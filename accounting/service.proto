@@ -1,0 +1,23 @@
+syntax = "proto3";
+package accounting;
+option go_package = "github.com/nspcc-dev/neofs-proto/accounting";
+
+import "decimal/decimal.proto";
+import "accounting/types.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+service Accounting {
+    rpc Balance(BalanceRequest) returns (BalanceResponse);
+}
+
+message BalanceRequest {
+    bytes OwnerID = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    uint32 TTL    = 2;
+}
+
+message BalanceResponse {
+    decimal.Decimal Balance       = 1;
+    repeated Account LockAccounts = 2;
+}

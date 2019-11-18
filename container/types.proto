@@ -1,0 +1,16 @@
+syntax = "proto3";
+package container;
+option go_package = "github.com/nspcc-dev/neofs-proto/container";
+
+import "github.com/nspcc-dev/netmap/selector.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+// The Container service definition.
+message Container {
+    bytes OwnerID              = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    bytes Salt                 = 2 [(gogoproto.customtype) = "UUID",    (gogoproto.nullable) = false];
+    uint64 Capacity            = 3;
+    netmap.PlacementRule Rules = 4 [(gogoproto.nullable) = false];
+}

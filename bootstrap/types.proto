@@ -1,0 +1,22 @@
+syntax = "proto3";
+package bootstrap;
+option go_package = "github.com/nspcc-dev/neofs-proto/bootstrap";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;;
+
+option (gogoproto.stringer_all) =  false;
+option (gogoproto.goproto_stringer_all) = false;
+
+message SpreadMap {
+    uint64 Epoch = 1;
+    repeated NodeInfo NetMap = 2 [(gogoproto.nullable) = false];
+}
+
+message NodeInfo {
+    string Address          = 1 [(gogoproto.jsontag) = "address"];
+    bytes PubKey            = 2 [(gogoproto.jsontag) = "pubkey,omitempty"];
+    repeated string Options = 3 [(gogoproto.jsontag) = "options,omitempty"];
+    uint64 Status           = 4 [(gogoproto.jsontag) = "status", (gogoproto.nullable) = false, (gogoproto.customtype) = "NodeStatus"];
+}

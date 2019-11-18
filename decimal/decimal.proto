@@ -1,0 +1,14 @@
+syntax = "proto3";
+package decimal;
+option go_package = "github.com/nspcc-dev/neofs-proto/decimal";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+message Decimal {
+    option (gogoproto.goproto_stringer) = false;
+
+    int64 Value = 1;
+    uint32 Precision = 2;
+}

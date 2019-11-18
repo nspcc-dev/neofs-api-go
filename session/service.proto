@@ -1,0 +1,27 @@
+syntax = "proto3";
+package session;
+option go_package = "github.com/nspcc-dev/neofs-proto/session";
+
+import "session/types.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+service Session {
+    rpc Create (stream CreateRequest) returns (stream CreateResponse);
+}
+
+
+message CreateRequest {
+    oneof Message {
+        session.Token Init = 1;
+        session.Token Signed = 2;
+    }
+}
+
+message CreateResponse {
+    oneof Message {
+        session.Token Unsigned = 1;
+        session.Token Result = 2;
+    }
+}

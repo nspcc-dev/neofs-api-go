@@ -1,0 +1,22 @@
+syntax = "proto3";
+package session;
+option go_package = "github.com/nspcc-dev/neofs-proto/session";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+message VerificationHeader {
+    bytes PublicKey = 1;
+    bytes KeySignature = 2;
+}
+
+message Token {
+    VerificationHeader Header = 1 [(gogoproto.nullable) = false];
+    bytes OwnerID = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    uint64 FirstEpoch = 3;
+    uint64 LastEpoch = 4;
+    repeated bytes ObjectID = 5 [(gogoproto.customtype) = "ObjectID", (gogoproto.nullable) = false];
+    bytes Signature = 6;
+    bytes ID = 7 [(gogoproto.customtype) = "TokenID", (gogoproto.nullable) = false];
+}

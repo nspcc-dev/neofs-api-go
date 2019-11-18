@@ -1,0 +1,106 @@
+syntax = "proto3";
+package accounting;
+option go_package = "github.com/nspcc-dev/neofs-proto/accounting";
+
+import "decimal/decimal.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+// Snapshot accounting messages
+message Account {
+    bytes OwnerID                 = 1 [(gogoproto.customtype) = "OwnerID",  (gogoproto.nullable) = false];
+    string Address                = 2;
+    string ParentAddress          = 3;
+    decimal.Decimal ActiveFunds   = 4;
+    Lifetime Lifetime             = 5 [(gogoproto.nullable) = false];
+    LockTarget LockTarget         = 6;
+    repeated Account LockAccounts = 7;
+}
+
+message LockTarget {
+    oneof Target {
+        WithdrawTarget WithdrawTarget = 1;
+        ContainerCreateTarget ContainerCreateTarget = 2;
+    }
+}
+
+// Snapshot balance messages
+message Balances {
+    repeated Account Accounts = 1 [(gogoproto.nullable) = false];
+}
+
+// PayIn / PayOut messages
+message PayIO {
+    uint64 BlockID = 1;
+    repeated Tx Transactions = 2 [(gogoproto.nullable) = false];
+}
+
+// Clearing messages
+message Clearing {
+    repeated Tx Transactions = 1 [(gogoproto.nullable) = false];
+}
+
+// Clearing messages
+message Withdraw {
+    string ID = 1;
+    uint64 Epoch = 2;
+    Tx Transaction = 3;
+}
+
+// Lifetime of locks
+message Lifetime {
+    enum Unit {
+        Unlimited = 0;
+        NeoFSEpoch = 1;
+        NeoBlock = 2;
+    }
+
+    Unit unit = 1 [(gogoproto.customname) = "Unit"];
+    int64 Value = 2;
+}
+
+// Transaction messages
+message Tx {
+    enum Type {
+        Unknown  = 0;
+        Withdraw = 1;
+        PayIO    = 2;
+        Inner    = 3;
+    }
+
+    Type type              = 1 [(gogoproto.customname) = "Type"];
+    string From            = 2;
+    string To              = 3;
+    decimal.Decimal Amount = 4;
+    bytes PublicKeys       = 5; // of sender
+}
+
+message Settlement {
+    message Receiver {
+        string To              = 1;
+        decimal.Decimal Amount = 2;
+    }
+
+    message Container {
+        bytes CID            = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
+        repeated bytes SGIDs = 2 [(gogoproto.customtype) = "SGID", (gogoproto.nullable) = false];
+    }
+
+    message Tx {
+        string From                 = 1;
+        Container Container         = 2 [(gogoproto.nullable) = false];
+        repeated Receiver Receivers = 3 [(gogoproto.nullable) = false];
+    }
+
+    uint64 Epoch             = 1;
+    repeated Tx Transactions = 2;
+}
+
+message ContainerCreateTarget {
+    bytes CID = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
+}
+
+message WithdrawTarget {
+    string Cheque = 1;
+}
