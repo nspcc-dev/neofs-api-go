@@ -1,0 +1,61 @@
+syntax = "proto3";
+package accounting;
+option go_package = "github.com/nspcc-dev/neofs-proto/accounting";
+
+import "decimal/decimal.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+service Withdraw {
+    rpc Get(GetRequest) returns (GetResponse);
+    rpc Put(PutRequest) returns (PutResponse);
+    rpc List(ListRequest) returns (ListResponse);
+    rpc Delete(DeleteRequest) returns (DeleteResponse);
+}
+
+message Item {
+    bytes ID               = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
+    bytes OwnerID          = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    decimal.Decimal Amount = 3;
+    uint64 Height          = 4;
+    bytes Payload          = 5;
+}
+
+message GetRequest {
+    bytes ID      = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
+    bytes OwnerID = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    uint32 TTL    = 3;
+}
+message GetResponse {
+    Item Withdraw = 1;
+}
+
+message PutRequest {
+    bytes OwnerID          = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    decimal.Decimal Amount = 2;
+    uint64 Height          = 3;
+    bytes MessageID        = 4 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
+    bytes Signature        = 5;
+    uint32 TTL             = 6;
+}
+message PutResponse {
+    bytes ID = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
+}
+
+message ListRequest {
+    bytes OwnerID = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    uint32 TTL    = 2;
+}
+message ListResponse {
+    repeated Item Items = 1;
+}
+
+message DeleteRequest {
+    bytes ID        = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
+    bytes OwnerID   = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    bytes MessageID = 3 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
+    bytes Signature = 4;
+    uint32 TTL      = 5;
+}
+message DeleteResponse {}

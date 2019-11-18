@@ -1,0 +1,20 @@
+syntax = "proto3";
+package bootstrap;
+option go_package = "github.com/nspcc-dev/neofs-proto/bootstrap";
+
+import "bootstrap/types.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+// The Bootstrap service definition.
+service Bootstrap {
+    rpc Process(Request) returns (bootstrap.SpreadMap);
+}
+
+// Request message to communicate between DHT nodes
+message Request {
+    int32              type = 1 [(gogoproto.customname) = "Type" , (gogoproto.nullable) = false, (gogoproto.customtype) = "NodeType"];
+    bootstrap.NodeInfo info = 2 [(gogoproto.nullable) = false];
+    uint32 TTL           = 3;
+}

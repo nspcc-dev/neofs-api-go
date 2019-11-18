@@ -1,0 +1,107 @@
+syntax = "proto3";
+package object;
+option go_package = "github.com/nspcc-dev/neofs-proto/object";
+
+import "refs/types.proto";
+import "session/types.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+message Range {
+    uint64 Offset = 1;
+    uint64 Length = 2;
+}
+
+message UserHeader {
+    string Key = 1;
+    string Value = 2;
+}
+
+message Header {
+    oneof Value {
+        Link Link                         = 1;
+        refs.Address Redirect             = 2;
+        UserHeader UserHeader             = 3;
+        Transform Transform               = 4;
+        Tombstone Tombstone               = 5;
+        // session-related info: session.VerificationHeader
+        session.VerificationHeader Verify = 6;
+        // integrity-related info
+        bytes HomoHash                    = 7 [(gogoproto.customtype) = "Hash"];
+        bytes PayloadChecksum             = 8;
+        IntegrityHeader Integrity         = 9;
+        StorageGroup StorageGroup         = 10;
+    }
+}
+
+message Tombstone {
+    uint64 Epoch = 1;
+}
+
+message SystemHeader {
+    uint64 Version       = 1;
+    uint64 PayloadLength = 2;
+
+    bytes ID        = 3 [(gogoproto.customtype) = "ID", (gogoproto.nullable) = false];
+    bytes OwnerID   = 4 [(gogoproto.customtype) = "OwnerID",  (gogoproto.nullable) = false];
+    bytes CID       = 5 [(gogoproto.customtype) = "CID",      (gogoproto.nullable) = false];
+    CreationPoint CreatedAt = 6 [(gogoproto.nullable) = false];
+}
+
+message CreationPoint {
+    int64 UnixTime = 1;
+    uint64 Epoch = 2;
+}
+
+message IntegrityHeader {
+    bytes HeadersChecksum   = 1;
+    bytes ChecksumSignature = 2;
+}
+
+message Link {
+    enum Type {
+        Unknown      = 0;
+        Parent       = 1;
+        Previous     = 2;
+        Next         = 3;
+        Child        = 4;
+        StorageGroup = 5;
+    }
+    Type type  = 1;
+    bytes ID = 2 [(gogoproto.customtype) = "ID", (gogoproto.nullable) = false];
+}
+
+message Transform {
+    enum Type {
+        Unknown = 0;
+        Split   = 1;
+        Sign    = 2;
+        Mould   = 3;
+    }
+    Type type  = 1;
+}
+
+message Object {
+    SystemHeader SystemHeader = 1 [(gogoproto.nullable) = false];
+    repeated Header Headers   = 2 [(gogoproto.nullable) = false];
+    bytes Payload             = 3;
+}
+
+message StorageGroup {
+    uint64 ValidationDataSize = 1;
+    bytes ValidationHash = 2 [(gogoproto.customtype) = "Hash", (gogoproto.nullable) = false];
+
+    message Lifetime {
+        enum Unit {
+            Unlimited = 0;
+            NeoFSEpoch = 1;
+            UnixTime = 2;
+        }
+
+        Unit unit = 1 [(gogoproto.customname) = "Unit"];
+        int64 Value = 2;
+    }
+
+    Lifetime lifetime = 3 [(gogoproto.customname) = "Lifetime"];
+}

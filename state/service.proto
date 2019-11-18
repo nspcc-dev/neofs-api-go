@@ -1,0 +1,37 @@
+syntax = "proto3";
+package state;
+option go_package = "github.com/nspcc-dev/neofs-proto/state";
+
+import "bootstrap/types.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+// The Status service definition.
+service Status {
+    rpc Netmap(NetmapRequest) returns (bootstrap.SpreadMap);
+    rpc Metrics(MetricsRequest) returns (MetricsResponse);
+    rpc HealthCheck(HealthRequest) returns (HealthResponse);
+}
+
+// NetmapRequest message to request current node netmap
+message NetmapRequest {}
+
+// MetricsRequest message to request node metrics
+message MetricsRequest {}
+
+// MetricsResponse contains [][]byte,
+// every []byte is marshaled MetricFamily proto message
+// from github.com/prometheus/client_model/metrics.proto
+message MetricsResponse {
+    repeated bytes Metrics = 1;
+}
+
+// HealthRequest message to check current state
+message HealthRequest {}
+
+// HealthResponse message with current state
+message HealthResponse {
+    bool Healthy  = 1;
+    string Status = 2;
+}

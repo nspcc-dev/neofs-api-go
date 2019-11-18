@@ -1,0 +1,25 @@
+syntax = "proto3";
+package query;
+option go_package = "github.com/nspcc-dev/neofs-proto/query";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+message Filter {
+    option (gogoproto.goproto_stringer) = false;
+
+    enum Type {
+        Exact = 0;
+        Regex = 1;
+    }
+    Type type = 1 [(gogoproto.customname) = "Type"];
+    string Name = 2;
+    string Value = 3;
+}
+
+message Query {
+    option (gogoproto.goproto_stringer) = false;
+
+    repeated Filter Filters = 1 [(gogoproto.nullable) = false];
+}

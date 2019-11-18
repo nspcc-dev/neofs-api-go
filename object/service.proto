@@ -1,0 +1,119 @@
+syntax = "proto3";
+package object;
+option go_package = "github.com/nspcc-dev/neofs-proto/object";
+
+import "refs/types.proto";
+import "object/types.proto";
+import "session/types.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+service Service {
+    // Get the object from a container
+    rpc Get(GetRequest) returns (stream GetResponse);
+
+    // Put the object into a container
+    rpc Put(stream PutRequest) returns (PutResponse);
+
+    // Delete the object from a container
+    rpc Delete(DeleteRequest) returns (DeleteResponse);
+
+    // Get MetaInfo
+    rpc Head(HeadRequest) returns (HeadResponse);
+
+    // Search by MetaInfo
+    rpc Search(SearchRequest) returns (SearchResponse);
+
+    // Get ranges of object payload
+    rpc GetRange(GetRangeRequest) returns (GetRangeResponse);
+
+    // Get hashes of object ranges
+    rpc GetRangeHash(GetRangeHashRequest) returns (GetRangeHashResponse);
+}
+
+message GetRequest {
+    uint64 Epoch         = 1;
+    refs.Address Address = 2 [(gogoproto.nullable) = false];
+    uint32 TTL           = 3;
+}
+
+message GetResponse {
+    oneof R {
+        Object object = 1;
+        bytes Chunk   = 2;
+    }
+}
+
+message PutRequest {
+    message PutHeader {
+        uint64 Epoch        = 1;
+        Object Object       = 2;
+        uint32 TTL          = 3;
+        session.Token Token = 4;
+    }
+
+    oneof R {
+        PutHeader Header = 1;
+        bytes Chunk      = 2;
+    }
+}
+
+message PutResponse {
+    refs.Address Address = 1 [(gogoproto.nullable) = false];
+}
+message DeleteRequest {
+    uint64 Epoch         = 1;
+    refs.Address Address = 2 [(gogoproto.nullable) = false];
+    bytes OwnerID        = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"];
+    uint32 TTL           = 4;
+    session.Token Token  = 5;
+}
+message DeleteResponse {}
+
+// HeadRequest.FullHeader == true, for fetch all headers
+message HeadRequest {
+    uint64 Epoch         = 1;
+    refs.Address Address = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
+    bool FullHeaders     = 3;
+    uint32 TTL           = 4;
+}
+message HeadResponse {
+    Object Object = 1;
+}
+
+message SearchRequest {
+    uint64 Epoch         = 1;
+    uint32 Version       = 2;
+    bytes ContainerID    = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "CID"];
+    bytes Query          = 4;
+    uint32 TTL           = 5;
+}
+
+message SearchResponse {
+    repeated refs.Address Addresses = 1 [(gogoproto.nullable) = false];
+}
+
+message GetRangeRequest {
+    uint64 Epoch          = 1;
+    refs.Address Address  = 2 [(gogoproto.nullable) = false];
+    repeated Range Ranges = 3 [(gogoproto.nullable) = false];
+    uint32 TTL            = 4;
+}
+
+message GetRangeResponse {
+    repeated bytes Fragments = 1;
+}
+
+message GetRangeHashRequest {
+    uint64 Epoch          = 1;
+    refs.Address Address  = 2 [(gogoproto.nullable) = false];
+    repeated Range Ranges = 3 [(gogoproto.nullable) = false];
+    bytes Salt            = 4;
+    uint32 TTL            = 5;
+}
+
+message GetRangeHashResponse {
+    repeated bytes Hashes = 1 [(gogoproto.customtype) = "Hash", (gogoproto.nullable) = false];
+}
+
