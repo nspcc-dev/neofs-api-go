@@ -2,6 +2,8 @@ syntax = "proto3";
 package state;
 option go_package = "github.com/nspcc-dev/neofs-proto/state";
 
+import "service/meta.proto";
+import "service/verify.proto";
 import "bootstrap/types.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
@@ -19,10 +21,16 @@ service Status {
 }
 
 // NetmapRequest message to request current node netmap
-message NetmapRequest {}
+message NetmapRequest {
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+}
 
 // MetricsRequest message to request node metrics
-message MetricsRequest {}
+message MetricsRequest {
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+}
 
 // MetricsResponse contains [][]byte,
 // every []byte is marshaled MetricFamily proto message
@@ -32,7 +40,10 @@ message MetricsResponse {
 }
 
 // HealthRequest message to check current state
-message HealthRequest {}
+message HealthRequest {
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+}
 
 // HealthResponse message with current state
 message HealthResponse {

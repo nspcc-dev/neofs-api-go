@@ -2,6 +2,8 @@ syntax = "proto3";
 package accounting;
 option go_package = "github.com/nspcc-dev/neofs-proto/accounting";
 
+import "service/meta.proto";
+import "service/verify.proto";
 import "decimal/decimal.proto";
 import "accounting/types.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
@@ -17,10 +19,11 @@ service Accounting {
 
 message BalanceRequest {
     // OwnerID is a wallet address
-    bytes OwnerID = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL    = 2;
+    bytes OwnerID                            = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message BalanceResponse {

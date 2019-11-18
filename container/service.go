@@ -19,18 +19,6 @@ type (
 	MessageID = refs.MessageID
 )
 
-// SetTTL sets ttl to GetRequest to satisfy TTLRequest interface.
-func (m *GetRequest) SetTTL(v uint32) { m.TTL = v }
-
-// SetTTL sets ttl to PutRequest to satisfy TTLRequest interface.
-func (m *PutRequest) SetTTL(v uint32) { m.TTL = v }
-
-// SetTTL sets ttl to ListRequest to satisfy TTLRequest interface.
-func (m *ListRequest) SetTTL(v uint32) { m.TTL = v }
-
-// SetTTL sets ttl to DeleteRequest to satisfy TTLRequest interface.
-func (m *DeleteRequest) SetTTL(v uint32) { m.TTL = v }
-
 // SetSignature sets signature to PutRequest to satisfy SignedRequest interface.
 func (m *PutRequest) SetSignature(v []byte) { m.Signature = v }
 

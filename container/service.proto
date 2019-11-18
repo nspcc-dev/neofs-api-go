@@ -2,6 +2,8 @@ syntax = "proto3";
 package container;
 option go_package = "github.com/nspcc-dev/neofs-proto/container";
 
+import "service/meta.proto";
+import "service/verify.proto";
 import "container/types.proto";
 import "github.com/nspcc-dev/netmap/selector.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
@@ -28,23 +30,24 @@ service Service {
 
 message PutRequest {
     // MessageID is a nonce for uniq container id calculation
-    bytes MessageID            = 1 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
+    bytes MessageID                          = 1 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
 
     // Capacity defines amount of data that can be stored in the container (doesn't used for now).
-    uint64 Capacity            = 2;
+    uint64 Capacity                          = 2;
 
     // OwnerID is a wallet address
-    bytes OwnerID              = 3 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    bytes OwnerID                            = 3 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
 
     // Rules define storage policy for the object inside the container.
-    netmap.PlacementRule rules = 4 [(gogoproto.nullable) = false];
+    netmap.PlacementRule rules               = 4 [(gogoproto.nullable) = false];
 
     // Signature of the user (owner id)
-    bytes Signature            = 5;
+    bytes Signature                          = 5;
 
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL                 = 6;
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message PutResponse {
@@ -54,14 +57,15 @@ message PutResponse {
 
 message DeleteRequest {
     // CID (container id) is a SHA256 hash of the container structure
-    bytes CID       = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
-
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL      = 2;
+    bytes CID                                = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
 
     // Signature of the container owner
-    bytes Signature = 3;
+    bytes Signature                          = 2;
+
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 // DeleteResponse is empty because delete operation is asynchronous and done
@@ -71,11 +75,12 @@ message DeleteResponse { }
 
 message GetRequest {
     // CID (container id) is a SHA256 hash of the container structure
-    bytes CID  = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
+    bytes CID                                = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
 
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL = 2;
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message GetResponse {
@@ -85,11 +90,11 @@ message GetResponse {
 
 message ListRequest {
     // OwnerID is a wallet address
-    bytes OwnerID = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
-
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL    = 2;
+    bytes OwnerID                            = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message ListResponse {

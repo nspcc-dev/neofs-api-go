@@ -31,8 +31,7 @@ type (
 	// All object operations must have TTL, Epoch, Container ID and
 	// permission of usage previous network map.
 	Request interface {
-		service.TTLRequest
-		service.EpochRequest
+		service.MetaHeader
 
 		CID() CID
 		AllowPreviousNetMap() bool
@@ -123,54 +122,6 @@ func (m *GetResponse) NotFull() bool { return checkIsNotFull(m) }
 
 // NotFull checks if protobuf stream provided whole object for put operation.
 func (m *PutRequest) NotFull() bool { return checkIsNotFull(m) }
-
-// GetTTL returns TTL value from object put request.
-func (m *PutRequest) GetTTL() uint32 { return m.GetHeader().TTL }
-
-// GetEpoch returns epoch value from object put request.
-func (m *PutRequest) GetEpoch() uint64 { return m.GetHeader().GetEpoch() }
-
-// SetTTL sets TTL value into object put request.
-func (m *PutRequest) SetTTL(ttl uint32) { m.GetHeader().TTL = ttl }
-
-// SetTTL sets TTL value into object get request.
-func (m *GetRequest) SetTTL(ttl uint32) { m.TTL = ttl }
-
-// SetTTL sets TTL value into object head request.
-func (m *HeadRequest) SetTTL(ttl uint32) { m.TTL = ttl }
-
-// SetTTL sets TTL value into object search request.
-func (m *SearchRequest) SetTTL(ttl uint32) { m.TTL = ttl }
-
-// SetTTL sets TTL value into object delete request.
-func (m *DeleteRequest) SetTTL(ttl uint32) { m.TTL = ttl }
-
-// SetTTL sets TTL value into object get range request.
-func (m *GetRangeRequest) SetTTL(ttl uint32) { m.TTL = ttl }
-
-// SetTTL sets TTL value into object get range hash request.
-func (m *GetRangeHashRequest) SetTTL(ttl uint32) { m.TTL = ttl }
-
-// SetEpoch sets epoch value into object put request.
-func (m *PutRequest) SetEpoch(v uint64) { m.GetHeader().Epoch = v }
-
-// SetEpoch sets epoch value into object get request.
-func (m *GetRequest) SetEpoch(v uint64) { m.Epoch = v }
-
-// SetEpoch sets epoch value into object head request.
-func (m *HeadRequest) SetEpoch(v uint64) { m.Epoch = v }
-
-// SetEpoch sets epoch value into object search request.
-func (m *SearchRequest) SetEpoch(v uint64) { m.Epoch = v }
-
-// SetEpoch sets epoch value into object delete request.
-func (m *DeleteRequest) SetEpoch(v uint64) { m.Epoch = v }
-
-// SetEpoch sets epoch value into object get range request.
-func (m *GetRangeRequest) SetEpoch(v uint64) { m.Epoch = v }
-
-// SetEpoch sets epoch value into object get range hash request.
-func (m *GetRangeHashRequest) SetEpoch(v uint64) { m.Epoch = v }
 
 // CID returns container id value from object put request.
 func (m *PutRequest) CID() CID { return m.GetHeader().Object.SystemHeader.CID }

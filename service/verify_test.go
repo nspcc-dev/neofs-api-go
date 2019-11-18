@@ -1,0 +1,106 @@
+package service
+
+import (
+	"math"
+	"testing"
+
+	crypto "github.com/nspcc-dev/neofs-crypto"
+	"github.com/nspcc-dev/neofs-crypto/test"
+	"github.com/pkg/errors"
+	"github.com/stretchr/testify/require"
+)
+
+func TestSignRequestHeader(t *testing.T) {
+	req := &TestRequest{
+		IntField:    math.MaxInt32,
+		StringField: "TestRequestStringField",
+		BytesField:  []byte("TestRequestBytesField"),
+	}
+
+	key := test.DecodeKey(0)
+	peer := crypto.MarshalPublicKey(&key.PublicKey)
+
+	data, err := req.Marshal()
+	require.NoError(t, err)
+
+	require.NoError(t, SignRequestHeader(key, req))
+
+	require.Len(t, req.Signatures, 1)
+	for i := range req.Signatures {
+		sign := req.Signatures[i].GetSign()
+		require.Equal(t, peer, req.Signatures[i].GetPeer())
+		require.NoError(t, crypto.Verify(&key.PublicKey, data, sign))
+	}
+}
+
+func TestVerifyRequestHeader(t *testing.T) {
+	req := &TestRequest{
+		IntField:          math.MaxInt32,
+		StringField:       "TestRequestStringField",
+		BytesField:        []byte("TestRequestBytesField"),
+		RequestMetaHeader: RequestMetaHeader{TTL: 10},
+	}
+
+	for i := 0; i < 10; i++ {
+		req.TTL--
+		require.NoError(t, SignRequestHeader(test.DecodeKey(i), req))
+	}
+
+	require.NoError(t, VerifyRequestHeader(req))
+}
+
+func TestMaintainableRequest(t *testing.T) {
+	req := &TestRequest{
+		IntField:          math.MaxInt32,
+		StringField:       "TestRequestStringField",
+		BytesField:        []byte("TestRequestBytesField"),
+		RequestMetaHeader: RequestMetaHeader{TTL: 10},
+	}
+
+	count := 10
+	owner := test.DecodeKey(count + 1)
+
+	for i := 0; i < count; i++ {
+		req.TTL--
+
+		key := test.DecodeKey(i)
+		require.NoError(t, SignRequestHeader(key, req))
+
+		// sign first key (session key) by owner key
+		if i == 0 {
+			sign, err := crypto.Sign(owner, crypto.MarshalPublicKey(&key.PublicKey))
+			require.NoError(t, err)
+
+			req.SetOwner(&owner.PublicKey, sign)
+		}
+	}
+
+	{ // Good case:
+		require.NoError(t, VerifyRequestHeader(req))
+
+		// validate, that first key (session key) was signed with owner
+		signatures := req.GetSignatures()
+
+		require.Len(t, signatures, count)
+
+		pub, err := req.GetOwner()
+		require.NoError(t, err)
+
+		require.Equal(t, &owner.PublicKey, pub)
+	}
+
+	{ // wrong owner:
+		req.Signatures[0].Origin = nil
+
+		pub, err := req.GetOwner()
+		require.NoError(t, err)
+
+		require.NotEqual(t, &owner.PublicKey, pub)
+	}
+
+	{ // Wrong signatures:
+		copy(req.Signatures[count-1].Sign, req.Signatures[count-1].Peer)
+		err := VerifyRequestHeader(req)
+		require.EqualError(t, errors.Cause(err), crypto.ErrInvalidSignature.Error())
+	}
+}

@@ -8,6 +8,7 @@ import (
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/golang/protobuf/proto"
+	service "github.com/nspcc-dev/neofs-proto/service"
 	netmap "github.com/nspcc-dev/netmap"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -39,12 +40,13 @@ type PutRequest struct {
 	Rules netmap.PlacementRule `protobuf:"bytes,4,opt,name=rules,proto3" json:"rules"`
 	// Signature of the user (owner id)
 	Signature []byte `protobuf:"bytes,5,opt,name=Signature,proto3" json:"Signature,omitempty"`
-	// TTL must be larger than zero, it decreased in every neofs-node
-	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-	TTL                  uint32   `protobuf:"varint,6,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
+	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *PutRequest) Reset()         { *m = PutRequest{} }
@@ -97,13 +99,6 @@ func (m *PutRequest) GetSignature() []byte {
 	return nil
 }
 
-func (m *PutRequest) GetTTL() uint32 {
-	if m != nil {
-		return m.TTL
-	}
-	return 0
-}
-
 type PutResponse struct {
 	// CID (container id) is a SHA256 hash of the container structure
 	CID                  CID      `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
@@ -144,14 +139,15 @@ var xxx_messageInfo_PutResponse proto.InternalMessageInfo
 type DeleteRequest struct {
 	// CID (container id) is a SHA256 hash of the container structure
 	CID CID `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
-	// TTL must be larger than zero, it decreased in every neofs-node
-	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-	TTL uint32 `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	// Signature of the container owner
-	Signature            []byte   `protobuf:"bytes,3,opt,name=Signature,proto3" json:"Signature,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Signature []byte `protobuf:"bytes,2,opt,name=Signature,proto3" json:"Signature,omitempty"`
+	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
+	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *DeleteRequest) Reset()         { *m = DeleteRequest{} }
@@ -182,13 +178,6 @@ func (m *DeleteRequest) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_DeleteRequest proto.InternalMessageInfo
-
-func (m *DeleteRequest) GetTTL() uint32 {
-	if m != nil {
-		return m.TTL
-	}
-	return 0
-}
 
 func (m *DeleteRequest) GetSignature() []byte {
 	if m != nil {
@@ -237,12 +226,13 @@ var xxx_messageInfo_DeleteResponse proto.InternalMessageInfo
 type GetRequest struct {
 	// CID (container id) is a SHA256 hash of the container structure
 	CID CID `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
-	// TTL must be larger than zero, it decreased in every neofs-node
-	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-	TTL                  uint32   `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
+	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *GetRequest) Reset()         { *m = GetRequest{} }
@@ -273,13 +263,6 @@ func (m *GetRequest) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_GetRequest proto.InternalMessageInfo
-
-func (m *GetRequest) GetTTL() uint32 {
-	if m != nil {
-		return m.TTL
-	}
-	return 0
-}
 
 type GetResponse struct {
 	// Container is a structure that contains placement rules and owner id
@@ -328,12 +311,13 @@ func (m *GetResponse) GetContainer() *Container {
 type ListRequest struct {
 	// OwnerID is a wallet address
 	OwnerID OwnerID `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
-	// TTL must be larger than zero, it decreased in every neofs-node
-	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-	TTL                  uint32   `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
+	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *ListRequest) Reset()         { *m = ListRequest{} }
@@ -364,13 +348,6 @@ func (m *ListRequest) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_ListRequest proto.InternalMessageInfo
-
-func (m *ListRequest) GetTTL() uint32 {
-	if m != nil {
-		return m.TTL
-	}
-	return 0
-}
 
 type ListResponse struct {
 	// CID (container id) is list of SHA256 hashes of the container structures
@@ -423,40 +400,44 @@ func init() {
 func init() { proto.RegisterFile("container/service.proto", fileDescriptor_e1fa9d7ab2e7ae06) }
 
 var fileDescriptor_e1fa9d7ab2e7ae06 = []byte{
-	// 520 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x53, 0xcf, 0x6e, 0xd3, 0x4e,
-	0x10, 0xee, 0xd6, 0x69, 0xfa, 0xcb, 0xb8, 0xfd, 0x51, 0x56, 0x84, 0x1a, 0x0b, 0xdc, 0xc8, 0xa7,
-	0x80, 0x88, 0x2d, 0x42, 0x25, 0x4e, 0x95, 0x20, 0x89, 0x54, 0x15, 0x15, 0x11, 0x6d, 0x7b, 0xe2,
-	0x80, 0xe4, 0x98, 0xa9, 0xb1, 0xe4, 0xd8, 0xc6, 0xbb, 0x2e, 0xea, 0x9b, 0xf0, 0x48, 0x3d, 0x72,
-	0x44, 0x1c, 0x2a, 0x14, 0x0e, 0x9c, 0x78, 0x07, 0x64, 0xaf, 0xff, 0x25, 0x2d, 0x20, 0x71, 0x59,
-	0xcd, 0xce, 0x7c, 0xf3, 0xcd, 0x37, 0x33, 0xbb, 0xb0, 0xeb, 0x46, 0xa1, 0x70, 0xfc, 0x10, 0x13,
-	0x9b, 0x63, 0x72, 0xee, 0xbb, 0x68, 0xc5, 0x49, 0x24, 0x22, 0xda, 0xa9, 0x02, 0x7a, 0xb7, 0xc6,
-	0x88, 0x8b, 0x18, 0xb9, 0x44, 0xe8, 0x8f, 0x3c, 0x5f, 0xbc, 0x4f, 0x67, 0x96, 0x1b, 0xcd, 0xed,
-	0x90, 0xc7, 0xae, 0x3b, 0x78, 0x87, 0xe7, 0x76, 0x88, 0x62, 0xee, 0xc4, 0x36, 0xc7, 0x00, 0x5d,
-	0x11, 0x25, 0x05, 0x76, 0xd0, 0xc0, 0x7a, 0x91, 0x17, 0xd9, 0xb9, 0x7b, 0x96, 0x9e, 0xe5, 0xb7,
-	0xfc, 0x92, 0x5b, 0x12, 0x6e, 0xfe, 0x20, 0x00, 0xd3, 0x54, 0x30, 0xfc, 0x90, 0x22, 0x17, 0xd4,
-	0x86, 0xce, 0x2b, 0xe4, 0xdc, 0xf1, 0xf0, 0x68, 0xa2, 0x91, 0x1e, 0xe9, 0x6f, 0x8d, 0x6e, 0x5f,
-	0x5e, 0xed, 0xad, 0x7d, 0xbd, 0xda, 0xab, 0x03, 0xac, 0x36, 0xa9, 0x0e, 0xff, 0x8d, 0x9d, 0xd8,
-	0x71, 0x7d, 0x71, 0xa1, 0xad, 0xf7, 0x48, 0xbf, 0xc5, 0xaa, 0x3b, 0x7d, 0x08, 0x9b, 0xaf, 0x3f,
-	0x86, 0x98, 0x1c, 0x4d, 0x34, 0x25, 0xa7, 0xba, 0x55, 0x50, 0x95, 0x6e, 0x56, 0x1a, 0xf4, 0x09,
-	0x6c, 0x24, 0x69, 0x80, 0x5c, 0x6b, 0xf5, 0x48, 0x5f, 0x1d, 0x76, 0x2d, 0xd9, 0x9c, 0x35, 0x0d,
-	0x1c, 0x17, 0xe7, 0x18, 0x0a, 0x96, 0x06, 0x38, 0x6a, 0x65, 0xf9, 0x4c, 0x22, 0xe9, 0x7d, 0xe8,
-	0x9c, 0xf8, 0x5e, 0xe8, 0x88, 0x34, 0x41, 0x6d, 0x23, 0xe3, 0x67, 0xb5, 0x83, 0xee, 0x80, 0x72,
-	0x7a, 0x7a, 0xac, 0xb5, 0x7b, 0xa4, 0xbf, 0xcd, 0x32, 0xd3, 0x7c, 0x0c, 0x6a, 0xde, 0x28, 0x8f,
-	0xa3, 0x90, 0x23, 0x7d, 0x00, 0xca, 0xb8, 0xea, 0x51, 0x2d, 0x84, 0x65, 0x2e, 0x96, 0x1d, 0xe6,
-	0x5b, 0xd8, 0x9e, 0x60, 0x80, 0x02, 0xcb, 0xc9, 0xfc, 0x19, 0x5f, 0xd6, 0x5b, 0xaf, 0xea, 0x2d,
-	0xeb, 0x53, 0x56, 0xf4, 0x99, 0x3b, 0xf0, 0x7f, 0xc9, 0x2f, 0x05, 0x99, 0x07, 0x00, 0x87, 0x28,
-	0xfe, 0xb5, 0x9c, 0xf9, 0x02, 0xd4, 0x3c, 0xbd, 0x68, 0x6f, 0x08, 0x9d, 0x71, 0xf9, 0x96, 0x72,
-	0x16, 0x75, 0x78, 0xc7, 0xaa, 0x5e, 0x97, 0x55, 0xc5, 0x58, 0x0d, 0x33, 0x5f, 0x82, 0x7a, 0xec,
-	0xf3, 0x4a, 0x42, 0x63, 0x7d, 0xe4, 0x2f, 0xeb, 0xbb, 0x2e, 0x67, 0x00, 0x5b, 0x92, 0x6b, 0x75,
-	0xdc, 0xca, 0x4d, 0xfd, 0x0c, 0x7f, 0x12, 0xd8, 0x3c, 0x91, 0xbf, 0x82, 0xee, 0x83, 0x32, 0x4d,
-	0x05, 0xed, 0x36, 0xe4, 0xd6, 0x2f, 0x54, 0xbf, 0xbb, 0xea, 0x2e, 0x0a, 0x1c, 0x40, 0x5b, 0x0e,
-	0x94, 0x6a, 0x0d, 0xc4, 0xd2, 0x0e, 0xf5, 0x7b, 0x37, 0x44, 0x8a, 0xf4, 0x7d, 0x50, 0x0e, 0x71,
-	0xb9, 0x68, 0xbd, 0x8d, 0xa5, 0xa2, 0xcd, 0x29, 0x3f, 0x83, 0x56, 0xd6, 0x25, 0x6d, 0xc6, 0x1b,
-	0x23, 0xd4, 0x77, 0xaf, 0xf9, 0x65, 0xe2, 0xe8, 0xf9, 0xe5, 0xc2, 0x20, 0x9f, 0x17, 0x06, 0xf9,
-	0xb2, 0x30, 0xc8, 0xb7, 0x85, 0x41, 0x3e, 0x7d, 0x37, 0xd6, 0xde, 0xfc, 0xee, 0x9f, 0x47, 0x67,
-	0x7c, 0x20, 0x7f, 0x6e, 0x45, 0x37, 0x6b, 0xe7, 0x8e, 0xa7, 0xbf, 0x02, 0x00, 0x00, 0xff, 0xff,
-	0xa3, 0xe9, 0x55, 0x5c, 0x57, 0x04, 0x00, 0x00,
+	// 586 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x54, 0xcd, 0x6e, 0xd3, 0x4c,
+	0x14, 0xed, 0x34, 0x69, 0xda, 0x5c, 0xf7, 0xfb, 0x80, 0x51, 0x43, 0x8d, 0x05, 0x49, 0xe4, 0x55,
+	0x40, 0xc4, 0x16, 0xa1, 0x12, 0x6c, 0x90, 0x20, 0x89, 0x54, 0x2a, 0x51, 0x11, 0xb9, 0x12, 0x0b,
+	0x76, 0x8e, 0x7b, 0x13, 0x2c, 0x25, 0xb6, 0xf1, 0x8c, 0x83, 0xf2, 0x26, 0xbc, 0x03, 0x2f, 0xc0,
+	0x23, 0x74, 0xc1, 0xa2, 0x1b, 0x24, 0xc4, 0x22, 0x42, 0x61, 0xcd, 0x3b, 0x20, 0x8f, 0xc7, 0x3f,
+	0x49, 0xcb, 0xcf, 0xae, 0x6c, 0x2c, 0xcf, 0x39, 0xf7, 0x9e, 0x99, 0x73, 0xef, 0xdc, 0x81, 0x7d,
+	0xc7, 0xf7, 0xb8, 0xed, 0x7a, 0x18, 0x9a, 0x0c, 0xc3, 0x99, 0xeb, 0xa0, 0x11, 0x84, 0x3e, 0xf7,
+	0x69, 0x35, 0x23, 0x34, 0x2a, 0x19, 0x73, 0x8a, 0xdc, 0x4e, 0x68, 0x6d, 0x2f, 0xc5, 0x66, 0x18,
+	0xba, 0xa3, 0xb9, 0x44, 0x6b, 0xb9, 0x1a, 0x9f, 0x07, 0xc8, 0x24, 0x7c, 0x6f, 0xec, 0xf2, 0x37,
+	0xd1, 0xd0, 0x70, 0xfc, 0xa9, 0xe9, 0xb1, 0xc0, 0x71, 0xda, 0xa7, 0x38, 0x33, 0x3d, 0xe4, 0x53,
+	0x3b, 0x30, 0x19, 0x4e, 0xd0, 0xe1, 0x7e, 0x28, 0x63, 0xdb, 0x85, 0xd8, 0xb1, 0x3f, 0xf6, 0x4d,
+	0x01, 0x0f, 0xa3, 0x91, 0x58, 0x89, 0x85, 0xf8, 0x4b, 0xc2, 0xf5, 0xcf, 0x9b, 0x00, 0x83, 0x88,
+	0x5b, 0xf8, 0x36, 0x42, 0xc6, 0xa9, 0x09, 0xd5, 0x63, 0x64, 0xcc, 0x1e, 0xe3, 0x51, 0x5f, 0x25,
+	0x4d, 0xd2, 0xda, 0xed, 0xde, 0x38, 0x5b, 0x34, 0x36, 0xbe, 0x2e, 0x1a, 0x39, 0x61, 0xe5, 0xbf,
+	0x54, 0x83, 0x9d, 0x9e, 0x1d, 0xd8, 0x8e, 0xcb, 0xe7, 0xea, 0x66, 0x93, 0xb4, 0xca, 0x56, 0xb6,
+	0xa6, 0x77, 0x61, 0xfb, 0xe5, 0x3b, 0x0f, 0xc3, 0xa3, 0xbe, 0x5a, 0x12, 0x52, 0xd7, 0xa4, 0x54,
+	0x0a, 0x5b, 0xe9, 0x0f, 0x7d, 0x00, 0x5b, 0x61, 0x34, 0x41, 0xa6, 0x96, 0x9b, 0xa4, 0xa5, 0x74,
+	0x6a, 0x46, 0x62, 0xce, 0x18, 0x4c, 0x6c, 0x07, 0xa7, 0xe8, 0x71, 0x2b, 0x9a, 0x60, 0xb7, 0x1c,
+	0xe7, 0x5b, 0x49, 0x24, 0xbd, 0x0d, 0xd5, 0x13, 0x77, 0xec, 0xd9, 0x3c, 0x0a, 0x51, 0xdd, 0x8a,
+	0xf5, 0xad, 0x1c, 0xa0, 0x8f, 0xa1, 0x7c, 0x8c, 0xdc, 0x56, 0x87, 0x42, 0x4f, 0x33, 0xd2, 0xe6,
+	0x48, 0xa3, 0x31, 0xf7, 0x1c, 0xed, 0x53, 0x0c, 0xbb, 0x3b, 0xb1, 0xe8, 0xf9, 0xa2, 0x41, 0x2c,
+	0x91, 0x41, 0xfb, 0x50, 0x79, 0x25, 0x7a, 0xa2, 0x3a, 0x22, 0x57, 0x5f, 0xcf, 0x15, 0xac, 0xeb,
+	0xd8, 0xdc, 0xf5, 0xbd, 0x0b, 0x1a, 0x32, 0x57, 0xbf, 0x0f, 0x8a, 0x28, 0x2b, 0x0b, 0x7c, 0x8f,
+	0x21, 0xbd, 0x03, 0xa5, 0x5e, 0x56, 0x51, 0x45, 0x96, 0x21, 0x86, 0xac, 0xf8, 0xa3, 0x7f, 0x22,
+	0xf0, 0x5f, 0x1f, 0x27, 0xc8, 0x31, 0x6d, 0xc4, 0xef, 0x13, 0x56, 0xcd, 0x6f, 0xfe, 0x6b, 0xe6,
+	0xaf, 0xc3, 0xff, 0xa9, 0x9b, 0xc4, 0xbf, 0xfe, 0x81, 0x00, 0x1c, 0x22, 0xff, 0x4b, 0x77, 0x57,
+	0x7d, 0xfe, 0x67, 0xa0, 0x88, 0xc3, 0xca, 0xe6, 0x75, 0xa0, 0xda, 0x4b, 0xe7, 0x52, 0x9c, 0x59,
+	0xe9, 0xec, 0x19, 0xd9, 0xa4, 0x1a, 0x19, 0x67, 0xe5, 0x61, 0xfa, 0x47, 0x02, 0xca, 0x0b, 0x97,
+	0x65, 0x8e, 0x0b, 0xb3, 0x40, 0xfe, 0x30, 0x0b, 0x57, 0xed, 0xbe, 0x0d, 0xbb, 0xc9, 0xc9, 0xd7,
+	0xef, 0x6e, 0xe9, 0xb2, 0x66, 0x75, 0x7e, 0x10, 0xd8, 0x3e, 0x49, 0xb6, 0xa1, 0x07, 0x50, 0x1a,
+	0x44, 0x9c, 0xd6, 0x0a, 0xd5, 0xc9, 0x1f, 0x17, 0xed, 0xe6, 0x3a, 0x2c, 0x37, 0x78, 0x02, 0x95,
+	0xe4, 0xba, 0x50, 0xb5, 0x10, 0xb1, 0x32, 0x0f, 0xda, 0xad, 0x4b, 0x18, 0x99, 0x7e, 0x00, 0xa5,
+	0x43, 0x5c, 0xdd, 0x34, 0xbf, 0x6a, 0x2b, 0x9b, 0x16, 0x9b, 0xfa, 0x08, 0xca, 0xb1, 0x4b, 0x5a,
+	0xe4, 0x0b, 0x0d, 0xd3, 0xf6, 0x2f, 0xe0, 0x49, 0x62, 0xf7, 0xe9, 0xd9, 0xb2, 0x4e, 0xce, 0x97,
+	0x75, 0xf2, 0x65, 0x59, 0x27, 0xdf, 0x96, 0x75, 0xf2, 0xfe, 0x7b, 0x7d, 0xe3, 0xf5, 0xaf, 0x9e,
+	0x68, 0x7f, 0xc4, 0xda, 0xc9, 0xa3, 0x9b, 0xc9, 0x0d, 0x2b, 0x02, 0x78, 0xf8, 0x33, 0x00, 0x00,
+	0xff, 0xff, 0xd2, 0x95, 0x12, 0x0c, 0x3c, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -685,11 +666,30 @@ func (m *PutRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.TTL != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.TTL))
-		i--
-		dAtA[i] = 0x30
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
 	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	if len(m.Signature) > 0 {
 		i -= len(m.Signature)
 		copy(dAtA[i:], m.Signature)
@@ -796,17 +796,36 @@ func (m *DeleteRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	if len(m.Signature) > 0 {
 		i -= len(m.Signature)
 		copy(dAtA[i:], m.Signature)
 		i = encodeVarintService(dAtA, i, uint64(len(m.Signature)))
 		i--
-		dAtA[i] = 0x1a
-	}
-	if m.TTL != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.TTL))
-		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
 	}
 	{
 		size := m.CID.Size()
@@ -872,11 +891,30 @@ func (m *GetRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.TTL != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.TTL))
-		i--
-		dAtA[i] = 0x10
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
 	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	{
 		size := m.CID.Size()
 		i -= size
@@ -953,11 +991,30 @@ func (m *ListRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.TTL != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.TTL))
-		i--
-		dAtA[i] = 0x10
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
 	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	{
 		size := m.OwnerID.Size()
 		i -= size
@@ -1042,9 +1099,10 @@ func (m *PutRequest) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovService(uint64(l))
 	}
-	if m.TTL != 0 {
-		n += 1 + sovService(uint64(m.TTL))
-	}
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -1073,13 +1131,14 @@ func (m *DeleteRequest) Size() (n int) {
 	_ = l
 	l = m.CID.Size()
 	n += 1 + l + sovService(uint64(l))
-	if m.TTL != 0 {
-		n += 1 + sovService(uint64(m.TTL))
-	}
 	l = len(m.Signature)
 	if l > 0 {
 		n += 1 + l + sovService(uint64(l))
 	}
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -1106,9 +1165,10 @@ func (m *GetRequest) Size() (n int) {
 	_ = l
 	l = m.CID.Size()
 	n += 1 + l + sovService(uint64(l))
-	if m.TTL != 0 {
-		n += 1 + sovService(uint64(m.TTL))
-	}
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -1139,9 +1199,10 @@ func (m *ListRequest) Size() (n int) {
 	_ = l
 	l = m.OwnerID.Size()
 	n += 1 + l + sovService(uint64(l))
-	if m.TTL != 0 {
-		n += 1 + sovService(uint64(m.TTL))
-	}
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -1353,11 +1414,11 @@ func (m *PutRequest) Unmarshal(dAtA []byte) error {
 				m.Signature = []byte{}
 			}
 			iNdEx = postIndex
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TTL", wireType)
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
 			}
-			m.TTL = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowService
@@ -1367,11 +1428,58 @@ func (m *PutRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TTL |= uint32(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])
@@ -1547,25 +1655,6 @@ func (m *DeleteRequest) Unmarshal(dAtA []byte) error {
 			}
 			iNdEx = postIndex
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TTL", wireType)
-			}
-			m.TTL = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.TTL |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Signature", wireType)
 			}
@@ -1597,6 +1686,72 @@ func (m *DeleteRequest) Unmarshal(dAtA []byte) error {
 			m.Signature = append(m.Signature[:0], dAtA[iNdEx:postIndex]...)
 			if m.Signature == nil {
 				m.Signature = []byte{}
+			}
+			iNdEx = postIndex
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
 			}
 			iNdEx = postIndex
 		default:
@@ -1740,11 +1895,11 @@ func (m *GetRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TTL", wireType)
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
 			}
-			m.TTL = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowService
@@ -1754,11 +1909,58 @@ func (m *GetRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TTL |= uint32(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])
@@ -1936,11 +2138,11 @@ func (m *ListRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TTL", wireType)
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
 			}
-			m.TTL = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowService
@@ -1950,11 +2152,58 @@ func (m *ListRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TTL |= uint32(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])

@@ -31,9 +31,6 @@ const (
 	ErrEmptyParentAddress = internal.Error("empty parent address")
 )
 
-// SetTTL sets ttl to BalanceRequest to satisfy TTLRequest interface.
-func (m BalanceRequest) SetTTL(v uint32) { m.TTL = v }
-
 // SumFunds goes through all accounts and sums up active funds.
 func SumFunds(accounts []*Account) (res *decimal.Decimal) {
 	res = decimal.Zero.Copy()

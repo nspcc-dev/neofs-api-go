@@ -9,6 +9,7 @@ import (
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/golang/protobuf/proto"
 	bootstrap "github.com/nspcc-dev/neofs-proto/bootstrap"
+	service "github.com/nspcc-dev/neofs-proto/service"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -30,9 +31,11 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 // NetmapRequest message to request current node netmap
 type NetmapRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *NetmapRequest) Reset()         { *m = NetmapRequest{} }
@@ -66,9 +69,11 @@ var xxx_messageInfo_NetmapRequest proto.InternalMessageInfo
 
 // MetricsRequest message to request node metrics
 type MetricsRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *MetricsRequest) Reset()         { *m = MetricsRequest{} }
@@ -148,9 +153,11 @@ func (m *MetricsResponse) GetMetrics() [][]byte {
 
 // HealthRequest message to check current state
 type HealthRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *HealthRequest) Reset()         { *m = HealthRequest{} }
@@ -247,27 +254,33 @@ func init() {
 func init() { proto.RegisterFile("state/service.proto", fileDescriptor_695592f6f2fc97b7) }
 
 var fileDescriptor_695592f6f2fc97b7 = []byte{
-	// 320 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x91, 0xbf, 0x4e, 0xc3, 0x30,
-	0x10, 0xc6, 0x31, 0x88, 0x02, 0x06, 0x5a, 0x64, 0xda, 0x2a, 0xca, 0x10, 0x55, 0x1d, 0x50, 0x25,
-	0xd4, 0x44, 0x02, 0x06, 0x84, 0x98, 0xca, 0xc2, 0x52, 0x86, 0x74, 0x63, 0x73, 0xdc, 0xeb, 0x1f,
-	0x41, 0x6b, 0x13, 0x5f, 0x2a, 0xf5, 0x4d, 0x78, 0x10, 0x1e, 0x82, 0x91, 0x91, 0x11, 0x85, 0x17,
-	0x41, 0xd8, 0x71, 0x20, 0xdd, 0xf2, 0xfd, 0x2e, 0xdf, 0xf9, 0xbb, 0x3b, 0x7a, 0xaa, 0x91, 0x23,
-	0x44, 0x1a, 0xd2, 0xd5, 0x5c, 0x40, 0xa8, 0x52, 0x89, 0x92, 0xed, 0x1a, 0xe8, 0xb7, 0x12, 0x29,
-	0x51, 0x63, 0xca, 0x55, 0x84, 0x6b, 0x05, 0xda, 0x56, 0xfd, 0xfe, 0x74, 0x8e, 0xb3, 0x2c, 0x09,
-	0x85, 0x5c, 0x44, 0x53, 0x39, 0x95, 0x91, 0xc1, 0x49, 0x36, 0x31, 0xca, 0x08, 0xf3, 0x65, 0x7f,
-	0xef, 0x36, 0xe8, 0xf1, 0x03, 0xe0, 0x82, 0xab, 0x18, 0x5e, 0x32, 0xd0, 0xd8, 0x3d, 0xa1, 0xf5,
-	0x21, 0x60, 0x3a, 0x17, 0xda, 0x91, 0x73, 0xda, 0x28, 0x89, 0x56, 0x72, 0xa9, 0x81, 0x79, 0x74,
-	0xaf, 0x40, 0x1e, 0xe9, 0xec, 0xf4, 0x8e, 0x62, 0x27, 0x7f, 0xfb, 0xdd, 0x03, 0x7f, 0xc6, 0x99,
-	0x73, 0x0f, 0x68, 0xdd, 0x81, 0x3f, 0xb3, 0x25, 0x6b, 0x8f, 0x74, 0x48, 0x6f, 0x3f, 0x76, 0x92,
-	0xb5, 0x69, 0x6d, 0x84, 0x1c, 0x33, 0xed, 0x6d, 0x77, 0x48, 0xef, 0x20, 0x2e, 0xd4, 0xc5, 0x1b,
-	0x71, 0x05, 0x76, 0x45, 0x6b, 0x36, 0x2f, 0x6b, 0x86, 0x66, 0x0f, 0x61, 0x25, 0xbe, 0xdf, 0x0c,
-	0xcb, 0xb5, 0x84, 0x23, 0x95, 0x02, 0x1f, 0x0f, 0xb9, 0x62, 0xd7, 0x65, 0x5e, 0xd6, 0x2a, 0x6c,
-	0xd5, 0x21, 0xfd, 0xf6, 0x26, 0x2e, 0xc2, 0xde, 0xd0, 0x43, 0x9b, 0xee, 0x6e, 0x06, 0xe2, 0xa9,
-	0x7c, 0xb4, 0x32, 0xa3, 0xdf, 0xda, 0xa0, 0xd6, 0x3b, 0xb8, 0x7d, 0xcf, 0x03, 0xf2, 0x91, 0x07,
-	0xe4, 0x33, 0x0f, 0xc8, 0x57, 0x1e, 0x90, 0xd7, 0xef, 0x60, 0xeb, 0xf1, 0xec, 0xdf, 0x81, 0x96,
-	0x5a, 0x09, 0xd1, 0x1f, 0xc3, 0x2a, 0x5a, 0x82, 0x9c, 0xe8, 0xbe, 0x3d, 0x8f, 0x69, 0x96, 0xd4,
-	0x8c, 0xb8, 0xfc, 0x09, 0x00, 0x00, 0xff, 0xff, 0x73, 0xd9, 0x9d, 0xd0, 0x04, 0x02, 0x00, 0x00,
+	// 408 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x93, 0xbf, 0xae, 0xd3, 0x30,
+	0x14, 0xc6, 0xaf, 0xf9, 0x13, 0x2e, 0xbe, 0x70, 0x91, 0x4c, 0x5b, 0x45, 0x19, 0xd2, 0xa8, 0x03,
+	0x8a, 0x84, 0x9a, 0x48, 0x85, 0xa1, 0x42, 0x4c, 0x85, 0xa1, 0x4b, 0x19, 0x52, 0x89, 0x81, 0xcd,
+	0x71, 0x4f, 0xdb, 0x08, 0x1a, 0x9b, 0xf8, 0xa4, 0x52, 0x9f, 0x02, 0x46, 0x1e, 0x84, 0x87, 0xe8,
+	0xd8, 0x91, 0xa9, 0x42, 0xe1, 0x45, 0x10, 0x8e, 0x13, 0x68, 0x79, 0x81, 0x6e, 0xf9, 0x7e, 0x5f,
+	0x3e, 0xe7, 0xd3, 0xc9, 0x31, 0x7d, 0xaa, 0x91, 0x23, 0xc4, 0x1a, 0x8a, 0x6d, 0x26, 0x20, 0x52,
+	0x85, 0x44, 0xc9, 0xee, 0x1b, 0xe8, 0x31, 0x4b, 0xe3, 0x0d, 0x20, 0xaf, 0x2d, 0xaf, 0xd3, 0xb0,
+	0x2d, 0x14, 0xd9, 0x72, 0x67, 0x69, 0x37, 0x95, 0x12, 0x35, 0x16, 0x5c, 0xc5, 0xb8, 0x53, 0xa0,
+	0x2d, 0x1e, 0xae, 0x32, 0x5c, 0x97, 0x69, 0x24, 0xe4, 0x26, 0x5e, 0xc9, 0x95, 0x8c, 0x0d, 0x4e,
+	0xcb, 0xa5, 0x51, 0x46, 0x98, 0xa7, 0xfa, 0xf5, 0xc1, 0x17, 0x42, 0x1f, 0xbf, 0x03, 0xdc, 0x70,
+	0x95, 0xc0, 0xe7, 0x12, 0x34, 0xb2, 0x31, 0xbd, 0x37, 0x03, 0xe4, 0x6e, 0x1a, 0x90, 0xf0, 0x66,
+	0xe4, 0x45, 0x4d, 0x4d, 0xeb, 0xff, 0xf1, 0xa6, 0xc0, 0x17, 0x50, 0x4c, 0xae, 0xf7, 0xc7, 0xfe,
+	0xd5, 0xe1, 0xd8, 0x27, 0x89, 0x49, 0xb0, 0xb7, 0xd4, 0x79, 0x6f, 0x1a, 0xba, 0xc2, 0x64, 0x07,
+	0xe7, 0x59, 0xe3, 0x66, 0x82, 0x63, 0x26, 0xf3, 0xff, 0xce, 0xb0, 0xd9, 0xc1, 0x57, 0x42, 0x6f,
+	0x67, 0x80, 0x45, 0x26, 0xf4, 0xa5, 0x54, 0x7a, 0x4e, 0x9f, 0xb4, 0x8d, 0xb4, 0x92, 0xb9, 0x06,
+	0xe6, 0xd2, 0x07, 0x16, 0xb9, 0x24, 0xb8, 0x1b, 0x3e, 0x4a, 0x1a, 0x69, 0x26, 0x3a, 0x05, 0xfe,
+	0x09, 0xd7, 0x97, 0x52, 0x7f, 0x42, 0x6f, 0x9b, 0x42, 0x7f, 0xdb, 0xd7, 0x64, 0xe7, 0x92, 0x80,
+	0x84, 0xd7, 0x49, 0x23, 0x59, 0x8f, 0x3a, 0x73, 0xe4, 0x58, 0x6a, 0xf7, 0x4e, 0x40, 0xc2, 0x87,
+	0x89, 0x55, 0xa3, 0xef, 0xa4, 0x31, 0xd8, 0x4b, 0xea, 0xd4, 0x1b, 0xc3, 0x3a, 0x91, 0x59, 0xda,
+	0xe8, 0x64, 0x81, 0xbc, 0x4e, 0xd4, 0x6e, 0x66, 0x34, 0x57, 0x05, 0xf0, 0xc5, 0x8c, 0x2b, 0x36,
+	0x6e, 0x07, 0xc6, 0xba, 0x36, 0x76, 0xfa, 0x97, 0xbd, 0xde, 0x39, 0xb6, 0x65, 0x5f, 0xd1, 0x9b,
+	0xba, 0xdd, 0x9b, 0x35, 0x88, 0x8f, 0xed, 0x47, 0x4f, 0x66, 0xec, 0x75, 0xcf, 0x68, 0x9d, 0x9d,
+	0xbc, 0xde, 0x57, 0x3e, 0x39, 0x54, 0x3e, 0xf9, 0x51, 0xf9, 0xe4, 0x67, 0xe5, 0x93, 0x6f, 0xbf,
+	0xfc, 0xab, 0x0f, 0xcf, 0xfe, 0xb9, 0x23, 0xb9, 0x56, 0x42, 0x0c, 0x17, 0xb0, 0x8d, 0x73, 0x90,
+	0x4b, 0x3d, 0xac, 0x6f, 0x88, 0x39, 0x2c, 0x75, 0x8c, 0x78, 0xf1, 0x3b, 0x00, 0x00, 0xff, 0xff,
+	0x78, 0x9b, 0x96, 0xe5, 0xb1, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -454,6 +467,30 @@ func (m *NetmapRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	return len(dAtA) - i, nil
 }
 
@@ -481,6 +518,30 @@ func (m *MetricsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	return len(dAtA) - i, nil
 }
 
@@ -544,6 +605,30 @@ func (m *HealthRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	return len(dAtA) - i, nil
 }
 
@@ -608,6 +693,10 @@ func (m *NetmapRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -620,6 +709,10 @@ func (m *MetricsRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -650,6 +743,10 @@ func (m *HealthRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -710,6 +807,72 @@ func (m *NetmapRequest) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: NetmapRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])
@@ -764,6 +927,72 @@ func (m *MetricsRequest) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: MetricsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])
@@ -904,6 +1133,72 @@ func (m *HealthRequest) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: HealthRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])
