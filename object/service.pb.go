@@ -9,6 +9,7 @@ import (
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/golang/protobuf/proto"
 	refs "github.com/nspcc-dev/neofs-proto/refs"
+	service "github.com/nspcc-dev/neofs-proto/service"
 	session "github.com/nspcc-dev/neofs-proto/session"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -30,12 +31,12 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type GetRequest struct {
-	Epoch                uint64       `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Address              refs.Address `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address"`
-	TTL                  uint32       `protobuf:"varint,3,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
+	Address                           refs.Address `protobuf:"bytes,1,opt,name=Address,proto3" json:"Address"`
+	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *GetRequest) Reset()         { *m = GetRequest{} }
@@ -67,25 +68,11 @@ func (m *GetRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetRequest proto.InternalMessageInfo
 
-func (m *GetRequest) GetEpoch() uint64 {
-	if m != nil {
-		return m.Epoch
-	}
-	return 0
-}
-
 func (m *GetRequest) GetAddress() refs.Address {
 	if m != nil {
 		return m.Address
 	}
 	return refs.Address{}
-}
-
-func (m *GetRequest) GetTTL() uint32 {
-	if m != nil {
-		return m.TTL
-	}
-	return 0
 }
 
 type GetResponse struct {
@@ -176,10 +163,12 @@ type PutRequest struct {
 	// Types that are valid to be assigned to R:
 	//	*PutRequest_Header
 	//	*PutRequest_Chunk
-	R                    isPutRequest_R `protobuf_oneof:"R"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
+	R                                 isPutRequest_R `protobuf_oneof:"R"`
+	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *PutRequest) Reset()         { *m = PutRequest{} }
@@ -257,10 +246,8 @@ func (*PutRequest) XXX_OneofWrappers() []interface{} {
 }
 
 type PutRequest_PutHeader struct {
-	Epoch                uint64         `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Object               *Object        `protobuf:"bytes,2,opt,name=Object,proto3" json:"Object,omitempty"`
-	TTL                  uint32         `protobuf:"varint,3,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	Token                *session.Token `protobuf:"bytes,4,opt,name=Token,proto3" json:"Token,omitempty"`
+	Object               *Object        `protobuf:"bytes,1,opt,name=Object,proto3" json:"Object,omitempty"`
+	Token                *session.Token `protobuf:"bytes,2,opt,name=Token,proto3" json:"Token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
 	XXX_sizecache        int32          `json:"-"`
@@ -295,25 +282,11 @@ func (m *PutRequest_PutHeader) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_PutRequest_PutHeader proto.InternalMessageInfo
 
-func (m *PutRequest_PutHeader) GetEpoch() uint64 {
-	if m != nil {
-		return m.Epoch
-	}
-	return 0
-}
-
 func (m *PutRequest_PutHeader) GetObject() *Object {
 	if m != nil {
 		return m.Object
 	}
 	return nil
-}
-
-func (m *PutRequest_PutHeader) GetTTL() uint32 {
-	if m != nil {
-		return m.TTL
-	}
-	return 0
 }
 
 func (m *PutRequest_PutHeader) GetToken() *session.Token {
@@ -367,14 +340,14 @@ func (m *PutResponse) GetAddress() refs.Address {
 }
 
 type DeleteRequest struct {
-	Epoch                uint64         `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Address              refs.Address   `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address"`
-	OwnerID              OwnerID        `protobuf:"bytes,3,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
-	TTL                  uint32         `protobuf:"varint,4,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	Token                *session.Token `protobuf:"bytes,5,opt,name=Token,proto3" json:"Token,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
+	Address                           refs.Address   `protobuf:"bytes,1,opt,name=Address,proto3" json:"Address"`
+	OwnerID                           OwnerID        `protobuf:"bytes,2,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	Token                             *session.Token `protobuf:"bytes,3,opt,name=Token,proto3" json:"Token,omitempty"`
+	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *DeleteRequest) Reset()         { *m = DeleteRequest{} }
@@ -406,25 +379,11 @@ func (m *DeleteRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DeleteRequest proto.InternalMessageInfo
 
-func (m *DeleteRequest) GetEpoch() uint64 {
-	if m != nil {
-		return m.Epoch
-	}
-	return 0
-}
-
 func (m *DeleteRequest) GetAddress() refs.Address {
 	if m != nil {
 		return m.Address
 	}
 	return refs.Address{}
-}
-
-func (m *DeleteRequest) GetTTL() uint32 {
-	if m != nil {
-		return m.TTL
-	}
-	return 0
 }
 
 func (m *DeleteRequest) GetToken() *session.Token {
@@ -471,13 +430,13 @@ var xxx_messageInfo_DeleteResponse proto.InternalMessageInfo
 
 // HeadRequest.FullHeader == true, for fetch all headers
 type HeadRequest struct {
-	Epoch                uint64   `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Address              Address  `protobuf:"bytes,2,opt,name=Address,proto3,customtype=Address" json:"Address"`
-	FullHeaders          bool     `protobuf:"varint,3,opt,name=FullHeaders,proto3" json:"FullHeaders,omitempty"`
-	TTL                  uint32   `protobuf:"varint,4,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Address                           Address `protobuf:"bytes,1,opt,name=Address,proto3,customtype=Address" json:"Address"`
+	FullHeaders                       bool    `protobuf:"varint,2,opt,name=FullHeaders,proto3" json:"FullHeaders,omitempty"`
+	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *HeadRequest) Reset()         { *m = HeadRequest{} }
@@ -509,25 +468,11 @@ func (m *HeadRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_HeadRequest proto.InternalMessageInfo
 
-func (m *HeadRequest) GetEpoch() uint64 {
-	if m != nil {
-		return m.Epoch
-	}
-	return 0
-}
-
 func (m *HeadRequest) GetFullHeaders() bool {
 	if m != nil {
 		return m.FullHeaders
 	}
 	return false
-}
-
-func (m *HeadRequest) GetTTL() uint32 {
-	if m != nil {
-		return m.TTL
-	}
-	return 0
 }
 
 type HeadResponse struct {
@@ -574,14 +519,14 @@ func (m *HeadResponse) GetObject() *Object {
 }
 
 type SearchRequest struct {
-	Epoch                uint64   `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Version              uint32   `protobuf:"varint,2,opt,name=Version,proto3" json:"Version,omitempty"`
-	ContainerID          CID      `protobuf:"bytes,3,opt,name=ContainerID,proto3,customtype=CID" json:"ContainerID"`
-	Query                []byte   `protobuf:"bytes,4,opt,name=Query,proto3" json:"Query,omitempty"`
-	TTL                  uint32   `protobuf:"varint,5,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Version                           uint32 `protobuf:"varint,1,opt,name=Version,proto3" json:"Version,omitempty"`
+	ContainerID                       CID    `protobuf:"bytes,2,opt,name=ContainerID,proto3,customtype=CID" json:"ContainerID"`
+	Query                             []byte `protobuf:"bytes,3,opt,name=Query,proto3" json:"Query,omitempty"`
+	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *SearchRequest) Reset()         { *m = SearchRequest{} }
@@ -613,13 +558,6 @@ func (m *SearchRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_SearchRequest proto.InternalMessageInfo
 
-func (m *SearchRequest) GetEpoch() uint64 {
-	if m != nil {
-		return m.Epoch
-	}
-	return 0
-}
-
 func (m *SearchRequest) GetVersion() uint32 {
 	if m != nil {
 		return m.Version
@@ -632,13 +570,6 @@ func (m *SearchRequest) GetQuery() []byte {
 		return m.Query
 	}
 	return nil
-}
-
-func (m *SearchRequest) GetTTL() uint32 {
-	if m != nil {
-		return m.TTL
-	}
-	return 0
 }
 
 type SearchResponse struct {
@@ -685,13 +616,13 @@ func (m *SearchResponse) GetAddresses() []refs.Address {
 }
 
 type GetRangeRequest struct {
-	Epoch                uint64       `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Address              refs.Address `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address"`
-	Ranges               []Range      `protobuf:"bytes,3,rep,name=Ranges,proto3" json:"Ranges"`
-	TTL                  uint32       `protobuf:"varint,4,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
+	Address                           refs.Address `protobuf:"bytes,1,opt,name=Address,proto3" json:"Address"`
+	Ranges                            []Range      `protobuf:"bytes,2,rep,name=Ranges,proto3" json:"Ranges"`
+	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *GetRangeRequest) Reset()         { *m = GetRangeRequest{} }
@@ -723,13 +654,6 @@ func (m *GetRangeRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetRangeRequest proto.InternalMessageInfo
 
-func (m *GetRangeRequest) GetEpoch() uint64 {
-	if m != nil {
-		return m.Epoch
-	}
-	return 0
-}
-
 func (m *GetRangeRequest) GetAddress() refs.Address {
 	if m != nil {
 		return m.Address
@@ -742,13 +666,6 @@ func (m *GetRangeRequest) GetRanges() []Range {
 		return m.Ranges
 	}
 	return nil
-}
-
-func (m *GetRangeRequest) GetTTL() uint32 {
-	if m != nil {
-		return m.TTL
-	}
-	return 0
 }
 
 type GetRangeResponse struct {
@@ -795,14 +712,14 @@ func (m *GetRangeResponse) GetFragments() [][]byte {
 }
 
 type GetRangeHashRequest struct {
-	Epoch                uint64       `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Address              refs.Address `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address"`
-	Ranges               []Range      `protobuf:"bytes,3,rep,name=Ranges,proto3" json:"Ranges"`
-	Salt                 []byte       `protobuf:"bytes,4,opt,name=Salt,proto3" json:"Salt,omitempty"`
-	TTL                  uint32       `protobuf:"varint,5,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
+	Address                           refs.Address `protobuf:"bytes,1,opt,name=Address,proto3" json:"Address"`
+	Ranges                            []Range      `protobuf:"bytes,2,rep,name=Ranges,proto3" json:"Ranges"`
+	Salt                              []byte       `protobuf:"bytes,3,opt,name=Salt,proto3" json:"Salt,omitempty"`
+	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
 }
 
 func (m *GetRangeHashRequest) Reset()         { *m = GetRangeHashRequest{} }
@@ -834,13 +751,6 @@ func (m *GetRangeHashRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetRangeHashRequest proto.InternalMessageInfo
 
-func (m *GetRangeHashRequest) GetEpoch() uint64 {
-	if m != nil {
-		return m.Epoch
-	}
-	return 0
-}
-
 func (m *GetRangeHashRequest) GetAddress() refs.Address {
 	if m != nil {
 		return m.Address
@@ -860,13 +770,6 @@ func (m *GetRangeHashRequest) GetSalt() []byte {
 		return m.Salt
 	}
 	return nil
-}
-
-func (m *GetRangeHashRequest) GetTTL() uint32 {
-	if m != nil {
-		return m.TTL
-	}
-	return 0
 }
 
 type GetRangeHashResponse struct {
@@ -926,57 +829,59 @@ func init() {
 func init() { proto.RegisterFile("object/service.proto", fileDescriptor_dfcdf610ade6a9ce) }
 
 var fileDescriptor_dfcdf610ade6a9ce = []byte{
-	// 793 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x55, 0xc1, 0x4e, 0xdb, 0x4c,
-	0x10, 0xce, 0xfe, 0x49, 0x1c, 0x18, 0x3b, 0x10, 0x2d, 0xf9, 0xf9, 0x23, 0xff, 0x28, 0x44, 0x16,
-	0x6a, 0x53, 0x55, 0x49, 0x28, 0x95, 0xa0, 0x07, 0x38, 0x34, 0xa1, 0x10, 0xa4, 0x4a, 0xd0, 0x25,
-	0xea, 0xa1, 0xb7, 0xc4, 0x59, 0x92, 0x94, 0x60, 0xa7, 0x5e, 0x9b, 0x8a, 0x63, 0x1f, 0xa1, 0x87,
-	0x56, 0x3d, 0xf4, 0x15, 0x7a, 0xee, 0x2b, 0x70, 0xec, 0xb1, 0xea, 0x01, 0x55, 0xa9, 0xfa, 0x1e,
-	0x95, 0x77, 0xd7, 0xb1, 0x13, 0x42, 0xb8, 0x20, 0xf5, 0xe4, 0x9d, 0x6f, 0x66, 0x77, 0xe6, 0x9b,
-	0x6f, 0xbc, 0x0b, 0x59, 0xbb, 0xf5, 0x9a, 0x9a, 0x6e, 0x85, 0x51, 0xe7, 0xbc, 0x67, 0xd2, 0xf2,
-	0xc0, 0xb1, 0x5d, 0x1b, 0x2b, 0x02, 0xd5, 0x33, 0x0e, 0x3d, 0x61, 0x15, 0xf7, 0x62, 0x40, 0x99,
-	0xf0, 0xe8, 0x58, 0xc6, 0x47, 0xb1, 0x25, 0x46, 0x19, 0xeb, 0xd9, 0xd6, 0x18, 0x58, 0xea, 0xf4,
-	0xdc, 0xae, 0xd7, 0x2a, 0x9b, 0xf6, 0x59, 0xa5, 0x63, 0x77, 0xec, 0x0a, 0x87, 0x5b, 0xde, 0x09,
-	0xb7, 0xb8, 0xc1, 0x57, 0x22, 0xdc, 0x30, 0x01, 0xf6, 0xa9, 0x4b, 0xe8, 0x1b, 0x8f, 0x32, 0x17,
-	0x67, 0x21, 0xf9, 0x6c, 0x60, 0x9b, 0xdd, 0x1c, 0x2a, 0xa0, 0x62, 0x82, 0x08, 0x03, 0x97, 0x20,
-	0xf5, 0xb4, 0xdd, 0x76, 0x28, 0x63, 0xb9, 0x7f, 0x0a, 0xa8, 0xa8, 0x6e, 0xa4, 0xcb, 0x7e, 0x7d,
-	0x65, 0x09, 0x56, 0x13, 0x97, 0x57, 0xab, 0x31, 0x12, 0xc4, 0xe0, 0x0c, 0xc4, 0x1b, 0x8d, 0xe7,
-	0xb9, 0x78, 0x01, 0x15, 0xd3, 0xc4, 0x5f, 0x1a, 0x0d, 0x50, 0x79, 0x12, 0x36, 0xb0, 0x2d, 0x46,
-	0x71, 0x11, 0x24, 0x4f, 0x9e, 0x46, 0xdd, 0x58, 0x28, 0x0b, 0xb3, 0x7c, 0xc8, 0x3f, 0xf5, 0x18,
-	0x91, 0x7e, 0xbc, 0x0c, 0xc9, 0x5a, 0xd7, 0xb3, 0x4e, 0x79, 0x5e, 0xad, 0x1e, 0x23, 0xc2, 0xac,
-	0xc6, 0x01, 0x11, 0xe3, 0x37, 0x02, 0x38, 0xf2, 0x46, 0xb5, 0x6f, 0x82, 0x52, 0xa7, 0xcd, 0x36,
-	0x75, 0xe4, 0xa9, 0x2b, 0xc1, 0xa9, 0x61, 0x8c, 0xbf, 0x14, 0x31, 0x7e, 0x0e, 0xb1, 0xba, 0x29,
-	0x87, 0xfe, 0x0e, 0xc1, 0xfc, 0x28, 0xfe, 0x86, 0xce, 0xdc, 0x03, 0x45, 0xd4, 0x2c, 0x1b, 0x33,
-	0xc1, 0x84, 0x48, 0xef, 0xf5, 0x96, 0xe0, 0x35, 0x48, 0x36, 0xec, 0x53, 0x6a, 0xe5, 0x12, 0x72,
-	0xa3, 0xd4, 0xb2, 0xcc, 0x51, 0x22, 0x9c, 0x82, 0xe7, 0x36, 0xa8, 0x9c, 0x82, 0xec, 0x5e, 0x44,
-	0x0d, 0x74, 0xbb, 0x1a, 0xc6, 0x57, 0x04, 0xe9, 0x5d, 0xda, 0xa7, 0x2e, 0xbd, 0x53, 0x91, 0x1f,
-	0x40, 0xea, 0xf0, 0xad, 0x45, 0x9d, 0x83, 0x5d, 0xce, 0x4a, 0xab, 0x2e, 0xfa, 0xfe, 0x1f, 0x57,
-	0xab, 0x01, 0x4c, 0x82, 0x45, 0x40, 0x3e, 0x31, 0x85, 0x7c, 0x72, 0x06, 0x79, 0x23, 0x03, 0x0b,
-	0x41, 0xe1, 0x82, 0xba, 0xf1, 0x1e, 0x81, 0xea, 0xeb, 0x31, 0x9b, 0xc9, 0x93, 0x5b, 0x98, 0x8c,
-	0x2a, 0x95, 0x40, 0x48, 0xaa, 0x00, 0xea, 0x9e, 0xd7, 0xef, 0x0b, 0xc9, 0x19, 0x27, 0x36, 0x47,
-	0xa2, 0xd0, 0x75, 0x2e, 0xc6, 0x26, 0x68, 0xa2, 0x24, 0x29, 0x4f, 0x38, 0x12, 0x68, 0xd6, 0x48,
-	0x18, 0x1f, 0x11, 0xa4, 0x8f, 0x69, 0xd3, 0x31, 0xbb, 0xb3, 0xd9, 0xe4, 0x20, 0xf5, 0x92, 0x3a,
-	0x7e, 0x77, 0x38, 0x9b, 0x34, 0x09, 0x4c, 0x5c, 0x02, 0xb5, 0x66, 0x5b, 0x6e, 0xb3, 0x17, 0x95,
-	0x41, 0x95, 0xe4, 0xe2, 0xb5, 0x83, 0x5d, 0x12, 0xf5, 0xfb, 0xc7, 0xbf, 0xf0, 0xa8, 0x73, 0xc1,
-	0x8b, 0xd7, 0x88, 0x30, 0x02, 0x42, 0xc9, 0x90, 0x50, 0x0d, 0x16, 0x82, 0xba, 0x24, 0xa5, 0x47,
-	0x30, 0x2f, 0x3b, 0x44, 0xfd, 0x99, 0x8b, 0xdf, 0x34, 0x1c, 0x61, 0x94, 0xf1, 0x01, 0xc1, 0xa2,
-	0xff, 0xcb, 0x37, 0xad, 0xce, 0xdd, 0xce, 0xdd, 0x43, 0x50, 0xf8, 0xa1, 0xbe, 0x3a, 0xa2, 0x10,
-	0xd9, 0x5e, 0x8e, 0xca, 0x68, 0x19, 0x32, 0x45, 0xad, 0x75, 0xc8, 0x84, 0x65, 0x49, 0x7a, 0x2b,
-	0x30, 0xbf, 0xe7, 0x34, 0x3b, 0x67, 0xd4, 0x72, 0x05, 0x3d, 0x8d, 0x84, 0x80, 0xf1, 0x05, 0xc1,
-	0x52, 0xb0, 0xa5, 0xde, 0x64, 0xdd, 0xbf, 0xc7, 0x06, 0x43, 0xe2, 0xb8, 0xd9, 0x77, 0xa5, 0x7e,
-	0x7c, 0x3d, 0x45, 0xbe, 0x6d, 0xc8, 0x8e, 0x97, 0x2b, 0x59, 0xae, 0x81, 0xe2, 0xdb, 0x52, 0x41,
-	0xad, 0xaa, 0xc9, 0x41, 0x49, 0xf0, 0x28, 0xe9, 0xdb, 0xf8, 0x1c, 0x87, 0xd4, 0xb1, 0x78, 0x92,
-	0xf0, 0x3a, 0xc4, 0xf7, 0xa9, 0x8b, 0x71, 0x50, 0x53, 0xf8, 0x4e, 0xe8, 0x4b, 0x63, 0x98, 0xc8,
-	0xb0, 0x8e, 0xfc, 0x1d, 0x47, 0x5e, 0x64, 0x47, 0x78, 0xf3, 0x86, 0x3b, 0x22, 0x57, 0x59, 0x11,
-	0xe1, 0x2d, 0x50, 0xc4, 0x3f, 0x8e, 0xff, 0x0d, 0x02, 0xc6, 0x2e, 0x2b, 0x7d, 0x79, 0x12, 0x1e,
-	0xcd, 0x64, 0xc2, 0xff, 0xed, 0xf0, 0xe8, 0xdc, 0xc8, 0xbd, 0xa0, 0x67, 0xc7, 0x41, 0xb9, 0x65,
-	0x0b, 0x14, 0x31, 0xd8, 0x61, 0xae, 0xb1, 0x1f, 0x30, 0xcc, 0x35, 0x31, 0xff, 0x3b, 0x30, 0x17,
-	0xb4, 0x14, 0xff, 0x17, 0x65, 0x1e, 0x99, 0x6e, 0x3d, 0x77, 0xdd, 0x21, 0xb7, 0x1f, 0x80, 0x16,
-	0x55, 0x04, 0xff, 0x3f, 0x19, 0x19, 0x19, 0x2b, 0x7d, 0x65, 0xba, 0x53, 0x1c, 0x55, 0xdd, 0xb9,
-	0x1c, 0xe6, 0xd1, 0xb7, 0x61, 0x1e, 0x7d, 0x1f, 0xe6, 0xd1, 0xcf, 0x61, 0x1e, 0x7d, 0xfa, 0x95,
-	0x8f, 0xbd, 0xba, 0x1f, 0x79, 0xf2, 0x2d, 0x36, 0x30, 0xcd, 0x52, 0x9b, 0x9e, 0x57, 0x2c, 0x6a,
-	0x9f, 0xb0, 0x92, 0x78, 0xf0, 0xc5, 0x99, 0x2d, 0x85, 0x5b, 0x8f, 0xff, 0x04, 0x00, 0x00, 0xff,
-	0xff, 0x37, 0xfc, 0x5a, 0x85, 0x7d, 0x08, 0x00, 0x00,
+	// 827 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x56, 0xcd, 0x4e, 0x1b, 0x49,
+	0x10, 0xf6, 0xd8, 0x66, 0x0c, 0x65, 0x1b, 0x50, 0xe3, 0x65, 0xad, 0x59, 0x64, 0xd0, 0x08, 0xed,
+	0x7a, 0xb5, 0xf2, 0x98, 0x25, 0x12, 0x70, 0x80, 0x43, 0x6c, 0x0b, 0xcc, 0x21, 0x82, 0x0c, 0x08,
+	0x29, 0xb9, 0x8d, 0xc7, 0xed, 0x9f, 0x60, 0x66, 0x9c, 0xf9, 0x21, 0xe2, 0x01, 0x72, 0xce, 0x35,
+	0x87, 0xbc, 0x49, 0xf2, 0x00, 0x1c, 0x39, 0x46, 0x39, 0xa0, 0xc8, 0x39, 0xe5, 0x90, 0x3c, 0x43,
+	0x34, 0xdd, 0xd5, 0x9e, 0xb1, 0x09, 0x24, 0xe1, 0x10, 0x9f, 0xdc, 0xf5, 0xd5, 0x57, 0x55, 0x5d,
+	0x5f, 0x57, 0xb7, 0x07, 0x72, 0x76, 0xe3, 0x19, 0x35, 0xbd, 0xb2, 0x4b, 0x9d, 0xf3, 0xae, 0x49,
+	0xb5, 0xbe, 0x63, 0x7b, 0x36, 0x91, 0x39, 0xaa, 0xcc, 0x3b, 0xb4, 0xe5, 0x96, 0xbd, 0x8b, 0x3e,
+	0x75, 0xb9, 0x47, 0x21, 0xc8, 0x8f, 0x62, 0x0b, 0x2e, 0x75, 0xdd, 0xae, 0x6d, 0x8d, 0x12, 0x31,
+	0x63, 0xf9, 0x8c, 0x7a, 0x06, 0x62, 0x39, 0x81, 0x9d, 0x53, 0xa7, 0xdb, 0xba, 0x40, 0xb4, 0xd4,
+	0xee, 0x7a, 0x1d, 0xbf, 0xa1, 0x99, 0xf6, 0x59, 0xb9, 0x6d, 0xb7, 0xed, 0x32, 0x83, 0x1b, 0x7e,
+	0x8b, 0x59, 0xcc, 0x60, 0x2b, 0x4e, 0x57, 0xdf, 0x4a, 0x00, 0x7b, 0xd4, 0xd3, 0xe9, 0x73, 0x9f,
+	0xba, 0x1e, 0x29, 0x41, 0xea, 0x61, 0xb3, 0xe9, 0x50, 0xd7, 0xcd, 0x4b, 0x2b, 0x52, 0x31, 0xbd,
+	0x9e, 0xd5, 0x82, 0x4d, 0x6b, 0x08, 0x56, 0x92, 0x97, 0xd7, 0xcb, 0x31, 0x5d, 0x70, 0xc8, 0x16,
+	0x24, 0x1f, 0x51, 0xcf, 0xc8, 0x37, 0x18, 0x57, 0xd1, 0x44, 0xdf, 0x98, 0x2e, 0xf0, 0xd5, 0xa9,
+	0xd1, 0xa4, 0x4e, 0x65, 0x3a, 0x08, 0xbc, 0xba, 0x5e, 0x96, 0x74, 0x16, 0x41, 0x6a, 0x20, 0x9f,
+	0xb0, 0x6d, 0xe7, 0x4d, 0x16, 0xab, 0x8e, 0xc7, 0x32, 0x6f, 0xd7, 0x34, 0xbc, 0xae, 0x6d, 0xdd,
+	0xc8, 0x81, 0xb1, 0xea, 0x31, 0xa4, 0xd9, 0xe6, 0xdd, 0xbe, 0x6d, 0xb9, 0x94, 0x14, 0x01, 0xa5,
+	0xc6, 0xcd, 0xcf, 0x6a, 0xdc, 0xd4, 0x0e, 0xd8, 0x4f, 0x3d, 0xa6, 0xa3, 0x9f, 0x2c, 0xc2, 0x54,
+	0xb5, 0xe3, 0x5b, 0xa7, 0xf9, 0xf8, 0x8a, 0x54, 0xcc, 0xd4, 0x63, 0x3a, 0x37, 0x2b, 0x09, 0x90,
+	0x74, 0xf5, 0x5d, 0x1c, 0xe0, 0xd0, 0x1f, 0x6a, 0xb2, 0x01, 0x32, 0xdf, 0x00, 0x66, 0x5d, 0x12,
+	0x59, 0x43, 0x4e, 0xb0, 0xe4, 0x9c, 0xa0, 0x06, 0x5f, 0xdd, 0x56, 0x63, 0xd2, 0xa2, 0x29, 0x4f,
+	0x60, 0x66, 0xb8, 0x5d, 0xf2, 0x37, 0xc8, 0x07, 0x77, 0x48, 0xa6, 0xa3, 0x97, 0xac, 0xc2, 0xd4,
+	0xb1, 0x7d, 0x4a, 0x2d, 0xd6, 0x4c, 0x40, 0xc3, 0x29, 0xd5, 0x18, 0xaa, 0x73, 0x27, 0x97, 0x6f,
+	0x1b, 0xd2, 0x4c, 0x19, 0x3c, 0x94, 0x5f, 0x1b, 0x29, 0xf5, 0x55, 0x1c, 0xb2, 0x35, 0xda, 0xa3,
+	0x1e, 0xbd, 0xe7, 0x4c, 0xfe, 0x0b, 0xa9, 0x83, 0x17, 0x16, 0x75, 0xf6, 0x6b, 0x5c, 0xf8, 0xca,
+	0x5c, 0xe0, 0xff, 0x70, 0xbd, 0x2c, 0x60, 0x5d, 0x2c, 0xc2, 0xa6, 0x12, 0x77, 0x34, 0x35, 0xf1,
+	0x21, 0x9f, 0x87, 0x59, 0x21, 0x08, 0x97, 0x54, 0xfd, 0x2c, 0x41, 0x3a, 0xa0, 0x0b, 0x85, 0xb6,
+	0x7e, 0xa0, 0xd0, 0x50, 0x01, 0x04, 0x42, 0xb1, 0x56, 0x20, 0xbd, 0xeb, 0xf7, 0x7a, 0xbc, 0xb6,
+	0xcb, 0x04, 0x9b, 0xd6, 0xa3, 0xd0, 0xc4, 0xbb, 0xdf, 0x80, 0x0c, 0x6f, 0x15, 0xc7, 0xe9, 0x27,
+	0x07, 0x56, 0xfd, 0x2a, 0x41, 0xf6, 0x88, 0x1a, 0x8e, 0xd9, 0x11, 0x2a, 0xe5, 0x21, 0x75, 0x42,
+	0x9d, 0xe0, 0x7c, 0x59, 0x68, 0x56, 0x17, 0x26, 0x29, 0x41, 0xba, 0x6a, 0x5b, 0x9e, 0xd1, 0x8d,
+	0x8e, 0x4d, 0x1a, 0x45, 0x4b, 0x54, 0xf7, 0x6b, 0x7a, 0xd4, 0x4f, 0x72, 0x30, 0xf5, 0xd8, 0xa7,
+	0xce, 0x05, 0x1b, 0x9b, 0x8c, 0xce, 0x8d, 0x89, 0x0b, 0x55, 0x85, 0x59, 0xd1, 0x2f, 0x4a, 0xf5,
+	0x3f, 0xcc, 0xe0, 0x39, 0xd3, 0x60, 0x30, 0x12, 0xb7, 0x5d, 0x9d, 0x90, 0xa5, 0x7e, 0x91, 0x60,
+	0x2e, 0x78, 0x51, 0x0d, 0xab, 0x7d, 0xdf, 0xfb, 0xf7, 0x1f, 0xc8, 0x2c, 0x3c, 0x98, 0x26, 0x5e,
+	0x12, 0x0f, 0x88, 0xa1, 0xc8, 0x46, 0xca, 0xc4, 0x45, 0x5b, 0x83, 0xf9, 0xb0, 0x5d, 0x94, 0x6d,
+	0x09, 0x66, 0x76, 0x1d, 0xa3, 0x7d, 0x46, 0x2d, 0x8f, 0xcb, 0x96, 0xd1, 0x43, 0x40, 0x7d, 0x19,
+	0x87, 0x05, 0x11, 0x52, 0x37, 0xdc, 0xce, 0xef, 0x50, 0x89, 0x40, 0xf2, 0xc8, 0xe8, 0x79, 0x38,
+	0x6f, 0x6c, 0x3d, 0x71, 0xe5, 0xb6, 0x21, 0x37, 0x2a, 0x03, 0xaa, 0xb7, 0x0a, 0x72, 0x60, 0xe3,
+	0xc4, 0x65, 0x2a, 0x19, 0xbc, 0x46, 0x49, 0xc6, 0x42, 0xdf, 0xfa, 0x9b, 0x04, 0xa4, 0x8e, 0x78,
+	0x55, 0xb2, 0x06, 0x89, 0x3d, 0xea, 0x11, 0x22, 0x14, 0x08, 0x3f, 0x47, 0x94, 0x85, 0x11, 0x8c,
+	0x57, 0x58, 0x93, 0x82, 0x88, 0x43, 0x3f, 0x12, 0x11, 0xfe, 0x11, 0x87, 0x11, 0x91, 0xbf, 0xa0,
+	0xa2, 0x44, 0x36, 0x41, 0xe6, 0x6f, 0x28, 0xf9, 0x43, 0x10, 0x46, 0xfe, 0x64, 0x94, 0xc5, 0x71,
+	0x78, 0x78, 0x87, 0x92, 0x81, 0x04, 0x64, 0x98, 0x37, 0xf2, 0xee, 0x2a, 0xb9, 0x51, 0x10, 0x43,
+	0x36, 0x41, 0xe6, 0x17, 0x31, 0xac, 0x35, 0xf2, 0x10, 0x85, 0xb5, 0xc6, 0xee, 0xeb, 0x0e, 0x4c,
+	0x0b, 0x49, 0xc9, 0x9f, 0xd1, 0xce, 0x23, 0xb7, 0x51, 0xc9, 0xdf, 0x74, 0x60, 0xf8, 0x3e, 0x64,
+	0xa2, 0x27, 0x42, 0xfe, 0x1a, 0x67, 0x46, 0xc6, 0x55, 0x59, 0xfa, 0xbe, 0x93, 0xa7, 0xaa, 0xec,
+	0x5c, 0x0e, 0x0a, 0xd2, 0xd5, 0xa0, 0x20, 0xbd, 0x1f, 0x14, 0xa4, 0x8f, 0x83, 0x82, 0xf4, 0xfa,
+	0x53, 0x21, 0xf6, 0xf4, 0x9f, 0xc8, 0xa7, 0xa5, 0xe5, 0xf6, 0x4d, 0xb3, 0xd4, 0xa4, 0xe7, 0x65,
+	0x8b, 0xda, 0x2d, 0xb7, 0xc4, 0x3f, 0x2c, 0x79, 0xce, 0x86, 0xcc, 0xac, 0x07, 0xdf, 0x02, 0x00,
+	0x00, 0xff, 0xff, 0x96, 0xdf, 0x01, 0x74, 0x0f, 0x0b, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1375,11 +1280,30 @@ func (m *GetRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.TTL != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.TTL))
-		i--
-		dAtA[i] = 0x18
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
 	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	{
 		size, err := m.Address.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
@@ -1389,12 +1313,7 @@ func (m *GetRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintService(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x12
-	if m.Epoch != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.Epoch))
-		i--
-		dAtA[i] = 0x8
-	}
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -1495,6 +1414,30 @@ func (m *PutRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	if m.R != nil {
 		{
 			size := m.R.Size()
@@ -1578,12 +1521,7 @@ func (m *PutRequest_PutHeader) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i = encodeVarintService(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x22
-	}
-	if m.TTL != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.TTL))
-		i--
-		dAtA[i] = 0x18
+		dAtA[i] = 0x12
 	}
 	if m.Object != nil {
 		{
@@ -1595,12 +1533,7 @@ func (m *PutRequest_PutHeader) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i = encodeVarintService(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x12
-	}
-	if m.Epoch != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.Epoch))
-		i--
-		dAtA[i] = 0x8
+		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -1666,6 +1599,30 @@ func (m *DeleteRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	if m.Token != nil {
 		{
 			size, err := m.Token.MarshalToSizedBuffer(dAtA[:i])
@@ -1676,12 +1633,7 @@ func (m *DeleteRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i = encodeVarintService(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x2a
-	}
-	if m.TTL != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.TTL))
-		i--
-		dAtA[i] = 0x20
+		dAtA[i] = 0x1a
 	}
 	{
 		size := m.OwnerID.Size()
@@ -1692,7 +1644,7 @@ func (m *DeleteRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintService(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x1a
+	dAtA[i] = 0x12
 	{
 		size, err := m.Address.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
@@ -1702,12 +1654,7 @@ func (m *DeleteRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintService(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x12
-	if m.Epoch != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.Epoch))
-		i--
-		dAtA[i] = 0x8
-	}
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -1762,11 +1709,30 @@ func (m *HeadRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.TTL != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.TTL))
-		i--
-		dAtA[i] = 0x20
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
 	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	if m.FullHeaders {
 		i--
 		if m.FullHeaders {
@@ -1775,7 +1741,7 @@ func (m *HeadRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x18
+		dAtA[i] = 0x10
 	}
 	{
 		size := m.Address.Size()
@@ -1786,12 +1752,7 @@ func (m *HeadRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintService(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x12
-	if m.Epoch != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.Epoch))
-		i--
-		dAtA[i] = 0x8
-	}
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -1858,17 +1819,36 @@ func (m *SearchRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.TTL != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.TTL))
-		i--
-		dAtA[i] = 0x28
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
 	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	if len(m.Query) > 0 {
 		i -= len(m.Query)
 		copy(dAtA[i:], m.Query)
 		i = encodeVarintService(dAtA, i, uint64(len(m.Query)))
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x1a
 	}
 	{
 		size := m.ContainerID.Size()
@@ -1879,14 +1859,9 @@ func (m *SearchRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintService(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x1a
+	dAtA[i] = 0x12
 	if m.Version != 0 {
 		i = encodeVarintService(dAtA, i, uint64(m.Version))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.Epoch != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.Epoch))
 		i--
 		dAtA[i] = 0x8
 	}
@@ -1958,11 +1933,30 @@ func (m *GetRangeRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.TTL != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.TTL))
-		i--
-		dAtA[i] = 0x20
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
 	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	if len(m.Ranges) > 0 {
 		for iNdEx := len(m.Ranges) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -1974,7 +1968,7 @@ func (m *GetRangeRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintService(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x1a
+			dAtA[i] = 0x12
 		}
 	}
 	{
@@ -1986,12 +1980,7 @@ func (m *GetRangeRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintService(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x12
-	if m.Epoch != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.Epoch))
-		i--
-		dAtA[i] = 0x8
-	}
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -2055,17 +2044,36 @@ func (m *GetRangeHashRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.TTL != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.TTL))
-		i--
-		dAtA[i] = 0x28
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
 	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
 	if len(m.Salt) > 0 {
 		i -= len(m.Salt)
 		copy(dAtA[i:], m.Salt)
 		i = encodeVarintService(dAtA, i, uint64(len(m.Salt)))
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x1a
 	}
 	if len(m.Ranges) > 0 {
 		for iNdEx := len(m.Ranges) - 1; iNdEx >= 0; iNdEx-- {
@@ -2078,7 +2086,7 @@ func (m *GetRangeHashRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintService(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x1a
+			dAtA[i] = 0x12
 		}
 	}
 	{
@@ -2090,12 +2098,7 @@ func (m *GetRangeHashRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintService(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x12
-	if m.Epoch != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.Epoch))
-		i--
-		dAtA[i] = 0x8
-	}
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -2157,14 +2160,12 @@ func (m *GetRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Epoch != 0 {
-		n += 1 + sovService(uint64(m.Epoch))
-	}
 	l = m.Address.Size()
 	n += 1 + l + sovService(uint64(l))
-	if m.TTL != 0 {
-		n += 1 + sovService(uint64(m.TTL))
-	}
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2219,6 +2220,10 @@ func (m *PutRequest) Size() (n int) {
 	if m.R != nil {
 		n += m.R.Size()
 	}
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2255,15 +2260,9 @@ func (m *PutRequest_PutHeader) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Epoch != 0 {
-		n += 1 + sovService(uint64(m.Epoch))
-	}
 	if m.Object != nil {
 		l = m.Object.Size()
 		n += 1 + l + sovService(uint64(l))
-	}
-	if m.TTL != 0 {
-		n += 1 + sovService(uint64(m.TTL))
 	}
 	if m.Token != nil {
 		l = m.Token.Size()
@@ -2295,20 +2294,18 @@ func (m *DeleteRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Epoch != 0 {
-		n += 1 + sovService(uint64(m.Epoch))
-	}
 	l = m.Address.Size()
 	n += 1 + l + sovService(uint64(l))
 	l = m.OwnerID.Size()
 	n += 1 + l + sovService(uint64(l))
-	if m.TTL != 0 {
-		n += 1 + sovService(uint64(m.TTL))
-	}
 	if m.Token != nil {
 		l = m.Token.Size()
 		n += 1 + l + sovService(uint64(l))
 	}
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2333,17 +2330,15 @@ func (m *HeadRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Epoch != 0 {
-		n += 1 + sovService(uint64(m.Epoch))
-	}
 	l = m.Address.Size()
 	n += 1 + l + sovService(uint64(l))
 	if m.FullHeaders {
 		n += 2
 	}
-	if m.TTL != 0 {
-		n += 1 + sovService(uint64(m.TTL))
-	}
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2372,9 +2367,6 @@ func (m *SearchRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Epoch != 0 {
-		n += 1 + sovService(uint64(m.Epoch))
-	}
 	if m.Version != 0 {
 		n += 1 + sovService(uint64(m.Version))
 	}
@@ -2384,9 +2376,10 @@ func (m *SearchRequest) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovService(uint64(l))
 	}
-	if m.TTL != 0 {
-		n += 1 + sovService(uint64(m.TTL))
-	}
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2417,9 +2410,6 @@ func (m *GetRangeRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Epoch != 0 {
-		n += 1 + sovService(uint64(m.Epoch))
-	}
 	l = m.Address.Size()
 	n += 1 + l + sovService(uint64(l))
 	if len(m.Ranges) > 0 {
@@ -2428,9 +2418,10 @@ func (m *GetRangeRequest) Size() (n int) {
 			n += 1 + l + sovService(uint64(l))
 		}
 	}
-	if m.TTL != 0 {
-		n += 1 + sovService(uint64(m.TTL))
-	}
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2461,9 +2452,6 @@ func (m *GetRangeHashRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Epoch != 0 {
-		n += 1 + sovService(uint64(m.Epoch))
-	}
 	l = m.Address.Size()
 	n += 1 + l + sovService(uint64(l))
 	if len(m.Ranges) > 0 {
@@ -2476,9 +2464,10 @@ func (m *GetRangeHashRequest) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovService(uint64(l))
 	}
-	if m.TTL != 0 {
-		n += 1 + sovService(uint64(m.TTL))
-	}
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2539,25 +2528,6 @@ func (m *GetRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Epoch", wireType)
-			}
-			m.Epoch = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Epoch |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
 			}
@@ -2590,11 +2560,11 @@ func (m *GetRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TTL", wireType)
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
 			}
-			m.TTL = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowService
@@ -2604,11 +2574,58 @@ func (m *GetRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TTL |= uint32(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])
@@ -2853,6 +2870,72 @@ func (m *PutRequest) Unmarshal(dAtA []byte) error {
 			copy(v, dAtA[iNdEx:postIndex])
 			m.R = &PutRequest_Chunk{v}
 			iNdEx = postIndex
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])
@@ -2908,25 +2991,6 @@ func (m *PutRequest_PutHeader) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Epoch", wireType)
-			}
-			m.Epoch = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Epoch |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Object", wireType)
 			}
@@ -2962,26 +3026,7 @@ func (m *PutRequest_PutHeader) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TTL", wireType)
-			}
-			m.TTL = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.TTL |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Token", wireType)
 			}
@@ -3159,25 +3204,6 @@ func (m *DeleteRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Epoch", wireType)
-			}
-			m.Epoch = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Epoch |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
 			}
@@ -3210,7 +3236,7 @@ func (m *DeleteRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field OwnerID", wireType)
 			}
@@ -3243,26 +3269,7 @@ func (m *DeleteRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TTL", wireType)
-			}
-			m.TTL = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.TTL |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Token", wireType)
 			}
@@ -3295,6 +3302,72 @@ func (m *DeleteRequest) Unmarshal(dAtA []byte) error {
 				m.Token = &session.Token{}
 			}
 			if err := m.Token.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -3407,25 +3480,6 @@ func (m *HeadRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Epoch", wireType)
-			}
-			m.Epoch = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Epoch |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
 			}
@@ -3458,7 +3512,7 @@ func (m *HeadRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field FullHeaders", wireType)
 			}
@@ -3478,11 +3532,11 @@ func (m *HeadRequest) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.FullHeaders = bool(v != 0)
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TTL", wireType)
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
 			}
-			m.TTL = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowService
@@ -3492,11 +3546,58 @@ func (m *HeadRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TTL |= uint32(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])
@@ -3643,25 +3744,6 @@ func (m *SearchRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Epoch", wireType)
-			}
-			m.Epoch = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Epoch |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
 			}
 			m.Version = 0
@@ -3679,7 +3761,7 @@ func (m *SearchRequest) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 3:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ContainerID", wireType)
 			}
@@ -3712,7 +3794,7 @@ func (m *SearchRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 4:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Query", wireType)
 			}
@@ -3746,11 +3828,11 @@ func (m *SearchRequest) Unmarshal(dAtA []byte) error {
 				m.Query = []byte{}
 			}
 			iNdEx = postIndex
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TTL", wireType)
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
 			}
-			m.TTL = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowService
@@ -3760,11 +3842,58 @@ func (m *SearchRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TTL |= uint32(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])
@@ -3908,25 +4037,6 @@ func (m *GetRangeRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Epoch", wireType)
-			}
-			m.Epoch = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Epoch |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
 			}
@@ -3959,7 +4069,7 @@ func (m *GetRangeRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Ranges", wireType)
 			}
@@ -3993,11 +4103,11 @@ func (m *GetRangeRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TTL", wireType)
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
 			}
-			m.TTL = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowService
@@ -4007,11 +4117,58 @@ func (m *GetRangeRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TTL |= uint32(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])
@@ -4153,25 +4310,6 @@ func (m *GetRangeHashRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Epoch", wireType)
-			}
-			m.Epoch = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Epoch |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
 			}
@@ -4204,7 +4342,7 @@ func (m *GetRangeHashRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Ranges", wireType)
 			}
@@ -4238,7 +4376,7 @@ func (m *GetRangeHashRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 4:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Salt", wireType)
 			}
@@ -4272,11 +4410,11 @@ func (m *GetRangeHashRequest) Unmarshal(dAtA []byte) error {
 				m.Salt = []byte{}
 			}
 			iNdEx = postIndex
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TTL", wireType)
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
 			}
-			m.TTL = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowService
@@ -4286,11 +4424,58 @@ func (m *GetRangeHashRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TTL |= uint32(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])

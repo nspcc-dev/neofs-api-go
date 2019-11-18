@@ -3,6 +3,8 @@ package session;
 option go_package = "github.com/nspcc-dev/neofs-proto/session";
 
 import "session/types.proto";
+import "service/meta.proto";
+import "service/verify.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
@@ -17,6 +19,8 @@ message CreateRequest {
         session.Token Init = 1;
         session.Token Signed = 2;
     }
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message CreateResponse {

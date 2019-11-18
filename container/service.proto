@@ -2,6 +2,8 @@ syntax = "proto3";
 package container;
 option go_package = "github.com/nspcc-dev/neofs-proto/container";
 
+import "service/meta.proto";
+import "service/verify.proto";
 import "container/types.proto";
 import "github.com/nspcc-dev/netmap/selector.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
@@ -23,12 +25,13 @@ service Service {
 
 // NewRequest message to create new container
 message PutRequest {
-    bytes MessageID            = 1 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
-    uint64 Capacity            = 2; // not actual size in megabytes, but probability of storage availability
-    bytes OwnerID              = 3 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
-    netmap.PlacementRule rules = 4 [(gogoproto.nullable) = false];
-    bytes Signature            = 5;
-    uint32 TTL                 = 6;
+    bytes MessageID                          = 1 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
+    uint64 Capacity                          = 2; // not actual size in megabytes, but probability of storage availability
+    bytes OwnerID                            = 3 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    netmap.PlacementRule rules               = 4 [(gogoproto.nullable) = false];
+    bytes Signature                          = 5;
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 // PutResponse message to respond about container uuid
@@ -37,9 +40,10 @@ message PutResponse {
 }
 
 message DeleteRequest {
-    bytes CID       = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
-    uint32 TTL      = 2;
-    bytes Signature = 3;
+    bytes CID                                = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
+    bytes Signature                          = 2;
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message DeleteResponse { }
@@ -47,8 +51,9 @@ message DeleteResponse { }
 
 // GetRequest message to fetch container placement rules
 message GetRequest {
-    bytes CID  = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
-    uint32 TTL = 2;
+    bytes CID                                = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 // GetResponse message with container structure
@@ -58,8 +63,9 @@ message GetResponse {
 
 // ListRequest message to list containers for user
 message ListRequest {
-    bytes OwnerID = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
-    uint32 TTL    = 2;
+    bytes OwnerID                            = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 // ListResponse message to respond about all user containers

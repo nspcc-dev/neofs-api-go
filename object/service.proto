@@ -5,6 +5,8 @@ option go_package = "github.com/nspcc-dev/neofs-proto/object";
 import "refs/types.proto";
 import "object/types.proto";
 import "session/types.proto";
+import "service/meta.proto";
+import "service/verify.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
@@ -33,9 +35,9 @@ service Service {
 }
 
 message GetRequest {
-    uint64 Epoch         = 1;
-    refs.Address Address = 2 [(gogoproto.nullable) = false];
-    uint32 TTL           = 3;
+    refs.Address Address                     = 1 [(gogoproto.nullable) = false];
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message GetResponse {
@@ -47,47 +49,48 @@ message GetResponse {
 
 message PutRequest {
     message PutHeader {
-        uint64 Epoch        = 1;
-        Object Object       = 2;
-        uint32 TTL          = 3;
-        session.Token Token = 4;
+        Object Object       = 1;
+        session.Token Token = 2;
     }
 
     oneof R {
         PutHeader Header = 1;
         bytes Chunk      = 2;
     }
+
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message PutResponse {
     refs.Address Address = 1 [(gogoproto.nullable) = false];
 }
 message DeleteRequest {
-    uint64 Epoch         = 1;
-    refs.Address Address = 2 [(gogoproto.nullable) = false];
-    bytes OwnerID        = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"];
-    uint32 TTL           = 4;
-    session.Token Token  = 5;
+    refs.Address Address                     = 1 [(gogoproto.nullable) = false];
+    bytes OwnerID                            = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"];
+    session.Token Token                      = 3;
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 message DeleteResponse {}
 
 // HeadRequest.FullHeader == true, for fetch all headers
 message HeadRequest {
-    uint64 Epoch         = 1;
-    refs.Address Address = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
-    bool FullHeaders     = 3;
-    uint32 TTL           = 4;
+    refs.Address Address                     = 1 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
+    bool FullHeaders                         = 2;
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 message HeadResponse {
     Object Object = 1;
 }
 
 message SearchRequest {
-    uint64 Epoch         = 1;
-    uint32 Version       = 2;
-    bytes ContainerID    = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "CID"];
-    bytes Query          = 4;
-    uint32 TTL           = 5;
+    uint32 Version                           = 1;
+    bytes ContainerID                        = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "CID"];
+    bytes Query                              = 3;
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message SearchResponse {
@@ -95,10 +98,10 @@ message SearchResponse {
 }
 
 message GetRangeRequest {
-    uint64 Epoch          = 1;
-    refs.Address Address  = 2 [(gogoproto.nullable) = false];
-    repeated Range Ranges = 3 [(gogoproto.nullable) = false];
-    uint32 TTL            = 4;
+    refs.Address Address                     = 1 [(gogoproto.nullable) = false];
+    repeated Range Ranges                    = 2 [(gogoproto.nullable) = false];
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message GetRangeResponse {
@@ -106,11 +109,11 @@ message GetRangeResponse {
 }
 
 message GetRangeHashRequest {
-    uint64 Epoch          = 1;
-    refs.Address Address  = 2 [(gogoproto.nullable) = false];
-    repeated Range Ranges = 3 [(gogoproto.nullable) = false];
-    bytes Salt            = 4;
-    uint32 TTL            = 5;
+    refs.Address Address                     = 1 [(gogoproto.nullable) = false];
+    repeated Range Ranges                    = 2 [(gogoproto.nullable) = false];
+    bytes Salt                               = 3;
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message GetRangeHashResponse {

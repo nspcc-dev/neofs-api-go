@@ -2,6 +2,8 @@ syntax = "proto3";
 package accounting;
 option go_package = "github.com/nspcc-dev/neofs-proto/accounting";
 
+import "service/meta.proto";
+import "service/verify.proto";
 import "decimal/decimal.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
@@ -23,39 +25,43 @@ message Item {
 }
 
 message GetRequest {
-    bytes ID      = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
-    bytes OwnerID = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
-    uint32 TTL    = 3;
+    bytes ID                                 = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
+    bytes OwnerID                            = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 message GetResponse {
     Item Withdraw = 1;
 }
 
 message PutRequest {
-    bytes OwnerID          = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
-    decimal.Decimal Amount = 2;
-    uint64 Height          = 3;
-    bytes MessageID        = 4 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
-    bytes Signature        = 5;
-    uint32 TTL             = 6;
+    bytes OwnerID                            = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    decimal.Decimal Amount                   = 2;
+    uint64 Height                            = 3;
+    bytes MessageID                          = 4 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
+    bytes Signature                          = 5;
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 message PutResponse {
     bytes ID = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
 }
 
 message ListRequest {
-    bytes OwnerID = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
-    uint32 TTL    = 2;
+    bytes OwnerID                            = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 message ListResponse {
     repeated Item Items = 1;
 }
 
 message DeleteRequest {
-    bytes ID        = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
-    bytes OwnerID   = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
-    bytes MessageID = 3 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
-    bytes Signature = 4;
-    uint32 TTL      = 5;
+    bytes ID                                 = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
+    bytes OwnerID                            = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    bytes MessageID                          = 3 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
+    bytes Signature                          = 4;
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 message DeleteResponse {}

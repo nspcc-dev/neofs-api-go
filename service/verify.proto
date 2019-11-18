@@ -1,0 +1,20 @@
+syntax = "proto3";
+package service;
+option go_package = "github.com/nspcc-dev/neofs-proto/service";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+message RequestVerificationHeader {
+    message Sign {
+        bytes Sign = 1;
+        bytes Peer = 2;
+    }
+    message Signature {
+        Sign Sign   = 1 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+        Sign Origin = 2;
+    }
+
+    repeated Signature Signatures = 1;
+}

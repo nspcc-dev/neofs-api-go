@@ -1,0 +1,17 @@
+syntax = "proto3";
+package service;
+option go_package = "github.com/nspcc-dev/neofs-proto/service";
+
+import "service/meta.proto";
+import "service/verify.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+message TestRequest {
+    int32 IntField                   = 1;
+    string StringField               = 2;
+    bytes BytesField                 = 3;
+    RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    RequestVerificationHeader Header = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+}

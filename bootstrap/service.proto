@@ -2,6 +2,8 @@ syntax = "proto3";
 package bootstrap;
 option go_package = "github.com/nspcc-dev/neofs-proto/bootstrap";
 
+import "service/meta.proto";
+import "service/verify.proto";
 import "bootstrap/types.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
@@ -14,7 +16,8 @@ service Bootstrap {
 
 // Request message to communicate between DHT nodes
 message Request {
-    int32              type = 1 [(gogoproto.customname) = "Type" , (gogoproto.nullable) = false, (gogoproto.customtype) = "NodeType"];
-    bootstrap.NodeInfo info = 2 [(gogoproto.nullable) = false];
-    uint32 TTL           = 3;
+    int32              type                  = 1 [(gogoproto.customname) = "Type" , (gogoproto.nullable) = false, (gogoproto.customtype) = "NodeType"];
+    bootstrap.NodeInfo info                  = 2 [(gogoproto.nullable) = false];
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
