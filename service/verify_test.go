@@ -1,9 +1,12 @@
 package service
 
 import (
+	"bytes"
+	"log"
 	"math"
 	"testing"
 
+	"github.com/gogo/protobuf/proto"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/pkg/errors"
@@ -103,4 +106,38 @@ func TestMaintainableRequest(t *testing.T) {
 		err := VerifyRequestHeader(req)
 		require.EqualError(t, errors.Cause(err), crypto.ErrInvalidSignature.Error())
 	}
+}
+
+func TestVerifyAndSignRequestHeaderWithoutCloning(t *testing.T) {
+	key := test.DecodeKey(0)
+
+	custom := testCustomField{1, 2, 3, 4, 5, 6, 7, 8}
+
+	b := &TestRequest{
+		IntField:    math.MaxInt32,
+		StringField: "TestRequestStringField",
+		BytesField:  []byte("TestRequestBytesField"),
+		CustomField: &custom,
+		RequestMetaHeader: RequestMetaHeader{
+			TTL:   math.MaxInt32 - 8,
+			Epoch: math.MaxInt64 - 12,
+		},
+	}
+
+	require.NoError(t, SignRequestHeader(key, b))
+	require.NoError(t, VerifyRequestHeader(b))
+
+	require.Len(t, b.Signatures, 1)
+	require.Equal(t, custom, *b.CustomField)
+	require.Equal(t, uint32(math.MaxInt32-8), b.GetTTL())
+	require.Equal(t, uint64(math.MaxInt64-12), b.GetEpoch())
+
+	buf := bytes.NewBuffer(nil)
+	log.SetOutput(buf)
+
+	cp, ok := proto.Clone(b).(*TestRequest)
+	require.True(t, ok)
+	require.NotEqual(t, b, cp)
+
+	require.Contains(t, buf.String(), "proto: don't know how to copy")
 }

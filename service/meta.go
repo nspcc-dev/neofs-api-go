@@ -8,10 +8,11 @@ import (
 
 type (
 	// MetaHeader contains meta information of request.
-	// It provides methods to get or set meta information
-	// and reset meta header.
+	// It provides methods to get or set meta information meta header.
+	// Also contains methods to reset and restore meta header.
 	MetaHeader interface {
-		ResetMeta()
+		ResetMeta() RequestMetaHeader
+		RestoreMeta(RequestMetaHeader)
 
 		// TTLRequest to verify and update ttl requests.
 		GetTTL() uint32
@@ -22,7 +23,7 @@ type (
 		SetEpoch(v uint64)
 	}
 
-	// TTLCondition is closure, that allows to validate request with ttl
+	// TTLCondition is closure, that allows to validate request with ttl.
 	TTLCondition func(ttl uint32) error
 )
 
@@ -45,14 +46,21 @@ const (
 	ErrIncorrectTTL = internal.Error("incorrect ttl")
 )
 
-// SetTTL sets TTL to RequestMetaHeader
+// SetTTL sets TTL to RequestMetaHeader.
 func (m *RequestMetaHeader) SetTTL(v uint32) { m.TTL = v }
 
-// SetEpoch sets Epoch to RequestMetaHeader
+// SetEpoch sets Epoch to RequestMetaHeader.
 func (m *RequestMetaHeader) SetEpoch(v uint64) { m.Epoch = v }
 
-// ResetMeta sets RequestMetaHeader to empty value
-func (m *RequestMetaHeader) ResetMeta() { m.Reset() }
+// ResetMeta returns current value and sets RequestMetaHeader to empty value.
+func (m *RequestMetaHeader) ResetMeta() RequestMetaHeader {
+	cp := *m
+	m.Reset()
+	return cp
+}
+
+// RestoreMeta sets current RequestMetaHeader to passed value.
+func (m *RequestMetaHeader) RestoreMeta(v RequestMetaHeader) { *m = v }
 
 // IRNonForwarding condition that allows NonForwardingTTL only for IR
 func IRNonForwarding(role NodeRole) TTLCondition {
