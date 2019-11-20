@@ -9,17 +9,23 @@ option (gogoproto.stable_marshaler_all) = true;
 message Filter {
     option (gogoproto.goproto_stringer) = false;
 
+    // Type can be Exact or Regex
     enum Type {
         Exact = 0;
         Regex = 1;
     }
+
+    // Type of filter
     Type type = 1 [(gogoproto.customname) = "Type"];
+    // Name of field that should be filtered
     string Name = 2;
+    // Value that should be used for filter
     string Value = 3;
 }
 
 message Query {
     option (gogoproto.goproto_stringer) = false;
 
+    // Filters is set of filters, should not be empty
     repeated Filter Filters = 1 [(gogoproto.nullable) = false];
 }
