@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 
+	"github.com/nspcc-dev/neofs-proto/internal"
 	"github.com/nspcc-dev/neofs-proto/refs"
 	"github.com/pkg/errors"
 )
@@ -17,6 +18,11 @@ type (
 	OwnerID = refs.OwnerID
 	// MessageID type alias.
 	MessageID = refs.MessageID
+)
+
+const (
+	// ErrNotFound is raised when container could not be found.
+	ErrNotFound = internal.Error("could not find container")
 )
 
 // SetSignature sets signature to PutRequest to satisfy SignedRequest interface.
