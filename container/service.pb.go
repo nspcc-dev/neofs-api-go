@@ -28,17 +28,22 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// NewRequest message to create new container
 type PutRequest struct {
-	MessageID            MessageID            `protobuf:"bytes,1,opt,name=MessageID,proto3,customtype=MessageID" json:"MessageID"`
-	Capacity             uint64               `protobuf:"varint,2,opt,name=Capacity,proto3" json:"Capacity,omitempty"`
-	OwnerID              OwnerID              `protobuf:"bytes,3,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
-	Rules                netmap.PlacementRule `protobuf:"bytes,4,opt,name=rules,proto3" json:"rules"`
-	Signature            []byte               `protobuf:"bytes,5,opt,name=Signature,proto3" json:"Signature,omitempty"`
-	TTL                  uint32               `protobuf:"varint,6,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
-	XXX_unrecognized     []byte               `json:"-"`
-	XXX_sizecache        int32                `json:"-"`
+	// MessageID is a nonce for uniq container id calculation
+	MessageID MessageID `protobuf:"bytes,1,opt,name=MessageID,proto3,customtype=MessageID" json:"MessageID"`
+	// Capacity defines amount of data that can be stored in the container (doesn't used for now).
+	Capacity uint64 `protobuf:"varint,2,opt,name=Capacity,proto3" json:"Capacity,omitempty"`
+	// OwnerID is a wallet address
+	OwnerID OwnerID `protobuf:"bytes,3,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// Rules define storage policy for the object inside the container.
+	Rules netmap.PlacementRule `protobuf:"bytes,4,opt,name=rules,proto3" json:"rules"`
+	// Signature of the user (owner id)
+	Signature []byte `protobuf:"bytes,5,opt,name=Signature,proto3" json:"Signature,omitempty"`
+	// TTL must be larger than zero, it decreased in every neofs-node
+	TTL                  uint32   `protobuf:"varint,6,opt,name=TTL,proto3" json:"TTL,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *PutRequest) Reset()         { *m = PutRequest{} }
@@ -98,8 +103,8 @@ func (m *PutRequest) GetTTL() uint32 {
 	return 0
 }
 
-// PutResponse message to respond about container uuid
 type PutResponse struct {
+	// CID (container id) is a SHA256 hash of the container structure
 	CID                  CID      `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -136,8 +141,11 @@ func (m *PutResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_PutResponse proto.InternalMessageInfo
 
 type DeleteRequest struct {
-	CID                  CID      `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
-	TTL                  uint32   `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
+	// CID (container id) is a SHA256 hash of the container structure
+	CID CID `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
+	// TTL must be larger than zero, it decreased in every neofs-node
+	TTL uint32 `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
+	// Signature of the container owner
 	Signature            []byte   `protobuf:"bytes,3,opt,name=Signature,proto3" json:"Signature,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -187,6 +195,8 @@ func (m *DeleteRequest) GetSignature() []byte {
 	return nil
 }
 
+// DeleteResponse is empty because delete operation is asynchronous and done
+// via consensus in inner ring nodes
 type DeleteResponse struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -222,9 +232,10 @@ func (m *DeleteResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DeleteResponse proto.InternalMessageInfo
 
-// GetRequest message to fetch container placement rules
 type GetRequest struct {
-	CID                  CID      `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
+	// CID (container id) is a SHA256 hash of the container structure
+	CID CID `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
+	// TTL must be larger than zero, it decreased in every neofs-node
 	TTL                  uint32   `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -267,8 +278,8 @@ func (m *GetRequest) GetTTL() uint32 {
 	return 0
 }
 
-// GetResponse message with container structure
 type GetResponse struct {
+	// Container is a structure that contains placement rules and owner id
 	Container            *Container `protobuf:"bytes,1,opt,name=Container,proto3" json:"Container,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
 	XXX_unrecognized     []byte     `json:"-"`
@@ -311,9 +322,10 @@ func (m *GetResponse) GetContainer() *Container {
 	return nil
 }
 
-// ListRequest message to list containers for user
 type ListRequest struct {
-	OwnerID              OwnerID  `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// OwnerID is a wallet address
+	OwnerID OwnerID `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// TTL must be larger than zero, it decreased in every neofs-node
 	TTL                  uint32   `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -356,8 +368,8 @@ func (m *ListRequest) GetTTL() uint32 {
 	return 0
 }
 
-// ListResponse message to respond about all user containers
 type ListResponse struct {
+	// CID (container id) is list of SHA256 hashes of the container structures
 	CID                  []CID    `protobuf:"bytes,1,rep,name=CID,proto3,customtype=CID" json:"CID"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -455,12 +467,16 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ServiceClient interface {
-	// Create container
+	// Put request proposes container to the inner ring nodes. They will
+	// accept new container if user has enough deposit. All containers
+	// are accepted by the consensus, therefore it is asynchronous process.
 	Put(ctx context.Context, in *PutRequest, opts ...grpc.CallOption) (*PutResponse, error)
-	// Delete container ... discuss implementation later
+	// Delete container removes it from the inner ring container storage. It
+	// also asynchronous process done by consensus.
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
-	// Get container
+	// Get container returns container instance
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	// List returns all user's containers
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 }
 
@@ -510,12 +526,16 @@ func (c *serviceClient) List(ctx context.Context, in *ListRequest, opts ...grpc.
 
 // ServiceServer is the server API for Service service.
 type ServiceServer interface {
-	// Create container
+	// Put request proposes container to the inner ring nodes. They will
+	// accept new container if user has enough deposit. All containers
+	// are accepted by the consensus, therefore it is asynchronous process.
 	Put(context.Context, *PutRequest) (*PutResponse, error)
-	// Delete container ... discuss implementation later
+	// Delete container removes it from the inner ring container storage. It
+	// also asynchronous process done by consensus.
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
-	// Get container
+	// Get container returns container instance
 	Get(context.Context, *GetRequest) (*GetResponse, error)
+	// List returns all user's containers
 	List(context.Context, *ListRequest) (*ListResponse, error)
 }
 

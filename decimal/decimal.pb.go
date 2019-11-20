@@ -23,8 +23,11 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// Decimal is a structure used for representation of assets amount
 type Decimal struct {
-	Value                int64    `protobuf:"varint,1,opt,name=Value,proto3" json:"Value,omitempty"`
+	// Value is value number
+	Value int64 `protobuf:"varint,1,opt,name=Value,proto3" json:"Value,omitempty"`
+	// Precision is precision number
 	Precision            uint32   `protobuf:"varint,2,opt,name=Precision,proto3" json:"Precision,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

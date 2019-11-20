@@ -9,111 +9,132 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
 
+// Object service provides API for manipulating with the object.
 service Service {
-    // Get the object from a container
+
+    // Get the object from container. Response uses gRPC stream. First response
+    // message carry object of requested address. Chunk messages are parts of
+    // the object's payload if it is needed. All messages except first carry
+    // chunks. Requested object can be restored by concatenation of object
+    // message payload and all chunks keeping receiving order.
     rpc Get(GetRequest) returns (stream GetResponse);
 
-    // Put the object into a container
+    // Put the object into container. Request uses gRPC stream. First message
+    // SHOULD BE type of PutHeader. Container id and Owner id of object SHOULD
+    // BE set. Session token SHOULD BE obtained before put operation (see
+    // session package). Chunk messages considered by server as part of object
+    // payload. All messages except first SHOULD BE chunks. Chunk messages
+    // SHOULD BE sent in direct order of fragmentation.
     rpc Put(stream PutRequest) returns (PutResponse);
 
     // Delete the object from a container
     rpc Delete(DeleteRequest) returns (DeleteResponse);
 
-    // Get MetaInfo
+    // Head returns the object without data payload. Object in the
+    // response has system header only. If full headers flag is set, extended
+    // headers are also present.
     rpc Head(HeadRequest) returns (HeadResponse);
 
-    // Search by MetaInfo
+    // Search objects in container. Version of query language format SHOULD BE
+    // set to 1. Search query represented in serialized format (see query
+    // package).
     rpc Search(SearchRequest) returns (SearchResponse);
 
-    // Get ranges of object payload
+    // GetRange of data payload. Ranges are set of pairs (offset, length).
+    // Fragments order in response corresponds to ranges order in request.
     rpc GetRange(GetRangeRequest) returns (GetRangeResponse);
 
-    // Get hashes of object ranges
+    // GetRangeHash returns homomorphic hash of object payload range after XOR
+    // operation. Ranges are set of pairs (offset, length). Hashes order in
+    // response corresponds to ranges order in request. Homomorphic hash is
+    // calculated for XORed data.
     rpc GetRangeHash(GetRangeHashRequest) returns (GetRangeHashResponse);
 }
 
 message GetRequest {
-    uint64 Epoch         = 1;
-    refs.Address Address = 2 [(gogoproto.nullable) = false];
-    uint32 TTL           = 3;
+    uint64 Epoch         = 1; // Epoch is set by user to 0, node set epoch to the actual value
+    refs.Address Address = 2 [(gogoproto.nullable) = false]; // Address of object (container id + object id)
+    uint32 TTL           = 3; // TTL must be larger than zero, it decreased in every neofs-node
 }
 
 message GetResponse {
     oneof R {
-        Object object = 1;
-        bytes Chunk   = 2;
+        Object object = 1; // Object header and some payload
+        bytes Chunk   = 2; // Chunk of remaining payload
     }
 }
 
 message PutRequest {
     message PutHeader {
-        uint64 Epoch        = 1;
-        Object Object       = 2;
-        uint32 TTL          = 3;
-        session.Token Token = 4;
+        uint64 Epoch        = 1; // Epoch is set by user to 0, node set epoch to the actual value
+        Object Object       = 2; // Object with at least container id and owner id fields
+        uint32 TTL          = 3; // TTL must be larger than zero, it decreased in every neofs-node
+        session.Token Token = 4; // Token with session public key and user's signature
     }
 
     oneof R {
-        PutHeader Header = 1;
-        bytes Chunk      = 2;
+        PutHeader Header = 1; // Header should be the first message in the stream
+        bytes Chunk      = 2; // Chunk should be a remaining message in stream should be chunks
     }
 }
 
 message PutResponse {
-    refs.Address Address = 1 [(gogoproto.nullable) = false];
+    refs.Address Address = 1 [(gogoproto.nullable) = false]; // Address of object (container id + object id)
 }
 message DeleteRequest {
-    uint64 Epoch         = 1;
-    refs.Address Address = 2 [(gogoproto.nullable) = false];
-    bytes OwnerID        = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"];
-    uint32 TTL           = 4;
-    session.Token Token  = 5;
+    uint64 Epoch         = 1; // Epoch is set by user to 0, node set epoch to the actual value
+    refs.Address Address = 2 [(gogoproto.nullable) = false]; // Address of object (container id + object id)
+    bytes OwnerID        = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"]; // OwnerID is a wallet address
+    uint32 TTL           = 4; // TTL must be larger than zero, it decreased in every neofs-node
+    session.Token Token  = 5; // Token with session public key and user's signature
 }
+
+// DeleteResponse is empty because we cannot guarantee permanent object removal
+// in distributed system.
 message DeleteResponse {}
 
-// HeadRequest.FullHeader == true, for fetch all headers
 message HeadRequest {
-    uint64 Epoch         = 1;
-    refs.Address Address = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
-    bool FullHeaders     = 3;
-    uint32 TTL           = 4;
+    uint64 Epoch         = 1; // Epoch is set by user to 0, node set epoch to the actual value
+    refs.Address Address = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"]; // Address of object (container id + object id)
+    bool FullHeaders     = 3; // FullHeaders can be set true for extended headers in the object
+    uint32 TTL           = 4; // TTL must be larger than zero, it decreased in every neofs-node
 }
 message HeadResponse {
-    Object Object = 1;
+    Object Object = 1; // Object without payload
 }
 
 message SearchRequest {
-    uint64 Epoch         = 1;
-    uint32 Version       = 2;
-    bytes ContainerID    = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "CID"];
-    bytes Query          = 4;
-    uint32 TTL           = 5;
+    uint64 Epoch         = 1; // Epoch is set by user to 0, node set epoch to the actual value
+    uint32 Version       = 2; // Version of search query format
+    bytes ContainerID    = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "CID"]; // ContainerID for searching the object
+    bytes Query          = 4; // Query in the binary serialized format
+    uint32 TTL           = 5; // TTL must be larger than zero, it decreased in every neofs-node
 }
 
 message SearchResponse {
-    repeated refs.Address Addresses = 1 [(gogoproto.nullable) = false];
+    repeated refs.Address Addresses = 1 [(gogoproto.nullable) = false]; // Addresses of found objects
 }
 
 message GetRangeRequest {
-    uint64 Epoch          = 1;
-    refs.Address Address  = 2 [(gogoproto.nullable) = false];
-    repeated Range Ranges = 3 [(gogoproto.nullable) = false];
-    uint32 TTL            = 4;
+    uint64 Epoch          = 1; // Epoch is set by user to 0, node set epoch to the actual value
+    refs.Address Address  = 2 [(gogoproto.nullable) = false]; // Address of object (container id + object id)
+    repeated Range Ranges = 3 [(gogoproto.nullable) = false]; // Ranges of object's payload to return
+    uint32 TTL            = 4; // TTL must be larger than zero, it decreased in every neofs-node
 }
 
 message GetRangeResponse {
-    repeated bytes Fragments = 1;
+    repeated bytes Fragments = 1; // Fragments of object's payload
 }
 
 message GetRangeHashRequest {
-    uint64 Epoch          = 1;
-    refs.Address Address  = 2 [(gogoproto.nullable) = false];
-    repeated Range Ranges = 3 [(gogoproto.nullable) = false];
-    bytes Salt            = 4;
-    uint32 TTL            = 5;
+    uint64 Epoch          = 1; // Epoch is set by user to 0, node set epoch to the actual value
+    refs.Address Address  = 2 [(gogoproto.nullable) = false]; // Address of object (container id + object id)
+    repeated Range Ranges = 3 [(gogoproto.nullable) = false]; // Ranges of object's payload to calculate homomorphic hash
+    bytes Salt            = 4; // Salt is used to XOR object's payload ranges before hashing, it can be nil
+    uint32 TTL            = 5; // TTL must be larger than zero, it decreased in every neofs-node
 }
 
 message GetRangeHashResponse {
-    repeated bytes Hashes = 1 [(gogoproto.customtype) = "Hash", (gogoproto.nullable) = false];
+    repeated bytes Hashes = 1 [(gogoproto.customtype) = "Hash", (gogoproto.nullable) = false]; // Homomorphic hashes of all ranges
 }
 

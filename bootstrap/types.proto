@@ -10,13 +10,19 @@ option (gogoproto.stringer_all) =  false;
 option (gogoproto.goproto_stringer_all) = false;
 
 message SpreadMap {
+    // Epoch is current epoch for netmap
     uint64 Epoch = 1;
+    // NetMap is a set of NodeInfos
     repeated NodeInfo NetMap = 2 [(gogoproto.nullable) = false];
 }
 
 message NodeInfo {
+    // Address is a node [multi-address](https://github.com/multiformats/multiaddr)
     string Address          = 1 [(gogoproto.jsontag) = "address"];
+    // PubKey is a compressed public key representation in bytes
     bytes PubKey            = 2 [(gogoproto.jsontag) = "pubkey,omitempty"];
+    // Options is set of node optional information, such as storage capacity, node location, price and etc
     repeated string Options = 3 [(gogoproto.jsontag) = "options,omitempty"];
+    // Status is bitmap status of the node
     uint64 Status           = 4 [(gogoproto.jsontag) = "status", (gogoproto.nullable) = false, (gogoproto.customtype) = "NodeStatus"];
 }

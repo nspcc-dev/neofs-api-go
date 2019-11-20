@@ -7,21 +7,41 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
 
+
 service Session {
+    // Open a trusted session to manipulate an object. In order to put or
+    // delete object client have to obtain session token with trusted node.
+    // Trusted node will modify client's object (add missing headers, checksums,
+    // homomorphic hash) and sign id with session key. Session is established
+    // during 4-step handshake in one gRPC stream
+
+    // - First client stream message SHOULD BE type of `CreateRequest_Init`.
+    // - First server stream message SHOULD BE type of `CreateResponse_Unsigned`.
+    // - Second client stream message SHOULD BE type of `CreateRequest_Signed`.
+    // - Second server stream message SHOULD BE type of `CreateResponse_Result`.
+
     rpc Create (stream CreateRequest) returns (stream CreateResponse);
 }
 
 
 message CreateRequest {
+    // Message should be one of
     oneof Message {
+        // Message to init session opening. Carry:
+        // owner of manipulation object;
+        // ID of manipulation object;
+        // token lifetime bounds.
         session.Token Init = 1;
+        // Signed Init message response (Unsigned) from server with user private key
         session.Token Signed = 2;
     }
 }
 
 message CreateResponse {
     oneof Message {
+        // Unsigned token with token ID and session public key generated on server side
         session.Token Unsigned = 1;
+        // Resulting token which can be used for object placing through an trusted intermediary
         session.Token Result = 2;
     }
 }

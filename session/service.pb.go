@@ -28,6 +28,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type CreateRequest struct {
+	// Message should be one of
+	//
 	// Types that are valid to be assigned to Message:
 	//	*CreateRequest_Init
 	//	*CreateRequest_Signed

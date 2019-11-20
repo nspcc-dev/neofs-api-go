@@ -27,10 +27,12 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// Request message to communicate between DHT nodes
 type Request struct {
-	Type                 NodeType `protobuf:"varint,1,opt,name=type,proto3,customtype=NodeType" json:"type"`
-	Info                 NodeInfo `protobuf:"bytes,2,opt,name=info,proto3" json:"info"`
+	// Type is NodeType, can be InnerRingNode (type=1) or StorageNode (type=2)
+	Type NodeType `protobuf:"varint,1,opt,name=type,proto3,customtype=NodeType" json:"type"`
+	// Info contains information about node
+	Info NodeInfo `protobuf:"bytes,2,opt,name=info,proto3" json:"info"`
+	// TTL must be larger than zero, it decreased in every neofs-node
 	TTL                  uint32   `protobuf:"varint,3,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -120,6 +122,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type BootstrapClient interface {
+	// Process is method that allows to register node in the network and receive actual netmap
 	Process(ctx context.Context, in *Request, opts ...grpc.CallOption) (*SpreadMap, error)
 }
 
@@ -142,6 +145,7 @@ func (c *bootstrapClient) Process(ctx context.Context, in *Request, opts ...grpc
 
 // BootstrapServer is the server API for Bootstrap service.
 type BootstrapServer interface {
+	// Process is method that allows to register node in the network and receive actual netmap
 	Process(context.Context, *Request) (*SpreadMap, error)
 }
 

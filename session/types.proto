@@ -7,16 +7,26 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 option (gogoproto.stable_marshaler_all) = true;
 
 message VerificationHeader {
+    // Session public key
     bytes PublicKey = 1;
+    // Session public key signature. Signed by trusted side
     bytes KeySignature = 2;
 }
 
+// User token granting rights for object manipulation
 message Token {
+    // Header carries verification data of session key
     VerificationHeader Header = 1 [(gogoproto.nullable) = false];
+    // Owner of manipulation object
     bytes OwnerID = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    // Initial epoch of token lifetime
     uint64 FirstEpoch = 3;
+    // Last epoch of token lifetime
     uint64 LastEpoch = 4;
+    // ID of manipulation object
     repeated bytes ObjectID = 5 [(gogoproto.customtype) = "ObjectID", (gogoproto.nullable) = false];
+    // Token signature. Signed by owner of manipulation object
     bytes Signature = 6;
+    // Token ID (UUID)
     bytes ID = 7 [(gogoproto.customtype) = "TokenID", (gogoproto.nullable) = false];
 }
