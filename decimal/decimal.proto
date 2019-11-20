@@ -6,9 +6,12 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
 
+// Decimal is a structure used for representation of assets amount
 message Decimal {
     option (gogoproto.goproto_stringer) = false;
 
+    // Value is value number
     int64 Value = 1;
+    // Precision is precision number
     uint32 Precision = 2;
 }
