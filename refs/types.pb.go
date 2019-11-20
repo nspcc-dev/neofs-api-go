@@ -23,8 +23,11 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// Address of object (container id + object id)
 type Address struct {
-	ObjectID             ObjectID `protobuf:"bytes,1,opt,name=ObjectID,proto3,customtype=ObjectID" json:"ObjectID"`
+	// ObjectID is an object identifier
+	ObjectID ObjectID `protobuf:"bytes,1,opt,name=ObjectID,proto3,customtype=ObjectID" json:"ObjectID"`
+	// CID is container identifier
 	CID                  CID      `protobuf:"bytes,2,opt,name=CID,proto3,customtype=CID" json:"CID"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

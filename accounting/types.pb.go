@@ -24,6 +24,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// Unit can be Unlimited, based on NeoFS epoch or Neo block
 type Lifetime_Unit int32
 
 const (
@@ -49,9 +50,10 @@ func (x Lifetime_Unit) String() string {
 }
 
 func (Lifetime_Unit) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_437c556d7375b726, []int{6, 0}
+	return fileDescriptor_437c556d7375b726, []int{4, 0}
 }
 
+// Type can be withdrawal, payIO or inner
 type Tx_Type int32
 
 const (
@@ -80,21 +82,27 @@ func (x Tx_Type) String() string {
 }
 
 func (Tx_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_437c556d7375b726, []int{7, 0}
+	return fileDescriptor_437c556d7375b726, []int{5, 0}
 }
 
-// Snapshot accounting messages
 type Account struct {
-	OwnerID              OwnerID          `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
-	Address              string           `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address,omitempty"`
-	ParentAddress        string           `protobuf:"bytes,3,opt,name=ParentAddress,proto3" json:"ParentAddress,omitempty"`
-	ActiveFunds          *decimal.Decimal `protobuf:"bytes,4,opt,name=ActiveFunds,proto3" json:"ActiveFunds,omitempty"`
-	Lifetime             Lifetime         `protobuf:"bytes,5,opt,name=Lifetime,proto3" json:"Lifetime"`
-	LockTarget           *LockTarget      `protobuf:"bytes,6,opt,name=LockTarget,proto3" json:"LockTarget,omitempty"`
-	LockAccounts         []*Account       `protobuf:"bytes,7,rep,name=LockAccounts,proto3" json:"LockAccounts,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
+	// OwnerID is a wallet address
+	OwnerID OwnerID `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// Address is identifier of accounting record
+	Address string `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address,omitempty"`
+	// ParentAddress is identifier of parent accounting record
+	ParentAddress string `protobuf:"bytes,3,opt,name=ParentAddress,proto3" json:"ParentAddress,omitempty"`
+	// ActiveFunds is amount of active (non locked) funds for account
+	ActiveFunds *decimal.Decimal `protobuf:"bytes,4,opt,name=ActiveFunds,proto3" json:"ActiveFunds,omitempty"`
+	// Lifetime is time until account is valid (used for lock accounts)
+	Lifetime Lifetime `protobuf:"bytes,5,opt,name=Lifetime,proto3" json:"Lifetime"`
+	// LockTarget is the purpose of lock funds (it might be withdraw or payment for storage)
+	LockTarget *LockTarget `protobuf:"bytes,6,opt,name=LockTarget,proto3" json:"LockTarget,omitempty"`
+	// LockAccounts contains child accounts with locked funds
+	LockAccounts         []*Account `protobuf:"bytes,7,rep,name=LockAccounts,proto3" json:"LockAccounts,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
 }
 
 func (m *Account) Reset()         { *m = Account{} }
@@ -168,6 +176,7 @@ func (m *Account) GetLockAccounts() []*Account {
 	return nil
 }
 
+// LockTarget must be one of two options
 type LockTarget struct {
 	// Types that are valid to be assigned to Target:
 	//	*LockTarget_WithdrawTarget
@@ -252,8 +261,8 @@ func (*LockTarget) XXX_OneofWrappers() []interface{} {
 	}
 }
 
-// Snapshot balance messages
 type Balances struct {
+	// Accounts contains multiple account snapshots
 	Accounts             []Account `protobuf:"bytes,1,rep,name=Accounts,proto3" json:"Accounts"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
@@ -296,9 +305,12 @@ func (m *Balances) GetAccounts() []Account {
 	return nil
 }
 
-// PayIn / PayOut messages
 type PayIO struct {
-	BlockID              uint64   `protobuf:"varint,1,opt,name=BlockID,proto3" json:"BlockID,omitempty"`
+	// BlockID contains id of the NEO block where withdraw or deposit
+	// call was invoked
+	BlockID uint64 `protobuf:"varint,1,opt,name=BlockID,proto3" json:"BlockID,omitempty"`
+	// Transactions contains all transactions that founded in block
+	// and used for PayIO
 	Transactions         []Tx     `protobuf:"bytes,2,rep,name=Transactions,proto3" json:"Transactions"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -348,124 +360,21 @@ func (m *PayIO) GetTransactions() []Tx {
 	return nil
 }
 
-// Clearing messages
-type Clearing struct {
-	Transactions         []Tx     `protobuf:"bytes,1,rep,name=Transactions,proto3" json:"Transactions"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Clearing) Reset()         { *m = Clearing{} }
-func (m *Clearing) String() string { return proto.CompactTextString(m) }
-func (*Clearing) ProtoMessage()    {}
-func (*Clearing) Descriptor() ([]byte, []int) {
-	return fileDescriptor_437c556d7375b726, []int{4}
-}
-func (m *Clearing) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *Clearing) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	b = b[:cap(b)]
-	n, err := m.MarshalToSizedBuffer(b)
-	if err != nil {
-		return nil, err
-	}
-	return b[:n], nil
-}
-func (m *Clearing) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Clearing.Merge(m, src)
-}
-func (m *Clearing) XXX_Size() int {
-	return m.Size()
-}
-func (m *Clearing) XXX_DiscardUnknown() {
-	xxx_messageInfo_Clearing.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Clearing proto.InternalMessageInfo
-
-func (m *Clearing) GetTransactions() []Tx {
-	if m != nil {
-		return m.Transactions
-	}
-	return nil
-}
-
-// Clearing messages
-type Withdraw struct {
-	ID                   string   `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	Epoch                uint64   `protobuf:"varint,2,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Transaction          *Tx      `protobuf:"bytes,3,opt,name=Transaction,proto3" json:"Transaction,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Withdraw) Reset()         { *m = Withdraw{} }
-func (m *Withdraw) String() string { return proto.CompactTextString(m) }
-func (*Withdraw) ProtoMessage()    {}
-func (*Withdraw) Descriptor() ([]byte, []int) {
-	return fileDescriptor_437c556d7375b726, []int{5}
-}
-func (m *Withdraw) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *Withdraw) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	b = b[:cap(b)]
-	n, err := m.MarshalToSizedBuffer(b)
-	if err != nil {
-		return nil, err
-	}
-	return b[:n], nil
-}
-func (m *Withdraw) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Withdraw.Merge(m, src)
-}
-func (m *Withdraw) XXX_Size() int {
-	return m.Size()
-}
-func (m *Withdraw) XXX_DiscardUnknown() {
-	xxx_messageInfo_Withdraw.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Withdraw proto.InternalMessageInfo
-
-func (m *Withdraw) GetID() string {
-	if m != nil {
-		return m.ID
-	}
-	return ""
-}
-
-func (m *Withdraw) GetEpoch() uint64 {
-	if m != nil {
-		return m.Epoch
-	}
-	return 0
-}
-
-func (m *Withdraw) GetTransaction() *Tx {
-	if m != nil {
-		return m.Transaction
-	}
-	return nil
-}
-
-// Lifetime of locks
 type Lifetime struct {
-	Unit                 Lifetime_Unit `protobuf:"varint,1,opt,name=unit,proto3,enum=accounting.Lifetime_Unit" json:"unit,omitempty"`
-	Value                int64         `protobuf:"varint,2,opt,name=Value,proto3" json:"Value,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
+	// Unit describes how lifetime is measured in account
+	Unit Lifetime_Unit `protobuf:"varint,1,opt,name=unit,proto3,enum=accounting.Lifetime_Unit" json:"unit,omitempty"`
+	// Value describes how long lifetime will be valid
+	Value                int64    `protobuf:"varint,2,opt,name=Value,proto3" json:"Value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Lifetime) Reset()         { *m = Lifetime{} }
 func (m *Lifetime) String() string { return proto.CompactTextString(m) }
 func (*Lifetime) ProtoMessage()    {}
 func (*Lifetime) Descriptor() ([]byte, []int) {
-	return fileDescriptor_437c556d7375b726, []int{6}
+	return fileDescriptor_437c556d7375b726, []int{4}
 }
 func (m *Lifetime) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -504,23 +413,27 @@ func (m *Lifetime) GetValue() int64 {
 	return 0
 }
 
-// Transaction messages
 type Tx struct {
-	Type                 Tx_Type          `protobuf:"varint,1,opt,name=type,proto3,enum=accounting.Tx_Type" json:"type,omitempty"`
-	From                 string           `protobuf:"bytes,2,opt,name=From,proto3" json:"From,omitempty"`
-	To                   string           `protobuf:"bytes,3,opt,name=To,proto3" json:"To,omitempty"`
-	Amount               *decimal.Decimal `protobuf:"bytes,4,opt,name=Amount,proto3" json:"Amount,omitempty"`
-	PublicKeys           []byte           `protobuf:"bytes,5,opt,name=PublicKeys,proto3" json:"PublicKeys,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
+	// Type describes target of transaction
+	Type Tx_Type `protobuf:"varint,1,opt,name=type,proto3,enum=accounting.Tx_Type" json:"type,omitempty"`
+	// From describes sender of funds
+	From string `protobuf:"bytes,2,opt,name=From,proto3" json:"From,omitempty"`
+	// To describes receiver of funds
+	To string `protobuf:"bytes,3,opt,name=To,proto3" json:"To,omitempty"`
+	// Amount describes amount of funds
+	Amount *decimal.Decimal `protobuf:"bytes,4,opt,name=Amount,proto3" json:"Amount,omitempty"`
+	// PublicKeys contains public key of sender
+	PublicKeys           []byte   `protobuf:"bytes,5,opt,name=PublicKeys,proto3" json:"PublicKeys,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Tx) Reset()         { *m = Tx{} }
 func (m *Tx) String() string { return proto.CompactTextString(m) }
 func (*Tx) ProtoMessage()    {}
 func (*Tx) Descriptor() ([]byte, []int) {
-	return fileDescriptor_437c556d7375b726, []int{7}
+	return fileDescriptor_437c556d7375b726, []int{5}
 }
 func (m *Tx) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -581,7 +494,9 @@ func (m *Tx) GetPublicKeys() []byte {
 }
 
 type Settlement struct {
-	Epoch                uint64           `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	// Epoch contains an epoch when settlement was accepted
+	Epoch uint64 `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	// Transactions is a set of transactions
 	Transactions         []*Settlement_Tx `protobuf:"bytes,2,rep,name=Transactions,proto3" json:"Transactions,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
@@ -592,7 +507,7 @@ func (m *Settlement) Reset()         { *m = Settlement{} }
 func (m *Settlement) String() string { return proto.CompactTextString(m) }
 func (*Settlement) ProtoMessage()    {}
 func (*Settlement) Descriptor() ([]byte, []int) {
-	return fileDescriptor_437c556d7375b726, []int{8}
+	return fileDescriptor_437c556d7375b726, []int{6}
 }
 func (m *Settlement) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -632,7 +547,9 @@ func (m *Settlement) GetTransactions() []*Settlement_Tx {
 }
 
 type Settlement_Receiver struct {
-	To                   string           `protobuf:"bytes,1,opt,name=To,proto3" json:"To,omitempty"`
+	// To is the address of funds recipient
+	To string `protobuf:"bytes,1,opt,name=To,proto3" json:"To,omitempty"`
+	// Amount is the amount of funds that will be sent
 	Amount               *decimal.Decimal `protobuf:"bytes,2,opt,name=Amount,proto3" json:"Amount,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
@@ -643,7 +560,7 @@ func (m *Settlement_Receiver) Reset()         { *m = Settlement_Receiver{} }
 func (m *Settlement_Receiver) String() string { return proto.CompactTextString(m) }
 func (*Settlement_Receiver) ProtoMessage()    {}
 func (*Settlement_Receiver) Descriptor() ([]byte, []int) {
-	return fileDescriptor_437c556d7375b726, []int{8, 0}
+	return fileDescriptor_437c556d7375b726, []int{6, 0}
 }
 func (m *Settlement_Receiver) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -683,7 +600,9 @@ func (m *Settlement_Receiver) GetAmount() *decimal.Decimal {
 }
 
 type Settlement_Container struct {
-	CID                  CID      `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
+	// CID is container identifier
+	CID CID `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
+	// SGIDs is a set of storage groups that successfully passed the audit
 	SGIDs                []SGID   `protobuf:"bytes,2,rep,name=SGIDs,proto3,customtype=SGID" json:"SGIDs"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -694,7 +613,7 @@ func (m *Settlement_Container) Reset()         { *m = Settlement_Container{} }
 func (m *Settlement_Container) String() string { return proto.CompactTextString(m) }
 func (*Settlement_Container) ProtoMessage()    {}
 func (*Settlement_Container) Descriptor() ([]byte, []int) {
-	return fileDescriptor_437c556d7375b726, []int{8, 1}
+	return fileDescriptor_437c556d7375b726, []int{6, 1}
 }
 func (m *Settlement_Container) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -720,8 +639,11 @@ func (m *Settlement_Container) XXX_DiscardUnknown() {
 var xxx_messageInfo_Settlement_Container proto.InternalMessageInfo
 
 type Settlement_Tx struct {
-	From                 string                `protobuf:"bytes,1,opt,name=From,proto3" json:"From,omitempty"`
-	Container            Settlement_Container  `protobuf:"bytes,2,opt,name=Container,proto3" json:"Container"`
+	// From is the address of the sender of funds
+	From string `protobuf:"bytes,1,opt,name=From,proto3" json:"From,omitempty"`
+	// Container that successfully had passed the audit
+	Container Settlement_Container `protobuf:"bytes,2,opt,name=Container,proto3" json:"Container"`
+	// Receivers is a set of addresses of funds recipients
 	Receivers            []Settlement_Receiver `protobuf:"bytes,3,rep,name=Receivers,proto3" json:"Receivers"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
@@ -732,7 +654,7 @@ func (m *Settlement_Tx) Reset()         { *m = Settlement_Tx{} }
 func (m *Settlement_Tx) String() string { return proto.CompactTextString(m) }
 func (*Settlement_Tx) ProtoMessage()    {}
 func (*Settlement_Tx) Descriptor() ([]byte, []int) {
-	return fileDescriptor_437c556d7375b726, []int{8, 2}
+	return fileDescriptor_437c556d7375b726, []int{6, 2}
 }
 func (m *Settlement_Tx) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -779,6 +701,7 @@ func (m *Settlement_Tx) GetReceivers() []Settlement_Receiver {
 }
 
 type ContainerCreateTarget struct {
+	// CID is container identifier
 	CID                  CID      `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -789,7 +712,7 @@ func (m *ContainerCreateTarget) Reset()         { *m = ContainerCreateTarget{} }
 func (m *ContainerCreateTarget) String() string { return proto.CompactTextString(m) }
 func (*ContainerCreateTarget) ProtoMessage()    {}
 func (*ContainerCreateTarget) Descriptor() ([]byte, []int) {
-	return fileDescriptor_437c556d7375b726, []int{9}
+	return fileDescriptor_437c556d7375b726, []int{7}
 }
 func (m *ContainerCreateTarget) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -815,6 +738,7 @@ func (m *ContainerCreateTarget) XXX_DiscardUnknown() {
 var xxx_messageInfo_ContainerCreateTarget proto.InternalMessageInfo
 
 type WithdrawTarget struct {
+	// Cheque is a string representation of cheque id
 	Cheque               string   `protobuf:"bytes,1,opt,name=Cheque,proto3" json:"Cheque,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -825,7 +749,7 @@ func (m *WithdrawTarget) Reset()         { *m = WithdrawTarget{} }
 func (m *WithdrawTarget) String() string { return proto.CompactTextString(m) }
 func (*WithdrawTarget) ProtoMessage()    {}
 func (*WithdrawTarget) Descriptor() ([]byte, []int) {
-	return fileDescriptor_437c556d7375b726, []int{10}
+	return fileDescriptor_437c556d7375b726, []int{8}
 }
 func (m *WithdrawTarget) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -864,8 +788,6 @@ func init() {
 	proto.RegisterType((*LockTarget)(nil), "accounting.LockTarget")
 	proto.RegisterType((*Balances)(nil), "accounting.Balances")
 	proto.RegisterType((*PayIO)(nil), "accounting.PayIO")
-	proto.RegisterType((*Clearing)(nil), "accounting.Clearing")
-	proto.RegisterType((*Withdraw)(nil), "accounting.Withdraw")
 	proto.RegisterType((*Lifetime)(nil), "accounting.Lifetime")
 	proto.RegisterType((*Tx)(nil), "accounting.Tx")
 	proto.RegisterType((*Settlement)(nil), "accounting.Settlement")
@@ -879,62 +801,59 @@ func init() {
 func init() { proto.RegisterFile("accounting/types.proto", fileDescriptor_437c556d7375b726) }
 
 var fileDescriptor_437c556d7375b726 = []byte{
-	// 866 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x55, 0x4d, 0x73, 0x22, 0x45,
-	0x18, 0xa6, 0x87, 0x09, 0x0c, 0x2f, 0x2c, 0x52, 0xbd, 0xbb, 0x29, 0xa4, 0x4a, 0x82, 0x53, 0x1e,
-	0xb0, 0xac, 0x80, 0x66, 0xcb, 0xc4, 0x8b, 0x07, 0x3e, 0x8c, 0x4b, 0xb9, 0x95, 0x4d, 0x75, 0x88,
-	0x96, 0x7a, 0x1a, 0x86, 0x0e, 0xe9, 0x0a, 0x74, 0xe3, 0x4c, 0x93, 0x6c, 0xfe, 0x84, 0x67, 0x2f,
-	0x9e, 0xfc, 0x11, 0xfe, 0x85, 0x3d, 0xea, 0xcd, 0xf2, 0x90, 0xb2, 0xf0, 0x8f, 0x58, 0xdd, 0xd3,
-	0x33, 0xcc, 0xec, 0x82, 0x7a, 0x81, 0xf7, 0xe3, 0x79, 0x9f, 0x7e, 0xbf, 0xba, 0x07, 0xf6, 0x3d,
-	0xdf, 0x17, 0x2b, 0x2e, 0x19, 0x9f, 0x75, 0xe5, 0xfd, 0x92, 0x86, 0x9d, 0x65, 0x20, 0xa4, 0xc0,
-	0xb0, 0xb1, 0x37, 0x9e, 0x4e, 0xa9, 0xcf, 0x16, 0xde, 0xbc, 0x6b, 0xfe, 0x23, 0x48, 0xe3, 0x70,
-	0xc6, 0xe4, 0xf5, 0x6a, 0xd2, 0xf1, 0xc5, 0xa2, 0x3b, 0x13, 0x33, 0xd1, 0xd5, 0xe6, 0xc9, 0xea,
-	0x4a, 0x6b, 0x5a, 0xd1, 0x52, 0x04, 0x77, 0x7f, 0xb7, 0xa0, 0xd8, 0x8b, 0x48, 0xf1, 0x87, 0x50,
-	0x7c, 0x79, 0xc7, 0x69, 0x30, 0x1a, 0xd6, 0x51, 0x0b, 0xb5, 0x2b, 0xfd, 0x77, 0x5e, 0x3f, 0x1c,
-	0xe4, 0xfe, 0x7c, 0x38, 0x88, 0xcd, 0x24, 0x16, 0x70, 0x1d, 0x8a, 0xbd, 0xe9, 0x34, 0xa0, 0x61,
-	0x58, 0xb7, 0x5a, 0xa8, 0x5d, 0x22, 0xb1, 0x8a, 0x3f, 0x80, 0x47, 0xe7, 0x5e, 0x40, 0xb9, 0x8c,
-	0xfd, 0x79, 0xed, 0xcf, 0x1a, 0xf1, 0x11, 0x94, 0x7b, 0xbe, 0x64, 0xb7, 0xf4, 0x74, 0xc5, 0xa7,
-	0x61, 0xdd, 0x6e, 0xa1, 0x76, 0xf9, 0xa8, 0xd6, 0x89, 0x4b, 0x19, 0x46, 0xff, 0x24, 0x0d, 0xc2,
-	0xc7, 0xe0, 0xbc, 0x60, 0x57, 0x54, 0xb2, 0x05, 0xad, 0xef, 0xe9, 0x80, 0x27, 0x9d, 0x4d, 0x3f,
-	0x3a, 0xb1, 0xaf, 0x6f, 0xab, 0xac, 0x49, 0x82, 0xc5, 0xc7, 0x00, 0x2f, 0x84, 0x7f, 0x33, 0xf6,
-	0x82, 0x19, 0x95, 0xf5, 0x82, 0x8e, 0xdc, 0xcf, 0x44, 0x26, 0x5e, 0x92, 0x42, 0xe2, 0x13, 0xa8,
-	0x28, 0xcd, 0x74, 0x27, 0xac, 0x17, 0x5b, 0xf9, 0x76, 0xf9, 0xe8, 0x71, 0x3a, 0xd2, 0xf8, 0x48,
-	0x06, 0xe8, 0xfe, 0x8a, 0xd2, 0x27, 0xe2, 0x21, 0x54, 0xbf, 0x61, 0xf2, 0x7a, 0x1a, 0x78, 0x77,
-	0x26, 0x07, 0xa4, 0x73, 0x68, 0xa4, 0x99, 0xb2, 0x88, 0xe7, 0x39, 0xf2, 0x46, 0x0c, 0xfe, 0x16,
-	0x9e, 0x0e, 0x04, 0x97, 0x1e, 0xe3, 0x34, 0x18, 0x04, 0xd4, 0x93, 0xd4, 0x90, 0x59, 0x9a, 0xec,
-	0xfd, 0x34, 0xd9, 0x56, 0xe0, 0xf3, 0x1c, 0xd9, 0xce, 0xd0, 0x77, 0xa0, 0x10, 0x49, 0x6e, 0x0f,
-	0x9c, 0xbe, 0x37, 0xf7, 0xb8, 0x4f, 0x43, 0xfc, 0x29, 0x38, 0x49, 0xe9, 0x68, 0x67, 0xe9, 0x71,
-	0xb7, 0x93, 0xe2, 0xbf, 0x87, 0xbd, 0x73, 0xef, 0x7e, 0xf4, 0x52, 0xad, 0x48, 0x7f, 0x2e, 0xfc,
-	0x1b, 0xb3, 0x4d, 0x36, 0x89, 0x55, 0xfc, 0x19, 0x54, 0xc6, 0x81, 0xc7, 0x43, 0xcf, 0x97, 0x4c,
-	0x70, 0xb5, 0x41, 0x8a, 0xbd, 0x9a, 0x66, 0x1f, 0xbf, 0x32, 0xc4, 0x19, 0xa4, 0x3b, 0x04, 0x67,
-	0x30, 0xa7, 0x5e, 0xc0, 0xf8, 0xec, 0x2d, 0x16, 0xf4, 0xbf, 0x59, 0x26, 0xe0, 0xc4, 0xcd, 0xc5,
-	0x55, 0xb0, 0x4c, 0x82, 0x25, 0x62, 0x8d, 0x86, 0xf8, 0x09, 0xec, 0x7d, 0xb1, 0x14, 0xfe, 0xb5,
-	0x6e, 0xab, 0x4d, 0x22, 0x05, 0x7f, 0x0c, 0xe5, 0x14, 0x83, 0x5e, 0xe9, 0xb7, 0x8e, 0x22, 0x69,
-	0x88, 0xfb, 0x23, 0xda, 0x6c, 0x2b, 0x3e, 0x01, 0x7b, 0xc5, 0x59, 0x34, 0xf7, 0xea, 0xd1, 0xbb,
-	0xdb, 0xb6, 0xb6, 0x73, 0xc9, 0x99, 0xec, 0x3b, 0xeb, 0x87, 0x03, 0x5b, 0x49, 0x44, 0x07, 0xa8,
-	0x6c, 0xbe, 0xf6, 0xe6, 0x2b, 0xaa, 0xb3, 0xc9, 0x93, 0x48, 0x71, 0x9f, 0x81, 0xc6, 0xe0, 0x47,
-	0x50, 0xba, 0xe4, 0x73, 0xb6, 0x60, 0x92, 0x4e, 0x6b, 0x39, 0x5c, 0x05, 0x38, 0xa3, 0xe2, 0xf4,
-	0x42, 0xa7, 0x5c, 0x43, 0xb8, 0x02, 0xce, 0x19, 0x15, 0xba, 0xe9, 0x35, 0xcb, 0x7d, 0x40, 0x60,
-	0x8d, 0x5f, 0xe1, 0x4f, 0xc0, 0x56, 0x0f, 0x8a, 0x49, 0xe5, 0x71, 0xb6, 0x84, 0xce, 0xf8, 0x7e,
-	0x49, 0xa3, 0x24, 0x94, 0x44, 0x34, 0x14, 0x63, 0xb0, 0x4f, 0x03, 0xb1, 0x30, 0x17, 0x5d, 0xcb,
-	0xaa, 0x6d, 0x63, 0x61, 0xae, 0xb6, 0x35, 0x16, 0xb8, 0x0d, 0x85, 0xde, 0x42, 0x11, 0xed, 0xbc,
-	0xca, 0xc6, 0x8f, 0x9b, 0x00, 0xe7, 0xab, 0xc9, 0x9c, 0xf9, 0x5f, 0xd1, 0xfb, 0x50, 0xdf, 0xe3,
-	0x0a, 0x49, 0x59, 0xdc, 0x13, 0xd0, 0x67, 0xe3, 0x32, 0x14, 0x2f, 0xf9, 0x0d, 0x17, 0x77, 0xbc,
-	0x96, 0x53, 0xa5, 0xc4, 0x13, 0xab, 0x21, 0x5c, 0x32, 0x2b, 0x56, 0xb3, 0x94, 0x38, 0xe2, 0x9c,
-	0x06, 0xb5, 0xbc, 0xfb, 0x73, 0x1e, 0xe0, 0x82, 0x4a, 0x39, 0xa7, 0x0b, 0xca, 0xe5, 0x66, 0x90,
-	0x28, 0x3d, 0xc8, 0xcf, 0xb7, 0xae, 0x5e, 0x66, 0x22, 0x1b, 0x0e, 0x35, 0xd4, 0x0c, 0xbc, 0x31,
-	0x04, 0x87, 0x50, 0x9f, 0xb2, 0x5b, 0x1a, 0x98, 0x16, 0xa0, 0x2d, 0x2d, 0xb0, 0xfe, 0xbd, 0x05,
-	0x8d, 0x33, 0x28, 0x25, 0x17, 0x11, 0xbf, 0x07, 0xf9, 0x41, 0xf2, 0xe0, 0x96, 0xcd, 0x83, 0xab,
-	0x4c, 0x44, 0xfd, 0x60, 0x17, 0xf6, 0x2e, 0xbe, 0x1c, 0x0d, 0xa3, 0x4c, 0x2b, 0xfd, 0x8a, 0x01,
-	0xd8, 0xca, 0x48, 0x22, 0x57, 0xe3, 0x97, 0x68, 0xb4, 0xf1, 0x9c, 0x50, 0x6a, 0x4e, 0xc3, 0xd4,
-	0x51, 0x26, 0xaf, 0xd6, 0x8e, 0x62, 0x13, 0x9c, 0xb9, 0x33, 0xa9, 0x1c, 0x07, 0x50, 0x8a, 0xcb,
-	0x56, 0xef, 0xb9, 0x6a, 0xd9, 0xc1, 0x0e, 0x96, 0x18, 0x17, 0x93, 0x24, 0x71, 0xee, 0xf1, 0x8e,
-	0x07, 0xec, 0x3f, 0x3a, 0xe0, 0xb6, 0xdf, 0x7c, 0x3e, 0xf1, 0x3e, 0x14, 0x06, 0xd7, 0xf4, 0x87,
-	0x15, 0x35, 0xa5, 0x1a, 0xad, 0xdf, 0x7b, 0xbd, 0x6e, 0xa2, 0xdf, 0xd6, 0x4d, 0xf4, 0xc7, 0xba,
-	0x89, 0xfe, 0x5a, 0x37, 0xd1, 0x4f, 0x7f, 0x37, 0x73, 0xdf, 0x7d, 0x94, 0xfa, 0x20, 0xf2, 0x70,
-	0xe9, 0xfb, 0x87, 0x53, 0x7a, 0xdb, 0xe5, 0x54, 0x5c, 0x85, 0x87, 0xd1, 0xe7, 0x70, 0x53, 0xc9,
-	0xa4, 0xa0, 0x2d, 0xcf, 0xfe, 0x09, 0x00, 0x00, 0xff, 0xff, 0x66, 0x69, 0x27, 0xa6, 0x81, 0x07,
-	0x00, 0x00,
+	// 821 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x55, 0x4d, 0x6f, 0xe3, 0x44,
+	0x18, 0xce, 0x38, 0x69, 0x3e, 0xde, 0x64, 0x83, 0x35, 0xbb, 0x5b, 0x85, 0x48, 0xa4, 0xc1, 0xe2,
+	0x10, 0x84, 0xea, 0x88, 0xae, 0x68, 0xb9, 0x70, 0x88, 0x13, 0xca, 0x56, 0xac, 0xba, 0xd5, 0xd4,
+	0x05, 0x01, 0x27, 0xd7, 0x99, 0xa6, 0x56, 0x93, 0x99, 0x60, 0x8f, 0xfb, 0xf1, 0x27, 0x38, 0x73,
+	0xe1, 0xc4, 0x8f, 0xe0, 0x2f, 0xec, 0x11, 0x6e, 0x88, 0x43, 0x85, 0xc2, 0x1f, 0x41, 0x33, 0x1e,
+	0x3b, 0x76, 0x95, 0xc0, 0x25, 0x79, 0x3f, 0x9e, 0xf7, 0x99, 0xf7, 0x6b, 0xc6, 0xb0, 0xeb, 0xf9,
+	0x3e, 0x8f, 0x99, 0x08, 0xd8, 0x6c, 0x28, 0x1e, 0x96, 0x34, 0xb2, 0x97, 0x21, 0x17, 0x1c, 0xc3,
+	0xda, 0xde, 0x7d, 0x39, 0xa5, 0x7e, 0xb0, 0xf0, 0xe6, 0x43, 0xfd, 0x9f, 0x40, 0xba, 0xfb, 0xb3,
+	0x40, 0x5c, 0xc7, 0x97, 0xb6, 0xcf, 0x17, 0xc3, 0x19, 0x9f, 0xf1, 0xa1, 0x32, 0x5f, 0xc6, 0x57,
+	0x4a, 0x53, 0x8a, 0x92, 0x12, 0xb8, 0xf5, 0x87, 0x01, 0xb5, 0x51, 0x42, 0x8a, 0x3f, 0x86, 0xda,
+	0xdb, 0x3b, 0x46, 0xc3, 0x93, 0x49, 0x07, 0xf5, 0xd1, 0xa0, 0xe5, 0xbc, 0xf7, 0xee, 0x71, 0xaf,
+	0xf4, 0xd7, 0xe3, 0x5e, 0x6a, 0x26, 0xa9, 0x80, 0x3b, 0x50, 0x1b, 0x4d, 0xa7, 0x21, 0x8d, 0xa2,
+	0x8e, 0xd1, 0x47, 0x83, 0x06, 0x49, 0x55, 0xfc, 0x11, 0x3c, 0x3b, 0xf3, 0x42, 0xca, 0x44, 0xea,
+	0x2f, 0x2b, 0x7f, 0xd1, 0x88, 0x0f, 0xa0, 0x39, 0xf2, 0x45, 0x70, 0x4b, 0x8f, 0x63, 0x36, 0x8d,
+	0x3a, 0x95, 0x3e, 0x1a, 0x34, 0x0f, 0x4c, 0x3b, 0x2d, 0x65, 0x92, 0xfc, 0x93, 0x3c, 0x08, 0x1f,
+	0x42, 0xfd, 0x4d, 0x70, 0x45, 0x45, 0xb0, 0xa0, 0x9d, 0x1d, 0x15, 0xf0, 0xc2, 0x5e, 0xf7, 0xc3,
+	0x4e, 0x7d, 0x4e, 0x45, 0x66, 0x4d, 0x32, 0x2c, 0x3e, 0x04, 0x78, 0xc3, 0xfd, 0x1b, 0xd7, 0x0b,
+	0x67, 0x54, 0x74, 0xaa, 0x2a, 0x72, 0xb7, 0x10, 0x99, 0x79, 0x49, 0x0e, 0x89, 0x8f, 0xa0, 0x25,
+	0x35, 0xdd, 0x9d, 0xa8, 0x53, 0xeb, 0x97, 0x07, 0xcd, 0x83, 0xe7, 0xf9, 0x48, 0xed, 0x23, 0x05,
+	0xa0, 0xf5, 0x1b, 0xca, 0x9f, 0x88, 0x27, 0xd0, 0xfe, 0x36, 0x10, 0xd7, 0xd3, 0xd0, 0xbb, 0xd3,
+	0x39, 0x20, 0x95, 0x43, 0x37, 0xcf, 0x54, 0x44, 0xbc, 0x2e, 0x91, 0x27, 0x31, 0xf8, 0x3b, 0x78,
+	0x39, 0xe6, 0x4c, 0x78, 0x01, 0xa3, 0xe1, 0x38, 0xa4, 0x9e, 0xa0, 0x9a, 0xcc, 0x50, 0x64, 0x1f,
+	0xe6, 0xc9, 0x36, 0x02, 0x5f, 0x97, 0xc8, 0x66, 0x06, 0xa7, 0x0e, 0xd5, 0x44, 0xb2, 0x46, 0x50,
+	0x77, 0xbc, 0xb9, 0xc7, 0x7c, 0x1a, 0xe1, 0xcf, 0xa0, 0x9e, 0x95, 0x8e, 0xb6, 0x96, 0x9e, 0x76,
+	0x3b, 0x2b, 0xfe, 0x07, 0xd8, 0x39, 0xf3, 0x1e, 0x4e, 0xde, 0xca, 0x15, 0x71, 0xe6, 0xdc, 0xbf,
+	0xd1, 0xdb, 0x54, 0x21, 0xa9, 0x8a, 0x3f, 0x87, 0x96, 0x1b, 0x7a, 0x2c, 0xf2, 0x7c, 0x11, 0x70,
+	0x26, 0x37, 0x48, 0xb2, 0xb7, 0xf3, 0xec, 0xee, 0xbd, 0x26, 0x2e, 0x20, 0xad, 0x9f, 0xd0, 0x7a,
+	0x07, 0xf0, 0x11, 0x54, 0x62, 0x16, 0x24, 0xdd, 0x6c, 0x1f, 0xbc, 0xbf, 0x69, 0x17, 0xec, 0x0b,
+	0x16, 0x08, 0xa7, 0xbe, 0x7a, 0xdc, 0xab, 0x48, 0x89, 0xa8, 0x00, 0xfc, 0x02, 0x76, 0xbe, 0xf1,
+	0xe6, 0x31, 0x55, 0xad, 0x2b, 0x93, 0x44, 0xb1, 0x5e, 0x81, 0xc2, 0xe0, 0x67, 0xd0, 0xb8, 0x60,
+	0xf3, 0x60, 0x11, 0x08, 0x3a, 0x35, 0x4b, 0xb8, 0x0d, 0x70, 0x4a, 0xf9, 0xf1, 0xf9, 0x97, 0x4b,
+	0xee, 0x5f, 0x9b, 0x08, 0xb7, 0xa0, 0x7e, 0x4a, 0xb9, 0x2a, 0xc5, 0x34, 0xac, 0x47, 0x04, 0x86,
+	0x7b, 0x8f, 0x3f, 0x85, 0x8a, 0xbc, 0xa6, 0x3a, 0x95, 0xe7, 0xc5, 0x4a, 0x6c, 0xf7, 0x61, 0x49,
+	0x93, 0x24, 0xa4, 0x44, 0x14, 0x14, 0x63, 0xa8, 0x1c, 0x87, 0x7c, 0xa1, 0xaf, 0x8f, 0x92, 0x71,
+	0x1b, 0x0c, 0x97, 0xeb, 0x0b, 0x63, 0xb8, 0x1c, 0x0f, 0xa0, 0x3a, 0x5a, 0x48, 0xa2, 0xad, 0x17,
+	0x44, 0xfb, 0x71, 0x0f, 0xe0, 0x2c, 0xbe, 0x9c, 0x07, 0xfe, 0xd7, 0xf4, 0x21, 0x52, 0xb7, 0xa3,
+	0x45, 0x72, 0x16, 0xeb, 0x08, 0xd4, 0xd9, 0xb8, 0x09, 0xb5, 0x0b, 0x76, 0xc3, 0xf8, 0x1d, 0x33,
+	0x4b, 0xb2, 0x94, 0x74, 0xc9, 0x4c, 0x84, 0x1b, 0x7a, 0x70, 0xa6, 0x21, 0xc5, 0x13, 0xc6, 0x68,
+	0x68, 0x96, 0xad, 0x5f, 0xca, 0x00, 0xe7, 0x54, 0x88, 0x39, 0x5d, 0x50, 0xa6, 0x5a, 0xa7, 0x1a,
+	0xa1, 0x47, 0x9a, 0x28, 0xf8, 0x8b, 0x8d, 0x03, 0x2d, 0x4c, 0x64, 0xcd, 0x61, 0xbb, 0xf7, 0xc5,
+	0xa9, 0x76, 0x27, 0x50, 0x27, 0xd4, 0xa7, 0xc1, 0x2d, 0x0d, 0x75, 0x0b, 0xd0, 0x86, 0x16, 0x18,
+	0xff, 0xdd, 0x82, 0xee, 0x29, 0x34, 0xb2, 0xf5, 0xc6, 0x1f, 0x40, 0x79, 0x9c, 0x3d, 0x63, 0x4d,
+	0xfd, 0x8c, 0x49, 0x13, 0x91, 0x3f, 0xd8, 0x82, 0x9d, 0xf3, 0xaf, 0x4e, 0x26, 0x49, 0xa6, 0x2d,
+	0xa7, 0xa5, 0x01, 0x15, 0x69, 0x24, 0x89, 0xab, 0xfb, 0x6b, 0x32, 0xda, 0x74, 0x4e, 0x28, 0x37,
+	0xa7, 0x49, 0xee, 0x28, 0x9d, 0x57, 0x7f, 0x4b, 0xb1, 0x19, 0x4e, 0xef, 0x73, 0x2e, 0xc7, 0x31,
+	0x34, 0xd2, 0xb2, 0xe5, 0x2b, 0x29, 0x5b, 0xb6, 0xb7, 0x85, 0x25, 0xc5, 0xa5, 0x24, 0x59, 0x9c,
+	0x75, 0xb8, 0xe5, 0x59, 0xf8, 0x9f, 0x0e, 0x58, 0x83, 0xa7, 0x8f, 0x12, 0xde, 0x85, 0xea, 0xf8,
+	0x9a, 0xfe, 0x18, 0x53, 0x5d, 0xaa, 0xd6, 0x9c, 0xd1, 0xbb, 0x55, 0x0f, 0xfd, 0xbe, 0xea, 0xa1,
+	0x3f, 0x57, 0x3d, 0xf4, 0xf7, 0xaa, 0x87, 0x7e, 0xfe, 0xa7, 0x57, 0xfa, 0xfe, 0x93, 0xdc, 0x67,
+	0x86, 0x45, 0x4b, 0xdf, 0xdf, 0x9f, 0xd2, 0xdb, 0x21, 0xa3, 0xfc, 0x2a, 0xda, 0x4f, 0x3e, 0x32,
+	0xeb, 0x4a, 0x2e, 0xab, 0xca, 0xf2, 0xea, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x3c, 0x2d, 0x7e,
+	0x6b, 0xd7, 0x06, 0x00, 0x00,
 }
 
 func (m *Account) Marshal() (dAtA []byte, err error) {
@@ -1197,98 +1116,6 @@ func (m *PayIO) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintTypes(dAtA, i, uint64(m.BlockID))
 		i--
 		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *Clearing) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Clearing) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Clearing) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.Transactions) > 0 {
-		for iNdEx := len(m.Transactions) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Transactions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintTypes(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *Withdraw) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Withdraw) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Withdraw) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Transaction != nil {
-		{
-			size, err := m.Transaction.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintTypes(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.Epoch != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.Epoch))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.ID) > 0 {
-		i -= len(m.ID)
-		copy(dAtA[i:], m.ID)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.ID)))
-		i--
-		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -1787,47 +1614,6 @@ func (m *PayIO) Size() (n int) {
 			l = e.Size()
 			n += 1 + l + sovTypes(uint64(l))
 		}
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *Clearing) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.Transactions) > 0 {
-		for _, e := range m.Transactions {
-			l = e.Size()
-			n += 1 + l + sovTypes(uint64(l))
-		}
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *Withdraw) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.ID)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	if m.Epoch != 0 {
-		n += 1 + sovTypes(uint64(m.Epoch))
-	}
-	if m.Transaction != nil {
-		l = m.Transaction.Size()
-		n += 1 + l + sovTypes(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -2586,235 +2372,6 @@ func (m *PayIO) Unmarshal(dAtA []byte) error {
 			}
 			m.Transactions = append(m.Transactions, Tx{})
 			if err := m.Transactions[len(m.Transactions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypes(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Clearing) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Clearing: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Clearing: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Transactions", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Transactions = append(m.Transactions, Tx{})
-			if err := m.Transactions[len(m.Transactions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypes(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Withdraw) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Withdraw: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Withdraw: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ID = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Epoch", wireType)
-			}
-			m.Epoch = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Epoch |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Transaction", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Transaction == nil {
-				m.Transaction = &Tx{}
-			}
-			if err := m.Transaction.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
