@@ -7,10 +7,14 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
 
-// The Status service definition.
+// Status service provides node's healthcheck and status info
 service Status {
+    // Netmap request allows to receive current [bootstrap.SpreadMap](bootstrap.md#bootstrap.SpreadMap)
     rpc Netmap(NetmapRequest) returns (bootstrap.SpreadMap);
+    // Metrics request allows to receive metrics in prometheus format
     rpc Metrics(MetricsRequest) returns (MetricsResponse);
+    // HealthCheck request allows to check health status of the node.
+    // If node unhealthy field Status would contains detailed info.
     rpc HealthCheck(HealthRequest) returns (HealthResponse);
 }
 
@@ -32,6 +36,8 @@ message HealthRequest {}
 
 // HealthResponse message with current state
 message HealthResponse {
+    // Healthy is true when node alive and healthy
     bool Healthy  = 1;
+    // Status contains detailed information about health status
     string Status = 2;
 }
