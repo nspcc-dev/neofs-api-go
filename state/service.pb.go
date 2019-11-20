@@ -184,7 +184,9 @@ var xxx_messageInfo_HealthRequest proto.InternalMessageInfo
 
 // HealthResponse message with current state
 type HealthResponse struct {
-	Healthy              bool     `protobuf:"varint,1,opt,name=Healthy,proto3" json:"Healthy,omitempty"`
+	// Healthy is true when node alive and healthy
+	Healthy bool `protobuf:"varint,1,opt,name=Healthy,proto3" json:"Healthy,omitempty"`
+	// Status contains detailed information about health status
 	Status               string   `protobuf:"bytes,2,opt,name=Status,proto3" json:"Status,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -280,8 +282,12 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type StatusClient interface {
+	// Netmap request allows to receive current [bootstrap.SpreadMap](bootstrap.md#bootstrap.SpreadMap)
 	Netmap(ctx context.Context, in *NetmapRequest, opts ...grpc.CallOption) (*bootstrap.SpreadMap, error)
+	// Metrics request allows to receive metrics in prometheus format
 	Metrics(ctx context.Context, in *MetricsRequest, opts ...grpc.CallOption) (*MetricsResponse, error)
+	// HealthCheck request allows to check health status of the node.
+	// If node unhealthy field Status would contains detailed info.
 	HealthCheck(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error)
 }
 
@@ -322,8 +328,12 @@ func (c *statusClient) HealthCheck(ctx context.Context, in *HealthRequest, opts 
 
 // StatusServer is the server API for Status service.
 type StatusServer interface {
+	// Netmap request allows to receive current [bootstrap.SpreadMap](bootstrap.md#bootstrap.SpreadMap)
 	Netmap(context.Context, *NetmapRequest) (*bootstrap.SpreadMap, error)
+	// Metrics request allows to receive metrics in prometheus format
 	Metrics(context.Context, *MetricsRequest) (*MetricsResponse, error)
+	// HealthCheck request allows to check health status of the node.
+	// If node unhealthy field Status would contains detailed info.
 	HealthCheck(context.Context, *HealthRequest) (*HealthResponse, error)
 }
 

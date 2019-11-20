@@ -29,14 +29,19 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type Item struct {
-	ID                   ChequeID         `protobuf:"bytes,1,opt,name=ID,proto3,customtype=ChequeID" json:"ID"`
-	OwnerID              OwnerID          `protobuf:"bytes,2,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
-	Amount               *decimal.Decimal `protobuf:"bytes,3,opt,name=Amount,proto3" json:"Amount,omitempty"`
-	Height               uint64           `protobuf:"varint,4,opt,name=Height,proto3" json:"Height,omitempty"`
-	Payload              []byte           `protobuf:"bytes,5,opt,name=Payload,proto3" json:"Payload,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
+	// ID is a cheque identifier
+	ID ChequeID `protobuf:"bytes,1,opt,name=ID,proto3,customtype=ChequeID" json:"ID"`
+	// OwnerID is a wallet address
+	OwnerID OwnerID `protobuf:"bytes,2,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// Amount of funds
+	Amount *decimal.Decimal `protobuf:"bytes,3,opt,name=Amount,proto3" json:"Amount,omitempty"`
+	// Height is the neo blockchain height until the cheque is valid
+	Height uint64 `protobuf:"varint,4,opt,name=Height,proto3" json:"Height,omitempty"`
+	// Payload contains cheque representation in bytes
+	Payload              []byte   `protobuf:"bytes,5,opt,name=Payload,proto3" json:"Payload,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Item) Reset()         { *m = Item{} }
@@ -90,8 +95,11 @@ func (m *Item) GetPayload() []byte {
 }
 
 type GetRequest struct {
-	ID                   ChequeID `protobuf:"bytes,1,opt,name=ID,proto3,customtype=ChequeID" json:"ID"`
-	OwnerID              OwnerID  `protobuf:"bytes,2,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// ID is cheque identifier
+	ID ChequeID `protobuf:"bytes,1,opt,name=ID,proto3,customtype=ChequeID" json:"ID"`
+	// OwnerID is a wallet address
+	OwnerID OwnerID `protobuf:"bytes,2,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// TTL must be larger than zero, it decreased in every neofs-node
 	TTL                  uint32   `protobuf:"varint,3,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -135,6 +143,7 @@ func (m *GetRequest) GetTTL() uint32 {
 }
 
 type GetResponse struct {
+	// Item is cheque with meta information
 	Withdraw             *Item    `protobuf:"bytes,1,opt,name=Withdraw,proto3" json:"Withdraw,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -178,15 +187,21 @@ func (m *GetResponse) GetWithdraw() *Item {
 }
 
 type PutRequest struct {
-	OwnerID              OwnerID          `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
-	Amount               *decimal.Decimal `protobuf:"bytes,2,opt,name=Amount,proto3" json:"Amount,omitempty"`
-	Height               uint64           `protobuf:"varint,3,opt,name=Height,proto3" json:"Height,omitempty"`
-	MessageID            MessageID        `protobuf:"bytes,4,opt,name=MessageID,proto3,customtype=MessageID" json:"MessageID"`
-	Signature            []byte           `protobuf:"bytes,5,opt,name=Signature,proto3" json:"Signature,omitempty"`
-	TTL                  uint32           `protobuf:"varint,6,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
+	// OwnerID is a wallet address
+	OwnerID OwnerID `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// Amount of funds
+	Amount *decimal.Decimal `protobuf:"bytes,2,opt,name=Amount,proto3" json:"Amount,omitempty"`
+	// Height is the neo blockchain height until the cheque is valid
+	Height uint64 `protobuf:"varint,3,opt,name=Height,proto3" json:"Height,omitempty"`
+	// MessageID is a nonce for uniq request (UUIDv4)
+	MessageID MessageID `protobuf:"bytes,4,opt,name=MessageID,proto3,customtype=MessageID" json:"MessageID"`
+	// Signature is a signature of the sent request
+	Signature []byte `protobuf:"bytes,5,opt,name=Signature,proto3" json:"Signature,omitempty"`
+	// TTL must be larger than zero, it decreased in every neofs-node
+	TTL                  uint32   `protobuf:"varint,6,opt,name=TTL,proto3" json:"TTL,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *PutRequest) Reset()         { *m = PutRequest{} }
@@ -247,6 +262,7 @@ func (m *PutRequest) GetTTL() uint32 {
 }
 
 type PutResponse struct {
+	// ID is cheque identifier
 	ID                   ChequeID `protobuf:"bytes,1,opt,name=ID,proto3,customtype=ChequeID" json:"ID"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -283,7 +299,9 @@ func (m *PutResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_PutResponse proto.InternalMessageInfo
 
 type ListRequest struct {
-	OwnerID              OwnerID  `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// OwnerID is a wallet address
+	OwnerID OwnerID `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// TTL must be larger than zero, it decreased in every neofs-node
 	TTL                  uint32   `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -327,6 +345,7 @@ func (m *ListRequest) GetTTL() uint32 {
 }
 
 type ListResponse struct {
+	// Item is a set of cheques with meta information
 	Items                []*Item  `protobuf:"bytes,1,rep,name=Items,proto3" json:"Items,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -370,14 +389,19 @@ func (m *ListResponse) GetItems() []*Item {
 }
 
 type DeleteRequest struct {
-	ID                   ChequeID  `protobuf:"bytes,1,opt,name=ID,proto3,customtype=ChequeID" json:"ID"`
-	OwnerID              OwnerID   `protobuf:"bytes,2,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
-	MessageID            MessageID `protobuf:"bytes,3,opt,name=MessageID,proto3,customtype=MessageID" json:"MessageID"`
-	Signature            []byte    `protobuf:"bytes,4,opt,name=Signature,proto3" json:"Signature,omitempty"`
-	TTL                  uint32    `protobuf:"varint,5,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
-	XXX_unrecognized     []byte    `json:"-"`
-	XXX_sizecache        int32     `json:"-"`
+	// ID is cheque identifier
+	ID ChequeID `protobuf:"bytes,1,opt,name=ID,proto3,customtype=ChequeID" json:"ID"`
+	// OwnerID is a wallet address
+	OwnerID OwnerID `protobuf:"bytes,2,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// MessageID is a nonce for uniq request (UUIDv4)
+	MessageID MessageID `protobuf:"bytes,3,opt,name=MessageID,proto3,customtype=MessageID" json:"MessageID"`
+	// Signature is a signature of the sent request
+	Signature []byte `protobuf:"bytes,4,opt,name=Signature,proto3" json:"Signature,omitempty"`
+	// TTL must be larger than zero, it decreased in every neofs-node
+	TTL                  uint32   `protobuf:"varint,5,opt,name=TTL,proto3" json:"TTL,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *DeleteRequest) Reset()         { *m = DeleteRequest{} }
@@ -423,6 +447,7 @@ func (m *DeleteRequest) GetTTL() uint32 {
 	return 0
 }
 
+// DeleteResponse is empty
 type DeleteResponse struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -523,9 +548,13 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type WithdrawClient interface {
+	// Get returns cheque if it was signed by inner ring nodes
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	// Put ask inner ring nodes to sign a cheque for withdraw invoke
 	Put(ctx context.Context, in *PutRequest, opts ...grpc.CallOption) (*PutResponse, error)
+	// List shows all user's checks
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	// Delete allows user to remove unused cheque
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 }
 
@@ -575,9 +604,13 @@ func (c *withdrawClient) Delete(ctx context.Context, in *DeleteRequest, opts ...
 
 // WithdrawServer is the server API for Withdraw service.
 type WithdrawServer interface {
+	// Get returns cheque if it was signed by inner ring nodes
 	Get(context.Context, *GetRequest) (*GetResponse, error)
+	// Put ask inner ring nodes to sign a cheque for withdraw invoke
 	Put(context.Context, *PutRequest) (*PutResponse, error)
+	// List shows all user's checks
 	List(context.Context, *ListRequest) (*ListResponse, error)
+	// Delete allows user to remove unused cheque
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 }
 

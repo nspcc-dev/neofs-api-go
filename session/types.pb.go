@@ -24,7 +24,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type VerificationHeader struct {
-	PublicKey            []byte   `protobuf:"bytes,1,opt,name=PublicKey,proto3" json:"PublicKey,omitempty"`
+	// Session public key
+	PublicKey []byte `protobuf:"bytes,1,opt,name=PublicKey,proto3" json:"PublicKey,omitempty"`
+	// Session public key signature. Signed by trusted side
 	KeySignature         []byte   `protobuf:"bytes,2,opt,name=KeySignature,proto3" json:"KeySignature,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -74,17 +76,25 @@ func (m *VerificationHeader) GetKeySignature() []byte {
 	return nil
 }
 
+// User token granting rights for object manipulation
 type Token struct {
-	Header               VerificationHeader `protobuf:"bytes,1,opt,name=Header,proto3" json:"Header"`
-	OwnerID              OwnerID            `protobuf:"bytes,2,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
-	FirstEpoch           uint64             `protobuf:"varint,3,opt,name=FirstEpoch,proto3" json:"FirstEpoch,omitempty"`
-	LastEpoch            uint64             `protobuf:"varint,4,opt,name=LastEpoch,proto3" json:"LastEpoch,omitempty"`
-	ObjectID             []ObjectID         `protobuf:"bytes,5,rep,name=ObjectID,proto3,customtype=ObjectID" json:"ObjectID"`
-	Signature            []byte             `protobuf:"bytes,6,opt,name=Signature,proto3" json:"Signature,omitempty"`
-	ID                   TokenID            `protobuf:"bytes,7,opt,name=ID,proto3,customtype=TokenID" json:"ID"`
-	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
-	XXX_unrecognized     []byte             `json:"-"`
-	XXX_sizecache        int32              `json:"-"`
+	// Header carries verification data of session key
+	Header VerificationHeader `protobuf:"bytes,1,opt,name=Header,proto3" json:"Header"`
+	// Owner of manipulation object
+	OwnerID OwnerID `protobuf:"bytes,2,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// Initial epoch of token lifetime
+	FirstEpoch uint64 `protobuf:"varint,3,opt,name=FirstEpoch,proto3" json:"FirstEpoch,omitempty"`
+	// Last epoch of token lifetime
+	LastEpoch uint64 `protobuf:"varint,4,opt,name=LastEpoch,proto3" json:"LastEpoch,omitempty"`
+	// ID of manipulation object
+	ObjectID []ObjectID `protobuf:"bytes,5,rep,name=ObjectID,proto3,customtype=ObjectID" json:"ObjectID"`
+	// Token signature. Signed by owner of manipulation object
+	Signature []byte `protobuf:"bytes,6,opt,name=Signature,proto3" json:"Signature,omitempty"`
+	// Token ID (UUID)
+	ID                   TokenID  `protobuf:"bytes,7,opt,name=ID,proto3,customtype=TokenID" json:"ID"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Token) Reset()         { *m = Token{} }

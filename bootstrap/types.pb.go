@@ -24,7 +24,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type SpreadMap struct {
-	Epoch                uint64     `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	// Epoch is current epoch for netmap
+	Epoch uint64 `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	// NetMap is a set of NodeInfos
 	NetMap               []NodeInfo `protobuf:"bytes,2,rep,name=NetMap,proto3" json:"NetMap"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
 	XXX_unrecognized     []byte     `json:"-"`
@@ -74,9 +76,13 @@ func (m *SpreadMap) GetNetMap() []NodeInfo {
 }
 
 type NodeInfo struct {
-	Address              string     `protobuf:"bytes,1,opt,name=Address,proto3" json:"address"`
-	PubKey               []byte     `protobuf:"bytes,2,opt,name=PubKey,proto3" json:"pubkey,omitempty"`
-	Options              []string   `protobuf:"bytes,3,rep,name=Options,proto3" json:"options,omitempty"`
+	// Address is a node [multi-address](https://github.com/multiformats/multiaddr)
+	Address string `protobuf:"bytes,1,opt,name=Address,proto3" json:"address"`
+	// PubKey is a compressed public key representation in bytes
+	PubKey []byte `protobuf:"bytes,2,opt,name=PubKey,proto3" json:"pubkey,omitempty"`
+	// Options is set of node optional information, such as storage capacity, node location, price and etc
+	Options []string `protobuf:"bytes,3,rep,name=Options,proto3" json:"options,omitempty"`
+	// Status is bitmap status of the node
 	Status               NodeStatus `protobuf:"varint,4,opt,name=Status,proto3,customtype=NodeStatus" json:"status"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
 	XXX_unrecognized     []byte     `json:"-"`

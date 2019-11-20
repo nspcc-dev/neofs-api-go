@@ -23,6 +23,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// Type can be Exact or Regex
 type Filter_Type int32
 
 const (
@@ -49,12 +50,15 @@ func (Filter_Type) EnumDescriptor() ([]byte, []int) {
 }
 
 type Filter struct {
-	Type                 Filter_Type `protobuf:"varint,1,opt,name=type,proto3,enum=query.Filter_Type" json:"type,omitempty"`
-	Name                 string      `protobuf:"bytes,2,opt,name=Name,proto3" json:"Name,omitempty"`
-	Value                string      `protobuf:"bytes,3,opt,name=Value,proto3" json:"Value,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
+	// Type of filter
+	Type Filter_Type `protobuf:"varint,1,opt,name=type,proto3,enum=query.Filter_Type" json:"type,omitempty"`
+	// Name of field that should be filtered
+	Name string `protobuf:"bytes,2,opt,name=Name,proto3" json:"Name,omitempty"`
+	// Value that should be used for filter
+	Value                string   `protobuf:"bytes,3,opt,name=Value,proto3" json:"Value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Filter) Reset()      { *m = Filter{} }
@@ -107,6 +111,7 @@ func (m *Filter) GetValue() string {
 }
 
 type Query struct {
+	// Filters is set of filters, should not be empty
 	Filters              []Filter `protobuf:"bytes,1,rep,name=Filters,proto3" json:"Filters"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

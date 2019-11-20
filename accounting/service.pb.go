@@ -29,7 +29,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type BalanceRequest struct {
-	OwnerID              OwnerID  `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// OwnerID is a wallet address
+	OwnerID OwnerID `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// TTL must be larger than zero, it decreased in every neofs-node
 	TTL                  uint32   `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -73,11 +75,14 @@ func (m *BalanceRequest) GetTTL() uint32 {
 }
 
 type BalanceResponse struct {
-	Balance              *decimal.Decimal `protobuf:"bytes,1,opt,name=Balance,proto3" json:"Balance,omitempty"`
-	LockAccounts         []*Account       `protobuf:"bytes,2,rep,name=LockAccounts,proto3" json:"LockAccounts,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
+	// Balance contains current account balance state
+	Balance *decimal.Decimal `protobuf:"bytes,1,opt,name=Balance,proto3" json:"Balance,omitempty"`
+	// LockAccounts contains information about locked funds. Locked funds appear
+	// when user pays for storage or withdraw assets.
+	LockAccounts         []*Account `protobuf:"bytes,2,rep,name=LockAccounts,proto3" json:"LockAccounts,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
 }
 
 func (m *BalanceResponse) Reset()         { *m = BalanceResponse{} }
@@ -166,6 +171,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AccountingClient interface {
+	// Balance returns current balance status of the NeoFS user
 	Balance(ctx context.Context, in *BalanceRequest, opts ...grpc.CallOption) (*BalanceResponse, error)
 }
 
@@ -188,6 +194,7 @@ func (c *accountingClient) Balance(ctx context.Context, in *BalanceRequest, opts
 
 // AccountingServer is the server API for Accounting service.
 type AccountingServer interface {
+	// Balance returns current balance status of the NeoFS user
 	Balance(context.Context, *BalanceRequest) (*BalanceResponse, error)
 }
 
