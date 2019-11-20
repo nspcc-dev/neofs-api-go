@@ -7,14 +7,19 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
 
-// The Bootstrap service definition.
+// Bootstrap service allows neofs-node to connect to the network. Node should
+// perform at least one bootstrap request in the epoch to stay in the network
+// for the next epoch.
 service Bootstrap {
+    // Process is method that allows to register node in the network and receive actual netmap
     rpc Process(Request) returns (bootstrap.SpreadMap);
 }
 
-// Request message to communicate between DHT nodes
 message Request {
+    // Type is NodeType, can be InnerRingNode (type=1) or StorageNode (type=2)
     int32              type = 1 [(gogoproto.customname) = "Type" , (gogoproto.nullable) = false, (gogoproto.customtype) = "NodeType"];
+    // Info contains information about node
     bootstrap.NodeInfo info = 2 [(gogoproto.nullable) = false];
+    // TTL must be larger than zero, it decreased in every neofs-node
     uint32 TTL           = 3;
 }
