@@ -8,61 +8,87 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
 
+// Container service provides API for manipulating with the container.
 service Service {
-    // Create container
+    // Put request proposes container to the inner ring nodes. They will
+    // accept new container if user has enough deposit. All containers
+    // are accepted by the consensus, therefore it is asynchronous process.
     rpc Put(PutRequest) returns (PutResponse);
 
-    // Delete container ... discuss implementation later
+    // Delete container removes it from the inner ring container storage. It
+    // also asynchronous process done by consensus.
     rpc Delete(DeleteRequest) returns (DeleteResponse);
 
-    // Get container
+    // Get container returns container instance
     rpc Get(GetRequest) returns (GetResponse);
 
+    // List returns all user's containers
     rpc List(ListRequest) returns (ListResponse);
 }
 
-// NewRequest message to create new container
 message PutRequest {
+    // MessageID is a nonce for uniq container id calculation
     bytes MessageID            = 1 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
-    uint64 Capacity            = 2; // not actual size in megabytes, but probability of storage availability
+
+    // Capacity defines amount of data that can be stored in the container (doesn't used for now).
+    uint64 Capacity            = 2;
+
+    // OwnerID is a wallet address
     bytes OwnerID              = 3 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+
+    // Rules define storage policy for the object inside the container.
     netmap.PlacementRule rules = 4 [(gogoproto.nullable) = false];
+
+    // Signature of the user (owner id)
     bytes Signature            = 5;
+
+    // TTL must be larger than zero, it decreased in every neofs-node
     uint32 TTL                 = 6;
 }
 
-// PutResponse message to respond about container uuid
 message PutResponse {
+    // CID (container id) is a SHA256 hash of the container structure
     bytes CID = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
 }
 
 message DeleteRequest {
+    // CID (container id) is a SHA256 hash of the container structure
     bytes CID       = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
+
+    // TTL must be larger than zero, it decreased in every neofs-node
     uint32 TTL      = 2;
+
+    // Signature of the container owner
     bytes Signature = 3;
 }
 
+// DeleteResponse is empty because delete operation is asynchronous and done
+// via consensus in inner ring nodes
 message DeleteResponse { }
 
 
-// GetRequest message to fetch container placement rules
 message GetRequest {
+    // CID (container id) is a SHA256 hash of the container structure
     bytes CID  = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
+
+    // TTL must be larger than zero, it decreased in every neofs-node
     uint32 TTL = 2;
 }
 
-// GetResponse message with container structure
 message GetResponse {
+    // Container is a structure that contains placement rules and owner id
     container.Container Container = 1;
 }
 
-// ListRequest message to list containers for user
 message ListRequest {
+    // OwnerID is a wallet address
     bytes OwnerID = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+
+    // TTL must be larger than zero, it decreased in every neofs-node
     uint32 TTL    = 2;
 }
 
-// ListResponse message to respond about all user containers
 message ListResponse {
+    // CID (container id) is list of SHA256 hashes of the container structures
     repeated bytes CID = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
 }

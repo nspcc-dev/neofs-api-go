@@ -434,6 +434,8 @@ func (m *DeleteRequest) GetToken() *session.Token {
 	return nil
 }
 
+// DeleteResponse is empty because we cannot guarantee permanent object removal
+// in distributed system.
 type DeleteResponse struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -469,7 +471,6 @@ func (m *DeleteResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DeleteResponse proto.InternalMessageInfo
 
-// HeadRequest.FullHeader == true, for fetch all headers
 type HeadRequest struct {
 	Epoch                uint64   `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
 	Address              Address  `protobuf:"bytes,2,opt,name=Address,proto3,customtype=Address" json:"Address"`
@@ -991,19 +992,36 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ServiceClient interface {
-	// Get the object from a container
+	// Get the object from container. Response uses gRPC stream. First response
+	// message carry object of requested address. Chunk messages are parts of
+	// the object's payload if it is needed. All messages except first carry
+	// chunks. Requested object can be restored by concatenation of object
+	// message payload and all chunks keeping receiving order.
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (Service_GetClient, error)
-	// Put the object into a container
+	// Put the object into container. Request uses gRPC stream. First message
+	// SHOULD BE type of PutHeader. Container id and Owner id of object SHOULD
+	// BE set. Session token SHOULD BE obtained before put operation (see
+	// session package). Chunk messages considered by server as part of object
+	// payload. All messages except first SHOULD BE chunks. Chunk messages
+	// SHOULD BE sent in direct order of fragmentation.
 	Put(ctx context.Context, opts ...grpc.CallOption) (Service_PutClient, error)
 	// Delete the object from a container
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
-	// Get MetaInfo
+	// Head returns the object without data payload. Object in the
+	// response has system header only. If full headers flag is set, extended
+	// headers are also present.
 	Head(ctx context.Context, in *HeadRequest, opts ...grpc.CallOption) (*HeadResponse, error)
-	// Search by MetaInfo
+	// Search objects in container. Version of query language format SHOULD BE
+	// set to 1. Search query represented in serialized format (see query
+	// package).
 	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error)
-	// Get ranges of object payload
+	// GetRange of data payload. Ranges are set of pairs (offset, length).
+	// Fragments order in response corresponds to ranges order in request.
 	GetRange(ctx context.Context, in *GetRangeRequest, opts ...grpc.CallOption) (*GetRangeResponse, error)
-	// Get hashes of object ranges
+	// GetRangeHash returns homomorphic hash of object payload range after XOR
+	// operation. Ranges are set of pairs (offset, length). Hashes order in
+	// response corresponds to ranges order in request. Homomorphic hash is
+	// calculated for XORed data.
 	GetRangeHash(ctx context.Context, in *GetRangeHashRequest, opts ...grpc.CallOption) (*GetRangeHashResponse, error)
 }
 
@@ -1128,19 +1146,36 @@ func (c *serviceClient) GetRangeHash(ctx context.Context, in *GetRangeHashReques
 
 // ServiceServer is the server API for Service service.
 type ServiceServer interface {
-	// Get the object from a container
+	// Get the object from container. Response uses gRPC stream. First response
+	// message carry object of requested address. Chunk messages are parts of
+	// the object's payload if it is needed. All messages except first carry
+	// chunks. Requested object can be restored by concatenation of object
+	// message payload and all chunks keeping receiving order.
 	Get(*GetRequest, Service_GetServer) error
-	// Put the object into a container
+	// Put the object into container. Request uses gRPC stream. First message
+	// SHOULD BE type of PutHeader. Container id and Owner id of object SHOULD
+	// BE set. Session token SHOULD BE obtained before put operation (see
+	// session package). Chunk messages considered by server as part of object
+	// payload. All messages except first SHOULD BE chunks. Chunk messages
+	// SHOULD BE sent in direct order of fragmentation.
 	Put(Service_PutServer) error
 	// Delete the object from a container
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
-	// Get MetaInfo
+	// Head returns the object without data payload. Object in the
+	// response has system header only. If full headers flag is set, extended
+	// headers are also present.
 	Head(context.Context, *HeadRequest) (*HeadResponse, error)
-	// Search by MetaInfo
+	// Search objects in container. Version of query language format SHOULD BE
+	// set to 1. Search query represented in serialized format (see query
+	// package).
 	Search(context.Context, *SearchRequest) (*SearchResponse, error)
-	// Get ranges of object payload
+	// GetRange of data payload. Ranges are set of pairs (offset, length).
+	// Fragments order in response corresponds to ranges order in request.
 	GetRange(context.Context, *GetRangeRequest) (*GetRangeResponse, error)
-	// Get hashes of object ranges
+	// GetRangeHash returns homomorphic hash of object payload range after XOR
+	// operation. Ranges are set of pairs (offset, length). Hashes order in
+	// response corresponds to ranges order in request. Homomorphic hash is
+	// calculated for XORed data.
 	GetRangeHash(context.Context, *GetRangeHashRequest) (*GetRangeHashResponse, error)
 }
 

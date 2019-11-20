@@ -8,16 +8,24 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
 
+// Accounting is a service that provides access for accounting balance
+// information
 service Accounting {
+    // Balance returns current balance status of the NeoFS user
     rpc Balance(BalanceRequest) returns (BalanceResponse);
 }
 
 message BalanceRequest {
+    // OwnerID is a wallet address
     bytes OwnerID = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    // TTL must be larger than zero, it decreased in every neofs-node
     uint32 TTL    = 2;
 }
 
 message BalanceResponse {
+    // Balance contains current account balance state
     decimal.Decimal Balance       = 1;
+    // LockAccounts contains information about locked funds. Locked funds appear
+    // when user pays for storage or withdraw assets.
     repeated Account LockAccounts = 2;
 }
