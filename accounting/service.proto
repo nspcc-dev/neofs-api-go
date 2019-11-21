@@ -19,6 +19,7 @@ message BalanceRequest {
     // OwnerID is a wallet address
     bytes OwnerID = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL    = 2;
 }
 

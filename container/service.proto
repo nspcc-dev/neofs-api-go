@@ -43,6 +43,7 @@ message PutRequest {
     bytes Signature            = 5;
 
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL                 = 6;
 }
 
@@ -56,6 +57,7 @@ message DeleteRequest {
     bytes CID       = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
 
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL      = 2;
 
     // Signature of the container owner
@@ -72,6 +74,7 @@ message GetRequest {
     bytes CID  = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
 
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL = 2;
 }
 
@@ -85,6 +88,7 @@ message ListRequest {
     bytes OwnerID = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
 
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL    = 2;
 }
 
