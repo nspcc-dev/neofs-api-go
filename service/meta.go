@@ -56,6 +56,9 @@ const (
 	ErrIncorrectTTL = internal.Error("incorrect ttl")
 )
 
+// SetVersion sets protocol version to RequestMetaHeader.
+func (m *RequestMetaHeader) SetVersion(v uint32) { m.Version = v }
+
 // SetTTL sets TTL to RequestMetaHeader.
 func (m *RequestMetaHeader) SetTTL(v uint32) { m.TTL = v }
 
