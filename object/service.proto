@@ -53,10 +53,12 @@ service Service {
 
 message GetRequest {
     // Epoch is set by user to 0, node set epoch to the actual value
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint64 Epoch         = 1;
     // Address of object (container id + object id)
     refs.Address Address = 2 [(gogoproto.nullable) = false];
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL           = 3;
 }
 
@@ -72,10 +74,12 @@ message GetResponse {
 message PutRequest {
     message PutHeader {
         // Epoch is set by user to 0, node set epoch to the actual value
+        // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
         uint64 Epoch        = 1;
         // Object with at least container id and owner id fields
         Object Object       = 2;
         // TTL must be larger than zero, it decreased in every neofs-node
+        // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
         uint32 TTL          = 3;
         // Token with session public key and user's signature
         session.Token Token = 4;
@@ -95,12 +99,14 @@ message PutResponse {
 }
 message DeleteRequest {
     // Epoch is set by user to 0, node set epoch to the actual value
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint64 Epoch         = 1;
     // Address of object (container id + object id)
     refs.Address Address = 2 [(gogoproto.nullable) = false];
     // OwnerID is a wallet address
     bytes OwnerID        = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"];
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL           = 4;
     // Token with session public key and user's signature
     session.Token Token  = 5;
@@ -112,12 +118,14 @@ message DeleteResponse {}
 
 message HeadRequest {
     // Epoch should be empty on user side, node sets epoch to the actual value
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint64 Epoch         = 1;
     // Address of object (container id + object id)
     refs.Address Address = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
     // FullHeaders can be set true for extended headers in the object
     bool FullHeaders     = 3;
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL           = 4;
 }
 message HeadResponse {
@@ -127,6 +135,7 @@ message HeadResponse {
 
 message SearchRequest {
     // Epoch is set by user to 0, node set epoch to the actual value
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint64 Epoch         = 1;
     // Version of search query format
     uint32 Version       = 2;
@@ -135,6 +144,7 @@ message SearchRequest {
     // Query in the binary serialized format
     bytes Query          = 4;
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL           = 5;
 }
 
@@ -145,12 +155,14 @@ message SearchResponse {
 
 message GetRangeRequest {
     // Epoch is set by user to 0, node set epoch to the actual value
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint64 Epoch          = 1;
     // Address of object (container id + object id)
     refs.Address Address  = 2 [(gogoproto.nullable) = false];
     // Ranges of object's payload to return
     repeated Range Ranges = 3 [(gogoproto.nullable) = false];
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL            = 4;
 }
 
@@ -161,6 +173,7 @@ message GetRangeResponse {
 
 message GetRangeHashRequest {
     // Epoch is set by user to 0, node set epoch to the actual value
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint64 Epoch          = 1;
     // Address of object (container id + object id)
     refs.Address Address  = 2 [(gogoproto.nullable) = false];
@@ -169,6 +182,7 @@ message GetRangeHashRequest {
     // Salt is used to XOR object's payload ranges before hashing, it can be nil
     bytes Salt            = 4;
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL            = 5;
 }
 
