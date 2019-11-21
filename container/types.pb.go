@@ -26,9 +26,13 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 // The Container service definition.
 type Container struct {
-	OwnerID              OwnerID              `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
-	Salt                 UUID                 `protobuf:"bytes,2,opt,name=Salt,proto3,customtype=UUID" json:"Salt"`
-	Capacity             uint64               `protobuf:"varint,3,opt,name=Capacity,proto3" json:"Capacity,omitempty"`
+	// OwnerID is a wallet address.
+	OwnerID OwnerID `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// Salt is a nonce for unique container id calculation.
+	Salt UUID `protobuf:"bytes,2,opt,name=Salt,proto3,customtype=UUID" json:"Salt"`
+	// Capacity defines amount of data that can be stored in the container (doesn't used for now).
+	Capacity uint64 `protobuf:"varint,3,opt,name=Capacity,proto3" json:"Capacity,omitempty"`
+	// Rules define storage policy for the object inside the container.
 	Rules                netmap.PlacementRule `protobuf:"bytes,4,opt,name=Rules,proto3" json:"Rules"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`

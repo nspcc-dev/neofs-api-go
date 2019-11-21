@@ -25,7 +25,7 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 // Address of object (container id + object id)
 type Address struct {
-	// ObjectID is an object identifier
+	// ObjectID is an object identifier, valid UUIDv4 represented in bytes
 	ObjectID ObjectID `protobuf:"bytes,1,opt,name=ObjectID,proto3,customtype=ObjectID" json:"ObjectID"`
 	// CID is container identifier
 	CID                  CID      `protobuf:"bytes,2,opt,name=CID,proto3,customtype=CID" json:"CID"`

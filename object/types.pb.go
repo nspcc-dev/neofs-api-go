@@ -28,11 +28,16 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 type Link_Type int32
 
 const (
-	Link_Unknown      Link_Type = 0
-	Link_Parent       Link_Type = 1
-	Link_Previous     Link_Type = 2
-	Link_Next         Link_Type = 3
-	Link_Child        Link_Type = 4
+	Link_Unknown Link_Type = 0
+	// Parent object created during object transformation
+	Link_Parent Link_Type = 1
+	// Previous object in the linked list created during object transformation
+	Link_Previous Link_Type = 2
+	// Next object in the linked list created during object transformation
+	Link_Next Link_Type = 3
+	// Child object created during object transformation
+	Link_Child Link_Type = 4
+	// Object that included into this storage group
 	Link_StorageGroup Link_Type = 5
 )
 
@@ -66,9 +71,12 @@ type Transform_Type int32
 
 const (
 	Transform_Unknown Transform_Type = 0
-	Transform_Split   Transform_Type = 1
-	Transform_Sign    Transform_Type = 2
-	Transform_Mould   Transform_Type = 3
+	// Split sets when object created after payload split
+	Transform_Split Transform_Type = 1
+	// Sign sets when object created after re-signing (doesn't used)
+	Transform_Sign Transform_Type = 2
+	// Mould sets when object created after filling missing headers in the object
+	Transform_Mould Transform_Type = 3
 )
 
 var Transform_Type_name = map[int32]string{
@@ -96,9 +104,12 @@ func (Transform_Type) EnumDescriptor() ([]byte, []int) {
 type StorageGroup_Lifetime_Unit int32
 
 const (
-	StorageGroup_Lifetime_Unlimited  StorageGroup_Lifetime_Unit = 0
+	// Unlimited set if storage group always valid
+	StorageGroup_Lifetime_Unlimited StorageGroup_Lifetime_Unit = 0
+	// NeoFSEpoch set if storage group is valid until lifetime NeoFS epoch
 	StorageGroup_Lifetime_NeoFSEpoch StorageGroup_Lifetime_Unit = 1
-	StorageGroup_Lifetime_UnixTime   StorageGroup_Lifetime_Unit = 2
+	// UnixTime set if storage group is valid until lifetime unix timestamp
+	StorageGroup_Lifetime_UnixTime StorageGroup_Lifetime_Unit = 2
 )
 
 var StorageGroup_Lifetime_Unit_name = map[int32]string{
@@ -122,7 +133,9 @@ func (StorageGroup_Lifetime_Unit) EnumDescriptor() ([]byte, []int) {
 }
 
 type Range struct {
-	Offset               uint64   `protobuf:"varint,1,opt,name=Offset,proto3" json:"Offset,omitempty"`
+	// Offset of the data range
+	Offset uint64 `protobuf:"varint,1,opt,name=Offset,proto3" json:"Offset,omitempty"`
+	// Length of the data range
 	Length               uint64   `protobuf:"varint,2,opt,name=Length,proto3" json:"Length,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -173,7 +186,9 @@ func (m *Range) GetLength() uint64 {
 }
 
 type UserHeader struct {
-	Key                  string   `protobuf:"bytes,1,opt,name=Key,proto3" json:"Key,omitempty"`
+	// Key of the user's header
+	Key string `protobuf:"bytes,1,opt,name=Key,proto3" json:"Key,omitempty"`
+	// Value of the user's header
 	Value                string   `protobuf:"bytes,2,opt,name=Value,proto3" json:"Value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -405,6 +420,7 @@ func (*Header) XXX_OneofWrappers() []interface{} {
 }
 
 type Tombstone struct {
+	// Epoch when tombstone was created
 	Epoch                uint64   `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -448,11 +464,17 @@ func (m *Tombstone) GetEpoch() uint64 {
 }
 
 type SystemHeader struct {
-	Version              uint64        `protobuf:"varint,1,opt,name=Version,proto3" json:"Version,omitempty"`
-	PayloadLength        uint64        `protobuf:"varint,2,opt,name=PayloadLength,proto3" json:"PayloadLength,omitempty"`
-	ID                   ID            `protobuf:"bytes,3,opt,name=ID,proto3,customtype=ID" json:"ID"`
-	OwnerID              OwnerID       `protobuf:"bytes,4,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
-	CID                  CID           `protobuf:"bytes,5,opt,name=CID,proto3,customtype=CID" json:"CID"`
+	// Version of the object structure
+	Version uint64 `protobuf:"varint,1,opt,name=Version,proto3" json:"Version,omitempty"`
+	// PayloadLength is an object payload length
+	PayloadLength uint64 `protobuf:"varint,2,opt,name=PayloadLength,proto3" json:"PayloadLength,omitempty"`
+	// ID is an object identifier, is a valid UUIDv4
+	ID ID `protobuf:"bytes,3,opt,name=ID,proto3,customtype=ID" json:"ID"`
+	// OwnerID is a wallet address
+	OwnerID OwnerID `protobuf:"bytes,4,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// CID is a SHA256 hash of the container structure (container identifier)
+	CID CID `protobuf:"bytes,5,opt,name=CID,proto3,customtype=CID" json:"CID"`
+	// CreatedAt is a timestamp of object creation
 	CreatedAt            CreationPoint `protobuf:"bytes,6,opt,name=CreatedAt,proto3" json:"CreatedAt"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
@@ -510,7 +532,9 @@ func (m *SystemHeader) GetCreatedAt() CreationPoint {
 }
 
 type CreationPoint struct {
-	UnixTime             int64    `protobuf:"varint,1,opt,name=UnixTime,proto3" json:"UnixTime,omitempty"`
+	// UnixTime is a date of creation in unixtime format
+	UnixTime int64 `protobuf:"varint,1,opt,name=UnixTime,proto3" json:"UnixTime,omitempty"`
+	// Epoch is a date of creation in NeoFS epochs
 	Epoch                uint64   `protobuf:"varint,2,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -561,7 +585,9 @@ func (m *CreationPoint) GetEpoch() uint64 {
 }
 
 type IntegrityHeader struct {
-	HeadersChecksum      []byte   `protobuf:"bytes,1,opt,name=HeadersChecksum,proto3" json:"HeadersChecksum,omitempty"`
+	// HeadersChecksum is a checksum of all above headers in the object
+	HeadersChecksum []byte `protobuf:"bytes,1,opt,name=HeadersChecksum,proto3" json:"HeadersChecksum,omitempty"`
+	// ChecksumSignature is an user's signature of checksum to verify if it is correct
 	ChecksumSignature    []byte   `protobuf:"bytes,2,opt,name=ChecksumSignature,proto3" json:"ChecksumSignature,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -612,11 +638,13 @@ func (m *IntegrityHeader) GetChecksumSignature() []byte {
 }
 
 type Link struct {
-	Type                 Link_Type `protobuf:"varint,1,opt,name=type,proto3,enum=object.Link_Type" json:"type,omitempty"`
-	ID                   ID        `protobuf:"bytes,2,opt,name=ID,proto3,customtype=ID" json:"ID"`
-	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
-	XXX_unrecognized     []byte    `json:"-"`
-	XXX_sizecache        int32     `json:"-"`
+	// Type of link
+	Type Link_Type `protobuf:"varint,1,opt,name=type,proto3,enum=object.Link_Type" json:"type,omitempty"`
+	// ID is an object identifier, is a valid UUIDv4
+	ID                   ID       `protobuf:"bytes,2,opt,name=ID,proto3,customtype=ID" json:"ID"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Link) Reset()         { *m = Link{} }
@@ -656,6 +684,7 @@ func (m *Link) GetType() Link_Type {
 }
 
 type Transform struct {
+	// Type of object transformation
 	Type                 Transform_Type `protobuf:"varint,1,opt,name=type,proto3,enum=object.Transform_Type" json:"type,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
@@ -699,12 +728,15 @@ func (m *Transform) GetType() Transform_Type {
 }
 
 type Object struct {
-	SystemHeader         SystemHeader `protobuf:"bytes,1,opt,name=SystemHeader,proto3" json:"SystemHeader"`
-	Headers              []Header     `protobuf:"bytes,2,rep,name=Headers,proto3" json:"Headers"`
-	Payload              []byte       `protobuf:"bytes,3,opt,name=Payload,proto3" json:"Payload,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
+	// SystemHeader describes system header
+	SystemHeader SystemHeader `protobuf:"bytes,1,opt,name=SystemHeader,proto3" json:"SystemHeader"`
+	// Headers describes a set of an extended headers
+	Headers []Header `protobuf:"bytes,2,rep,name=Headers,proto3" json:"Headers"`
+	// Payload is an object's payload
+	Payload              []byte   `protobuf:"bytes,3,opt,name=Payload,proto3" json:"Payload,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Object) Reset()         { *m = Object{} }
@@ -758,8 +790,11 @@ func (m *Object) GetPayload() []byte {
 }
 
 type StorageGroup struct {
-	ValidationDataSize   uint64                 `protobuf:"varint,1,opt,name=ValidationDataSize,proto3" json:"ValidationDataSize,omitempty"`
-	ValidationHash       Hash                   `protobuf:"bytes,2,opt,name=ValidationHash,proto3,customtype=Hash" json:"ValidationHash"`
+	// ValidationDataSize is size of the all object's payloads included into storage group
+	ValidationDataSize uint64 `protobuf:"varint,1,opt,name=ValidationDataSize,proto3" json:"ValidationDataSize,omitempty"`
+	// ValidationHash is homomorphic hash of all object's payloads included into storage group
+	ValidationHash Hash `protobuf:"bytes,2,opt,name=ValidationHash,proto3,customtype=Hash" json:"ValidationHash"`
+	// Lifetime is time until storage group is valid
 	Lifetime             *StorageGroup_Lifetime `protobuf:"bytes,3,opt,name=lifetime,proto3" json:"lifetime,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
 	XXX_unrecognized     []byte                 `json:"-"`
@@ -810,11 +845,13 @@ func (m *StorageGroup) GetLifetime() *StorageGroup_Lifetime {
 }
 
 type StorageGroup_Lifetime struct {
-	Unit                 StorageGroup_Lifetime_Unit `protobuf:"varint,1,opt,name=unit,proto3,enum=object.StorageGroup_Lifetime_Unit" json:"unit,omitempty"`
-	Value                int64                      `protobuf:"varint,2,opt,name=Value,proto3" json:"Value,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                   `json:"-"`
-	XXX_unrecognized     []byte                     `json:"-"`
-	XXX_sizecache        int32                      `json:"-"`
+	// Unit is lifetime type
+	Unit StorageGroup_Lifetime_Unit `protobuf:"varint,1,opt,name=unit,proto3,enum=object.StorageGroup_Lifetime_Unit" json:"unit,omitempty"`
+	// Value for lifetime
+	Value                int64    `protobuf:"varint,2,opt,name=Value,proto3" json:"Value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *StorageGroup_Lifetime) Reset()         { *m = StorageGroup_Lifetime{} }
