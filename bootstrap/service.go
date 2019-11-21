@@ -6,6 +6,3 @@ import (
 
 // NodeType type alias.
 type NodeType = service.NodeRole
-
-// SetTTL sets ttl to Request to satisfy TTLRequest interface.
-func (m *Request) SetTTL(v uint32) { m.TTL = v }

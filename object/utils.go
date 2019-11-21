@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"code.cloudfoundry.org/bytefmt"
+	"github.com/nspcc-dev/neofs-proto/service"
 	"github.com/nspcc-dev/neofs-proto/session"
 	"github.com/pkg/errors"
 )
@@ -49,14 +50,11 @@ func SendPutRequest(s Service_PutClient, obj *Object, epoch uint64, ttl uint32) 
 // into header of object put request.
 func MakePutRequestHeader(obj *Object, epoch uint64, ttl uint32, token *session.Token) *PutRequest {
 	return &PutRequest{
-		R: &PutRequest_Header{
-			Header: &PutRequest_PutHeader{
-				Epoch:  epoch,
-				Object: obj,
-				TTL:    ttl,
-				Token:  token,
-			},
-		},
+		RequestMetaHeader: service.RequestMetaHeader{TTL: ttl, Epoch: epoch},
+		R: &PutRequest_Header{Header: &PutRequest_PutHeader{
+			Object: obj,
+			Token:  token,
+		}},
 	}
 }
 

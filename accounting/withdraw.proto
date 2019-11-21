@@ -2,6 +2,8 @@ syntax = "proto3";
 package accounting;
 option go_package = "github.com/nspcc-dev/neofs-proto/accounting";
 
+import "service/meta.proto";
+import "service/verify.proto";
 import "decimal/decimal.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
@@ -34,12 +36,13 @@ message Item {
 
 message GetRequest {
     // ID is cheque identifier
-    bytes ID      = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
+    bytes ID                                 = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
     // OwnerID is a wallet address
-    bytes OwnerID = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL    = 3;
+    bytes OwnerID                            = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message GetResponse {
@@ -49,18 +52,19 @@ message GetResponse {
 
 message PutRequest {
     // OwnerID is a wallet address
-    bytes OwnerID          = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    bytes OwnerID                            = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
     // Amount of funds
-    decimal.Decimal Amount = 2;
+    decimal.Decimal Amount                   = 2;
     // Height is the neo blockchain height until the cheque is valid
-    uint64 Height          = 3;
+    uint64 Height                            = 3;
     // MessageID is a nonce for uniq request (UUIDv4)
-    bytes MessageID        = 4 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
+    bytes MessageID                          = 4 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
     // Signature is a signature of the sent request
-    bytes Signature        = 5;
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL             = 6;
+    bytes Signature                          = 5;
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 message PutResponse {
     // ID is cheque identifier
@@ -69,10 +73,11 @@ message PutResponse {
 
 message ListRequest {
     // OwnerID is a wallet address
-    bytes OwnerID = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL    = 2;
+    bytes OwnerID                            = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message ListResponse {
@@ -82,16 +87,17 @@ message ListResponse {
 
 message DeleteRequest {
     // ID is cheque identifier
-    bytes ID        = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
+    bytes ID                                 = 1 [(gogoproto.customtype) = "ChequeID", (gogoproto.nullable) = false];
     // OwnerID is a wallet address
-    bytes OwnerID   = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    bytes OwnerID                            = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
     // MessageID is a nonce for uniq request (UUIDv4)
-    bytes MessageID = 3 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
+    bytes MessageID                          = 3 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
     // Signature is a signature of the sent request
-    bytes Signature = 4;
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL      = 5;
+    bytes Signature                          = 4;
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 // DeleteResponse is empty

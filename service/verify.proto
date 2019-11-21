@@ -1,0 +1,30 @@
+syntax = "proto3";
+package service;
+option go_package = "github.com/nspcc-dev/neofs-proto/service";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request
+// (should be embedded into message).
+message RequestVerificationHeader {
+    message Sign {
+        // Sign is signature of the request or session key.
+        bytes Sign = 1;
+        // Peer is compressed public key used for signature.
+        bytes Peer = 2;
+    }
+
+    message Signature {
+        // Sign is a signature and public key of the request.
+        Sign Sign   = 1 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+        // Origin used for requests, when trusted node changes it and re-sign with session key.
+        // If session key used for signature request, then Origin should contain
+        // public key of user and signed session key.
+        Sign Origin = 2;
+    }
+
+    // Signatures is a set of signatures of every passed NeoFS Node
+    repeated Signature Signatures = 1;
+}

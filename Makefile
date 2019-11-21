@@ -33,5 +33,5 @@ protoc:
 		echo "${B}${G}⇒ Processing $$f ${R}"; \
 		protoc \
 			--proto_path=.:./vendor:/usr/local/include \
-			--gofast_out=plugins=grpc,paths=source_relative:. $$f; \
+            --gofast_out=plugins=grpc,paths=source_relative:. $$f; \
 	done

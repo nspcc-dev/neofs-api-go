@@ -70,6 +70,8 @@ session key. Session is established during 4-step handshake in one gRPC stream
 | ----- | ---- | ----- | ----------- |
 | Init | [Token](#session.Token) |  | Init is a message to initialize session opening. Carry: owner of manipulation object; ID of manipulation object; token lifetime bounds. |
 | Signed | [Token](#session.Token) |  | Signed Init message response (Unsigned) from server with user private key |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="session.CreateResponse"></a>

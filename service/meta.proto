@@ -1,0 +1,19 @@
+syntax = "proto3";
+package service;
+option go_package = "github.com/nspcc-dev/neofs-proto/service";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+// RequestMetaHeader contains information about request meta headers
+// (should be embedded into message)
+message RequestMetaHeader {
+    // TTL must be larger than zero, it decreased in every NeoFS Node
+    uint32 TTL     = 1;
+    // Epoch for user can be empty, because node sets epoch to the actual value
+    uint64 Epoch   = 2;
+    // Version defines protocol version
+    // TODO: not used for now, should be implemented in future
+    uint32 Version = 3;
+}

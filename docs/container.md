@@ -92,8 +92,9 @@ List returns all user's containers
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | CID | [bytes](#bytes) |  | CID (container id) is a SHA256 hash of the container structure |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Signature | [bytes](#bytes) |  | Signature of the container owner |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="container.DeleteResponse"></a>
@@ -113,7 +114,8 @@ via consensus in inner ring nodes
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | CID | [bytes](#bytes) |  | CID (container id) is a SHA256 hash of the container structure |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="container.GetResponse"></a>
@@ -136,7 +138,8 @@ via consensus in inner ring nodes
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | OwnerID | [bytes](#bytes) |  | OwnerID is a wallet address |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="container.ListResponse"></a>
@@ -163,7 +166,8 @@ via consensus in inner ring nodes
 | OwnerID | [bytes](#bytes) |  | OwnerID is a wallet address |
 | rules | [netmap.PlacementRule](#netmap.PlacementRule) |  | Rules define storage policy for the object inside the container. |
 | Signature | [bytes](#bytes) |  | Signature of the user (owner id) |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="container.PutResponse"></a>

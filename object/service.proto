@@ -5,6 +5,8 @@ option go_package = "github.com/nspcc-dev/neofs-proto/object";
 import "refs/types.proto";
 import "object/types.proto";
 import "session/types.proto";
+import "service/meta.proto";
+import "service/verify.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
@@ -52,14 +54,12 @@ service Service {
 }
 
 message GetRequest {
-    // Epoch is set by user to 0, node set epoch to the actual value
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint64 Epoch         = 1;
     // Address of object (container id + object id)
-    refs.Address Address = 2 [(gogoproto.nullable) = false];
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL           = 3;
+    refs.Address Address                     = 1 [(gogoproto.nullable) = false];
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message GetResponse {
@@ -73,16 +73,10 @@ message GetResponse {
 
 message PutRequest {
     message PutHeader {
-        // Epoch is set by user to 0, node set epoch to the actual value
-        // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-        uint64 Epoch        = 1;
         // Object with at least container id and owner id fields
-        Object Object       = 2;
-        // TTL must be larger than zero, it decreased in every neofs-node
-        // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-        uint32 TTL          = 3;
+        Object Object       = 1;
         // Token with session public key and user's signature
-        session.Token Token = 4;
+        session.Token Token = 2;
     }
 
     oneof R {
@@ -91,6 +85,11 @@ message PutRequest {
         // Chunk should be a remaining message in stream should be chunks
         bytes Chunk      = 2;
     }
+
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message PutResponse {
@@ -98,18 +97,16 @@ message PutResponse {
     refs.Address Address = 1 [(gogoproto.nullable) = false];
 }
 message DeleteRequest {
-    // Epoch is set by user to 0, node set epoch to the actual value
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint64 Epoch         = 1;
     // Address of object (container id + object id)
-    refs.Address Address = 2 [(gogoproto.nullable) = false];
+    refs.Address Address                     = 1 [(gogoproto.nullable) = false];
     // OwnerID is a wallet address
-    bytes OwnerID        = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"];
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL           = 4;
+    bytes OwnerID                            = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"];
     // Token with session public key and user's signature
-    session.Token Token  = 5;
+    session.Token Token                      = 3;
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 // DeleteResponse is empty because we cannot guarantee permanent object removal
@@ -117,16 +114,14 @@ message DeleteRequest {
 message DeleteResponse {}
 
 message HeadRequest {
-    // Epoch should be empty on user side, node sets epoch to the actual value
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint64 Epoch         = 1;
     // Address of object (container id + object id)
-    refs.Address Address = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
+    refs.Address Address                     = 1 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
     // FullHeaders can be set true for extended headers in the object
-    bool FullHeaders     = 3;
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL           = 4;
+    bool FullHeaders                         = 2;
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 message HeadResponse {
     // Object without payload
@@ -134,18 +129,16 @@ message HeadResponse {
 }
 
 message SearchRequest {
-    // Epoch is set by user to 0, node set epoch to the actual value
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint64 Epoch         = 1;
-    // Version of search query format
-    uint32 Version       = 2;
     // ContainerID for searching the object
-    bytes ContainerID    = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "CID"];
+    bytes ContainerID                        = 1 [(gogoproto.nullable) = false, (gogoproto.customtype) = "CID"];
     // Query in the binary serialized format
-    bytes Query          = 4;
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL           = 5;
+    bytes Query                              = 2;
+    // QueryVersion is a version of search query format
+    uint32 QueryVersion                     = 3;
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message SearchResponse {
@@ -154,16 +147,14 @@ message SearchResponse {
 }
 
 message GetRangeRequest {
-    // Epoch is set by user to 0, node set epoch to the actual value
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint64 Epoch          = 1;
     // Address of object (container id + object id)
-    refs.Address Address  = 2 [(gogoproto.nullable) = false];
+    refs.Address Address                     = 1 [(gogoproto.nullable) = false];
     // Ranges of object's payload to return
-    repeated Range Ranges = 3 [(gogoproto.nullable) = false];
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL            = 4;
+    repeated Range Ranges                    = 2 [(gogoproto.nullable) = false];
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message GetRangeResponse {
@@ -172,18 +163,16 @@ message GetRangeResponse {
 }
 
 message GetRangeHashRequest {
-    // Epoch is set by user to 0, node set epoch to the actual value
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint64 Epoch          = 1;
     // Address of object (container id + object id)
-    refs.Address Address  = 2 [(gogoproto.nullable) = false];
+    refs.Address Address                     = 1 [(gogoproto.nullable) = false];
     // Ranges of object's payload to calculate homomorphic hash
-    repeated Range Ranges = 3 [(gogoproto.nullable) = false];
+    repeated Range Ranges                    = 2 [(gogoproto.nullable) = false];
     // Salt is used to XOR object's payload ranges before hashing, it can be nil
-    bytes Salt            = 4;
-    // TTL must be larger than zero, it decreased in every neofs-node
-    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
-    uint32 TTL            = 5;
+    bytes Salt                               = 3;
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 message GetRangeHashResponse {
