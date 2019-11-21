@@ -68,8 +68,8 @@ func (m *Container) Empty() bool {
 }
 
 // -- Test container definition -- //
+
 // NewTestContainer returns test container.
-//
 // WARNING: DON'T USE THIS OUTSIDE TESTS.
 func NewTestContainer() (*Container, error) {
 	key := test.DecodeKey(0)

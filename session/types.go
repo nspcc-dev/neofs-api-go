@@ -124,7 +124,7 @@ func (m *Token) Verify(keys ...*ecdsa.PublicKey) bool {
 	return false
 }
 
-// Sign adds token signatures.
+// AddSignatures adds token signatures.
 func (t *PToken) AddSignatures(signH, signT []byte) {
 	t.mtx.Lock()
 
@@ -139,8 +139,7 @@ func (t *PToken) SignData(data []byte) ([]byte, error) {
 	return crypto.Sign(t.PrivateKey, data)
 }
 
-// VerifyData checks if signature of data by token t
-// is equal to sign.
+// VerifyData checks if signature of data by token is equal to sign.
 func (m *VerificationHeader) VerifyData(data, sign []byte) error {
 	if crypto.Verify(crypto.UnmarshalPublicKey(m.PublicKey), data, sign) != nil {
 		return ErrInvalidSignature
