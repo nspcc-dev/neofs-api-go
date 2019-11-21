@@ -42,7 +42,7 @@ message GetRequest {
 }
 
 message GetResponse {
-    // Item is cheque with meta information
+    // Withdraw is cheque with meta information
     Item Withdraw = 1;
 }
 
@@ -73,7 +73,7 @@ message ListRequest {
 }
 
 message ListResponse {
-    // Item is a set of cheques with meta information
+    // Items is a set of cheques with meta information
     repeated Item Items = 1;
 }
 
