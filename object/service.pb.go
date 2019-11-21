@@ -30,12 +30,17 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type GetRequest struct {
-	Epoch                uint64       `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Address              refs.Address `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address"`
-	TTL                  uint32       `protobuf:"varint,3,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
+	// Epoch is set by user to 0, node set epoch to the actual value
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+	Epoch uint64 `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	// Address of object (container id + object id)
+	Address refs.Address `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address"`
+	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+	TTL                  uint32   `protobuf:"varint,3,opt,name=TTL,proto3" json:"TTL,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *GetRequest) Reset()         { *m = GetRequest{} }
@@ -257,9 +262,15 @@ func (*PutRequest) XXX_OneofWrappers() []interface{} {
 }
 
 type PutRequest_PutHeader struct {
-	Epoch                uint64         `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Object               *Object        `protobuf:"bytes,2,opt,name=Object,proto3" json:"Object,omitempty"`
-	TTL                  uint32         `protobuf:"varint,3,opt,name=TTL,proto3" json:"TTL,omitempty"`
+	// Epoch is set by user to 0, node set epoch to the actual value
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+	Epoch uint64 `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	// Object with at least container id and owner id fields
+	Object *Object `protobuf:"bytes,2,opt,name=Object,proto3" json:"Object,omitempty"`
+	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+	TTL uint32 `protobuf:"varint,3,opt,name=TTL,proto3" json:"TTL,omitempty"`
+	// Token with session public key and user's signature
 	Token                *session.Token `protobuf:"bytes,4,opt,name=Token,proto3" json:"Token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
@@ -324,6 +335,7 @@ func (m *PutRequest_PutHeader) GetToken() *session.Token {
 }
 
 type PutResponse struct {
+	// Address of object (container id + object id)
 	Address              refs.Address `protobuf:"bytes,1,opt,name=Address,proto3" json:"Address"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
 	XXX_unrecognized     []byte       `json:"-"`
@@ -367,10 +379,17 @@ func (m *PutResponse) GetAddress() refs.Address {
 }
 
 type DeleteRequest struct {
-	Epoch                uint64         `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Address              refs.Address   `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address"`
-	OwnerID              OwnerID        `protobuf:"bytes,3,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
-	TTL                  uint32         `protobuf:"varint,4,opt,name=TTL,proto3" json:"TTL,omitempty"`
+	// Epoch is set by user to 0, node set epoch to the actual value
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+	Epoch uint64 `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	// Address of object (container id + object id)
+	Address refs.Address `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address"`
+	// OwnerID is a wallet address
+	OwnerID OwnerID `protobuf:"bytes,3,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+	TTL uint32 `protobuf:"varint,4,opt,name=TTL,proto3" json:"TTL,omitempty"`
+	// Token with session public key and user's signature
 	Token                *session.Token `protobuf:"bytes,5,opt,name=Token,proto3" json:"Token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
@@ -472,9 +491,15 @@ func (m *DeleteResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_DeleteResponse proto.InternalMessageInfo
 
 type HeadRequest struct {
-	Epoch                uint64   `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Address              Address  `protobuf:"bytes,2,opt,name=Address,proto3,customtype=Address" json:"Address"`
-	FullHeaders          bool     `protobuf:"varint,3,opt,name=FullHeaders,proto3" json:"FullHeaders,omitempty"`
+	// Epoch should be empty on user side, node sets epoch to the actual value
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+	Epoch uint64 `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	// Address of object (container id + object id)
+	Address Address `protobuf:"bytes,2,opt,name=Address,proto3,customtype=Address" json:"Address"`
+	// FullHeaders can be set true for extended headers in the object
+	FullHeaders bool `protobuf:"varint,3,opt,name=FullHeaders,proto3" json:"FullHeaders,omitempty"`
+	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
 	TTL                  uint32   `protobuf:"varint,4,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -532,6 +557,7 @@ func (m *HeadRequest) GetTTL() uint32 {
 }
 
 type HeadResponse struct {
+	// Object without payload
 	Object               *Object  `protobuf:"bytes,1,opt,name=Object,proto3" json:"Object,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -575,10 +601,17 @@ func (m *HeadResponse) GetObject() *Object {
 }
 
 type SearchRequest struct {
-	Epoch                uint64   `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Version              uint32   `protobuf:"varint,2,opt,name=Version,proto3" json:"Version,omitempty"`
-	ContainerID          CID      `protobuf:"bytes,3,opt,name=ContainerID,proto3,customtype=CID" json:"ContainerID"`
-	Query                []byte   `protobuf:"bytes,4,opt,name=Query,proto3" json:"Query,omitempty"`
+	// Epoch is set by user to 0, node set epoch to the actual value
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+	Epoch uint64 `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	// Version of search query format
+	Version uint32 `protobuf:"varint,2,opt,name=Version,proto3" json:"Version,omitempty"`
+	// ContainerID for searching the object
+	ContainerID CID `protobuf:"bytes,3,opt,name=ContainerID,proto3,customtype=CID" json:"ContainerID"`
+	// Query in the binary serialized format
+	Query []byte `protobuf:"bytes,4,opt,name=Query,proto3" json:"Query,omitempty"`
+	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
 	TTL                  uint32   `protobuf:"varint,5,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -643,6 +676,7 @@ func (m *SearchRequest) GetTTL() uint32 {
 }
 
 type SearchResponse struct {
+	// Addresses of found objects
 	Addresses            []refs.Address `protobuf:"bytes,1,rep,name=Addresses,proto3" json:"Addresses"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
@@ -686,13 +720,19 @@ func (m *SearchResponse) GetAddresses() []refs.Address {
 }
 
 type GetRangeRequest struct {
-	Epoch                uint64       `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Address              refs.Address `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address"`
-	Ranges               []Range      `protobuf:"bytes,3,rep,name=Ranges,proto3" json:"Ranges"`
-	TTL                  uint32       `protobuf:"varint,4,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
+	// Epoch is set by user to 0, node set epoch to the actual value
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+	Epoch uint64 `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	// Address of object (container id + object id)
+	Address refs.Address `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address"`
+	// Ranges of object's payload to return
+	Ranges []Range `protobuf:"bytes,3,rep,name=Ranges,proto3" json:"Ranges"`
+	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+	TTL                  uint32   `protobuf:"varint,4,opt,name=TTL,proto3" json:"TTL,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *GetRangeRequest) Reset()         { *m = GetRangeRequest{} }
@@ -753,6 +793,7 @@ func (m *GetRangeRequest) GetTTL() uint32 {
 }
 
 type GetRangeResponse struct {
+	// Fragments of object's payload
 	Fragments            [][]byte `protobuf:"bytes,1,rep,name=Fragments,proto3" json:"Fragments,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -796,14 +837,21 @@ func (m *GetRangeResponse) GetFragments() [][]byte {
 }
 
 type GetRangeHashRequest struct {
-	Epoch                uint64       `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
-	Address              refs.Address `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address"`
-	Ranges               []Range      `protobuf:"bytes,3,rep,name=Ranges,proto3" json:"Ranges"`
-	Salt                 []byte       `protobuf:"bytes,4,opt,name=Salt,proto3" json:"Salt,omitempty"`
-	TTL                  uint32       `protobuf:"varint,5,opt,name=TTL,proto3" json:"TTL,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
-	XXX_unrecognized     []byte       `json:"-"`
-	XXX_sizecache        int32        `json:"-"`
+	// Epoch is set by user to 0, node set epoch to the actual value
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+	Epoch uint64 `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	// Address of object (container id + object id)
+	Address refs.Address `protobuf:"bytes,2,opt,name=Address,proto3" json:"Address"`
+	// Ranges of object's payload to calculate homomorphic hash
+	Ranges []Range `protobuf:"bytes,3,rep,name=Ranges,proto3" json:"Ranges"`
+	// Salt is used to XOR object's payload ranges before hashing, it can be nil
+	Salt []byte `protobuf:"bytes,4,opt,name=Salt,proto3" json:"Salt,omitempty"`
+	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+	TTL                  uint32   `protobuf:"varint,5,opt,name=TTL,proto3" json:"TTL,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *GetRangeHashRequest) Reset()         { *m = GetRangeHashRequest{} }
@@ -871,6 +919,7 @@ func (m *GetRangeHashRequest) GetTTL() uint32 {
 }
 
 type GetRangeHashResponse struct {
+	// Hashes is a homomorphic hashes of all ranges
 	Hashes               []Hash   `protobuf:"bytes,1,rep,name=Hashes,proto3,customtype=Hash" json:"Hashes"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

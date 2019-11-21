@@ -238,6 +238,16 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SessionClient interface {
+	// Create is a method that used to open a trusted session to manipulate
+	// an object. In order to put or delete object client have to obtain session
+	// token with trusted node. Trusted node will modify client's object
+	// (add missing headers, checksums, homomorphic hash) and sign id with
+	// session key. Session is established during 4-step handshake in one gRPC stream
+	//
+	// - First client stream message SHOULD BE type of `CreateRequest_Init`.
+	// - First server stream message SHOULD BE type of `CreateResponse_Unsigned`.
+	// - Second client stream message SHOULD BE type of `CreateRequest_Signed`.
+	// - Second server stream message SHOULD BE type of `CreateResponse_Result`.
 	Create(ctx context.Context, opts ...grpc.CallOption) (Session_CreateClient, error)
 }
 
@@ -282,6 +292,16 @@ func (x *sessionCreateClient) Recv() (*CreateResponse, error) {
 
 // SessionServer is the server API for Session service.
 type SessionServer interface {
+	// Create is a method that used to open a trusted session to manipulate
+	// an object. In order to put or delete object client have to obtain session
+	// token with trusted node. Trusted node will modify client's object
+	// (add missing headers, checksums, homomorphic hash) and sign id with
+	// session key. Session is established during 4-step handshake in one gRPC stream
+	//
+	// - First client stream message SHOULD BE type of `CreateRequest_Init`.
+	// - First server stream message SHOULD BE type of `CreateResponse_Unsigned`.
+	// - Second client stream message SHOULD BE type of `CreateRequest_Signed`.
+	// - Second server stream message SHOULD BE type of `CreateResponse_Result`.
 	Create(Session_CreateServer) error
 }
 
