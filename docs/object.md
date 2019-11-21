@@ -147,10 +147,10 @@ calculated for XORed data.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value |
+| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Address | [refs.Address](#refs.Address) |  | Address of object (container id + object id) |
 | OwnerID | [bytes](#bytes) |  | OwnerID is a wallet address |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node |
+| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Token | [session.Token](#session.Token) |  | Token with session public key and user's signature |
 
 
@@ -170,11 +170,11 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value |
+| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Address | [refs.Address](#refs.Address) |  | Address of object (container id + object id) |
 | Ranges | [Range](#object.Range) | repeated | Ranges of object's payload to calculate homomorphic hash |
 | Salt | [bytes](#bytes) |  | Salt is used to XOR object's payload ranges before hashing, it can be nil |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node |
+| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 
 
 <a name="object.GetRangeHashResponse"></a>
@@ -185,7 +185,7 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Hashes | [bytes](#bytes) | repeated | Homomorphic hashes of all ranges |
+| Hashes | [bytes](#bytes) | repeated | Hashes is a homomorphic hashes of all ranges |
 
 
 <a name="object.GetRangeRequest"></a>
@@ -196,10 +196,10 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value |
+| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Address | [refs.Address](#refs.Address) |  | Address of object (container id + object id) |
 | Ranges | [Range](#object.Range) | repeated | Ranges of object's payload to return |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node |
+| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 
 
 <a name="object.GetRangeResponse"></a>
@@ -221,9 +221,9 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value |
+| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Address | [refs.Address](#refs.Address) |  | Address of object (container id + object id) |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node |
+| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 
 
 <a name="object.GetResponse"></a>
@@ -246,10 +246,10 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value |
+| Epoch | [uint64](#uint64) |  | Epoch should be empty on user side, node sets epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Address | [refs.Address](#refs.Address) |  | Address of object (container id + object id) |
 | FullHeaders | [bool](#bool) |  | FullHeaders can be set true for extended headers in the object |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node |
+| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 
 
 <a name="object.HeadResponse"></a>
@@ -283,9 +283,9 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value |
+| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Object | [Object](#object.Object) |  | Object with at least container id and owner id fields |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node |
+| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Token | [session.Token](#session.Token) |  | Token with session public key and user's signature |
 
 
@@ -308,11 +308,11 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value |
+| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Version | [uint32](#uint32) |  | Version of search query format |
 | ContainerID | [bytes](#bytes) |  | ContainerID for searching the object |
 | Query | [bytes](#bytes) |  | Query in the binary serialized format |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node |
+| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 
 
 <a name="object.SearchResponse"></a>
@@ -348,8 +348,8 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| UnixTime | [int64](#int64) |  | Date of creation in unixtime format |
-| Epoch | [uint64](#uint64) |  | Date of creation in NeoFS epochs |
+| UnixTime | [int64](#int64) |  | UnixTime is a date of creation in unixtime format |
+| Epoch | [uint64](#uint64) |  | Epoch is a date of creation in NeoFS epochs |
 
 
 <a name="object.Header"></a>
@@ -361,12 +361,12 @@ in distributed system.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | Link | [Link](#object.Link) |  | Link to other objects |
-| Redirect | [refs.Address](#refs.Address) |  | RedirectNot used yet |
-| UserHeader | [UserHeader](#object.UserHeader) |  | UserHeader defined by user |
+| Redirect | [refs.Address](#refs.Address) |  | Redirect not used yet |
+| UserHeader | [UserHeader](#object.UserHeader) |  | UserHeader is a set of KV headers defined by user |
 | Transform | [Transform](#object.Transform) |  | Transform defines transform operation (e.g. payload split) |
 | Tombstone | [Tombstone](#object.Tombstone) |  | Tombstone header that set up in deleted objects |
 | Verify | [session.VerificationHeader](#session.VerificationHeader) |  | Verify header that contains session public key and user's signature |
-| HomoHash | [bytes](#bytes) |  | Homomorphic hash of original object payload |
+| HomoHash | [bytes](#bytes) |  | HomoHash is a homomorphic hash of original object payload |
 | PayloadChecksum | [bytes](#bytes) |  | PayloadChecksum of actual object's payload |
 | Integrity | [IntegrityHeader](#object.IntegrityHeader) |  | Integrity header with checksum of all above headers in the object |
 | StorageGroup | [StorageGroup](#object.StorageGroup) |  | StorageGroup contains meta information for the data audit |
@@ -380,8 +380,8 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| HeadersChecksum | [bytes](#bytes) |  | Checksum of all above headers in the object |
-| ChecksumSignature | [bytes](#bytes) |  | User's signature of checksum to verify if it is correct |
+| HeadersChecksum | [bytes](#bytes) |  | HeadersChecksum is a checksum of all above headers in the object |
+| ChecksumSignature | [bytes](#bytes) |  | ChecksumSignature is an user's signature of checksum to verify if it is correct |
 
 
 <a name="object.Link"></a>
@@ -392,8 +392,8 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| type | [Link.Type](#object.Link.Type) |  | Link type |
-| ID | [bytes](#bytes) |  | Object id |
+| type | [Link.Type](#object.Link.Type) |  | Type of link |
+| ID | [bytes](#bytes) |  | ID is an object identifier, is a valid UUIDv4 |
 
 
 <a name="object.Object"></a>
@@ -404,9 +404,9 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| SystemHeader | [SystemHeader](#object.SystemHeader) |  | System header |
-| Headers | [Header](#object.Header) | repeated | Extended headers |
-| Payload | [bytes](#bytes) |  | Object's payload |
+| SystemHeader | [SystemHeader](#object.SystemHeader) |  | SystemHeader describes system header |
+| Headers | [Header](#object.Header) | repeated | Headers describes a set of an extended headers |
+| Payload | [bytes](#bytes) |  | Payload is an object's payload |
 
 
 <a name="object.Range"></a>
@@ -429,9 +429,9 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| ValidationDataSize | [uint64](#uint64) |  | Size of the all object's payloads included into storage group |
-| ValidationHash | [bytes](#bytes) |  | Homomorphic hash of all object's payloads included into storage group |
-| lifetime | [StorageGroup.Lifetime](#object.StorageGroup.Lifetime) |  | Time until storage group is valid |
+| ValidationDataSize | [uint64](#uint64) |  | ValidationDataSize is size of the all object's payloads included into storage group |
+| ValidationHash | [bytes](#bytes) |  | ValidationHash is homomorphic hash of all object's payloads included into storage group |
+| lifetime | [StorageGroup.Lifetime](#object.StorageGroup.Lifetime) |  | Lifetime is time until storage group is valid |
 
 
 <a name="object.StorageGroup.Lifetime"></a>
@@ -442,8 +442,8 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| unit | [StorageGroup.Lifetime.Unit](#object.StorageGroup.Lifetime.Unit) |  | Lifetime type |
-| Value | [int64](#int64) |  | Lifetime value |
+| unit | [StorageGroup.Lifetime.Unit](#object.StorageGroup.Lifetime.Unit) |  | Unit is lifetime type |
+| Value | [int64](#int64) |  | Value for lifetime |
 
 
 <a name="object.SystemHeader"></a>
@@ -455,11 +455,11 @@ in distributed system.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | Version | [uint64](#uint64) |  | Version of the object structure |
-| PayloadLength | [uint64](#uint64) |  | Object payload length |
-| ID | [bytes](#bytes) |  | ObjectID is a UUID |
+| PayloadLength | [uint64](#uint64) |  | PayloadLength is an object payload length |
+| ID | [bytes](#bytes) |  | ID is an object identifier, is a valid UUIDv4 |
 | OwnerID | [bytes](#bytes) |  | OwnerID is a wallet address |
-| CID | [bytes](#bytes) |  | ContainerID is a SHA256 hash of the container structure |
-| CreatedAt | [CreationPoint](#object.CreationPoint) |  | Timestamp of object creation |
+| CID | [bytes](#bytes) |  | CID is a SHA256 hash of the container structure (container identifier) |
+| CreatedAt | [CreationPoint](#object.CreationPoint) |  | CreatedAt is a timestamp of object creation |
 
 
 <a name="object.Tombstone"></a>
@@ -521,9 +521,9 @@ in distributed system.
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| Unlimited | 0 | Storage group always valid |
-| NeoFSEpoch | 1 | Storage group is valid until lifetime NeoFS epoch |
-| UnixTime | 2 | Storage group is valid until lifetime unix timestamp |
+| Unlimited | 0 | Unlimited set if storage group always valid |
+| NeoFSEpoch | 1 | NeoFSEpoch set if storage group is valid until lifetime NeoFS epoch |
+| UnixTime | 2 | UnixTime set if storage group is valid until lifetime unix timestamp |
 
 
 
@@ -535,9 +535,9 @@ in distributed system.
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | Unknown | 0 |  |
-| Split | 1 | Object created after payload split |
-| Sign | 2 | Object created after re-signing (doesn't used) |
-| Mould | 3 | Object created after filling missing headers in the object |
+| Split | 1 | Split sets when object created after payload split |
+| Sign | 2 | Sign sets when object created after re-signing (doesn't used) |
+| Mould | 3 | Mould sets when object created after filling missing headers in the object |
 
 
  <!-- end enums -->
