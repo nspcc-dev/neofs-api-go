@@ -23,7 +23,10 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request
+// (should be embedded into message).
 type RequestVerificationHeader struct {
+	// Signatures is a set of signatures of every passed NeoFS Node
 	Signatures           []*RequestVerificationHeader_Signature `protobuf:"bytes,1,rep,name=Signatures,proto3" json:"Signatures,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                               `json:"-"`
 	XXX_unrecognized     []byte                                 `json:"-"`
@@ -67,7 +70,9 @@ func (m *RequestVerificationHeader) GetSignatures() []*RequestVerificationHeader
 }
 
 type RequestVerificationHeader_Sign struct {
-	Sign                 []byte   `protobuf:"bytes,1,opt,name=Sign,proto3" json:"Sign,omitempty"`
+	// Sign is signature of the request or session key.
+	Sign []byte `protobuf:"bytes,1,opt,name=Sign,proto3" json:"Sign,omitempty"`
+	// Peer is compressed public key used for signature.
 	Peer                 []byte   `protobuf:"bytes,2,opt,name=Peer,proto3" json:"Peer,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -118,11 +123,15 @@ func (m *RequestVerificationHeader_Sign) GetPeer() []byte {
 }
 
 type RequestVerificationHeader_Signature struct {
+	// Sign is a signature and public key of the request.
 	RequestVerificationHeader_Sign `protobuf:"bytes,1,opt,name=Sign,proto3,embedded=Sign" json:"Sign"`
-	Origin                         *RequestVerificationHeader_Sign `protobuf:"bytes,2,opt,name=Origin,proto3" json:"Origin,omitempty"`
-	XXX_NoUnkeyedLiteral           struct{}                        `json:"-"`
-	XXX_unrecognized               []byte                          `json:"-"`
-	XXX_sizecache                  int32                           `json:"-"`
+	// Origin used for requests, when trusted node changes it and re-sign with session key.
+	// If session key used for signature request, then Origin should contain
+	// public key of user and signed session key.
+	Origin               *RequestVerificationHeader_Sign `protobuf:"bytes,2,opt,name=Origin,proto3" json:"Origin,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
+	XXX_unrecognized     []byte                          `json:"-"`
+	XXX_sizecache        int32                           `json:"-"`
 }
 
 func (m *RequestVerificationHeader_Signature) Reset()         { *m = RequestVerificationHeader_Signature{} }

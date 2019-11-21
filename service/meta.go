@@ -10,6 +10,7 @@ type (
 	// MetaHeader contains meta information of request.
 	// It provides methods to get or set meta information meta header.
 	// Also contains methods to reset and restore meta header.
+	// Also contains methods to get or set request protocol version
 	MetaHeader interface {
 		ResetMeta() RequestMetaHeader
 		RestoreMeta(RequestMetaHeader)
@@ -20,7 +21,16 @@ type (
 
 		// EpochRequest gives possibility to get or set epoch in RPC Requests.
 		GetEpoch() uint64
-		SetEpoch(v uint64)
+		SetEpoch(uint64)
+
+		// VersionHeader allows get or set version of protocol request
+		VersionHeader
+	}
+
+	// VersionHeader allows get or set version of protocol request
+	VersionHeader interface {
+		GetVersion() uint32
+		SetVersion(uint32)
 	}
 
 	// TTLCondition is closure, that allows to validate request with ttl.
@@ -45,6 +55,9 @@ const (
 	// ErrIncorrectTTL is raised when NonForwardingTTL is passed and NodeRole != InnerRingNode.
 	ErrIncorrectTTL = internal.Error("incorrect ttl")
 )
+
+// SetVersion sets protocol version to RequestMetaHeader.
+func (m *RequestMetaHeader) SetVersion(v uint32) { m.Version = v }
 
 // SetTTL sets TTL to RequestMetaHeader.
 func (m *RequestMetaHeader) SetTTL(v uint32) { m.TTL = v }

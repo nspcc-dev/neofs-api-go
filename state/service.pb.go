@@ -31,7 +31,9 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 // NetmapRequest message to request current node netmap
 type NetmapRequest struct {
-	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
+	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
 	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
 	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
 	XXX_unrecognized                  []byte   `json:"-"`
@@ -69,7 +71,9 @@ var xxx_messageInfo_NetmapRequest proto.InternalMessageInfo
 
 // MetricsRequest message to request node metrics
 type MetricsRequest struct {
-	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
+	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
 	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
 	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
 	XXX_unrecognized                  []byte   `json:"-"`
@@ -153,7 +157,9 @@ func (m *MetricsResponse) GetMetrics() [][]byte {
 
 // HealthRequest message to check current state
 type HealthRequest struct {
-	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
+	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
 	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
 	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
 	XXX_unrecognized                  []byte   `json:"-"`

@@ -34,8 +34,10 @@ type CreateRequest struct {
 	// Types that are valid to be assigned to Message:
 	//	*CreateRequest_Init
 	//	*CreateRequest_Signed
-	Message                           isCreateRequest_Message `protobuf_oneof:"Message"`
-	service.RequestMetaHeader         `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	Message isCreateRequest_Message `protobuf_oneof:"Message"`
+	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
+	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
 	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
 	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
 	XXX_unrecognized                  []byte   `json:"-"`

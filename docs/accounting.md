@@ -87,7 +87,8 @@ Balance returns current balance status of the NeoFS user
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | OwnerID | [bytes](#bytes) |  | OwnerID is a wallet address |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="accounting.BalanceResponse"></a>
@@ -362,7 +363,8 @@ Delete allows user to remove unused cheque
 | OwnerID | [bytes](#bytes) |  | OwnerID is a wallet address |
 | MessageID | [bytes](#bytes) |  | MessageID is a nonce for uniq request (UUIDv4) |
 | Signature | [bytes](#bytes) |  | Signature is a signature of the sent request |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="accounting.DeleteResponse"></a>
@@ -382,7 +384,8 @@ DeleteResponse is empty
 | ----- | ---- | ----- | ----------- |
 | ID | [bytes](#bytes) |  | ID is cheque identifier |
 | OwnerID | [bytes](#bytes) |  | OwnerID is a wallet address |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="accounting.GetResponse"></a>
@@ -420,7 +423,8 @@ DeleteResponse is empty
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | OwnerID | [bytes](#bytes) |  | OwnerID is a wallet address |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="accounting.ListResponse"></a>
@@ -447,7 +451,8 @@ DeleteResponse is empty
 | Height | [uint64](#uint64) |  | Height is the neo blockchain height until the cheque is valid |
 | MessageID | [bytes](#bytes) |  | MessageID is a nonce for uniq request (UUIDv4) |
 | Signature | [bytes](#bytes) |  | Signature is a signature of the sent request |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="accounting.PutResponse"></a>

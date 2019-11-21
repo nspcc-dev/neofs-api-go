@@ -129,12 +129,12 @@ message HeadResponse {
 }
 
 message SearchRequest {
-    // Version of search query format
-    uint32 Version                           = 1;
     // ContainerID for searching the object
-    bytes ContainerID                        = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "CID"];
+    bytes ContainerID                        = 1 [(gogoproto.nullable) = false, (gogoproto.customtype) = "CID"];
     // Query in the binary serialized format
-    bytes Query                              = 3;
+    bytes Query                              = 2;
+    // QueryVersion is a version of search query format
+    uint32 QueryVersion                     = 3;
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
