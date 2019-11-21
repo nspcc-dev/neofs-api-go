@@ -15,7 +15,7 @@ type (
 	UUID = refs.UUID
 	// OwnerID type alias.
 	OwnerID = refs.OwnerID
-	// OwnerID type alias.
+	// MessageID type alias.
 	MessageID = refs.MessageID
 )
 
