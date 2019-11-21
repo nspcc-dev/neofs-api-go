@@ -23,11 +23,12 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// Type can be Exact or Regex
 type Filter_Type int32
 
 const (
+	// Exact sets when value of filter should be equal to the header value
 	Filter_Exact Filter_Type = 0
+	// Regex sets when value of filter should match the header value by the regular expression
 	Filter_Regex Filter_Type = 1
 )
 

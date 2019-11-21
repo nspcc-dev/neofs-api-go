@@ -30,7 +30,7 @@ Address of object (container id + object id)
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| ObjectID | [bytes](#bytes) |  | ObjectID is an object identifier |
+| ObjectID | [bytes](#bytes) |  | ObjectID is an object identifier, valid UUIDv4 represented in bytes |
 | CID | [bytes](#bytes) |  | CID is container identifier |
 
  <!-- end messages -->

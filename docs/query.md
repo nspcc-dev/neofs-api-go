@@ -52,12 +52,12 @@
 <a name="query.Filter.Type"></a>
 
 ### Filter.Type
-Type can be Exact or Regex
+
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| Exact | 0 |  |
-| Regex | 1 |  |
+| Exact | 0 | Exact sets when value of filter should be equal to the header value |
+| Regex | 1 | Regex sets when value of filter should match the header value by the regular expression |
 
 
  <!-- end enums -->

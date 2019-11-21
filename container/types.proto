@@ -9,8 +9,12 @@ option (gogoproto.stable_marshaler_all) = true;
 
 // The Container service definition.
 message Container {
-    bytes OwnerID              = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false]; // OwnerID is a wallet address.
-    bytes Salt                 = 2 [(gogoproto.customtype) = "UUID",    (gogoproto.nullable) = false]; // Salt is a nonce for unique container id calculation.
-    uint64 Capacity            = 3; // Capacity defines amount of data that can be stored in the container (doesn't used for now).
-    netmap.PlacementRule Rules = 4 [(gogoproto.nullable) = false]; // Rules define storage policy for the object inside the container.
+    // OwnerID is a wallet address.
+    bytes OwnerID              = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    // Salt is a nonce for unique container id calculation.
+    bytes Salt                 = 2 [(gogoproto.customtype) = "UUID",    (gogoproto.nullable) = false];
+    // Capacity defines amount of data that can be stored in the container (doesn't used for now).
+    uint64 Capacity            = 3;
+    // Rules define storage policy for the object inside the container.
+    netmap.PlacementRule Rules = 4 [(gogoproto.nullable) = false];
 }

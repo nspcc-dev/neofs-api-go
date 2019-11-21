@@ -34,11 +34,7 @@
 <a name="session.Session"></a>
 
 ### Service "session.Session"
-Open a trusted session to manipulate an object. In order to put or
-delete object client have to obtain session token with trusted node.
-Trusted node will modify client's object (add missing headers, checksums,
-homomorphic hash) and sign id with session key. Session is established
-during 4-step handshake in one gRPC stream
+
 
 ```
 rpc Create(stream CreateRequest) returns (stream CreateResponse);
@@ -47,7 +43,16 @@ rpc Create(stream CreateRequest) returns (stream CreateResponse);
 
 #### Method Create
 
+Create is a method that used to open a trusted session to manipulate
+an object. In order to put or delete object client have to obtain session
+token with trusted node. Trusted node will modify client's object
+(add missing headers, checksums, homomorphic hash) and sign id with
+session key. Session is established during 4-step handshake in one gRPC stream
 
+- First client stream message SHOULD BE type of `CreateRequest_Init`.
+- First server stream message SHOULD BE type of `CreateResponse_Unsigned`.
+- Second client stream message SHOULD BE type of `CreateRequest_Signed`.
+- Second server stream message SHOULD BE type of `CreateResponse_Result`.
 
 | Name | Input | Output |
 | ---- | ----- | ------ |
@@ -63,7 +68,7 @@ rpc Create(stream CreateRequest) returns (stream CreateResponse);
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Init | [Token](#session.Token) |  | Message to init session opening. Carry: owner of manipulation object; ID of manipulation object; token lifetime bounds. |
+| Init | [Token](#session.Token) |  | Init is a message to initialize session opening. Carry: owner of manipulation object; ID of manipulation object; token lifetime bounds. |
 | Signed | [Token](#session.Token) |  | Signed Init message response (Unsigned) from server with user private key |
 
 
@@ -76,7 +81,7 @@ rpc Create(stream CreateRequest) returns (stream CreateResponse);
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | Unsigned | [Token](#session.Token) |  | Unsigned token with token ID and session public key generated on server side |
-| Result | [Token](#session.Token) |  | Resulting token which can be used for object placing through an trusted intermediary |
+| Result | [Token](#session.Token) |  | Result is a resulting token which can be used for object placing through an trusted intermediary |
 
  <!-- end messages -->
 
@@ -102,12 +107,12 @@ User token granting rights for object manipulation
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | Header | [VerificationHeader](#session.VerificationHeader) |  | Header carries verification data of session key |
-| OwnerID | [bytes](#bytes) |  | Owner of manipulation object |
-| FirstEpoch | [uint64](#uint64) |  | Initial epoch of token lifetime |
-| LastEpoch | [uint64](#uint64) |  | Last epoch of token lifetime |
-| ObjectID | [bytes](#bytes) | repeated | ID of manipulation object |
-| Signature | [bytes](#bytes) |  | Token signature. Signed by owner of manipulation object |
-| ID | [bytes](#bytes) |  | Token ID (UUID) |
+| OwnerID | [bytes](#bytes) |  | OwnerID is an owner of manipulation object |
+| FirstEpoch | [uint64](#uint64) |  | FirstEpoch is an initial epoch of token lifetime |
+| LastEpoch | [uint64](#uint64) |  | LastEpoch is a last epoch of token lifetime |
+| ObjectID | [bytes](#bytes) | repeated | ObjectID is an object identifier of manipulation object |
+| Signature | [bytes](#bytes) |  | Signature is a token signature, signed by owner of manipulation object |
+| ID | [bytes](#bytes) |  | ID is a token identifier. valid UUIDv4 represented in bytes |
 
 
 <a name="session.VerificationHeader"></a>
@@ -118,8 +123,8 @@ User token granting rights for object manipulation
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| PublicKey | [bytes](#bytes) |  | Session public key |
-| KeySignature | [bytes](#bytes) |  | Session public key signature. Signed by trusted side |
+| PublicKey | [bytes](#bytes) |  | PublicKey is a session public key |
+| KeySignature | [bytes](#bytes) |  | KeySignature is a session public key signature. Signed by trusted side |
 
  <!-- end messages -->
 

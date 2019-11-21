@@ -32,6 +32,7 @@ type BalanceRequest struct {
 	// OwnerID is a wallet address
 	OwnerID OwnerID `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
 	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
 	TTL                  uint32   `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
