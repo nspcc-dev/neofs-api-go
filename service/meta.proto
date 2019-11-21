@@ -7,6 +7,7 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 option (gogoproto.stable_marshaler_all) = true;
 
 message RequestMetaHeader {
-    uint32 TTL   = 1;
-    uint64 Epoch = 2;
+    uint32 TTL     = 1;
+    uint64 Epoch   = 2;
+    uint32 Version = 3;
 }

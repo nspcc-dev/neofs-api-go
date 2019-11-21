@@ -10,6 +10,7 @@ type (
 	// MetaHeader contains meta information of request.
 	// It provides methods to get or set meta information meta header.
 	// Also contains methods to reset and restore meta header.
+	// Also contains methods to get or set request protocol version
 	MetaHeader interface {
 		ResetMeta() RequestMetaHeader
 		RestoreMeta(RequestMetaHeader)
@@ -20,7 +21,16 @@ type (
 
 		// EpochRequest gives possibility to get or set epoch in RPC Requests.
 		GetEpoch() uint64
-		SetEpoch(v uint64)
+		SetEpoch(uint64)
+
+		// VersionHeader allows get or set version of protocol request
+		VersionHeader
+	}
+
+	// VersionHeader allows get or set version of protocol request
+	VersionHeader interface {
+		GetVersion() uint32
+		SetVersion(uint32)
 	}
 
 	// TTLCondition is closure, that allows to validate request with ttl.
