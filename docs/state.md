@@ -70,6 +70,11 @@ If node unhealthy field Status would contains detailed info.
 HealthRequest message to check current state
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
+
 
 <a name="state.HealthResponse"></a>
 
@@ -88,6 +93,11 @@ HealthResponse message with current state
 ### Message MetricsRequest
 MetricsRequest message to request node metrics
 
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="state.MetricsResponse"></a>
@@ -108,6 +118,11 @@ from github.com/prometheus/client_model/metrics.proto
 ### Message NetmapRequest
 NetmapRequest message to request current node netmap
 
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
  <!-- end messages -->
 

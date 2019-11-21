@@ -147,11 +147,11 @@ calculated for XORed data.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Address | [refs.Address](#refs.Address) |  | Address of object (container id + object id) |
 | OwnerID | [bytes](#bytes) |  | OwnerID is a wallet address |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Token | [session.Token](#session.Token) |  | Token with session public key and user's signature |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="object.DeleteResponse"></a>
@@ -170,11 +170,11 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Address | [refs.Address](#refs.Address) |  | Address of object (container id + object id) |
 | Ranges | [Range](#object.Range) | repeated | Ranges of object's payload to calculate homomorphic hash |
 | Salt | [bytes](#bytes) |  | Salt is used to XOR object's payload ranges before hashing, it can be nil |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="object.GetRangeHashResponse"></a>
@@ -196,10 +196,10 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Address | [refs.Address](#refs.Address) |  | Address of object (container id + object id) |
 | Ranges | [Range](#object.Range) | repeated | Ranges of object's payload to return |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="object.GetRangeResponse"></a>
@@ -221,9 +221,9 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Address | [refs.Address](#refs.Address) |  | Address of object (container id + object id) |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="object.GetResponse"></a>
@@ -246,10 +246,10 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch should be empty on user side, node sets epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Address | [refs.Address](#refs.Address) |  | Address of object (container id + object id) |
 | FullHeaders | [bool](#bool) |  | FullHeaders can be set true for extended headers in the object |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="object.HeadResponse"></a>
@@ -273,6 +273,8 @@ in distributed system.
 | ----- | ---- | ----- | ----------- |
 | Header | [PutRequest.PutHeader](#object.PutRequest.PutHeader) |  | Header should be the first message in the stream |
 | Chunk | [bytes](#bytes) |  | Chunk should be a remaining message in stream should be chunks |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="object.PutRequest.PutHeader"></a>
@@ -283,9 +285,7 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Object | [Object](#object.Object) |  | Object with at least container id and owner id fields |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
 | Token | [session.Token](#session.Token) |  | Token with session public key and user's signature |
 
 
@@ -308,11 +308,11 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch is set by user to 0, node set epoch to the actual value Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
-| Version | [uint32](#uint32) |  | Version of search query format |
 | ContainerID | [bytes](#bytes) |  | ContainerID for searching the object |
 | Query | [bytes](#bytes) |  | Query in the binary serialized format |
-| TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every neofs-node Deprecated: will be replaced with RequestMetaHeader (see develop branch) |
+| QueryVersion | [uint32](#uint32) |  | QueryVersion is a version of search query format |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
 
 <a name="object.SearchResponse"></a>
