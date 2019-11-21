@@ -38,11 +38,12 @@ message GetRequest {
     // OwnerID is a wallet address
     bytes OwnerID = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL    = 3;
 }
 
 message GetResponse {
-    // Item is cheque with meta information
+    // Withdraw is cheque with meta information
     Item Withdraw = 1;
 }
 
@@ -58,6 +59,7 @@ message PutRequest {
     // Signature is a signature of the sent request
     bytes Signature        = 5;
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL             = 6;
 }
 message PutResponse {
@@ -69,11 +71,12 @@ message ListRequest {
     // OwnerID is a wallet address
     bytes OwnerID = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL    = 2;
 }
 
 message ListResponse {
-    // Item is a set of cheques with meta information
+    // Items is a set of cheques with meta information
     repeated Item Items = 1;
 }
 
@@ -87,6 +90,7 @@ message DeleteRequest {
     // Signature is a signature of the sent request
     bytes Signature = 4;
     // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
     uint32 TTL      = 5;
 }
 

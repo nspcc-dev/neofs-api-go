@@ -100,6 +100,7 @@ type GetRequest struct {
 	// OwnerID is a wallet address
 	OwnerID OwnerID `protobuf:"bytes,2,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
 	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
 	TTL                  uint32   `protobuf:"varint,3,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -143,7 +144,7 @@ func (m *GetRequest) GetTTL() uint32 {
 }
 
 type GetResponse struct {
-	// Item is cheque with meta information
+	// Withdraw is cheque with meta information
 	Withdraw             *Item    `protobuf:"bytes,1,opt,name=Withdraw,proto3" json:"Withdraw,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -198,6 +199,7 @@ type PutRequest struct {
 	// Signature is a signature of the sent request
 	Signature []byte `protobuf:"bytes,5,opt,name=Signature,proto3" json:"Signature,omitempty"`
 	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
 	TTL                  uint32   `protobuf:"varint,6,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -302,6 +304,7 @@ type ListRequest struct {
 	// OwnerID is a wallet address
 	OwnerID OwnerID `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
 	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
 	TTL                  uint32   `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -345,7 +348,7 @@ func (m *ListRequest) GetTTL() uint32 {
 }
 
 type ListResponse struct {
-	// Item is a set of cheques with meta information
+	// Items is a set of cheques with meta information
 	Items                []*Item  `protobuf:"bytes,1,rep,name=Items,proto3" json:"Items,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -398,6 +401,7 @@ type DeleteRequest struct {
 	// Signature is a signature of the sent request
 	Signature []byte `protobuf:"bytes,4,opt,name=Signature,proto3" json:"Signature,omitempty"`
 	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
 	TTL                  uint32   `protobuf:"varint,5,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

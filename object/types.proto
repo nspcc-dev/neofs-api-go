@@ -9,97 +9,144 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 option (gogoproto.stable_marshaler_all) = true;
 
 message Range {
-    uint64 Offset = 1; // Offset of the data range
-    uint64 Length = 2; // Length of the data range
+    // Offset of the data range
+    uint64 Offset = 1;
+    // Length of the data range
+    uint64 Length = 2;
 }
 
 message UserHeader {
-    string Key   = 1; // Key of the user's header
-    string Value = 2; // Value of the user's header
+    // Key of the user's header
+    string Key   = 1;
+    // Value of the user's header
+    string Value = 2;
 }
 
 message Header {
     oneof Value {
-        Link Link                         = 1;  // Link to other objects
-        refs.Address Redirect             = 2;  // RedirectNot used yet
-        UserHeader UserHeader             = 3;  // UserHeader defined by user
-        Transform Transform               = 4;  // Transform defines transform operation (e.g. payload split)
-        Tombstone Tombstone               = 5;  // Tombstone header that set up in deleted objects
-        session.VerificationHeader Verify = 6;  // Verify header that contains session public key and user's signature
-        bytes HomoHash                    = 7 [(gogoproto.customtype) = "Hash"]; // Homomorphic hash of original object payload
-        bytes PayloadChecksum             = 8;  // PayloadChecksum of actual object's payload
-        IntegrityHeader Integrity         = 9;  // Integrity header with checksum of all above headers in the object
-        StorageGroup StorageGroup         = 10; // StorageGroup contains meta information for the data audit
+        // Link to other objects
+        Link Link                         = 1;
+        // Redirect not used yet
+        refs.Address Redirect             = 2;
+        // UserHeader is a set of KV headers defined by user
+        UserHeader UserHeader             = 3;
+        // Transform defines transform operation (e.g. payload split)
+        Transform Transform               = 4;
+        // Tombstone header that set up in deleted objects
+        Tombstone Tombstone               = 5;
+        // Verify header that contains session public key and user's signature
+        session.VerificationHeader Verify = 6;
+        // HomoHash is a homomorphic hash of original object payload
+        bytes HomoHash                    = 7 [(gogoproto.customtype) = "Hash"];
+        // PayloadChecksum of actual object's payload
+        bytes PayloadChecksum             = 8;
+        // Integrity header with checksum of all above headers in the object
+        IntegrityHeader Integrity         = 9;
+        // StorageGroup contains meta information for the data audit
+        StorageGroup StorageGroup         = 10;
     }
 }
 
 message Tombstone {
-    uint64 Epoch = 1; // Epoch when tombstone was created
+    // Epoch when tombstone was created
+    uint64 Epoch = 1;
 }
 
 message SystemHeader {
-    uint64 Version       = 1; // Version of the object structure
-    uint64 PayloadLength = 2; // Object payload length
+    // Version of the object structure
+    uint64 Version       = 1;
+    // PayloadLength is an object payload length
+    uint64 PayloadLength = 2;
 
-    bytes ID        = 3 [(gogoproto.customtype) = "ID", (gogoproto.nullable) = false]; // ObjectID is a UUID
-    bytes OwnerID   = 4 [(gogoproto.customtype) = "OwnerID",  (gogoproto.nullable) = false]; // OwnerID is a wallet address
-    bytes CID       = 5 [(gogoproto.customtype) = "CID",      (gogoproto.nullable) = false]; // ContainerID is a SHA256 hash of the container structure
-    CreationPoint CreatedAt = 6 [(gogoproto.nullable) = false]; // Timestamp of object creation
+    // ID is an object identifier, is a valid UUIDv4
+    bytes ID        = 3 [(gogoproto.customtype) = "ID", (gogoproto.nullable) = false];
+    // OwnerID is a wallet address
+    bytes OwnerID   = 4 [(gogoproto.customtype) = "OwnerID",  (gogoproto.nullable) = false];
+    // CID is a SHA256 hash of the container structure (container identifier)
+    bytes CID       = 5 [(gogoproto.customtype) = "CID",      (gogoproto.nullable) = false];
+    // CreatedAt is a timestamp of object creation
+    CreationPoint CreatedAt = 6 [(gogoproto.nullable) = false];
 }
 
 message CreationPoint {
-    int64 UnixTime = 1; // Date of creation in unixtime format
-    uint64 Epoch   = 2; // Date of creation in NeoFS epochs
+    // UnixTime is a date of creation in unixtime format
+    int64 UnixTime = 1;
+    // Epoch is a date of creation in NeoFS epochs
+    uint64 Epoch   = 2;
 }
 
 message IntegrityHeader {
-    bytes HeadersChecksum   = 1; // Checksum of all above headers in the object
-    bytes ChecksumSignature = 2; // User's signature of checksum to verify if it is correct
+    // HeadersChecksum is a checksum of all above headers in the object
+    bytes HeadersChecksum   = 1;
+    // ChecksumSignature is an user's signature of checksum to verify if it is correct
+    bytes ChecksumSignature = 2;
 }
 
 message Link {
     enum Type {
         Unknown      = 0;
-        Parent       = 1; // Parent object created during object transformation
-        Previous     = 2; // Previous object in the linked list created during object transformation
-        Next         = 3; // Next object in the linked list created during object transformation
-        Child        = 4; // Child object created during object transformation
-        StorageGroup = 5; // Object that included into this storage group
+        // Parent object created during object transformation
+        Parent       = 1;
+        // Previous object in the linked list created during object transformation
+        Previous     = 2;
+        // Next object in the linked list created during object transformation
+        Next         = 3;
+        // Child object created during object transformation
+        Child        = 4;
+        // Object that included into this storage group
+        StorageGroup = 5;
     }
-    Type type  = 1; // Link type
-    bytes ID = 2 [(gogoproto.customtype) = "ID", (gogoproto.nullable) = false]; // Object id
+    // Type of link
+    Type type  = 1;
+    // ID is an object identifier, is a valid UUIDv4
+    bytes ID = 2 [(gogoproto.customtype) = "ID", (gogoproto.nullable) = false];
 }
 
 message Transform {
     enum Type {
         Unknown = 0;
-        Split   = 1; // Object created after payload split
-        Sign    = 2; // Object created after re-signing (doesn't used)
-        Mould   = 3; // Object created after filling missing headers in the object
+        // Split sets when object created after payload split
+        Split   = 1;
+        // Sign sets when object created after re-signing (doesn't used)
+        Sign    = 2;
+        // Mould sets when object created after filling missing headers in the object
+        Mould   = 3;
     }
-    Type type  = 1; // Type of object transformation
+    // Type of object transformation
+    Type type  = 1;
 }
 
 message Object {
-    SystemHeader SystemHeader = 1 [(gogoproto.nullable) = false]; // System header
-    repeated Header Headers   = 2 [(gogoproto.nullable) = false]; // Extended headers
-    bytes Payload             = 3; // Object's payload
+    // SystemHeader describes system header
+    SystemHeader SystemHeader = 1 [(gogoproto.nullable) = false];
+    // Headers describes a set of an extended headers
+    repeated Header Headers   = 2 [(gogoproto.nullable) = false];
+    // Payload is an object's payload
+    bytes Payload             = 3;
 }
 
 message StorageGroup {
-    uint64 ValidationDataSize = 1; // Size of the all object's payloads included into storage group
-    bytes ValidationHash = 2 [(gogoproto.customtype) = "Hash", (gogoproto.nullable) = false]; // Homomorphic hash of all object's payloads included into storage group
+    // ValidationDataSize is size of the all object's payloads included into storage group
+    uint64 ValidationDataSize = 1;
+    // ValidationHash is homomorphic hash of all object's payloads included into storage group
+    bytes ValidationHash = 2 [(gogoproto.customtype) = "Hash", (gogoproto.nullable) = false];
 
     message Lifetime {
         enum Unit {
-            Unlimited = 0;  // Storage group always valid
-            NeoFSEpoch = 1; // Storage group is valid until lifetime NeoFS epoch
-            UnixTime = 2;   // Storage group is valid until lifetime unix timestamp
+            // Unlimited set if storage group always valid
+            Unlimited = 0;
+            // NeoFSEpoch set if storage group is valid until lifetime NeoFS epoch
+            NeoFSEpoch = 1;
+            // UnixTime set if storage group is valid until lifetime unix timestamp
+            UnixTime = 2;
         }
 
-        Unit unit = 1 [(gogoproto.customname) = "Unit"]; // Lifetime type
-        int64 Value = 2; // Lifetime value
+        // Unit is lifetime type
+        Unit unit = 1 [(gogoproto.customname) = "Unit"];
+        // Value for lifetime
+        int64 Value = 2;
     }
 
-    Lifetime lifetime = 3 [(gogoproto.customname) = "Lifetime"]; // Time until storage group is valid
+    // Lifetime is time until storage group is valid
+    Lifetime lifetime = 3 [(gogoproto.customname) = "Lifetime"];
 }

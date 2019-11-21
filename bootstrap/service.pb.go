@@ -33,6 +33,7 @@ type Request struct {
 	// Info contains information about node
 	Info NodeInfo `protobuf:"bytes,2,opt,name=info,proto3" json:"info"`
 	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
 	TTL                  uint32   `protobuf:"varint,3,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

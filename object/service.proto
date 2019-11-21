@@ -52,41 +52,64 @@ service Service {
 }
 
 message GetRequest {
-    uint64 Epoch         = 1; // Epoch is set by user to 0, node set epoch to the actual value
-    refs.Address Address = 2 [(gogoproto.nullable) = false]; // Address of object (container id + object id)
-    uint32 TTL           = 3; // TTL must be larger than zero, it decreased in every neofs-node
+    // Epoch is set by user to 0, node set epoch to the actual value
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+    uint64 Epoch         = 1;
+    // Address of object (container id + object id)
+    refs.Address Address = 2 [(gogoproto.nullable) = false];
+    // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+    uint32 TTL           = 3;
 }
 
 message GetResponse {
     oneof R {
-        Object object = 1; // Object header and some payload
-        bytes Chunk   = 2; // Chunk of remaining payload
+        // Object header and some payload
+        Object object = 1;
+        // Chunk of remaining payload
+        bytes Chunk   = 2;
     }
 }
 
 message PutRequest {
     message PutHeader {
-        uint64 Epoch        = 1; // Epoch is set by user to 0, node set epoch to the actual value
-        Object Object       = 2; // Object with at least container id and owner id fields
-        uint32 TTL          = 3; // TTL must be larger than zero, it decreased in every neofs-node
-        session.Token Token = 4; // Token with session public key and user's signature
+        // Epoch is set by user to 0, node set epoch to the actual value
+        // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+        uint64 Epoch        = 1;
+        // Object with at least container id and owner id fields
+        Object Object       = 2;
+        // TTL must be larger than zero, it decreased in every neofs-node
+        // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+        uint32 TTL          = 3;
+        // Token with session public key and user's signature
+        session.Token Token = 4;
     }
 
     oneof R {
-        PutHeader Header = 1; // Header should be the first message in the stream
-        bytes Chunk      = 2; // Chunk should be a remaining message in stream should be chunks
+        // Header should be the first message in the stream
+        PutHeader Header = 1;
+        // Chunk should be a remaining message in stream should be chunks
+        bytes Chunk      = 2;
     }
 }
 
 message PutResponse {
-    refs.Address Address = 1 [(gogoproto.nullable) = false]; // Address of object (container id + object id)
+    // Address of object (container id + object id)
+    refs.Address Address = 1 [(gogoproto.nullable) = false];
 }
 message DeleteRequest {
-    uint64 Epoch         = 1; // Epoch is set by user to 0, node set epoch to the actual value
-    refs.Address Address = 2 [(gogoproto.nullable) = false]; // Address of object (container id + object id)
-    bytes OwnerID        = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"]; // OwnerID is a wallet address
-    uint32 TTL           = 4; // TTL must be larger than zero, it decreased in every neofs-node
-    session.Token Token  = 5; // Token with session public key and user's signature
+    // Epoch is set by user to 0, node set epoch to the actual value
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+    uint64 Epoch         = 1;
+    // Address of object (container id + object id)
+    refs.Address Address = 2 [(gogoproto.nullable) = false];
+    // OwnerID is a wallet address
+    bytes OwnerID        = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"];
+    // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+    uint32 TTL           = 4;
+    // Token with session public key and user's signature
+    session.Token Token  = 5;
 }
 
 // DeleteResponse is empty because we cannot guarantee permanent object removal
@@ -94,47 +117,77 @@ message DeleteRequest {
 message DeleteResponse {}
 
 message HeadRequest {
-    uint64 Epoch         = 1; // Epoch is set by user to 0, node set epoch to the actual value
-    refs.Address Address = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"]; // Address of object (container id + object id)
-    bool FullHeaders     = 3; // FullHeaders can be set true for extended headers in the object
-    uint32 TTL           = 4; // TTL must be larger than zero, it decreased in every neofs-node
+    // Epoch should be empty on user side, node sets epoch to the actual value
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+    uint64 Epoch         = 1;
+    // Address of object (container id + object id)
+    refs.Address Address = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
+    // FullHeaders can be set true for extended headers in the object
+    bool FullHeaders     = 3;
+    // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+    uint32 TTL           = 4;
 }
 message HeadResponse {
-    Object Object = 1; // Object without payload
+    // Object without payload
+    Object Object = 1;
 }
 
 message SearchRequest {
-    uint64 Epoch         = 1; // Epoch is set by user to 0, node set epoch to the actual value
-    uint32 Version       = 2; // Version of search query format
-    bytes ContainerID    = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "CID"]; // ContainerID for searching the object
-    bytes Query          = 4; // Query in the binary serialized format
-    uint32 TTL           = 5; // TTL must be larger than zero, it decreased in every neofs-node
+    // Epoch is set by user to 0, node set epoch to the actual value
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+    uint64 Epoch         = 1;
+    // Version of search query format
+    uint32 Version       = 2;
+    // ContainerID for searching the object
+    bytes ContainerID    = 3 [(gogoproto.nullable) = false, (gogoproto.customtype) = "CID"];
+    // Query in the binary serialized format
+    bytes Query          = 4;
+    // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+    uint32 TTL           = 5;
 }
 
 message SearchResponse {
-    repeated refs.Address Addresses = 1 [(gogoproto.nullable) = false]; // Addresses of found objects
+    // Addresses of found objects
+    repeated refs.Address Addresses = 1 [(gogoproto.nullable) = false];
 }
 
 message GetRangeRequest {
-    uint64 Epoch          = 1; // Epoch is set by user to 0, node set epoch to the actual value
-    refs.Address Address  = 2 [(gogoproto.nullable) = false]; // Address of object (container id + object id)
-    repeated Range Ranges = 3 [(gogoproto.nullable) = false]; // Ranges of object's payload to return
-    uint32 TTL            = 4; // TTL must be larger than zero, it decreased in every neofs-node
+    // Epoch is set by user to 0, node set epoch to the actual value
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+    uint64 Epoch          = 1;
+    // Address of object (container id + object id)
+    refs.Address Address  = 2 [(gogoproto.nullable) = false];
+    // Ranges of object's payload to return
+    repeated Range Ranges = 3 [(gogoproto.nullable) = false];
+    // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+    uint32 TTL            = 4;
 }
 
 message GetRangeResponse {
-    repeated bytes Fragments = 1; // Fragments of object's payload
+    // Fragments of object's payload
+    repeated bytes Fragments = 1;
 }
 
 message GetRangeHashRequest {
-    uint64 Epoch          = 1; // Epoch is set by user to 0, node set epoch to the actual value
-    refs.Address Address  = 2 [(gogoproto.nullable) = false]; // Address of object (container id + object id)
-    repeated Range Ranges = 3 [(gogoproto.nullable) = false]; // Ranges of object's payload to calculate homomorphic hash
-    bytes Salt            = 4; // Salt is used to XOR object's payload ranges before hashing, it can be nil
-    uint32 TTL            = 5; // TTL must be larger than zero, it decreased in every neofs-node
+    // Epoch is set by user to 0, node set epoch to the actual value
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+    uint64 Epoch          = 1;
+    // Address of object (container id + object id)
+    refs.Address Address  = 2 [(gogoproto.nullable) = false];
+    // Ranges of object's payload to calculate homomorphic hash
+    repeated Range Ranges = 3 [(gogoproto.nullable) = false];
+    // Salt is used to XOR object's payload ranges before hashing, it can be nil
+    bytes Salt            = 4;
+    // TTL must be larger than zero, it decreased in every neofs-node
+    // Deprecated: will be replaced with RequestMetaHeader (see develop branch)
+    uint32 TTL            = 5;
 }
 
 message GetRangeHashResponse {
-    repeated bytes Hashes = 1 [(gogoproto.customtype) = "Hash", (gogoproto.nullable) = false]; // Homomorphic hashes of all ranges
+    // Hashes is a homomorphic hashes of all ranges
+    repeated bytes Hashes = 1 [(gogoproto.customtype) = "Hash", (gogoproto.nullable) = false];
 }
 

@@ -9,9 +9,10 @@ option (gogoproto.stable_marshaler_all) = true;
 message Filter {
     option (gogoproto.goproto_stringer) = false;
 
-    // Type can be Exact or Regex
     enum Type {
+        // Exact sets when value of filter should be equal to the header value
         Exact = 0;
+        // Regex sets when value of filter should match the header value by the regular expression
         Regex = 1;
     }
 

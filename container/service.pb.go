@@ -40,6 +40,7 @@ type PutRequest struct {
 	// Signature of the user (owner id)
 	Signature []byte `protobuf:"bytes,5,opt,name=Signature,proto3" json:"Signature,omitempty"`
 	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
 	TTL                  uint32   `protobuf:"varint,6,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -144,6 +145,7 @@ type DeleteRequest struct {
 	// CID (container id) is a SHA256 hash of the container structure
 	CID CID `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
 	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
 	TTL uint32 `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	// Signature of the container owner
 	Signature            []byte   `protobuf:"bytes,3,opt,name=Signature,proto3" json:"Signature,omitempty"`
@@ -236,6 +238,7 @@ type GetRequest struct {
 	// CID (container id) is a SHA256 hash of the container structure
 	CID CID `protobuf:"bytes,1,opt,name=CID,proto3,customtype=CID" json:"CID"`
 	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
 	TTL                  uint32   `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -326,6 +329,7 @@ type ListRequest struct {
 	// OwnerID is a wallet address
 	OwnerID OwnerID `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
 	// TTL must be larger than zero, it decreased in every neofs-node
+	// Deprecated: will be replaced with RequestMetaHeader (see develop branch)
 	TTL                  uint32   `protobuf:"varint,2,opt,name=TTL,proto3" json:"TTL,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
