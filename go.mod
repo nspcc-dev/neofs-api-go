@@ -8,7 +8,7 @@ require (
 	github.com/golang/protobuf v1.3.2
 	github.com/google/uuid v1.1.1
 	github.com/mr-tron/base58 v1.1.2
-	github.com/nspcc-dev/neofs-crypto v0.2.1
+	github.com/nspcc-dev/neofs-crypto v0.2.2
 	github.com/nspcc-dev/netmap v1.6.1
 	github.com/nspcc-dev/tzhash v1.3.0
 	github.com/onsi/ginkgo v1.10.2 // indirect

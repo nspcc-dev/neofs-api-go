@@ -4,53 +4,14 @@ import (
 	"io"
 
 	"code.cloudfoundry.org/bytefmt"
-	"github.com/nspcc-dev/neofs-proto/service"
 	"github.com/nspcc-dev/neofs-proto/session"
 	"github.com/pkg/errors"
 )
 
-const maxGetPayloadSize = 3584 * 1024 // 3.5 MiB
-
-func splitBytes(data []byte, maxSize int) (result [][]byte) {
-	l := len(data)
-	if l == 0 {
-		return [][]byte{data}
-	}
-	for i := 0; i < l; i += maxSize {
-		last := i + maxSize
-		if last > l {
-			last = l
-		}
-		result = append(result, data[i:last])
-	}
-	return
-}
-
-// SendPutRequest prepares object and sends it in chunks through protobuf stream.
-func SendPutRequest(s Service_PutClient, obj *Object, epoch uint64, ttl uint32) (*PutResponse, error) {
-	// TODO split must take into account size of the marshalled Object
-	chunks := splitBytes(obj.Payload, maxGetPayloadSize)
-	obj.Payload = chunks[0]
-	if err := s.Send(MakePutRequestHeader(obj, epoch, ttl, nil)); err != nil {
-		return nil, err
-	}
-	for i := range chunks[1:] {
-		if err := s.Send(MakePutRequestChunk(chunks[i+1])); err != nil {
-			return nil, err
-		}
-	}
-	resp, err := s.CloseAndRecv()
-	if err != nil && err != io.EOF {
-		return nil, err
-	}
-	return resp, nil
-}
-
-// MakePutRequestHeader combines object, epoch, ttl and session token value
+// MakePutRequestHeader combines object and session token value
 // into header of object put request.
-func MakePutRequestHeader(obj *Object, epoch uint64, ttl uint32, token *session.Token) *PutRequest {
+func MakePutRequestHeader(obj *Object, token *session.Token) *PutRequest {
 	return &PutRequest{
-		RequestMetaHeader: service.RequestMetaHeader{TTL: ttl, Epoch: epoch},
 		R: &PutRequest_Header{Header: &PutRequest_PutHeader{
 			Object: obj,
 			Token:  token,
