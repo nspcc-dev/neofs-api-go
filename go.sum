@@ -73,6 +73,7 @@ github.com/nspcc-dev/hrw v1.0.8 h1:vwRuJXZXgkMvf473vFzeWGCfY1WBVeSHAEHvR4u3/Cg=
 github.com/nspcc-dev/hrw v1.0.8/go.mod h1:l/W2vx83vMQo6aStyx2AuZrJ+07lGv2JQGlVkPG06MU=
 github.com/nspcc-dev/neofs-crypto v0.2.1 h1:NxKexcW88vlHO/u7EYjx5Q1UaOQ7XhYrCsLSVgOcCxw=
 github.com/nspcc-dev/neofs-crypto v0.2.1/go.mod h1:F/96fUzPM3wR+UGsPi3faVNmFlA9KAEAUQR7dMxZmNA=
+github.com/nspcc-dev/neofs-crypto v0.2.2/go.mod h1:F/96fUzPM3wR+UGsPi3faVNmFlA9KAEAUQR7dMxZmNA=
 github.com/nspcc-dev/netmap v1.6.1 h1:Pigqpqi6QSdRiusbq5XlO20A18k6Eyu7j9MzOfAE3CM=
 github.com/nspcc-dev/netmap v1.6.1/go.mod h1:mhV3UOg9ljQmu0teQShD6+JYX09XY5gu2I4hIByCH9M=
 github.com/nspcc-dev/rfc6979 v0.1.0 h1:Lwg7esRRoyK1Up/IN1vAef1EmvrBeMHeeEkek2fAJ6c=
