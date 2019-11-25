@@ -101,6 +101,10 @@ func ProcessRequestTTL(req MetaHeader, cond ...TTLCondition) error {
 
 		// check specific condition:
 		if err := cond[i](ttl); err != nil {
+			if st, ok := status.FromError(err); ok {
+				return st.Err()
+			}
+
 			return status.New(codes.InvalidArgument, err.Error()).Err()
 		}
 	}
