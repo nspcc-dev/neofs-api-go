@@ -19,12 +19,17 @@ type (
 		GetTTL() uint32
 		SetTTL(uint32)
 
-		// EpochRequest gives possibility to get or set epoch in RPC Requests.
-		GetEpoch() uint64
-		SetEpoch(uint64)
+		// EpochHeader gives possibility to get or set epoch in RPC Requests.
+		EpochHeader
 
 		// VersionHeader allows get or set version of protocol request
 		VersionHeader
+	}
+
+	// EpochHeader interface gives possibility to get or set epoch in RPC Requests.
+	EpochHeader interface {
+		GetEpoch() uint64
+		SetEpoch(v uint64)
 	}
 
 	// VersionHeader allows get or set version of protocol request
