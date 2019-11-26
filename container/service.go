@@ -25,12 +25,6 @@ const (
 	ErrNotFound = internal.Error("could not find container")
 )
 
-// SetSignature sets signature to PutRequest to satisfy SignedRequest interface.
-func (m *PutRequest) SetSignature(v []byte) { m.Signature = v }
-
-// SetSignature sets signature to DeleteRequest to satisfy SignedRequest interface.
-func (m *DeleteRequest) SetSignature(v []byte) { m.Signature = v }
-
 // PrepareData prepares bytes representation of PutRequest to satisfy SignedRequest interface.
 func (m *PutRequest) PrepareData() ([]byte, error) {
 	var (
