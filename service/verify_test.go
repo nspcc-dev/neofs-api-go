@@ -9,6 +9,7 @@ import (
 	"github.com/gogo/protobuf/proto"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-crypto/test"
+	"github.com/nspcc-dev/neofs-proto/refs"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )
@@ -76,6 +77,12 @@ func TestMaintainableRequest(t *testing.T) {
 
 			req.SetOwner(&owner.PublicKey, sign)
 		}
+	}
+
+	{ // Validate owner
+		user, err := refs.NewOwnerID(&owner.PublicKey)
+		require.NoError(t, err)
+		require.NoError(t, req.CheckOwner(user))
 	}
 
 	{ // Good case:
