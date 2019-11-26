@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/nspcc-dev/neofs-proto/internal"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -106,7 +107,7 @@ func ProcessRequestTTL(req MetaHeader, cond ...TTLCondition) error {
 
 		// check specific condition:
 		if err := cond[i](ttl); err != nil {
-			if st, ok := status.FromError(err); ok {
+			if st, ok := status.FromError(errors.Cause(err)); ok {
 				return st.Err()
 			}
 
