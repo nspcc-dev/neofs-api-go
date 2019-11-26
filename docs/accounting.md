@@ -362,7 +362,6 @@ Delete allows user to remove unused cheque
 | ID | [bytes](#bytes) |  | ID is cheque identifier |
 | OwnerID | [bytes](#bytes) |  | OwnerID is a wallet address |
 | MessageID | [bytes](#bytes) |  | MessageID is a nonce for uniq request (UUIDv4) |
-| Signature | [bytes](#bytes) |  | Signature is a signature of the sent request |
 | Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
 | Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
@@ -450,7 +449,6 @@ DeleteResponse is empty
 | Amount | [decimal.Decimal](#decimal.Decimal) |  | Amount of funds |
 | Height | [uint64](#uint64) |  | Height is the neo blockchain height until the cheque is valid |
 | MessageID | [bytes](#bytes) |  | MessageID is a nonce for uniq request (UUIDv4) |
-| Signature | [bytes](#bytes) |  | Signature is a signature of the sent request |
 | Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
 | Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
