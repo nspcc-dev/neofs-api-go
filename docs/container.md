@@ -92,7 +92,6 @@ List returns all user's containers
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | CID | [bytes](#bytes) |  | CID (container id) is a SHA256 hash of the container structure |
-| Signature | [bytes](#bytes) |  | Signature of the container owner |
 | Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
 | Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
@@ -165,7 +164,6 @@ via consensus in inner ring nodes
 | Capacity | [uint64](#uint64) |  | Capacity defines amount of data that can be stored in the container (doesn't used for now). |
 | OwnerID | [bytes](#bytes) |  | OwnerID is a wallet address |
 | rules | [netmap.PlacementRule](#netmap.PlacementRule) |  | Rules define storage policy for the object inside the container. |
-| Signature | [bytes](#bytes) |  | Signature of the user (owner id) |
 | Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
 | Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 

@@ -41,9 +41,6 @@ message PutRequest {
     // Rules define storage policy for the object inside the container.
     netmap.PlacementRule rules               = 4 [(gogoproto.nullable) = false];
 
-    // Signature of the user (owner id)
-    bytes Signature                          = 5;
-
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -58,9 +55,6 @@ message PutResponse {
 message DeleteRequest {
     // CID (container id) is a SHA256 hash of the container structure
     bytes CID                                = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
-
-    // Signature of the container owner
-    bytes Signature                          = 2;
 
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
