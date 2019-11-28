@@ -2,11 +2,42 @@ package object
 
 import (
 	"io"
+	"strconv"
 
-	"code.cloudfoundry.org/bytefmt"
 	"github.com/nspcc-dev/neofs-proto/session"
 	"github.com/pkg/errors"
 )
+
+// ByteSize used to format bytes
+type ByteSize uint64
+
+// String represents ByteSize in string format
+func (b ByteSize) String() string {
+	var (
+		dec  int64
+		unit string
+		num  = int64(b)
+	)
+
+	switch {
+	case num > UnitsTB:
+		unit = "TB"
+		dec = UnitsTB
+	case num > UnitsGB:
+		unit = "GB"
+		dec = UnitsGB
+	case num > UnitsMB:
+		unit = "MB"
+		dec = UnitsMB
+	case num > UnitsKB:
+		unit = "KB"
+		dec = UnitsKB
+	case num > UnitsB:
+		dec = 1
+	}
+
+	return strconv.FormatFloat(float64(num)/float64(dec), 'g', 6, 64) + unit
+}
 
 // MakePutRequestHeader combines object and session token value
 // into header of object put request.
@@ -26,7 +57,7 @@ func MakePutRequestChunk(chunk []byte) *PutRequest {
 }
 
 func errMaxSizeExceeded(size uint64) error {
-	return errors.Errorf("object payload size exceed: %s", bytefmt.ByteSize(size))
+	return errors.Errorf("object payload size exceed: %s", ByteSize(size).String())
 }
 
 // ReceiveGetResponse receives object by chunks from the protobuf stream

@@ -1,6 +1,22 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.2.3] - 2019-11-28
+
+### Removed
+- service: SignRequest / VerifyRequest and accompanying code 
+- proto: Signature field from requests
+- object: bytefmt package not used anymore   
+
+### Changed
+- service: rename EpochRequest to EpochHeader and merge with MetaHeader
+- service: get status error even if it is wrapped
+
+### Added
+- service: RequestVerificationHeader's method to validate owner
+- service: test coverage for CheckOwner
+- service: test coverage for wrapped status errors
+
 ## [0.2.2] - 2019-11-22
 
 ### Changed
@@ -33,3 +49,4 @@ Initial public release
 [0.2.0]: https://github.com/nspcc-dev/neofs-proto/compare/v0.1.0...v0.2.0
 [0.2.1]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.0...v0.2.1
 [0.2.2]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.1...v0.2.2
+[0.2.3]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.2...v0.2.3

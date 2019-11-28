@@ -6,6 +6,7 @@ import (
 	"github.com/gogo/protobuf/proto"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-proto/internal"
+	"github.com/nspcc-dev/neofs-proto/refs"
 	"github.com/pkg/errors"
 )
 
@@ -35,6 +36,9 @@ const (
 
 	// ErrCannotFindOwner is raised when signatures empty in GetOwner.
 	ErrCannotFindOwner = internal.Error("cannot find owner public key")
+
+	// ErrWrongOwner is raised when passed OwnerID not equal to present PublicKey
+	ErrWrongOwner = internal.Error("wrong owner")
 )
 
 // SetSignatures replaces signatures stored in RequestVerificationHeader.
@@ -60,6 +64,18 @@ func (m *RequestVerificationHeader) SetOwner(pub *ecdsa.PublicKey, sign []byte) 
 		Sign: sign,
 		Peer: crypto.MarshalPublicKey(pub),
 	}
+}
+
+// CheckOwner validates, that passed OwnerID is equal to present PublicKey of owner.
+func (m *RequestVerificationHeader) CheckOwner(owner refs.OwnerID) error {
+	if key, err := m.GetOwner(); err != nil {
+		return err
+	} else if user, err := refs.NewOwnerID(key); err != nil {
+		return err
+	} else if !user.Equal(owner) {
+		return ErrWrongOwner
+	}
+	return nil
 }
 
 // GetOwner tries to get owner (client) public key from signatures.

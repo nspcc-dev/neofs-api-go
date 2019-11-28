@@ -3,6 +3,7 @@ package service
 import (
 	"testing"
 
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -53,6 +54,18 @@ func TestMetaRequest(t *testing.T) {
 			name:              "custom status error",
 			RequestMetaHeader: RequestMetaHeader{TTL: SingleForwardingTTL},
 			handler:           func(_ uint32) error { return status.Error(codes.NotFound, "not found") },
+		},
+		{
+			msg:               "not found",
+			code:              codes.NotFound,
+			name:              "custom wrapped status error",
+			RequestMetaHeader: RequestMetaHeader{TTL: SingleForwardingTTL},
+			handler: func(_ uint32) error {
+				err := status.Error(codes.NotFound, "not found")
+				err = errors.Wrap(err, "some error context")
+				err = errors.Wrap(err, "another error context")
+				return err
+			},
 		},
 	}
 

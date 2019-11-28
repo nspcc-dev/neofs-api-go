@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/nspcc-dev/neofs-proto/internal"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -19,12 +20,17 @@ type (
 		GetTTL() uint32
 		SetTTL(uint32)
 
-		// EpochRequest gives possibility to get or set epoch in RPC Requests.
-		GetEpoch() uint64
-		SetEpoch(uint64)
+		// EpochHeader gives possibility to get or set epoch in RPC Requests.
+		EpochHeader
 
 		// VersionHeader allows get or set version of protocol request
 		VersionHeader
+	}
+
+	// EpochHeader interface gives possibility to get or set epoch in RPC Requests.
+	EpochHeader interface {
+		GetEpoch() uint64
+		SetEpoch(v uint64)
 	}
 
 	// VersionHeader allows get or set version of protocol request
@@ -101,7 +107,7 @@ func ProcessRequestTTL(req MetaHeader, cond ...TTLCondition) error {
 
 		// check specific condition:
 		if err := cond[i](ttl); err != nil {
-			if st, ok := status.FromError(err); ok {
+			if st, ok := status.FromError(errors.Cause(err)); ok {
 				return st.Err()
 			}
 

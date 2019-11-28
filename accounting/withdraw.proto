@@ -59,8 +59,6 @@ message PutRequest {
     uint64 Height                            = 3;
     // MessageID is a nonce for uniq request (UUIDv4)
     bytes MessageID                          = 4 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
-    // Signature is a signature of the sent request
-    bytes Signature                          = 5;
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -92,8 +90,6 @@ message DeleteRequest {
     bytes OwnerID                            = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
     // MessageID is a nonce for uniq request (UUIDv4)
     bytes MessageID                          = 3 [(gogoproto.customtype) = "MessageID", (gogoproto.nullable) = false];
-    // Signature is a signature of the sent request
-    bytes Signature                          = 4;
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
