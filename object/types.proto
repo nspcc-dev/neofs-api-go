@@ -4,6 +4,7 @@ option go_package = "github.com/nspcc-dev/neofs-proto/object";
 
 import "refs/types.proto";
 import "session/types.proto";
+import "storagegroup/types.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
@@ -25,25 +26,25 @@ message UserHeader {
 message Header {
     oneof Value {
         // Link to other objects
-        Link Link                         = 1;
+        Link Link                              = 1;
         // Redirect not used yet
-        refs.Address Redirect             = 2;
+        refs.Address Redirect                  = 2;
         // UserHeader is a set of KV headers defined by user
-        UserHeader UserHeader             = 3;
+        UserHeader UserHeader                  = 3;
         // Transform defines transform operation (e.g. payload split)
-        Transform Transform               = 4;
+        Transform Transform                    = 4;
         // Tombstone header that set up in deleted objects
-        Tombstone Tombstone               = 5;
+        Tombstone Tombstone                    = 5;
         // Verify header that contains session public key and user's signature
-        session.VerificationHeader Verify = 6;
+        session.VerificationHeader Verify      = 6;
         // HomoHash is a homomorphic hash of original object payload
-        bytes HomoHash                    = 7 [(gogoproto.customtype) = "Hash"];
+        bytes HomoHash                         = 7 [(gogoproto.customtype) = "Hash"];
         // PayloadChecksum of actual object's payload
-        bytes PayloadChecksum             = 8;
+        bytes PayloadChecksum                  = 8;
         // Integrity header with checksum of all above headers in the object
-        IntegrityHeader Integrity         = 9;
+        IntegrityHeader Integrity              = 9;
         // StorageGroup contains meta information for the data audit
-        StorageGroup StorageGroup         = 10;
+        storagegroup.StorageGroup StorageGroup = 10;
     }
 }
 
@@ -123,30 +124,4 @@ message Object {
     repeated Header Headers   = 2 [(gogoproto.nullable) = false];
     // Payload is an object's payload
     bytes Payload             = 3;
-}
-
-message StorageGroup {
-    // ValidationDataSize is size of the all object's payloads included into storage group
-    uint64 ValidationDataSize = 1;
-    // ValidationHash is homomorphic hash of all object's payloads included into storage group
-    bytes ValidationHash = 2 [(gogoproto.customtype) = "Hash", (gogoproto.nullable) = false];
-
-    message Lifetime {
-        enum Unit {
-            // Unlimited set if storage group always valid
-            Unlimited = 0;
-            // NeoFSEpoch set if storage group is valid until lifetime NeoFS epoch
-            NeoFSEpoch = 1;
-            // UnixTime set if storage group is valid until lifetime unix timestamp
-            UnixTime = 2;
-        }
-
-        // Unit is lifetime type
-        Unit unit = 1 [(gogoproto.customname) = "Unit"];
-        // Value for lifetime
-        int64 Value = 2;
-    }
-
-    // Lifetime is time until storage group is valid
-    Lifetime lifetime = 3 [(gogoproto.customname) = "Lifetime"];
 }
