@@ -1,6 +1,15 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.2.4] - 2019-12-03
+
+### Added
+- StorageGroup library
+
+### Changed
+- Storage group part of object library moved into separate package
+- Updated proto documentation
+
 ## [0.2.3] - 2019-11-28
 
 ### Removed
@@ -50,3 +59,4 @@ Initial public release
 [0.2.1]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.0...v0.2.1
 [0.2.2]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.1...v0.2.2
 [0.2.3]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.2...v0.2.3
+[0.2.4]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.3...v0.2.4
