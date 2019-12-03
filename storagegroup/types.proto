@@ -1,0 +1,35 @@
+syntax = "proto3";
+package storagegroup;
+option go_package = "github.com/nspcc-dev/neofs-proto/storagegroup";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.stable_marshaler_all) = true;
+
+message StorageGroup {
+    option (gogoproto.goproto_stringer) = false;
+
+    // ValidationDataSize is size of the all object's payloads included into storage group
+    uint64 ValidationDataSize = 1;
+    // ValidationHash is homomorphic hash of all object's payloads included into storage group
+    bytes ValidationHash = 2 [(gogoproto.customtype) = "Hash", (gogoproto.nullable) = false];
+
+    message Lifetime {
+        enum Unit {
+            // Unlimited set if storage group always valid
+            Unlimited = 0;
+            // NeoFSEpoch set if storage group is valid until lifetime NeoFS epoch
+            NeoFSEpoch = 1;
+            // UnixTime set if storage group is valid until lifetime unix timestamp
+            UnixTime = 2;
+        }
+
+        // Unit is lifetime type
+        Unit unit = 1 [(gogoproto.customname) = "Unit"];
+        // Value for lifetime
+        int64 Value = 2;
+    }
+
+    // Lifetime is time until storage group is valid
+    Lifetime lifetime = 3 [(gogoproto.customname) = "Lifetime"];
+}

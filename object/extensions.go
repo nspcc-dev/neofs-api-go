@@ -1,8 +1,6 @@
 package object
 
-import (
-	"github.com/nspcc-dev/neofs-proto/hash"
-)
+import "github.com/nspcc-dev/neofs-proto/storagegroup"
 
 // IsLinking checks if object has children links to another objects.
 // We have to check payload size because zero-object must have zero
@@ -64,7 +62,7 @@ func (m Object) IsTombstone() bool {
 }
 
 // StorageGroup returns storage group structure if it is presented in extended headers.
-func (m Object) StorageGroup() (*StorageGroup, error) {
+func (m Object) StorageGroup() (*storagegroup.StorageGroup, error) {
 	_, sgHdr := m.LastHeader(HeaderType(StorageGroupHdr))
 	if sgHdr == nil {
 		return nil, ErrHeaderNotFound
@@ -74,11 +72,6 @@ func (m Object) StorageGroup() (*StorageGroup, error) {
 
 // SetStorageGroup sets storage group header in the object.
 // It will replace existing storage group header or add a new one.
-func (m *Object) SetStorageGroup(sg *StorageGroup) {
-	m.SetHeader(&Header{Value: &Header_StorageGroup{StorageGroup: sg}})
-}
-
-// Empty checks if storage group has some data for validation.
-func (m StorageGroup) Empty() bool {
-	return m.ValidationDataSize == 0 && m.ValidationHash.Equal(hash.Hash{})
+func (m *Object) SetStorageGroup(group *storagegroup.StorageGroup) {
+	m.SetHeader(&Header{Value: &Header_StorageGroup{StorageGroup: group}})
 }

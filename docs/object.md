@@ -34,8 +34,6 @@
     - [Link](#object.Link)
     - [Object](#object.Object)
     - [Range](#object.Range)
-    - [StorageGroup](#object.StorageGroup)
-    - [StorageGroup.Lifetime](#object.StorageGroup.Lifetime)
     - [SystemHeader](#object.SystemHeader)
     - [Tombstone](#object.Tombstone)
     - [Transform](#object.Transform)
@@ -369,7 +367,7 @@ in distributed system.
 | HomoHash | [bytes](#bytes) |  | HomoHash is a homomorphic hash of original object payload |
 | PayloadChecksum | [bytes](#bytes) |  | PayloadChecksum of actual object's payload |
 | Integrity | [IntegrityHeader](#object.IntegrityHeader) |  | Integrity header with checksum of all above headers in the object |
-| StorageGroup | [StorageGroup](#object.StorageGroup) |  | StorageGroup contains meta information for the data audit |
+| StorageGroup | [storagegroup.StorageGroup](#storagegroup.StorageGroup) |  | StorageGroup contains meta information for the data audit |
 
 
 <a name="object.IntegrityHeader"></a>
@@ -419,31 +417,6 @@ in distributed system.
 | ----- | ---- | ----- | ----------- |
 | Offset | [uint64](#uint64) |  | Offset of the data range |
 | Length | [uint64](#uint64) |  | Length of the data range |
-
-
-<a name="object.StorageGroup"></a>
-
-### Message StorageGroup
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| ValidationDataSize | [uint64](#uint64) |  | ValidationDataSize is size of the all object's payloads included into storage group |
-| ValidationHash | [bytes](#bytes) |  | ValidationHash is homomorphic hash of all object's payloads included into storage group |
-| lifetime | [StorageGroup.Lifetime](#object.StorageGroup.Lifetime) |  | Lifetime is time until storage group is valid |
-
-
-<a name="object.StorageGroup.Lifetime"></a>
-
-### Message StorageGroup.Lifetime
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit | [StorageGroup.Lifetime.Unit](#object.StorageGroup.Lifetime.Unit) |  | Unit is lifetime type |
-| Value | [int64](#int64) |  | Value for lifetime |
 
 
 <a name="object.SystemHeader"></a>
@@ -511,19 +484,6 @@ in distributed system.
 | Next | 3 | Next object in the linked list created during object transformation |
 | Child | 4 | Child object created during object transformation |
 | StorageGroup | 5 | Object that included into this storage group |
-
-
-
-<a name="object.StorageGroup.Lifetime.Unit"></a>
-
-### StorageGroup.Lifetime.Unit
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| Unlimited | 0 | Unlimited set if storage group always valid |
-| NeoFSEpoch | 1 | NeoFSEpoch set if storage group is valid until lifetime NeoFS epoch |
-| UnixTime | 2 | UnixTime set if storage group is valid until lifetime unix timestamp |
 
 
 

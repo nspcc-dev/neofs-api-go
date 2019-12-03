@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-proto/hash"
+	"github.com/nspcc-dev/neofs-proto/storagegroup"
 	"github.com/stretchr/testify/require"
 )
 
@@ -28,7 +29,7 @@ func TestObject_StorageGroup(t *testing.T) {
 		}
 
 		rand.Shuffle(len(obj.Headers), func(i, j int) { obj.Headers[i], obj.Headers[j] = obj.Headers[j], obj.Headers[i] })
-		sort.Sort(IDList(idList))
+		sort.Sort(storagegroup.IDList(idList))
 		require.Equal(t, idList, obj.Group())
 	})
 	t.Run("identification method", func(t *testing.T) {
@@ -58,7 +59,7 @@ func TestObject_StorageGroup(t *testing.T) {
 			Headers: []Header{
 				{
 					Value: &Header_StorageGroup{
-						StorageGroup: &StorageGroup{
+						StorageGroup: &storagegroup.StorageGroup{
 							ValidationDataSize: sgSize,
 							ValidationHash:     sgHash,
 						},
