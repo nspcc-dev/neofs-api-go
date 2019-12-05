@@ -3,7 +3,6 @@ package service
 import (
 	"crypto/ecdsa"
 
-	"github.com/gogo/protobuf/proto"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-proto/internal"
 	"github.com/nspcc-dev/neofs-proto/refs"
@@ -13,7 +12,6 @@ import (
 type (
 	// VerifiableRequest adds possibility to sign and verify request header.
 	VerifiableRequest interface {
-		proto.Message
 		Marshal() ([]byte, error)
 		AddSignature(*RequestVerificationHeader_Signature)
 		GetSignatures() []*RequestVerificationHeader_Signature
@@ -23,7 +21,6 @@ type (
 	// MaintainableRequest adds possibility to set and get (+validate)
 	// owner (client) public key from RequestVerificationHeader.
 	MaintainableRequest interface {
-		proto.Message
 		GetOwner() (*ecdsa.PublicKey, error)
 		SetOwner(*ecdsa.PublicKey, []byte)
 		GetLastPeer() (*ecdsa.PublicKey, error)
