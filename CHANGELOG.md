@@ -1,6 +1,11 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.2.5] - 2019-12-05
+
+### Removed
+- proto.Message in Maintainable/Verifiable requests
+
 ## [0.2.4] - 2019-12-03
 
 ### Added
@@ -60,3 +65,4 @@ Initial public release
 [0.2.2]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.1...v0.2.2
 [0.2.3]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.2...v0.2.3
 [0.2.4]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.3...v0.2.4
+[0.2.5]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.4...v0.2.5
