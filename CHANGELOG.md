@@ -1,6 +1,11 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.2.6] - 2019-12-17
+
+### Added
+- Request to dump node config
+
 ## [0.2.5] - 2019-12-05
 
 ### Removed
@@ -66,3 +71,4 @@ Initial public release
 [0.2.3]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.2...v0.2.3
 [0.2.4]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.3...v0.2.4
 [0.2.5]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.4...v0.2.5
+[0.2.6]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.5...v0.2.6
