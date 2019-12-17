@@ -45,6 +45,7 @@ func DecodeMetrics(r *MetricsResponse) ([]*MetricFamily, error) {
 		if err := proto.Unmarshal(r.Metrics[i], mf); err != nil {
 			return nil, err
 		}
+		metrics = append(metrics, mf)
 	}
 
 	return metrics, nil
