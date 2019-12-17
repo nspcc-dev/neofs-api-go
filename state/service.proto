@@ -18,6 +18,10 @@ service Status {
     // HealthCheck request allows to check health status of the node.
     // If node unhealthy field Status would contains detailed info.
     rpc HealthCheck(HealthRequest) returns (HealthResponse);
+    // DumpConfig request allows dumping settings for the current node.
+    // To permit access, used server config options.
+    // The request should be signed.
+    rpc DumpConfig(DumpRequest) returns (DumpResponse);
 }
 
 // NetmapRequest message to request current node netmap
@@ -57,4 +61,18 @@ message HealthResponse {
     bool Healthy  = 1;
     // Status contains detailed information about health status
     string Status = 2;
+}
+
+// DumpRequest message to fetch current server config.
+message DumpRequest {
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+}
+
+// DumpResponse message contains current server config.
+// Config stored in JSON encoded into slice of bytes.
+message DumpResponse {
+    bytes Config = 1;
 }

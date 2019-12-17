@@ -249,44 +249,134 @@ func (m *HealthResponse) GetStatus() string {
 	return ""
 }
 
+// DumpRequest message to fetch current server config.
+type DumpRequest struct {
+	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
+	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
+}
+
+func (m *DumpRequest) Reset()         { *m = DumpRequest{} }
+func (m *DumpRequest) String() string { return proto.CompactTextString(m) }
+func (*DumpRequest) ProtoMessage()    {}
+func (*DumpRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_695592f6f2fc97b7, []int{5}
+}
+func (m *DumpRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DumpRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *DumpRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DumpRequest.Merge(m, src)
+}
+func (m *DumpRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *DumpRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DumpRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DumpRequest proto.InternalMessageInfo
+
+// DumpResponse message contains current server config.
+// Config stored in JSON encoded into slice of bytes.
+type DumpResponse struct {
+	Config               []byte   `protobuf:"bytes,1,opt,name=Config,proto3" json:"Config,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DumpResponse) Reset()         { *m = DumpResponse{} }
+func (m *DumpResponse) String() string { return proto.CompactTextString(m) }
+func (*DumpResponse) ProtoMessage()    {}
+func (*DumpResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_695592f6f2fc97b7, []int{6}
+}
+func (m *DumpResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DumpResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *DumpResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DumpResponse.Merge(m, src)
+}
+func (m *DumpResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *DumpResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DumpResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DumpResponse proto.InternalMessageInfo
+
+func (m *DumpResponse) GetConfig() []byte {
+	if m != nil {
+		return m.Config
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*NetmapRequest)(nil), "state.NetmapRequest")
 	proto.RegisterType((*MetricsRequest)(nil), "state.MetricsRequest")
 	proto.RegisterType((*MetricsResponse)(nil), "state.MetricsResponse")
 	proto.RegisterType((*HealthRequest)(nil), "state.HealthRequest")
 	proto.RegisterType((*HealthResponse)(nil), "state.HealthResponse")
+	proto.RegisterType((*DumpRequest)(nil), "state.DumpRequest")
+	proto.RegisterType((*DumpResponse)(nil), "state.DumpResponse")
 }
 
 func init() { proto.RegisterFile("state/service.proto", fileDescriptor_695592f6f2fc97b7) }
 
 var fileDescriptor_695592f6f2fc97b7 = []byte{
-	// 408 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x93, 0xbf, 0xae, 0xd3, 0x30,
-	0x14, 0xc6, 0xaf, 0xf9, 0x13, 0x2e, 0xbe, 0x70, 0x91, 0x4c, 0x5b, 0x45, 0x19, 0xd2, 0xa8, 0x03,
-	0x8a, 0x84, 0x9a, 0x48, 0x85, 0xa1, 0x42, 0x4c, 0x85, 0xa1, 0x4b, 0x19, 0x52, 0x89, 0x81, 0xcd,
-	0x71, 0x4f, 0xdb, 0x08, 0x1a, 0x9b, 0xf8, 0xa4, 0x52, 0x9f, 0x02, 0x46, 0x1e, 0x84, 0x87, 0xe8,
-	0xd8, 0x91, 0xa9, 0x42, 0xe1, 0x45, 0x10, 0x8e, 0x13, 0x68, 0x79, 0x81, 0x6e, 0xf9, 0x7e, 0x5f,
-	0x3e, 0xe7, 0xd3, 0xc9, 0x31, 0x7d, 0xaa, 0x91, 0x23, 0xc4, 0x1a, 0x8a, 0x6d, 0x26, 0x20, 0x52,
-	0x85, 0x44, 0xc9, 0xee, 0x1b, 0xe8, 0x31, 0x4b, 0xe3, 0x0d, 0x20, 0xaf, 0x2d, 0xaf, 0xd3, 0xb0,
-	0x2d, 0x14, 0xd9, 0x72, 0x67, 0x69, 0x37, 0x95, 0x12, 0x35, 0x16, 0x5c, 0xc5, 0xb8, 0x53, 0xa0,
-	0x2d, 0x1e, 0xae, 0x32, 0x5c, 0x97, 0x69, 0x24, 0xe4, 0x26, 0x5e, 0xc9, 0x95, 0x8c, 0x0d, 0x4e,
-	0xcb, 0xa5, 0x51, 0x46, 0x98, 0xa7, 0xfa, 0xf5, 0xc1, 0x17, 0x42, 0x1f, 0xbf, 0x03, 0xdc, 0x70,
-	0x95, 0xc0, 0xe7, 0x12, 0x34, 0xb2, 0x31, 0xbd, 0x37, 0x03, 0xe4, 0x6e, 0x1a, 0x90, 0xf0, 0x66,
-	0xe4, 0x45, 0x4d, 0x4d, 0xeb, 0xff, 0xf1, 0xa6, 0xc0, 0x17, 0x50, 0x4c, 0xae, 0xf7, 0xc7, 0xfe,
-	0xd5, 0xe1, 0xd8, 0x27, 0x89, 0x49, 0xb0, 0xb7, 0xd4, 0x79, 0x6f, 0x1a, 0xba, 0xc2, 0x64, 0x07,
-	0xe7, 0x59, 0xe3, 0x66, 0x82, 0x63, 0x26, 0xf3, 0xff, 0xce, 0xb0, 0xd9, 0xc1, 0x57, 0x42, 0x6f,
-	0x67, 0x80, 0x45, 0x26, 0xf4, 0xa5, 0x54, 0x7a, 0x4e, 0x9f, 0xb4, 0x8d, 0xb4, 0x92, 0xb9, 0x06,
-	0xe6, 0xd2, 0x07, 0x16, 0xb9, 0x24, 0xb8, 0x1b, 0x3e, 0x4a, 0x1a, 0x69, 0x26, 0x3a, 0x05, 0xfe,
-	0x09, 0xd7, 0x97, 0x52, 0x7f, 0x42, 0x6f, 0x9b, 0x42, 0x7f, 0xdb, 0xd7, 0x64, 0xe7, 0x92, 0x80,
-	0x84, 0xd7, 0x49, 0x23, 0x59, 0x8f, 0x3a, 0x73, 0xe4, 0x58, 0x6a, 0xf7, 0x4e, 0x40, 0xc2, 0x87,
-	0x89, 0x55, 0xa3, 0xef, 0xa4, 0x31, 0xd8, 0x4b, 0xea, 0xd4, 0x1b, 0xc3, 0x3a, 0x91, 0x59, 0xda,
-	0xe8, 0x64, 0x81, 0xbc, 0x4e, 0xd4, 0x6e, 0x66, 0x34, 0x57, 0x05, 0xf0, 0xc5, 0x8c, 0x2b, 0x36,
-	0x6e, 0x07, 0xc6, 0xba, 0x36, 0x76, 0xfa, 0x97, 0xbd, 0xde, 0x39, 0xb6, 0x65, 0x5f, 0xd1, 0x9b,
-	0xba, 0xdd, 0x9b, 0x35, 0x88, 0x8f, 0xed, 0x47, 0x4f, 0x66, 0xec, 0x75, 0xcf, 0x68, 0x9d, 0x9d,
-	0xbc, 0xde, 0x57, 0x3e, 0x39, 0x54, 0x3e, 0xf9, 0x51, 0xf9, 0xe4, 0x67, 0xe5, 0x93, 0x6f, 0xbf,
-	0xfc, 0xab, 0x0f, 0xcf, 0xfe, 0xb9, 0x23, 0xb9, 0x56, 0x42, 0x0c, 0x17, 0xb0, 0x8d, 0x73, 0x90,
-	0x4b, 0x3d, 0xac, 0x6f, 0x88, 0x39, 0x2c, 0x75, 0x8c, 0x78, 0xf1, 0x3b, 0x00, 0x00, 0xff, 0xff,
-	0x78, 0x9b, 0x96, 0xe5, 0xb1, 0x03, 0x00, 0x00,
+	// 459 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x94, 0xbf, 0x6e, 0xdb, 0x30,
+	0x10, 0xc6, 0xc3, 0xfe, 0x51, 0xd3, 0xb3, 0x9b, 0x02, 0x8c, 0x6d, 0x08, 0x1a, 0x14, 0xc3, 0x43,
+	0x60, 0xa0, 0xb0, 0x04, 0xa4, 0x2d, 0x10, 0x14, 0x9d, 0x9c, 0x0c, 0x59, 0xdc, 0x41, 0x01, 0x3a,
+	0x74, 0xa3, 0xe4, 0xb3, 0x2d, 0xb4, 0x16, 0x59, 0xf1, 0x64, 0xc0, 0x0f, 0x51, 0xb4, 0x63, 0x1f,
+	0x29, 0x63, 0xc6, 0x4e, 0x41, 0xe1, 0x8e, 0x7d, 0x89, 0x22, 0x24, 0xe5, 0xda, 0xce, 0x0b, 0x78,
+	0xf3, 0xf7, 0x3b, 0x7d, 0xf4, 0x77, 0xe4, 0x91, 0x70, 0xac, 0x49, 0x10, 0xc6, 0x1a, 0xcb, 0x45,
+	0x9e, 0x61, 0xa4, 0x4a, 0x49, 0x92, 0x3f, 0x35, 0x30, 0xe0, 0x8e, 0xc6, 0x73, 0x24, 0x61, 0x4b,
+	0x41, 0xab, 0x66, 0x0b, 0x2c, 0xf3, 0xc9, 0xd2, 0xd1, 0x76, 0x2a, 0x25, 0x69, 0x2a, 0x85, 0x8a,
+	0x69, 0xa9, 0x50, 0x3b, 0x3c, 0x98, 0xe6, 0x34, 0xab, 0xd2, 0x28, 0x93, 0xf3, 0x78, 0x2a, 0xa7,
+	0x32, 0x36, 0x38, 0xad, 0x26, 0x46, 0x19, 0x61, 0x7e, 0xd9, 0xcf, 0x7b, 0xdf, 0x19, 0xbc, 0xf8,
+	0x80, 0x34, 0x17, 0x2a, 0xc1, 0xaf, 0x15, 0x6a, 0xe2, 0xe7, 0xf0, 0x64, 0x84, 0x24, 0xfc, 0xb4,
+	0xcb, 0xfa, 0x8d, 0xb3, 0x20, 0xaa, 0x63, 0xba, 0xfa, 0x7d, 0xed, 0x0a, 0xc5, 0x18, 0xcb, 0xe1,
+	0xe1, 0xcd, 0xdd, 0xc9, 0xc1, 0xed, 0xdd, 0x09, 0x4b, 0x8c, 0x83, 0x5f, 0x82, 0xf7, 0xd1, 0x24,
+	0xf4, 0x33, 0xe3, 0xed, 0xed, 0x7a, 0x4d, 0x35, 0xcf, 0x04, 0xe5, 0xb2, 0x78, 0xb0, 0x86, 0xf3,
+	0xf6, 0x7e, 0x30, 0x38, 0x1a, 0x21, 0x95, 0x79, 0xa6, 0xf7, 0x25, 0xd2, 0x2b, 0x78, 0xb9, 0x4e,
+	0xa4, 0x95, 0x2c, 0x34, 0x72, 0x1f, 0x9e, 0x39, 0xe4, 0xb3, 0xee, 0xe3, 0x7e, 0x33, 0xa9, 0xa5,
+	0xd9, 0xd1, 0x2b, 0x14, 0x5f, 0x68, 0xb6, 0x2f, 0xf1, 0x87, 0x70, 0x54, 0x07, 0xfa, 0x9f, 0xde,
+	0x92, 0xa5, 0xcf, 0xba, 0xac, 0x7f, 0x98, 0xd4, 0x92, 0x77, 0xc0, 0xbb, 0x26, 0x41, 0x95, 0xf6,
+	0x1f, 0x75, 0x59, 0xff, 0x79, 0xe2, 0x54, 0xef, 0x1b, 0x83, 0xc6, 0x65, 0x35, 0xdf, 0x9b, 0x29,
+	0x39, 0x85, 0xa6, 0x8d, 0xe3, 0x3a, 0xea, 0x80, 0x77, 0x21, 0x8b, 0x49, 0x3e, 0x35, 0x0d, 0x35,
+	0x13, 0xa7, 0xce, 0xfe, 0xb2, 0xba, 0x21, 0xfe, 0x06, 0x3c, 0x3b, 0xe9, 0xbc, 0x15, 0x99, 0xcb,
+	0x16, 0x6d, 0x0d, 0x7e, 0xd0, 0x8a, 0xd6, 0x37, 0x2a, 0xba, 0x56, 0x25, 0x8a, 0xf1, 0x48, 0x28,
+	0x7e, 0xbe, 0x3e, 0x68, 0xde, 0x76, 0xb6, 0xed, 0xe9, 0x0c, 0x3a, 0xbb, 0xd8, 0x45, 0x7a, 0x07,
+	0x0d, 0xbb, 0xab, 0x17, 0x33, 0xcc, 0x3e, 0xaf, 0xff, 0x74, 0x6b, 0x36, 0x82, 0xf6, 0x0e, 0x75,
+	0xde, 0xb7, 0x00, 0xf7, 0xed, 0xd9, 0x26, 0x38, 0x77, 0x1f, 0x6d, 0x1c, 0x40, 0x70, 0xbc, 0xc5,
+	0xac, 0x6d, 0xf8, 0xfe, 0x66, 0x15, 0xb2, 0xdb, 0x55, 0xc8, 0x7e, 0xad, 0x42, 0xf6, 0x7b, 0x15,
+	0xb2, 0x9f, 0x7f, 0xc2, 0x83, 0x4f, 0xa7, 0x1b, 0x4f, 0x42, 0xa1, 0x55, 0x96, 0x0d, 0xc6, 0xb8,
+	0x88, 0x0b, 0x94, 0x13, 0x3d, 0xb0, 0x0f, 0x82, 0x59, 0x2a, 0xf5, 0x8c, 0x78, 0xfd, 0x2f, 0x00,
+	0x00, 0xff, 0xff, 0x88, 0xd9, 0x75, 0x33, 0xa0, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -308,6 +398,10 @@ type StatusClient interface {
 	// HealthCheck request allows to check health status of the node.
 	// If node unhealthy field Status would contains detailed info.
 	HealthCheck(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error)
+	// DumpConfig request allows dumping settings for the current node.
+	// To permit access, used server config options.
+	// The request should be signed.
+	DumpConfig(ctx context.Context, in *DumpRequest, opts ...grpc.CallOption) (*DumpResponse, error)
 }
 
 type statusClient struct {
@@ -345,6 +439,15 @@ func (c *statusClient) HealthCheck(ctx context.Context, in *HealthRequest, opts 
 	return out, nil
 }
 
+func (c *statusClient) DumpConfig(ctx context.Context, in *DumpRequest, opts ...grpc.CallOption) (*DumpResponse, error) {
+	out := new(DumpResponse)
+	err := c.cc.Invoke(ctx, "/state.Status/DumpConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StatusServer is the server API for Status service.
 type StatusServer interface {
 	// Netmap request allows to receive current [bootstrap.SpreadMap](bootstrap.md#bootstrap.SpreadMap)
@@ -354,6 +457,10 @@ type StatusServer interface {
 	// HealthCheck request allows to check health status of the node.
 	// If node unhealthy field Status would contains detailed info.
 	HealthCheck(context.Context, *HealthRequest) (*HealthResponse, error)
+	// DumpConfig request allows dumping settings for the current node.
+	// To permit access, used server config options.
+	// The request should be signed.
+	DumpConfig(context.Context, *DumpRequest) (*DumpResponse, error)
 }
 
 // UnimplementedStatusServer can be embedded to have forward compatible implementations.
@@ -368,6 +475,9 @@ func (*UnimplementedStatusServer) Metrics(ctx context.Context, req *MetricsReque
 }
 func (*UnimplementedStatusServer) HealthCheck(ctx context.Context, req *HealthRequest) (*HealthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HealthCheck not implemented")
+}
+func (*UnimplementedStatusServer) DumpConfig(ctx context.Context, req *DumpRequest) (*DumpResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DumpConfig not implemented")
 }
 
 func RegisterStatusServer(s *grpc.Server, srv StatusServer) {
@@ -428,6 +538,24 @@ func _Status_HealthCheck_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Status_DumpConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DumpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StatusServer).DumpConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/state.Status/DumpConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StatusServer).DumpConfig(ctx, req.(*DumpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Status_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "state.Status",
 	HandlerType: (*StatusServer)(nil),
@@ -443,6 +571,10 @@ var _Status_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HealthCheck",
 			Handler:    _Status_HealthCheck_Handler,
+		},
+		{
+			MethodName: "DumpConfig",
+			Handler:    _Status_DumpConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -682,6 +814,91 @@ func (m *HealthResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *DumpRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DumpRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DumpRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
+	return len(dAtA) - i, nil
+}
+
+func (m *DumpResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DumpResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DumpResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Config) > 0 {
+		i -= len(m.Config)
+		copy(dAtA[i:], m.Config)
+		i = encodeVarintService(dAtA, i, uint64(len(m.Config)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintService(dAtA []byte, offset int, v uint64) int {
 	offset -= sovService(v)
 	base := offset
@@ -769,6 +986,38 @@ func (m *HealthResponse) Size() (n int) {
 		n += 2
 	}
 	l = len(m.Status)
+	if l > 0 {
+		n += 1 + l + sovService(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *DumpRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *DumpResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Config)
 	if l > 0 {
 		n += 1 + l + sovService(uint64(l))
 	}
@@ -1310,6 +1559,214 @@ func (m *HealthResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Status = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DumpRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DumpRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DumpRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DumpResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DumpResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DumpResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Config", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Config = append(m.Config[:0], dAtA[iNdEx:postIndex]...)
+			if m.Config == nil {
+				m.Config = []byte{}
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

@@ -8,6 +8,8 @@
     - [Status](#state.Status)
     
   - Messages
+    - [DumpRequest](#state.DumpRequest)
+    - [DumpResponse](#state.DumpResponse)
     - [HealthRequest](#state.HealthRequest)
     - [HealthResponse](#state.HealthResponse)
     - [MetricsRequest](#state.MetricsRequest)
@@ -36,6 +38,7 @@ Status service provides node's healthcheck and status info
 rpc Netmap(NetmapRequest) returns (.bootstrap.SpreadMap);
 rpc Metrics(MetricsRequest) returns (MetricsResponse);
 rpc HealthCheck(HealthRequest) returns (HealthResponse);
+rpc DumpConfig(DumpRequest) returns (DumpResponse);
 
 ```
 
@@ -61,7 +64,40 @@ If node unhealthy field Status would contains detailed info.
 | Name | Input | Output |
 | ---- | ----- | ------ |
 | HealthCheck | [HealthRequest](#state.HealthRequest) | [HealthResponse](#state.HealthResponse) |
+#### Method DumpConfig
+
+DumpConfig request allows dumping settings for the current node.
+To permit access, used server config options.
+The request should be signed.
+
+| Name | Input | Output |
+| ---- | ----- | ------ |
+| DumpConfig | [DumpRequest](#state.DumpRequest) | [DumpResponse](#state.DumpResponse) |
  <!-- end services -->
+
+
+<a name="state.DumpRequest"></a>
+
+### Message DumpRequest
+DumpRequest message to fetch current server config.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
+
+
+<a name="state.DumpResponse"></a>
+
+### Message DumpResponse
+DumpResponse message contains current server config.
+Config stored in JSON encoded into slice of bytes.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Config | [bytes](#bytes) |  |  |
 
 
 <a name="state.HealthRequest"></a>
