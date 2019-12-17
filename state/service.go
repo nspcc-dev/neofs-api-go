@@ -1,9 +1,12 @@
 package state
 
 import (
+	"encoding/json"
+
 	"github.com/golang/protobuf/proto"
 	"github.com/prometheus/client_golang/prometheus"
 	dto "github.com/prometheus/client_model/go"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -45,4 +48,15 @@ func DecodeMetrics(r *MetricsResponse) ([]*MetricFamily, error) {
 	}
 
 	return metrics, nil
+}
+
+// EncodeConfig encodes viper settings into DumpConfig message,
+// if something went wrong returns gRPC Status error (can be returned from service).
+func EncodeConfig(v *viper.Viper) (*DumpResponse, error) {
+	data, err := json.Marshal(v.AllSettings())
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &DumpResponse{Config: data}, nil
 }
