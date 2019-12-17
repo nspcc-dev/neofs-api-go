@@ -13,6 +13,7 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/prometheus/client_golang v1.2.1
 	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4
+	github.com/spf13/viper v1.6.1
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
 	google.golang.org/grpc v1.24.0
