@@ -23,9 +23,9 @@ message Container {
 
 message AccessGroup {
     // Group access mode.
-    uint32 M         = 1;
+    uint32 AccessMode         = 1;
     // Group members.
-    repeated bytes G = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+    repeated bytes UserGroup  = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
 }
 
 message AccessControlList {
