@@ -11,6 +11,19 @@ import (
 	"github.com/pkg/errors"
 )
 
+// AccessMode is a container access mode type.
+type AccessMode uint32
+
+const (
+	// AccessModeRead is a read access mode.
+	AccessModeRead AccessMode = 1 << iota
+	// AccessModeWrite is a write access mode.
+	AccessModeWrite
+)
+
+// AccessModeReadWrite is a read/write container access mode.
+const AccessModeReadWrite = AccessModeRead | AccessModeWrite
+
 var (
 	_ internal.Custom = (*Container)(nil)
 

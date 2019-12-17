@@ -41,6 +41,9 @@ message PutRequest {
     // Rules define storage policy for the object inside the container.
     netmap.PlacementRule rules               = 4 [(gogoproto.nullable) = false];
 
+    // Container ACL.
+    AccessGroup Group                        = 5 [(gogoproto.nullable) = false];
+
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
