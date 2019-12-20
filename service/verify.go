@@ -2,6 +2,7 @@ package service
 
 import (
 	"crypto/ecdsa"
+	"sync"
 
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-proto/internal"
@@ -12,7 +13,8 @@ import (
 type (
 	// VerifiableRequest adds possibility to sign and verify request header.
 	VerifiableRequest interface {
-		Marshal() ([]byte, error)
+		Size() int
+		MarshalTo([]byte) (int, error)
 		AddSignature(*RequestVerificationHeader_Signature)
 		GetSignatures() []*RequestVerificationHeader_Signature
 		SetSignatures([]*RequestVerificationHeader_Signature)
@@ -133,6 +135,10 @@ func newSignature(key *ecdsa.PrivateKey, data []byte) (*RequestVerificationHeade
 	}, nil
 }
 
+var bytesPool = sync.Pool{New: func() interface{} {
+	return make([]byte, 4.5*1024*1024) // 4.5MB
+}}
+
 // SignRequestHeader receives private key and request with RequestVerificationHeader,
 // tries to marshal and sign request with passed PrivateKey, after that adds
 // new signature to headers. If something went wrong, returns error.
@@ -146,12 +152,23 @@ func SignRequestHeader(key *ecdsa.PrivateKey, msg VerifiableRequest) error {
 		}()
 	}
 
-	data, err := msg.Marshal()
+	data := bytesPool.Get().([]byte)
+	defer func() {
+		bytesPool.Put(data)
+	}()
+
+	if size := msg.Size(); size <= cap(data) {
+		data = data[:size]
+	} else {
+		data = make([]byte, size)
+	}
+
+	size, err := msg.MarshalTo(data)
 	if err != nil {
 		return err
 	}
 
-	signature, err := newSignature(key, data)
+	signature, err := newSignature(key, data[:size])
 	if err != nil {
 		return err
 	}
@@ -174,8 +191,10 @@ func VerifyRequestHeader(msg VerifiableRequest) error {
 		}()
 	}
 
+	data := bytesPool.Get().([]byte)
 	signatures := msg.GetSignatures()
 	defer func() {
+		bytesPool.Put(data)
 		msg.SetSignatures(signatures)
 	}()
 
@@ -189,9 +208,15 @@ func VerifyRequestHeader(msg VerifiableRequest) error {
 			return errors.Wrapf(ErrCannotLoadPublicKey, "%d: %02x", i, peer)
 		}
 
-		if data, err := msg.Marshal(); err != nil {
+		if size := msg.Size(); size <= cap(data) {
+			data = data[:size]
+		} else {
+			data = make([]byte, size)
+		}
+
+		if size, err := msg.MarshalTo(data); err != nil {
 			return errors.Wrapf(err, "%d: %02x", i, peer)
-		} else if err := crypto.Verify(key, data, sign); err != nil {
+		} else if err := crypto.Verify(key, data[:size], sign); err != nil {
 			return errors.Wrapf(err, "%d: %02x", i, peer)
 		}
 	}

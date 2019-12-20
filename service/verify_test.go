@@ -14,6 +14,57 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func BenchmarkSignRequestHeader(b *testing.B) {
+	key := test.DecodeKey(0)
+
+	custom := testCustomField{1, 2, 3, 4, 5, 6, 7, 8}
+
+	some := &TestRequest{
+		IntField:    math.MaxInt32,
+		StringField: "TestRequestStringField",
+		BytesField:  make([]byte, 1<<22),
+		CustomField: &custom,
+		RequestMetaHeader: RequestMetaHeader{
+			TTL:   math.MaxInt32 - 8,
+			Epoch: math.MaxInt64 - 12,
+		},
+	}
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		require.NoError(b, SignRequestHeader(key, some))
+	}
+}
+
+func BenchmarkVerifyRequestHeader(b *testing.B) {
+	custom := testCustomField{1, 2, 3, 4, 5, 6, 7, 8}
+
+	some := &TestRequest{
+		IntField:    math.MaxInt32,
+		StringField: "TestRequestStringField",
+		BytesField:  make([]byte, 1<<22),
+		CustomField: &custom,
+		RequestMetaHeader: RequestMetaHeader{
+			TTL:   math.MaxInt32 - 8,
+			Epoch: math.MaxInt64 - 12,
+		},
+	}
+
+	for i := 0; i < 10; i++ {
+		key := test.DecodeKey(i)
+		require.NoError(b, SignRequestHeader(key, some))
+	}
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		require.NoError(b, VerifyRequestHeader(some))
+	}
+}
+
 func TestSignRequestHeader(t *testing.T) {
 	req := &TestRequest{
 		IntField:    math.MaxInt32,
