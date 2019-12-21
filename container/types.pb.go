@@ -33,10 +33,12 @@ type Container struct {
 	// Capacity defines amount of data that can be stored in the container (doesn't used for now).
 	Capacity uint64 `protobuf:"varint,3,opt,name=Capacity,proto3" json:"Capacity,omitempty"`
 	// Rules define storage policy for the object inside the container.
-	Rules                netmap.PlacementRule `protobuf:"bytes,4,opt,name=Rules,proto3" json:"Rules"`
-	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
-	XXX_unrecognized     []byte               `json:"-"`
-	XXX_sizecache        int32                `json:"-"`
+	Rules netmap.PlacementRule `protobuf:"bytes,4,opt,name=Rules,proto3" json:"Rules"`
+	// Container ACL.
+	List                 AccessControlList `protobuf:"bytes,5,opt,name=List,proto3" json:"List"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
 }
 
 func (m *Container) Reset()         { *m = Container{} }
@@ -82,32 +84,136 @@ func (m *Container) GetRules() netmap.PlacementRule {
 	return netmap.PlacementRule{}
 }
 
+func (m *Container) GetList() AccessControlList {
+	if m != nil {
+		return m.List
+	}
+	return AccessControlList{}
+}
+
+type AccessGroup struct {
+	// Group access mode.
+	AccessMode uint32 `protobuf:"varint,1,opt,name=AccessMode,proto3" json:"AccessMode,omitempty"`
+	// Group members.
+	UserGroup            []OwnerID `protobuf:"bytes,2,rep,name=UserGroup,proto3,customtype=OwnerID" json:"UserGroup"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
+}
+
+func (m *AccessGroup) Reset()         { *m = AccessGroup{} }
+func (m *AccessGroup) String() string { return proto.CompactTextString(m) }
+func (*AccessGroup) ProtoMessage()    {}
+func (*AccessGroup) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1432e52ab0b53e3e, []int{1}
+}
+func (m *AccessGroup) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AccessGroup) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *AccessGroup) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AccessGroup.Merge(m, src)
+}
+func (m *AccessGroup) XXX_Size() int {
+	return m.Size()
+}
+func (m *AccessGroup) XXX_DiscardUnknown() {
+	xxx_messageInfo_AccessGroup.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AccessGroup proto.InternalMessageInfo
+
+func (m *AccessGroup) GetAccessMode() uint32 {
+	if m != nil {
+		return m.AccessMode
+	}
+	return 0
+}
+
+type AccessControlList struct {
+	// List of access groups.
+	List                 []AccessGroup `protobuf:"bytes,1,rep,name=List,proto3" json:"List"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *AccessControlList) Reset()         { *m = AccessControlList{} }
+func (m *AccessControlList) String() string { return proto.CompactTextString(m) }
+func (*AccessControlList) ProtoMessage()    {}
+func (*AccessControlList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1432e52ab0b53e3e, []int{2}
+}
+func (m *AccessControlList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AccessControlList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *AccessControlList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AccessControlList.Merge(m, src)
+}
+func (m *AccessControlList) XXX_Size() int {
+	return m.Size()
+}
+func (m *AccessControlList) XXX_DiscardUnknown() {
+	xxx_messageInfo_AccessControlList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AccessControlList proto.InternalMessageInfo
+
+func (m *AccessControlList) GetList() []AccessGroup {
+	if m != nil {
+		return m.List
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*Container)(nil), "container.Container")
+	proto.RegisterType((*AccessGroup)(nil), "container.AccessGroup")
+	proto.RegisterType((*AccessControlList)(nil), "container.AccessControlList")
 }
 
 func init() { proto.RegisterFile("container/types.proto", fileDescriptor_1432e52ab0b53e3e) }
 
 var fileDescriptor_1432e52ab0b53e3e = []byte{
-	// 275 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x4d, 0xce, 0xcf, 0x2b,
-	0x49, 0xcc, 0xcc, 0x4b, 0x2d, 0xd2, 0x2f, 0xa9, 0x2c, 0x48, 0x2d, 0xd6, 0x2b, 0x28, 0xca, 0x2f,
-	0xc9, 0x17, 0xe2, 0x84, 0x0b, 0x4b, 0x69, 0xa5, 0x67, 0x96, 0x64, 0x94, 0x26, 0xe9, 0x25, 0xe7,
-	0xe7, 0xea, 0xe7, 0x15, 0x17, 0x24, 0x27, 0xeb, 0xa6, 0xa4, 0x96, 0xe9, 0xe7, 0xa5, 0x96, 0xe4,
-	0x26, 0x16, 0xe8, 0x17, 0xa7, 0xe6, 0xa4, 0x26, 0x97, 0xe4, 0x17, 0x41, 0xb4, 0x49, 0xe9, 0x22,
-	0xa9, 0x4d, 0xcf, 0x4f, 0xcf, 0xd7, 0x07, 0x0b, 0x27, 0x95, 0xa6, 0x81, 0x79, 0x60, 0x0e, 0x98,
-	0x05, 0x51, 0xae, 0xb4, 0x9c, 0x91, 0x8b, 0xd3, 0x19, 0x66, 0x91, 0x90, 0x26, 0x17, 0xbb, 0x7f,
-	0x79, 0x5e, 0x6a, 0x91, 0xa7, 0x8b, 0x04, 0xa3, 0x02, 0xa3, 0x06, 0x8f, 0x13, 0xff, 0x89, 0x7b,
-	0xf2, 0x0c, 0xb7, 0xee, 0xc9, 0xc3, 0x84, 0x83, 0x60, 0x0c, 0x21, 0x05, 0x2e, 0x96, 0xe0, 0xc4,
-	0x9c, 0x12, 0x09, 0x26, 0xb0, 0x3a, 0x1e, 0xa8, 0x3a, 0x96, 0xd0, 0x50, 0x4f, 0x97, 0x20, 0xb0,
-	0x8c, 0x90, 0x14, 0x17, 0x87, 0x73, 0x62, 0x41, 0x62, 0x72, 0x66, 0x49, 0xa5, 0x04, 0xb3, 0x02,
-	0xa3, 0x06, 0x4b, 0x10, 0x9c, 0x2f, 0x64, 0xc8, 0xc5, 0x1a, 0x54, 0x9a, 0x93, 0x5a, 0x2c, 0xc1,
-	0xa2, 0xc0, 0xa8, 0xc1, 0x6d, 0x24, 0xaa, 0x07, 0xf1, 0x8c, 0x5e, 0x40, 0x4e, 0x62, 0x72, 0x6a,
-	0x6e, 0x6a, 0x5e, 0x09, 0x48, 0xd6, 0x89, 0x05, 0x64, 0x6a, 0x10, 0x44, 0xa5, 0x93, 0xc3, 0x89,
-	0x47, 0x72, 0x8c, 0x17, 0x1e, 0xc9, 0x31, 0xde, 0x78, 0x24, 0xc7, 0xf8, 0xe0, 0x91, 0x1c, 0xe3,
-	0x8c, 0xc7, 0x72, 0x0c, 0x51, 0xb8, 0x82, 0x26, 0x3f, 0xad, 0x58, 0x17, 0xe2, 0x59, 0x78, 0x30,
-	0x26, 0xb1, 0x81, 0x05, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x29, 0x6b, 0x4d, 0x08, 0x71,
-	0x01, 0x00, 0x00,
+	// 368 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x91, 0x4f, 0x4b, 0xfb, 0x30,
+	0x1c, 0xc6, 0x97, 0xad, 0xfb, 0xfd, 0x5c, 0x36, 0x11, 0x03, 0x93, 0x32, 0xa4, 0x2b, 0x3b, 0x55,
+	0xa1, 0xad, 0x4e, 0xf0, 0xac, 0xdb, 0x44, 0x06, 0x8a, 0x52, 0xd9, 0x45, 0xbc, 0x74, 0x59, 0x36,
+	0x0b, 0x5d, 0x53, 0x92, 0x54, 0xd9, 0x3b, 0xf1, 0x25, 0xed, 0xe8, 0x51, 0x3c, 0x4c, 0xa9, 0x6f,
+	0x44, 0x9a, 0x6c, 0x75, 0x30, 0xbd, 0xe5, 0x79, 0xf2, 0x79, 0x92, 0xef, 0x1f, 0x58, 0xc7, 0x34,
+	0x12, 0x7e, 0x10, 0x11, 0xe6, 0x8a, 0x59, 0x4c, 0xb8, 0x13, 0x33, 0x2a, 0x28, 0xaa, 0xe4, 0x76,
+	0xe3, 0x70, 0x12, 0x88, 0xc7, 0x64, 0xe8, 0x60, 0x3a, 0x75, 0x23, 0x1e, 0x63, 0x6c, 0x8f, 0xc8,
+	0x93, 0x1b, 0x11, 0x31, 0xf5, 0x63, 0x97, 0x93, 0x90, 0x60, 0x41, 0x99, 0x8a, 0x35, 0xec, 0x35,
+	0x76, 0x42, 0x27, 0xd4, 0x95, 0xf6, 0x30, 0x19, 0x4b, 0x25, 0x85, 0x3c, 0x29, 0xbc, 0xf5, 0x01,
+	0x60, 0xa5, 0xbb, 0xfa, 0x08, 0x1d, 0xc0, 0xff, 0x37, 0xcf, 0x11, 0x61, 0xfd, 0x9e, 0x0e, 0x4c,
+	0x60, 0xd5, 0x3a, 0x3b, 0xf3, 0x45, 0xb3, 0xf0, 0xbe, 0x68, 0xae, 0x6c, 0x6f, 0x75, 0x40, 0x26,
+	0xd4, 0xee, 0xfc, 0x50, 0xe8, 0x45, 0xc9, 0xd5, 0x96, 0x9c, 0x36, 0x18, 0xf4, 0x7b, 0x9e, 0xbc,
+	0x41, 0x0d, 0xb8, 0xd5, 0xf5, 0x63, 0x1f, 0x07, 0x62, 0xa6, 0x97, 0x4c, 0x60, 0x69, 0x5e, 0xae,
+	0xd1, 0x31, 0x2c, 0x7b, 0x49, 0x48, 0xb8, 0xae, 0x99, 0xc0, 0xaa, 0xb6, 0xeb, 0x8e, 0x6a, 0xc6,
+	0xb9, 0x0d, 0x7d, 0x4c, 0xa6, 0x24, 0x12, 0xd9, 0x6d, 0x47, 0xcb, 0x5e, 0xf5, 0x14, 0x89, 0x4e,
+	0xa1, 0x76, 0x15, 0x70, 0xa1, 0x97, 0x65, 0x62, 0xdf, 0xc9, 0xc7, 0xe3, 0x9c, 0x63, 0x4c, 0x38,
+	0xcf, 0xba, 0x60, 0x34, 0xcc, 0x98, 0x65, 0x50, 0xf2, 0xad, 0x07, 0x58, 0x55, 0xc0, 0x25, 0xa3,
+	0x49, 0x8c, 0x0c, 0x08, 0x95, 0xbc, 0xa6, 0x23, 0x22, 0xbb, 0xdc, 0xf6, 0xd6, 0x1c, 0x64, 0xc3,
+	0xca, 0x80, 0x13, 0x26, 0x61, 0xbd, 0x68, 0x96, 0x7e, 0x1b, 0xc2, 0x0f, 0xd1, 0xba, 0x80, 0xbb,
+	0x1b, 0xdf, 0xa3, 0xa3, 0x65, 0xa9, 0xc0, 0x2c, 0x59, 0xd5, 0xf6, 0xde, 0x46, 0xa9, 0x32, 0xba,
+	0x5e, 0x64, 0xe7, 0x6c, 0x9e, 0x1a, 0xe0, 0x35, 0x35, 0xc0, 0x5b, 0x6a, 0x80, 0xcf, 0xd4, 0x00,
+	0x2f, 0x5f, 0x46, 0xe1, 0xfe, 0xaf, 0xbd, 0xd3, 0x31, 0xb7, 0xd5, 0x26, 0xf3, 0x97, 0x87, 0xff,
+	0xa4, 0x71, 0xf2, 0x1d, 0x00, 0x00, 0xff, 0xff, 0x13, 0x1b, 0x01, 0x24, 0x4e, 0x02, 0x00, 0x00,
 }
 
 func (m *Container) Marshal() (dAtA []byte, err error) {
@@ -134,6 +240,16 @@ func (m *Container) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	{
+		size, err := m.List.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintTypes(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x2a
 	{
 		size, err := m.Rules.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
@@ -172,6 +288,93 @@ func (m *Container) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *AccessGroup) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AccessGroup) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AccessGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.UserGroup) > 0 {
+		for iNdEx := len(m.UserGroup) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size := m.UserGroup[iNdEx].Size()
+				i -= size
+				if _, err := m.UserGroup[iNdEx].MarshalTo(dAtA[i:]); err != nil {
+					return 0, err
+				}
+				i = encodeVarintTypes(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if m.AccessMode != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.AccessMode))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *AccessControlList) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AccessControlList) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AccessControlList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.List) > 0 {
+		for iNdEx := len(m.List) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.List[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTypes(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTypes(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTypes(v)
 	base := offset
@@ -198,6 +401,47 @@ func (m *Container) Size() (n int) {
 	}
 	l = m.Rules.Size()
 	n += 1 + l + sovTypes(uint64(l))
+	l = m.List.Size()
+	n += 1 + l + sovTypes(uint64(l))
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *AccessGroup) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.AccessMode != 0 {
+		n += 1 + sovTypes(uint64(m.AccessMode))
+	}
+	if len(m.UserGroup) > 0 {
+		for _, e := range m.UserGroup {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *AccessControlList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.List) > 0 {
+		for _, e := range m.List {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -354,6 +598,235 @@ func (m *Container) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if err := m.Rules.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field List", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.List.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AccessGroup) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AccessGroup: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AccessGroup: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccessMode", wireType)
+			}
+			m.AccessMode = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AccessMode |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserGroup", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			var v OwnerID
+			m.UserGroup = append(m.UserGroup, v)
+			if err := m.UserGroup[len(m.UserGroup)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AccessControlList) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AccessControlList: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AccessControlList: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field List", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.List = append(m.List, AccessGroup{})
+			if err := m.List[len(m.List)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

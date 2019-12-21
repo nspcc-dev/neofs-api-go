@@ -18,3 +18,6 @@ require (
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
 	google.golang.org/grpc v1.24.0
 )
+
+// Used for debug reasons
+// replace github.com/nspcc-dev/neofs-crypto => ../neofs-crypto
