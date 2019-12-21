@@ -1,6 +1,15 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.2.8] - 2019-12-21
+
+### Added
+- Container access control type definitions
+
+### Changed
+- Used sync.Pool for Sign/VerifyRequestHeader
+- VerifiableRequest.Marshal method replace with MarshalTo and Size
+
 ## [0.2.7] - 2019-12-17
 
 ### Fixed
@@ -78,3 +87,4 @@ Initial public release
 [0.2.5]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.4...v0.2.5
 [0.2.6]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.5...v0.2.6
 [0.2.7]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.6...v0.2.7
+[0.2.8]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.7...v0.2.8
