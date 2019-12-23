@@ -46,10 +46,13 @@ func (m Object) headersChecksum(check bool) ([]byte, error) {
 	return checksum[:], nil
 }
 
-// PayloadChecksum calculates sha256 checksum of object payload.
-func (m Object) PayloadChecksum() []byte {
-	checksum := sha256.Sum256(m.Payload)
-	return checksum[:]
+// PayloadRangeChecksum calculates sha256 checksum of object payload range.
+func (m Object) PayloadRangeChecksum(r Range) ([]byte, error) {
+	if r.Offset+r.Length > uint64(len(m.Payload)) {
+		return nil, ErrRangeOutOfBounds
+	}
+	checksum := sha256.Sum256(m.Payload[r.Offset : r.Offset+r.Length])
+	return checksum[:], nil
 }
 
 func (m Object) verifySignature(key []byte, ih *IntegrityHeader) error {
@@ -98,15 +101,7 @@ func (m Object) Verify() error {
 
 	// Verify checksum of payload
 	if m.SystemHeader.PayloadLength > 0 && !m.IsLinking() {
-		checksum = m.PayloadChecksum()
-
-		_, ph := m.LastHeader(HeaderType(PayloadChecksumHdr))
-		if ph == nil {
-			return ErrHeaderNotFound
-		}
-		if !bytes.Equal(ph.Value.(*Header_PayloadChecksum).PayloadChecksum, checksum) {
-			return ErrVerifyPayload
-		}
+		return m.VerifyPayload()
 	}
 	return nil
 }
@@ -128,5 +123,34 @@ func (m *Object) Sign(key *ecdsa.PrivateKey) error {
 			ChecksumSignature: headerChecksumSignature,
 		},
 	}})
+	return nil
+}
+
+// VerifyPayload checks the correctness of the payload checksum header structurally and by value.
+func (m *Object) VerifyPayload() error {
+	_, ph := m.LastHeader(HeaderType(PayloadChecksumHdr))
+	if ph == nil {
+		return ErrHeaderNotFound
+	}
+
+	p := uint64(0)
+
+	for _, rangeChecksum := range ph.Value.(*Header_PayloadChecksum).PayloadChecksum.ChecksumList {
+		if rangeChecksum.Range.Offset != p {
+			return ErrInvalidRangeOrder
+		} else if rangeChecksum.Range.Length <= 0 {
+			return ErrEmptyPayloadRange
+		} else if calculatedChecksum, err := m.PayloadRangeChecksum(rangeChecksum.Range); err != nil {
+			return err
+		} else if !bytes.Equal(calculatedChecksum, rangeChecksum.Value) {
+			return ErrVerifyPayload
+		}
+		p += rangeChecksum.Range.Length
+	}
+
+	if p != uint64(len(m.Payload)) {
+		return ErrIncompleteRangeCoverage
+	}
+
 	return nil
 }

@@ -43,6 +43,18 @@ const (
 
 	// ErrVerifySignature is raised when signature cannot be verified.
 	ErrVerifySignature = internal.Error("can't verify signature")
+
+	// ErrRangeOutOfBounds is raised when range is out of object payload bounds.
+	ErrRangeOutOfBounds = internal.Error("payload range is out of bounds")
+
+	// ErrInvalidRangeOrder is raised when payload range order is out of order.
+	ErrInvalidRangeOrder = internal.Error("invalid payload range list order")
+
+	// ErrEmptyPayloadRange is raised when payload range size is non-positive.
+	ErrEmptyPayloadRange = internal.Error("empty payload range")
+
+	// ErrIncompleteRangeCoverage is raised when checksum header range list covers object payload incompletely.
+	ErrIncompleteRangeCoverage = internal.Error("incomplete range coverage of payload")
 )
 
 const (

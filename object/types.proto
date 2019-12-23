@@ -40,7 +40,7 @@ message Header {
         // HomoHash is a homomorphic hash of original object payload
         bytes HomoHash                         = 7 [(gogoproto.customtype) = "Hash"];
         // PayloadChecksum of actual object's payload
-        bytes PayloadChecksum                  = 8;
+        PayloadChecksum PayloadChecksum        = 8;
         // Integrity header with checksum of all above headers in the object
         IntegrityHeader Integrity              = 9;
         // StorageGroup contains meta information for the data audit
@@ -124,4 +124,12 @@ message Object {
     repeated Header Headers   = 2 [(gogoproto.nullable) = false];
     // Payload is an object's payload
     bytes Payload             = 3;
+}
+
+message PayloadChecksum {
+    message RangeChecksum {
+        Range Range = 1 [(gogoproto.nullable) = false];
+        bytes Value = 2;
+    }
+    repeated RangeChecksum ChecksumList = 1 [(gogoproto.nullable) = false];
 }
