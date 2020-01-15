@@ -441,10 +441,6 @@ in distributed system.
 
 
 
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch when tombstone was created |
-
 
 <a name="object.Transform"></a>
 

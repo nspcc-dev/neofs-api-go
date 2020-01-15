@@ -48,10 +48,7 @@ message Header {
     }
 }
 
-message Tombstone {
-    // Epoch when tombstone was created
-    uint64 Epoch = 1;
-}
+message Tombstone {}
 
 message SystemHeader {
     // Version of the object structure
