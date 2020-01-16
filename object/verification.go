@@ -68,24 +68,30 @@ func (m Object) Verify() error {
 	var (
 		err      error
 		checksum []byte
+		pubkey []byte
 	)
-	// Prepare structures
-	_, vh := m.LastHeader(HeaderType(VerifyHdr))
-	if vh == nil {
-		return ErrHeaderNotFound
-	}
-	verify := vh.Value.(*Header_Verify).Verify
-
-	_, ih := m.LastHeader(HeaderType(IntegrityHdr))
-	if ih == nil {
+	ind, ih := m.LastHeader(HeaderType(IntegrityHdr))
+	if ih == nil || ind != len(m.Headers) - 1{
 		return ErrHeaderNotFound
 	}
 	integrity := ih.Value.(*Header_Integrity).Integrity
 
+	// Prepare structures
+	_, vh := m.LastHeader(HeaderType(VerifyHdr))
+	if vh == nil {
+		_, pkh := m.LastHeader(HeaderType(PublicKeyHdr))
+		if pkh == nil {
+			return ErrHeaderNotFound
+		}
+		pubkey = pkh.Value.(*Header_PublicKey).PublicKey.Value
+	} else {
+		pubkey = vh.Value.(*Header_Verify).Verify.PublicKey
+	}
+
 	// Verify signature
-	err = m.verifySignature(verify.PublicKey, integrity)
+	err = m.verifySignature(pubkey, integrity)
 	if err != nil {
-		return errors.Wrapf(err, "public key: %x", verify.PublicKey)
+		return errors.Wrapf(err, "public key: %x", pubkey)
 	}
 
 	// Verify checksum of header

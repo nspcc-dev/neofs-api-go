@@ -56,7 +56,7 @@ func TestObject_Verify(t *testing.T) {
 	obj.SetPayload(payload)
 	obj.SetHeader(&Header{Value: &Header_PayloadChecksum{[]byte("incorrect checksum")}})
 
-	t.Run("error no integrity header", func(t *testing.T) {
+	t.Run("error no integrity header and pubkey", func(t *testing.T) {
 		err = obj.Verify()
 		require.EqualError(t, err, ErrHeaderNotFound.Error())
 	})
@@ -83,12 +83,25 @@ func TestObject_Verify(t *testing.T) {
 	}
 	obj.SetVerificationHeader(vh)
 
+	// validation header is not last
+	t.Run("error validation header is not last", func(t *testing.T) {
+		err = obj.Verify()
+		require.EqualError(t, err, ErrHeaderNotFound.Error())
+	})
+
+	obj.Headers = obj.Headers[:len(obj.Headers)-2]
+	obj.SetVerificationHeader(vh)
+	obj.SetHeader(&Header{Value: &Header_Integrity{ih}})
+
 	t.Run("error invalid header checksum", func(t *testing.T) {
 		err = obj.Verify()
 		require.EqualError(t, err, ErrVerifyHeader.Error())
 	})
 
-	require.NoError(t, obj.Sign(sessionkey))
+	obj.Headers = obj.Headers[:len(obj.Headers)-1]
+	genIH, err := CreateIntegrityHeader(obj, sessionkey)
+	require.NoError(t, err)
+	obj.SetHeader(genIH)
 
 	t.Run("error invalid payload checksum", func(t *testing.T) {
 		err = obj.Verify()
@@ -96,10 +109,39 @@ func TestObject_Verify(t *testing.T) {
 	})
 
 	obj.SetHeader(&Header{Value: &Header_PayloadChecksum{obj.PayloadChecksum()}})
-	require.NoError(t, obj.Sign(sessionkey))
 
-	t.Run("correct", func(t *testing.T) {
+	obj.Headers = obj.Headers[:len(obj.Headers)-1]
+	genIH, err = CreateIntegrityHeader(obj, sessionkey)
+	require.NoError(t, err)
+	obj.SetHeader(genIH)
+
+	t.Run("correct with vh", func(t *testing.T) {
 		err = obj.Verify()
 		require.NoError(t, err)
 	})
+
+	pkh := Header{Value: &Header_PublicKey{&PublicKey{
+		Value: crypto.MarshalPublicKey(&key.PublicKey),
+	}}}
+	// replace vh with pkh
+	obj.Headers[len(obj.Headers)-2] = pkh
+	// re-sign object
+	obj.Sign(sessionkey)
+
+
+	t.Run("incorrect with bad public key", func(t *testing.T) {
+		err = obj.Verify()
+		require.Error(t, err)
+	})
+
+	obj.SetHeader(&Header{Value: &Header_PublicKey{&PublicKey{
+		Value: dataPK,
+	}}})
+	obj.Sign(sessionkey)
+
+	t.Run("correct with good public key", func(t *testing.T) {
+		err = obj.Verify()
+		require.NoError(t, err)
+	})
+
 }
