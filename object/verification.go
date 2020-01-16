@@ -63,6 +63,7 @@ func (m Object) verifySignature(key []byte, ih *IntegrityHeader) error {
 // Verify performs local integrity check by finding verification header and
 // integrity header. If header integrity is passed, function verifies
 // checksum of the object payload.
+// todo: move this verification logic into separate library
 func (m Object) Verify() error {
 	var (
 		err      error
@@ -111,22 +112,32 @@ func (m Object) Verify() error {
 	return nil
 }
 
-// Sign creates new integrity header and adds it to the end of the list of
-// extended headers.
-func (m *Object) Sign(key *ecdsa.PrivateKey) error {
-	headerChecksum, err := m.headersChecksum(false)
+// CreateIntegrityHeader returns signed integrity header for the object
+func CreateIntegrityHeader(obj *Object, key *ecdsa.PrivateKey) (*Header, error) {
+	headerChecksum, err := obj.headersChecksum(false)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	headerChecksumSignature, err := crypto.Sign(key, headerChecksum)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	m.AddHeader(&Header{Value: &Header_Integrity{
+
+	return &Header{Value: &Header_Integrity{
 		Integrity: &IntegrityHeader{
 			HeadersChecksum:   headerChecksum,
 			ChecksumSignature: headerChecksumSignature,
 		},
-	}})
+	}}, nil
+}
+
+// Sign creates new integrity header and adds it to the end of the list of
+// extended headers.
+func (m *Object) Sign(key *ecdsa.PrivateKey) error {
+	ih, err := CreateIntegrityHeader(m, key)
+	if err != nil {
+		return err
+	}
+	m.AddHeader(ih)
 	return nil
 }
