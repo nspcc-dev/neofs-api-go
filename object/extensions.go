@@ -1,4 +1,5 @@
 package object
+// todo: all extensions must be transferred to the separate util library
 
 import "github.com/nspcc-dev/neofs-proto/storagegroup"
 

@@ -67,6 +67,8 @@ const (
 	IntegrityHdr
 	// StorageGroupHdr is a storage group header type.
 	StorageGroupHdr
+	// PublicKeyHdr is a public key header type.
+	PublicKeyHdr
 )
 
 var (
@@ -140,6 +142,8 @@ func (m Header) typeOf(t isHeader_Value) (ok bool) {
 		_, ok = m.Value.(*Header_Integrity)
 	case *Header_StorageGroup:
 		_, ok = m.Value.(*Header_StorageGroup)
+	case *Header_PublicKey:
+		_, ok = m.Value.(*Header_PublicKey)
 	}
 	return
 }
@@ -168,6 +172,8 @@ func HeaderType(t headerType) Pred {
 		return func(h *Header) bool { _, ok := h.Value.(*Header_Integrity); return ok }
 	case StorageGroupHdr:
 		return func(h *Header) bool { _, ok := h.Value.(*Header_StorageGroup); return ok }
+	case PublicKeyHdr:
+		return func(h *Header) bool { _, ok := h.Value.(*Header_PublicKey); return ok }
 	default:
 		return nil
 	}
