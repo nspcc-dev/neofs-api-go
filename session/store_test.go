@@ -57,9 +57,14 @@ func TestTokenStore(t *testing.T) {
 
 	c := newTestClient(t)
 	require.NotNil(t, c)
+	pk := [][]byte{crypto.MarshalPublicKey(&c.PublicKey)}
 
 	// create new token
-	token := s.New(TokenParams{ObjectID: []ObjectID{oid}, OwnerID: c.OwnerID})
+	token := s.New(TokenParams{
+		ObjectID: []ObjectID{oid},
+		OwnerID: c.OwnerID,
+		PublicKeys: pk,
+	})
 	signToken(t, token, c)
 
 	// check that it can be fetched
@@ -68,7 +73,11 @@ func TestTokenStore(t *testing.T) {
 	require.Equal(t, token, t1)
 
 	// create and sign another token by the same client
-	t1 = s.New(TokenParams{ObjectID: []ObjectID{oid}, OwnerID: c.OwnerID})
+	t1 = s.New(TokenParams{
+		ObjectID: []ObjectID{oid},
+		OwnerID: c.OwnerID,
+		PublicKeys: pk})
+
 	signToken(t, t1, c)
 
 	data := []byte{1, 2, 3}
