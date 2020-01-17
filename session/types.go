@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	crypto "github.com/nspcc-dev/neofs-crypto"
+	"github.com/nspcc-dev/neofs-proto/chain"
 	"github.com/nspcc-dev/neofs-proto/internal"
 	"github.com/nspcc-dev/neofs-proto/refs"
 	"github.com/pkg/errors"
@@ -111,11 +112,24 @@ func (m *Token) Sign(key *ecdsa.PrivateKey) error {
 	return nil
 }
 
+// SetPublicKeys sets owner's public keys to the token
+func (m *Token) SetPublicKeys(keys... *ecdsa.PublicKey) {
+	m.PublicKeys = m.PublicKeys[:0]
+	for i := range keys {
+		m.PublicKeys = append(m.PublicKeys, crypto.MarshalPublicKey(keys[i]))
+	}
+}
+
 // Verify checks if token is correct and signed.
 func (m *Token) Verify(keys ...*ecdsa.PublicKey) bool {
 	if m.FirstEpoch > m.LastEpoch {
 		return false
 	}
+	ownerFromKeys := chain.KeysToAddress(keys...)
+	if m.OwnerID.String() != ownerFromKeys {
+		return false
+	}
+
 	for i := range keys {
 		if m.Header.Verify(keys[i]) && crypto.Verify(keys[i], m.verificationData(), m.Signature) == nil {
 			return true
@@ -155,4 +169,13 @@ func (m *VerificationHeader) Verify(keys ...*ecdsa.PublicKey) bool {
 		}
 	}
 	return false
+}
+
+// UnmarshalPublicKeys returns unmarshal public keys from the token
+func UnmarshalPublicKeys(t *Token) []*ecdsa.PublicKey {
+	r := make([]*ecdsa.PublicKey, 0, len(t.PublicKeys))
+	for i := range t.PublicKeys {
+		r = append(r, crypto.UnmarshalPublicKey(t.PublicKeys[i]))
+	}
+	return r
 }
