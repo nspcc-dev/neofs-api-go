@@ -1,6 +1,11 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.2.10] - 2020-01-17
+
+### Changed
+- Private token contructor now takes public keys as an argument
+
 ## [0.2.9] - 2020-01-17
 
 ### Added
@@ -106,3 +111,4 @@ Initial public release
 [0.2.7]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.6...v0.2.7
 [0.2.8]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.7...v0.2.8
 [0.2.9]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.8...v0.2.9
+[0.2.10]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.9...v0.2.10
