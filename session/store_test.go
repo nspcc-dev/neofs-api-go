@@ -31,20 +31,22 @@ func newTestClient(t *testing.T) *testClient {
 
 func signToken(t *testing.T, token *PToken, c *testClient) {
 	require.NotNil(t, token)
+	token.SetPublicKeys(&c.PublicKey)
 
 	signH, err := c.Sign(token.Header.PublicKey)
 	require.NoError(t, err)
 	require.NotNil(t, signH)
 
 	// data is not yet signed
-	require.False(t, token.Verify(&c.PublicKey))
+	keys := UnmarshalPublicKeys(&token.Token)
+	require.False(t, token.Verify(keys...))
 
 	signT, err := c.Sign(token.verificationData())
 	require.NoError(t, err)
 	require.NotNil(t, signT)
 
 	token.AddSignatures(signH, signT)
-	require.True(t, token.Verify(&c.PublicKey))
+	require.True(t, token.Verify(keys...))
 }
 
 func TestTokenStore(t *testing.T) {

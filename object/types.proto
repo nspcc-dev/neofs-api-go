@@ -45,13 +45,12 @@ message Header {
         IntegrityHeader Integrity              = 9;
         // StorageGroup contains meta information for the data audit
         storagegroup.StorageGroup StorageGroup = 10;
+        // PublicKey of owner of the object. Key is used for verification and can be based on NeoID or x509 cert.
+        PublicKey PublicKey                    = 11;
     }
 }
 
-message Tombstone {
-    // Epoch when tombstone was created
-    uint64 Epoch = 1;
-}
+message Tombstone {}
 
 message SystemHeader {
     // Version of the object structure
@@ -124,4 +123,9 @@ message Object {
     repeated Header Headers   = 2 [(gogoproto.nullable) = false];
     // Payload is an object's payload
     bytes Payload             = 3;
+}
+
+message PublicKey {
+    // Value contains marshaled ecdsa public key
+    bytes Value = 1;
 }

@@ -106,12 +106,12 @@ github.com/mr-tron/base58 v1.1.3/go.mod h1:BinMc/sQntlIE1frQmRFPUoPA1Zkr8VRgBdjW
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/nspcc-dev/hrw v1.0.8 h1:vwRuJXZXgkMvf473vFzeWGCfY1WBVeSHAEHvR4u3/Cg=
 github.com/nspcc-dev/hrw v1.0.8/go.mod h1:l/W2vx83vMQo6aStyx2AuZrJ+07lGv2JQGlVkPG06MU=
-github.com/nspcc-dev/neofs-crypto v0.2.2 h1:jLc5O+Wdpaq7L4lNYFX7li+OP4I1FsvvcPW1NXm3erY=
-github.com/nspcc-dev/neofs-crypto v0.2.2/go.mod h1:F/96fUzPM3wR+UGsPi3faVNmFlA9KAEAUQR7dMxZmNA=
+github.com/nspcc-dev/neofs-crypto v0.2.3 h1:aca3X2aly92ENRbFK+kH6Hd+J9EQ4Eu6XMVoITSIKtc=
+github.com/nspcc-dev/neofs-crypto v0.2.3/go.mod h1:8w16GEJbH6791ktVqHN9YRNH3s9BEEKYxGhlFnp0cDw=
 github.com/nspcc-dev/netmap v1.6.1 h1:Pigqpqi6QSdRiusbq5XlO20A18k6Eyu7j9MzOfAE3CM=
 github.com/nspcc-dev/netmap v1.6.1/go.mod h1:mhV3UOg9ljQmu0teQShD6+JYX09XY5gu2I4hIByCH9M=
-github.com/nspcc-dev/rfc6979 v0.1.0 h1:Lwg7esRRoyK1Up/IN1vAef1EmvrBeMHeeEkek2fAJ6c=
-github.com/nspcc-dev/rfc6979 v0.1.0/go.mod h1:exhIh1PdpDC5vQmyEsGvc4YDM/lyQp/452QxGq/UEso=
+github.com/nspcc-dev/rfc6979 v0.2.0 h1:3e1WNxrN60/6N0DW7+UYisLeZJyfqZTNOjeV/toYvOE=
+github.com/nspcc-dev/rfc6979 v0.2.0/go.mod h1:exhIh1PdpDC5vQmyEsGvc4YDM/lyQp/452QxGq/UEso=
 github.com/nspcc-dev/tzhash v1.3.0 h1:n6FTHsfPYbMi5Jmo6SwGVVRQD8i2w1P2ScCaW6rz69Q=
 github.com/nspcc-dev/tzhash v1.3.0/go.mod h1:Lc4DersKS8MNIrunTmsAzANO56qnG+LZ4GOE/WYGVzU=
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=

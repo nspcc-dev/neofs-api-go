@@ -33,6 +33,7 @@
     - [IntegrityHeader](#object.IntegrityHeader)
     - [Link](#object.Link)
     - [Object](#object.Object)
+    - [PublicKey](#object.PublicKey)
     - [Range](#object.Range)
     - [SystemHeader](#object.SystemHeader)
     - [Tombstone](#object.Tombstone)
@@ -368,6 +369,7 @@ in distributed system.
 | PayloadChecksum | [bytes](#bytes) |  | PayloadChecksum of actual object's payload |
 | Integrity | [IntegrityHeader](#object.IntegrityHeader) |  | Integrity header with checksum of all above headers in the object |
 | StorageGroup | [storagegroup.StorageGroup](#storagegroup.StorageGroup) |  | StorageGroup contains meta information for the data audit |
+| PublicKey | [PublicKey](#object.PublicKey) |  | PublicKey of owner of the object. Key is used for verification and can be based on NeoID or x509 cert. |
 
 
 <a name="object.IntegrityHeader"></a>
@@ -407,6 +409,17 @@ in distributed system.
 | Payload | [bytes](#bytes) |  | Payload is an object's payload |
 
 
+<a name="object.PublicKey"></a>
+
+### Message PublicKey
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Value | [bytes](#bytes) |  | Value contains marshaled ecdsa public key |
+
+
 <a name="object.Range"></a>
 
 ### Message Range
@@ -440,10 +453,6 @@ in distributed system.
 ### Message Tombstone
 
 
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| Epoch | [uint64](#uint64) |  | Epoch when tombstone was created |
 
 
 <a name="object.Transform"></a>

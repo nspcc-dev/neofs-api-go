@@ -63,28 +63,35 @@ func (m Object) verifySignature(key []byte, ih *IntegrityHeader) error {
 // Verify performs local integrity check by finding verification header and
 // integrity header. If header integrity is passed, function verifies
 // checksum of the object payload.
+// todo: move this verification logic into separate library
 func (m Object) Verify() error {
 	var (
 		err      error
 		checksum []byte
+		pubkey []byte
 	)
-	// Prepare structures
-	_, vh := m.LastHeader(HeaderType(VerifyHdr))
-	if vh == nil {
-		return ErrHeaderNotFound
-	}
-	verify := vh.Value.(*Header_Verify).Verify
-
-	_, ih := m.LastHeader(HeaderType(IntegrityHdr))
-	if ih == nil {
+	ind, ih := m.LastHeader(HeaderType(IntegrityHdr))
+	if ih == nil || ind != len(m.Headers) - 1{
 		return ErrHeaderNotFound
 	}
 	integrity := ih.Value.(*Header_Integrity).Integrity
 
+	// Prepare structures
+	_, vh := m.LastHeader(HeaderType(VerifyHdr))
+	if vh == nil {
+		_, pkh := m.LastHeader(HeaderType(PublicKeyHdr))
+		if pkh == nil {
+			return ErrHeaderNotFound
+		}
+		pubkey = pkh.Value.(*Header_PublicKey).PublicKey.Value
+	} else {
+		pubkey = vh.Value.(*Header_Verify).Verify.PublicKey
+	}
+
 	// Verify signature
-	err = m.verifySignature(verify.PublicKey, integrity)
+	err = m.verifySignature(pubkey, integrity)
 	if err != nil {
-		return errors.Wrapf(err, "public key: %x", verify.PublicKey)
+		return errors.Wrapf(err, "public key: %x", pubkey)
 	}
 
 	// Verify checksum of header
@@ -111,22 +118,32 @@ func (m Object) Verify() error {
 	return nil
 }
 
-// Sign creates new integrity header and adds it to the end of the list of
-// extended headers.
-func (m *Object) Sign(key *ecdsa.PrivateKey) error {
-	headerChecksum, err := m.headersChecksum(false)
+// CreateIntegrityHeader returns signed integrity header for the object
+func CreateIntegrityHeader(obj *Object, key *ecdsa.PrivateKey) (*Header, error) {
+	headerChecksum, err := obj.headersChecksum(false)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	headerChecksumSignature, err := crypto.Sign(key, headerChecksum)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	m.AddHeader(&Header{Value: &Header_Integrity{
+
+	return &Header{Value: &Header_Integrity{
 		Integrity: &IntegrityHeader{
 			HeadersChecksum:   headerChecksum,
 			ChecksumSignature: headerChecksumSignature,
 		},
-	}})
+	}}, nil
+}
+
+// Sign creates new integrity header and adds it to the end of the list of
+// extended headers.
+func (m *Object) Sign(key *ecdsa.PrivateKey) error {
+	ih, err := CreateIntegrityHeader(m, key)
+	if err != nil {
+		return err
+	}
+	m.AddHeader(ih)
 	return nil
 }

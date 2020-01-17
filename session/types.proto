@@ -29,4 +29,6 @@ message Token {
     bytes Signature = 6;
     // ID is a token identifier. valid UUIDv4 represented in bytes
     bytes ID = 7 [(gogoproto.customtype) = "TokenID", (gogoproto.nullable) = false];
+    // PublicKeys associated with owner
+    repeated bytes PublicKeys = 8;
 }
