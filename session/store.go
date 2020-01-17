@@ -54,6 +54,7 @@ func (s *simpleStore) New(p TokenParams) *PToken {
 			LastEpoch:  p.LastEpoch,
 			ObjectID:   p.ObjectID,
 			OwnerID:    p.OwnerID,
+			PublicKeys: p.PublicKeys,
 		},
 		PrivateKey: key,
 	}
