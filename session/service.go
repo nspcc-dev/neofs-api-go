@@ -33,6 +33,7 @@ type (
 		LastEpoch  uint64
 		ObjectID   []ObjectID
 		OwnerID    OwnerID
+		PublicKeys [][]byte
 	}
 )
 
