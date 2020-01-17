@@ -1,6 +1,23 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.2.9] - 2020-01-17
+
+### Added
+- Docs for container ACL field
+- Public key header in the object with docs
+- Public key field in the session token with docs
+
+### Changed
+- Routine to verify correct object checks if integrity header is last and
+may use public key header if verification header is not present
+- Routine to verify correct session token checks if keys in the token 
+associated with owner id
+- Updated neofs-crypto to v0.2.3
+
+### Removed
+- Timestamp in object tombstone header
+
 ## [0.2.8] - 2019-12-21
 
 ### Added
@@ -88,3 +105,4 @@ Initial public release
 [0.2.6]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.5...v0.2.6
 [0.2.7]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.6...v0.2.7
 [0.2.8]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.7...v0.2.8
+[0.2.9]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.8...v0.2.9
