@@ -115,6 +115,7 @@ User token granting rights for object manipulation
 | ObjectID | [bytes](#bytes) | repeated | ObjectID is an object identifier of manipulation object |
 | Signature | [bytes](#bytes) |  | Signature is a token signature, signed by owner of manipulation object |
 | ID | [bytes](#bytes) |  | ID is a token identifier. valid UUIDv4 represented in bytes |
+| PublicKeys | [bytes](#bytes) | repeated | PublicKeys associated with owner |
 
 
 <a name="session.VerificationHeader"></a>
