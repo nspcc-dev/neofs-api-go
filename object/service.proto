@@ -56,6 +56,8 @@ service Service {
 message GetRequest {
     // Address of object (container id + object id)
     refs.Address Address                     = 1 [(gogoproto.nullable) = false];
+    // Raw is the request flag of a physically stored representation of an object
+    bool Raw                                 = 2;
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -118,6 +120,8 @@ message HeadRequest {
     refs.Address Address                     = 1 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
     // FullHeaders can be set true for extended headers in the object
     bool FullHeaders                         = 2;
+    // Raw is the request flag of a physically stored representation of an object
+    bool Raw                                 = 3;
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
