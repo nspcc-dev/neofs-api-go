@@ -1,6 +1,11 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.2.11] - 2020-01-21
+
+### Added
+- Raw flag in object head and get queries with docs
+
 ## [0.2.10] - 2020-01-17
 
 ### Changed
@@ -112,3 +117,4 @@ Initial public release
 [0.2.8]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.7...v0.2.8
 [0.2.9]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.8...v0.2.9
 [0.2.10]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.9...v0.2.10
+[0.2.11]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.10...v0.2.11
