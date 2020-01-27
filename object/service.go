@@ -39,8 +39,8 @@ type (
 )
 
 const (
-	// UnitsB starts enum for amount of bytes.
-	UnitsB int64 = 1 << (10 * iota)
+	// starts enum for amount of bytes.
+	_ int64 = 1 << (10 * iota)
 
 	// UnitsKB defines amount of bytes in one kilobyte.
 	UnitsKB

@@ -1,6 +1,11 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.2.12] - 2020-01-27
+
+### Fixed
+- Bug with ByteSize (0 bytes returns NaN)
+
 ## [0.2.11] - 2020-01-21
 
 ### Added
@@ -118,3 +123,4 @@ Initial public release
 [0.2.9]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.8...v0.2.9
 [0.2.10]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.9...v0.2.10
 [0.2.11]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.10...v0.2.11
+[0.2.12]: https://github.com/nspcc-dev/neofs-proto/compare/v0.2.11...v0.2.12
