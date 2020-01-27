@@ -32,7 +32,7 @@ func (b ByteSize) String() string {
 	case num > UnitsKB:
 		unit = "KB"
 		dec = UnitsKB
-	case num > UnitsB:
+	default:
 		dec = 1
 	}
 

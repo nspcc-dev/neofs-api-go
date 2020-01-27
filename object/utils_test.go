@@ -7,11 +7,16 @@ import (
 )
 
 func TestByteSize_String(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		name   string
 		expect string
 		actual ByteSize
 	}{
+		{
+			name:   "0 bytes",
+			expect: "0",
+			actual: ByteSize(0),
+		},
 		{
 			name:   "101 bytes",
 			expect: "101",
