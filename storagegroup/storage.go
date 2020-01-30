@@ -3,7 +3,7 @@ package storagegroup
 import (
 	"context"
 
-	"github.com/nspcc-dev/neofs-proto/refs"
+	"github.com/nspcc-dev/neofs-api/refs"
 )
 
 type (

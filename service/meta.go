@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/nspcc-dev/neofs-proto/internal"
+	"github.com/nspcc-dev/neofs-api/internal"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -94,7 +94,7 @@ func IRNonForwarding(role NodeRole) TTLCondition {
 
 // ProcessRequestTTL validates and update ttl requests.
 func ProcessRequestTTL(req MetaHeader, cond ...TTLCondition) error {
-	var ttl = req.GetTTL()
+	ttl := req.GetTTL()
 
 	if ttl == ZeroTTL {
 		return status.New(codes.InvalidArgument, ErrZeroTTL.Error()).Err()

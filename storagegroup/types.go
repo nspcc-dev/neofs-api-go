@@ -7,8 +7,8 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/mr-tron/base58"
-	"github.com/nspcc-dev/neofs-proto/hash"
-	"github.com/nspcc-dev/neofs-proto/refs"
+	"github.com/nspcc-dev/neofs-api/hash"
+	"github.com/nspcc-dev/neofs-api/refs"
 )
 
 type (

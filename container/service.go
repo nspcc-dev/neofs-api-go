@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 
-	"github.com/nspcc-dev/neofs-proto/internal"
-	"github.com/nspcc-dev/neofs-proto/refs"
+	"github.com/nspcc-dev/neofs-api/internal"
+	"github.com/nspcc-dev/neofs-api/refs"
 	"github.com/pkg/errors"
 )
 

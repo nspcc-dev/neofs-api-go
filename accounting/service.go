@@ -1,9 +1,9 @@
 package accounting
 
 import (
-	"github.com/nspcc-dev/neofs-proto/decimal"
-	"github.com/nspcc-dev/neofs-proto/internal"
-	"github.com/nspcc-dev/neofs-proto/refs"
+	"github.com/nspcc-dev/neofs-api/decimal"
+	"github.com/nspcc-dev/neofs-api/internal"
+	"github.com/nspcc-dev/neofs-api/refs"
 )
 
 type (

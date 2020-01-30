@@ -4,8 +4,8 @@ import (
 	"context"
 	"crypto/ecdsa"
 
+	"github.com/nspcc-dev/neofs-api/refs"
 	crypto "github.com/nspcc-dev/neofs-crypto"
-	"github.com/nspcc-dev/neofs-proto/refs"
 )
 
 type (

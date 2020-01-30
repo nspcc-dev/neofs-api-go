@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/nspcc-dev/neofs-proto/object"
+	"github.com/nspcc-dev/neofs-api/object"
 )
 
 type (

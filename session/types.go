@@ -5,10 +5,10 @@ import (
 	"encoding/binary"
 	"sync"
 
+	"github.com/nspcc-dev/neofs-api/chain"
+	"github.com/nspcc-dev/neofs-api/internal"
+	"github.com/nspcc-dev/neofs-api/refs"
 	crypto "github.com/nspcc-dev/neofs-crypto"
-	"github.com/nspcc-dev/neofs-proto/chain"
-	"github.com/nspcc-dev/neofs-proto/internal"
-	"github.com/nspcc-dev/neofs-proto/refs"
 	"github.com/pkg/errors"
 )
 
@@ -113,7 +113,7 @@ func (m *Token) Sign(key *ecdsa.PrivateKey) error {
 }
 
 // SetPublicKeys sets owner's public keys to the token
-func (m *Token) SetPublicKeys(keys... *ecdsa.PublicKey) {
+func (m *Token) SetPublicKeys(keys ...*ecdsa.PublicKey) {
 	m.PublicKeys = m.PublicKeys[:0]
 	for i := range keys {
 		m.PublicKeys = append(m.PublicKeys, crypto.MarshalPublicKey(keys[i]))
