@@ -1,6 +1,6 @@
-# NeoFS-proto 
+# NeoFS API
 
-NeoFS-proto repository contains implementation of core NeoFS structures that
+NeoFS API repository contains implementation of core NeoFS structures that
 can be used for integration with NeoFS. 
 
 ## Description
@@ -107,7 +107,7 @@ State package defines:
 
 ## How to use
 
-NeoFS-proto packages contain godoc documentation. Examples of using most of 
+NeoFS API packages contain godoc documentation. Examples of using most of 
 these packages can be found in NeoFS-CLI repository. CLI implements and 
 demonstrates all basic interactions with NeoFS: container, object, storage 
 group, and accounting operations. 
