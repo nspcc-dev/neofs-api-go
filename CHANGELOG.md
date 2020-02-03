@@ -1,6 +1,15 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.2.13] - 2020-02-03
+
+### Fixed
+- Code format
+
+### Changed
+- Use separated proto repository
+- Rename neofs-proto to neofs-api
+
 ## [0.2.12] - 2020-01-27
 
 ### Fixed
@@ -124,3 +133,4 @@ Initial public release
 [0.2.10]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.9...v0.2.10
 [0.2.11]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.10...v0.2.11
 [0.2.12]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.11...v0.2.12
+[0.2.13]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.12...v0.2.13
