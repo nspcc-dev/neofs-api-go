@@ -1,6 +1,6 @@
 syntax = "proto3";
 package state;
-option go_package = "github.com/nspcc-dev/neofs-proto/state";
+option go_package = "github.com/nspcc-dev/neofs-api/state";
 
 import "service/meta.proto";
 import "service/verify.proto";

@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/mr-tron/base58"
+	"github.com/nspcc-dev/neofs-api/chain"
+	"github.com/nspcc-dev/neofs-api/decimal"
+	"github.com/nspcc-dev/neofs-api/refs"
 	"github.com/nspcc-dev/neofs-crypto/test"
-	"github.com/nspcc-dev/neofs-proto/chain"
-	"github.com/nspcc-dev/neofs-proto/decimal"
-	"github.com/nspcc-dev/neofs-proto/refs"
 	"github.com/stretchr/testify/require"
 )
 
@@ -34,7 +34,7 @@ func TestCheque(t *testing.T) {
 	})
 
 	t.Run("marshal/unmarshal", func(t *testing.T) {
-		var b2 = new(Cheque)
+		b2 := new(Cheque)
 
 		key1 := test.DecodeKey(0)
 		key2 := test.DecodeKey(1)
@@ -67,7 +67,7 @@ func TestCheque(t *testing.T) {
 	})
 
 	t.Run("example from SC", func(t *testing.T) {
-		var pathToCheque = "fixtures/cheque_data"
+		pathToCheque := "fixtures/cheque_data"
 		expect, err := ioutil.ReadFile(pathToCheque)
 		require.NoError(t, err)
 

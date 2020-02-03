@@ -5,8 +5,8 @@ import (
 	"crypto/rand"
 	"testing"
 
+	"github.com/nspcc-dev/neofs-api/refs"
 	crypto "github.com/nspcc-dev/neofs-crypto"
-	"github.com/nspcc-dev/neofs-proto/refs"
 	"github.com/stretchr/testify/require"
 )
 
@@ -61,8 +61,8 @@ func TestTokenStore(t *testing.T) {
 
 	// create new token
 	token := s.New(TokenParams{
-		ObjectID: []ObjectID{oid},
-		OwnerID: c.OwnerID,
+		ObjectID:   []ObjectID{oid},
+		OwnerID:    c.OwnerID,
 		PublicKeys: pk,
 	})
 	signToken(t, token, c)
@@ -74,9 +74,10 @@ func TestTokenStore(t *testing.T) {
 
 	// create and sign another token by the same client
 	t1 = s.New(TokenParams{
-		ObjectID: []ObjectID{oid},
-		OwnerID: c.OwnerID,
-		PublicKeys: pk})
+		ObjectID:   []ObjectID{oid},
+		OwnerID:    c.OwnerID,
+		PublicKeys: pk,
+	})
 
 	signToken(t, t1, c)
 

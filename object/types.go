@@ -5,9 +5,9 @@ import (
 	"context"
 
 	"github.com/gogo/protobuf/proto"
-	"github.com/nspcc-dev/neofs-proto/internal"
-	"github.com/nspcc-dev/neofs-proto/refs"
-	"github.com/nspcc-dev/neofs-proto/session"
+	"github.com/nspcc-dev/neofs-api/internal"
+	"github.com/nspcc-dev/neofs-api/refs"
+	"github.com/nspcc-dev/neofs-api/session"
 )
 
 type (

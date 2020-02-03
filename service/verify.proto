@@ -1,6 +1,6 @@
 syntax = "proto3";
 package service;
-option go_package = "github.com/nspcc-dev/neofs-proto/service";
+option go_package = "github.com/nspcc-dev/neofs-api/service";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 

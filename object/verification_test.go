@@ -4,11 +4,11 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/nspcc-dev/neofs-api/container"
+	"github.com/nspcc-dev/neofs-api/refs"
+	"github.com/nspcc-dev/neofs-api/session"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-crypto/test"
-	"github.com/nspcc-dev/neofs-proto/container"
-	"github.com/nspcc-dev/neofs-proto/refs"
-	"github.com/nspcc-dev/neofs-proto/session"
 	"github.com/stretchr/testify/require"
 )
 
@@ -127,7 +127,6 @@ func TestObject_Verify(t *testing.T) {
 	obj.Headers[len(obj.Headers)-2] = pkh
 	// re-sign object
 	obj.Sign(sessionkey)
-
 
 	t.Run("incorrect with bad public key", func(t *testing.T) {
 		err = obj.Verify()

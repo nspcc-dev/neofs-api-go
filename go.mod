@@ -1,4 +1,4 @@
-module github.com/nspcc-dev/neofs-proto
+module github.com/nspcc-dev/neofs-api
 
 go 1.13
 

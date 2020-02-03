@@ -1,6 +1,6 @@
 syntax = "proto3";
 package query;
-option go_package = "github.com/nspcc-dev/neofs-proto/query";
+option go_package = "github.com/nspcc-dev/neofs-api/query";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 

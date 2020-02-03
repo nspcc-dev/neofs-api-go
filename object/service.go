@@ -1,11 +1,11 @@
 package object
 
 import (
-	"github.com/nspcc-dev/neofs-proto/hash"
-	"github.com/nspcc-dev/neofs-proto/internal"
-	"github.com/nspcc-dev/neofs-proto/refs"
-	"github.com/nspcc-dev/neofs-proto/service"
-	"github.com/nspcc-dev/neofs-proto/session"
+	"github.com/nspcc-dev/neofs-api/hash"
+	"github.com/nspcc-dev/neofs-api/internal"
+	"github.com/nspcc-dev/neofs-api/refs"
+	"github.com/nspcc-dev/neofs-api/service"
+	"github.com/nspcc-dev/neofs-api/session"
 )
 
 type (

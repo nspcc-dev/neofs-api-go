@@ -4,9 +4,9 @@ import (
 	"crypto/ecdsa"
 	"sync"
 
+	"github.com/nspcc-dev/neofs-api/internal"
+	"github.com/nspcc-dev/neofs-api/refs"
 	crypto "github.com/nspcc-dev/neofs-crypto"
-	"github.com/nspcc-dev/neofs-proto/internal"
-	"github.com/nspcc-dev/neofs-proto/refs"
 	"github.com/pkg/errors"
 )
 

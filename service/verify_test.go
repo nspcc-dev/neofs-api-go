@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/gogo/protobuf/proto"
+	"github.com/nspcc-dev/neofs-api/refs"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-crypto/test"
-	"github.com/nspcc-dev/neofs-proto/refs"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )
