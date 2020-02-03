@@ -13,8 +13,8 @@ import (
 	"crypto/sha256"
 
 	"github.com/google/uuid"
-	"github.com/nspcc-dev/neofs-proto/chain"
-	"github.com/nspcc-dev/neofs-proto/internal"
+	"github.com/nspcc-dev/neofs-api/chain"
+	"github.com/nspcc-dev/neofs-api/internal"
 )
 
 type (

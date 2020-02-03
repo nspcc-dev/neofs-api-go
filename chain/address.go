@@ -7,8 +7,8 @@ import (
 	"encoding/hex"
 
 	"github.com/mr-tron/base58"
+	"github.com/nspcc-dev/neofs-api/internal"
 	crypto "github.com/nspcc-dev/neofs-crypto"
-	"github.com/nspcc-dev/neofs-proto/internal"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ripemd160"
 )

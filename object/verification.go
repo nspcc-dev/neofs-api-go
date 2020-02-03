@@ -68,10 +68,10 @@ func (m Object) Verify() error {
 	var (
 		err      error
 		checksum []byte
-		pubkey []byte
+		pubkey   []byte
 	)
 	ind, ih := m.LastHeader(HeaderType(IntegrityHdr))
-	if ih == nil || ind != len(m.Headers) - 1{
+	if ih == nil || ind != len(m.Headers)-1 {
 		return ErrHeaderNotFound
 	}
 	integrity := ih.Value.(*Header_Integrity).Integrity

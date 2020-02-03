@@ -1,6 +1,6 @@
 syntax = "proto3";
 package refs;
-option go_package = "github.com/nspcc-dev/neofs-proto/refs";
+option go_package = "github.com/nspcc-dev/neofs-api/refs";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 

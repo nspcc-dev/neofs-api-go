@@ -1,6 +1,6 @@
 syntax = "proto3";
 package accounting;
-option go_package = "github.com/nspcc-dev/neofs-proto/accounting";
+option go_package = "github.com/nspcc-dev/neofs-api/accounting";
 
 import "decimal/decimal.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
@@ -85,7 +85,7 @@ message Tx {
 
 message Settlement {
     message Receiver {
-        // To is the address of funds recipient 
+        // To is the address of funds recipient
         string To              = 1;
         // Amount is the amount of funds that will be sent
         decimal.Decimal Amount = 2;

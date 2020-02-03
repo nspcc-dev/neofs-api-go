@@ -3,8 +3,8 @@ package object
 import (
 	"sort"
 
-	"github.com/nspcc-dev/neofs-proto/refs"
-	"github.com/nspcc-dev/neofs-proto/storagegroup"
+	"github.com/nspcc-dev/neofs-api/refs"
+	"github.com/nspcc-dev/neofs-api/storagegroup"
 )
 
 // Here are defined getter functions for objects that contain storage group

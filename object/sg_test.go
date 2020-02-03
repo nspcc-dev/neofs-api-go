@@ -5,8 +5,8 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/nspcc-dev/neofs-proto/hash"
-	"github.com/nspcc-dev/neofs-proto/storagegroup"
+	"github.com/nspcc-dev/neofs-api/hash"
+	"github.com/nspcc-dev/neofs-api/storagegroup"
 	"github.com/stretchr/testify/require"
 )
 

@@ -1,6 +1,33 @@
+PROTO_VERSION=master
+PROTO_URL=https://bitbucket.org/nspcc-dev/neofs-proto/get/$(PROTO_VERSION).tar.gz
+
 B=\033[0;1m
 G=\033[0;92m
 R=\033[0m
+
+.PHONY: deps format docgen protoc
+
+# Dependencies
+deps:
+	@echo "${B}${G}=> Golang modules ${R}"
+	@go mod tidy -v
+	@go mod vendor
+
+	@echo "${B}${G}=> Cleanup old files ${R}"
+	@find . -type f -name '*.pb.go' -not -path './vendor/*' -exec rm {} \;
+	@find . -type f -name '*.proto' -not -path './vendor/*' -not -name '*_test.proto' -exec rm {} \;
+
+	@echo "${B}${G}=> NeoFS Proto files ${R}"
+	@mkdir -p ./vendor/proto
+	@curl -sL -o ./vendor/proto.tar.gz $(PROTO_URL)
+	@tar -xzf ./vendor/proto.tar.gz --strip-components 1 -C ./vendor/proto
+	@for f in `find ./vendor/proto -type f -name '*.proto' -exec dirname {} \; | sort -u `; do \
+		cp $$f/*.proto ./$$(basename $$f); \
+	done
+
+	@echo "${B}${G}=> Cleanup ${R}"
+	@rm -rf ./vendor/proto
+	@rm -rf ./vendor/proto.tar.gz
 
 # Reformat code
 format:
@@ -11,7 +38,7 @@ format:
 	done
 
 # Regenerate documentation for protot files:
-docgen:
+docgen: deps
 	@for f in `find . -type f -name '*.proto' -not -path './vendor/*' -exec dirname {} \; | sort -u `; do \
 		echo "${B}${G}⇒ Documentation for $$(basename $$f) ${R}"; \
 		protoc \
@@ -21,14 +48,12 @@ docgen:
 	done
 
 # Regenerate proto files:
-protoc:
-	@go mod tidy -v
-	@go mod vendor
-	# Install specific version for gogo-proto
+protoc: deps
+	@echo "${B}${G}=> Install specific version for gogo-proto ${R}"
 	@go list -f '{{.Path}}/...@{{.Version}}' -m github.com/gogo/protobuf | xargs go get -v
-	# Install specific version for protobuf lib
+	@echo "${B}${G}=> Install specific version for protobuf lib ${R}"
 	@go list -f '{{.Path}}/...@{{.Version}}' -m  github.com/golang/protobuf | xargs go get -v
-	# Protoc generate
+	@echo "${B}${G}=> Protoc generate ${R}"
 	@for f in `find . -type f -name '*.proto' -not -path './vendor/*'`; do \
 		echo "${B}${G}⇒ Processing $$f ${R}"; \
 		protoc \

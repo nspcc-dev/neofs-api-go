@@ -4,7 +4,7 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/nspcc-dev/neofs-proto/session"
+	"github.com/nspcc-dev/neofs-api/session"
 	"github.com/pkg/errors"
 )
 

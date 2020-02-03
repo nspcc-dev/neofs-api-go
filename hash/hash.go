@@ -4,7 +4,7 @@ import (
 	"bytes"
 
 	"github.com/mr-tron/base58"
-	"github.com/nspcc-dev/neofs-proto/internal"
+	"github.com/nspcc-dev/neofs-api/internal"
 	"github.com/nspcc-dev/tzhash/tz"
 	"github.com/pkg/errors"
 )
@@ -70,7 +70,7 @@ func (h Hash) Verify(data []byte) bool { return h.Equal(Sum(data)) }
 
 // Validate checks if combined hashes are equal to current Hash.
 func (h Hash) Validate(hashes []Hash) bool {
-	var hashBytes = make([][]byte, 0, len(hashes))
+	hashBytes := make([][]byte, 0, len(hashes))
 	for i := range hashes {
 		hashBytes = append(hashBytes, hashes[i].Bytes())
 	}
