@@ -40,7 +40,7 @@ service Service {
     // Search objects in container. Version of query language format SHOULD BE
     // set to 1. Search query represented in serialized format (see query
     // package).
-    rpc Search(SearchRequest) returns (SearchResponse);
+    rpc Search(SearchRequest) returns (stream SearchResponse);
 
     // GetRange of data payload. Ranges are set of pairs (offset, length).
     // Fragments order in response corresponds to ranges order in request.

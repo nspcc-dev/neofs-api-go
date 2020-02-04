@@ -63,7 +63,7 @@ rpc Get(GetRequest) returns (stream GetResponse);
 rpc Put(stream PutRequest) returns (PutResponse);
 rpc Delete(DeleteRequest) returns (DeleteResponse);
 rpc Head(HeadRequest) returns (HeadResponse);
-rpc Search(SearchRequest) returns (SearchResponse);
+rpc Search(SearchRequest) returns (stream SearchResponse);
 rpc GetRange(GetRangeRequest) returns (GetRangeResponse);
 rpc GetRangeHash(GetRangeHashRequest) returns (GetRangeHashResponse);
 
