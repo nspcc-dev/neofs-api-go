@@ -1,6 +1,17 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.2.14] - 2020-02-04
+
+### Fixed
+- Readme
+
+### Added
+- Filename header
+
+### Updated
+- Object.Search now uses streams
+
 ## [0.2.13] - 2020-02-03
 
 ### Fixed
@@ -134,3 +145,4 @@ Initial public release
 [0.2.11]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.10...v0.2.11
 [0.2.12]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.11...v0.2.12
 [0.2.13]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.12...v0.2.13
+[0.2.14]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.13...v0.2.14

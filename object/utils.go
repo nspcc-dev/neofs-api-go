@@ -8,6 +8,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+// FilenameHeader is a user header key for names of files, stored by third
+// party apps. We recommend to use this header to be compatible with neofs
+// http gate, neofs minio gate and neofs-dropper application.
+const FilenameHeader = "filename"
+
 // ByteSize used to format bytes
 type ByteSize uint64
 
