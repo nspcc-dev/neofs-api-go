@@ -163,8 +163,8 @@ message GetRangeRequest {
 }
 
 message GetRangeResponse {
-    // Fragments of object's payload
-    repeated bytes Fragments = 1;
+    // Fragment of object's payload
+    bytes Fragment = 1;
 }
 
 message GetRangeHashRequest {

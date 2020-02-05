@@ -210,7 +210,7 @@ in distributed system.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Fragments | [bytes](#bytes) | repeated | Fragments of object's payload |
+| Fragment | [bytes](#bytes) |  | Fragment of object's payload |
 
 
 <a name="object.GetRequest"></a>
