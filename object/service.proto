@@ -1,6 +1,7 @@
 syntax = "proto3";
 package object;
 option go_package = "github.com/nspcc-dev/neofs-api/object";
+option csharp_namespace = "NeoFS.API.Object";
 
 import "refs/types.proto";
 import "object/types.proto";
@@ -42,9 +43,10 @@ service Service {
     // package).
     rpc Search(SearchRequest) returns (stream SearchResponse);
 
-    // GetRange of data payload. Ranges are set of pairs (offset, length).
-    // Fragments order in response corresponds to ranges order in request.
-    rpc GetRange(GetRangeRequest) returns (GetRangeResponse);
+    // GetRange of data payload. Range is a pair (offset, length).
+    // Requested range can be restored by concatenation of all chunks
+    // keeping receiving order.
+    rpc GetRange(GetRangeRequest) returns (stream GetRangeResponse);
 
     // GetRangeHash returns homomorphic hash of object payload range after XOR
     // operation. Ranges are set of pairs (offset, length). Hashes order in
@@ -153,8 +155,8 @@ message SearchResponse {
 message GetRangeRequest {
     // Address of object (container id + object id)
     refs.Address Address                     = 1 [(gogoproto.nullable) = false];
-    // Ranges of object's payload to return
-    repeated Range Ranges                    = 2 [(gogoproto.nullable) = false];
+    // Range of object's payload to return
+    Range Range                              = 2 [(gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -162,8 +164,8 @@ message GetRangeRequest {
 }
 
 message GetRangeResponse {
-    // Fragments of object's payload
-    repeated bytes Fragments = 1;
+    // Fragment of object's payload
+    bytes Fragment = 1;
 }
 
 message GetRangeHashRequest {

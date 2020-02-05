@@ -1,6 +1,7 @@
 syntax = "proto3";
 package accounting;
 option go_package = "github.com/nspcc-dev/neofs-api/accounting";
+option csharp_namespace = "NeoFS.API.Accounting";
 
 import "decimal/decimal.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";

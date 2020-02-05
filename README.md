@@ -1,5 +1,13 @@
 # NeoFS API
 
+![Go](https://github.com/nspcc-dev/neofs-api/workflows/Go/badge.svg)
+[![codecov](https://codecov.io/gh/nspcc-dev/neofs-api/branch/master/graph/badge.svg)](https://codecov.io/gh/nspcc-dev/neofs-api)
+[![Report](https://goreportcard.com/badge/github.com/nspcc-dev/neofs-api)](https://goreportcard.com/report/github.com/nspcc-dev/neofs-api)
+[![GitHub release](https://img.shields.io/github/release/nspcc-dev/neofs-api.svg)](https://github.com/nspcc-dev/neofs-api)
+![GitHub license](https://img.shields.io/github/license/nspcc-dev/neofs-api.svg?style=popout)
+
+---
+
 NeoFS API repository contains implementation of core NeoFS structures that
 can be used for integration with NeoFS. 
 
