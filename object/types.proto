@@ -1,6 +1,7 @@
 syntax = "proto3";
 package object;
 option go_package = "github.com/nspcc-dev/neofs-api/object";
+option csharp_namespace = "NeoFS.API.Object";
 
 import "refs/types.proto";
 import "session/types.proto";

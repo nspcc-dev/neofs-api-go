@@ -1,10 +1,11 @@
 syntax = "proto3";
 package bootstrap;
 option go_package = "github.com/nspcc-dev/neofs-api/bootstrap";
+option csharp_namespace = "NeoFS.API.Bootstrap";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
-option (gogoproto.stable_marshaler_all) = true;;
+option (gogoproto.stable_marshaler_all) = true;
 
 option (gogoproto.stringer_all) =  false;
 option (gogoproto.goproto_stringer_all) = false;
