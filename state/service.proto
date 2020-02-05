@@ -1,6 +1,7 @@
 syntax = "proto3";
 package state;
 option go_package = "github.com/nspcc-dev/neofs-api/state";
+option csharp_namespace = "NeoFS.API.State";
 
 import "service/meta.proto";
 import "service/verify.proto";

@@ -1,6 +1,7 @@
 syntax = "proto3";
 package storagegroup;
 option go_package = "github.com/nspcc-dev/neofs-api/storagegroup";
+option csharp_namespace = "NeoFS.API.StorageGroup";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
