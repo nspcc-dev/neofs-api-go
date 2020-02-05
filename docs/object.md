@@ -64,7 +64,7 @@ rpc Put(stream PutRequest) returns (PutResponse);
 rpc Delete(DeleteRequest) returns (DeleteResponse);
 rpc Head(HeadRequest) returns (HeadResponse);
 rpc Search(SearchRequest) returns (stream SearchResponse);
-rpc GetRange(GetRangeRequest) returns (GetRangeResponse);
+rpc GetRange(GetRangeRequest) returns (stream GetRangeResponse);
 rpc GetRangeHash(GetRangeHashRequest) returns (GetRangeHashResponse);
 
 ```
@@ -119,8 +119,9 @@ package).
 | Search | [SearchRequest](#object.SearchRequest) | [SearchResponse](#object.SearchResponse) |
 #### Method GetRange
 
-GetRange of data payload. Ranges are set of pairs (offset, length).
-Fragments order in response corresponds to ranges order in request.
+GetRange of data payload. Range is a pair (offset, length).
+Requested range can be restored by concatenation of all chunks
+keeping receiving order.
 
 | Name | Input | Output |
 | ---- | ----- | ------ |
@@ -196,7 +197,7 @@ in distributed system.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | Address | [refs.Address](#refs.Address) |  | Address of object (container id + object id) |
-| Ranges | [Range](#object.Range) | repeated | Ranges of object's payload to return |
+| Range | [Range](#object.Range) |  | Range of object's payload to return |
 | Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
 | Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
