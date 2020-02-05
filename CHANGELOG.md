@@ -1,6 +1,25 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.3.0] - 2020-02-05
+
+### Updated
+- proto files
+- dependencies
+    - github.com/golang/protobuf `v1.3.2 => v1.3.3`
+    - github.com/pkg/errors `v0.8.1 => v0.9.1`
+    - github.com/prometheus/client_golang `v1.2.1 => v1.4.0`
+    - github.com/prometheus/client_model `v0.0.0-20190812154241-14fe0d1b01d4 => v0.2.0`
+    - github.com/spf13/viper `v1.6.1 => v1.6.2`
+    - google.golang.org/grpc `v1.24.0 => v1.27.0`
+
+### Changed
+- make object.GetRange to be server-side streaming RPC
+- GetRange response struct
+
+### Added
+- badges to readme
+
 ## [0.2.14] - 2020-02-04
 
 ### Fixed
@@ -146,3 +165,4 @@ Initial public release
 [0.2.12]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.11...v0.2.12
 [0.2.13]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.12...v0.2.13
 [0.2.14]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.13...v0.2.14
+[0.3.0]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.14...v0.3.0
