@@ -1,6 +1,16 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.3.1] - 2020-02-07
+### Fixed
+- bug with `tz.Concat`
+
+### Updated
+- dependencies:
+    - github.com/nspcc-dev/tzhash `v1.3.0 => v1.4.0`
+    - github.com/prometheus/client_golang `v1.4.0 => v1.4.1`
+    - google.golang.org/grpc `v1.27.0 => v1.27.1`
+
 ## [0.3.0] - 2020-02-05
 
 ### Updated
@@ -166,3 +176,4 @@ Initial public release
 [0.2.13]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.12...v0.2.13
 [0.2.14]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.13...v0.2.14
 [0.3.0]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.14...v0.3.0
+[0.3.1]: https://github.com/nspcc-dev/neofs-api/compare/v0.3.0...v0.3.1
