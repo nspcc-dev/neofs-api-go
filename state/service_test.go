@@ -5,6 +5,7 @@ import (
 	"expvar"
 	"testing"
 
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,4 +26,24 @@ func TestEncodeVariables(t *testing.T) {
 
 	require.Contains(t, dump, "test2")
 	require.Equal(t, "test2", dump["test2"])
+}
+
+func TestEncodeConfig(t *testing.T) {
+	v := viper.New()
+	v.Set("test1", "test1")
+	v.Set("test2", "test2")
+
+	res, err := EncodeConfig(v)
+	require.NoError(t, err)
+
+	dump := make(map[string]interface{})
+	require.NoError(t, json.Unmarshal(res.Config, &dump))
+
+	require.NotEmpty(t, dump)
+
+	require.Contains(t, dump, "test1")
+	require.Equal(t, dump["test1"], "test1")
+
+	require.Contains(t, dump, "test2")
+	require.Equal(t, dump["test2"], "test2")
 }
