@@ -10,6 +10,8 @@
   - Messages
     - [DumpRequest](#state.DumpRequest)
     - [DumpResponse](#state.DumpResponse)
+    - [DumpVarsRequest](#state.DumpVarsRequest)
+    - [DumpVarsResponse](#state.DumpVarsResponse)
     - [HealthRequest](#state.HealthRequest)
     - [HealthResponse](#state.HealthResponse)
     - [MetricsRequest](#state.MetricsRequest)
@@ -39,6 +41,7 @@ rpc Netmap(NetmapRequest) returns (.bootstrap.SpreadMap);
 rpc Metrics(MetricsRequest) returns (MetricsResponse);
 rpc HealthCheck(HealthRequest) returns (HealthResponse);
 rpc DumpConfig(DumpRequest) returns (DumpResponse);
+rpc DumpVars(DumpVarsRequest) returns (DumpVarsResponse);
 
 ```
 
@@ -73,6 +76,15 @@ The request should be signed.
 | Name | Input | Output |
 | ---- | ----- | ------ |
 | DumpConfig | [DumpRequest](#state.DumpRequest) | [DumpResponse](#state.DumpResponse) |
+#### Method DumpVars
+
+DumpVars returns debug variables for the current node.
+To permit access, used server config options.
+The request should be signed.
+
+| Name | Input | Output |
+| ---- | ----- | ------ |
+| DumpVars | [DumpVarsRequest](#state.DumpVarsRequest) | [DumpVarsResponse](#state.DumpVarsResponse) |
  <!-- end services -->
 
 
@@ -98,6 +110,30 @@ Config stored in JSON encoded into slice of bytes.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | Config | [bytes](#bytes) |  |  |
+
+
+<a name="state.DumpVarsRequest"></a>
+
+### Message DumpVarsRequest
+DumpVarsRequest message to fetch current server debug variables.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
+
+
+<a name="state.DumpVarsResponse"></a>
+
+### Message DumpVarsResponse
+DumpVarsResponse message contains current server debug variables.
+Variables stored in JSON encoded into slice of bytes.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Variables | [bytes](#bytes) |  |  |
 
 
 <a name="state.HealthRequest"></a>
