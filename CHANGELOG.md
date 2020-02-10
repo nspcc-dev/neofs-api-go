@@ -1,6 +1,17 @@
 # Changelog
 This is the changelog for NeoFS Proto
 
+## [0.3.2] - 2020-02-10
+
+### Added 
+- gRPC method DumpVars to State service
+- add method `EncodeVariables` to encode debug variables to JSON (slice of bytes)
+- increase test coverage for state package
+
+### Updated
+- state proto file
+- documentation for state service and messages
+
 ## [0.3.1] - 2020-02-07
 ### Fixed
 - bug with `tz.Concat`
@@ -177,3 +188,4 @@ Initial public release
 [0.2.14]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.13...v0.2.14
 [0.3.0]: https://github.com/nspcc-dev/neofs-api/compare/v0.2.14...v0.3.0
 [0.3.1]: https://github.com/nspcc-dev/neofs-api/compare/v0.3.0...v0.3.1
+[0.3.2]: https://github.com/nspcc-dev/neofs-api/compare/v0.3.1...v0.3.2
