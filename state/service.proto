@@ -23,6 +23,10 @@ service Status {
     // To permit access, used server config options.
     // The request should be signed.
     rpc DumpConfig(DumpRequest) returns (DumpResponse);
+    // DumpVars returns debug variables for the current node.
+    // To permit access, used server config options.
+    // The request should be signed.
+    rpc DumpVars(DumpVarsRequest) returns (DumpVarsResponse);
 }
 
 // NetmapRequest message to request current node netmap
@@ -76,4 +80,18 @@ message DumpRequest {
 // Config stored in JSON encoded into slice of bytes.
 message DumpResponse {
     bytes Config = 1;
+}
+
+// DumpVarsRequest message to fetch current server debug variables.
+message DumpVarsRequest {
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+}
+
+// DumpVarsResponse message contains current server debug variables.
+// Variables stored in JSON encoded into slice of bytes.
+message DumpVarsResponse {
+    bytes Variables = 1;
 }

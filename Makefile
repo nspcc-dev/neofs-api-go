@@ -14,7 +14,6 @@ deps:
 	@go mod vendor
 
 	@echo "${B}${G}=> Cleanup old files ${R}"
-	@find . -type f -name '*.pb.go' -not -path './vendor/*' -exec rm {} \;
 	@find . -type f -name '*.proto' -not -path './vendor/*' -not -name '*_test.proto' -exec rm {} \;
 
 	@echo "${B}${G}=> NeoFS Proto files ${R}"
@@ -49,6 +48,9 @@ docgen: deps
 
 # Regenerate proto files:
 protoc: deps
+	@echo "${B}${G}=> Cleanup old files ${R}"
+	@find . -type f -name '*.pb.go' -not -path './vendor/*' -exec rm {} \;
+
 	@echo "${B}${G}=> Install specific version for gogo-proto ${R}"
 	@go list -f '{{.Path}}/...@{{.Version}}' -m github.com/gogo/protobuf | xargs go get -v
 	@echo "${B}${G}=> Install specific version for protobuf lib ${R}"
@@ -60,3 +62,5 @@ protoc: deps
 			--proto_path=.:./vendor:/usr/local/include \
             --gofast_out=plugins=grpc,paths=source_relative:. $$f; \
 	done
+
+update: docgen protoc

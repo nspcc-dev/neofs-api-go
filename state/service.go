@@ -1,7 +1,10 @@
 package state
 
 import (
+	"bytes"
 	"encoding/json"
+	"expvar"
+	"fmt"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/prometheus/client_golang/prometheus"
@@ -60,4 +63,26 @@ func EncodeConfig(v *viper.Viper) (*DumpResponse, error) {
 	}
 
 	return &DumpResponse{Config: data}, nil
+}
+
+// EncodeVariables encodes debug variables into DumpVarsResponse message.
+// Variables encoded into JSON and stored as slice of bytes.
+func EncodeVariables() *DumpVarsResponse {
+	buf := new(bytes.Buffer)
+	buf.WriteString("{\n")
+	first := true
+
+	expvar.Do(func(kv expvar.KeyValue) {
+		if !first {
+			buf.WriteString(",\n")
+		}
+
+		first = false
+
+		_, _ = fmt.Fprintf(buf, "%q: %s", kv.Key, kv.Value)
+	})
+
+	buf.WriteString("\n}\n")
+
+	return &DumpVarsResponse{Variables: buf.Bytes()}
 }
