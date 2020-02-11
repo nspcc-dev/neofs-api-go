@@ -80,5 +80,7 @@ func TestCheque(t *testing.T) {
 		require.Equal(t, expect, actual)
 
 		require.NoError(t, cheque.Verify())
+		require.Equal(t, cheque.Height, uint64(7777))
+		require.Equal(t, cheque.Amount, decimal.NewGAS(42))
 	})
 }

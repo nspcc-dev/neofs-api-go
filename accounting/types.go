@@ -169,10 +169,10 @@ func (b *Cheque) marshalBody() []byte {
 	offset += copy(buf, b.ID.Bytes())
 	offset += copy(buf[offset:], b.Owner.Bytes())
 
-	binary.BigEndian.PutUint64(buf[offset:], uint64(b.Amount.Value))
+	binary.LittleEndian.PutUint64(buf[offset:], uint64(b.Amount.Value))
 	offset += u64size
 
-	binary.BigEndian.PutUint64(buf[offset:], b.Height)
+	binary.LittleEndian.PutUint64(buf[offset:], b.Height)
 
 	return buf
 }
@@ -199,13 +199,13 @@ func (b *Cheque) unmarshalBody(buf []byte) error {
 	}
 
 	{ // unmarshal amount
-		amount := int64(binary.BigEndian.Uint64(buf[offset:]))
+		amount := int64(binary.LittleEndian.Uint64(buf[offset:]))
 		b.Amount = decimal.New(amount)
 		offset += u64size
 	}
 
 	{ // unmarshal height
-		b.Height = binary.BigEndian.Uint64(buf[offset:])
+		b.Height = binary.LittleEndian.Uint64(buf[offset:])
 		offset += u64size
 	}
 
@@ -220,7 +220,7 @@ func (b Cheque) MarshalBinary() ([]byte, error) {
 		offset = copy(buf, b.marshalBody())
 	)
 
-	binary.BigEndian.PutUint16(buf[offset:], uint16(count))
+	binary.LittleEndian.PutUint16(buf[offset:], uint16(count))
 	offset += u16size
 
 	for _, sign := range b.Signatures {
@@ -246,7 +246,7 @@ func (b *Cheque) UnmarshalBinary(buf []byte) error {
 
 	body := buf[:signaturesOffset]
 
-	count := int64(binary.BigEndian.Uint16(buf[signaturesOffset:]))
+	count := int64(binary.LittleEndian.Uint16(buf[signaturesOffset:]))
 	offset := signaturesOffset + u16size
 
 	if ln := count * int64(crypto.PublicKeyCompressedSize+crypto.RFC6979SignatureSize); ln > int64(len(buf[offset:])) {
