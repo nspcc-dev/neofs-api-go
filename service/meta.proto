@@ -18,3 +18,13 @@ message RequestMetaHeader {
     // TODO: not used for now, should be implemented in future
     uint32 Version = 3;
 }
+
+// ResponseMetaHeader contains meta information based on request processing by server
+// (should be embedded into message)
+message ResponseMetaHeader {
+    // Current NeoFS epoch on server
+    uint64 Epoch   = 1;
+    // Version defines protocol version
+    // TODO: not used for now, should be implemented in future
+    uint32 Version = 2;
+}
