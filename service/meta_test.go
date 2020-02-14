@@ -88,3 +88,17 @@ func TestMetaRequest(t *testing.T) {
 		})
 	}
 }
+
+func TestRequestMetaHeader_SetEpoch(t *testing.T) {
+	m := new(ResponseMetaHeader)
+	epoch := uint64(3)
+	m.SetEpoch(epoch)
+	require.Equal(t, epoch, m.GetEpoch())
+}
+
+func TestRequestMetaHeader_SetVersion(t *testing.T) {
+	m := new(ResponseMetaHeader)
+	version := uint32(3)
+	m.SetVersion(version)
+	require.Equal(t, version, m.GetVersion())
+}
