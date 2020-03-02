@@ -1,6 +1,11 @@
 # Changelog
 This is the changelog for NeoFS API
 
+## [0.4.1] - 2020-03-02
+
+### Changed
+- Updated neofs-crypto library to v0.3.0
+
 ## [0.4.0] - 2020-02-18
 
 ### Added 
@@ -198,3 +203,4 @@ Initial public release
 [0.3.1]: https://github.com/nspcc-dev/neofs-api/compare/v0.3.0...v0.3.1
 [0.3.2]: https://github.com/nspcc-dev/neofs-api/compare/v0.3.1...v0.3.2
 [0.4.0]: https://github.com/nspcc-dev/neofs-api/compare/v0.3.2...v0.4.0
+[0.4.1]: https://github.com/nspcc-dev/neofs-api/compare/v0.4.0...v0.4.1
