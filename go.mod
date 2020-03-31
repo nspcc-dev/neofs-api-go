@@ -1,6 +1,6 @@
-module github.com/nspcc-dev/neofs-api
+module github.com/nspcc-dev/neofs-api-go
 
-go 1.13
+go 1.14
 
 require (
 	github.com/gogo/protobuf v1.3.1

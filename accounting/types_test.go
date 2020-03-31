@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/mr-tron/base58"
-	"github.com/nspcc-dev/neofs-api/chain"
-	"github.com/nspcc-dev/neofs-api/decimal"
-	"github.com/nspcc-dev/neofs-api/refs"
+	"github.com/nspcc-dev/neofs-api-go/chain"
+	"github.com/nspcc-dev/neofs-api-go/decimal"
+	"github.com/nspcc-dev/neofs-api-go/refs"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )

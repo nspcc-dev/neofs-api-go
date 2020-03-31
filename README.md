@@ -1,9 +1,9 @@
 # NeoFS API
 
-![Go](https://github.com/nspcc-dev/neofs-api/workflows/Go/badge.svg)
-[![codecov](https://codecov.io/gh/nspcc-dev/neofs-api/branch/master/graph/badge.svg)](https://codecov.io/gh/nspcc-dev/neofs-api)
-[![Report](https://goreportcard.com/badge/github.com/nspcc-dev/neofs-api)](https://goreportcard.com/report/github.com/nspcc-dev/neofs-api)
-[![GitHub release](https://img.shields.io/github/release/nspcc-dev/neofs-api.svg)](https://github.com/nspcc-dev/neofs-api)
+![Go](https://github.com/nspcc-dev/neofs-api-go/workflows/Go/badge.svg)
+[![codecov](https://codecov.io/gh/nspcc-dev/neofs-api-go/branch/master/graph/badge.svg)](https://codecov.io/gh/nspcc-dev/neofs-api-go)
+[![Report](https://goreportcard.com/badge/github.com/nspcc-dev/neofs-api-go)](https://goreportcard.com/report/github.com/nspcc-dev/neofs-api-go)
+[![GitHub release](https://img.shields.io/github/release/nspcc-dev/neofs-api.svg)](https://github.com/nspcc-dev/neofs-api-go)
 ![GitHub license](https://img.shields.io/github/license/nspcc-dev/neofs-api.svg?style=popout)
 
 ---

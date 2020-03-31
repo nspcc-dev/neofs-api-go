@@ -1,6 +1,6 @@
 syntax = "proto3";
 package decimal;
-option go_package = "github.com/nspcc-dev/neofs-api/decimal";
+option go_package = "github.com/nspcc-dev/neofs-api-go/decimal";
 option csharp_namespace = "NeoFS.API.Decimal";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
