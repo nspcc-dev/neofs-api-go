@@ -5,7 +5,7 @@ import (
 	"crypto/ecdsa"
 
 	"github.com/mr-tron/base58"
-	"github.com/nspcc-dev/neofs-api/chain"
+	"github.com/nspcc-dev/neofs-api-go/chain"
 	"github.com/pkg/errors"
 )
 

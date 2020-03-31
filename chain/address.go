@@ -7,7 +7,7 @@ import (
 	"encoding/hex"
 
 	"github.com/mr-tron/base58"
-	"github.com/nspcc-dev/neofs-api/internal"
+	"github.com/nspcc-dev/neofs-api-go/internal"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ripemd160"

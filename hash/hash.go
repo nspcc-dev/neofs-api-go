@@ -4,7 +4,7 @@ import (
 	"bytes"
 
 	"github.com/mr-tron/base58"
-	"github.com/nspcc-dev/neofs-api/internal"
+	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/tzhash/tz"
 	"github.com/pkg/errors"
 )

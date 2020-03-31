@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/nspcc-dev/neofs-api/container"
-	"github.com/nspcc-dev/neofs-api/refs"
-	"github.com/nspcc-dev/neofs-api/session"
+	"github.com/nspcc-dev/neofs-api-go/container"
+	"github.com/nspcc-dev/neofs-api-go/refs"
+	"github.com/nspcc-dev/neofs-api-go/session"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"

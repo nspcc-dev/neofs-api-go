@@ -4,8 +4,8 @@ import (
 	"bytes"
 
 	"github.com/google/uuid"
-	"github.com/nspcc-dev/neofs-api/internal"
-	"github.com/nspcc-dev/neofs-api/refs"
+	"github.com/nspcc-dev/neofs-api-go/internal"
+	"github.com/nspcc-dev/neofs-api-go/refs"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/nspcc-dev/netmap"
 	"github.com/pkg/errors"
