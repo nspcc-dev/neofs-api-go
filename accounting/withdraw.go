@@ -3,7 +3,7 @@ package accounting
 import (
 	"encoding/binary"
 
-	"github.com/nspcc-dev/neofs-api/refs"
+	"github.com/nspcc-dev/neofs-api-go/refs"
 )
 
 type (

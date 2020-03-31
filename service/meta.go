@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/nspcc-dev/neofs-api/internal"
+	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

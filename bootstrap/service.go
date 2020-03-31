@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	"github.com/nspcc-dev/neofs-api/service"
+	"github.com/nspcc-dev/neofs-api-go/service"
 )
 
 // NodeType type alias.

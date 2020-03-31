@@ -6,7 +6,7 @@ import (
 	"crypto/rand"
 	"sync"
 
-	"github.com/nspcc-dev/neofs-api/refs"
+	"github.com/nspcc-dev/neofs-api-go/refs"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 

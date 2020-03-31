@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 	"strings"
 
-	"github.com/nspcc-dev/neofs-api/internal"
+	"github.com/nspcc-dev/neofs-api-go/internal"
 )
 
 const (

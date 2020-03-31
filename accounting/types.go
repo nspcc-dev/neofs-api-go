@@ -7,10 +7,10 @@ import (
 	"reflect"
 
 	"github.com/mr-tron/base58"
-	"github.com/nspcc-dev/neofs-api/chain"
-	"github.com/nspcc-dev/neofs-api/decimal"
-	"github.com/nspcc-dev/neofs-api/internal"
-	"github.com/nspcc-dev/neofs-api/refs"
+	"github.com/nspcc-dev/neofs-api-go/chain"
+	"github.com/nspcc-dev/neofs-api-go/decimal"
+	"github.com/nspcc-dev/neofs-api-go/internal"
+	"github.com/nspcc-dev/neofs-api-go/refs"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/pkg/errors"
 )

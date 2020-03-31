@@ -1,6 +1,6 @@
 syntax = "proto3";
 package query;
-option go_package = "github.com/nspcc-dev/neofs-api/query";
+option go_package = "github.com/nspcc-dev/neofs-api-go/query";
 option csharp_namespace = "NeoFS.API.Query";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";

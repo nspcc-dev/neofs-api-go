@@ -1,6 +1,6 @@
 syntax = "proto3";
 package container;
-option go_package = "github.com/nspcc-dev/neofs-api/container";
+option go_package = "github.com/nspcc-dev/neofs-api-go/container";
 option csharp_namespace = "NeoFS.API.Container";
 
 import "github.com/nspcc-dev/netmap/selector.proto";

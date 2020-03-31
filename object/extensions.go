@@ -2,7 +2,7 @@ package object
 
 // todo: all extensions must be transferred to the separate util library
 
-import "github.com/nspcc-dev/neofs-api/storagegroup"
+import "github.com/nspcc-dev/neofs-api-go/storagegroup"
 
 // IsLinking checks if object has children links to another objects.
 // We have to check payload size because zero-object must have zero
