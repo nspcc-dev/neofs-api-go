@@ -1,5 +1,5 @@
-PROTO_VERSION=master
-PROTO_URL=https://bitbucket.org/nspcc-dev/neofs-proto/get/$(PROTO_VERSION).tar.gz
+PROTO_VERSION=v0.5.0
+PROTO_URL=https://github.com/nspcc-dev/neofs-api/archive/$(PROTO_VERSION).tar.gz
 
 B=\033[0;1m
 G=\033[0;92m
