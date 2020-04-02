@@ -18,18 +18,7 @@ message Container {
     uint64 Capacity            = 3;
     // Rules define storage policy for the object inside the container.
     netmap.PlacementRule Rules = 4 [(gogoproto.nullable) = false];
-    // Container ACL.
-    AccessControlList List     = 5 [(gogoproto.nullable) = false];
-}
-
-message AccessGroup {
-    // Group access mode.
-    uint32 AccessMode         = 1;
-    // Group members.
-    repeated bytes UserGroup  = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
-}
-
-message AccessControlList {
-    // List of access groups.
-    repeated AccessGroup List = 1 [(gogoproto.nullable) = false];
+    // BasicACL with access control rules for owner, system, others and
+    // permission bits for bearer token and extended ACL.
+    uint32 BasicACL            = 5;
 }

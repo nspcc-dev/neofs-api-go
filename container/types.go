@@ -11,19 +11,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// AccessMode is a container access mode type.
-type AccessMode uint32
-
-const (
-	// AccessModeRead is a read access mode.
-	AccessModeRead AccessMode = 1 << iota
-	// AccessModeWrite is a write access mode.
-	AccessModeWrite
-)
-
-// AccessModeReadWrite is a read/write container access mode.
-const AccessModeReadWrite = AccessModeRead | AccessModeWrite
-
 var (
 	_ internal.Custom = (*Container)(nil)
 
@@ -31,8 +18,8 @@ var (
 	emptyOwner = (OwnerID{}).Bytes()
 )
 
-// New creates new user container based on capacity, OwnerID and PlacementRules.
-func New(cap uint64, owner OwnerID, rules netmap.PlacementRule) (*Container, error) {
+// New creates new user container based on capacity, OwnerID, ACL and PlacementRules.
+func New(cap uint64, owner OwnerID, acl uint32, rules netmap.PlacementRule) (*Container, error) {
 	if bytes.Equal(owner[:], emptyOwner) {
 		return nil, refs.ErrEmptyOwner
 	} else if cap == 0 {
@@ -49,6 +36,7 @@ func New(cap uint64, owner OwnerID, rules netmap.PlacementRule) (*Container, err
 		Salt:     UUID(salt),
 		Capacity: cap,
 		Rules:    rules,
+		BasicACL: acl,
 	}, nil
 }
 
@@ -90,7 +78,7 @@ func NewTestContainer() (*Container, error) {
 	if err != nil {
 		return nil, err
 	}
-	return New(100, owner, netmap.PlacementRule{
+	return New(100, owner, 0xFFFFFFFF, netmap.PlacementRule{
 		ReplFactor: 2,
 		SFGroups: []netmap.SFGroup{
 			{

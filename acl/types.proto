@@ -1,0 +1,27 @@
+syntax = "proto3";
+package acl;
+option go_package = "github.com/nspcc-dev/neofs-api-go/acl";
+option csharp_namespace = "NeoFS.API.Acl";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+option (gogoproto.stable_marshaler_all) = true;
+
+// Target of the access control rule in access control list.
+enum Target {
+    // Unknown target, default value.
+    Unknown = 0;
+
+    // User target rule is applied if sender is the owner of the container.
+    User    = 1;
+
+    // System target rule is applied if sender is the storage node within the
+    // container or inner ring node.
+    System  = 2;
+
+    // Others target rule is applied if sender is not user or system target.
+    Others  = 3;
+
+    // PubKey target rule is applied if sender has public key provided in
+    // extended ACL.
+    PubKey  = 4;
+}

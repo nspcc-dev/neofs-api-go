@@ -31,9 +31,11 @@ func (m *PutRequest) PrepareData() ([]byte, error) {
 		err      error
 		buf      = new(bytes.Buffer)
 		capBytes = make([]byte, 8)
+		aclBytes = make([]byte, 4)
 	)
 
 	binary.BigEndian.PutUint64(capBytes, m.Capacity)
+	binary.BigEndian.PutUint32(capBytes, m.BasicACL)
 
 	if _, err = buf.Write(m.MessageID.Bytes()); err != nil {
 		return nil, errors.Wrap(err, "could not write message id")
@@ -45,6 +47,8 @@ func (m *PutRequest) PrepareData() ([]byte, error) {
 		return nil, errors.Wrap(err, "could not marshal placement")
 	} else if _, err = buf.Write(data); err != nil {
 		return nil, errors.Wrap(err, "could not write placement")
+	} else if _, err = buf.Write(aclBytes); err != nil {
+		return nil, errors.Wrap(err, "could not write basic acl")
 	}
 
 	return buf.Bytes(), nil
