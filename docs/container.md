@@ -21,8 +21,6 @@
 - [container/types.proto](#container/types.proto)
 
   - Messages
-    - [AccessControlList](#container.AccessControlList)
-    - [AccessGroup](#container.AccessGroup)
     - [Container](#container.Container)
     
 
@@ -166,7 +164,7 @@ via consensus in inner ring nodes
 | Capacity | [uint64](#uint64) |  | Capacity defines amount of data that can be stored in the container (doesn't used for now). |
 | OwnerID | [bytes](#bytes) |  | OwnerID is a wallet address |
 | rules | [netmap.PlacementRule](#netmap.PlacementRule) |  | Rules define storage policy for the object inside the container. |
-| Group | [AccessGroup](#container.AccessGroup) |  | Container ACL. |
+| BasicACL | [uint32](#uint32) |  | BasicACL of the container. |
 | Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
 | Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
@@ -196,29 +194,6 @@ via consensus in inner ring nodes
  <!-- end services -->
 
 
-<a name="container.AccessControlList"></a>
-
-### Message AccessControlList
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| List | [AccessGroup](#container.AccessGroup) | repeated | List of access groups. |
-
-
-<a name="container.AccessGroup"></a>
-
-### Message AccessGroup
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| AccessMode | [uint32](#uint32) |  | Group access mode. |
-| UserGroup | [bytes](#bytes) | repeated | Group members. |
-
-
 <a name="container.Container"></a>
 
 ### Message Container
@@ -231,7 +206,7 @@ The Container service definition.
 | Salt | [bytes](#bytes) |  | Salt is a nonce for unique container id calculation. |
 | Capacity | [uint64](#uint64) |  | Capacity defines amount of data that can be stored in the container (doesn't used for now). |
 | Rules | [netmap.PlacementRule](#netmap.PlacementRule) |  | Rules define storage policy for the object inside the container. |
-| List | [AccessControlList](#container.AccessControlList) |  | Container ACL. |
+| BasicACL | [uint32](#uint32) |  | BasicACL with access control rules for owner, system, others and permission bits for bearer token and extended ACL. |
 
  <!-- end messages -->
 
