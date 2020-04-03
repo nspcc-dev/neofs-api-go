@@ -18,11 +18,22 @@ func TestRequest(t *testing.T) {
 		&GetRangeHashRequest{},
 	}
 
+	types := []RequestType{
+		RequestPut,
+		RequestGet,
+		RequestHead,
+		RequestSearch,
+		RequestDelete,
+		RequestRange,
+		RequestRangeHash,
+	}
+
 	for i := range cases {
 		v := cases[i]
 
 		t.Run(fmt.Sprintf("%T", v), func(t *testing.T) {
 			require.NotPanics(t, func() { v.CID() })
+			require.Equal(t, types[i], v.Type())
 		})
 	}
 }

@@ -36,7 +36,7 @@ func TestCID(t *testing.T) {
 		owner, err := refs.NewOwnerID(&key.PublicKey)
 		require.NoError(t, err)
 
-		c1, err := New(10, owner, rules)
+		c1, err := New(10, owner, 0xDEADBEEF, rules)
 		require.NoError(t, err)
 
 		data, err := proto.Marshal(c1)
@@ -53,25 +53,5 @@ func TestCID(t *testing.T) {
 		require.NoError(t, cid2.Unmarshal(data))
 
 		require.Equal(t, cid1, cid2)
-	})
-}
-
-func TestAccessMode(t *testing.T) {
-	t.Run("read access to read/write mode", func(t *testing.T) {
-		require.Equal(t, AccessModeRead, AccessModeReadWrite&AccessModeRead)
-	})
-
-	t.Run("write access to read/write mode", func(t *testing.T) {
-		require.Equal(t, AccessModeWrite, AccessModeReadWrite&AccessModeWrite)
-	})
-
-	t.Run("read(write) access to write(read) mode", func(t *testing.T) {
-		require.Zero(t, AccessModeRead&AccessModeWrite)
-	})
-
-	t.Run("access to same mode", func(t *testing.T) {
-		require.Equal(t, AccessModeWrite, AccessModeWrite&AccessModeWrite)
-		require.Equal(t, AccessModeRead, AccessModeRead&AccessModeRead)
-		require.Equal(t, AccessModeReadWrite, AccessModeReadWrite&AccessModeReadWrite)
 	})
 }

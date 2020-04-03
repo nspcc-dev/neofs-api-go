@@ -28,12 +28,13 @@ type (
 	Token = session.Token
 
 	// Request defines object rpc requests.
-	// All object operations must have TTL, Epoch, Container ID and
+	// All object operations must have TTL, Epoch, Type, Container ID and
 	// permission of usage previous network map.
 	Request interface {
 		service.MetaHeader
 
 		CID() CID
+		Type() RequestType
 		AllowPreviousNetMap() bool
 	}
 )
@@ -169,3 +170,24 @@ func (m *GetRangeRequest) AllowPreviousNetMap() bool { return false }
 
 // AllowPreviousNetMap returns permission to use previous network map in object get range hash request.
 func (m *GetRangeHashRequest) AllowPreviousNetMap() bool { return false }
+
+// Type returns type of the object put request.
+func (m *PutRequest) Type() RequestType { return RequestPut }
+
+// Type returns type of the object get request.
+func (m *GetRequest) Type() RequestType { return RequestGet }
+
+// Type returns type of the object head request.
+func (m *HeadRequest) Type() RequestType { return RequestHead }
+
+// Type returns type of the object search request.
+func (m *SearchRequest) Type() RequestType { return RequestSearch }
+
+// Type returns type of the object delete request.
+func (m *DeleteRequest) Type() RequestType { return RequestDelete }
+
+// Type returns type of the object get range request.
+func (m *GetRangeRequest) Type() RequestType { return RequestRange }
+
+// Type returns type of the object get range hash request.
+func (m *GetRangeHashRequest) Type() RequestType { return RequestRangeHash }

@@ -28,7 +28,10 @@ type (
 		PRead(ctx context.Context, addr refs.Address, rng Range) ([]byte, error)
 	}
 
-	headerType int
+	// RequestType of the object service requests.
+	RequestType int
+
+	headerType  int
 )
 
 const (
@@ -71,11 +74,51 @@ const (
 	PublicKeyHdr
 )
 
+const (
+	_ RequestType = iota
+	// RequestPut is a type for object put request.
+	RequestPut
+	// RequestGet is a type for object get request.
+	RequestGet
+	// RequestHead is a type for object head request.
+	RequestHead
+	// RequestSearch is a type for object search request.
+	RequestSearch
+	// RequestRange is a type for object range request.
+	RequestRange
+	// RequestRangeHash is a type for object hash range request.
+	RequestRangeHash
+	// RequestDelete is a type for object delete request.
+	RequestDelete
+)
+
 var (
 	_ internal.Custom = (*Object)(nil)
 
 	emptyObject = new(Object).Bytes()
 )
+
+// String returns printable name of the request type.
+func (s RequestType) String() string {
+	switch s {
+	case RequestPut:
+		return "PUT"
+	case RequestGet:
+		return "GET"
+	case RequestHead:
+		return "HEAD"
+	case RequestSearch:
+		return "SEARCH"
+	case RequestRange:
+		return "RANGE"
+	case RequestRangeHash:
+		return "RANGE_HASH"
+	case RequestDelete:
+		return "DELETE"
+	default:
+		return "UNKNOWN"
+	}
+}
 
 // Bytes returns marshaled object in a binary format.
 func (m Object) Bytes() []byte { data, _ := m.Marshal(); return data }

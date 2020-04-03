@@ -1,5 +1,16 @@
 # Changelog
-This is the changelog for NeoFS API
+This is the changelog for NeoFS-API-Go
+
+## [0.6.0] - 2020-04-03
+
+### Added
+
+- `RequestType` for object service requests
+- `Type()` function in `Request` interface
+
+### Changed
+
+- Synced proto files with `neofs-api v0.6.0`
 
 ## [0.5.0] - 2020-03-31
 
@@ -217,3 +228,4 @@ Initial public release
 [0.4.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.4.0...v0.4.1
 [0.4.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.4.1...v0.4.2
 [0.5.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.4.2...v0.5.0
+[0.6.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.5.0...v0.6.0
