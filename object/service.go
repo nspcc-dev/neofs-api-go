@@ -125,13 +125,14 @@ func (m *GetResponse) NotFull() bool { return checkIsNotFull(m) }
 func (m *PutRequest) NotFull() bool { return checkIsNotFull(m) }
 
 // CID returns container id value from object put request.
-func (m *PutRequest) CID() CID {
-	if header := m.GetHeader(); header != nil {
-		if obj := header.GetObject(); obj != nil {
-			return obj.SystemHeader.CID
-		}
+func (m *PutRequest) CID() (cid CID) {
+	if header := m.GetHeader(); header == nil {
+		return
+	} else if obj := header.GetObject(); obj == nil {
+		return
+	} else {
+		return obj.SystemHeader.CID
 	}
-	return refs.CID{}
 }
 
 // CID returns container id value from object get request.
