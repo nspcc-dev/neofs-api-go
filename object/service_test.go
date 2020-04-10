@@ -16,6 +16,7 @@ func TestRequest(t *testing.T) {
 		&DeleteRequest{},
 		&GetRangeRequest{},
 		&GetRangeHashRequest{},
+		MakePutRequestHeader(nil, nil),
 	}
 
 	types := []RequestType{
@@ -26,6 +27,7 @@ func TestRequest(t *testing.T) {
 		RequestDelete,
 		RequestRange,
 		RequestRangeHash,
+		RequestPut,
 	}
 
 	for i := range cases {
