@@ -19,10 +19,22 @@ service Bootstrap {
 }
 
 message Request {
+    // Node state
+    enum State {
+        // used by default
+        Unknown = 0;
+        // used to inform that node online
+        Online  = 1;
+        // used to inform that node offline
+        Offline = 2;
+    }
+
     // Type is NodeType, can be InnerRingNode (type=1) or StorageNode (type=2)
     int32              type                  = 1 [(gogoproto.customname) = "Type" , (gogoproto.nullable) = false, (gogoproto.customtype) = "NodeType"];
     // Info contains information about node
     bootstrap.NodeInfo info                  = 2 [(gogoproto.nullable) = false];
+    // State contains node status
+    State state                              = 3;
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
