@@ -31,7 +31,7 @@ type (
 	// RequestType of the object service requests.
 	RequestType int
 
-	headerType  int
+	headerType int
 )
 
 const (

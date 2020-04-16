@@ -1,6 +1,20 @@
 # Changelog
 This is the changelog for NeoFS-API-Go
 
+## [0.6.2] - 2020-04-16
+
+### Updated
+- NeoFS API v0.6.1
+- Protobuf v1.4.0
+- Netmap v1.7.0
+- Prometheus Client v1.5.1
+- Testify v1.5.1
+- gRPC v1.28.1
+
+### Fixed
+- formatting
+- test coverage for Object.PutRequest.CID method
+
 ## [0.6.1] - 2020-04-10
 
 ### Changed
@@ -241,3 +255,4 @@ Initial public release
 [0.5.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.4.2...v0.5.0
 [0.6.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.5.0...v0.6.0
 [0.6.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.6.0...v0.6.1
+[0.6.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.6.1...v0.6.2

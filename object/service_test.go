@@ -17,6 +17,7 @@ func TestRequest(t *testing.T) {
 		&GetRangeRequest{},
 		&GetRangeHashRequest{},
 		MakePutRequestHeader(nil, nil),
+		MakePutRequestHeader(&Object{}, nil),
 	}
 
 	types := []RequestType{
@@ -28,12 +29,13 @@ func TestRequest(t *testing.T) {
 		RequestRange,
 		RequestRangeHash,
 		RequestPut,
+		RequestPut,
 	}
 
 	for i := range cases {
 		v := cases[i]
 
-		t.Run(fmt.Sprintf("%T", v), func(t *testing.T) {
+		t.Run(fmt.Sprintf("%T_%d", v, i), func(t *testing.T) {
 			require.NotPanics(t, func() { v.CID() })
 			require.Equal(t, types[i], v.Type())
 		})
