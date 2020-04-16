@@ -62,10 +62,24 @@ Process is method that allows to register node in the network and receive actual
 | ----- | ---- | ----- | ----------- |
 | type | [int32](#int32) |  | Type is NodeType, can be InnerRingNode (type=1) or StorageNode (type=2) |
 | info | [NodeInfo](#bootstrap.NodeInfo) |  | Info contains information about node |
+| state | [Request.State](#bootstrap.Request.State) |  | State contains node status |
 | Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
 | Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
  <!-- end messages -->
+
+
+<a name="bootstrap.Request.State"></a>
+
+### Request.State
+Node state
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| Unknown | 0 | used by default |
+| Online | 1 | used to inform that node online |
+| Offline | 2 | used to inform that node offline |
+
 
  <!-- end enums -->
 
