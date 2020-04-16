@@ -84,6 +84,8 @@ message PutRequest {
         Object Object       = 1;
         // Token with session public key and user's signature
         session.Token Token = 2;
+        // Number of the object copies to store within the RPC call (zero is processed according to the placement rules)
+        uint32 CopiesNumber = 3;
     }
 
     oneof R {
