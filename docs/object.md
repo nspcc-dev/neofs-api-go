@@ -297,6 +297,7 @@ in distributed system.
 | ----- | ---- | ----- | ----------- |
 | Object | [Object](#object.Object) |  | Object with at least container id and owner id fields |
 | Token | [session.Token](#session.Token) |  | Token with session public key and user's signature |
+| CopiesNumber | [uint32](#uint32) |  | Number of the object copies to store within the RPC call (zero is processed according to the placement rules) |
 
 
 <a name="object.PutResponse"></a>
