@@ -10,7 +10,8 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
 
-// Status service provides node's healthcheck and status info
+// Status service provides node's healthcheck and status info.
+// TODO: decide how to describe auth and were contains permissions.
 service Status {
     // Netmap request allows to receive current [bootstrap.SpreadMap](bootstrap.md#bootstrap.SpreadMap)
     rpc Netmap(NetmapRequest) returns (bootstrap.SpreadMap);
@@ -27,6 +28,10 @@ service Status {
     // To permit access, used server config options.
     // The request should be signed.
     rpc DumpVars(DumpVarsRequest) returns (DumpVarsResponse);
+    // ChangeState allows to change current node state of node.
+    // To permit access, used server config options.
+    // The request should be signed.
+    rpc ChangeState(ChangeStateRequest) returns (ChangeStateResponse);
 }
 
 // NetmapRequest message to request current node netmap
@@ -95,3 +100,25 @@ message DumpVarsRequest {
 message DumpVarsResponse {
     bytes Variables = 1;
 }
+
+// ChangeStateRequest contains a new state of node.
+message ChangeStateRequest {
+    enum State {
+        // Unknown is default value. Does nothing.
+        Unknown = 0;
+        // Online used when need to set node to the online state.
+        Online = 1;
+        // Offline used when need to set node to the offline state.
+        Offline = 2;
+    }
+
+    // State is a new state of node.
+    State state = 1;
+    // RequestMetaHeader contains information about request meta headers (should be embedded into message)
+    service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+    service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+}
+
+// ChangeStateResponse is an empty response, that returns when RPC invoked without errors.
+message ChangeStateResponse {}
