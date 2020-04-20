@@ -8,6 +8,8 @@
     - [Status](#state.Status)
     
   - Messages
+    - [ChangeStateRequest](#state.ChangeStateRequest)
+    - [ChangeStateResponse](#state.ChangeStateResponse)
     - [DumpRequest](#state.DumpRequest)
     - [DumpResponse](#state.DumpResponse)
     - [DumpVarsRequest](#state.DumpVarsRequest)
@@ -34,7 +36,8 @@
 <a name="state.Status"></a>
 
 ### Service "state.Status"
-Status service provides node's healthcheck and status info
+Status service provides node's healthcheck and status info.
+TODO: decide how to describe auth and were contains permissions.
 
 ```
 rpc Netmap(NetmapRequest) returns (.bootstrap.SpreadMap);
@@ -42,6 +45,7 @@ rpc Metrics(MetricsRequest) returns (MetricsResponse);
 rpc HealthCheck(HealthRequest) returns (HealthResponse);
 rpc DumpConfig(DumpRequest) returns (DumpResponse);
 rpc DumpVars(DumpVarsRequest) returns (DumpVarsResponse);
+rpc ChangeState(ChangeStateRequest) returns (ChangeStateResponse);
 
 ```
 
@@ -85,7 +89,36 @@ The request should be signed.
 | Name | Input | Output |
 | ---- | ----- | ------ |
 | DumpVars | [DumpVarsRequest](#state.DumpVarsRequest) | [DumpVarsResponse](#state.DumpVarsResponse) |
+#### Method ChangeState
+
+ChangeState allows to change current node state of node.
+To permit access, used server config options.
+The request should be signed.
+
+| Name | Input | Output |
+| ---- | ----- | ------ |
+| ChangeState | [ChangeStateRequest](#state.ChangeStateRequest) | [ChangeStateResponse](#state.ChangeStateResponse) |
  <!-- end services -->
+
+
+<a name="state.ChangeStateRequest"></a>
+
+### Message ChangeStateRequest
+ChangeStateRequest contains a new state of node.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| state | [ChangeStateRequest.State](#state.ChangeStateRequest.State) |  | State is a new state of node. |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
+
+
+<a name="state.ChangeStateResponse"></a>
+
+### Message ChangeStateResponse
+ChangeStateResponse is an empty response, that returns when RPC invoked without errors.
+
 
 
 <a name="state.DumpRequest"></a>
@@ -197,6 +230,19 @@ NetmapRequest message to request current node netmap
 | Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
  <!-- end messages -->
+
+
+<a name="state.ChangeStateRequest.State"></a>
+
+### ChangeStateRequest.State
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| Unknown | 0 | Unknown is default value. Does nothing. |
+| Online | 1 | Online used when need to set node to the online state. |
+| Offline | 2 | Offline used when need to set node to the offline state. |
+
 
  <!-- end enums -->
 
