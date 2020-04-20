@@ -29,6 +29,37 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+type ChangeStateRequest_State int32
+
+const (
+	// Unknown is default value. Does nothing.
+	ChangeStateRequest_Unknown ChangeStateRequest_State = 0
+	// Online used when need to set node to the online state.
+	ChangeStateRequest_Online ChangeStateRequest_State = 1
+	// Offline used when need to set node to the offline state.
+	ChangeStateRequest_Offline ChangeStateRequest_State = 2
+)
+
+var ChangeStateRequest_State_name = map[int32]string{
+	0: "Unknown",
+	1: "Online",
+	2: "Offline",
+}
+
+var ChangeStateRequest_State_value = map[string]int32{
+	"Unknown": 0,
+	"Online":  1,
+	"Offline": 2,
+}
+
+func (x ChangeStateRequest_State) String() string {
+	return proto.EnumName(ChangeStateRequest_State_name, int32(x))
+}
+
+func (ChangeStateRequest_State) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_695592f6f2fc97b7, []int{9, 0}
+}
+
 // NetmapRequest message to request current node netmap
 type NetmapRequest struct {
 	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
@@ -419,7 +450,93 @@ func (m *DumpVarsResponse) GetVariables() []byte {
 	return nil
 }
 
+// ChangeStateRequest contains a new state of node.
+type ChangeStateRequest struct {
+	// State is a new state of node.
+	State ChangeStateRequest_State `protobuf:"varint,1,opt,name=state,proto3,enum=state.ChangeStateRequest_State" json:"state,omitempty"`
+	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
+	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
+}
+
+func (m *ChangeStateRequest) Reset()         { *m = ChangeStateRequest{} }
+func (m *ChangeStateRequest) String() string { return proto.CompactTextString(m) }
+func (*ChangeStateRequest) ProtoMessage()    {}
+func (*ChangeStateRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_695592f6f2fc97b7, []int{9}
+}
+func (m *ChangeStateRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ChangeStateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *ChangeStateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ChangeStateRequest.Merge(m, src)
+}
+func (m *ChangeStateRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *ChangeStateRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ChangeStateRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ChangeStateRequest proto.InternalMessageInfo
+
+func (m *ChangeStateRequest) GetState() ChangeStateRequest_State {
+	if m != nil {
+		return m.State
+	}
+	return ChangeStateRequest_Unknown
+}
+
+// ChangeStateResponse is an empty response, that returns when RPC invoked without errors.
+type ChangeStateResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ChangeStateResponse) Reset()         { *m = ChangeStateResponse{} }
+func (m *ChangeStateResponse) String() string { return proto.CompactTextString(m) }
+func (*ChangeStateResponse) ProtoMessage()    {}
+func (*ChangeStateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_695592f6f2fc97b7, []int{10}
+}
+func (m *ChangeStateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ChangeStateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *ChangeStateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ChangeStateResponse.Merge(m, src)
+}
+func (m *ChangeStateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *ChangeStateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ChangeStateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ChangeStateResponse proto.InternalMessageInfo
+
 func init() {
+	proto.RegisterEnum("state.ChangeStateRequest_State", ChangeStateRequest_State_name, ChangeStateRequest_State_value)
 	proto.RegisterType((*NetmapRequest)(nil), "state.NetmapRequest")
 	proto.RegisterType((*MetricsRequest)(nil), "state.MetricsRequest")
 	proto.RegisterType((*MetricsResponse)(nil), "state.MetricsResponse")
@@ -429,46 +546,53 @@ func init() {
 	proto.RegisterType((*DumpResponse)(nil), "state.DumpResponse")
 	proto.RegisterType((*DumpVarsRequest)(nil), "state.DumpVarsRequest")
 	proto.RegisterType((*DumpVarsResponse)(nil), "state.DumpVarsResponse")
+	proto.RegisterType((*ChangeStateRequest)(nil), "state.ChangeStateRequest")
+	proto.RegisterType((*ChangeStateResponse)(nil), "state.ChangeStateResponse")
 }
 
 func init() { proto.RegisterFile("state/service.proto", fileDescriptor_695592f6f2fc97b7) }
 
 var fileDescriptor_695592f6f2fc97b7 = []byte{
-	// 529 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x94, 0xcf, 0x6e, 0xd3, 0x40,
-	0x10, 0xc6, 0xbb, 0x01, 0x42, 0x3a, 0x09, 0x0d, 0xda, 0x26, 0xc1, 0xb2, 0x50, 0x1a, 0xf9, 0x00,
-	0x91, 0x50, 0x6c, 0x54, 0x40, 0xaa, 0xe0, 0x44, 0x5a, 0xa1, 0x72, 0x48, 0x41, 0x8e, 0x94, 0x03,
-	0xb7, 0xb5, 0x33, 0x71, 0x2c, 0x1a, 0xaf, 0xf1, 0xae, 0x23, 0xe5, 0x21, 0x10, 0x70, 0xe3, 0x11,
-	0x10, 0x4f, 0xd2, 0x63, 0x8f, 0x9c, 0x2a, 0x14, 0x5e, 0x04, 0x65, 0xbd, 0xce, 0xbf, 0xbe, 0x40,
-	0x6e, 0x99, 0xdf, 0xcc, 0xe7, 0x7c, 0xb3, 0x3b, 0x3b, 0x70, 0x28, 0x24, 0x93, 0xe8, 0x08, 0x4c,
-	0xa6, 0xa1, 0x8f, 0x76, 0x9c, 0x70, 0xc9, 0xe9, 0x3d, 0x05, 0x4d, 0xaa, 0xa9, 0x33, 0x41, 0xc9,
-	0xb2, 0x94, 0x59, 0xcb, 0xd9, 0x14, 0x93, 0x70, 0x34, 0xd3, 0xb4, 0xee, 0x71, 0x2e, 0x85, 0x4c,
-	0x58, 0xec, 0xc8, 0x59, 0x8c, 0x42, 0xe3, 0x4e, 0x10, 0xca, 0x71, 0xea, 0xd9, 0x3e, 0x9f, 0x38,
-	0x01, 0x0f, 0xb8, 0xa3, 0xb0, 0x97, 0x8e, 0x54, 0xa4, 0x02, 0xf5, 0x2b, 0x2b, 0xb7, 0xbe, 0x11,
-	0x78, 0x70, 0x81, 0x72, 0xc2, 0x62, 0x17, 0xbf, 0xa4, 0x28, 0x24, 0x3d, 0x81, 0xbb, 0x3d, 0x94,
-	0xcc, 0xf0, 0x5a, 0xa4, 0x5d, 0x3e, 0x36, 0xed, 0xdc, 0xa6, 0xce, 0x2f, 0x72, 0xe7, 0xc8, 0x86,
-	0x98, 0x74, 0x4b, 0x57, 0x37, 0x47, 0x7b, 0xd7, 0x37, 0x47, 0xc4, 0x55, 0x0a, 0x7a, 0x06, 0xc5,
-	0x81, 0x72, 0x68, 0xf8, 0x4a, 0x6b, 0x6d, 0x6b, 0x55, 0x36, 0xf4, 0x99, 0x0c, 0x79, 0x74, 0xeb,
-	0x1b, 0x5a, 0x6b, 0x7d, 0x27, 0x70, 0xd0, 0x43, 0x99, 0x84, 0xbe, 0xd8, 0x15, 0x4b, 0xcf, 0xa0,
-	0xba, 0x74, 0x24, 0x62, 0x1e, 0x09, 0xa4, 0x06, 0xdc, 0xd7, 0xc8, 0x20, 0xad, 0x3b, 0xed, 0x8a,
-	0x9b, 0x87, 0xea, 0x44, 0xcf, 0x91, 0x5d, 0xca, 0xf1, 0xae, 0xd8, 0xef, 0xc2, 0x41, 0x6e, 0x68,
-	0xe5, 0x3e, 0x23, 0x33, 0x83, 0xb4, 0x48, 0xbb, 0xe4, 0xe6, 0x21, 0x6d, 0x40, 0xb1, 0x2f, 0x99,
-	0x4c, 0x85, 0x51, 0x68, 0x91, 0xf6, 0xbe, 0xab, 0x23, 0xeb, 0x2b, 0x81, 0xf2, 0x59, 0x3a, 0xd9,
-	0x99, 0x29, 0x79, 0x02, 0x95, 0xcc, 0x8e, 0xee, 0xa8, 0x01, 0xc5, 0x53, 0x1e, 0x8d, 0xc2, 0x40,
-	0x35, 0x54, 0x71, 0x75, 0x64, 0xfd, 0x20, 0x50, 0x5d, 0x14, 0x0e, 0x58, 0xb2, 0x33, 0xe3, 0xf4,
-	0x1c, 0x1e, 0xae, 0x2c, 0x69, 0xff, 0x8f, 0x61, 0x7f, 0xc0, 0x92, 0x90, 0x79, 0x97, 0x28, 0x74,
-	0x0b, 0x2b, 0x70, 0xfc, 0xab, 0x90, 0x5f, 0x0b, 0x7d, 0x09, 0xc5, 0xec, 0xbd, 0xd2, 0x9a, 0xad,
-	0x56, 0x86, 0xbd, 0xf1, 0x7c, 0xcd, 0x9a, 0xbd, 0xdc, 0x0b, 0x76, 0x3f, 0x4e, 0x90, 0x0d, 0x7b,
-	0x2c, 0xa6, 0x27, 0xcb, 0x71, 0xa5, 0x75, 0x2d, 0xdb, 0x7c, 0x63, 0x66, 0x63, 0x1b, 0x6b, 0x63,
-	0xaf, 0xa1, 0x9c, 0xcd, 0xc6, 0xe9, 0x18, 0xfd, 0xcf, 0xcb, 0x3f, 0xdd, 0x98, 0x70, 0xb3, 0xbe,
-	0x45, 0xb5, 0xf6, 0x15, 0xc0, 0xa2, 0xd1, 0xec, 0x2a, 0x28, 0xd5, 0x45, 0x6b, 0x63, 0x64, 0x1e,
-	0x6e, 0x30, 0x2d, 0x7b, 0x03, 0xa5, 0xfc, 0x7c, 0x68, 0x63, 0xad, 0x60, 0xed, 0x0e, 0xcd, 0x47,
-	0xb7, 0x78, 0x26, 0xee, 0x7e, 0xb8, 0x9a, 0x37, 0xc9, 0xf5, 0xbc, 0x49, 0xfe, 0xcc, 0x9b, 0xe4,
-	0xef, 0xbc, 0x49, 0x7e, 0xfe, 0x6b, 0xee, 0x7d, 0x7a, 0xba, 0xb6, 0x15, 0x23, 0x11, 0xfb, 0x7e,
-	0x67, 0x88, 0x53, 0x27, 0x42, 0x3e, 0x12, 0x1d, 0x16, 0x87, 0x9d, 0x80, 0x3b, 0xea, 0x7b, 0xbf,
-	0x0b, 0xd5, 0x0b, 0xe4, 0xef, 0xfa, 0xf6, 0xdb, 0x8f, 0xef, 0xed, 0xc5, 0x89, 0xa3, 0x57, 0x54,
-	0x8b, 0xf2, 0xc5, 0xff, 0x00, 0x00, 0x00, 0xff, 0xff, 0x60, 0x43, 0xc8, 0xac, 0xb6, 0x05, 0x00,
-	0x00,
+	// 619 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x55, 0xc1, 0x6e, 0xd3, 0x4c,
+	0x10, 0xee, 0xe6, 0xff, 0xeb, 0xb6, 0x93, 0xd2, 0x56, 0xdb, 0x26, 0x18, 0x0b, 0xa5, 0x91, 0x0f,
+	0x10, 0x09, 0xc5, 0x46, 0x85, 0x4a, 0x15, 0x9c, 0x68, 0x2b, 0x54, 0x0e, 0x6d, 0x91, 0x2b, 0x7a,
+	0xe0, 0xb6, 0x76, 0xc7, 0x8e, 0xd5, 0xc6, 0x6b, 0xbc, 0x9b, 0xa2, 0x3e, 0x04, 0x02, 0x6e, 0x3c,
+	0x03, 0x4f, 0xd2, 0x63, 0x8f, 0x9c, 0x2a, 0x14, 0xee, 0x3c, 0x00, 0x27, 0x94, 0xdd, 0x75, 0x9a,
+	0x34, 0x70, 0x26, 0xb7, 0x7c, 0xdf, 0xcc, 0xb7, 0xf9, 0x66, 0x77, 0x66, 0x0c, 0xab, 0x42, 0x32,
+	0x89, 0xbe, 0xc0, 0xe2, 0x3c, 0x8d, 0xd0, 0xcb, 0x0b, 0x2e, 0x39, 0x9d, 0x55, 0xa4, 0x43, 0x0d,
+	0xeb, 0x77, 0x51, 0x32, 0x1d, 0x72, 0xd6, 0x4a, 0xee, 0x1c, 0x8b, 0x34, 0xbe, 0x30, 0x6c, 0x2d,
+	0xe4, 0x5c, 0x0a, 0x59, 0xb0, 0xdc, 0x97, 0x17, 0x39, 0x0a, 0x43, 0xb7, 0x93, 0x54, 0x76, 0x7a,
+	0xa1, 0x17, 0xf1, 0xae, 0x9f, 0xf0, 0x84, 0xfb, 0x8a, 0x0e, 0x7b, 0xb1, 0x42, 0x0a, 0xa8, 0x5f,
+	0x3a, 0xdd, 0xfd, 0x48, 0xe0, 0xce, 0x01, 0xca, 0x2e, 0xcb, 0x03, 0x7c, 0xd7, 0x43, 0x21, 0xe9,
+	0x16, 0xfc, 0xbf, 0x8f, 0x92, 0xd9, 0x61, 0x93, 0xb4, 0xaa, 0x1b, 0x8e, 0x57, 0xda, 0x34, 0xf1,
+	0x41, 0x6c, 0x0f, 0xd9, 0x09, 0x16, 0xdb, 0xf3, 0x97, 0xd7, 0xeb, 0x33, 0x57, 0xd7, 0xeb, 0x24,
+	0x50, 0x0a, 0xba, 0x0b, 0xd6, 0xb1, 0x72, 0x68, 0x47, 0x4a, 0xeb, 0xde, 0xd6, 0xaa, 0x68, 0x1a,
+	0x31, 0x99, 0xf2, 0x6c, 0xe2, 0x0c, 0xa3, 0x75, 0x3f, 0x11, 0x58, 0xda, 0x47, 0x59, 0xa4, 0x91,
+	0x98, 0x16, 0x4b, 0x8f, 0x60, 0x79, 0xe8, 0x48, 0xe4, 0x3c, 0x13, 0x48, 0x6d, 0x98, 0x33, 0x94,
+	0x4d, 0x9a, 0xff, 0xb5, 0x16, 0x83, 0x12, 0xaa, 0x1b, 0xdd, 0x43, 0x76, 0x26, 0x3b, 0xd3, 0x62,
+	0x7f, 0x1b, 0x96, 0x4a, 0x43, 0x37, 0xee, 0x35, 0x73, 0x61, 0x93, 0x26, 0x69, 0xcd, 0x07, 0x25,
+	0xa4, 0x75, 0xb0, 0x8e, 0x24, 0x93, 0x3d, 0x61, 0x57, 0x9a, 0xa4, 0xb5, 0x10, 0x18, 0xe4, 0x7e,
+	0x20, 0x50, 0xdd, 0xed, 0x75, 0xa7, 0xa6, 0x4b, 0x1e, 0xc0, 0xa2, 0xb6, 0x63, 0x2a, 0xaa, 0x83,
+	0xb5, 0xc3, 0xb3, 0x38, 0x4d, 0x54, 0x41, 0x8b, 0x81, 0x41, 0xee, 0x67, 0x02, 0xcb, 0x83, 0xc4,
+	0x63, 0x56, 0x4c, 0x4d, 0x3b, 0x3d, 0x86, 0x95, 0x1b, 0x4b, 0xc6, 0xff, 0x7d, 0x58, 0x38, 0x66,
+	0x45, 0xca, 0xc2, 0x33, 0x14, 0xa6, 0x84, 0x1b, 0xc2, 0xfd, 0x45, 0x80, 0xee, 0x74, 0x58, 0x96,
+	0xe0, 0xe0, 0x39, 0xb0, 0x2c, 0x64, 0x13, 0xf4, 0xd6, 0x50, 0x82, 0xa5, 0x8d, 0x75, 0x4f, 0x21,
+	0x6f, 0x32, 0xd3, 0xd3, 0x40, 0x67, 0xff, 0xf3, 0xfa, 0xdb, 0x30, 0xab, 0xfc, 0xd0, 0x2a, 0xcc,
+	0xbd, 0xc9, 0x4e, 0x33, 0xfe, 0x3e, 0x5b, 0x99, 0xa1, 0x00, 0xd6, 0x61, 0x76, 0x96, 0x66, 0xb8,
+	0x42, 0x06, 0x81, 0xc3, 0x38, 0x56, 0xa0, 0xe2, 0xd6, 0x60, 0x75, 0xac, 0x22, 0x7d, 0x63, 0x1b,
+	0x3f, 0x2b, 0x65, 0xab, 0xd2, 0xa7, 0x60, 0xe9, 0x1d, 0x46, 0xd7, 0xcc, 0x15, 0x8c, 0xad, 0x34,
+	0x67, 0xcd, 0x1b, 0xee, 0x4a, 0xef, 0x28, 0x2f, 0x90, 0x9d, 0xec, 0xb3, 0x9c, 0x6e, 0x0d, 0x47,
+	0x98, 0xd6, 0x8c, 0x6c, 0x7c, 0xef, 0x38, 0xf5, 0xdb, 0xb4, 0x79, 0xac, 0x67, 0x50, 0xd5, 0xf3,
+	0xb2, 0xd3, 0xc1, 0xe8, 0x74, 0xf8, 0xa7, 0x63, 0x53, 0xef, 0xd4, 0x6e, 0xb1, 0x46, 0xbb, 0x09,
+	0x30, 0x78, 0x7c, 0xdd, 0x9e, 0x94, 0x9a, 0xa4, 0x91, 0xd1, 0x72, 0x56, 0xc7, 0x38, 0x23, 0x7b,
+	0x0e, 0xf3, 0x65, 0xcf, 0xd0, 0xfa, 0x48, 0xc2, 0x48, 0x5f, 0x3b, 0x77, 0x27, 0x78, 0x23, 0xde,
+	0x85, 0xea, 0xc8, 0x0d, 0xd2, 0x7b, 0x7f, 0xed, 0x13, 0xc7, 0xf9, 0x53, 0x48, 0x9f, 0xb2, 0x7d,
+	0x78, 0xd9, 0x6f, 0x90, 0xab, 0x7e, 0x83, 0x7c, 0xeb, 0x37, 0xc8, 0xf7, 0x7e, 0x83, 0x7c, 0xf9,
+	0xd1, 0x98, 0x79, 0xfb, 0x70, 0xe4, 0x7b, 0x93, 0x89, 0x3c, 0x8a, 0xda, 0x27, 0x78, 0xee, 0x67,
+	0xc8, 0x63, 0xd1, 0x66, 0x79, 0xda, 0x4e, 0xb8, 0xaf, 0x8e, 0xfc, 0x5a, 0x59, 0x3e, 0x40, 0xfe,
+	0xf2, 0xc8, 0x7b, 0xf1, 0xfa, 0x95, 0x6e, 0xc7, 0xd0, 0x52, 0x9f, 0xa0, 0x27, 0xbf, 0x03, 0x00,
+	0x00, 0xff, 0xff, 0x8c, 0xdd, 0xa7, 0x55, 0x10, 0x07, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -498,6 +622,10 @@ type StatusClient interface {
 	// To permit access, used server config options.
 	// The request should be signed.
 	DumpVars(ctx context.Context, in *DumpVarsRequest, opts ...grpc.CallOption) (*DumpVarsResponse, error)
+	// ChangeState allows to change current node state of node.
+	// To permit access, used server config options.
+	// The request should be signed.
+	ChangeState(ctx context.Context, in *ChangeStateRequest, opts ...grpc.CallOption) (*ChangeStateResponse, error)
 }
 
 type statusClient struct {
@@ -553,6 +681,15 @@ func (c *statusClient) DumpVars(ctx context.Context, in *DumpVarsRequest, opts .
 	return out, nil
 }
 
+func (c *statusClient) ChangeState(ctx context.Context, in *ChangeStateRequest, opts ...grpc.CallOption) (*ChangeStateResponse, error) {
+	out := new(ChangeStateResponse)
+	err := c.cc.Invoke(ctx, "/state.Status/ChangeState", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StatusServer is the server API for Status service.
 type StatusServer interface {
 	// Netmap request allows to receive current [bootstrap.SpreadMap](bootstrap.md#bootstrap.SpreadMap)
@@ -570,6 +707,10 @@ type StatusServer interface {
 	// To permit access, used server config options.
 	// The request should be signed.
 	DumpVars(context.Context, *DumpVarsRequest) (*DumpVarsResponse, error)
+	// ChangeState allows to change current node state of node.
+	// To permit access, used server config options.
+	// The request should be signed.
+	ChangeState(context.Context, *ChangeStateRequest) (*ChangeStateResponse, error)
 }
 
 // UnimplementedStatusServer can be embedded to have forward compatible implementations.
@@ -590,6 +731,9 @@ func (*UnimplementedStatusServer) DumpConfig(ctx context.Context, req *DumpReque
 }
 func (*UnimplementedStatusServer) DumpVars(ctx context.Context, req *DumpVarsRequest) (*DumpVarsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DumpVars not implemented")
+}
+func (*UnimplementedStatusServer) ChangeState(ctx context.Context, req *ChangeStateRequest) (*ChangeStateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeState not implemented")
 }
 
 func RegisterStatusServer(s *grpc.Server, srv StatusServer) {
@@ -686,6 +830,24 @@ func _Status_DumpVars_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Status_ChangeState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StatusServer).ChangeState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/state.Status/ChangeState",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StatusServer).ChangeState(ctx, req.(*ChangeStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Status_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "state.Status",
 	HandlerType: (*StatusServer)(nil),
@@ -709,6 +871,10 @@ var _Status_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DumpVars",
 			Handler:    _Status_DumpVars_Handler,
+		},
+		{
+			MethodName: "ChangeState",
+			Handler:    _Status_ChangeState_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1118,6 +1284,89 @@ func (m *DumpVarsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *ChangeStateRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ChangeStateRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ChangeStateRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
+	if m.State != 0 {
+		i = encodeVarintService(dAtA, i, uint64(m.State))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ChangeStateResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ChangeStateResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ChangeStateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintService(dAtA []byte, offset int, v uint64) int {
 	offset -= sovService(v)
 	base := offset
@@ -1272,6 +1521,37 @@ func (m *DumpVarsResponse) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovService(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ChangeStateRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.State != 0 {
+		n += 1 + sovService(uint64(m.State))
+	}
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ChangeStateResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2227,6 +2507,199 @@ func (m *DumpVarsResponse) Unmarshal(dAtA []byte) error {
 				m.Variables = []byte{}
 			}
 			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ChangeStateRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ChangeStateRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ChangeStateRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field State", wireType)
+			}
+			m.State = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.State |= ChangeStateRequest_State(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ChangeStateResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ChangeStateResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ChangeStateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])
