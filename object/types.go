@@ -334,14 +334,14 @@ func Stringify(dst io.Writer, obj *Object) error {
 			val = fmt.Sprintf("{"+
 				"ID=%s OwnerID=%s Verb=%s Address=%s Created=%d ValidUntil=%d SessionKey=%02x Signature=%02x"+
 				"}",
-				t.Token.Token_Info.ID,
-				t.Token.Token_Info.OwnerID,
-				t.Token.Token_Info.Verb,
-				t.Token.Token_Info.Address,
-				t.Token.Token_Info.Created,
-				t.Token.Token_Info.ValidUntil,
-				t.Token.Token_Info.SessionKey,
-				t.Token.Signature)
+				t.Token.GetID(),
+				t.Token.GetOwnerID(),
+				t.Token.GetVerb(),
+				t.Token.GetAddress(),
+				t.Token.CreationEpoch(),
+				t.Token.ExpirationEpoch(),
+				t.Token.GetSessionKey(),
+				t.Token.GetSignature())
 		case *Header_HomoHash:
 			key = "HomoHash"
 			val = t.HomoHash

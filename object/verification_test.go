@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/nspcc-dev/neofs-api-go/container"
 	"github.com/nspcc-dev/neofs-api-go/refs"
-	"github.com/nspcc-dev/neofs-api-go/service"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
@@ -77,12 +76,9 @@ func TestObject_Verify(t *testing.T) {
 
 	dataPK := crypto.MarshalPublicKey(&sessionkey.PublicKey)
 	signature, err = crypto.Sign(key, dataPK)
-	tok := &service.Token{
-		Token_Info: service.Token_Info{
-			SessionKey: dataPK,
-		},
-		Signature: signature,
-	}
+	tok := new(Token)
+	tok.SetSignature(signature)
+	tok.SetSessionKey(dataPK)
 	obj.AddHeader(&Header{Value: &Header_Token{Token: tok}})
 
 	// validation header is not last

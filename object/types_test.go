@@ -111,21 +111,20 @@ Object:
 		},
 	})
 
+	token := new(Token)
+	token.SetID(oid)
+	token.SetOwnerID(uid)
+	token.SetVerb(service.Token_Info_Search)
+	token.SetAddress(Address{ObjectID: oid, CID: refs.CID{}})
+	token.SetCreationEpoch(1)
+	token.SetExpirationEpoch(2)
+	token.SetSessionKey([]byte{1, 2, 3, 4, 5, 6})
+	token.SetSignature([]byte{1, 2, 3, 4, 5, 6})
+
 	// *Header_Token
 	obj.Headers = append(obj.Headers, Header{
 		Value: &Header_Token{
-			Token: &Token{
-				Signature: []byte{1, 2, 3, 4, 5, 6},
-				Token_Info: service.Token_Info{
-					ID:         oid,
-					OwnerID:    uid,
-					Verb:       service.Token_Info_Search,
-					Address:    service.Address{ObjectID: oid, CID: refs.CID{}},
-					Created:    1,
-					ValidUntil: 2,
-					SessionKey: []byte{1, 2, 3, 4, 5, 6},
-				},
-			},
+			Token: token,
 		},
 	})
 
