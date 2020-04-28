@@ -3,6 +3,7 @@ package service;
 option go_package = "github.com/nspcc-dev/neofs-api-go/service";
 option csharp_namespace = "NeoFS.API.Service";
 
+import "refs/types.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.stable_marshaler_all) = true;
@@ -10,22 +11,74 @@ option (gogoproto.stable_marshaler_all) = true;
 // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request
 // (should be embedded into message).
 message RequestVerificationHeader {
-    message Sign {
+    message Signature {
         // Sign is signature of the request or session key.
         bytes Sign = 1;
         // Peer is compressed public key used for signature.
         bytes Peer = 2;
     }
 
-    message Signature {
-        // Sign is a signature and public key of the request.
-        Sign Sign   = 1 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
-        // Origin used for requests, when trusted node changes it and re-sign with session key.
-        // If session key used for signature request, then Origin should contain
-        // public key of user and signed session key.
-        Sign Origin = 2;
-    }
-
     // Signatures is a set of signatures of every passed NeoFS Node
     repeated Signature Signatures = 1;
+
+    // Token is a token of the session within which the request is sent
+    Token Token = 2;
 }
+
+// User token granting rights for object manipulation
+message Token {
+    message Info {
+        // ID is a token identifier. valid UUIDv4 represented in bytes
+        bytes ID = 1 [(gogoproto.customtype) = "TokenID", (gogoproto.nullable) = false];
+
+        // OwnerID is an owner of manipulation object
+        bytes OwnerID = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+
+        // Verb is an enumeration of session request types
+        enum Verb {
+            // Put refers to object.Put RPC call
+            Put = 0;
+            // Get refers to object.Get RPC call
+            Get = 1;
+            // Head refers to object.Head RPC call
+            Head = 2;
+            // Search refers to object.Search RPC call
+            Search = 3;
+            // Delete refers to object.Delete RPC call
+            Delete = 4;
+            // Range refers to object.GetRange RPC call
+            Range = 5;
+            // RangeHash refers to object.GetRangeHash RPC call
+            RangeHash = 6;
+        }
+
+        // Verb is a type of request for which the token is issued
+        Verb verb = 3 [(gogoproto.customname) = "Verb"];
+
+        // Address is an object address for which token is issued
+        refs.Address Address = 4 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
+
+        // Created is an initial epoch of token lifetime
+        uint64 Created = 5;
+
+        // ValidUntil is a last epoch of token lifetime
+        uint64 ValidUntil = 6;
+
+        // SessionKey is a public key of session key
+        bytes SessionKey = 7;
+    }
+
+    // TokenInfo is a grouped information about token
+    Info TokenInfo = 1 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+
+    // Signature is a signature of session token information
+    bytes Signature = 8;
+}
+
+// TODO: for variable token types and version redefine message
+// Example:
+// message Token {
+//     TokenType TokenType = 1;
+//     uint32 Version = 2;
+//     bytes Data = 3;
+// }

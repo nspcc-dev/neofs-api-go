@@ -17,6 +17,8 @@ message RequestMetaHeader {
     // Version defines protocol version
     // TODO: not used for now, should be implemented in future
     uint32 Version = 3;
+    // Raw determines whether the request is raw or not
+    bool Raw       = 4;
 }
 
 // ResponseMetaHeader contains meta information based on request processing by server
