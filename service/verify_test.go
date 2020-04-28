@@ -194,7 +194,7 @@ func TestRequestVerificationHeader_SetToken(t *testing.T) {
 	require.NoError(t, err)
 
 	token := new(Token)
-	token.ID = id
+	token.SetID(id)
 
 	h := new(RequestVerificationHeader)
 

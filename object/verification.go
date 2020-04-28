@@ -85,7 +85,7 @@ func (m Object) Verify() error {
 		}
 		pubkey = pkh.Value.(*Header_PublicKey).PublicKey.Value
 	} else {
-		pubkey = vh.Value.(*Header_Token).Token.SessionKey
+		pubkey = vh.Value.(*Header_Token).Token.GetSessionKey()
 	}
 
 	// Verify signature

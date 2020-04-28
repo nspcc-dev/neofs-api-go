@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/nspcc-dev/neofs-api-go/refs"
-	"github.com/nspcc-dev/neofs-api-go/service"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
@@ -46,24 +45,23 @@ func (s *simpleStore) New(p TokenParams) *PToken {
 		return nil
 	}
 
+	token := new(Token)
+	token.SetID(tid)
+	token.SetOwnerID(p.OwnerID)
+	token.SetVerb(p.Verb)
+	token.SetAddress(p.Address)
+	token.SetCreationEpoch(p.FirstEpoch)
+	token.SetExpirationEpoch(p.LastEpoch)
+	token.SetSessionKey(crypto.MarshalPublicKey(&key.PublicKey))
+
 	t := &PToken{
-		mtx: new(sync.Mutex),
-		Token: Token{
-			Token_Info: service.Token_Info{
-				ID:         tid,
-				OwnerID:    p.OwnerID,
-				Verb:       p.Verb,
-				Address:    p.Address,
-				Created:    p.FirstEpoch,
-				ValidUntil: p.LastEpoch,
-				SessionKey: crypto.MarshalPublicKey(&key.PublicKey),
-			},
-		},
+		mtx:        new(sync.Mutex),
+		Token:      *token,
 		PrivateKey: key,
 	}
 
 	s.Lock()
-	s.tokens[t.ID] = t
+	s.tokens[tid] = t
 	s.Unlock()
 
 	return t
