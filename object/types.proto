@@ -70,6 +70,8 @@ message SystemHeader {
 }
 
 message CreationPoint {
+    option (gogoproto.goproto_stringer) = false;
+
     // UnixTime is a date of creation in unixtime format
     int64 UnixTime = 1;
     // Epoch is a date of creation in NeoFS epochs
