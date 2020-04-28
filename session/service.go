@@ -5,7 +5,6 @@ import (
 	"crypto/ecdsa"
 
 	"github.com/nspcc-dev/neofs-api-go/refs"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
 type (
@@ -31,9 +30,9 @@ type (
 	TokenParams struct {
 		FirstEpoch uint64
 		LastEpoch  uint64
-		ObjectID   []ObjectID
+		Address    Address
 		OwnerID    OwnerID
-		PublicKeys [][]byte
+		Verb       Verb
 	}
 )
 
@@ -45,14 +44,4 @@ func NewInitRequest(t *Token) *CreateRequest {
 // NewSignedRequest returns new signed CreateRequest from passed Token.
 func NewSignedRequest(t *Token) *CreateRequest {
 	return &CreateRequest{Message: &CreateRequest_Signed{Signed: t}}
-}
-
-// Sign signs contents of the header with the private key.
-func (m *VerificationHeader) Sign(key *ecdsa.PrivateKey) error {
-	s, err := crypto.Sign(key, m.PublicKey)
-	if err != nil {
-		return err
-	}
-	m.KeySignature = s
-	return nil
 }

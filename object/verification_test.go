@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/nspcc-dev/neofs-api-go/container"
 	"github.com/nspcc-dev/neofs-api-go/refs"
-	"github.com/nspcc-dev/neofs-api-go/session"
+	"github.com/nspcc-dev/neofs-api-go/service"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
@@ -77,11 +77,13 @@ func TestObject_Verify(t *testing.T) {
 
 	dataPK := crypto.MarshalPublicKey(&sessionkey.PublicKey)
 	signature, err = crypto.Sign(key, dataPK)
-	vh := &session.VerificationHeader{
-		PublicKey:    dataPK,
-		KeySignature: signature,
+	tok := &service.Token{
+		Token_Info: service.Token_Info{
+			SessionKey: dataPK,
+		},
+		Signature: signature,
 	}
-	obj.SetVerificationHeader(vh)
+	obj.AddHeader(&Header{Value: &Header_Token{Token: tok}})
 
 	// validation header is not last
 	t.Run("error validation header is not last", func(t *testing.T) {
@@ -90,7 +92,7 @@ func TestObject_Verify(t *testing.T) {
 	})
 
 	obj.Headers = obj.Headers[:len(obj.Headers)-2]
-	obj.SetVerificationHeader(vh)
+	obj.AddHeader(&Header{Value: &Header_Token{Token: tok}})
 	obj.SetHeader(&Header{Value: &Header_Integrity{ih}})
 
 	t.Run("error invalid header checksum", func(t *testing.T) {
@@ -115,7 +117,7 @@ func TestObject_Verify(t *testing.T) {
 	require.NoError(t, err)
 	obj.SetHeader(genIH)
 
-	t.Run("correct with vh", func(t *testing.T) {
+	t.Run("correct with tok", func(t *testing.T) {
 		err = obj.Verify()
 		require.NoError(t, err)
 	})
@@ -123,7 +125,7 @@ func TestObject_Verify(t *testing.T) {
 	pkh := Header{Value: &Header_PublicKey{&PublicKey{
 		Value: crypto.MarshalPublicKey(&key.PublicKey),
 	}}}
-	// replace vh with pkh
+	// replace tok with pkh
 	obj.Headers[len(obj.Headers)-2] = pkh
 	// re-sign object
 	obj.Sign(sessionkey)

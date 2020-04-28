@@ -53,18 +53,6 @@ func (m *RequestVerificationHeader) AddSignature(sig *RequestVerificationHeader_
 	m.Signatures = append(m.Signatures, sig)
 }
 
-// SetOwner adds origin (sign and public key) of owner (client) into first signature.
-func (m *RequestVerificationHeader) SetOwner(pub *ecdsa.PublicKey, sign []byte) {
-	if len(m.Signatures) == 0 || pub == nil {
-		return
-	}
-
-	m.Signatures[0].Origin = &RequestVerificationHeader_Sign{
-		Sign: sign,
-		Peer: crypto.MarshalPublicKey(pub),
-	}
-}
-
 // CheckOwner validates, that passed OwnerID is equal to present PublicKey of owner.
 func (m *RequestVerificationHeader) CheckOwner(owner refs.OwnerID) error {
 	if key, err := m.GetOwner(); err != nil {
@@ -83,18 +71,6 @@ func (m *RequestVerificationHeader) CheckOwner(owner refs.OwnerID) error {
 func (m *RequestVerificationHeader) GetOwner() (*ecdsa.PublicKey, error) {
 	if len(m.Signatures) == 0 {
 		return nil, ErrCannotFindOwner
-	}
-
-	// if first signature contains origin, we should try to validate session key
-	if m.Signatures[0].Origin != nil {
-		owner := crypto.UnmarshalPublicKey(m.Signatures[0].Origin.Peer)
-		if owner == nil {
-			return nil, ErrCannotLoadPublicKey
-		} else if err := crypto.Verify(owner, m.Signatures[0].Peer, m.Signatures[0].Origin.Sign); err != nil {
-			return nil, errors.Wrap(err, "could not verify session token")
-		}
-
-		return owner, nil
 	} else if key := crypto.UnmarshalPublicKey(m.Signatures[0].Peer); key != nil {
 		return key, nil
 	}
@@ -128,10 +104,8 @@ func newSignature(key *ecdsa.PrivateKey, data []byte) (*RequestVerificationHeade
 	}
 
 	return &RequestVerificationHeader_Signature{
-		RequestVerificationHeader_Sign: RequestVerificationHeader_Sign{
-			Sign: sign,
-			Peer: crypto.MarshalPublicKey(&key.PublicKey),
-		},
+		Sign: sign,
+		Peer: crypto.MarshalPublicKey(&key.PublicKey),
 	}, nil
 }
 
