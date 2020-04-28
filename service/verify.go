@@ -27,6 +27,12 @@ type (
 		SetOwner(*ecdsa.PublicKey, []byte)
 		GetLastPeer() (*ecdsa.PublicKey, error)
 	}
+
+	// TokenHeader is an interface of the container of a Token pointer value
+	TokenHeader interface {
+		GetToken() *Token
+		SetToken(*Token)
+	}
 )
 
 const (
@@ -95,6 +101,11 @@ func (m *RequestVerificationHeader) GetLastPeer() (*ecdsa.PublicKey, error) {
 
 		return nil, ErrCannotLoadPublicKey
 	}
+}
+
+// SetToken is a Token field setter.
+func (m *RequestVerificationHeader) SetToken(token *Token) {
+	m.Token = token
 }
 
 func newSignature(key *ecdsa.PrivateKey, data []byte) (*RequestVerificationHeader_Signature, error) {

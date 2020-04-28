@@ -188,3 +188,17 @@ func TestVerifyAndSignRequestHeaderWithoutCloning(t *testing.T) {
 
 	require.Contains(t, buf.String(), "proto: don't know how to copy")
 }
+
+func TestRequestVerificationHeader_SetToken(t *testing.T) {
+	id, err := refs.NewUUID()
+	require.NoError(t, err)
+
+	token := new(Token)
+	token.ID = id
+
+	h := new(RequestVerificationHeader)
+
+	h.SetToken(token)
+
+	require.Equal(t, token, h.GetToken())
+}
