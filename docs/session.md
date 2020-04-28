@@ -12,13 +12,6 @@
     - [CreateResponse](#session.CreateResponse)
     
 
-- [session/types.proto](#session/types.proto)
-
-  - Messages
-    - [Token](#session.Token)
-    - [VerificationHeader](#session.VerificationHeader)
-    
-
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -68,8 +61,8 @@ session key. Session is established during 4-step handshake in one gRPC stream
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Init | [Token](#session.Token) |  | Init is a message to initialize session opening. Carry: owner of manipulation object; ID of manipulation object; token lifetime bounds. |
-| Signed | [Token](#session.Token) |  | Signed Init message response (Unsigned) from server with user private key |
+| Init | [service.Token](#service.Token) |  | Init is a message to initialize session opening. Carry: owner of manipulation object; ID of manipulation object; token lifetime bounds. |
+| Signed | [service.Token](#service.Token) |  | Signed Init message response (Unsigned) from server with user private key |
 | Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
 | Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
@@ -82,52 +75,8 @@ session key. Session is established during 4-step handshake in one gRPC stream
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Unsigned | [Token](#session.Token) |  | Unsigned token with token ID and session public key generated on server side |
-| Result | [Token](#session.Token) |  | Result is a resulting token which can be used for object placing through an trusted intermediary |
-
- <!-- end messages -->
-
- <!-- end enums -->
-
-
-
-<a name="session/types.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## session/types.proto
-
-
- <!-- end services -->
-
-
-<a name="session.Token"></a>
-
-### Message Token
-User token granting rights for object manipulation
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| Header | [VerificationHeader](#session.VerificationHeader) |  | Header carries verification data of session key |
-| OwnerID | [bytes](#bytes) |  | OwnerID is an owner of manipulation object |
-| FirstEpoch | [uint64](#uint64) |  | FirstEpoch is an initial epoch of token lifetime |
-| LastEpoch | [uint64](#uint64) |  | LastEpoch is a last epoch of token lifetime |
-| ObjectID | [bytes](#bytes) | repeated | ObjectID is an object identifier of manipulation object |
-| Signature | [bytes](#bytes) |  | Signature is a token signature, signed by owner of manipulation object |
-| ID | [bytes](#bytes) |  | ID is a token identifier. valid UUIDv4 represented in bytes |
-| PublicKeys | [bytes](#bytes) | repeated | PublicKeys associated with owner |
-
-
-<a name="session.VerificationHeader"></a>
-
-### Message VerificationHeader
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| PublicKey | [bytes](#bytes) |  | PublicKey is a session public key |
-| KeySignature | [bytes](#bytes) |  | KeySignature is a session public key signature. Signed by trusted side |
+| Unsigned | [service.Token](#service.Token) |  | Unsigned token with token ID and session public key generated on server side |
+| Result | [service.Token](#service.Token) |  | Result is a resulting token which can be used for object placing through an trusted intermediary |
 
  <!-- end messages -->
 
