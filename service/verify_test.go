@@ -119,15 +119,13 @@ func TestMaintainableRequest(t *testing.T) {
 		req.TTL--
 
 		key := test.DecodeKey(i)
-		require.NoError(t, SignRequestHeader(key, req))
 
 		// sign first key (session key) by owner key
 		if i == 0 {
-			sign, err := crypto.Sign(owner, crypto.MarshalPublicKey(&key.PublicKey))
-			require.NoError(t, err)
-
-			req.SetOwner(&owner.PublicKey, sign)
+			key = owner
 		}
+
+		require.NoError(t, SignRequestHeader(key, req))
 	}
 
 	{ // Validate owner
@@ -150,17 +148,8 @@ func TestMaintainableRequest(t *testing.T) {
 		require.Equal(t, &owner.PublicKey, pub)
 	}
 
-	{ // wrong owner:
-		req.Signatures[0].Origin = nil
-
-		pub, err := req.GetOwner()
-		require.NoError(t, err)
-
-		require.NotEqual(t, &owner.PublicKey, pub)
-	}
-
 	{ // Wrong signatures:
-		copy(req.Signatures[count-1].Sign, req.Signatures[count-1].Peer)
+		copy(req.Signatures[count-1].Sign, req.Signatures[count-2].Sign)
 		err := VerifyRequestHeader(req)
 		require.EqualError(t, errors.Cause(err), crypto.ErrInvalidSignature.Error())
 	}

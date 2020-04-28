@@ -5,7 +5,6 @@ option csharp_namespace = "NeoFS.API.Object";
 
 import "refs/types.proto";
 import "object/types.proto";
-import "session/types.proto";
 import "service/meta.proto";
 import "service/verify.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
@@ -58,8 +57,6 @@ service Service {
 message GetRequest {
     // Address of object (container id + object id)
     refs.Address Address                     = 1 [(gogoproto.nullable) = false];
-    // Raw is the request flag of a physically stored representation of an object
-    bool Raw                                 = 2;
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -82,10 +79,8 @@ message PutRequest {
     message PutHeader {
         // Object with at least container id and owner id fields
         Object Object       = 1;
-        // Token with session public key and user's signature
-        session.Token Token = 2;
         // Number of the object copies to store within the RPC call (zero is processed according to the placement rules)
-        uint32 CopiesNumber = 3;
+        uint32 CopiesNumber = 2;
     }
 
     oneof R {
@@ -112,8 +107,6 @@ message DeleteRequest {
     refs.Address Address                     = 1 [(gogoproto.nullable) = false];
     // OwnerID is a wallet address
     bytes OwnerID                            = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"];
-    // Token with session public key and user's signature
-    session.Token Token                      = 3;
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -132,8 +125,6 @@ message HeadRequest {
     refs.Address Address                     = 1 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
     // FullHeaders can be set true for extended headers in the object
     bool FullHeaders                         = 2;
-    // Raw is the request flag of a physically stored representation of an object
-    bool Raw                                 = 3;
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)

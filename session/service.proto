@@ -3,7 +3,6 @@ package session;
 option go_package = "github.com/nspcc-dev/neofs-api-go/session";
 option csharp_namespace = "NeoFS.API.Session";
 
-import "session/types.proto";
 import "service/meta.proto";
 import "service/verify.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
@@ -33,9 +32,9 @@ message CreateRequest {
         // owner of manipulation object;
         // ID of manipulation object;
         // token lifetime bounds.
-        session.Token Init = 1;
+        service.Token Init = 1;
         // Signed Init message response (Unsigned) from server with user private key
-        session.Token Signed = 2;
+        service.Token Signed = 2;
     }
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
@@ -46,8 +45,8 @@ message CreateRequest {
 message CreateResponse {
     oneof Message {
         // Unsigned token with token ID and session public key generated on server side
-        session.Token Unsigned = 1;
+        service.Token Unsigned = 1;
         // Result is a resulting token which can be used for object placing through an trusted intermediary
-        session.Token Result = 2;
+        service.Token Result = 2;
     }
 }

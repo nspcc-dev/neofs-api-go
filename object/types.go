@@ -7,7 +7,6 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/refs"
-	"github.com/nspcc-dev/neofs-api-go/session"
 )
 
 type (
@@ -18,9 +17,6 @@ type (
 
 	// Address is a type alias of object Address.
 	Address = refs.Address
-
-	// VerificationHeader is a type alias of session's verification header.
-	VerificationHeader = session.VerificationHeader
 
 	// PositionReader defines object reader that returns slice of bytes
 	// for specified object and data range.
@@ -60,8 +56,8 @@ const (
 	TransformHdr
 	// TombstoneHdr is a tombstone header type.
 	TombstoneHdr
-	// VerifyHdr is a verification header type.
-	VerifyHdr
+	// TokenHdr is a token header type.
+	TokenHdr
 	// HomoHashHdr is a homomorphic hash header type.
 	HomoHashHdr
 	// PayloadChecksumHdr is a payload checksum header type.
@@ -175,8 +171,8 @@ func (m Header) typeOf(t isHeader_Value) (ok bool) {
 		_, ok = m.Value.(*Header_Transform)
 	case *Header_Tombstone:
 		_, ok = m.Value.(*Header_Tombstone)
-	case *Header_Verify:
-		_, ok = m.Value.(*Header_Verify)
+	case *Header_Token:
+		_, ok = m.Value.(*Header_Token)
 	case *Header_HomoHash:
 		_, ok = m.Value.(*Header_HomoHash)
 	case *Header_PayloadChecksum:
@@ -205,8 +201,8 @@ func HeaderType(t headerType) Pred {
 		return func(h *Header) bool { _, ok := h.Value.(*Header_Transform); return ok }
 	case TombstoneHdr:
 		return func(h *Header) bool { _, ok := h.Value.(*Header_Tombstone); return ok }
-	case VerifyHdr:
-		return func(h *Header) bool { _, ok := h.Value.(*Header_Verify); return ok }
+	case TokenHdr:
+		return func(h *Header) bool { _, ok := h.Value.(*Header_Token); return ok }
 	case HomoHashHdr:
 		return func(h *Header) bool { _, ok := h.Value.(*Header_HomoHash); return ok }
 	case PayloadChecksumHdr:
