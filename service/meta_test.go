@@ -102,3 +102,13 @@ func TestRequestMetaHeader_SetVersion(t *testing.T) {
 	m.SetVersion(version)
 	require.Equal(t, version, m.GetVersion())
 }
+
+func TestRequestMetaHeader_SetRaw(t *testing.T) {
+	m := new(RequestMetaHeader)
+
+	m.SetRaw(true)
+	require.True(t, m.GetRaw())
+
+	m.SetRaw(false)
+	require.False(t, m.GetRaw())
+}
