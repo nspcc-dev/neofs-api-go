@@ -3,10 +3,14 @@ package object
 import (
 	"bytes"
 	"context"
+	"fmt"
+	"io"
+	"reflect"
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/refs"
+	"github.com/pkg/errors"
 )
 
 type (
@@ -261,4 +265,118 @@ func (m Object) Address() *refs.Address {
 		ObjectID: m.SystemHeader.ID,
 		CID:      m.SystemHeader.CID,
 	}
+}
+
+func (m CreationPoint) String() string {
+	return fmt.Sprintf(`{UnixTime=%d Epoch=%d}`, m.UnixTime, m.Epoch)
+}
+
+// Stringify converts object into string format.
+func Stringify(dst io.Writer, obj *Object) error {
+	// put empty line
+	if _, err := fmt.Fprintln(dst); err != nil {
+		return err
+	}
+
+	// put object line
+	if _, err := fmt.Fprintln(dst, "Object:"); err != nil {
+		return err
+	}
+
+	// put system headers
+	if _, err := fmt.Fprintln(dst, "\tSystemHeader:"); err != nil {
+		return err
+	}
+
+	sysHeaders := []string{"ID", "CID", "OwnerID", "Version", "PayloadLength", "CreatedAt"}
+	v := reflect.ValueOf(obj.SystemHeader)
+	for _, key := range sysHeaders {
+		if !v.FieldByName(key).IsValid() {
+			return errors.Errorf("invalid system header key: %q", key)
+		}
+
+		val := v.FieldByName(key).Interface()
+		if _, err := fmt.Fprintf(dst, "\t\t- %s=%v\n", key, val); err != nil {
+			return err
+		}
+	}
+
+	// put user headers
+	if _, err := fmt.Fprintln(dst, "\tUserHeaders:"); err != nil {
+		return err
+	}
+
+	for _, header := range obj.Headers {
+		var (
+			typ = reflect.ValueOf(header.Value)
+			key string
+			val interface{}
+		)
+
+		switch t := typ.Interface().(type) {
+		case *Header_Link:
+			key = "Link"
+			val = fmt.Sprintf(`{Type=%s ID=%s}`, t.Link.Type, t.Link.ID)
+		case *Header_Redirect:
+			key = "Redirect"
+			val = fmt.Sprintf(`{CID=%s OID=%s}`, t.Redirect.CID, t.Redirect.ObjectID)
+		case *Header_UserHeader:
+			key = "UserHeader"
+			val = fmt.Sprintf(`{Key=%s Val=%s}`, t.UserHeader.Key, t.UserHeader.Value)
+		case *Header_Transform:
+			key = "Transform"
+			val = t.Transform.Type.String()
+		case *Header_Tombstone:
+			key = "Tombstone"
+			val = "MARKED"
+		case *Header_Token:
+			key = "Token"
+			val = fmt.Sprintf("{"+
+				"ID=%s OwnerID=%s Verb=%s Address=%s Created=%d ValidUntil=%d SessionKey=%02x Signature=%02x"+
+				"}",
+				t.Token.Token_Info.ID,
+				t.Token.Token_Info.OwnerID,
+				t.Token.Token_Info.Verb,
+				t.Token.Token_Info.Address,
+				t.Token.Token_Info.Created,
+				t.Token.Token_Info.ValidUntil,
+				t.Token.Token_Info.SessionKey,
+				t.Token.Signature)
+		case *Header_HomoHash:
+			key = "HomoHash"
+			val = t.HomoHash
+		case *Header_PayloadChecksum:
+			key = "PayloadChecksum"
+			val = t.PayloadChecksum
+		case *Header_Integrity:
+			key = "Integrity"
+			val = fmt.Sprintf(`{Checksum=%02x Signature=%02x}`,
+				t.Integrity.HeadersChecksum,
+				t.Integrity.ChecksumSignature)
+		case *Header_StorageGroup:
+			key = "StorageGroup"
+			val = fmt.Sprintf(`{DataSize=%d Hash=%02x Lifetime={Unit=%s Value=%d}}`,
+				t.StorageGroup.ValidationDataSize,
+				t.StorageGroup.ValidationHash,
+				t.StorageGroup.Lifetime.Unit,
+				t.StorageGroup.Lifetime.Value)
+		case *Header_PublicKey:
+			key = "PublicKey"
+			val = t.PublicKey.Value
+		default:
+			key = "Unknown"
+			val = t
+		}
+
+		if _, err := fmt.Fprintf(dst, "\t\t- Type=%s\n\t\t  Value=%v\n", key, val); err != nil {
+			return err
+		}
+	}
+
+	// put payload
+	if _, err := fmt.Fprintf(dst, "\tPayload: %#v\n", obj.Payload); err != nil {
+		return err
+	}
+
+	return nil
 }
