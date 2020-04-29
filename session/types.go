@@ -1,6 +1,9 @@
 package session
 
 import (
+	"context"
+	"crypto/ecdsa"
+
 	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/refs"
 	"github.com/nspcc-dev/neofs-api-go/service"
@@ -49,6 +52,14 @@ type PrivateTokenStore interface {
 	//
 	// Resulting error must be nil if private token was stored successfully.
 	Store(TokenID, PrivateToken) error
+}
+
+// KeyStore is an interface of the storage of public keys addressable by OwnerID,
+type KeyStore interface {
+	// Get must return the storage record corresponding to the passed key.
+	//
+	// Resulting error must be ErrKeyNotFound if there is no corresponding record.
+	Get(context.Context, OwnerID) ([]*ecdsa.PublicKey, error)
 }
 
 const ErrPrivateTokenNotFound = internal.Error("private token not found")
