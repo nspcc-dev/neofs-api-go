@@ -1,7 +1,6 @@
 package session
 
 import (
-	"crypto/elliptic"
 	"sync"
 )
 
@@ -9,11 +8,6 @@ type mapTokenStore struct {
 	*sync.RWMutex
 
 	tokens map[TokenID]PrivateToken
-}
-
-// TODO get curve from neofs-crypto
-func defaultCurve() elliptic.Curve {
-	return elliptic.P256()
 }
 
 // NewMapTokenStore creates new PrivateTokenStore instance.

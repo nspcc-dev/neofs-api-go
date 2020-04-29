@@ -2,6 +2,7 @@ package session
 
 import (
 	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/rand"
 
 	crypto "github.com/nspcc-dev/neofs-crypto"
@@ -16,7 +17,7 @@ type pToken struct {
 //
 // Returns non-nil error on key generation error.
 func NewPrivateToken() (PrivateToken, error) {
-	sk, err := ecdsa.GenerateKey(defaultCurve(), rand.Reader)
+	sk, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		return nil, err
 	}
