@@ -10,7 +10,7 @@ import (
 
 func TestPrivateToken(t *testing.T) {
 	// create new private token
-	pToken, err := NewPrivateToken()
+	pToken, err := NewPrivateToken(0)
 	require.NoError(t, err)
 
 	// generate data to sign
@@ -30,4 +30,21 @@ func TestPrivateToken(t *testing.T) {
 			sig,
 		),
 	)
+}
+
+func TestPToken_Expired(t *testing.T) {
+	e := uint64(10)
+
+	var token PrivateToken = &pToken{
+		validUntil: e,
+	}
+
+	// must not be expired in the epoch before last
+	require.False(t, token.Expired(e-1))
+
+	// must not be expired in the last epoch
+	require.False(t, token.Expired(e))
+
+	// must be expired in the epoch after last
+	require.True(t, token.Expired(e+1))
 }

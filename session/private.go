@@ -11,12 +11,14 @@ import (
 type pToken struct {
 	// private session token
 	sessionKey *ecdsa.PrivateKey
+	// last epoch of the lifetime
+	validUntil uint64
 }
 
-// NewPrivateToken creates PrivateToken instance.
+// NewPrivateToken creates PrivateToken instance that expires after passed epoch.
 //
 // Returns non-nil error on key generation error.
-func NewPrivateToken() (PrivateToken, error) {
+func NewPrivateToken(validUntil uint64) (PrivateToken, error) {
 	sk, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		return nil, err
@@ -24,6 +26,7 @@ func NewPrivateToken() (PrivateToken, error) {
 
 	return &pToken{
 		sessionKey: sk,
+		validUntil: validUntil,
 	}, nil
 }
 
@@ -35,4 +38,8 @@ func (t *pToken) Sign(data []byte) ([]byte, error) {
 // PublicKey returns a binary representation of the session public key.
 func (t *pToken) PublicKey() []byte {
 	return crypto.MarshalPublicKey(&t.sessionKey.PublicKey)
+}
+
+func (t *pToken) Expired(epoch uint64) bool {
+	return t.validUntil < epoch
 }
