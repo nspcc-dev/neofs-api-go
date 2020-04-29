@@ -13,7 +13,7 @@ import (
 type simpleStore struct {
 	*sync.RWMutex
 
-	tokens map[TokenID]*PToken
+	tokens map[TokenID]PrivateToken
 }
 
 // TODO get curve from neofs-crypto
@@ -25,12 +25,12 @@ func defaultCurve() elliptic.Curve {
 func NewSimpleStore() TokenStore {
 	return &simpleStore{
 		RWMutex: new(sync.RWMutex),
-		tokens:  make(map[TokenID]*PToken),
+		tokens:  make(map[TokenID]PrivateToken),
 	}
 }
 
 // New returns new token with specified parameters.
-func (s *simpleStore) New(p TokenParams) *PToken {
+func (s *simpleStore) New(p TokenParams) PrivateToken {
 	tid, err := refs.NewUUID()
 	if err != nil {
 		return nil
@@ -54,10 +54,8 @@ func (s *simpleStore) New(p TokenParams) *PToken {
 	token.SetExpirationEpoch(p.LastEpoch)
 	token.SetSessionKey(crypto.MarshalPublicKey(&key.PublicKey))
 
-	t := &PToken{
-		mtx:        new(sync.Mutex),
-		Token:      *token,
-		PrivateKey: key,
+	t := &pToken{
+		sessionKey: key,
 	}
 
 	s.Lock()
@@ -68,7 +66,7 @@ func (s *simpleStore) New(p TokenParams) *PToken {
 }
 
 // Fetch tries to fetch a token with specified id.
-func (s *simpleStore) Fetch(id TokenID) *PToken {
+func (s *simpleStore) Fetch(id TokenID) PrivateToken {
 	s.RLock()
 	defer s.RUnlock()
 

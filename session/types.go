@@ -1,13 +1,9 @@
 package session
 
 import (
-	"crypto/ecdsa"
-	"sync"
-
 	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/refs"
 	"github.com/nspcc-dev/neofs-api-go/service"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
 type (
@@ -23,16 +19,19 @@ type (
 	Address = refs.Address
 	// Verb is Token_Info_Verb type alias
 	Verb = service.Token_Info_Verb
-
-	// PToken is a wrapper around Token that allows to sign data
-	// and to do thread-safe manipulations.
-	PToken struct {
-		Token
-
-		mtx        *sync.Mutex
-		PrivateKey *ecdsa.PrivateKey
-	}
 )
+
+// PrivateToken is an interface of session private part.
+type PrivateToken interface {
+	// PublicKey must return a binary representation of session public key.
+	PublicKey() []byte
+
+	// Sign must return the signature of passed data.
+	//
+	// Resulting signature must be verified by crypto.Verify function
+	// with the session public key.
+	Sign([]byte) ([]byte, error)
+}
 
 const (
 	// ErrWrongFirstEpoch is raised when passed Token contains wrong first epoch.
@@ -58,8 +57,3 @@ const (
 	// ErrInvalidSignature is raised when wrong signature is passed to VerificationHeader.VerifyData().
 	ErrInvalidSignature = internal.Error("invalid signature")
 )
-
-// SignData signs data with session private key.
-func (t *PToken) SignData(data []byte) ([]byte, error) {
-	return crypto.Sign(t.PrivateKey, data)
-}

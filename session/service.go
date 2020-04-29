@@ -17,10 +17,10 @@ type (
 	// TokenStore is a PToken storage manipulation interface.
 	TokenStore interface {
 		// New returns new token with specified parameters.
-		New(p TokenParams) *PToken
+		New(p TokenParams) PrivateToken
 
 		// Fetch tries to fetch a token with specified id.
-		Fetch(id TokenID) *PToken
+		Fetch(id TokenID) PrivateToken
 
 		// Remove removes token with id from store.
 		Remove(id TokenID)
