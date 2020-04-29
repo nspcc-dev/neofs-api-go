@@ -5,23 +5,6 @@ import (
 	"crypto/ecdsa"
 
 	"github.com/nspcc-dev/neofs-api-go/internal"
-	"github.com/nspcc-dev/neofs-api-go/refs"
-	"github.com/nspcc-dev/neofs-api-go/service"
-)
-
-type (
-	// ObjectID type alias.
-	ObjectID = refs.ObjectID
-	// OwnerID type alias.
-	OwnerID = refs.OwnerID
-	// TokenID type alias.
-	TokenID = refs.UUID
-	// Token type alias
-	Token = service.Token
-	// Address type alias
-	Address = refs.Address
-	// Verb is Token_Info_Verb type alias
-	Verb = service.Token_Info_Verb
 )
 
 // PrivateToken is an interface of session private part.
