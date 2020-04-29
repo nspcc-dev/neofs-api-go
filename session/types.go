@@ -45,29 +45,5 @@ type KeyStore interface {
 	Get(context.Context, OwnerID) ([]*ecdsa.PublicKey, error)
 }
 
+// ErrPrivateTokenNotFound is raised when addressed private token was not found in storage.
 const ErrPrivateTokenNotFound = internal.Error("private token not found")
-
-const (
-	// ErrWrongFirstEpoch is raised when passed Token contains wrong first epoch.
-	// First epoch is an epoch since token is valid
-	ErrWrongFirstEpoch = internal.Error("wrong first epoch")
-
-	// ErrWrongLastEpoch is raised when passed Token contains wrong last epoch.
-	// Last epoch is an epoch until token is valid
-	ErrWrongLastEpoch = internal.Error("wrong last epoch")
-
-	// ErrWrongOwner is raised when passed Token contains wrong OwnerID.
-	ErrWrongOwner = internal.Error("wrong owner")
-
-	// ErrEmptyPublicKey is raised when passed Token contains wrong public key.
-	ErrEmptyPublicKey = internal.Error("empty public key")
-
-	// ErrWrongObjectsCount is raised when passed Token contains wrong objects count.
-	ErrWrongObjectsCount = internal.Error("wrong objects count")
-
-	// ErrWrongObjects is raised when passed Token contains wrong object ids.
-	ErrWrongObjects = internal.Error("wrong objects")
-
-	// ErrInvalidSignature is raised when wrong signature is passed to VerificationHeader.VerifyData().
-	ErrInvalidSignature = internal.Error("invalid signature")
-)
