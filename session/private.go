@@ -13,7 +13,7 @@ type pToken struct {
 	sessionKey *ecdsa.PrivateKey
 }
 
-// NewSessionPrivateToken creates PrivateToken instance.
+// NewPrivateToken creates PrivateToken instance.
 //
 // Returns non-nil error on key generation error.
 func NewPrivateToken() (PrivateToken, error) {
