@@ -17,6 +17,9 @@ type PrivateToken interface {
 	// Resulting signature must be verified by crypto.Verify function
 	// with the session public key.
 	Sign([]byte) ([]byte, error)
+
+	// Expired must return true if and only if private token is expired in the given epoch number.
+	Expired(uint64) bool
 }
 
 // PrivateTokenSource is an interface of private token storage with read access.
@@ -27,9 +30,16 @@ type PrivateTokenSource interface {
 	Fetch(TokenID) (PrivateToken, error)
 }
 
+// EpochLifetimeStore is an interface of the storage of elements that lifetime is limited by NeoFS epoch.
+type EpochLifetimeStore interface {
+	// RemoveExpired must remove all elements that are expired in the given epoch.
+	RemoveExpired(uint64) error
+}
+
 // PrivateTokenStore is an interface of the storage of private tokens addressable by TokenID.
 type PrivateTokenStore interface {
 	PrivateTokenSource
+	EpochLifetimeStore
 
 	// Store must save passed private token in the storage under the given key.
 	//

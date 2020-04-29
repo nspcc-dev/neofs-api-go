@@ -45,3 +45,20 @@ func (s *mapTokenStore) Fetch(id TokenID) (PrivateToken, error) {
 
 	return t, nil
 }
+
+// RemoveExpired removes all the map elements that are expired in the passed epoch.
+//
+// Resulting error is always nil.
+func (s *mapTokenStore) RemoveExpired(epoch uint64) error {
+	s.Lock()
+
+	for key, token := range s.tokens {
+		if token.Expired(epoch) {
+			delete(s.tokens, key)
+		}
+	}
+
+	s.Unlock()
+
+	return nil
+}
