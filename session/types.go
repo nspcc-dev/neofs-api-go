@@ -33,6 +33,26 @@ type PrivateToken interface {
 	Sign([]byte) ([]byte, error)
 }
 
+// PrivateTokenSource is an interface of private token storage with read access.
+type PrivateTokenSource interface {
+	// Fetch must return the storage record corresponding to the passed key.
+	//
+	// Resulting error must be ErrPrivateTokenNotFound if there is no corresponding record.
+	Fetch(TokenID) (PrivateToken, error)
+}
+
+// PrivateTokenStore is an interface of the storage of private tokens addressable by TokenID.
+type PrivateTokenStore interface {
+	PrivateTokenSource
+
+	// Store must save passed private token in the storage under the given key.
+	//
+	// Resulting error must be nil if private token was stored successfully.
+	Store(TokenID, PrivateToken) error
+}
+
+const ErrPrivateTokenNotFound = internal.Error("private token not found")
+
 const (
 	// ErrWrongFirstEpoch is raised when passed Token contains wrong first epoch.
 	// First epoch is an epoch since token is valid

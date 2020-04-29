@@ -13,27 +13,6 @@ type (
 	KeyStore interface {
 		Get(ctx context.Context, id refs.OwnerID) ([]*ecdsa.PublicKey, error)
 	}
-
-	// TokenStore is a PToken storage manipulation interface.
-	TokenStore interface {
-		// New returns new token with specified parameters.
-		New(p TokenParams) PrivateToken
-
-		// Fetch tries to fetch a token with specified id.
-		Fetch(id TokenID) PrivateToken
-
-		// Remove removes token with id from store.
-		Remove(id TokenID)
-	}
-
-	// TokenParams contains params to create new PToken.
-	TokenParams struct {
-		FirstEpoch uint64
-		LastEpoch  uint64
-		Address    Address
-		OwnerID    OwnerID
-		Verb       Verb
-	}
 )
 
 // NewInitRequest returns new initialization CreateRequest from passed Token.

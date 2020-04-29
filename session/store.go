@@ -1,16 +1,11 @@
 package session
 
 import (
-	"crypto/ecdsa"
 	"crypto/elliptic"
-	"crypto/rand"
 	"sync"
-
-	"github.com/nspcc-dev/neofs-api-go/refs"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
-type simpleStore struct {
+type mapTokenStore struct {
 	*sync.RWMutex
 
 	tokens map[TokenID]PrivateToken
@@ -21,61 +16,38 @@ func defaultCurve() elliptic.Curve {
 	return elliptic.P256()
 }
 
-// NewSimpleStore creates simple token storage
-func NewSimpleStore() TokenStore {
-	return &simpleStore{
+// NewMapTokenStore creates new PrivateTokenStore instance.
+//
+// The elements of the instance are stored in the map.
+func NewMapTokenStore() PrivateTokenStore {
+	return &mapTokenStore{
 		RWMutex: new(sync.RWMutex),
 		tokens:  make(map[TokenID]PrivateToken),
 	}
 }
 
-// New returns new token with specified parameters.
-func (s *simpleStore) New(p TokenParams) PrivateToken {
-	tid, err := refs.NewUUID()
-	if err != nil {
-		return nil
-	}
-
-	key, err := ecdsa.GenerateKey(defaultCurve(), rand.Reader)
-	if err != nil {
-		return nil
-	}
-
-	if p.FirstEpoch > p.LastEpoch || p.OwnerID.Empty() {
-		return nil
-	}
-
-	token := new(Token)
-	token.SetID(tid)
-	token.SetOwnerID(p.OwnerID)
-	token.SetVerb(p.Verb)
-	token.SetAddress(p.Address)
-	token.SetCreationEpoch(p.FirstEpoch)
-	token.SetExpirationEpoch(p.LastEpoch)
-	token.SetSessionKey(crypto.MarshalPublicKey(&key.PublicKey))
-
-	t := &pToken{
-		sessionKey: key,
-	}
-
+// Store adds passed token to the map.
+//
+// Resulting error is always nil.
+func (s *mapTokenStore) Store(id TokenID, token PrivateToken) error {
 	s.Lock()
-	s.tokens[tid] = t
+	s.tokens[id] = token
 	s.Unlock()
 
-	return t
+	return nil
 }
 
-// Fetch tries to fetch a token with specified id.
-func (s *simpleStore) Fetch(id TokenID) PrivateToken {
+// Fetch returns the map element corresponding to the given key.
+//
+// Returns ErrPrivateTokenNotFound is there is no element in map.
+func (s *mapTokenStore) Fetch(id TokenID) (PrivateToken, error) {
 	s.RLock()
 	defer s.RUnlock()
 
-	return s.tokens[id]
-}
+	t, ok := s.tokens[id]
+	if !ok {
+		return nil, ErrPrivateTokenNotFound
+	}
 
-// Remove removes token with id from store.
-func (s *simpleStore) Remove(id TokenID) {
-	s.Lock()
-	delete(s.tokens, id)
-	s.Unlock()
+	return t, nil
 }
