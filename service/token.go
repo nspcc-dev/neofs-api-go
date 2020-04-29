@@ -203,7 +203,16 @@ func SignToken(token SessionToken, key *ecdsa.PrivateKey) error {
 }
 
 // VerifyTokenSignature checks if token was signed correctly.
+//
+// If passed token is nil, ErrEmptyToken returns.
+// If passed public key is nil, crypto.ErrEmptyPublicKey returns.
 func VerifyTokenSignature(token SessionToken, key *ecdsa.PublicKey) error {
+	if token == nil {
+		return ErrEmptyToken
+	} else if key == nil {
+		return crypto.ErrEmptyPublicKey
+	}
+
 	return crypto.Verify(
 		key,
 		verificationTokenData(token),

@@ -96,12 +96,22 @@ func TestSignToken(t *testing.T) {
 		ErrEmptyToken.Error(),
 	)
 
+	require.EqualError(t,
+		VerifyTokenSignature(nil, nil),
+		ErrEmptyToken.Error(),
+	)
+
 	var token SessionToken = new(Token)
 
 	// nil key
 	require.EqualError(t,
 		SignToken(token, nil),
 		crypto.ErrEmptyPrivateKey.Error(),
+	)
+
+	require.EqualError(t,
+		VerifyTokenSignature(token, nil),
+		crypto.ErrEmptyPublicKey.Error(),
 	)
 
 	// create private key for signing
