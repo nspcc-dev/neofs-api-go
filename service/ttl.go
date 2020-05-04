@@ -6,12 +6,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// TTLHeader is an interface of the container of a numerical TTL value.
-type TTLHeader interface {
-	GetTTL() uint32
-	SetTTL(uint32)
-}
-
 // TTL constants.
 const (
 	// ZeroTTL is an upper bound of invalid TTL values.
@@ -41,7 +35,7 @@ func IRNonForwarding(role NodeRole) TTLCondition {
 }
 
 // ProcessRequestTTL validates and updates requests with TTL.
-func ProcessRequestTTL(req TTLHeader, cond ...TTLCondition) error {
+func ProcessRequestTTL(req TTLContainer, cond ...TTLCondition) error {
 	ttl := req.GetTTL()
 
 	if ttl == ZeroTTL {

@@ -9,35 +9,10 @@ type (
 		ResetMeta() RequestMetaHeader
 		RestoreMeta(RequestMetaHeader)
 
-		// TTLHeader allows to get and set TTL value of request.
-		TTLHeader
-
-		// EpochHeader gives possibility to get or set epoch in RPC Requests.
-		EpochHeader
-
-		// VersionHeader allows get or set version of protocol request
-		VersionHeader
-
-		// RawHeader allows to get and set raw option of request
-		RawHeader
-	}
-
-	// EpochHeader interface gives possibility to get or set epoch in RPC Requests.
-	EpochHeader interface {
-		GetEpoch() uint64
-		SetEpoch(v uint64)
-	}
-
-	// VersionHeader allows get or set version of protocol request
-	VersionHeader interface {
-		GetVersion() uint32
-		SetVersion(uint32)
-	}
-
-	// RawHeader is an interface of the container of a boolean Raw value
-	RawHeader interface {
-		GetRaw() bool
-		SetRaw(bool)
+		TTLContainer
+		EpochContainer
+		VersionContainer
+		RawContainer
 	}
 )
 
