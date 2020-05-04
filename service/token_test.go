@@ -93,12 +93,12 @@ func TestSignToken(t *testing.T) {
 	// nil token
 	require.EqualError(t,
 		SignToken(nil, nil),
-		ErrEmptyToken.Error(),
+		ErrNilToken.Error(),
 	)
 
 	require.EqualError(t,
 		VerifyTokenSignature(nil, nil),
-		ErrEmptyToken.Error(),
+		ErrNilToken.Error(),
 	)
 
 	var token SessionToken = new(Token)

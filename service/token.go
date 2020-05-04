@@ -4,7 +4,6 @@ import (
 	"crypto/ecdsa"
 	"encoding/binary"
 
-	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/refs"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 )
@@ -61,9 +60,6 @@ type SessionToken interface {
 	SessionTokenInfo
 	SignatureContainer
 }
-
-// ErrEmptyToken is raised when passed Token is nil.
-const ErrEmptyToken = internal.Error("token is empty")
 
 var _ SessionToken = (*Token)(nil)
 
@@ -183,11 +179,11 @@ func verificationTokenData(token SessionToken) []byte {
 
 // SignToken calculates and stores the signature of token information.
 //
-// If passed token is nil, ErrEmptyToken returns.
+// If passed token is nil, ErrNilToken returns.
 // If passed private key is nil, crypto.ErrEmptyPrivateKey returns.
 func SignToken(token SessionToken, key *ecdsa.PrivateKey) error {
 	if token == nil {
-		return ErrEmptyToken
+		return ErrNilToken
 	} else if key == nil {
 		return crypto.ErrEmptyPrivateKey
 	}
@@ -204,11 +200,11 @@ func SignToken(token SessionToken, key *ecdsa.PrivateKey) error {
 
 // VerifyTokenSignature checks if token was signed correctly.
 //
-// If passed token is nil, ErrEmptyToken returns.
+// If passed token is nil, ErrNilToken returns.
 // If passed public key is nil, crypto.ErrEmptyPublicKey returns.
 func VerifyTokenSignature(token SessionToken, key *ecdsa.PublicKey) error {
 	if token == nil {
-		return ErrEmptyToken
+		return ErrNilToken
 	} else if key == nil {
 		return crypto.ErrEmptyPublicKey
 	}

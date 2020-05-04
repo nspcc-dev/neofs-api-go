@@ -35,17 +35,6 @@ type (
 	}
 )
 
-const (
-	// ErrCannotLoadPublicKey is raised when cannot unmarshal public key from RequestVerificationHeader_Sign.
-	ErrCannotLoadPublicKey = internal.Error("cannot load public key")
-
-	// ErrCannotFindOwner is raised when signatures empty in GetOwner.
-	ErrCannotFindOwner = internal.Error("cannot find owner public key")
-
-	// ErrWrongOwner is raised when passed OwnerID not equal to present PublicKey
-	ErrWrongOwner = internal.Error("wrong owner")
-)
-
 // SetSignatures replaces signatures stored in RequestVerificationHeader.
 func (m *RequestVerificationHeader) SetSignatures(signatures []*RequestVerificationHeader_Signature) {
 	m.Signatures = signatures
@@ -81,7 +70,7 @@ func (m *RequestVerificationHeader) GetOwner() (*ecdsa.PublicKey, error) {
 		return key, nil
 	}
 
-	return nil, ErrCannotLoadPublicKey
+	return nil, ErrInvalidPublicKeyBytes
 }
 
 // GetLastPeer tries to get last peer public key from signatures.
@@ -99,7 +88,7 @@ func (m *RequestVerificationHeader) GetLastPeer() (*ecdsa.PublicKey, error) {
 			return key, nil
 		}
 
-		return nil, ErrCannotLoadPublicKey
+		return nil, ErrInvalidPublicKeyBytes
 	}
 }
 
@@ -190,7 +179,7 @@ func VerifyRequestHeader(msg VerifiableRequest) error {
 
 		key := crypto.UnmarshalPublicKey(peer)
 		if key == nil {
-			return errors.Wrapf(ErrCannotLoadPublicKey, "%d: %02x", i, peer)
+			return errors.Wrapf(ErrInvalidPublicKeyBytes, "%d: %02x", i, peer)
 		}
 
 		if size := msg.Size(); size <= cap(data) {

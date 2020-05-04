@@ -26,13 +26,13 @@ func TestMetaRequest(t *testing.T) {
 		},
 		{
 			code:              codes.InvalidArgument,
-			msg:               ErrIncorrectTTL.Error(),
+			msg:               ErrInvalidTTL.Error(),
 			name:              "direct to storage node",
 			handler:           IRNonForwarding(StorageNode),
 			RequestMetaHeader: RequestMetaHeader{TTL: NonForwardingTTL},
 		},
 		{
-			msg:               ErrZeroTTL.Error(),
+			msg:               ErrInvalidTTL.Error(),
 			code:              codes.InvalidArgument,
 			name:              "zero ttl",
 			handler:           IRNonForwarding(StorageNode),

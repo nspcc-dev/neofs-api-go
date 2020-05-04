@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -63,14 +62,6 @@ const (
 	SingleForwardingTTL
 )
 
-const (
-	// ErrZeroTTL is raised when zero ttl is passed.
-	ErrZeroTTL = internal.Error("zero ttl")
-
-	// ErrIncorrectTTL is raised when NonForwardingTTL is passed and NodeRole != InnerRingNode.
-	ErrIncorrectTTL = internal.Error("incorrect ttl")
-)
-
 // SetVersion sets protocol version to ResponseMetaHeader.
 func (m *ResponseMetaHeader) SetVersion(v uint32) { m.Version = v }
 
@@ -105,7 +96,7 @@ func (m *RequestMetaHeader) RestoreMeta(v RequestMetaHeader) { *m = v }
 func IRNonForwarding(role NodeRole) TTLCondition {
 	return func(ttl uint32) error {
 		if ttl == NonForwardingTTL && role != InnerRingNode {
-			return ErrIncorrectTTL
+			return ErrInvalidTTL
 		}
 
 		return nil
@@ -117,7 +108,7 @@ func ProcessRequestTTL(req MetaHeader, cond ...TTLCondition) error {
 	ttl := req.GetTTL()
 
 	if ttl == ZeroTTL {
-		return status.New(codes.InvalidArgument, ErrZeroTTL.Error()).Err()
+		return status.New(codes.InvalidArgument, ErrInvalidTTL.Error()).Err()
 	}
 
 	for i := range cond {
