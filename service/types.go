@@ -171,3 +171,19 @@ type SessionToken interface {
 	SessionTokenInfo
 	SignatureContainer
 }
+
+// SignedDataSource is an interface of the container of a data for signing.
+type SignedDataSource interface {
+	// Must return the required for signature byte slice.
+	// A non-nil error indicates that the data is not ready for signature.
+	SignedData() ([]byte, error)
+}
+
+// SignedDataReader is an interface of signed data reader.
+type SignedDataReader interface {
+	// Must return the minimum length of the slice for full reading.
+	SignedDataSize() int
+
+	// Must behave like Read method of io.Reader and differ only in the reading of the signed data.
+	ReadSignedData([]byte) (int, error)
+}
