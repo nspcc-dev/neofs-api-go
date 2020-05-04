@@ -6,26 +6,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRequestMetaHeader_SetEpoch(t *testing.T) {
-	m := new(ResponseMetaHeader)
-	epoch := uint64(3)
-	m.SetEpoch(epoch)
-	require.Equal(t, epoch, m.GetEpoch())
-}
+func TestCutRestoreMeta(t *testing.T) {
+	items := []func() SeizedMetaHeaderContainer{
+		func() SeizedMetaHeaderContainer {
+			m := new(RequestMetaHeader)
+			m.SetEpoch(1)
+			return m
+		},
+	}
 
-func TestRequestMetaHeader_SetVersion(t *testing.T) {
-	m := new(ResponseMetaHeader)
-	version := uint32(3)
-	m.SetVersion(version)
-	require.Equal(t, version, m.GetVersion())
-}
+	for _, item := range items {
+		v1 := item()
+		m1 := v1.CutMeta()
+		v1.RestoreMeta(m1)
 
-func TestRequestMetaHeader_SetRaw(t *testing.T) {
-	m := new(RequestMetaHeader)
-
-	m.SetRaw(true)
-	require.True(t, m.GetRaw())
-
-	m.SetRaw(false)
-	require.False(t, m.GetRaw())
+		require.Equal(t, item(), v1)
+	}
 }

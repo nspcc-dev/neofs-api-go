@@ -51,6 +51,12 @@ type TTLContainer interface {
 	SetTTL(uint32)
 }
 
+// SeizedMetaHeaderContainer is an interface of container of RequestMetaHeader that can be cut and restored.
+type SeizedMetaHeaderContainer interface {
+	CutMeta() RequestMetaHeader
+	RestoreMeta(RequestMetaHeader)
+}
+
 // RequestMetaContainer is an interface of a fixed set of request meta value containers.
 // Contains:
 // - TTL value;
@@ -62,6 +68,12 @@ type RequestMetaContainer interface {
 	EpochContainer
 	VersionContainer
 	RawContainer
+}
+
+// SeizedRequestMetaContainer is a RequestMetaContainer with seized meta.
+type SeizedRequestMetaContainer interface {
+	RequestMetaContainer
+	SeizedMetaHeaderContainer
 }
 
 // VerbSource is an interface of the container of a token verb value with read access.

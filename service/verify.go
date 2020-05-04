@@ -118,8 +118,8 @@ var bytesPool = sync.Pool{New: func() interface{} {
 // new signature to headers. If something went wrong, returns error.
 func SignRequestHeader(key *ecdsa.PrivateKey, msg VerifiableRequest) error {
 	// ignore meta header
-	if meta, ok := msg.(MetaHeader); ok {
-		h := meta.ResetMeta()
+	if meta, ok := msg.(SeizedRequestMetaContainer); ok {
+		h := meta.CutMeta()
 
 		defer func() {
 			meta.RestoreMeta(h)
@@ -157,8 +157,8 @@ func SignRequestHeader(key *ecdsa.PrivateKey, msg VerifiableRequest) error {
 // If something went wrong, returns error.
 func VerifyRequestHeader(msg VerifiableRequest) error {
 	// ignore meta header
-	if meta, ok := msg.(MetaHeader); ok {
-		h := meta.ResetMeta()
+	if meta, ok := msg.(SeizedRequestMetaContainer); ok {
+		h := meta.CutMeta()
 
 		defer func() {
 			meta.RestoreMeta(h)

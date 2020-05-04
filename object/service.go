@@ -31,7 +31,7 @@ type (
 	// All object operations must have TTL, Epoch, Type, Container ID and
 	// permission of usage previous network map.
 	Request interface {
-		service.MetaHeader
+		service.SeizedRequestMetaContainer
 
 		CID() CID
 		Type() RequestType
