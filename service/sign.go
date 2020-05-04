@@ -56,3 +56,17 @@ func DataSignature(src SignedDataSource, key *ecdsa.PrivateKey) ([]byte, error) 
 
 	return crypto.Sign(key, data)
 }
+
+// AddSignatureWithKey calculates the data signature and adds it to accumulator with public key.
+//
+// Returns signing errors only.
+func AddSignatureWithKey(v SignatureKeyAccumulator, key *ecdsa.PrivateKey) error {
+	sign, err := DataSignature(v, key)
+	if err != nil {
+		return err
+	}
+
+	v.AddSignKey(sign, &key.PublicKey)
+
+	return nil
+}

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"crypto/ecdsa"
 	"crypto/rand"
 	"errors"
 	"io"
@@ -21,6 +22,21 @@ type testSignedDataReader struct {
 
 	e error
 	d []byte
+}
+
+type testKeySigAccum struct {
+	d []byte
+	f func([]byte, *ecdsa.PublicKey)
+}
+
+func (s testKeySigAccum) SignedData() ([]byte, error) {
+	return s.d, nil
+}
+
+func (s testKeySigAccum) AddSignKey(sig []byte, key *ecdsa.PublicKey) {
+	if s.f != nil {
+		s.f(sig, key)
+	}
 }
 
 func testData(t *testing.T, sz int) []byte {
@@ -109,4 +125,23 @@ func TestDataSignature(t *testing.T) {
 		// ascertain that the signature passes verification
 		require.NoError(t, crypto.Verify(&sk.PublicKey, src.d, sig))
 	})
+}
+
+func TestAddSignatureWithKey(t *testing.T) {
+	// create test data
+	data := testData(t, 10)
+
+	// create test private key
+	sk := test.DecodeKey(0)
+
+	// create test signature accumulator
+	var s SignatureKeyAccumulator = &testKeySigAccum{
+		d: data,
+		f: func(sig []byte, key *ecdsa.PublicKey) {
+			require.Equal(t, &sk.PublicKey, key)
+			require.NoError(t, crypto.Verify(key, data, sig))
+		},
+	}
+
+	require.NoError(t, AddSignatureWithKey(s, sk))
 }

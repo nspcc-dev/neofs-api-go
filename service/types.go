@@ -1,5 +1,9 @@
 package service
 
+import (
+	"crypto/ecdsa"
+)
+
 // NodeRole to identify in Bootstrap service.
 type NodeRole int32
 
@@ -186,4 +190,10 @@ type SignedDataReader interface {
 
 	// Must behave like Read method of io.Reader and differ only in the reading of the signed data.
 	ReadSignedData([]byte) (int, error)
+}
+
+// SignatureKeyAccumulator is an interface of the accumulator of data signatures with keys.
+type SignatureKeyAccumulator interface {
+	SignedDataSource
+	AddSignKey([]byte, *ecdsa.PublicKey)
 }
