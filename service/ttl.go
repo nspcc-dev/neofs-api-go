@@ -12,10 +12,6 @@ type TTLHeader interface {
 	SetTTL(uint32)
 }
 
-// TTLCondition is a function type that used to verify that TTL value match a specific criterion.
-// Nil error indicates compliance with the criterion.
-type TTLCondition func(ttl uint32) error
-
 // TTL constants.
 const (
 	// ZeroTTL is an upper bound of invalid TTL values.

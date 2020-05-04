@@ -4,64 +4,8 @@ import (
 	"crypto/ecdsa"
 	"encoding/binary"
 
-	"github.com/nspcc-dev/neofs-api-go/refs"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 )
-
-// VerbContainer is an interface of the container of a token verb value.
-type VerbContainer interface {
-	GetVerb() Token_Info_Verb
-	SetVerb(Token_Info_Verb)
-}
-
-// TokenIDContainer is an interface of the container of a token ID value.
-type TokenIDContainer interface {
-	GetID() TokenID
-	SetID(TokenID)
-}
-
-// CreationEpochContainer is an interface of the container of a creation epoch number.
-type CreationEpochContainer interface {
-	CreationEpoch() uint64
-	SetCreationEpoch(uint64)
-}
-
-// ExpirationEpochContainer is an interface of the container of an expiration epoch number.
-type ExpirationEpochContainer interface {
-	ExpirationEpoch() uint64
-	SetExpirationEpoch(uint64)
-}
-
-// SessionKeyContainer is an interface of the container of session key bytes.
-type SessionKeyContainer interface {
-	GetSessionKey() []byte
-	SetSessionKey([]byte)
-}
-
-// SignatureContainer is an interface of the container of signature bytes.
-type SignatureContainer interface {
-	GetSignature() []byte
-	SetSignature([]byte)
-}
-
-// SessionTokenInfo is an interface that determines the information scope of session token.
-type SessionTokenInfo interface {
-	TokenIDContainer
-	refs.OwnerIDContainer
-	VerbContainer
-	refs.AddressContainer
-	CreationEpochContainer
-	ExpirationEpochContainer
-	SessionKeyContainer
-}
-
-// SessionToken is an interface of token information and signature pair.
-type SessionToken interface {
-	SessionTokenInfo
-	SignatureContainer
-}
-
-var _ SessionToken = (*Token)(nil)
 
 var tokenEndianness = binary.BigEndian
 

@@ -1,8 +1,5 @@
 package service
 
-// NodeRole to identify in Bootstrap service.
-type NodeRole int32
-
 const (
 	_ NodeRole = iota
 	// InnerRingNode that work like IR node.
