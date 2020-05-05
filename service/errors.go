@@ -17,5 +17,11 @@ const ErrCannotFindOwner = internal.Error("cannot find owner public key")
 // ErrWrongOwner is raised when passed OwnerID not equal to present PublicKey
 const ErrWrongOwner = internal.Error("wrong owner")
 
-// ErrNilSignedDataSource returned by functions that expect a non-nil SignedDataSource argument, but received nil.
+// ErrNilSignedDataSource returned by functions that expect a non-nil SignedDataSource, but received nil.
 const ErrNilSignedDataSource = internal.Error("signed data source is nil")
+
+// ErrNilSignatureKeySource is returned by functions that expect a non-nil SignatureKeySource, but received nil.
+const ErrNilSignatureKeySource = internal.Error("empty key-signature source")
+
+// ErrEmptyDataWithSignature is returned by functions that expect a non-nil DataWithSignature, but received nil.
+const ErrEmptyDataWithSignature = internal.Error("empty data with signature")

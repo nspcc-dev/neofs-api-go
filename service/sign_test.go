@@ -25,18 +25,28 @@ type testSignedDataReader struct {
 }
 
 type testKeySigAccum struct {
-	d []byte
-	f func([]byte, *ecdsa.PublicKey)
+	data []byte
+	sig  []byte
+	key  *ecdsa.PublicKey
+}
+
+func (s testKeySigAccum) GetSignature() []byte {
+	return s.sig
+}
+
+func (s testKeySigAccum) GetSignKeyPairs() []SignKeyPair {
+	return []SignKeyPair{
+		newSignatureKeyPair(s.key, s.sig),
+	}
 }
 
 func (s testKeySigAccum) SignedData() ([]byte, error) {
-	return s.d, nil
+	return s.data, nil
 }
 
 func (s testKeySigAccum) AddSignKey(sig []byte, key *ecdsa.PublicKey) {
-	if s.f != nil {
-		s.f(sig, key)
-	}
+	s.key = key
+	s.sig = sig
 }
 
 func testData(t *testing.T, sz int) []byte {
@@ -69,16 +79,16 @@ func (s testSignedDataSrc) SignedData() ([]byte, error) {
 func TestDataSignature(t *testing.T) {
 	var err error
 
-	// nil data source
-	_, err = DataSignature(nil, nil)
-	require.EqualError(t, err, ErrNilSignedDataSource.Error())
-
 	// nil private key
-	_, err = DataSignature(new(testSignedDataSrc), nil)
+	_, err = DataSignature(nil, nil)
 	require.EqualError(t, err, crypto.ErrEmptyPrivateKey.Error())
 
 	// create test private key
 	sk := test.DecodeKey(0)
+
+	// nil private key
+	_, err = DataSignature(sk, nil)
+	require.EqualError(t, err, ErrNilSignedDataSource.Error())
 
 	t.Run("common signed data source", func(t *testing.T) {
 		// create test data source
@@ -89,14 +99,14 @@ func TestDataSignature(t *testing.T) {
 		// create custom error for data source
 		src.e = errors.New("test error for data source")
 
-		_, err = DataSignature(src, sk)
+		_, err = DataSignature(sk, src)
 		require.EqualError(t, err, src.e.Error())
 
 		// reset error to nil
 		src.e = nil
 
 		// calculate data signature
-		sig, err := DataSignature(src, sk)
+		sig, err := DataSignature(sk, src)
 		require.NoError(t, err)
 
 		// ascertain that the signature passes verification
@@ -112,14 +122,14 @@ func TestDataSignature(t *testing.T) {
 		// create custom error for signed data reader
 		src.e = errors.New("test error for signed data reader")
 
-		sig, err := DataSignature(src, sk)
+		sig, err := DataSignature(sk, src)
 		require.EqualError(t, err, src.e.Error())
 
 		// reset error to nil
 		src.e = nil
 
 		// calculate data signature
-		sig, err = DataSignature(src, sk)
+		sig, err = DataSignature(sk, src)
 		require.NoError(t, err)
 
 		// ascertain that the signature passes verification
@@ -136,12 +146,122 @@ func TestAddSignatureWithKey(t *testing.T) {
 
 	// create test signature accumulator
 	var s SignatureKeyAccumulator = &testKeySigAccum{
-		d: data,
-		f: func(sig []byte, key *ecdsa.PublicKey) {
-			require.Equal(t, &sk.PublicKey, key)
-			require.NoError(t, crypto.Verify(key, data, sig))
-		},
+		data: data,
 	}
 
 	require.NoError(t, AddSignatureWithKey(s, sk))
+}
+
+func TestVerifySignatures(t *testing.T) {
+	// empty signatures
+	require.NoError(t, VerifySignatures(nil))
+
+	// create test signature source
+	src := &testSignedDataSrc{
+		d: testData(t, 10),
+	}
+
+	// create private key for test
+	sk := test.DecodeKey(0)
+
+	// calculate a signature of the data
+	sig, err := crypto.Sign(sk, src.d)
+	require.NoError(t, err)
+
+	// ascertain that verification is passed
+	require.NoError(t,
+		VerifySignatures(
+			src,
+			newSignatureKeyPair(&sk.PublicKey, sig),
+		),
+	)
+
+	// break the signature
+	sig[0]++
+
+	require.Error(t,
+		VerifySignatures(
+			src,
+			newSignatureKeyPair(&sk.PublicKey, sig),
+		),
+	)
+
+	// restore the signature
+	sig[0]--
+
+	// empty data source
+	require.EqualError(t,
+		VerifySignatures(nil, nil),
+		ErrNilSignedDataSource.Error(),
+	)
+
+}
+
+func TestVerifyAccumulatedSignatures(t *testing.T) {
+	// nil signature source
+	require.EqualError(t,
+		VerifyAccumulatedSignatures(nil),
+		ErrNilSignatureKeySource.Error(),
+	)
+
+	// create test private key
+	sk := test.DecodeKey(0)
+
+	// create signature source
+	src := &testKeySigAccum{
+		data: testData(t, 10),
+		key:  &sk.PublicKey,
+	}
+
+	var err error
+
+	// calculate a signature
+	src.sig, err = crypto.Sign(sk, src.data)
+	require.NoError(t, err)
+
+	// ascertain that verification is passed
+	require.NoError(t, VerifyAccumulatedSignatures(src))
+
+	// break the signature
+	src.sig[0]++
+
+	// ascertain that verification is failed
+	require.Error(t, VerifyAccumulatedSignatures(src))
+}
+
+func TestVerifySignatureWithKey(t *testing.T) {
+	// nil signature source
+	require.EqualError(t,
+		VerifySignatureWithKey(nil, nil),
+		ErrEmptyDataWithSignature.Error(),
+	)
+
+	// create test signature source
+	src := &testKeySigAccum{
+		data: testData(t, 10),
+	}
+
+	// nil public key
+	require.EqualError(t,
+		VerifySignatureWithKey(src, nil),
+		crypto.ErrEmptyPublicKey.Error(),
+	)
+
+	// create test private key
+	sk := test.DecodeKey(0)
+
+	var err error
+
+	// calculate a signature
+	src.sig, err = crypto.Sign(sk, src.data)
+	require.NoError(t, err)
+
+	// ascertain that verification is passed
+	require.NoError(t, VerifySignatureWithKey(src, &sk.PublicKey))
+
+	// break the signature
+	src.sig[0]++
+
+	// ascertain that verification is failed
+	require.Error(t, VerifySignatureWithKey(src, &sk.PublicKey))
 }

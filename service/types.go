@@ -192,8 +192,26 @@ type SignedDataReader interface {
 	ReadSignedData([]byte) (int, error)
 }
 
-// SignatureKeyAccumulator is an interface of the accumulator of data signatures with keys.
+// SignatureKeyAccumulator is an interface of the container of a data and signatures.
 type SignatureKeyAccumulator interface {
 	SignedDataSource
 	AddSignKey([]byte, *ecdsa.PublicKey)
+}
+
+// SignKeyPair is an interface of key-signature pair with read access.
+type SignKeyPair interface {
+	SignatureSource
+	GetPublicKey() *ecdsa.PublicKey
+}
+
+// SignatureKeyAccumulator is an interface of the container of a data and signatures with read access.
+type SignatureKeySource interface {
+	SignedDataSource
+	GetSignKeyPairs() []SignKeyPair
+}
+
+// DataWithSignature is an interface of data-signature pair with read access.
+type DataWithSignature interface {
+	SignedDataSource
+	SignatureSource
 }
