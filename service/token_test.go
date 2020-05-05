@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/refs"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
@@ -90,29 +89,7 @@ func TestTokenGettersSetters(t *testing.T) {
 }
 
 func TestSignToken(t *testing.T) {
-	// nil token
-	require.EqualError(t,
-		SignToken(nil, nil),
-		ErrNilToken.Error(),
-	)
-
-	require.EqualError(t,
-		VerifyTokenSignature(nil, nil),
-		ErrNilToken.Error(),
-	)
-
-	var token SessionToken = new(Token)
-
-	// nil key
-	require.EqualError(t,
-		SignToken(token, nil),
-		crypto.ErrEmptyPrivateKey.Error(),
-	)
-
-	require.EqualError(t,
-		VerifyTokenSignature(token, nil),
-		crypto.ErrEmptyPublicKey.Error(),
-	)
+	token := new(Token)
 
 	// create private key for signing
 	sk := test.DecodeKey(0)
@@ -150,8 +127,8 @@ func TestSignToken(t *testing.T) {
 	token.SetSessionKey(sessionKey)
 
 	// sign and verify token
-	require.NoError(t, SignToken(token, sk))
-	require.NoError(t, VerifyTokenSignature(token, pk))
+	require.NoError(t, AddSignatureWithKey(token, sk))
+	require.NoError(t, VerifySignatureWithKey(token, pk))
 
 	items := []struct {
 		corrupt func()
@@ -235,8 +212,8 @@ func TestSignToken(t *testing.T) {
 
 	for _, v := range items {
 		v.corrupt()
-		require.Error(t, VerifyTokenSignature(token, pk))
+		require.Error(t, VerifySignatureWithKey(token, pk))
 		v.restore()
-		require.NoError(t, VerifyTokenSignature(token, pk))
+		require.NoError(t, VerifySignatureWithKey(token, pk))
 	}
 }

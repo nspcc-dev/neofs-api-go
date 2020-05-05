@@ -3,9 +3,21 @@ package service
 import (
 	"crypto/ecdsa"
 	"encoding/binary"
+	"io"
 
-	crypto "github.com/nspcc-dev/neofs-crypto"
+	"github.com/nspcc-dev/neofs-api-go/refs"
 )
+
+const verbSize = 4
+
+const fixedTokenDataSize = 0 +
+	refs.UUIDSize +
+	refs.OwnerIDSize +
+	verbSize +
+	refs.UUIDSize +
+	refs.CIDSize +
+	8 +
+	8
 
 var tokenEndianness = binary.BigEndian
 
@@ -74,88 +86,71 @@ func (m *Token) SetSignature(sig []byte) {
 	m.Signature = sig
 }
 
-// Returns byte slice that is used for creation/verification of the token signature.
-func verificationTokenData(token SessionToken) []byte {
-	var sz int
+// Size returns the size of a binary representation of the verb.
+func (x Token_Info_Verb) Size() int {
+	return verbSize
+}
 
-	id := token.GetID()
-	sz += id.Size()
-
-	ownerID := token.GetOwnerID()
-	sz += ownerID.Size()
-
-	verb := uint32(token.GetVerb())
-	sz += 4
-
-	addr := token.GetAddress()
-	sz += addr.CID.Size() + addr.ObjectID.Size()
-
-	cEpoch := token.CreationEpoch()
-	sz += 8
-
-	fEpoch := token.ExpirationEpoch()
-	sz += 8
-
-	key := token.GetSessionKey()
-	sz += len(key)
-
-	data := make([]byte, sz)
-
-	var off int
-
-	tokenEndianness.PutUint32(data, verb)
-	off += 4
-
-	tokenEndianness.PutUint64(data[off:], cEpoch)
-	off += 8
-
-	tokenEndianness.PutUint64(data[off:], fEpoch)
-	off += 8
-
-	off += copy(data[off:], id.Bytes())
-	off += copy(data[off:], ownerID.Bytes())
-	off += copy(data[off:], addr.CID.Bytes())
-	off += copy(data[off:], addr.ObjectID.Bytes())
-	off += copy(data[off:], key)
-
+// Bytes returns a binary representation of the verb.
+func (x Token_Info_Verb) Bytes() []byte {
+	data := make([]byte, verbSize)
+	tokenEndianness.PutUint32(data, uint32(x))
 	return data
 }
 
-// SignToken calculates and stores the signature of token information.
-//
-// If passed token is nil, ErrNilToken returns.
-// If passed private key is nil, crypto.ErrEmptyPrivateKey returns.
-func SignToken(token SessionToken, key *ecdsa.PrivateKey) error {
-	if token == nil {
-		return ErrNilToken
-	} else if key == nil {
-		return crypto.ErrEmptyPrivateKey
-	}
-
-	sig, err := crypto.Sign(key, verificationTokenData(token))
-	if err != nil {
-		return err
-	}
-
-	token.SetSignature(sig)
-
-	return nil
+// AddSignKey calls a Signature field setter with passed signature.
+func (m *Token) AddSignKey(sig []byte, _ *ecdsa.PublicKey) {
+	m.SetSignature(sig)
 }
 
-// VerifyTokenSignature checks if token was signed correctly.
+// SignedData returns token information in a binary representation.
+func (m *Token) SignedData() ([]byte, error) {
+	data := make([]byte, m.SignedDataSize())
+
+	copyTokenSignedData(data, m)
+
+	return data, nil
+}
+
+// ReadSignedData copies a binary representation of the token information to passed buffer.
 //
-// If passed token is nil, ErrNilToken returns.
-// If passed public key is nil, crypto.ErrEmptyPublicKey returns.
-func VerifyTokenSignature(token SessionToken, key *ecdsa.PublicKey) error {
-	if token == nil {
-		return ErrNilToken
-	} else if key == nil {
-		return crypto.ErrEmptyPublicKey
+// If buffer length is less than required, io.ErrUnexpectedEOF returns.
+func (m *Token_Info) ReadSignedData(p []byte) (int, error) {
+	sz := m.SignedDataSize()
+	if len(p) < sz {
+		return 0, io.ErrUnexpectedEOF
 	}
 
-	return crypto.Verify(
-		key,
-		verificationTokenData(token),
-		token.GetSignature(),
-	)
+	copyTokenSignedData(p, m)
+
+	return sz, nil
+}
+
+// SignedDataSize returns the length of signed token information slice.
+func (m Token_Info) SignedDataSize() int {
+	return fixedTokenDataSize + len(m.GetSessionKey())
+}
+
+// Fills passed buffer with signing token information bytes.
+// Does not check buffer length, it is understood that enough space is allocated in it.
+func copyTokenSignedData(buf []byte, token SessionTokenInfo) {
+	var off int
+
+	off += copy(buf[off:], token.GetID().Bytes())
+
+	off += copy(buf[off:], token.GetOwnerID().Bytes())
+
+	off += copy(buf[off:], token.GetVerb().Bytes())
+
+	addr := token.GetAddress()
+	off += copy(buf[off:], addr.CID.Bytes())
+	off += copy(buf[off:], addr.ObjectID.Bytes())
+
+	tokenEndianness.PutUint64(buf[off:], token.CreationEpoch())
+	off += 8
+
+	tokenEndianness.PutUint64(buf[off:], token.ExpirationEpoch())
+	off += 8
+
+	copy(buf[off:], token.GetSessionKey())
 }
