@@ -73,6 +73,22 @@ func TestSignVerifyRequests(t *testing.T) {
 				},
 			},
 		},
+		{ // DeleteRequest
+			constructor: func() sigType {
+				return new(DeleteRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					s.(*DeleteRequest).OwnerID[0]++
+				},
+				func(s sigType) {
+					s.(*DeleteRequest).Address.CID[0]++
+				},
+				func(s sigType) {
+					s.(*DeleteRequest).Address.ObjectID[0]++
+				},
+			},
+		},
 	}
 
 	for _, item := range items {

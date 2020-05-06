@@ -4,27 +4,23 @@ import (
 	"io"
 )
 
-// SignedData returns marshaled payload of the Put request.
+// SignedData returns payload bytes of the request.
 //
 // If payload is nil, ErrHeaderNotFound returns.
 func (m PutRequest) SignedData() ([]byte, error) {
-	r := m.GetR()
-	if r == nil {
+	sz := m.SignedDataSize()
+	if sz < 0 {
 		return nil, ErrHeaderNotFound
 	}
 
-	data := make([]byte, r.Size())
+	data := make([]byte, sz)
 
-	if _, err := r.MarshalTo(data); err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return data, m.ReadSignedData(data)
 }
 
-// ReadSignedData copies marshaled payload of the Put request to passed buffer.
+// ReadSignedData copies payload bytes to passed buffer.
 //
-// If payload is nil, ErrHeaderNotFound returns.
+// If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
 func (m PutRequest) ReadSignedData(p []byte) error {
 	r := m.GetR()
 	if r == nil {
@@ -48,16 +44,14 @@ func (m PutRequest) SignedDataSize() int {
 	return r.Size()
 }
 
-// SignedData returns marshaled Address field.
-//
-// Resulting error is always nil.
+// SignedData returns payload bytes of the request.
 func (m GetRequest) SignedData() ([]byte, error) {
-	addr := m.GetAddress()
+	data := make([]byte, m.SignedDataSize())
 
-	return addressBytes(addr), nil
+	return data, m.ReadSignedData(data)
 }
 
-// ReadSignedData copies marshaled Address field to passed buffer.
+// ReadSignedData copies payload bytes to passed buffer.
 //
 // If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
 func (m GetRequest) ReadSignedData(p []byte) error {
@@ -74,29 +68,19 @@ func (m GetRequest) ReadSignedData(p []byte) error {
 	return nil
 }
 
-// SignedDataSize returns the size of object address.
+// SignedDataSize returns payload size of the request.
 func (m GetRequest) SignedDataSize() int {
 	return addressSize(m.GetAddress())
 }
 
-// SignedData returns marshaled Address field.
-//
-// Resulting error is always nil.
+// SignedData returns payload bytes of the request.
 func (m HeadRequest) SignedData() ([]byte, error) {
-	sz := addressSize(m.Address)
+	data := make([]byte, m.SignedDataSize())
 
-	data := make([]byte, sz+1)
-
-	if m.GetFullHeaders() {
-		data[0] = 1
-	}
-
-	copy(data[1:], addressBytes(m.Address))
-
-	return data, nil
+	return data, m.ReadSignedData(data)
 }
 
-// ReadSignedData copies marshaled Address field to passed buffer.
+// ReadSignedData copies payload bytes to passed buffer.
 //
 // If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
 func (m HeadRequest) ReadSignedData(p []byte) error {
@@ -115,9 +99,36 @@ func (m HeadRequest) ReadSignedData(p []byte) error {
 	return nil
 }
 
-// SignedDataSize returns the size of object address.
+// SignedDataSize returns payload size of the request.
 func (m HeadRequest) SignedDataSize() int {
 	return addressSize(m.Address) + 1
+}
+
+// SignedData returns payload bytes of the request.
+func (m DeleteRequest) SignedData() ([]byte, error) {
+	data := make([]byte, m.SignedDataSize())
+
+	return data, m.ReadSignedData(data)
+}
+
+// ReadSignedData copies payload bytes to passed buffer.
+//
+// If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
+func (m DeleteRequest) ReadSignedData(p []byte) error {
+	if len(p) < m.SignedDataSize() {
+		return io.ErrUnexpectedEOF
+	}
+
+	off := copy(p, m.OwnerID.Bytes())
+
+	copy(p[off:], addressBytes(m.Address))
+
+	return nil
+}
+
+// SignedDataSize returns payload size of the request.
+func (m DeleteRequest) SignedDataSize() int {
+	return m.OwnerID.Size() + addressSize(m.Address)
 }
 
 func addressSize(addr Address) int {
