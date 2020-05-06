@@ -19,14 +19,14 @@ func TestSignVerifyRequests(t *testing.T) {
 	}
 
 	items := []struct {
-		constructor func() sigType
-		bodyCorrupt []func(sigType)
+		constructor    func() sigType
+		payloadCorrupt []func(sigType)
 	}{
 		{ // PutRequest.PutHeader
 			constructor: func() sigType {
 				return MakePutRequestHeader(new(Object))
 			},
-			bodyCorrupt: []func(sigType){
+			payloadCorrupt: []func(sigType){
 				func(s sigType) {
 					obj := s.(*PutRequest).GetR().(*PutRequest_Header).Header.GetObject()
 					obj.SystemHeader.PayloadLength++
@@ -37,10 +37,23 @@ func TestSignVerifyRequests(t *testing.T) {
 			constructor: func() sigType {
 				return MakePutRequestChunk(make([]byte, 10))
 			},
-			bodyCorrupt: []func(sigType){
+			payloadCorrupt: []func(sigType){
 				func(s sigType) {
 					h := s.(*PutRequest).GetR().(*PutRequest_Chunk)
 					h.Chunk[0]++
+				},
+			},
+		},
+		{ // GetRequest
+			constructor: func() sigType {
+				return new(GetRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					s.(*GetRequest).Address.CID[0]++
+				},
+				func(s sigType) {
+					s.(*GetRequest).Address.ObjectID[0]++
 				},
 			},
 		},
@@ -62,8 +75,8 @@ func TestSignVerifyRequests(t *testing.T) {
 			require.Error(t, service.VerifyAccumulatedSignaturesWithToken(v))
 		}
 
-		{ // body corruptions
-			for _, corruption := range item.bodyCorrupt {
+		{ // payload corruptions
+			for _, corruption := range item.payloadCorrupt {
 				v := item.constructor()
 
 				require.NoError(t, service.SignDataWithSessionToken(sk, v))

@@ -1,5 +1,9 @@
 package object
 
+import (
+	"io"
+)
+
 // SignedData returns marshaled payload of the Put request.
 //
 // If payload is nil, ErrHeaderNotFound returns.
@@ -42,4 +46,40 @@ func (m PutRequest) SignedDataSize() int {
 	}
 
 	return r.Size()
+}
+
+// SignedData returns marshaled Address field.
+//
+// Resulting error is always nil.
+func (m GetRequest) SignedData() ([]byte, error) {
+	addr := m.GetAddress()
+
+	return append(
+		addr.CID.Bytes(),
+		addr.ObjectID.Bytes()...,
+	), nil
+}
+
+// ReadSignedData copies marshaled Address field to passed buffer.
+//
+// If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
+func (m GetRequest) ReadSignedData(p []byte) error {
+	addr := m.GetAddress()
+
+	if len(p) < addr.CID.Size()+addr.ObjectID.Size() {
+		return io.ErrUnexpectedEOF
+	}
+
+	off := copy(p, addr.CID.Bytes())
+
+	copy(p[off:], addr.ObjectID.Bytes())
+
+	return nil
+}
+
+// SignedDataSize returns the size of object address.
+func (m GetRequest) SignedDataSize() int {
+	addr := m.GetAddress()
+
+	return addr.CID.Size() + addr.ObjectID.Size()
 }
