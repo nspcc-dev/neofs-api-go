@@ -35,6 +35,56 @@ type (
 	}
 )
 
+// GetSessionToken returns SessionToken interface of Token field.
+//
+// If token field value is nil, nil returns.
+func (m RequestVerificationHeader) GetSessionToken() SessionToken {
+	if t := m.GetToken(); t != nil {
+		return t
+	}
+
+	return nil
+}
+
+// AddSignKey adds new element to Signatures field.
+//
+// Sets Sign field to passed sign. Set Peer field to marshaled passed key.
+func (m *RequestVerificationHeader) AddSignKey(sign []byte, key *ecdsa.PublicKey) {
+	m.SetSignatures(
+		append(
+			m.GetSignatures(),
+			&RequestVerificationHeader_Signature{
+				Sign: sign,
+				Peer: crypto.MarshalPublicKey(key),
+			},
+		),
+	)
+}
+
+// GetSignKeyPairs returns the elements of Signatures field as SignKeyPair slice.
+func (m RequestVerificationHeader) GetSignKeyPairs() []SignKeyPair {
+	var (
+		signs = m.GetSignatures()
+		res   = make([]SignKeyPair, len(signs))
+	)
+
+	for i := range signs {
+		res[i] = signs[i]
+	}
+
+	return res
+}
+
+// GetSignature returns the result of a Sign field getter.
+func (m RequestVerificationHeader_Signature) GetSignature() []byte {
+	return m.GetSign()
+}
+
+// GetPublicKey unmarshals and returns the result of a Peer field getter.
+func (m RequestVerificationHeader_Signature) GetPublicKey() *ecdsa.PublicKey {
+	return crypto.UnmarshalPublicKey(m.GetPeer())
+}
+
 // SetSignatures replaces signatures stored in RequestVerificationHeader.
 func (m *RequestVerificationHeader) SetSignatures(signatures []*RequestVerificationHeader_Signature) {
 	m.Signatures = signatures
