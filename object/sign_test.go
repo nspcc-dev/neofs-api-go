@@ -57,6 +57,22 @@ func TestSignVerifyRequests(t *testing.T) {
 				},
 			},
 		},
+		{ // HeadRequest
+			constructor: func() sigType {
+				return new(HeadRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					s.(*HeadRequest).Address.CID[0]++
+				},
+				func(s sigType) {
+					s.(*HeadRequest).Address.ObjectID[0]++
+				},
+				func(s sigType) {
+					s.(*HeadRequest).FullHeaders = true
+				},
+			},
+		},
 	}
 
 	for _, item := range items {

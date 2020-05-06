@@ -54,10 +54,7 @@ func (m PutRequest) SignedDataSize() int {
 func (m GetRequest) SignedData() ([]byte, error) {
 	addr := m.GetAddress()
 
-	return append(
-		addr.CID.Bytes(),
-		addr.ObjectID.Bytes()...,
-	), nil
+	return addressBytes(addr), nil
 }
 
 // ReadSignedData copies marshaled Address field to passed buffer.
@@ -66,7 +63,7 @@ func (m GetRequest) SignedData() ([]byte, error) {
 func (m GetRequest) ReadSignedData(p []byte) error {
 	addr := m.GetAddress()
 
-	if len(p) < addr.CID.Size()+addr.ObjectID.Size() {
+	if len(p) < m.SignedDataSize() {
 		return io.ErrUnexpectedEOF
 	}
 
@@ -79,7 +76,54 @@ func (m GetRequest) ReadSignedData(p []byte) error {
 
 // SignedDataSize returns the size of object address.
 func (m GetRequest) SignedDataSize() int {
-	addr := m.GetAddress()
+	return addressSize(m.GetAddress())
+}
 
+// SignedData returns marshaled Address field.
+//
+// Resulting error is always nil.
+func (m HeadRequest) SignedData() ([]byte, error) {
+	sz := addressSize(m.Address)
+
+	data := make([]byte, sz+1)
+
+	if m.GetFullHeaders() {
+		data[0] = 1
+	}
+
+	copy(data[1:], addressBytes(m.Address))
+
+	return data, nil
+}
+
+// ReadSignedData copies marshaled Address field to passed buffer.
+//
+// If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
+func (m HeadRequest) ReadSignedData(p []byte) error {
+	if len(p) < m.SignedDataSize() {
+		return io.ErrUnexpectedEOF
+	}
+
+	if m.GetFullHeaders() {
+		p[0] = 1
+	}
+
+	off := 1 + copy(p[1:], m.Address.CID.Bytes())
+
+	copy(p[off:], m.Address.ObjectID.Bytes())
+
+	return nil
+}
+
+// SignedDataSize returns the size of object address.
+func (m HeadRequest) SignedDataSize() int {
+	return addressSize(m.Address) + 1
+}
+
+func addressSize(addr Address) int {
 	return addr.CID.Size() + addr.ObjectID.Size()
+}
+
+func addressBytes(addr Address) []byte {
+	return append(addr.CID.Bytes(), addr.ObjectID.Bytes()...)
 }
