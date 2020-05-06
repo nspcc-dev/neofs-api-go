@@ -22,7 +22,7 @@ type RawContainer interface {
 	SetRaw(bool)
 }
 
-// VersionContainer is an interface of the container of a numerical Version value with read access.
+// VersionSource is an interface of the container of a numerical Version value with read access.
 type VersionSource interface {
 	GetVersion() uint32
 }

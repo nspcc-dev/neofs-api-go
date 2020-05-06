@@ -1,6 +1,6 @@
 package service
 
-// ResetMeta returns current value and sets RequestMetaHeader to empty value.
+// CutMeta returns current value and sets RequestMetaHeader to empty value.
 func (m *RequestMetaHeader) CutMeta() RequestMetaHeader {
 	cp := *m
 	m.Reset()
