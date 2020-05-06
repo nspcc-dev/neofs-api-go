@@ -181,9 +181,9 @@ func (m GetRangeHashRequest) ReadSignedData(p []byte) error {
 
 	off += copy(p[off:], addressBytes(m.GetAddress()))
 
-	off += copy(p[off:], sliceBytes(m.GetSalt()))
+	off += copy(p[off:], rangeSetBytes(m.GetRanges()))
 
-	copy(p[off:], rangeSetBytes(m.GetRanges()))
+	off += copy(p[off:], m.GetSalt())
 
 	return nil
 }
@@ -196,23 +196,49 @@ func (m GetRangeHashRequest) SignedDataSize() int {
 
 	sz += rangeSetSize(m.GetRanges())
 
-	sz += sliceSize(m.GetSalt())
+	sz += len(m.GetSalt())
 
 	return sz
 }
 
-func sliceSize(v []byte) int {
-	return 4 + len(v)
+// SignedData returns payload bytes of the request.
+func (m SearchRequest) SignedData() ([]byte, error) {
+	data := make([]byte, m.SignedDataSize())
+
+	return data, m.ReadSignedData(data)
 }
 
-func sliceBytes(v []byte) []byte {
-	data := make([]byte, sliceSize(v))
+// ReadSignedData copies payload bytes to passed buffer.
+//
+// If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
+func (m SearchRequest) ReadSignedData(p []byte) error {
+	if len(p) < m.SignedDataSize() {
+		return io.ErrUnexpectedEOF
+	}
 
-	binary.BigEndian.PutUint32(data, uint32(len(v)))
+	var off int
 
-	copy(data[4:], v)
+	off += copy(p[off:], m.CID().Bytes())
 
-	return data
+	binary.BigEndian.PutUint32(p[off:], m.GetQueryVersion())
+	off += 4
+
+	copy(p[off:], m.GetQuery())
+
+	return nil
+}
+
+// SignedDataSize returns payload size of the request.
+func (m SearchRequest) SignedDataSize() int {
+	var sz int
+
+	sz += m.CID().Size()
+
+	sz += 4 // uint32 Version
+
+	sz += len(m.GetQuery())
+
+	return sz
 }
 
 func rangeSetSize(rs []Range) int {
