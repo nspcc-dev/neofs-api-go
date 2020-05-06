@@ -186,16 +186,21 @@ type SignedDataSource interface {
 // SignedDataReader is an interface of signed data reader.
 type SignedDataReader interface {
 	// Must return the minimum length of the slice for full reading.
+	// Must return a negative value if the length cannot be calculated.
 	SignedDataSize() int
 
 	// Must behave like Read method of io.Reader and differ only in the reading of the signed data.
 	ReadSignedData([]byte) (int, error)
 }
 
-// SignatureKeyAccumulator is an interface of the container of a data and signatures.
-type SignatureKeyAccumulator interface {
-	SignedDataSource
+// SignKeyPairAccumulator is an interface of a set of key-signature pairs with append access.
+type SignKeyPairAccumulator interface {
 	AddSignKey([]byte, *ecdsa.PublicKey)
+}
+
+// SignKeyPairSource is an interface of a set of key-signature pairs with read access.
+type SignKeyPairSource interface {
+	GetSignKeyPairs() []SignKeyPair
 }
 
 // SignKeyPair is an interface of key-signature pair with read access.
@@ -204,14 +209,38 @@ type SignKeyPair interface {
 	GetPublicKey() *ecdsa.PublicKey
 }
 
-// SignatureKeyAccumulator is an interface of the container of a data and signatures with read access.
-type SignatureKeySource interface {
-	SignedDataSource
-	GetSignKeyPairs() []SignKeyPair
-}
-
 // DataWithSignature is an interface of data-signature pair with read access.
 type DataWithSignature interface {
 	SignedDataSource
 	SignatureSource
+}
+
+// DataWithSignKeyAccumulator is an interface of data and key-signature accumulator pair.
+type DataWithSignKeyAccumulator interface {
+	SignedDataSource
+	SignKeyPairAccumulator
+}
+
+// DataWithSignKeySource is an interface of data and key-signature source pair.
+type DataWithSignKeySource interface {
+	SignedDataSource
+	SignKeyPairSource
+}
+
+// SignedDataWithToken is an interface of data-token pair with read access.
+type SignedDataWithToken interface {
+	SignedDataSource
+	SessionTokenSource
+}
+
+// DataWithTokenSignAccumulator is an interface of data-token pair with signature write access.
+type DataWithTokenSignAccumulator interface {
+	SignedDataWithToken
+	SignKeyPairAccumulator
+}
+
+// DataWithTokenSignSource is an interface of data-token pair with signature read access.
+type DataWithTokenSignSource interface {
+	SignedDataWithToken
+	SignKeyPairSource
 }

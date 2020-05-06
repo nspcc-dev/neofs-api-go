@@ -34,6 +34,8 @@ func newSignatureKeyPair(key *ecdsa.PublicKey, sign []byte) SignKeyPair {
 // If passed DataSignatureAccumulator provides a SignedDataReader interface, data for signature is obtained
 // using this interface for optimization. In this case, it is understood that reading into the slice D
 // that the method DataForSignature returns does not change D.
+//
+// If returned length of data is negative, ErrNegativeLength returns.
 func dataForSignature(src SignedDataSource) ([]byte, error) {
 	if src == nil {
 		return nil, ErrNilSignedDataSource
@@ -45,11 +47,10 @@ func dataForSignature(src SignedDataSource) ([]byte, error) {
 	}
 
 	buf := bytesPool.Get().([]byte)
-	defer func() {
-		bytesPool.Put(buf)
-	}()
 
-	if size := r.SignedDataSize(); size <= cap(buf) {
+	if size := r.SignedDataSize(); size < 0 {
+		return nil, ErrNegativeLength
+	} else if size <= cap(buf) {
 		buf = buf[:size]
 	} else {
 		buf = make([]byte, size)
@@ -78,14 +79,17 @@ func DataSignature(key *ecdsa.PrivateKey, src SignedDataSource) ([]byte, error) 
 	if err != nil {
 		return nil, err
 	}
+	defer bytesPool.Put(data)
 
 	return crypto.Sign(key, data)
 }
 
 // AddSignatureWithKey calculates the data signature and adds it to accumulator with public key.
 //
+// Any change of data provoke signature breakdown.
+//
 // Returns signing errors only.
-func AddSignatureWithKey(v SignatureKeyAccumulator, key *ecdsa.PrivateKey) error {
+func AddSignatureWithKey(key *ecdsa.PrivateKey, v DataWithSignKeyAccumulator) error {
 	sign, err := DataSignature(key, v)
 	if err != nil {
 		return err
@@ -108,6 +112,7 @@ func verifySignatures(src SignedDataSource, items ...SignKeyPair) error {
 	if err != nil {
 		return err
 	}
+	defer bytesPool.Put(data)
 
 	for _, signKey := range items {
 		if err := crypto.Verify(
@@ -135,7 +140,7 @@ func VerifySignatures(src SignedDataSource, items ...SignKeyPair) error {
 //
 // Behaves like VerifySignatures.
 // If passed key-signature source is empty, ErrNilSignatureKeySource returns.
-func VerifyAccumulatedSignatures(src SignatureKeySource) error {
+func VerifyAccumulatedSignatures(src DataWithSignKeySource) error {
 	if src == nil {
 		return ErrNilSignatureKeySource
 	}
@@ -148,7 +153,7 @@ func VerifyAccumulatedSignatures(src SignatureKeySource) error {
 // If passed data with signature is nil, ErrEmptyDataWithSignature returns.
 // If passed key is nil, crypto.ErrEmptyPublicKey returns.
 // A non-nil error returns if and only if the signature does not pass verification.
-func VerifySignatureWithKey(src DataWithSignature, key *ecdsa.PublicKey) error {
+func VerifySignatureWithKey(key *ecdsa.PublicKey, src DataWithSignature) error {
 	if src == nil {
 		return ErrEmptyDataWithSignature
 	} else if key == nil {
@@ -162,4 +167,56 @@ func VerifySignatureWithKey(src DataWithSignature, key *ecdsa.PublicKey) error {
 			src.GetSignature(),
 		),
 	)
+}
+
+// SignDataWithSessionToken calculates data with token signature and adds it to accumulator.
+//
+// Any change of data or session token info provoke signature breakdown.
+//
+// If passed private key is nil, crypto.ErrEmptyPrivateKey returns.
+// If passed DataWithTokenSignAccumulator is nil, ErrNilDataWithTokenSignAccumulator returns.
+func SignDataWithSessionToken(key *ecdsa.PrivateKey, src DataWithTokenSignAccumulator) error {
+	if src == nil {
+		return ErrNilDataWithTokenSignAccumulator
+	} else if r, ok := src.(SignedDataReader); ok {
+		return AddSignatureWithKey(key, &signDataReaderWithToken{
+			SignedDataSource:       src,
+			SignKeyPairAccumulator: src,
+
+			rdr:   r,
+			token: src.GetSessionToken(),
+		},
+		)
+	}
+
+	return AddSignatureWithKey(key, &signAccumWithToken{
+		SignedDataSource:       src,
+		SignKeyPairAccumulator: src,
+
+		token: src.GetSessionToken(),
+	})
+}
+
+// VerifyAccumulatedSignaturesWithToken checks if accumulated key-signature pairs of data with token are valid.
+//
+// If passed DataWithTokenSignSource is nil, ErrNilSignatureKeySourceWithToken returns.
+func VerifyAccumulatedSignaturesWithToken(src DataWithTokenSignSource) error {
+	if src == nil {
+		return ErrNilSignatureKeySourceWithToken
+	} else if r, ok := src.(SignedDataReader); ok {
+		return VerifyAccumulatedSignatures(&signDataReaderWithToken{
+			SignedDataSource:  src,
+			SignKeyPairSource: src,
+
+			rdr:   r,
+			token: src.GetSessionToken(),
+		})
+	}
+
+	return VerifyAccumulatedSignatures(&signAccumWithToken{
+		SignedDataSource:  src,
+		SignKeyPairSource: src,
+
+		token: src.GetSessionToken(),
+	})
 }

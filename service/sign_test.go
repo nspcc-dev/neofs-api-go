@@ -13,38 +13,32 @@ import (
 )
 
 type testSignedDataSrc struct {
-	e error
-	d []byte
+	err   error
+	data  []byte
+	sig   []byte
+	key   *ecdsa.PublicKey
+	token SessionToken
 }
 
 type testSignedDataReader struct {
-	SignedDataSource
-
-	e error
-	d []byte
+	*testSignedDataSrc
 }
 
-type testKeySigAccum struct {
-	data []byte
-	sig  []byte
-	key  *ecdsa.PublicKey
-}
-
-func (s testKeySigAccum) GetSignature() []byte {
+func (s testSignedDataSrc) GetSignature() []byte {
 	return s.sig
 }
 
-func (s testKeySigAccum) GetSignKeyPairs() []SignKeyPair {
+func (s testSignedDataSrc) GetSignKeyPairs() []SignKeyPair {
 	return []SignKeyPair{
 		newSignatureKeyPair(s.key, s.sig),
 	}
 }
 
-func (s testKeySigAccum) SignedData() ([]byte, error) {
-	return s.data, nil
+func (s testSignedDataSrc) SignedData() ([]byte, error) {
+	return s.data, s.err
 }
 
-func (s testKeySigAccum) AddSignKey(sig []byte, key *ecdsa.PublicKey) {
+func (s *testSignedDataSrc) AddSignKey(sig []byte, key *ecdsa.PublicKey) {
 	s.key = key
 	s.sig = sig
 }
@@ -56,24 +50,24 @@ func testData(t *testing.T, sz int) []byte {
 	return d
 }
 
+func (s testSignedDataSrc) GetSessionToken() SessionToken {
+	return s.token
+}
+
 func (s testSignedDataReader) SignedDataSize() int {
-	return len(s.d)
+	return len(s.data)
 }
 
 func (s testSignedDataReader) ReadSignedData(buf []byte) (int, error) {
-	if s.e != nil {
-		return 0, s.e
+	if s.err != nil {
+		return 0, s.err
 	}
 
 	var err error
-	if len(buf) < len(s.d) {
+	if len(buf) < len(s.data) {
 		err = io.ErrUnexpectedEOF
 	}
-	return copy(buf, s.d), err
-}
-
-func (s testSignedDataSrc) SignedData() ([]byte, error) {
-	return s.d, s.e
+	return copy(buf, s.data), err
 }
 
 func TestDataSignature(t *testing.T) {
@@ -93,63 +87,59 @@ func TestDataSignature(t *testing.T) {
 	t.Run("common signed data source", func(t *testing.T) {
 		// create test data source
 		src := &testSignedDataSrc{
-			d: testData(t, 10),
+			data: testData(t, 10),
 		}
 
 		// create custom error for data source
-		src.e = errors.New("test error for data source")
+		src.err = errors.New("test error for data source")
 
 		_, err = DataSignature(sk, src)
-		require.EqualError(t, err, src.e.Error())
+		require.EqualError(t, err, src.err.Error())
 
 		// reset error to nil
-		src.e = nil
+		src.err = nil
 
 		// calculate data signature
 		sig, err := DataSignature(sk, src)
 		require.NoError(t, err)
 
 		// ascertain that the signature passes verification
-		require.NoError(t, crypto.Verify(&sk.PublicKey, src.d, sig))
+		require.NoError(t, crypto.Verify(&sk.PublicKey, src.data, sig))
 	})
 
 	t.Run("signed data reader", func(t *testing.T) {
 		// create test signed data reader
-		src := &testSignedDataReader{
-			d: testData(t, 10),
+		src := &testSignedDataSrc{
+			data: testData(t, 10),
 		}
 
 		// create custom error for signed data reader
-		src.e = errors.New("test error for signed data reader")
+		src.err = errors.New("test error for signed data reader")
 
 		sig, err := DataSignature(sk, src)
-		require.EqualError(t, err, src.e.Error())
+		require.EqualError(t, err, src.err.Error())
 
 		// reset error to nil
-		src.e = nil
+		src.err = nil
 
 		// calculate data signature
 		sig, err = DataSignature(sk, src)
 		require.NoError(t, err)
 
 		// ascertain that the signature passes verification
-		require.NoError(t, crypto.Verify(&sk.PublicKey, src.d, sig))
+		require.NoError(t, crypto.Verify(&sk.PublicKey, src.data, sig))
 	})
 }
 
 func TestAddSignatureWithKey(t *testing.T) {
-	// create test data
-	data := testData(t, 10)
-
-	// create test private key
-	sk := test.DecodeKey(0)
-
-	// create test signature accumulator
-	var s SignatureKeyAccumulator = &testKeySigAccum{
-		data: data,
-	}
-
-	require.NoError(t, AddSignatureWithKey(s, sk))
+	require.NoError(t,
+		AddSignatureWithKey(
+			test.DecodeKey(0),
+			&testSignedDataSrc{
+				data: testData(t, 10),
+			},
+		),
+	)
 }
 
 func TestVerifySignatures(t *testing.T) {
@@ -158,14 +148,14 @@ func TestVerifySignatures(t *testing.T) {
 
 	// create test signature source
 	src := &testSignedDataSrc{
-		d: testData(t, 10),
+		data: testData(t, 10),
 	}
 
 	// create private key for test
 	sk := test.DecodeKey(0)
 
 	// calculate a signature of the data
-	sig, err := crypto.Sign(sk, src.d)
+	sig, err := crypto.Sign(sk, src.data)
 	require.NoError(t, err)
 
 	// ascertain that verification is passed
@@ -208,7 +198,7 @@ func TestVerifyAccumulatedSignatures(t *testing.T) {
 	sk := test.DecodeKey(0)
 
 	// create signature source
-	src := &testKeySigAccum{
+	src := &testSignedDataSrc{
 		data: testData(t, 10),
 		key:  &sk.PublicKey,
 	}
@@ -237,13 +227,13 @@ func TestVerifySignatureWithKey(t *testing.T) {
 	)
 
 	// create test signature source
-	src := &testKeySigAccum{
+	src := &testSignedDataSrc{
 		data: testData(t, 10),
 	}
 
 	// nil public key
 	require.EqualError(t,
-		VerifySignatureWithKey(src, nil),
+		VerifySignatureWithKey(nil, src),
 		crypto.ErrEmptyPublicKey.Error(),
 	)
 
@@ -257,11 +247,80 @@ func TestVerifySignatureWithKey(t *testing.T) {
 	require.NoError(t, err)
 
 	// ascertain that verification is passed
-	require.NoError(t, VerifySignatureWithKey(src, &sk.PublicKey))
+	require.NoError(t, VerifySignatureWithKey(&sk.PublicKey, src))
 
 	// break the signature
 	src.sig[0]++
 
 	// ascertain that verification is failed
-	require.Error(t, VerifySignatureWithKey(src, &sk.PublicKey))
+	require.Error(t, VerifySignatureWithKey(&sk.PublicKey, src))
+}
+
+func TestSignVerifyDataWithSessionToken(t *testing.T) {
+	// sign with empty DataWithTokenSignAccumulator
+	require.EqualError(t,
+		SignDataWithSessionToken(nil, nil),
+		ErrNilDataWithTokenSignAccumulator.Error(),
+	)
+
+	// verify with empty DataWithTokenSignSource
+	require.EqualError(t,
+		VerifyAccumulatedSignaturesWithToken(nil),
+		ErrNilSignatureKeySourceWithToken.Error(),
+	)
+
+	// create test session token
+	var (
+		token    = new(Token)
+		initVerb = Token_Info_Verb(1)
+	)
+
+	token.SetVerb(initVerb)
+
+	// create test data with token
+	src := &testSignedDataSrc{
+		data:  testData(t, 10),
+		token: token,
+	}
+
+	// create test private key
+	sk := test.DecodeKey(0)
+
+	// sign with private key
+	require.NoError(t, SignDataWithSessionToken(sk, src))
+
+	// ascertain that verification is passed
+	require.NoError(t, VerifyAccumulatedSignaturesWithToken(src))
+
+	// break the data
+	src.data[0]++
+
+	// ascertain that verification is failed
+	require.Error(t, VerifyAccumulatedSignaturesWithToken(src))
+
+	// restore the data
+	src.data[0]--
+
+	// break the token
+	token.SetVerb(initVerb + 1)
+
+	// ascertain that verification is failed
+	require.Error(t, VerifyAccumulatedSignaturesWithToken(src))
+
+	// restore the token
+	token.SetVerb(initVerb)
+
+	// ascertain that verification is passed
+	require.NoError(t, VerifyAccumulatedSignaturesWithToken(src))
+
+	// wrap to data reader
+	rdr := &testSignedDataReader{
+		testSignedDataSrc: src,
+	}
+
+	// sign with private key
+	require.NoError(t, SignDataWithSessionToken(sk, rdr))
+
+	// ascertain that verification is passed
+	require.NoError(t, VerifyAccumulatedSignaturesWithToken(rdr))
 }

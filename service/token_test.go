@@ -127,8 +127,8 @@ func TestSignToken(t *testing.T) {
 	token.SetSessionKey(sessionKey)
 
 	// sign and verify token
-	require.NoError(t, AddSignatureWithKey(token, sk))
-	require.NoError(t, VerifySignatureWithKey(token, pk))
+	require.NoError(t, AddSignatureWithKey(sk, token))
+	require.NoError(t, VerifySignatureWithKey(pk, token))
 
 	items := []struct {
 		corrupt func()
@@ -212,8 +212,8 @@ func TestSignToken(t *testing.T) {
 
 	for _, v := range items {
 		v.corrupt()
-		require.Error(t, VerifySignatureWithKey(token, pk))
+		require.Error(t, VerifySignatureWithKey(pk, token))
 		v.restore()
-		require.NoError(t, VerifySignatureWithKey(token, pk))
+		require.NoError(t, VerifySignatureWithKey(pk, token))
 	}
 }

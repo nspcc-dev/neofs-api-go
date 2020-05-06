@@ -8,6 +8,24 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/refs"
 )
 
+type signAccumWithToken struct {
+	SignedDataSource
+	SignKeyPairAccumulator
+	SignKeyPairSource
+
+	token SessionToken
+}
+
+type signDataReaderWithToken struct {
+	SignedDataSource
+	SignKeyPairAccumulator
+	SignKeyPairSource
+
+	rdr SignedDataReader
+
+	token SessionToken
+}
+
 const verbSize = 4
 
 const fixedTokenDataSize = 0 +
@@ -127,13 +145,26 @@ func (m *Token_Info) ReadSignedData(p []byte) (int, error) {
 }
 
 // SignedDataSize returns the length of signed token information slice.
-func (m Token_Info) SignedDataSize() int {
-	return fixedTokenDataSize + len(m.GetSessionKey())
+func (m *Token_Info) SignedDataSize() int {
+	return tokenInfoSize(m)
+}
+
+func tokenInfoSize(v SessionKeySource) int {
+	if v == nil {
+		return 0
+	}
+	return fixedTokenDataSize + len(v.GetSessionKey())
 }
 
 // Fills passed buffer with signing token information bytes.
 // Does not check buffer length, it is understood that enough space is allocated in it.
+//
+// If passed SessionTokenInfo, buffer remains unchanged.
 func copyTokenSignedData(buf []byte, token SessionTokenInfo) {
+	if token == nil {
+		return
+	}
+
 	var off int
 
 	off += copy(buf[off:], token.GetID().Bytes())
@@ -153,4 +184,52 @@ func copyTokenSignedData(buf []byte, token SessionTokenInfo) {
 	off += 8
 
 	copy(buf[off:], token.GetSessionKey())
+}
+
+// SignedData concatenates signed data with session token information. Returns concatenation result.
+//
+// Token bytes are added if and only if token is not nil.
+func (s signAccumWithToken) SignedData() ([]byte, error) {
+	data, err := s.SignedDataSource.SignedData()
+	if err != nil {
+		return nil, err
+	}
+
+	tokenData := make([]byte, tokenInfoSize(s.token))
+
+	copyTokenSignedData(tokenData, s.token)
+
+	return append(data, tokenData...), nil
+}
+
+func (s signDataReaderWithToken) SignedDataSize() int {
+	sz := s.rdr.SignedDataSize()
+	if sz < 0 {
+		return -1
+	}
+
+	sz += tokenInfoSize(s.token)
+
+	return sz
+}
+
+func (s signDataReaderWithToken) ReadSignedData(p []byte) (int, error) {
+	dataSize := s.rdr.SignedDataSize()
+	if dataSize < 0 {
+		return 0, ErrNegativeLength
+	}
+
+	sumSize := dataSize + tokenInfoSize(s.token)
+
+	if len(p) < sumSize {
+		return 0, io.ErrUnexpectedEOF
+	}
+
+	if n, err := s.rdr.ReadSignedData(p); err != nil {
+		return n, err
+	}
+
+	copyTokenSignedData(p[dataSize:], s.token)
+
+	return sumSize, nil
 }
