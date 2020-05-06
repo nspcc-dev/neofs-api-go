@@ -1,6 +1,7 @@
 package object
 
 import (
+	"encoding/binary"
 	"io"
 )
 
@@ -159,6 +160,81 @@ func (m GetRangeRequest) ReadSignedData(p []byte) error {
 // SignedDataSize returns payload size of the request.
 func (m GetRangeRequest) SignedDataSize() int {
 	return (&m.Range).Size() + addressSize(m.GetAddress())
+}
+
+// SignedData returns payload bytes of the request.
+func (m GetRangeHashRequest) SignedData() ([]byte, error) {
+	data := make([]byte, m.SignedDataSize())
+
+	return data, m.ReadSignedData(data)
+}
+
+// ReadSignedData copies payload bytes to passed buffer.
+//
+// If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
+func (m GetRangeHashRequest) ReadSignedData(p []byte) error {
+	if len(p) < m.SignedDataSize() {
+		return io.ErrUnexpectedEOF
+	}
+
+	var off int
+
+	off += copy(p[off:], addressBytes(m.GetAddress()))
+
+	off += copy(p[off:], sliceBytes(m.GetSalt()))
+
+	copy(p[off:], rangeSetBytes(m.GetRanges()))
+
+	return nil
+}
+
+// SignedDataSize returns payload size of the request.
+func (m GetRangeHashRequest) SignedDataSize() int {
+	var sz int
+
+	sz += addressSize(m.GetAddress())
+
+	sz += rangeSetSize(m.GetRanges())
+
+	sz += sliceSize(m.GetSalt())
+
+	return sz
+}
+
+func sliceSize(v []byte) int {
+	return 4 + len(v)
+}
+
+func sliceBytes(v []byte) []byte {
+	data := make([]byte, sliceSize(v))
+
+	binary.BigEndian.PutUint32(data, uint32(len(v)))
+
+	copy(data[4:], v)
+
+	return data
+}
+
+func rangeSetSize(rs []Range) int {
+	return 4 + len(rs)*16 // two uint64 fields
+}
+
+func rangeSetBytes(rs []Range) []byte {
+	data := make([]byte, rangeSetSize(rs))
+
+	binary.BigEndian.PutUint32(data, uint32(len(rs)))
+
+	off := 4
+
+	for i := range rs {
+		binary.BigEndian.PutUint64(data[off:], rs[i].Offset)
+		off += 8
+
+		binary.BigEndian.PutUint64(data[off:], rs[i].Length)
+		off += 8
+	}
+
+	return data
 }
 
 func addressSize(addr Address) int {

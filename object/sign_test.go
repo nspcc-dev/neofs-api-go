@@ -108,6 +108,34 @@ func TestSignVerifyRequests(t *testing.T) {
 				},
 			},
 		},
+		{ // GetRangeHashRequest
+			constructor: func() sigType {
+				return &GetRangeHashRequest{
+					Ranges: []Range{{}},
+					Salt:   []byte{1, 2, 3},
+				}
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					s.(*GetRangeHashRequest).Address.CID[0]++
+				},
+				func(s sigType) {
+					s.(*GetRangeHashRequest).Address.ObjectID[0]++
+				},
+				func(s sigType) {
+					s.(*GetRangeHashRequest).Salt[0]++
+				},
+				func(s sigType) {
+					s.(*GetRangeHashRequest).Ranges[0].Length++
+				},
+				func(s sigType) {
+					s.(*GetRangeHashRequest).Ranges[0].Offset++
+				},
+				func(s sigType) {
+					s.(*GetRangeHashRequest).Ranges = nil
+				},
+			},
+		},
 	}
 
 	for _, item := range items {
