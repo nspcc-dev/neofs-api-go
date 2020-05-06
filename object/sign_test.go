@@ -89,6 +89,25 @@ func TestSignVerifyRequests(t *testing.T) {
 				},
 			},
 		},
+		{ // GetRangeRequest
+			constructor: func() sigType {
+				return new(GetRangeRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					s.(*GetRangeRequest).Range.Length++
+				},
+				func(s sigType) {
+					s.(*GetRangeRequest).Range.Offset++
+				},
+				func(s sigType) {
+					s.(*GetRangeRequest).Address.CID[0]++
+				},
+				func(s sigType) {
+					s.(*GetRangeRequest).Address.ObjectID[0]++
+				},
+			},
+		},
 	}
 
 	for _, item := range items {

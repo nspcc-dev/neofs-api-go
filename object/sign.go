@@ -131,6 +131,36 @@ func (m DeleteRequest) SignedDataSize() int {
 	return m.OwnerID.Size() + addressSize(m.Address)
 }
 
+// SignedData returns payload bytes of the request.
+func (m GetRangeRequest) SignedData() ([]byte, error) {
+	data := make([]byte, m.SignedDataSize())
+
+	return data, m.ReadSignedData(data)
+}
+
+// ReadSignedData copies payload bytes to passed buffer.
+//
+// If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
+func (m GetRangeRequest) ReadSignedData(p []byte) error {
+	if len(p) < m.SignedDataSize() {
+		return io.ErrUnexpectedEOF
+	}
+
+	n, err := (&m.Range).MarshalTo(p)
+	if err != nil {
+		return err
+	}
+
+	copy(p[n:], addressBytes(m.GetAddress()))
+
+	return nil
+}
+
+// SignedDataSize returns payload size of the request.
+func (m GetRangeRequest) SignedDataSize() int {
+	return (&m.Range).Size() + addressSize(m.GetAddress())
+}
+
 func addressSize(addr Address) int {
 	return addr.CID.Size() + addr.ObjectID.Size()
 }
