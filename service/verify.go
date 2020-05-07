@@ -35,16 +35,55 @@ type (
 	}
 )
 
-const (
-	// ErrCannotLoadPublicKey is raised when cannot unmarshal public key from RequestVerificationHeader_Sign.
-	ErrCannotLoadPublicKey = internal.Error("cannot load public key")
+// GetSessionToken returns SessionToken interface of Token field.
+//
+// If token field value is nil, nil returns.
+func (m RequestVerificationHeader) GetSessionToken() SessionToken {
+	if t := m.GetToken(); t != nil {
+		return t
+	}
 
-	// ErrCannotFindOwner is raised when signatures empty in GetOwner.
-	ErrCannotFindOwner = internal.Error("cannot find owner public key")
+	return nil
+}
 
-	// ErrWrongOwner is raised when passed OwnerID not equal to present PublicKey
-	ErrWrongOwner = internal.Error("wrong owner")
-)
+// AddSignKey adds new element to Signatures field.
+//
+// Sets Sign field to passed sign. Set Peer field to marshaled passed key.
+func (m *RequestVerificationHeader) AddSignKey(sign []byte, key *ecdsa.PublicKey) {
+	m.SetSignatures(
+		append(
+			m.GetSignatures(),
+			&RequestVerificationHeader_Signature{
+				Sign: sign,
+				Peer: crypto.MarshalPublicKey(key),
+			},
+		),
+	)
+}
+
+// GetSignKeyPairs returns the elements of Signatures field as SignKeyPair slice.
+func (m RequestVerificationHeader) GetSignKeyPairs() []SignKeyPair {
+	var (
+		signs = m.GetSignatures()
+		res   = make([]SignKeyPair, len(signs))
+	)
+
+	for i := range signs {
+		res[i] = signs[i]
+	}
+
+	return res
+}
+
+// GetSignature returns the result of a Sign field getter.
+func (m RequestVerificationHeader_Signature) GetSignature() []byte {
+	return m.GetSign()
+}
+
+// GetPublicKey unmarshals and returns the result of a Peer field getter.
+func (m RequestVerificationHeader_Signature) GetPublicKey() *ecdsa.PublicKey {
+	return crypto.UnmarshalPublicKey(m.GetPeer())
+}
 
 // SetSignatures replaces signatures stored in RequestVerificationHeader.
 func (m *RequestVerificationHeader) SetSignatures(signatures []*RequestVerificationHeader_Signature) {
@@ -81,7 +120,7 @@ func (m *RequestVerificationHeader) GetOwner() (*ecdsa.PublicKey, error) {
 		return key, nil
 	}
 
-	return nil, ErrCannotLoadPublicKey
+	return nil, ErrInvalidPublicKeyBytes
 }
 
 // GetLastPeer tries to get last peer public key from signatures.
@@ -99,7 +138,7 @@ func (m *RequestVerificationHeader) GetLastPeer() (*ecdsa.PublicKey, error) {
 			return key, nil
 		}
 
-		return nil, ErrCannotLoadPublicKey
+		return nil, ErrInvalidPublicKeyBytes
 	}
 }
 
@@ -129,8 +168,8 @@ var bytesPool = sync.Pool{New: func() interface{} {
 // new signature to headers. If something went wrong, returns error.
 func SignRequestHeader(key *ecdsa.PrivateKey, msg VerifiableRequest) error {
 	// ignore meta header
-	if meta, ok := msg.(MetaHeader); ok {
-		h := meta.ResetMeta()
+	if meta, ok := msg.(SeizedRequestMetaContainer); ok {
+		h := meta.CutMeta()
 
 		defer func() {
 			meta.RestoreMeta(h)
@@ -168,8 +207,8 @@ func SignRequestHeader(key *ecdsa.PrivateKey, msg VerifiableRequest) error {
 // If something went wrong, returns error.
 func VerifyRequestHeader(msg VerifiableRequest) error {
 	// ignore meta header
-	if meta, ok := msg.(MetaHeader); ok {
-		h := meta.ResetMeta()
+	if meta, ok := msg.(SeizedRequestMetaContainer); ok {
+		h := meta.CutMeta()
 
 		defer func() {
 			meta.RestoreMeta(h)
@@ -190,7 +229,7 @@ func VerifyRequestHeader(msg VerifiableRequest) error {
 
 		key := crypto.UnmarshalPublicKey(peer)
 		if key == nil {
-			return errors.Wrapf(ErrCannotLoadPublicKey, "%d: %02x", i, peer)
+			return errors.Wrapf(ErrInvalidPublicKeyBytes, "%d: %02x", i, peer)
 		}
 
 		if size := msg.Size(); size <= cap(data) {

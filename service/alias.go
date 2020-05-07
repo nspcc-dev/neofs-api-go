@@ -4,11 +4,17 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/refs"
 )
 
-// TokenID is type alias of UUID ref.
+// TokenID is a type alias of UUID ref.
 type TokenID = refs.UUID
 
-// OwnerID is type alias of OwnerID ref.
+// OwnerID is a type alias of OwnerID ref.
 type OwnerID = refs.OwnerID
 
-// Address is type alias of Address ref.
+// Address is a type alias of Address ref.
 type Address = refs.Address
+
+// AddressContainer is a type alias of refs.AddressContainer.
+type AddressContainer = refs.AddressContainer
+
+// OwnerIDContainer is a type alias of refs.OwnerIDContainer.
+type OwnerIDContainer = refs.OwnerIDContainer

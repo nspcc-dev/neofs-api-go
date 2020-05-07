@@ -3,69 +3,39 @@ package service
 import (
 	"crypto/ecdsa"
 	"encoding/binary"
+	"io"
 
-	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/refs"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
-// VerbContainer is an interface of the container of a token verb value.
-type VerbContainer interface {
-	GetVerb() Token_Info_Verb
-	SetVerb(Token_Info_Verb)
+type signAccumWithToken struct {
+	SignedDataSource
+	SignKeyPairAccumulator
+	SignKeyPairSource
+
+	token SessionToken
 }
 
-// TokenIDContainer is an interface of the container of a token ID value.
-type TokenIDContainer interface {
-	GetID() TokenID
-	SetID(TokenID)
+type signDataReaderWithToken struct {
+	SignedDataSource
+	SignKeyPairAccumulator
+	SignKeyPairSource
+
+	rdr SignedDataReader
+
+	token SessionToken
 }
 
-// CreationEpochContainer is an interface of the container of a creation epoch number.
-type CreationEpochContainer interface {
-	CreationEpoch() uint64
-	SetCreationEpoch(uint64)
-}
+const verbSize = 4
 
-// ExpirationEpochContainer is an interface of the container of an expiration epoch number.
-type ExpirationEpochContainer interface {
-	ExpirationEpoch() uint64
-	SetExpirationEpoch(uint64)
-}
-
-// SessionKeyContainer is an interface of the container of session key bytes.
-type SessionKeyContainer interface {
-	GetSessionKey() []byte
-	SetSessionKey([]byte)
-}
-
-// SignatureContainer is an interface of the container of signature bytes.
-type SignatureContainer interface {
-	GetSignature() []byte
-	SetSignature([]byte)
-}
-
-// SessionTokenInfo is an interface that determines the information scope of session token.
-type SessionTokenInfo interface {
-	TokenIDContainer
-	refs.OwnerIDContainer
-	VerbContainer
-	refs.AddressContainer
-	CreationEpochContainer
-	ExpirationEpochContainer
-	SessionKeyContainer
-}
-
-// SessionToken is an interface of token information and signature pair.
-type SessionToken interface {
-	SessionTokenInfo
-	SignatureContainer
-}
-
-// ErrEmptyToken is raised when passed Token is nil.
-const ErrEmptyToken = internal.Error("token is empty")
-
-var _ SessionToken = (*Token)(nil)
+const fixedTokenDataSize = 0 +
+	refs.UUIDSize +
+	refs.OwnerIDSize +
+	verbSize +
+	refs.UUIDSize +
+	refs.CIDSize +
+	8 +
+	8
 
 var tokenEndianness = binary.BigEndian
 
@@ -134,88 +104,132 @@ func (m *Token) SetSignature(sig []byte) {
 	m.Signature = sig
 }
 
-// Returns byte slice that is used for creation/verification of the token signature.
-func verificationTokenData(token SessionToken) []byte {
-	var sz int
+// Size returns the size of a binary representation of the verb.
+func (x Token_Info_Verb) Size() int {
+	return verbSize
+}
 
-	id := token.GetID()
-	sz += id.Size()
-
-	ownerID := token.GetOwnerID()
-	sz += ownerID.Size()
-
-	verb := uint32(token.GetVerb())
-	sz += 4
-
-	addr := token.GetAddress()
-	sz += addr.CID.Size() + addr.ObjectID.Size()
-
-	cEpoch := token.CreationEpoch()
-	sz += 8
-
-	fEpoch := token.ExpirationEpoch()
-	sz += 8
-
-	key := token.GetSessionKey()
-	sz += len(key)
-
-	data := make([]byte, sz)
-
-	var off int
-
-	tokenEndianness.PutUint32(data, verb)
-	off += 4
-
-	tokenEndianness.PutUint64(data[off:], cEpoch)
-	off += 8
-
-	tokenEndianness.PutUint64(data[off:], fEpoch)
-	off += 8
-
-	off += copy(data[off:], id.Bytes())
-	off += copy(data[off:], ownerID.Bytes())
-	off += copy(data[off:], addr.CID.Bytes())
-	off += copy(data[off:], addr.ObjectID.Bytes())
-	off += copy(data[off:], key)
-
+// Bytes returns a binary representation of the verb.
+func (x Token_Info_Verb) Bytes() []byte {
+	data := make([]byte, verbSize)
+	tokenEndianness.PutUint32(data, uint32(x))
 	return data
 }
 
-// SignToken calculates and stores the signature of token information.
-//
-// If passed token is nil, ErrEmptyToken returns.
-// If passed private key is nil, crypto.ErrEmptyPrivateKey returns.
-func SignToken(token SessionToken, key *ecdsa.PrivateKey) error {
-	if token == nil {
-		return ErrEmptyToken
-	} else if key == nil {
-		return crypto.ErrEmptyPrivateKey
-	}
-
-	sig, err := crypto.Sign(key, verificationTokenData(token))
-	if err != nil {
-		return err
-	}
-
-	token.SetSignature(sig)
-
-	return nil
+// AddSignKey calls a Signature field setter with passed signature.
+func (m *Token) AddSignKey(sig []byte, _ *ecdsa.PublicKey) {
+	m.SetSignature(sig)
 }
 
-// VerifyTokenSignature checks if token was signed correctly.
+// SignedData returns token information in a binary representation.
+func (m *Token) SignedData() ([]byte, error) {
+	data := make([]byte, m.SignedDataSize())
+
+	copyTokenSignedData(data, m)
+
+	return data, nil
+}
+
+// ReadSignedData copies a binary representation of the token information to passed buffer.
 //
-// If passed token is nil, ErrEmptyToken returns.
-// If passed public key is nil, crypto.ErrEmptyPublicKey returns.
-func VerifyTokenSignature(token SessionToken, key *ecdsa.PublicKey) error {
-	if token == nil {
-		return ErrEmptyToken
-	} else if key == nil {
-		return crypto.ErrEmptyPublicKey
+// If buffer length is less than required, io.ErrUnexpectedEOF returns.
+func (m *Token_Info) ReadSignedData(p []byte) (int, error) {
+	sz := m.SignedDataSize()
+	if len(p) < sz {
+		return 0, io.ErrUnexpectedEOF
 	}
 
-	return crypto.Verify(
-		key,
-		verificationTokenData(token),
-		token.GetSignature(),
-	)
+	copyTokenSignedData(p, m)
+
+	return sz, nil
+}
+
+// SignedDataSize returns the length of signed token information slice.
+func (m *Token_Info) SignedDataSize() int {
+	return tokenInfoSize(m)
+}
+
+func tokenInfoSize(v SessionKeySource) int {
+	if v == nil {
+		return 0
+	}
+	return fixedTokenDataSize + len(v.GetSessionKey())
+}
+
+// Fills passed buffer with signing token information bytes.
+// Does not check buffer length, it is understood that enough space is allocated in it.
+//
+// If passed SessionTokenInfo, buffer remains unchanged.
+func copyTokenSignedData(buf []byte, token SessionTokenInfo) {
+	if token == nil {
+		return
+	}
+
+	var off int
+
+	off += copy(buf[off:], token.GetID().Bytes())
+
+	off += copy(buf[off:], token.GetOwnerID().Bytes())
+
+	off += copy(buf[off:], token.GetVerb().Bytes())
+
+	addr := token.GetAddress()
+	off += copy(buf[off:], addr.CID.Bytes())
+	off += copy(buf[off:], addr.ObjectID.Bytes())
+
+	tokenEndianness.PutUint64(buf[off:], token.CreationEpoch())
+	off += 8
+
+	tokenEndianness.PutUint64(buf[off:], token.ExpirationEpoch())
+	off += 8
+
+	copy(buf[off:], token.GetSessionKey())
+}
+
+// SignedData concatenates signed data with session token information. Returns concatenation result.
+//
+// Token bytes are added if and only if token is not nil.
+func (s signAccumWithToken) SignedData() ([]byte, error) {
+	data, err := s.SignedDataSource.SignedData()
+	if err != nil {
+		return nil, err
+	}
+
+	tokenData := make([]byte, tokenInfoSize(s.token))
+
+	copyTokenSignedData(tokenData, s.token)
+
+	return append(data, tokenData...), nil
+}
+
+func (s signDataReaderWithToken) SignedDataSize() int {
+	sz := s.rdr.SignedDataSize()
+	if sz < 0 {
+		return -1
+	}
+
+	sz += tokenInfoSize(s.token)
+
+	return sz
+}
+
+func (s signDataReaderWithToken) ReadSignedData(p []byte) (int, error) {
+	dataSize := s.rdr.SignedDataSize()
+	if dataSize < 0 {
+		return 0, ErrNegativeLength
+	}
+
+	sumSize := dataSize + tokenInfoSize(s.token)
+
+	if len(p) < sumSize {
+		return 0, io.ErrUnexpectedEOF
+	}
+
+	if n, err := s.rdr.ReadSignedData(p); err != nil {
+		return n, err
+	}
+
+	copyTokenSignedData(p[dataSize:], s.token)
+
+	return sumSize, nil
 }
