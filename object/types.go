@@ -251,6 +251,12 @@ func (m *Object) CopyTo(o *Object) {
 					HomoHash: v.HomoHash,
 				},
 			}
+		case *Header_Token:
+			o.Headers[i] = Header{
+				Value: &Header_Token{
+					Token: v.Token,
+				},
+			}
 		default:
 			o.Headers[i] = *proto.Clone(&m.Headers[i]).(*Header)
 		}

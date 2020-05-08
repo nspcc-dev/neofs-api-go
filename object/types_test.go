@@ -178,3 +178,24 @@ Object:
 	require.NoError(t, Stringify(buf, obj))
 	require.Equal(t, res, buf.String())
 }
+
+func TestObject_Copy(t *testing.T) {
+	t.Run("token header", func(t *testing.T) {
+		token := new(Token)
+		token.SetID(service.TokenID{1, 2, 3})
+
+		obj := new(Object)
+
+		obj.AddHeader(&Header{
+			Value: &Header_Token{
+				Token: token,
+			},
+		})
+
+		cp := obj.Copy()
+
+		_, h := cp.LastHeader(HeaderType(TokenHdr))
+		require.NotNil(t, h)
+		require.Equal(t, token, h.GetValue().(*Header_Token).Token)
+	})
+}
