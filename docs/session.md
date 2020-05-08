@@ -30,22 +30,13 @@
 
 
 ```
-rpc Create(stream CreateRequest) returns (stream CreateResponse);
+rpc Create(CreateRequest) returns (CreateResponse);
 
 ```
 
 #### Method Create
 
-Create is a method that used to open a trusted session to manipulate
-an object. In order to put or delete object client have to obtain session
-token with trusted node. Trusted node will modify client's object
-(add missing headers, checksums, homomorphic hash) and sign id with
-session key. Session is established during 4-step handshake in one gRPC stream
-
-- First client stream message SHOULD BE type of `CreateRequest_Init`.
-- First server stream message SHOULD BE type of `CreateResponse_Unsigned`.
-- Second client stream message SHOULD BE type of `CreateRequest_Signed`.
-- Second server stream message SHOULD BE type of `CreateResponse_Result`.
+Create opens new session between the client and the server
 
 | Name | Input | Output |
 | ---- | ----- | ------ |
@@ -56,13 +47,13 @@ session key. Session is established during 4-step handshake in one gRPC stream
 <a name="session.CreateRequest"></a>
 
 ### Message CreateRequest
-
+CreateRequest carries an information necessary for opening a session
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Init | [service.Token](#service.Token) |  | Init is a message to initialize session opening. Carry: owner of manipulation object; ID of manipulation object; token lifetime bounds. |
-| Signed | [service.Token](#service.Token) |  | Signed Init message response (Unsigned) from server with user private key |
+| OwnerID | [bytes](#bytes) |  | OwnerID carries an identifier of a session initiator |
+| Lifetime | [service.TokenLifetime](#service.TokenLifetime) |  | Lifetime carries a lifetime of the session |
 | Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
 | Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
@@ -70,13 +61,13 @@ session key. Session is established during 4-step handshake in one gRPC stream
 <a name="session.CreateResponse"></a>
 
 ### Message CreateResponse
-
+CreateResponse carries an information about the opened session
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Unsigned | [service.Token](#service.Token) |  | Unsigned token with token ID and session public key generated on server side |
-| Result | [service.Token](#service.Token) |  | Result is a resulting token which can be used for object placing through an trusted intermediary |
+| ID | [bytes](#bytes) |  | ID carries an identifier of session token |
+| SessionKey | [bytes](#bytes) |  | SessionKey carries a session public key |
 
  <!-- end messages -->
 

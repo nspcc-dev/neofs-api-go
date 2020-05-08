@@ -28,13 +28,12 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// CreateRequest carries an information necessary for opening a session
 type CreateRequest struct {
-	// Message should be one of
-	//
-	// Types that are valid to be assigned to Message:
-	//	*CreateRequest_Init
-	//	*CreateRequest_Signed
-	Message isCreateRequest_Message `protobuf_oneof:"Message"`
+	// OwnerID carries an identifier of a session initiator
+	OwnerID OwnerID `protobuf:"bytes,1,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`
+	// Lifetime carries a lifetime of the session
+	service.TokenLifetime `protobuf:"bytes,2,opt,name=Lifetime,proto3,embedded=Lifetime" json:"Lifetime"`
 	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
 	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
 	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -73,59 +72,15 @@ func (m *CreateRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_CreateRequest proto.InternalMessageInfo
 
-type isCreateRequest_Message interface {
-	isCreateRequest_Message()
-	MarshalTo([]byte) (int, error)
-	Size() int
-}
-
-type CreateRequest_Init struct {
-	Init *service.Token `protobuf:"bytes,1,opt,name=Init,proto3,oneof" json:"Init,omitempty"`
-}
-type CreateRequest_Signed struct {
-	Signed *service.Token `protobuf:"bytes,2,opt,name=Signed,proto3,oneof" json:"Signed,omitempty"`
-}
-
-func (*CreateRequest_Init) isCreateRequest_Message()   {}
-func (*CreateRequest_Signed) isCreateRequest_Message() {}
-
-func (m *CreateRequest) GetMessage() isCreateRequest_Message {
-	if m != nil {
-		return m.Message
-	}
-	return nil
-}
-
-func (m *CreateRequest) GetInit() *service.Token {
-	if x, ok := m.GetMessage().(*CreateRequest_Init); ok {
-		return x.Init
-	}
-	return nil
-}
-
-func (m *CreateRequest) GetSigned() *service.Token {
-	if x, ok := m.GetMessage().(*CreateRequest_Signed); ok {
-		return x.Signed
-	}
-	return nil
-}
-
-// XXX_OneofWrappers is for the internal use of the proto package.
-func (*CreateRequest) XXX_OneofWrappers() []interface{} {
-	return []interface{}{
-		(*CreateRequest_Init)(nil),
-		(*CreateRequest_Signed)(nil),
-	}
-}
-
+// CreateResponse carries an information about the opened session
 type CreateResponse struct {
-	// Types that are valid to be assigned to Message:
-	//	*CreateResponse_Unsigned
-	//	*CreateResponse_Result
-	Message              isCreateResponse_Message `protobuf_oneof:"Message"`
-	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
-	XXX_unrecognized     []byte                   `json:"-"`
-	XXX_sizecache        int32                    `json:"-"`
+	// ID carries an identifier of session token
+	ID TokenID `protobuf:"bytes,1,opt,name=ID,proto3,customtype=TokenID" json:"ID"`
+	// SessionKey carries a session public key
+	SessionKey           []byte   `protobuf:"bytes,2,opt,name=SessionKey,proto3" json:"SessionKey,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *CreateResponse) Reset()         { *m = CreateResponse{} }
@@ -157,49 +112,11 @@ func (m *CreateResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_CreateResponse proto.InternalMessageInfo
 
-type isCreateResponse_Message interface {
-	isCreateResponse_Message()
-	MarshalTo([]byte) (int, error)
-	Size() int
-}
-
-type CreateResponse_Unsigned struct {
-	Unsigned *service.Token `protobuf:"bytes,1,opt,name=Unsigned,proto3,oneof" json:"Unsigned,omitempty"`
-}
-type CreateResponse_Result struct {
-	Result *service.Token `protobuf:"bytes,2,opt,name=Result,proto3,oneof" json:"Result,omitempty"`
-}
-
-func (*CreateResponse_Unsigned) isCreateResponse_Message() {}
-func (*CreateResponse_Result) isCreateResponse_Message()   {}
-
-func (m *CreateResponse) GetMessage() isCreateResponse_Message {
+func (m *CreateResponse) GetSessionKey() []byte {
 	if m != nil {
-		return m.Message
+		return m.SessionKey
 	}
 	return nil
-}
-
-func (m *CreateResponse) GetUnsigned() *service.Token {
-	if x, ok := m.GetMessage().(*CreateResponse_Unsigned); ok {
-		return x.Unsigned
-	}
-	return nil
-}
-
-func (m *CreateResponse) GetResult() *service.Token {
-	if x, ok := m.GetMessage().(*CreateResponse_Result); ok {
-		return x.Result
-	}
-	return nil
-}
-
-// XXX_OneofWrappers is for the internal use of the proto package.
-func (*CreateResponse) XXX_OneofWrappers() []interface{} {
-	return []interface{}{
-		(*CreateResponse_Unsigned)(nil),
-		(*CreateResponse_Result)(nil),
-	}
 }
 
 func init() {
@@ -210,31 +127,32 @@ func init() {
 func init() { proto.RegisterFile("session/service.proto", fileDescriptor_b329bee0fd1148e0) }
 
 var fileDescriptor_b329bee0fd1148e0 = []byte{
-	// 380 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x52, 0x4f, 0x4f, 0xe2, 0x40,
-	0x14, 0x67, 0x08, 0x29, 0xec, 0x6c, 0x96, 0x64, 0x27, 0xfb, 0xa7, 0xe9, 0xa1, 0x6c, 0xc8, 0x1e,
-	0xd8, 0x64, 0xdb, 0x1a, 0xbc, 0x78, 0xf1, 0x20, 0x1a, 0x03, 0x07, 0x8c, 0x69, 0xd5, 0x83, 0xb7,
-	0xb6, 0x3c, 0xea, 0x44, 0x99, 0xa9, 0x9d, 0x29, 0x89, 0xdf, 0xc4, 0xcf, 0xe0, 0x27, 0xe1, 0xc8,
-	0xd1, 0x13, 0x31, 0xf5, 0xe6, 0xa7, 0x30, 0x4c, 0x07, 0x82, 0x12, 0x6e, 0x7d, 0xbf, 0x3f, 0xef,
-	0xbd, 0x5f, 0xdf, 0xe0, 0x9f, 0x02, 0x84, 0xa0, 0x9c, 0x79, 0x02, 0xb2, 0x29, 0x8d, 0xc1, 0x4d,
-	0x33, 0x2e, 0x39, 0xa9, 0x6b, 0xd8, 0x22, 0x1a, 0xf7, 0x26, 0x20, 0xc3, 0x92, 0xb4, 0x7e, 0xac,
-	0xb0, 0x29, 0x64, 0x74, 0xfc, 0xa0, 0x51, 0x27, 0xa1, 0xf2, 0x26, 0x8f, 0xdc, 0x98, 0x4f, 0xbc,
-	0x84, 0x27, 0xdc, 0x53, 0x70, 0x94, 0x8f, 0x55, 0xa5, 0x0a, 0xf5, 0x55, 0xca, 0xdb, 0x6f, 0x08,
-	0x7f, 0x3b, 0xce, 0x20, 0x94, 0xe0, 0xc3, 0x7d, 0x0e, 0x42, 0x92, 0xbf, 0xb8, 0x36, 0x60, 0x54,
-	0x9a, 0xe8, 0x0f, 0xea, 0x7c, 0xed, 0x36, 0xdd, 0xd5, 0x46, 0x17, 0xfc, 0x16, 0x58, 0xbf, 0xe2,
-	0x2b, 0x96, 0x74, 0xb0, 0x11, 0xd0, 0x84, 0xc1, 0xc8, 0xac, 0xee, 0xd0, 0x69, 0x9e, 0x1c, 0xe0,
-	0xda, 0x10, 0x64, 0x68, 0x46, 0x4a, 0x67, 0xad, 0x75, 0x7a, 0xde, 0x92, 0xeb, 0x43, 0x38, 0x82,
-	0xac, 0xd7, 0x98, 0x2d, 0x5a, 0x95, 0xf9, 0xa2, 0x85, 0x7c, 0xe5, 0x20, 0x27, 0xd8, 0xb8, 0x52,
-	0xd1, 0xcc, 0x58, 0x79, 0xdb, 0x9f, 0xbd, 0x8a, 0xa5, 0x71, 0x28, 0x29, 0x67, 0x5b, 0x3d, 0xb4,
-	0xb7, 0xf7, 0x05, 0xd7, 0x87, 0x20, 0x44, 0x98, 0x40, 0x5b, 0xe0, 0xe6, 0x2a, 0xab, 0x48, 0x39,
-	0x13, 0x40, 0xfe, 0xe3, 0xc6, 0x25, 0x13, 0x65, 0x90, 0x5d, 0x81, 0xd7, 0x8a, 0x65, 0x68, 0x1f,
-	0x44, 0x7e, 0x27, 0x77, 0x87, 0x2e, 0xf9, 0x8d, 0xa1, 0xdd, 0x3e, 0xae, 0x07, 0xe5, 0x15, 0xc9,
-	0x21, 0x36, 0xca, 0xf9, 0xe4, 0x97, 0xab, 0x2f, 0xeb, 0x7e, 0xf8, 0xf9, 0xd6, 0xef, 0x2d, 0xbc,
-	0x5c, 0xb4, 0x83, 0xf6, 0x50, 0x2f, 0x98, 0x15, 0x36, 0x9a, 0x17, 0x36, 0x7a, 0x2e, 0x6c, 0xf4,
-	0x52, 0xd8, 0xe8, 0xf1, 0xd5, 0xae, 0x5c, 0xff, 0xdb, 0x38, 0x38, 0x13, 0x69, 0x1c, 0x3b, 0x23,
-	0x98, 0x7a, 0x0c, 0xf8, 0x58, 0x38, 0x61, 0x4a, 0x9d, 0x84, 0x7b, 0xba, 0xe7, 0x53, 0xf5, 0xfb,
-	0x19, 0xf0, 0xd3, 0xc0, 0x3d, 0x3a, 0x1f, 0xb8, 0x7a, 0xa7, 0xc8, 0x50, 0xef, 0x60, 0xff, 0x3d,
-	0x00, 0x00, 0xff, 0xff, 0x70, 0x53, 0x71, 0xf3, 0x82, 0x02, 0x00, 0x00,
+	// 386 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x64, 0x91, 0xcf, 0x6e, 0xda, 0x40,
+	0x10, 0xc6, 0x59, 0xab, 0x02, 0xb4, 0xa5, 0xad, 0xba, 0xea, 0x1f, 0xcb, 0x07, 0x1b, 0x71, 0x82,
+	0x83, 0x6d, 0x89, 0x5e, 0x5a, 0xa9, 0x97, 0x52, 0xab, 0xaa, 0xd5, 0xe6, 0x9f, 0x89, 0x72, 0xc8,
+	0xcd, 0x36, 0x63, 0x67, 0x15, 0xe1, 0x75, 0xbc, 0x0b, 0x11, 0x6f, 0x92, 0x67, 0xc8, 0x93, 0x70,
+	0xe4, 0x18, 0xe5, 0x80, 0x22, 0xe7, 0x25, 0x72, 0x8c, 0x58, 0xaf, 0x11, 0x09, 0xb7, 0x9d, 0xdf,
+	0xec, 0xf7, 0x69, 0xbe, 0x19, 0xfc, 0x99, 0x03, 0xe7, 0x94, 0x65, 0x2e, 0x87, 0x62, 0x4e, 0x63,
+	0x70, 0xf2, 0x82, 0x09, 0x46, 0x5a, 0x0a, 0x1b, 0x44, 0x71, 0x77, 0x0a, 0x22, 0xac, 0x9a, 0xc6,
+	0xa7, 0x9a, 0xcd, 0xa1, 0xa0, 0xc9, 0x42, 0x51, 0x3b, 0xa5, 0xe2, 0x62, 0x16, 0x39, 0x31, 0x9b,
+	0xba, 0x29, 0x4b, 0x99, 0x2b, 0x71, 0x34, 0x4b, 0x64, 0x25, 0x0b, 0xf9, 0xaa, 0xbe, 0xf7, 0x9e,
+	0x10, 0x7e, 0xf7, 0xbb, 0x80, 0x50, 0x40, 0x00, 0x57, 0x33, 0xe0, 0x82, 0x0c, 0x70, 0xeb, 0xe8,
+	0x3a, 0x83, 0xc2, 0xf7, 0x74, 0xd4, 0x45, 0xfd, 0xce, 0xe8, 0xc3, 0x72, 0x6d, 0x35, 0xee, 0xd7,
+	0x56, 0x8d, 0x83, 0xfa, 0x41, 0x7e, 0xe2, 0xf6, 0x7f, 0x9a, 0x80, 0xa0, 0x53, 0xd0, 0xb5, 0x2e,
+	0xea, 0xbf, 0x1d, 0x7e, 0x71, 0xea, 0x00, 0xa7, 0xec, 0x12, 0xb2, 0xba, 0x3b, 0x6a, 0x6f, 0x3c,
+	0x56, 0x6b, 0x0b, 0x05, 0x5b, 0x05, 0xf9, 0x8e, 0xdf, 0x1c, 0x80, 0x08, 0xf5, 0x48, 0x2a, 0x8d,
+	0xad, 0x52, 0x0d, 0xb2, 0xe9, 0xfd, 0x85, 0x70, 0x02, 0xc5, 0x8e, 0x5a, 0x2a, 0x88, 0x87, 0x9b,
+	0x67, 0x32, 0xb3, 0x1e, 0x4b, 0x6d, 0xef, 0xb5, 0x56, 0x76, 0x69, 0x1c, 0x0a, 0xca, 0xb2, 0x3d,
+	0x0f, 0xa5, 0xed, 0x9d, 0xe0, 0xf7, 0x75, 0x72, 0x9e, 0xb3, 0x8c, 0x03, 0xb1, 0xb0, 0xb6, 0x9f,
+	0x5a, 0x06, 0xf1, 0xbd, 0x40, 0xf3, 0x3d, 0x62, 0x62, 0x3c, 0xae, 0x2e, 0xf2, 0x0f, 0x16, 0x32,
+	0x72, 0x27, 0xd8, 0x21, 0x43, 0x0f, 0xb7, 0x54, 0x45, 0x7e, 0xe0, 0x66, 0xe5, 0x4e, 0x36, 0x3b,
+	0x91, 0xcc, 0x79, 0xb1, 0x68, 0xe3, 0xeb, 0x1e, 0xaf, 0xc6, 0x18, 0x8d, 0x97, 0xa5, 0x89, 0x56,
+	0xa5, 0x89, 0xee, 0x4a, 0x13, 0x3d, 0x94, 0x26, 0xba, 0x79, 0x34, 0x1b, 0xe7, 0x83, 0x9d, 0xc3,
+	0x66, 0x3c, 0x8f, 0x63, 0x7b, 0x02, 0x73, 0x37, 0x03, 0x96, 0x70, 0x3b, 0xcc, 0xa9, 0x9d, 0x32,
+	0x57, 0xf9, 0xdd, 0x6a, 0x1f, 0x0f, 0x81, 0xfd, 0x19, 0x3b, 0xbf, 0x8e, 0x7d, 0x47, 0xcd, 0x13,
+	0x35, 0xe5, 0xbd, 0xbf, 0x3d, 0x07, 0x00, 0x00, 0xff, 0xff, 0xf5, 0x66, 0xc9, 0x19, 0x6a, 0x02,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -249,17 +167,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SessionClient interface {
-	// Create is a method that used to open a trusted session to manipulate
-	// an object. In order to put or delete object client have to obtain session
-	// token with trusted node. Trusted node will modify client's object
-	// (add missing headers, checksums, homomorphic hash) and sign id with
-	// session key. Session is established during 4-step handshake in one gRPC stream
-	//
-	// - First client stream message SHOULD BE type of `CreateRequest_Init`.
-	// - First server stream message SHOULD BE type of `CreateResponse_Unsigned`.
-	// - Second client stream message SHOULD BE type of `CreateRequest_Signed`.
-	// - Second server stream message SHOULD BE type of `CreateResponse_Result`.
-	Create(ctx context.Context, opts ...grpc.CallOption) (Session_CreateClient, error)
+	// Create opens new session between the client and the server
+	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 }
 
 type sessionClient struct {
@@ -270,102 +179,61 @@ func NewSessionClient(cc *grpc.ClientConn) SessionClient {
 	return &sessionClient{cc}
 }
 
-func (c *sessionClient) Create(ctx context.Context, opts ...grpc.CallOption) (Session_CreateClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Session_serviceDesc.Streams[0], "/session.Session/Create", opts...)
+func (c *sessionClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
+	out := new(CreateResponse)
+	err := c.cc.Invoke(ctx, "/session.Session/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &sessionCreateClient{stream}
-	return x, nil
-}
-
-type Session_CreateClient interface {
-	Send(*CreateRequest) error
-	Recv() (*CreateResponse, error)
-	grpc.ClientStream
-}
-
-type sessionCreateClient struct {
-	grpc.ClientStream
-}
-
-func (x *sessionCreateClient) Send(m *CreateRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *sessionCreateClient) Recv() (*CreateResponse, error) {
-	m := new(CreateResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
+	return out, nil
 }
 
 // SessionServer is the server API for Session service.
 type SessionServer interface {
-	// Create is a method that used to open a trusted session to manipulate
-	// an object. In order to put or delete object client have to obtain session
-	// token with trusted node. Trusted node will modify client's object
-	// (add missing headers, checksums, homomorphic hash) and sign id with
-	// session key. Session is established during 4-step handshake in one gRPC stream
-	//
-	// - First client stream message SHOULD BE type of `CreateRequest_Init`.
-	// - First server stream message SHOULD BE type of `CreateResponse_Unsigned`.
-	// - Second client stream message SHOULD BE type of `CreateRequest_Signed`.
-	// - Second server stream message SHOULD BE type of `CreateResponse_Result`.
-	Create(Session_CreateServer) error
+	// Create opens new session between the client and the server
+	Create(context.Context, *CreateRequest) (*CreateResponse, error)
 }
 
 // UnimplementedSessionServer can be embedded to have forward compatible implementations.
 type UnimplementedSessionServer struct {
 }
 
-func (*UnimplementedSessionServer) Create(srv Session_CreateServer) error {
-	return status.Errorf(codes.Unimplemented, "method Create not implemented")
+func (*UnimplementedSessionServer) Create(ctx context.Context, req *CreateRequest) (*CreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 
 func RegisterSessionServer(s *grpc.Server, srv SessionServer) {
 	s.RegisterService(&_Session_serviceDesc, srv)
 }
 
-func _Session_Create_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(SessionServer).Create(&sessionCreateServer{stream})
-}
-
-type Session_CreateServer interface {
-	Send(*CreateResponse) error
-	Recv() (*CreateRequest, error)
-	grpc.ServerStream
-}
-
-type sessionCreateServer struct {
-	grpc.ServerStream
-}
-
-func (x *sessionCreateServer) Send(m *CreateResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *sessionCreateServer) Recv() (*CreateRequest, error) {
-	m := new(CreateRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
+func _Session_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRequest)
+	if err := dec(in); err != nil {
 		return nil, err
 	}
-	return m, nil
+	if interceptor == nil {
+		return srv.(SessionServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/session.Session/Create",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SessionServer).Create(ctx, req.(*CreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _Session_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "session.Session",
 	HandlerType: (*SessionServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams: []grpc.StreamDesc{
+	Methods: []grpc.MethodDesc{
 		{
-			StreamName:    "Create",
-			Handler:       _Session_Create_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
+			MethodName: "Create",
+			Handler:    _Session_Create_Handler,
 		},
 	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "session/service.proto",
 }
 
@@ -417,60 +285,29 @@ func (m *CreateRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	dAtA[i] = 0x6
 	i--
 	dAtA[i] = 0x92
-	if m.Message != nil {
-		{
-			size := m.Message.Size()
-			i -= size
-			if _, err := m.Message.MarshalTo(dAtA[i:]); err != nil {
-				return 0, err
-			}
+	{
+		size, err := m.TokenLifetime.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
 		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
 	}
+	i--
+	dAtA[i] = 0x12
+	{
+		size := m.OwnerID.Size()
+		i -= size
+		if _, err := m.OwnerID.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
-func (m *CreateRequest_Init) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *CreateRequest_Init) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.Init != nil {
-		{
-			size, err := m.Init.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintService(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-func (m *CreateRequest_Signed) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *CreateRequest_Signed) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.Signed != nil {
-		{
-			size, err := m.Signed.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintService(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	return len(dAtA) - i, nil
-}
 func (m *CreateResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -495,60 +332,26 @@ func (m *CreateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.Message != nil {
-		{
-			size := m.Message.Size()
-			i -= size
-			if _, err := m.Message.MarshalTo(dAtA[i:]); err != nil {
-				return 0, err
-			}
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *CreateResponse_Unsigned) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *CreateResponse_Unsigned) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.Unsigned != nil {
-		{
-			size, err := m.Unsigned.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintService(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-func (m *CreateResponse_Result) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *CreateResponse_Result) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.Result != nil {
-		{
-			size, err := m.Result.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintService(dAtA, i, uint64(size))
-		}
+	if len(m.SessionKey) > 0 {
+		i -= len(m.SessionKey)
+		copy(dAtA[i:], m.SessionKey)
+		i = encodeVarintService(dAtA, i, uint64(len(m.SessionKey)))
 		i--
 		dAtA[i] = 0x12
 	}
+	{
+		size := m.ID.Size()
+		i -= size
+		if _, err := m.ID.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
+
 func encodeVarintService(dAtA []byte, offset int, v uint64) int {
 	offset -= sovService(v)
 	base := offset
@@ -566,9 +369,10 @@ func (m *CreateRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.Message != nil {
-		n += m.Message.Size()
-	}
+	l = m.OwnerID.Size()
+	n += 1 + l + sovService(uint64(l))
+	l = m.TokenLifetime.Size()
+	n += 1 + l + sovService(uint64(l))
 	l = m.RequestMetaHeader.Size()
 	n += 2 + l + sovService(uint64(l))
 	l = m.RequestVerificationHeader.Size()
@@ -579,66 +383,20 @@ func (m *CreateRequest) Size() (n int) {
 	return n
 }
 
-func (m *CreateRequest_Init) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Init != nil {
-		l = m.Init.Size()
-		n += 1 + l + sovService(uint64(l))
-	}
-	return n
-}
-func (m *CreateRequest_Signed) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Signed != nil {
-		l = m.Signed.Size()
-		n += 1 + l + sovService(uint64(l))
-	}
-	return n
-}
 func (m *CreateResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.Message != nil {
-		n += m.Message.Size()
+	l = m.ID.Size()
+	n += 1 + l + sovService(uint64(l))
+	l = len(m.SessionKey)
+	if l > 0 {
+		n += 1 + l + sovService(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *CreateResponse_Unsigned) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Unsigned != nil {
-		l = m.Unsigned.Size()
-		n += 1 + l + sovService(uint64(l))
-	}
-	return n
-}
-func (m *CreateResponse_Result) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Result != nil {
-		l = m.Result.Size()
-		n += 1 + l + sovService(uint64(l))
 	}
 	return n
 }
@@ -680,9 +438,9 @@ func (m *CreateRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Init", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field OwnerID", wireType)
 			}
-			var msglen int
+			var byteLen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowService
@@ -692,30 +450,28 @@ func (m *CreateRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			if byteLen < 0 {
 				return ErrInvalidLengthService
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + byteLen
 			if postIndex < 0 {
 				return ErrInvalidLengthService
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			v := &service.Token{}
-			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.OwnerID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.Message = &CreateRequest_Init{v}
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Signed", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field TokenLifetime", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -742,11 +498,9 @@ func (m *CreateRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			v := &service.Token{}
-			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.TokenLifetime.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.Message = &CreateRequest_Signed{v}
 			iNdEx = postIndex
 		case 98:
 			if wireType != 2 {
@@ -870,9 +624,9 @@ func (m *CreateResponse) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Unsigned", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
 			}
-			var msglen int
+			var byteLen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowService
@@ -882,32 +636,30 @@ func (m *CreateResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			if byteLen < 0 {
 				return ErrInvalidLengthService
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + byteLen
 			if postIndex < 0 {
 				return ErrInvalidLengthService
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			v := &service.Token{}
-			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.ID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			m.Message = &CreateResponse_Unsigned{v}
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Result", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field SessionKey", wireType)
 			}
-			var msglen int
+			var byteLen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowService
@@ -917,26 +669,25 @@ func (m *CreateResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			if byteLen < 0 {
 				return ErrInvalidLengthService
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + byteLen
 			if postIndex < 0 {
 				return ErrInvalidLengthService
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			v := &service.Token{}
-			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
+			m.SessionKey = append(m.SessionKey[:0], dAtA[iNdEx:postIndex]...)
+			if m.SessionKey == nil {
+				m.SessionKey = []byte{}
 			}
-			m.Message = &CreateResponse_Result{v}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
