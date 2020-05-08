@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/ecdsa"
 
-	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/refs"
 	"github.com/nspcc-dev/neofs-api-go/service"
 )
@@ -79,6 +78,3 @@ type CreateResult interface {
 type Creator interface {
 	Create(context.Context, CreateParamsSource) (CreateResult, error)
 }
-
-// ErrPrivateTokenNotFound is raised when addressed private token was not found in storage.
-const ErrPrivateTokenNotFound = internal.Error("private token not found")

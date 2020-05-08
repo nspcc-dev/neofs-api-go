@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/ecdsa"
 
-	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/service"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"google.golang.org/grpc"
@@ -17,10 +16,6 @@ type gRPCCreator struct {
 
 	clientFunc func(*grpc.ClientConn) SessionClient
 }
-
-const ErrNilCreateParamsSource = internal.Error("create params source is nil")
-
-const ErrNilGPRCClientConn = internal.Error("gRPC client connection is nil")
 
 // NewGRPCCreator unites virtual gRPC client with private ket and returns Creator interface.
 //
