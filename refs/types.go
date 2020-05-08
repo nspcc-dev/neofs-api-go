@@ -37,9 +37,14 @@ type (
 	OwnerID chain.WalletAddress
 )
 
+// OwnerIDSource is an interface of the container of an OwnerID value with read access.
+type OwnerIDSource interface {
+	GetOwnerID() OwnerID
+}
+
 // OwnerIDContainer is an interface of the container of an OwnerID value.
 type OwnerIDContainer interface {
-	GetOwnerID() OwnerID
+	OwnerIDSource
 	SetOwnerID(OwnerID)
 }
 

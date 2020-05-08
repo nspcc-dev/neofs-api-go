@@ -124,6 +124,18 @@ type ExpirationEpochContainer interface {
 	SetExpirationEpoch(uint64)
 }
 
+// LifetimeSource is an interface of the container of creation-expiration epoch pair with read access.
+type LifetimeSource interface {
+	CreationEpochSource
+	ExpirationEpochSource
+}
+
+// LifetimeSource is an interface of the container of creation-expiration epoch pair.
+type LifetimeContainer interface {
+	CreationEpochContainer
+	ExpirationEpochContainer
+}
+
 // SessionKeySource is an interface of the container of session key bytes with read access.
 type SessionKeySource interface {
 	GetSessionKey() []byte
@@ -157,16 +169,14 @@ type SessionTokenSource interface {
 // - ID of the token's owner;
 // - verb of the session;
 // - address of the session object;
-// - creation epoch number of the token;
-// - expiration epoch number of the token;
+// - token lifetime;
 // - public session key bytes.
 type SessionTokenInfo interface {
 	TokenIDContainer
 	OwnerIDContainer
 	VerbContainer
 	AddressContainer
-	CreationEpochContainer
-	ExpirationEpochContainer
+	LifetimeContainer
 	SessionKeyContainer
 }
 

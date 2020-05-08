@@ -14,6 +14,10 @@ const signedRequestDataSize = 0 +
 
 var requestEndianness = binary.BigEndian
 
+func NewParams() CreateParamsContainer {
+	return new(CreateRequest)
+}
+
 // GetOwnerID is an OwnerID field getter.
 func (m CreateRequest) GetOwnerID() OwnerID {
 	return m.OwnerID

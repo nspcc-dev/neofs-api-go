@@ -5,6 +5,8 @@ import (
 	"crypto/ecdsa"
 
 	"github.com/nspcc-dev/neofs-api-go/internal"
+	"github.com/nspcc-dev/neofs-api-go/refs"
+	"github.com/nspcc-dev/neofs-api-go/service"
 )
 
 // PrivateToken is an interface of session private part.
@@ -53,6 +55,29 @@ type KeyStore interface {
 	//
 	// Resulting error must be ErrKeyNotFound if there is no corresponding record.
 	Get(context.Context, OwnerID) ([]*ecdsa.PublicKey, error)
+}
+
+// CreateParamsSource is an interface of the container of session parameters with read access.
+type CreateParamsSource interface {
+	refs.OwnerIDSource
+	service.LifetimeSource
+}
+
+// CreateParamsContainer is an interface of the container of session parameters.
+type CreateParamsContainer interface {
+	refs.OwnerIDContainer
+	service.LifetimeContainer
+}
+
+// CreateResult is an interface of the container of an opened session info with read access.
+type CreateResult interface {
+	service.TokenIDSource
+	service.SessionKeySource
+}
+
+// Creator is an interface of the tool for a session opening.
+type Creator interface {
+	Create(context.Context, CreateParamsSource) (CreateResult, error)
 }
 
 // ErrPrivateTokenNotFound is raised when addressed private token was not found in storage.
