@@ -17,6 +17,7 @@
     - [RequestVerificationHeader.Signature](#service.RequestVerificationHeader.Signature)
     - [Token](#service.Token)
     - [Token.Info](#service.Token.Info)
+    - [TokenLifetime](#service.TokenLifetime)
     
 
 - [service/verify_test.proto](#service/verify_test.proto)
@@ -129,9 +130,20 @@ User token granting rights for object manipulation
 | OwnerID | [bytes](#bytes) |  | OwnerID is an owner of manipulation object |
 | verb | [Token.Info.Verb](#service.Token.Info.Verb) |  | Verb is a type of request for which the token is issued |
 | Address | [refs.Address](#refs.Address) |  | Address is an object address for which token is issued |
-| Created | [uint64](#uint64) |  | Created is an initial epoch of token lifetime |
-| ValidUntil | [uint64](#uint64) |  | ValidUntil is a last epoch of token lifetime |
+| Lifetime | [TokenLifetime](#service.TokenLifetime) |  | Lifetime is a lifetime of the session |
 | SessionKey | [bytes](#bytes) |  | SessionKey is a public key of session key |
+
+
+<a name="service.TokenLifetime"></a>
+
+### Message TokenLifetime
+TokenLifetime carries a group of lifetime parameters of the token
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Created | [uint64](#uint64) |  | Created carries an initial epoch of token lifetime |
+| ValidUntil | [uint64](#uint64) |  | ValidUntil carries a last epoch of token lifetime |
 
  <!-- end messages -->
 

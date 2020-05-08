@@ -58,14 +58,11 @@ message Token {
         // Address is an object address for which token is issued
         refs.Address Address = 4 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
 
-        // Created is an initial epoch of token lifetime
-        uint64 Created = 5;
-
-        // ValidUntil is a last epoch of token lifetime
-        uint64 ValidUntil = 6;
+        // Lifetime is a lifetime of the session
+        TokenLifetime Lifetime = 5 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 
         // SessionKey is a public key of session key
-        bytes SessionKey = 7;
+        bytes SessionKey = 6;
     }
 
     // TokenInfo is a grouped information about token
@@ -73,6 +70,15 @@ message Token {
 
     // Signature is a signature of session token information
     bytes Signature = 8;
+}
+
+// TokenLifetime carries a group of lifetime parameters of the token
+message TokenLifetime {
+    // Created carries an initial epoch of token lifetime
+    uint64 Created = 1;
+
+    // ValidUntil carries a last epoch of token lifetime
+    uint64 ValidUntil = 2;
 }
 
 // TODO: for variable token types and version redefine message

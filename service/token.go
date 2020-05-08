@@ -75,22 +75,22 @@ func (m *Token_Info) SetAddress(addr Address) {
 }
 
 // CreationEpoch is a Created field getter.
-func (m Token_Info) CreationEpoch() uint64 {
+func (m TokenLifetime) CreationEpoch() uint64 {
 	return m.Created
 }
 
 // SetCreationEpoch is a Created field setter.
-func (m *Token_Info) SetCreationEpoch(e uint64) {
+func (m *TokenLifetime) SetCreationEpoch(e uint64) {
 	m.Created = e
 }
 
 // ExpirationEpoch is a ValidUntil field getter.
-func (m Token_Info) ExpirationEpoch() uint64 {
+func (m TokenLifetime) ExpirationEpoch() uint64 {
 	return m.ValidUntil
 }
 
 // SetExpirationEpoch is a ValidUntil field setter.
-func (m *Token_Info) SetExpirationEpoch(e uint64) {
+func (m *TokenLifetime) SetExpirationEpoch(e uint64) {
 	m.ValidUntil = e
 }
 
