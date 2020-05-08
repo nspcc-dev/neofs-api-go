@@ -15,19 +15,26 @@ func TestMapTokenStore(t *testing.T) {
 	// create map token store
 	s := NewMapTokenStore()
 
-	// create new storage key
-	id, err := refs.NewUUID()
+	// create test TokenID
+	tid, err := refs.NewUUID()
 	require.NoError(t, err)
 
+	// create test OwnerID
+	ownerID := OwnerID{1, 2, 3}
+
+	key := PrivateTokenKey{}
+	key.SetOwnerID(ownerID)
+	key.SetTokenID(tid)
+
 	// ascertain that there is no record for the key
-	_, err = s.Fetch(id)
+	_, err = s.Fetch(key)
 	require.EqualError(t, err, ErrPrivateTokenNotFound.Error())
 
 	// save private token record
-	require.NoError(t, s.Store(id, pToken))
+	require.NoError(t, s.Store(key, pToken))
 
 	// fetch private token by the key
-	res, err := s.Fetch(id)
+	res, err := s.Fetch(key)
 	require.NoError(t, err)
 
 	// ascertain that returned token equals to initial
@@ -52,7 +59,11 @@ func TestMapTokenStore_RemoveExpired(t *testing.T) {
 	// create token store instance
 	s := NewMapTokenStore()
 
-	// create storage keys for tokens
+	// create test PrivateTokenKey
+	key := PrivateTokenKey{}
+	key.SetOwnerID(OwnerID{1, 2, 3})
+
+	// create IDs for tokens
 	id1, err := refs.NewUUID()
 	require.NoError(t, err)
 	id2, err := refs.NewUUID()
@@ -60,21 +71,25 @@ func TestMapTokenStore_RemoveExpired(t *testing.T) {
 
 	assertPresence := func(ids ...TokenID) {
 		for i := range ids {
-			_, err = s.Fetch(ids[i])
+			key.SetTokenID(ids[i])
+			_, err = s.Fetch(key)
 			require.NoError(t, err)
 		}
 	}
 
 	assertAbsence := func(ids ...TokenID) {
 		for i := range ids {
-			_, err = s.Fetch(ids[i])
+			key.SetTokenID(ids[i])
+			_, err = s.Fetch(key)
 			require.EqualError(t, err, ErrPrivateTokenNotFound.Error())
 		}
 	}
 
 	// store both tokens
-	require.NoError(t, s.Store(id1, tok1))
-	require.NoError(t, s.Store(id2, tok2))
+	key.SetTokenID(id1)
+	require.NoError(t, s.Store(key, tok1))
+	key.SetTokenID(id2)
+	require.NoError(t, s.Store(key, tok2))
 
 	// ascertain that both tokens are available
 	assertPresence(id1, id2)

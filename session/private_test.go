@@ -48,3 +48,23 @@ func TestPToken_Expired(t *testing.T) {
 	// must be expired in the epoch after last
 	require.True(t, token.Expired(e+1))
 }
+
+func TestPrivateTokenKey_SetOwnerID(t *testing.T) {
+	ownerID := OwnerID{1, 2, 3}
+
+	s := new(PrivateTokenKey)
+
+	s.SetOwnerID(ownerID)
+
+	require.Equal(t, ownerID, s.owner)
+}
+
+func TestPrivateTokenKey_SetTokenID(t *testing.T) {
+	tokenID := TokenID{1, 2, 3}
+
+	s := new(PrivateTokenKey)
+
+	s.SetTokenID(tokenID)
+
+	require.Equal(t, tokenID, s.token)
+}

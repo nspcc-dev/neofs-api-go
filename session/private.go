@@ -43,3 +43,13 @@ func (t *pToken) PublicKey() []byte {
 func (t *pToken) Expired(epoch uint64) bool {
 	return t.validUntil < epoch
 }
+
+// SetOwnerID is an owner ID field setter.
+func (s *PrivateTokenKey) SetOwnerID(id OwnerID) {
+	s.owner = id
+}
+
+// SetTokenID is a token ID field setter.
+func (s *PrivateTokenKey) SetTokenID(id TokenID) {
+	s.token = id
+}
