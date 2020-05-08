@@ -7,7 +7,7 @@ import (
 type mapTokenStore struct {
 	*sync.RWMutex
 
-	tokens map[TokenID]PrivateToken
+	tokens map[PrivateTokenKey]PrivateToken
 }
 
 // NewMapTokenStore creates new PrivateTokenStore instance.
@@ -16,16 +16,16 @@ type mapTokenStore struct {
 func NewMapTokenStore() PrivateTokenStore {
 	return &mapTokenStore{
 		RWMutex: new(sync.RWMutex),
-		tokens:  make(map[TokenID]PrivateToken),
+		tokens:  make(map[PrivateTokenKey]PrivateToken),
 	}
 }
 
 // Store adds passed token to the map.
 //
 // Resulting error is always nil.
-func (s *mapTokenStore) Store(id TokenID, token PrivateToken) error {
+func (s *mapTokenStore) Store(key PrivateTokenKey, token PrivateToken) error {
 	s.Lock()
-	s.tokens[id] = token
+	s.tokens[key] = token
 	s.Unlock()
 
 	return nil
@@ -34,11 +34,11 @@ func (s *mapTokenStore) Store(id TokenID, token PrivateToken) error {
 // Fetch returns the map element corresponding to the given key.
 //
 // Returns ErrPrivateTokenNotFound is there is no element in map.
-func (s *mapTokenStore) Fetch(id TokenID) (PrivateToken, error) {
+func (s *mapTokenStore) Fetch(key PrivateTokenKey) (PrivateToken, error) {
 	s.RLock()
 	defer s.RUnlock()
 
-	t, ok := s.tokens[id]
+	t, ok := s.tokens[key]
 	if !ok {
 		return nil, ErrPrivateTokenNotFound
 	}

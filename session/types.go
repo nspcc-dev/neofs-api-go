@@ -23,12 +23,18 @@ type PrivateToken interface {
 	Expired(uint64) bool
 }
 
+// PrivateTokenKey is a structure of private token storage key.
+type PrivateTokenKey struct {
+	owner OwnerID
+	token TokenID
+}
+
 // PrivateTokenSource is an interface of private token storage with read access.
 type PrivateTokenSource interface {
 	// Fetch must return the storage record corresponding to the passed key.
 	//
 	// Resulting error must be ErrPrivateTokenNotFound if there is no corresponding record.
-	Fetch(TokenID) (PrivateToken, error)
+	Fetch(PrivateTokenKey) (PrivateToken, error)
 }
 
 // EpochLifetimeStore is an interface of the storage of elements that lifetime is limited by NeoFS epoch.
@@ -45,7 +51,7 @@ type PrivateTokenStore interface {
 	// Store must save passed private token in the storage under the given key.
 	//
 	// Resulting error must be nil if private token was stored successfully.
-	Store(TokenID, PrivateToken) error
+	Store(PrivateTokenKey, PrivateToken) error
 }
 
 // KeyStore is an interface of the storage of public keys addressable by OwnerID,
