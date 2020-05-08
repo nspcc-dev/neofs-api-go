@@ -14,6 +14,7 @@ const signedRequestDataSize = 0 +
 
 var requestEndianness = binary.BigEndian
 
+// NewParams creates a new CreateRequest message and returns CreateParamsContainer interface.
 func NewParams() CreateParamsContainer {
 	return new(CreateRequest)
 }
@@ -28,6 +29,7 @@ func (m *CreateRequest) SetOwnerID(id OwnerID) {
 	m.OwnerID = id
 }
 
+// SignedData returns payload bytes of the request.
 func (m CreateRequest) SignedData() ([]byte, error) {
 	data := make([]byte, m.SignedDataSize())
 
@@ -39,10 +41,14 @@ func (m CreateRequest) SignedData() ([]byte, error) {
 	return data, nil
 }
 
+// SignedDataSize returns payload size of the request.
 func (m CreateRequest) SignedDataSize() int {
 	return signedRequestDataSize
 }
 
+// ReadSignedData copies payload bytes to passed buffer.
+//
+// If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
 func (m CreateRequest) ReadSignedData(p []byte) (int, error) {
 	sz := m.SignedDataSize()
 	if len(p) < sz {

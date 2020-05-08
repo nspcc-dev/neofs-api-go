@@ -130,7 +130,7 @@ type LifetimeSource interface {
 	ExpirationEpochSource
 }
 
-// LifetimeSource is an interface of the container of creation-expiration epoch pair.
+// LifetimeContainer is an interface of the container of creation-expiration epoch pair.
 type LifetimeContainer interface {
 	CreationEpochContainer
 	ExpirationEpochContainer
