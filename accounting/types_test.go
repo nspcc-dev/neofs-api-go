@@ -152,3 +152,12 @@ func TestPutRequestGettersSetters(t *testing.T) {
 		require.Equal(t, h, m.GetHeight())
 	})
 }
+
+func TestListRequestGettersSetters(t *testing.T) {
+	ownerID := OwnerID{1, 2, 3}
+	m := new(ListRequest)
+
+	m.SetOwnerID(ownerID)
+
+	require.Equal(t, ownerID, m.GetOwnerID())
+}

@@ -411,3 +411,13 @@ func (m *PutRequest) SetAmount(amount *decimal.Decimal) {
 func (m *PutRequest) SetHeight(h uint64) {
 	m.Height = h
 }
+
+// GetOwnerID is an OwnerID field getter.
+func (m ListRequest) GetOwnerID() OwnerID {
+	return m.OwnerID
+}
+
+// SetOwnerID is an OwnerID field setter.
+func (m *ListRequest) SetOwnerID(id OwnerID) {
+	m.OwnerID = id
+}
