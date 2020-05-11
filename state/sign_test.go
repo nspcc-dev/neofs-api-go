@@ -37,6 +37,11 @@ func TestRequestSign(t *testing.T) {
 				return new(HealthRequest)
 			},
 		},
+		{ // DumpRequest
+			constructor: func() sigType {
+				return new(DumpRequest)
+			},
+		},
 	}
 
 	for _, item := range items {
