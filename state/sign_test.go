@@ -27,6 +27,11 @@ func TestRequestSign(t *testing.T) {
 				return new(NetmapRequest)
 			},
 		},
+		{ // MetricsRequest
+			constructor: func() sigType {
+				return new(MetricsRequest)
+			},
+		},
 	}
 
 	for _, item := range items {
