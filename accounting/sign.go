@@ -152,3 +152,41 @@ func (m ListRequest) ReadSignedData(p []byte) (int, error) {
 
 	return sz, nil
 }
+
+// SignedData returns payload bytes of the request.
+func (m DeleteRequest) SignedData() ([]byte, error) {
+	data := make([]byte, m.SignedDataSize())
+
+	if _, err := m.ReadSignedData(data); err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// SignedDataSize returns payload size of the request.
+func (m DeleteRequest) SignedDataSize() int {
+	return 0 +
+		m.GetID().Size() +
+		m.GetOwnerID().Size() +
+		m.GetMessageID().Size()
+}
+
+// ReadSignedData copies payload bytes to passed buffer.
+//
+// If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
+func (m DeleteRequest) ReadSignedData(p []byte) (int, error) {
+	if len(p) < m.SignedDataSize() {
+		return 0, io.ErrUnexpectedEOF
+	}
+
+	var off int
+
+	off += copy(p[off:], m.GetID().Bytes())
+
+	off += copy(p[off:], m.GetOwnerID().Bytes())
+
+	off += copy(p[off:], m.GetMessageID().Bytes())
+
+	return off, nil
+}

@@ -161,3 +161,33 @@ func TestListRequestGettersSetters(t *testing.T) {
 
 	require.Equal(t, ownerID, m.GetOwnerID())
 }
+
+func TestDeleteRequestGettersSetters(t *testing.T) {
+	t.Run("id", func(t *testing.T) {
+		id := ChequeID("test id")
+		m := new(DeleteRequest)
+
+		m.SetID(id)
+
+		require.Equal(t, id, m.GetID())
+	})
+
+	t.Run("owner", func(t *testing.T) {
+		id := OwnerID{1, 2, 3}
+		m := new(DeleteRequest)
+
+		m.SetOwnerID(id)
+
+		require.Equal(t, id, m.GetOwnerID())
+	})
+
+	t.Run("message ID", func(t *testing.T) {
+		id, err := refs.NewUUID()
+		require.NoError(t, err)
+
+		m := new(DeleteRequest)
+		m.SetMessageID(id)
+
+		require.Equal(t, id, m.GetMessageID())
+	})
+}

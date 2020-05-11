@@ -421,3 +421,33 @@ func (m ListRequest) GetOwnerID() OwnerID {
 func (m *ListRequest) SetOwnerID(id OwnerID) {
 	m.OwnerID = id
 }
+
+// GetID is an ID field getter.
+func (m DeleteRequest) GetID() ChequeID {
+	return m.ID
+}
+
+// SetID is an ID field setter.
+func (m *DeleteRequest) SetID(id ChequeID) {
+	m.ID = id
+}
+
+// GetOwnerID is an OwnerID field getter.
+func (m DeleteRequest) GetOwnerID() OwnerID {
+	return m.OwnerID
+}
+
+// SetOwnerID is an OwnerID field setter.
+func (m *DeleteRequest) SetOwnerID(id OwnerID) {
+	m.OwnerID = id
+}
+
+// GetMessageID is a MessageID field getter.
+func (m DeleteRequest) GetMessageID() MessageID {
+	return m.MessageID
+}
+
+// SetMessageID is a MessageID field setter.
+func (m *DeleteRequest) SetMessageID(id MessageID) {
+	m.MessageID = id
+}

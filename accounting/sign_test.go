@@ -119,6 +119,37 @@ func TestSignBalanceRequest(t *testing.T) {
 				},
 			},
 		},
+		{
+			constructor: func() sigType {
+				return new(DeleteRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					req := s.(*DeleteRequest)
+
+					id, err := NewChequeID()
+					require.NoError(t, err)
+
+					req.SetID(id)
+				},
+				func(s sigType) {
+					req := s.(*DeleteRequest)
+
+					owner := req.GetOwnerID()
+					owner[0]++
+
+					req.SetOwnerID(owner)
+				},
+				func(s sigType) {
+					req := s.(*DeleteRequest)
+
+					mid := req.GetMessageID()
+					mid[0]++
+
+					req.SetMessageID(mid)
+				},
+			},
+		},
 	}
 
 	for _, item := range items {
