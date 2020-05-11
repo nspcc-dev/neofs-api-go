@@ -361,3 +361,23 @@ func (m BalanceRequest) GetOwnerID() OwnerID {
 func (m *BalanceRequest) SetOwnerID(owner OwnerID) {
 	m.OwnerID = owner
 }
+
+// GetID is an ID field getter.
+func (m GetRequest) GetID() ChequeID {
+	return m.ID
+}
+
+// SetID is an ID field setter.
+func (m *GetRequest) SetID(id ChequeID) {
+	m.ID = id
+}
+
+// GetOwnerID is an OwnerID field getter.
+func (m GetRequest) GetOwnerID() OwnerID {
+	return m.OwnerID
+}
+
+// SetOwnerID is an OwnerID field setter.
+func (m *GetRequest) SetOwnerID(id OwnerID) {
+	m.OwnerID = id
+}

@@ -9,46 +9,87 @@ import (
 )
 
 func TestSignBalanceRequest(t *testing.T) {
-	// create test OwnerID
-	ownerID := OwnerID{1, 2, 3}
-
-	// create test BalanceRequest
-	req := new(BalanceRequest)
-	req.SetOwnerID(ownerID)
-
-	// create test private key
 	sk := test.DecodeKey(0)
 
+	type sigType interface {
+		service.SignedDataWithToken
+		service.SignKeyPairAccumulator
+		service.SignKeyPairSource
+		SetToken(*service.Token)
+	}
+
 	items := []struct {
-		corrupt func()
-		restore func()
+		constructor    func() sigType
+		payloadCorrupt []func(sigType)
 	}{
-		{
-			corrupt: func() {
-				ownerID[0]++
-				req.SetOwnerID(ownerID)
+		{ // BalanceRequest
+			constructor: func() sigType {
+				return new(BalanceRequest)
 			},
-			restore: func() {
-				ownerID[0]--
-				req.SetOwnerID(ownerID)
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					req := s.(*BalanceRequest)
+
+					owner := req.GetOwnerID()
+					owner[0]++
+
+					req.SetOwnerID(owner)
+				},
+			},
+		},
+		{ // GetRequest
+			constructor: func() sigType {
+				return new(GetRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					req := s.(*GetRequest)
+
+					id, err := NewChequeID()
+					require.NoError(t, err)
+
+					req.SetID(id)
+				},
+				func(s sigType) {
+					req := s.(*GetRequest)
+
+					id := req.GetOwnerID()
+					id[0]++
+
+					req.SetOwnerID(id)
+				},
 			},
 		},
 	}
 
 	for _, item := range items {
-		// sign with private key
-		require.NoError(t, service.AddSignatureWithKey(sk, req))
+		{ // token corruptions
+			v := item.constructor()
 
-		// ascertain that verification is passed
-		require.NoError(t, service.VerifyAccumulatedSignatures(req))
+			token := new(service.Token)
+			v.SetToken(token)
 
-		// corrupt the request
-		item.corrupt()
+			require.NoError(t, service.SignDataWithSessionToken(sk, v))
 
-		// ascertain that verification is failed
-		require.Error(t, service.VerifyAccumulatedSignatures(req))
+			require.NoError(t, service.VerifyAccumulatedSignaturesWithToken(v))
 
-		// ascertain that request
-		item.restore()
+			token.SetSessionKey(append(token.GetSessionKey(), 1))
+
+			require.Error(t, service.VerifyAccumulatedSignaturesWithToken(v))
+		}
+
+		{ // payload corruptions
+			for _, corruption := range item.payloadCorrupt {
+				v := item.constructor()
+
+				require.NoError(t, service.SignDataWithSessionToken(sk, v))
+
+				require.NoError(t, service.VerifyAccumulatedSignaturesWithToken(v))
+
+				corruption(v)
+
+				require.Error(t, service.VerifyAccumulatedSignaturesWithToken(v))
+			}
+		}
 	}
 }

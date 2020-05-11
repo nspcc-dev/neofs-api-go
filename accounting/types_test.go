@@ -93,3 +93,23 @@ func TestBalanceRequest_SetOwnerID(t *testing.T) {
 
 	require.Equal(t, ownerID, m.GetOwnerID())
 }
+
+func TestGetRequestGettersSetters(t *testing.T) {
+	t.Run("id", func(t *testing.T) {
+		id := ChequeID("test id")
+		m := new(GetRequest)
+
+		m.SetID(id)
+
+		require.Equal(t, id, m.GetID())
+	})
+
+	t.Run("owner", func(t *testing.T) {
+		id := OwnerID{1, 2, 3}
+		m := new(GetRequest)
+
+		m.SetOwnerID(id)
+
+		require.Equal(t, id, m.GetOwnerID())
+	})
+}
