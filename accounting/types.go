@@ -351,3 +351,13 @@ func (m *Settlement) Equal(s *Settlement) bool {
 	}
 	return len(m.Transactions) == 0 || reflect.DeepEqual(m.Transactions, s.Transactions)
 }
+
+// GetOwnerID is an OwnerID field getter.
+func (m BalanceRequest) GetOwnerID() OwnerID {
+	return m.OwnerID
+}
+
+// SetOwnerID is an OwnerID field setter.
+func (m *BalanceRequest) SetOwnerID(owner OwnerID) {
+	m.OwnerID = owner
+}

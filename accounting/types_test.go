@@ -84,3 +84,12 @@ func TestCheque(t *testing.T) {
 		require.Equal(t, cheque.Amount, decimal.NewGAS(42))
 	})
 }
+
+func TestBalanceRequest_SetOwnerID(t *testing.T) {
+	ownerID := OwnerID{1, 2, 3}
+	m := new(BalanceRequest)
+
+	m.SetOwnerID(ownerID)
+
+	require.Equal(t, ownerID, m.GetOwnerID())
+}
