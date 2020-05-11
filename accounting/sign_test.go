@@ -3,6 +3,7 @@ package accounting
 import (
 	"testing"
 
+	"github.com/nspcc-dev/neofs-api-go/decimal"
 	"github.com/nspcc-dev/neofs-api-go/service"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
@@ -57,6 +58,49 @@ func TestSignBalanceRequest(t *testing.T) {
 					id[0]++
 
 					req.SetOwnerID(id)
+				},
+			},
+		},
+		{ // PutRequest
+			constructor: func() sigType {
+				req := new(PutRequest)
+
+				amount := decimal.New(1)
+				req.SetAmount(amount)
+
+				return req
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					req := s.(*PutRequest)
+
+					owner := req.GetOwnerID()
+					owner[0]++
+
+					req.SetOwnerID(owner)
+				},
+				func(s sigType) {
+					req := s.(*PutRequest)
+
+					mid := req.GetMessageID()
+					mid[0]++
+
+					req.SetMessageID(mid)
+				},
+				func(s sigType) {
+					req := s.(*PutRequest)
+
+					req.SetHeight(req.GetHeight() + 1)
+				},
+				func(s sigType) {
+					req := s.(*PutRequest)
+
+					amount := req.GetAmount()
+					if amount == nil {
+						req.SetAmount(decimal.New(0))
+					} else {
+						req.SetAmount(amount.Add(decimal.New(amount.GetValue())))
+					}
 				},
 			},
 		},

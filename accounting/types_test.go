@@ -113,3 +113,42 @@ func TestGetRequestGettersSetters(t *testing.T) {
 		require.Equal(t, id, m.GetOwnerID())
 	})
 }
+
+func TestPutRequestGettersSetters(t *testing.T) {
+	t.Run("owner", func(t *testing.T) {
+		id := OwnerID{1, 2, 3}
+		m := new(PutRequest)
+
+		m.SetOwnerID(id)
+
+		require.Equal(t, id, m.GetOwnerID())
+	})
+
+	t.Run("message ID", func(t *testing.T) {
+		id, err := refs.NewUUID()
+		require.NoError(t, err)
+
+		m := new(PutRequest)
+		m.SetMessageID(id)
+
+		require.Equal(t, id, m.GetMessageID())
+	})
+
+	t.Run("amount", func(t *testing.T) {
+		amount := decimal.New(1)
+		m := new(PutRequest)
+
+		m.SetAmount(amount)
+
+		require.Equal(t, amount, m.GetAmount())
+	})
+
+	t.Run("height", func(t *testing.T) {
+		h := uint64(3)
+		m := new(PutRequest)
+
+		m.SetHeight(h)
+
+		require.Equal(t, h, m.GetHeight())
+	})
+}

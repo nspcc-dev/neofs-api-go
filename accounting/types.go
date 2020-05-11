@@ -381,3 +381,33 @@ func (m GetRequest) GetOwnerID() OwnerID {
 func (m *GetRequest) SetOwnerID(id OwnerID) {
 	m.OwnerID = id
 }
+
+// GetOwnerID is an OwnerID field getter.
+func (m PutRequest) GetOwnerID() OwnerID {
+	return m.OwnerID
+}
+
+// SetOwnerID is an OwnerID field setter.
+func (m *PutRequest) SetOwnerID(id OwnerID) {
+	m.OwnerID = id
+}
+
+// GetMessageID is a MessageID field getter.
+func (m PutRequest) GetMessageID() MessageID {
+	return m.MessageID
+}
+
+// SetMessageID is a MessageID field setter.
+func (m *PutRequest) SetMessageID(id MessageID) {
+	m.MessageID = id
+}
+
+// SetAmount is an Amount field setter.
+func (m *PutRequest) SetAmount(amount *decimal.Decimal) {
+	m.Amount = amount
+}
+
+// SetHeight is a Height field setter.
+func (m *PutRequest) SetHeight(h uint64) {
+	m.Height = h
+}
