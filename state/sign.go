@@ -27,3 +27,10 @@ func (m HealthRequest) SignedData() ([]byte, error) {
 func (m DumpRequest) SignedData() ([]byte, error) {
 	return make([]byte, 0), nil
 }
+
+// SignedData returns payload bytes of the request.
+//
+// Always returns an empty slice.
+func (m DumpVarsRequest) SignedData() ([]byte, error) {
+	return make([]byte, 0), nil
+}
