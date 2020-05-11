@@ -77,7 +77,7 @@ func (m DeleteRequest) SignedData() ([]byte, error) {
 }
 
 // SignedDataSize returns payload size of the request.
-func (m DeleteRequest) SignedDataSize() (sz int) {
+func (m DeleteRequest) SignedDataSize() int {
 	return m.GetCID().Size()
 }
 
@@ -108,7 +108,7 @@ func (m GetRequest) SignedData() ([]byte, error) {
 }
 
 // SignedDataSize returns payload size of the request.
-func (m GetRequest) SignedDataSize() (sz int) {
+func (m GetRequest) SignedDataSize() int {
 	return m.GetCID().Size()
 }
 
@@ -123,6 +123,37 @@ func (m GetRequest) ReadSignedData(p []byte) (int, error) {
 	var off int
 
 	off += copy(p[off:], m.GetCID().Bytes())
+
+	return off, nil
+}
+
+// SignedData returns payload bytes of the request.
+func (m ListRequest) SignedData() ([]byte, error) {
+	data := make([]byte, m.SignedDataSize())
+
+	if _, err := m.ReadSignedData(data); err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// SignedDataSize returns payload size of the request.
+func (m ListRequest) SignedDataSize() int {
+	return m.GetOwnerID().Size()
+}
+
+// ReadSignedData copies payload bytes to passed buffer.
+//
+// If the Request size is insufficient, io.ErrUnexpectedEOF returns.
+func (m ListRequest) ReadSignedData(p []byte) (int, error) {
+	if len(p) < m.SignedDataSize() {
+		return 0, io.ErrUnexpectedEOF
+	}
+
+	var off int
+
+	off += copy(p[off:], m.GetOwnerID().Bytes())
 
 	return off, nil
 }

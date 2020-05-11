@@ -148,3 +148,13 @@ func (m GetRequest) GetCID() CID {
 func (m *GetRequest) SetCID(cid CID) {
 	m.CID = cid
 }
+
+// GetOwnerID is an OwnerID field getter.
+func (m ListRequest) GetOwnerID() OwnerID {
+	return m.OwnerID
+}
+
+// SetOwnerID is an OwnerID field setter.
+func (m *ListRequest) SetOwnerID(owner OwnerID) {
+	m.OwnerID = owner
+}

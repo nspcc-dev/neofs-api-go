@@ -93,6 +93,21 @@ func TestRequestSign(t *testing.T) {
 				},
 			},
 		},
+		{ // ListRequest
+			constructor: func() sigType {
+				return new(ListRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					req := s.(*ListRequest)
+
+					owner := req.GetOwnerID()
+					owner[0]++
+
+					req.SetOwnerID(owner)
+				},
+			},
+		},
 	}
 
 	for _, item := range items {

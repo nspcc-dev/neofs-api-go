@@ -129,3 +129,14 @@ func TestGetRequestGettersSetters(t *testing.T) {
 		require.Equal(t, cid, m.GetCID())
 	})
 }
+
+func TestListRequestGettersSetters(t *testing.T) {
+	t.Run("owner", func(t *testing.T) {
+		owner := OwnerID{1, 2, 3}
+		m := new(PutRequest)
+
+		m.SetOwnerID(owner)
+
+		require.Equal(t, owner, m.GetOwnerID())
+	})
+}
