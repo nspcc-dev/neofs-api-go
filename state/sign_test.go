@@ -47,6 +47,18 @@ func TestRequestSign(t *testing.T) {
 				return new(DumpVarsRequest)
 			},
 		},
+		{
+			constructor: func() sigType {
+				return new(ChangeStateRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					req := s.(*ChangeStateRequest)
+
+					req.SetState(req.GetState() + 1)
+				},
+			},
+		},
 	}
 
 	for _, item := range items {
