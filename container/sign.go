@@ -95,3 +95,34 @@ func (m DeleteRequest) ReadSignedData(p []byte) (int, error) {
 
 	return off, nil
 }
+
+// SignedData returns payload bytes of the request.
+func (m GetRequest) SignedData() ([]byte, error) {
+	data := make([]byte, m.SignedDataSize())
+
+	if _, err := m.ReadSignedData(data); err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// SignedDataSize returns payload size of the request.
+func (m GetRequest) SignedDataSize() (sz int) {
+	return m.GetCID().Size()
+}
+
+// ReadSignedData copies payload bytes to passed buffer.
+//
+// If the Request size is insufficient, io.ErrUnexpectedEOF returns.
+func (m GetRequest) ReadSignedData(p []byte) (int, error) {
+	if len(p) < m.SignedDataSize() {
+		return 0, io.ErrUnexpectedEOF
+	}
+
+	var off int
+
+	off += copy(p[off:], m.GetCID().Bytes())
+
+	return off, nil
+}

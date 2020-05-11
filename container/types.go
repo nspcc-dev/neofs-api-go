@@ -138,3 +138,13 @@ func (m DeleteRequest) GetCID() CID {
 func (m *DeleteRequest) SetCID(cid CID) {
 	m.CID = cid
 }
+
+// GetCID is a CID field getter.
+func (m GetRequest) GetCID() CID {
+	return m.CID
+}
+
+// SetCID is a CID field setter.
+func (m *GetRequest) SetCID(cid CID) {
+	m.CID = cid
+}

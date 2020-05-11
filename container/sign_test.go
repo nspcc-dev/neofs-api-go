@@ -78,6 +78,21 @@ func TestRequestSign(t *testing.T) {
 				},
 			},
 		},
+		{ // GetRequest
+			constructor: func() sigType {
+				return new(GetRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					req := s.(*GetRequest)
+
+					cid := req.GetCID()
+					cid[0]++
+
+					req.SetCID(cid)
+				},
+			},
+		},
 	}
 
 	for _, item := range items {

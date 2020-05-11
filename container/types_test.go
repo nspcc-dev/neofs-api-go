@@ -118,3 +118,14 @@ func TestDeleteRequestGettersSetters(t *testing.T) {
 		require.Equal(t, cid, m.GetCID())
 	})
 }
+
+func TestGetRequestGettersSetters(t *testing.T) {
+	t.Run("cid", func(t *testing.T) {
+		cid := CID{1, 2, 3}
+		m := new(GetRequest)
+
+		m.SetCID(cid)
+
+		require.Equal(t, cid, m.GetCID())
+	})
+}
