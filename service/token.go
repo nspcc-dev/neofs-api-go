@@ -123,11 +123,7 @@ func (m *Token) AddSignKey(sig []byte, _ *ecdsa.PublicKey) {
 
 // SignedData returns token information in a binary representation.
 func (m *Token) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	copyTokenSignedData(data, m)
-
-	return data, nil
+	return SignedDataFromReader(m)
 }
 
 // ReadSignedData copies a binary representation of the token information to passed buffer.

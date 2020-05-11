@@ -43,3 +43,7 @@ const ErrNilDataWithTokenSignAccumulator = internal.Error("signed data with toke
 // ErrNilSignatureKeySourceWithToken is returned by functions that expect
 // a non-nil SignatureKeySourceWithToken, but received nil.
 const ErrNilSignatureKeySourceWithToken = internal.Error("key-signature source with token is nil")
+
+// ErrNilSignedDataReader is returned by functions that expect
+// a non-nil SignedDataReader, but received nil.
+const ErrNilSignedDataReader = internal.Error("signed data reader is nil")

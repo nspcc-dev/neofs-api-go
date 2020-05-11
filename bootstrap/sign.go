@@ -1,16 +1,14 @@
 package bootstrap
 
-import "io"
+import (
+	"io"
+
+	"github.com/nspcc-dev/neofs-api-go/service"
+)
 
 // SignedData returns payload bytes of the request.
 func (m Request) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	if _, err := m.ReadSignedData(data); err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return service.SignedDataFromReader(m)
 }
 
 // SignedDataSize returns payload size of the request.

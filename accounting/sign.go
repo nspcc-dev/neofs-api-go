@@ -3,17 +3,13 @@ package accounting
 import (
 	"encoding/binary"
 	"io"
+
+	"github.com/nspcc-dev/neofs-api-go/service"
 )
 
 // SignedData returns payload bytes of the request.
 func (m BalanceRequest) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	if _, err := m.ReadSignedData(data); err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return service.SignedDataFromReader(m)
 }
 
 // SignedDataSize returns payload size of the request.
@@ -37,13 +33,7 @@ func (m BalanceRequest) ReadSignedData(p []byte) (int, error) {
 
 // SignedData returns payload bytes of the request.
 func (m GetRequest) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	if _, err := m.ReadSignedData(data); err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return service.SignedDataFromReader(m)
 }
 
 // SignedDataSize returns payload size of the request.
@@ -71,13 +61,7 @@ func (m GetRequest) ReadSignedData(p []byte) (int, error) {
 
 // SignedData returns payload bytes of the request.
 func (m PutRequest) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	if _, err := m.ReadSignedData(data); err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return service.SignedDataFromReader(m)
 }
 
 // SignedDataSize returns payload size of the request.
@@ -125,13 +109,7 @@ func (m PutRequest) ReadSignedData(p []byte) (int, error) {
 
 // SignedData returns payload bytes of the request.
 func (m ListRequest) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	if _, err := m.ReadSignedData(data); err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return service.SignedDataFromReader(m)
 }
 
 // SignedDataSize returns payload size of the request.
@@ -155,13 +133,7 @@ func (m ListRequest) ReadSignedData(p []byte) (int, error) {
 
 // SignedData returns payload bytes of the request.
 func (m DeleteRequest) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	if _, err := m.ReadSignedData(data); err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return service.SignedDataFromReader(m)
 }
 
 // SignedDataSize returns payload size of the request.
