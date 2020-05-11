@@ -22,10 +22,12 @@ func (nt NodeRole) String() string {
 	}
 }
 
+// Size returns the size necessary for a binary representation of the NodeRole.
 func (nt NodeRole) Size() int {
 	return 4
 }
 
+// Bytes returns a binary representation of the NodeRole.
 func (nt NodeRole) Bytes() []byte {
 	data := make([]byte, nt.Size())
 

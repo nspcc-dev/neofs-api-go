@@ -122,10 +122,12 @@ func (m *Request) SetInfo(info NodeInfo) {
 	m.Info = info
 }
 
+// Size returns the size necessary for a binary representation of the state.
 func (x Request_State) Size() int {
 	return 4
 }
 
+// Bytes returns a binary representation of the state.
 func (x Request_State) Bytes() []byte {
 	data := make([]byte, x.Size())
 
