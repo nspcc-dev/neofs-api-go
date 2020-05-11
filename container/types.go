@@ -128,3 +128,13 @@ func (m *PutRequest) SetRules(rules netmap.PlacementRule) {
 func (m *PutRequest) SetBasicACL(acl uint32) {
 	m.BasicACL = acl
 }
+
+// GetCID is a CID field getter.
+func (m DeleteRequest) GetCID() CID {
+	return m.CID
+}
+
+// SetCID is a CID field setter.
+func (m *DeleteRequest) SetCID(cid CID) {
+	m.CID = cid
+}

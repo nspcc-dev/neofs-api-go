@@ -22,7 +22,7 @@ func TestRequestSign(t *testing.T) {
 		constructor    func() sigType
 		payloadCorrupt []func(sigType)
 	}{
-		{ // Request
+		{ // PutRequest
 			constructor: func() sigType {
 				return new(PutRequest)
 			},
@@ -60,6 +60,21 @@ func TestRequestSign(t *testing.T) {
 					req := s.(*PutRequest)
 
 					req.SetBasicACL(req.GetBasicACL() + 1)
+				},
+			},
+		},
+		{ // DeleteRequest
+			constructor: func() sigType {
+				return new(DeleteRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					req := s.(*DeleteRequest)
+
+					cid := req.GetCID()
+					cid[0]++
+
+					req.SetCID(cid)
 				},
 			},
 		},
