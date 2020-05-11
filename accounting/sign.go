@@ -165,11 +165,14 @@ func (m DeleteRequest) SignedData() ([]byte, error) {
 }
 
 // SignedDataSize returns payload size of the request.
-func (m DeleteRequest) SignedDataSize() int {
-	return 0 +
-		m.GetID().Size() +
-		m.GetOwnerID().Size() +
-		m.GetMessageID().Size()
+func (m DeleteRequest) SignedDataSize() (sz int) {
+	sz += m.GetID().Size()
+
+	sz += m.GetOwnerID().Size()
+
+	sz += m.GetMessageID().Size()
+
+	return
 }
 
 // ReadSignedData copies payload bytes to passed buffer.
