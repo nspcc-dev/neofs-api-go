@@ -1,6 +1,22 @@
 # Changelog
 This is the changelog for NeoFS-API-Go
 
+## [0.7.4] - 2020-05-12
+
+### Added
+
+- Stringify for `object.Object`.
+
+### Changed
+
+- Mechanism for creating and verifying request message signatures.
+- Implementation and interface of private token storage.
+- File structure of packages.
+
+### Updated
+
+- NeoFS API v0.7.4
+
 ## [0.7.1] - 2020-04-20
 
 ### Added
@@ -273,3 +289,4 @@ Initial public release
 [0.6.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.6.1...v0.6.2
 [0.7.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.6.2...v0.7.0
 [0.7.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.0...v0.7.1
+[0.7.4]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.1...v0.7.4
