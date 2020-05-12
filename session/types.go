@@ -1,181 +1,86 @@
 package session
 
 import (
+	"context"
 	"crypto/ecdsa"
-	"encoding/binary"
-	"sync"
 
-	"github.com/nspcc-dev/neofs-api-go/chain"
-	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/refs"
-	crypto "github.com/nspcc-dev/neofs-crypto"
-	"github.com/pkg/errors"
+	"github.com/nspcc-dev/neofs-api-go/service"
 )
 
-type (
-	// ObjectID type alias.
-	ObjectID = refs.ObjectID
-	// OwnerID type alias.
-	OwnerID = refs.OwnerID
-	// TokenID type alias.
-	TokenID = refs.UUID
+// PrivateToken is an interface of session private part.
+type PrivateToken interface {
+	// PublicKey must return a binary representation of session public key.
+	PublicKey() []byte
 
-	// PToken is a wrapper around Token that allows to sign data
-	// and to do thread-safe manipulations.
-	PToken struct {
-		Token
+	// Sign must return the signature of passed data.
+	//
+	// Resulting signature must be verified by crypto.Verify function
+	// with the session public key.
+	Sign([]byte) ([]byte, error)
 
-		mtx        *sync.Mutex
-		PrivateKey *ecdsa.PrivateKey
-	}
-)
-
-const (
-	// ErrWrongFirstEpoch is raised when passed Token contains wrong first epoch.
-	// First epoch is an epoch since token is valid
-	ErrWrongFirstEpoch = internal.Error("wrong first epoch")
-
-	// ErrWrongLastEpoch is raised when passed Token contains wrong last epoch.
-	// Last epoch is an epoch until token is valid
-	ErrWrongLastEpoch = internal.Error("wrong last epoch")
-
-	// ErrWrongOwner is raised when passed Token contains wrong OwnerID.
-	ErrWrongOwner = internal.Error("wrong owner")
-
-	// ErrEmptyPublicKey is raised when passed Token contains wrong public key.
-	ErrEmptyPublicKey = internal.Error("empty public key")
-
-	// ErrWrongObjectsCount is raised when passed Token contains wrong objects count.
-	ErrWrongObjectsCount = internal.Error("wrong objects count")
-
-	// ErrWrongObjects is raised when passed Token contains wrong object ids.
-	ErrWrongObjects = internal.Error("wrong objects")
-
-	// ErrInvalidSignature is raised when wrong signature is passed to VerificationHeader.VerifyData().
-	ErrInvalidSignature = internal.Error("invalid signature")
-)
-
-// verificationData returns byte array to sign.
-// Note: protobuf serialization is inconsistent as
-// wire order is unspecified.
-func (m *Token) verificationData() (data []byte) {
-	var size int
-	if l := len(m.ObjectID); l > 0 {
-		size = m.ObjectID[0].Size()
-		data = make([]byte, 16+l*size)
-	} else {
-		data = make([]byte, 16)
-	}
-	binary.BigEndian.PutUint64(data, m.FirstEpoch)
-	binary.BigEndian.PutUint64(data[8:], m.LastEpoch)
-	for i := range m.ObjectID {
-		copy(data[16+i*size:], m.ObjectID[i].Bytes())
-	}
-	return
+	// Expired must return true if and only if private token is expired in the given epoch number.
+	Expired(uint64) bool
 }
 
-// IsSame checks if the passed token is valid and equal to current token
-func (m *Token) IsSame(t *Token) error {
-	switch {
-	case m.FirstEpoch != t.FirstEpoch:
-		return ErrWrongFirstEpoch
-	case m.LastEpoch != t.LastEpoch:
-		return ErrWrongLastEpoch
-	case !m.OwnerID.Equal(t.OwnerID):
-		return ErrWrongOwner
-	case m.Header.PublicKey == nil:
-		return ErrEmptyPublicKey
-	case len(m.ObjectID) != len(t.ObjectID):
-		return ErrWrongObjectsCount
-	default:
-		for i := range m.ObjectID {
-			if !m.ObjectID[i].Equal(t.ObjectID[i]) {
-				return errors.Wrapf(ErrWrongObjects, "expect %s, actual: %s", m.ObjectID[i], t.ObjectID[i])
-			}
-		}
-	}
-	return nil
+// PrivateTokenKey is a structure of private token storage key.
+type PrivateTokenKey struct {
+	owner OwnerID
+	token TokenID
 }
 
-// Sign tries to sign current Token data and stores signature inside it.
-func (m *Token) Sign(key *ecdsa.PrivateKey) error {
-	if err := m.Header.Sign(key); err != nil {
-		return err
-	}
-
-	s, err := crypto.Sign(key, m.verificationData())
-	if err != nil {
-		return err
-	}
-
-	m.Signature = s
-	return nil
+// PrivateTokenSource is an interface of private token storage with read access.
+type PrivateTokenSource interface {
+	// Fetch must return the storage record corresponding to the passed key.
+	//
+	// Resulting error must be ErrPrivateTokenNotFound if there is no corresponding record.
+	Fetch(PrivateTokenKey) (PrivateToken, error)
 }
 
-// SetPublicKeys sets owner's public keys to the token
-func (m *Token) SetPublicKeys(keys ...*ecdsa.PublicKey) {
-	m.PublicKeys = m.PublicKeys[:0]
-	for i := range keys {
-		m.PublicKeys = append(m.PublicKeys, crypto.MarshalPublicKey(keys[i]))
-	}
+// EpochLifetimeStore is an interface of the storage of elements that lifetime is limited by NeoFS epoch.
+type EpochLifetimeStore interface {
+	// RemoveExpired must remove all elements that are expired in the given epoch.
+	RemoveExpired(uint64) error
 }
 
-// Verify checks if token is correct and signed.
-func (m *Token) Verify(keys ...*ecdsa.PublicKey) bool {
-	if m.FirstEpoch > m.LastEpoch {
-		return false
-	}
-	ownerFromKeys := chain.KeysToAddress(keys...)
-	if m.OwnerID.String() != ownerFromKeys {
-		return false
-	}
+// PrivateTokenStore is an interface of the storage of private tokens addressable by TokenID.
+type PrivateTokenStore interface {
+	PrivateTokenSource
+	EpochLifetimeStore
 
-	for i := range keys {
-		if m.Header.Verify(keys[i]) && crypto.Verify(keys[i], m.verificationData(), m.Signature) == nil {
-			return true
-		}
-	}
-	return false
+	// Store must save passed private token in the storage under the given key.
+	//
+	// Resulting error must be nil if private token was stored successfully.
+	Store(PrivateTokenKey, PrivateToken) error
 }
 
-// AddSignatures adds token signatures.
-func (t *PToken) AddSignatures(signH, signT []byte) {
-	t.mtx.Lock()
-
-	t.Header.KeySignature = signH
-	t.Signature = signT
-
-	t.mtx.Unlock()
+// KeyStore is an interface of the storage of public keys addressable by OwnerID,
+type KeyStore interface {
+	// Get must return the storage record corresponding to the passed key.
+	//
+	// Resulting error must be ErrKeyNotFound if there is no corresponding record.
+	Get(context.Context, OwnerID) ([]*ecdsa.PublicKey, error)
 }
 
-// SignData signs data with session private key.
-func (t *PToken) SignData(data []byte) ([]byte, error) {
-	return crypto.Sign(t.PrivateKey, data)
+// CreateParamsSource is an interface of the container of session parameters with read access.
+type CreateParamsSource interface {
+	refs.OwnerIDSource
+	service.LifetimeSource
 }
 
-// VerifyData checks if signature of data by token is equal to sign.
-func (m *VerificationHeader) VerifyData(data, sign []byte) error {
-	if crypto.Verify(crypto.UnmarshalPublicKey(m.PublicKey), data, sign) != nil {
-		return ErrInvalidSignature
-	}
-	return nil
+// CreateParamsContainer is an interface of the container of session parameters.
+type CreateParamsContainer interface {
+	refs.OwnerIDContainer
+	service.LifetimeContainer
 }
 
-// Verify checks if verification header was issued by id.
-func (m *VerificationHeader) Verify(keys ...*ecdsa.PublicKey) bool {
-	for i := range keys {
-		if crypto.Verify(keys[i], m.PublicKey, m.KeySignature) == nil {
-			return true
-		}
-	}
-	return false
+// CreateResult is an interface of the container of an opened session info with read access.
+type CreateResult interface {
+	service.TokenIDSource
+	service.SessionKeySource
 }
 
-// UnmarshalPublicKeys returns unmarshal public keys from the token
-func UnmarshalPublicKeys(t *Token) []*ecdsa.PublicKey {
-	r := make([]*ecdsa.PublicKey, 0, len(t.PublicKeys))
-	for i := range t.PublicKeys {
-		r = append(r, crypto.UnmarshalPublicKey(t.PublicKeys[i]))
-	}
-	return r
+// Creator is an interface of the tool for a session opening.
+type Creator interface {
+	Create(context.Context, CreateParamsSource) (CreateResult, error)
 }

@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"bytes"
+	"encoding/binary"
 	"encoding/hex"
 	"strconv"
 	"strings"
@@ -26,6 +27,8 @@ var (
 	_ proto.Message = (*NodeInfo)(nil)
 	_ proto.Message = (*SpreadMap)(nil)
 )
+
+var requestEndianness = binary.BigEndian
 
 // Equals checks whether two NodeInfo has same address.
 func (m NodeInfo) Equals(n1 NodeInfo) bool {
@@ -97,4 +100,38 @@ func (m SpreadMap) String() string {
 		"Epoch: " + strconv.FormatUint(m.Epoch, 10) +
 		", " +
 		"Netmap: [" + strings.Join(result, ",") + "]>"
+}
+
+// GetType is a Type field getter.
+func (m Request) GetType() NodeType {
+	return m.Type
+}
+
+// SetType is a Type field setter.
+func (m *Request) SetType(t NodeType) {
+	m.Type = t
+}
+
+// SetState is a State field setter.
+func (m *Request) SetState(state Request_State) {
+	m.State = state
+}
+
+// SetInfo is an Info field getter.
+func (m *Request) SetInfo(info NodeInfo) {
+	m.Info = info
+}
+
+// Size returns the size necessary for a binary representation of the state.
+func (x Request_State) Size() int {
+	return 4
+}
+
+// Bytes returns a binary representation of the state.
+func (x Request_State) Bytes() []byte {
+	data := make([]byte, x.Size())
+
+	requestEndianness.PutUint32(data, uint32(x))
+
+	return data
 }

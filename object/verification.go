@@ -77,7 +77,7 @@ func (m Object) Verify() error {
 	integrity := ih.Value.(*Header_Integrity).Integrity
 
 	// Prepare structures
-	_, vh := m.LastHeader(HeaderType(VerifyHdr))
+	_, vh := m.LastHeader(HeaderType(TokenHdr))
 	if vh == nil {
 		_, pkh := m.LastHeader(HeaderType(PublicKeyHdr))
 		if pkh == nil {
@@ -85,7 +85,7 @@ func (m Object) Verify() error {
 		}
 		pubkey = pkh.Value.(*Header_PublicKey).PublicKey.Value
 	} else {
-		pubkey = vh.Value.(*Header_Verify).Verify.PublicKey
+		pubkey = vh.Value.(*Header_Token).Token.GetSessionKey()
 	}
 
 	// Verify signature

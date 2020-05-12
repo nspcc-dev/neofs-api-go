@@ -19,21 +19,6 @@ func (m Object) IsLinking() bool {
 	return false
 }
 
-// VerificationHeader returns verification header if it is presented in extended headers.
-func (m Object) VerificationHeader() (*VerificationHeader, error) {
-	_, vh := m.LastHeader(HeaderType(VerifyHdr))
-	if vh == nil {
-		return nil, ErrHeaderNotFound
-	}
-	return vh.Value.(*Header_Verify).Verify, nil
-}
-
-// SetVerificationHeader sets verification header in the object.
-// It will replace existing verification header or add a new one.
-func (m *Object) SetVerificationHeader(header *VerificationHeader) {
-	m.SetHeader(&Header{Value: &Header_Verify{Verify: header}})
-}
-
 // Links returns slice of ids of specified link type
 func (m *Object) Links(t Link_Type) []ID {
 	var res []ID

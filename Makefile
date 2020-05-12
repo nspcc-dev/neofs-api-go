@@ -1,4 +1,4 @@
-PROTO_VERSION=v0.7.1
+PROTO_VERSION=v0.7.4
 PROTO_URL=https://github.com/nspcc-dev/neofs-api/archive/$(PROTO_VERSION).tar.gz
 
 B=\033[0;1m

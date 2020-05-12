@@ -1,82 +1,64 @@
 package session
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
-	"crypto/rand"
 	"sync"
-
-	"github.com/nspcc-dev/neofs-api-go/refs"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
-type simpleStore struct {
+type mapTokenStore struct {
 	*sync.RWMutex
 
-	tokens map[TokenID]*PToken
+	tokens map[PrivateTokenKey]PrivateToken
 }
 
-// TODO get curve from neofs-crypto
-func defaultCurve() elliptic.Curve {
-	return elliptic.P256()
-}
-
-// NewSimpleStore creates simple token storage
-func NewSimpleStore() TokenStore {
-	return &simpleStore{
+// NewMapTokenStore creates new PrivateTokenStore instance.
+//
+// The elements of the instance are stored in the map.
+func NewMapTokenStore() PrivateTokenStore {
+	return &mapTokenStore{
 		RWMutex: new(sync.RWMutex),
-		tokens:  make(map[TokenID]*PToken),
+		tokens:  make(map[PrivateTokenKey]PrivateToken),
 	}
 }
 
-// New returns new token with specified parameters.
-func (s *simpleStore) New(p TokenParams) *PToken {
-	tid, err := refs.NewUUID()
-	if err != nil {
-		return nil
-	}
-
-	key, err := ecdsa.GenerateKey(defaultCurve(), rand.Reader)
-	if err != nil {
-		return nil
-	}
-
-	if p.FirstEpoch > p.LastEpoch || p.OwnerID.Empty() {
-		return nil
-	}
-
-	t := &PToken{
-		mtx: new(sync.Mutex),
-		Token: Token{
-			ID:         tid,
-			Header:     VerificationHeader{PublicKey: crypto.MarshalPublicKey(&key.PublicKey)},
-			FirstEpoch: p.FirstEpoch,
-			LastEpoch:  p.LastEpoch,
-			ObjectID:   p.ObjectID,
-			OwnerID:    p.OwnerID,
-			PublicKeys: p.PublicKeys,
-		},
-		PrivateKey: key,
-	}
-
+// Store adds passed token to the map.
+//
+// Resulting error is always nil.
+func (s *mapTokenStore) Store(key PrivateTokenKey, token PrivateToken) error {
 	s.Lock()
-	s.tokens[t.ID] = t
+	s.tokens[key] = token
 	s.Unlock()
 
-	return t
+	return nil
 }
 
-// Fetch tries to fetch a token with specified id.
-func (s *simpleStore) Fetch(id TokenID) *PToken {
+// Fetch returns the map element corresponding to the given key.
+//
+// Returns ErrPrivateTokenNotFound is there is no element in map.
+func (s *mapTokenStore) Fetch(key PrivateTokenKey) (PrivateToken, error) {
 	s.RLock()
 	defer s.RUnlock()
 
-	return s.tokens[id]
+	t, ok := s.tokens[key]
+	if !ok {
+		return nil, ErrPrivateTokenNotFound
+	}
+
+	return t, nil
 }
 
-// Remove removes token with id from store.
-func (s *simpleStore) Remove(id TokenID) {
+// RemoveExpired removes all the map elements that are expired in the passed epoch.
+//
+// Resulting error is always nil.
+func (s *mapTokenStore) RemoveExpired(epoch uint64) error {
 	s.Lock()
-	delete(s.tokens, id)
+
+	for key, token := range s.tokens {
+		if token.Expired(epoch) {
+			delete(s.tokens, key)
+		}
+	}
+
 	s.Unlock()
+
+	return nil
 }

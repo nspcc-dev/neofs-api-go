@@ -3,7 +3,6 @@ package session;
 option go_package = "github.com/nspcc-dev/neofs-api-go/session";
 option csharp_namespace = "NeoFS.API.Session";
 
-import "session/types.proto";
 import "service/meta.proto";
 import "service/verify.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
@@ -12,42 +11,29 @@ option (gogoproto.stable_marshaler_all) = true;
 
 
 service Session {
-    // Create is a method that used to open a trusted session to manipulate
-    // an object. In order to put or delete object client have to obtain session
-    // token with trusted node. Trusted node will modify client's object
-    // (add missing headers, checksums, homomorphic hash) and sign id with
-    // session key. Session is established during 4-step handshake in one gRPC stream
-    //
-    // - First client stream message SHOULD BE type of `CreateRequest_Init`.
-    // - First server stream message SHOULD BE type of `CreateResponse_Unsigned`.
-    // - Second client stream message SHOULD BE type of `CreateRequest_Signed`.
-    // - Second server stream message SHOULD BE type of `CreateResponse_Result`.
-    rpc Create (stream CreateRequest) returns (stream CreateResponse);
+    // Create opens new session between the client and the server
+    rpc Create (CreateRequest) returns (CreateResponse);
 }
 
-
+// CreateRequest carries an information necessary for opening a session
 message CreateRequest {
-    // Message should be one of
-    oneof Message {
-        // Init is a message to initialize session opening. Carry:
-        // owner of manipulation object;
-        // ID of manipulation object;
-        // token lifetime bounds.
-        session.Token Init = 1;
-        // Signed Init message response (Unsigned) from server with user private key
-        session.Token Signed = 2;
-    }
+    // OwnerID carries an identifier of a session initiator
+    bytes OwnerID = 1 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"];
+
+    // Lifetime carries a lifetime of the session
+    service.TokenLifetime Lifetime = 2 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
     service.RequestVerificationHeader Verify = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
+// CreateResponse carries an information about the opened session
 message CreateResponse {
-    oneof Message {
-        // Unsigned token with token ID and session public key generated on server side
-        session.Token Unsigned = 1;
-        // Result is a resulting token which can be used for object placing through an trusted intermediary
-        session.Token Result = 2;
-    }
+    // ID carries an identifier of session token
+    bytes ID = 1 [(gogoproto.customtype) = "TokenID", (gogoproto.nullable) = false];
+
+    // SessionKey carries a session public key
+    bytes SessionKey = 2;
 }

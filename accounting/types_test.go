@@ -84,3 +84,110 @@ func TestCheque(t *testing.T) {
 		require.Equal(t, cheque.Amount, decimal.NewGAS(42))
 	})
 }
+
+func TestBalanceRequest_SetOwnerID(t *testing.T) {
+	ownerID := OwnerID{1, 2, 3}
+	m := new(BalanceRequest)
+
+	m.SetOwnerID(ownerID)
+
+	require.Equal(t, ownerID, m.GetOwnerID())
+}
+
+func TestGetRequestGettersSetters(t *testing.T) {
+	t.Run("id", func(t *testing.T) {
+		id := ChequeID("test id")
+		m := new(GetRequest)
+
+		m.SetID(id)
+
+		require.Equal(t, id, m.GetID())
+	})
+
+	t.Run("owner", func(t *testing.T) {
+		id := OwnerID{1, 2, 3}
+		m := new(GetRequest)
+
+		m.SetOwnerID(id)
+
+		require.Equal(t, id, m.GetOwnerID())
+	})
+}
+
+func TestPutRequestGettersSetters(t *testing.T) {
+	t.Run("owner", func(t *testing.T) {
+		id := OwnerID{1, 2, 3}
+		m := new(PutRequest)
+
+		m.SetOwnerID(id)
+
+		require.Equal(t, id, m.GetOwnerID())
+	})
+
+	t.Run("message ID", func(t *testing.T) {
+		id, err := refs.NewUUID()
+		require.NoError(t, err)
+
+		m := new(PutRequest)
+		m.SetMessageID(id)
+
+		require.Equal(t, id, m.GetMessageID())
+	})
+
+	t.Run("amount", func(t *testing.T) {
+		amount := decimal.New(1)
+		m := new(PutRequest)
+
+		m.SetAmount(amount)
+
+		require.Equal(t, amount, m.GetAmount())
+	})
+
+	t.Run("height", func(t *testing.T) {
+		h := uint64(3)
+		m := new(PutRequest)
+
+		m.SetHeight(h)
+
+		require.Equal(t, h, m.GetHeight())
+	})
+}
+
+func TestListRequestGettersSetters(t *testing.T) {
+	ownerID := OwnerID{1, 2, 3}
+	m := new(ListRequest)
+
+	m.SetOwnerID(ownerID)
+
+	require.Equal(t, ownerID, m.GetOwnerID())
+}
+
+func TestDeleteRequestGettersSetters(t *testing.T) {
+	t.Run("id", func(t *testing.T) {
+		id := ChequeID("test id")
+		m := new(DeleteRequest)
+
+		m.SetID(id)
+
+		require.Equal(t, id, m.GetID())
+	})
+
+	t.Run("owner", func(t *testing.T) {
+		id := OwnerID{1, 2, 3}
+		m := new(DeleteRequest)
+
+		m.SetOwnerID(id)
+
+		require.Equal(t, id, m.GetOwnerID())
+	})
+
+	t.Run("message ID", func(t *testing.T) {
+		id, err := refs.NewUUID()
+		require.NoError(t, err)
+
+		m := new(DeleteRequest)
+		m.SetMessageID(id)
+
+		require.Equal(t, id, m.GetMessageID())
+	})
+}

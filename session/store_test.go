@@ -1,96 +1,111 @@
 package session
 
 import (
-	"crypto/ecdsa"
-	"crypto/rand"
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/refs"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/stretchr/testify/require"
 )
 
-type testClient struct {
-	*ecdsa.PrivateKey
-	OwnerID OwnerID
+func TestMapTokenStore(t *testing.T) {
+	// create new private token
+	pToken, err := NewPrivateToken(0)
+	require.NoError(t, err)
+
+	// create map token store
+	s := NewMapTokenStore()
+
+	// create test TokenID
+	tid, err := refs.NewUUID()
+	require.NoError(t, err)
+
+	// create test OwnerID
+	ownerID := OwnerID{1, 2, 3}
+
+	key := PrivateTokenKey{}
+	key.SetOwnerID(ownerID)
+	key.SetTokenID(tid)
+
+	// ascertain that there is no record for the key
+	_, err = s.Fetch(key)
+	require.EqualError(t, err, ErrPrivateTokenNotFound.Error())
+
+	// save private token record
+	require.NoError(t, s.Store(key, pToken))
+
+	// fetch private token by the key
+	res, err := s.Fetch(key)
+	require.NoError(t, err)
+
+	// ascertain that returned token equals to initial
+	require.Equal(t, pToken, res)
 }
 
-func (c *testClient) Sign(data []byte) ([]byte, error) {
-	return crypto.Sign(c.PrivateKey, data)
-}
+func TestMapTokenStore_RemoveExpired(t *testing.T) {
+	// create some epoch number
+	e1 := uint64(1)
 
-func newTestClient(t *testing.T) *testClient {
-	key, err := ecdsa.GenerateKey(defaultCurve(), rand.Reader)
+	// create private token that expires after e1
+	tok1, err := NewPrivateToken(e1)
 	require.NoError(t, err)
 
-	owner, err := refs.NewOwnerID(&key.PublicKey)
+	// create some greater than e1 epoch number
+	e2 := e1 + 1
+
+	// create private token that expires after e2
+	tok2, err := NewPrivateToken(e2)
 	require.NoError(t, err)
 
-	return &testClient{PrivateKey: key, OwnerID: owner}
-}
+	// create token store instance
+	s := NewMapTokenStore()
 
-func signToken(t *testing.T, token *PToken, c *testClient) {
-	require.NotNil(t, token)
-	token.SetPublicKeys(&c.PublicKey)
+	// create test PrivateTokenKey
+	key := PrivateTokenKey{}
+	key.SetOwnerID(OwnerID{1, 2, 3})
 
-	signH, err := c.Sign(token.Header.PublicKey)
+	// create IDs for tokens
+	id1, err := refs.NewUUID()
 	require.NoError(t, err)
-	require.NotNil(t, signH)
-
-	// data is not yet signed
-	keys := UnmarshalPublicKeys(&token.Token)
-	require.False(t, token.Verify(keys...))
-
-	signT, err := c.Sign(token.verificationData())
-	require.NoError(t, err)
-	require.NotNil(t, signT)
-
-	token.AddSignatures(signH, signT)
-	require.True(t, token.Verify(keys...))
-}
-
-func TestTokenStore(t *testing.T) {
-	s := NewSimpleStore()
-
-	oid, err := refs.NewObjectID()
+	id2, err := refs.NewUUID()
 	require.NoError(t, err)
 
-	c := newTestClient(t)
-	require.NotNil(t, c)
-	pk := [][]byte{crypto.MarshalPublicKey(&c.PublicKey)}
+	assertPresence := func(ids ...TokenID) {
+		for i := range ids {
+			key.SetTokenID(ids[i])
+			_, err = s.Fetch(key)
+			require.NoError(t, err)
+		}
+	}
 
-	// create new token
-	token := s.New(TokenParams{
-		ObjectID:   []ObjectID{oid},
-		OwnerID:    c.OwnerID,
-		PublicKeys: pk,
-	})
-	signToken(t, token, c)
+	assertAbsence := func(ids ...TokenID) {
+		for i := range ids {
+			key.SetTokenID(ids[i])
+			_, err = s.Fetch(key)
+			require.EqualError(t, err, ErrPrivateTokenNotFound.Error())
+		}
+	}
 
-	// check that it can be fetched
-	t1 := s.Fetch(token.ID)
-	require.NotNil(t, t1)
-	require.Equal(t, token, t1)
+	// store both tokens
+	key.SetTokenID(id1)
+	require.NoError(t, s.Store(key, tok1))
+	key.SetTokenID(id2)
+	require.NoError(t, s.Store(key, tok2))
 
-	// create and sign another token by the same client
-	t1 = s.New(TokenParams{
-		ObjectID:   []ObjectID{oid},
-		OwnerID:    c.OwnerID,
-		PublicKeys: pk,
-	})
+	// ascertain that both tokens are available
+	assertPresence(id1, id2)
 
-	signToken(t, t1, c)
+	// perform cleaning for epoch in which both tokens are not expired
+	require.NoError(t, s.RemoveExpired(e1))
 
-	data := []byte{1, 2, 3}
-	sign, err := t1.SignData(data)
-	require.NoError(t, err)
-	require.Error(t, token.Header.VerifyData(data, sign))
+	// ascertain that both tokens are still available
+	assertPresence(id1, id2)
 
-	sign, err = token.SignData(data)
-	require.NoError(t, err)
-	require.NoError(t, token.Header.VerifyData(data, sign))
+	// perform cleaning for epoch greater than e1 and not greater than e2
+	require.NoError(t, s.RemoveExpired(e1+1))
 
-	s.Remove(token.ID)
-	require.Nil(t, s.Fetch(token.ID))
-	require.NotNil(t, s.Fetch(t1.ID))
+	// ascertain that tok1 was removed
+	assertAbsence(id1)
+
+	// ascertain that tok2 was not removed
+	assertPresence(id2)
 }

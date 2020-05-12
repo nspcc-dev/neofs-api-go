@@ -1,7 +1,6 @@
 package service
 
-// NodeRole to identify in Bootstrap service.
-type NodeRole int32
+import "encoding/binary"
 
 const (
 	_ NodeRole = iota
@@ -21,4 +20,18 @@ func (nt NodeRole) String() string {
 	default:
 		return "Unknown"
 	}
+}
+
+// Size returns the size necessary for a binary representation of the NodeRole.
+func (nt NodeRole) Size() int {
+	return 4
+}
+
+// Bytes returns a binary representation of the NodeRole.
+func (nt NodeRole) Bytes() []byte {
+	data := make([]byte, nt.Size())
+
+	binary.BigEndian.PutUint32(data, uint32(nt))
+
+	return data
 }

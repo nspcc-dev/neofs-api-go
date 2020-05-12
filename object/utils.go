@@ -4,7 +4,6 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/nspcc-dev/neofs-api-go/session"
 	"github.com/pkg/errors"
 )
 
@@ -46,11 +45,10 @@ func (b ByteSize) String() string {
 
 // MakePutRequestHeader combines object and session token value
 // into header of object put request.
-func MakePutRequestHeader(obj *Object, token *session.Token) *PutRequest {
+func MakePutRequestHeader(obj *Object) *PutRequest {
 	return &PutRequest{
 		R: &PutRequest_Header{Header: &PutRequest_PutHeader{
 			Object: obj,
-			Token:  token,
 		}},
 	}
 }

@@ -1,201 +1,117 @@
 package service
 
 import (
-	"bytes"
-	"log"
+	"encoding/binary"
+	"io"
 	"math"
 	"testing"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/nspcc-dev/neofs-api-go/refs"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-crypto/test"
-	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )
 
-func BenchmarkSignRequestHeader(b *testing.B) {
+func (m TestRequest) SignedData() ([]byte, error) {
+	return SignedDataFromReader(m)
+}
+
+func (m TestRequest) SignedDataSize() (sz int) {
+	sz += 4
+
+	sz += len(m.StringField)
+
+	sz += len(m.BytesField)
+
+	sz += m.CustomField.Size()
+
+	return
+}
+
+func (m TestRequest) ReadSignedData(p []byte) (int, error) {
+	if len(p) < m.SignedDataSize() {
+		return 0, io.ErrUnexpectedEOF
+	}
+
+	var off int
+
+	binary.BigEndian.PutUint32(p[off:], uint32(m.IntField))
+	off += 4
+
+	off += copy(p[off:], []byte(m.StringField))
+
+	off += copy(p[off:], m.BytesField)
+
+	n, err := m.CustomField.MarshalTo(p[off:])
+	off += n
+
+	return off, err
+}
+
+func BenchmarkSignDataWithSessionToken(b *testing.B) {
 	key := test.DecodeKey(0)
 
-	custom := testCustomField{1, 2, 3, 4, 5, 6, 7, 8}
+	customField := testCustomField{1, 2, 3, 4, 5, 6, 7, 8}
 
-	some := &TestRequest{
-		IntField:    math.MaxInt32,
-		StringField: "TestRequestStringField",
-		BytesField:  make([]byte, 1<<22),
-		CustomField: &custom,
-		RequestMetaHeader: RequestMetaHeader{
-			TTL:   math.MaxInt32 - 8,
-			Epoch: math.MaxInt64 - 12,
-		},
-	}
+	token := new(Token)
 
-	b.ResetTimer()
-	b.ReportAllocs()
-
-	for i := 0; i < b.N; i++ {
-		require.NoError(b, SignRequestHeader(key, some))
-	}
-}
-
-func BenchmarkVerifyRequestHeader(b *testing.B) {
-	custom := testCustomField{1, 2, 3, 4, 5, 6, 7, 8}
-
-	some := &TestRequest{
-		IntField:    math.MaxInt32,
-		StringField: "TestRequestStringField",
-		BytesField:  make([]byte, 1<<22),
-		CustomField: &custom,
-		RequestMetaHeader: RequestMetaHeader{
-			TTL:   math.MaxInt32 - 8,
-			Epoch: math.MaxInt64 - 12,
-		},
-	}
-
-	for i := 0; i < 10; i++ {
-		key := test.DecodeKey(i)
-		require.NoError(b, SignRequestHeader(key, some))
-	}
-
-	b.ResetTimer()
-	b.ReportAllocs()
-
-	for i := 0; i < b.N; i++ {
-		require.NoError(b, VerifyRequestHeader(some))
-	}
-}
-
-func TestSignRequestHeader(t *testing.T) {
 	req := &TestRequest{
 		IntField:    math.MaxInt32,
 		StringField: "TestRequestStringField",
-		BytesField:  []byte("TestRequestBytesField"),
+		BytesField:  make([]byte, 1<<22),
+		CustomField: &customField,
 	}
 
-	key := test.DecodeKey(0)
-	peer := crypto.MarshalPublicKey(&key.PublicKey)
+	req.SetTTL(math.MaxInt32 - 8)
+	req.SetEpoch(math.MaxInt64 - 12)
+	req.SetToken(token)
 
-	data, err := req.Marshal()
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		require.NoError(b, SignDataWithSessionToken(key, req))
+	}
+}
+
+func BenchmarkVerifyAccumulatedSignaturesWithToken(b *testing.B) {
+	customField := testCustomField{1, 2, 3, 4, 5, 6, 7, 8}
+
+	token := new(Token)
+
+	req := &TestRequest{
+		IntField:    math.MaxInt32,
+		StringField: "TestRequestStringField",
+		BytesField:  make([]byte, 1<<22),
+		CustomField: &customField,
+	}
+
+	req.SetTTL(math.MaxInt32 - 8)
+	req.SetEpoch(math.MaxInt64 - 12)
+	req.SetToken(token)
+
+	for i := 0; i < 10; i++ {
+		key := test.DecodeKey(i)
+		require.NoError(b, SignDataWithSessionToken(key, req))
+	}
+
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		require.NoError(b, VerifyAccumulatedSignaturesWithToken(req))
+	}
+}
+
+func TestRequestVerificationHeader_SetToken(t *testing.T) {
+	id, err := refs.NewUUID()
 	require.NoError(t, err)
 
-	require.NoError(t, SignRequestHeader(key, req))
+	token := new(Token)
+	token.SetID(id)
 
-	require.Len(t, req.Signatures, 1)
-	for i := range req.Signatures {
-		sign := req.Signatures[i].GetSign()
-		require.Equal(t, peer, req.Signatures[i].GetPeer())
-		require.NoError(t, crypto.Verify(&key.PublicKey, data, sign))
-	}
-}
+	h := new(RequestVerificationHeader)
 
-func TestVerifyRequestHeader(t *testing.T) {
-	req := &TestRequest{
-		IntField:          math.MaxInt32,
-		StringField:       "TestRequestStringField",
-		BytesField:        []byte("TestRequestBytesField"),
-		RequestMetaHeader: RequestMetaHeader{TTL: 10},
-	}
+	h.SetToken(token)
 
-	for i := 0; i < 10; i++ {
-		req.TTL--
-		require.NoError(t, SignRequestHeader(test.DecodeKey(i), req))
-	}
-
-	require.NoError(t, VerifyRequestHeader(req))
-}
-
-func TestMaintainableRequest(t *testing.T) {
-	req := &TestRequest{
-		IntField:          math.MaxInt32,
-		StringField:       "TestRequestStringField",
-		BytesField:        []byte("TestRequestBytesField"),
-		RequestMetaHeader: RequestMetaHeader{TTL: 10},
-	}
-
-	count := 10
-	owner := test.DecodeKey(count + 1)
-
-	for i := 0; i < count; i++ {
-		req.TTL--
-
-		key := test.DecodeKey(i)
-		require.NoError(t, SignRequestHeader(key, req))
-
-		// sign first key (session key) by owner key
-		if i == 0 {
-			sign, err := crypto.Sign(owner, crypto.MarshalPublicKey(&key.PublicKey))
-			require.NoError(t, err)
-
-			req.SetOwner(&owner.PublicKey, sign)
-		}
-	}
-
-	{ // Validate owner
-		user, err := refs.NewOwnerID(&owner.PublicKey)
-		require.NoError(t, err)
-		require.NoError(t, req.CheckOwner(user))
-	}
-
-	{ // Good case:
-		require.NoError(t, VerifyRequestHeader(req))
-
-		// validate, that first key (session key) was signed with owner
-		signatures := req.GetSignatures()
-
-		require.Len(t, signatures, count)
-
-		pub, err := req.GetOwner()
-		require.NoError(t, err)
-
-		require.Equal(t, &owner.PublicKey, pub)
-	}
-
-	{ // wrong owner:
-		req.Signatures[0].Origin = nil
-
-		pub, err := req.GetOwner()
-		require.NoError(t, err)
-
-		require.NotEqual(t, &owner.PublicKey, pub)
-	}
-
-	{ // Wrong signatures:
-		copy(req.Signatures[count-1].Sign, req.Signatures[count-1].Peer)
-		err := VerifyRequestHeader(req)
-		require.EqualError(t, errors.Cause(err), crypto.ErrInvalidSignature.Error())
-	}
-}
-
-func TestVerifyAndSignRequestHeaderWithoutCloning(t *testing.T) {
-	key := test.DecodeKey(0)
-
-	custom := testCustomField{1, 2, 3, 4, 5, 6, 7, 8}
-
-	b := &TestRequest{
-		IntField:    math.MaxInt32,
-		StringField: "TestRequestStringField",
-		BytesField:  []byte("TestRequestBytesField"),
-		CustomField: &custom,
-		RequestMetaHeader: RequestMetaHeader{
-			TTL:   math.MaxInt32 - 8,
-			Epoch: math.MaxInt64 - 12,
-		},
-	}
-
-	require.NoError(t, SignRequestHeader(key, b))
-	require.NoError(t, VerifyRequestHeader(b))
-
-	require.Len(t, b.Signatures, 1)
-	require.Equal(t, custom, *b.CustomField)
-	require.Equal(t, uint32(math.MaxInt32-8), b.GetTTL())
-	require.Equal(t, uint64(math.MaxInt64-12), b.GetEpoch())
-
-	buf := bytes.NewBuffer(nil)
-	log.SetOutput(buf)
-
-	cp, ok := proto.Clone(b).(*TestRequest)
-	require.True(t, ok)
-	require.NotEqual(t, b, cp)
-
-	require.Contains(t, buf.String(), "proto: don't know how to copy")
+	require.Equal(t, token, h.GetToken())
 }

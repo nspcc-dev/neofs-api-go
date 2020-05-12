@@ -351,3 +351,103 @@ func (m *Settlement) Equal(s *Settlement) bool {
 	}
 	return len(m.Transactions) == 0 || reflect.DeepEqual(m.Transactions, s.Transactions)
 }
+
+// GetOwnerID is an OwnerID field getter.
+func (m BalanceRequest) GetOwnerID() OwnerID {
+	return m.OwnerID
+}
+
+// SetOwnerID is an OwnerID field setter.
+func (m *BalanceRequest) SetOwnerID(owner OwnerID) {
+	m.OwnerID = owner
+}
+
+// GetID is an ID field getter.
+func (m GetRequest) GetID() ChequeID {
+	return m.ID
+}
+
+// SetID is an ID field setter.
+func (m *GetRequest) SetID(id ChequeID) {
+	m.ID = id
+}
+
+// GetOwnerID is an OwnerID field getter.
+func (m GetRequest) GetOwnerID() OwnerID {
+	return m.OwnerID
+}
+
+// SetOwnerID is an OwnerID field setter.
+func (m *GetRequest) SetOwnerID(id OwnerID) {
+	m.OwnerID = id
+}
+
+// GetOwnerID is an OwnerID field getter.
+func (m PutRequest) GetOwnerID() OwnerID {
+	return m.OwnerID
+}
+
+// SetOwnerID is an OwnerID field setter.
+func (m *PutRequest) SetOwnerID(id OwnerID) {
+	m.OwnerID = id
+}
+
+// GetMessageID is a MessageID field getter.
+func (m PutRequest) GetMessageID() MessageID {
+	return m.MessageID
+}
+
+// SetMessageID is a MessageID field setter.
+func (m *PutRequest) SetMessageID(id MessageID) {
+	m.MessageID = id
+}
+
+// SetAmount is an Amount field setter.
+func (m *PutRequest) SetAmount(amount *decimal.Decimal) {
+	m.Amount = amount
+}
+
+// SetHeight is a Height field setter.
+func (m *PutRequest) SetHeight(h uint64) {
+	m.Height = h
+}
+
+// GetOwnerID is an OwnerID field getter.
+func (m ListRequest) GetOwnerID() OwnerID {
+	return m.OwnerID
+}
+
+// SetOwnerID is an OwnerID field setter.
+func (m *ListRequest) SetOwnerID(id OwnerID) {
+	m.OwnerID = id
+}
+
+// GetID is an ID field getter.
+func (m DeleteRequest) GetID() ChequeID {
+	return m.ID
+}
+
+// SetID is an ID field setter.
+func (m *DeleteRequest) SetID(id ChequeID) {
+	m.ID = id
+}
+
+// GetOwnerID is an OwnerID field getter.
+func (m DeleteRequest) GetOwnerID() OwnerID {
+	return m.OwnerID
+}
+
+// SetOwnerID is an OwnerID field setter.
+func (m *DeleteRequest) SetOwnerID(id OwnerID) {
+	m.OwnerID = id
+}
+
+// GetMessageID is a MessageID field getter.
+func (m DeleteRequest) GetMessageID() MessageID {
+	return m.MessageID
+}
+
+// SetMessageID is a MessageID field setter.
+func (m *DeleteRequest) SetMessageID(id MessageID) {
+	m.MessageID = id
+}

@@ -4,7 +4,7 @@ option go_package = "github.com/nspcc-dev/neofs-api-go/object";
 option csharp_namespace = "NeoFS.API.Object";
 
 import "refs/types.proto";
-import "session/types.proto";
+import "service/verify.proto";
 import "storagegroup/types.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
@@ -36,8 +36,8 @@ message Header {
         Transform Transform                    = 4;
         // Tombstone header that set up in deleted objects
         Tombstone Tombstone                    = 5;
-        // Verify header that contains session public key and user's signature
-        session.VerificationHeader Verify      = 6;
+        // Token header contains token of the session within which the object was created
+        service.Token Token                    = 6;
         // HomoHash is a homomorphic hash of original object payload
         bytes HomoHash                         = 7 [(gogoproto.customtype) = "Hash"];
         // PayloadChecksum of actual object's payload
@@ -70,6 +70,8 @@ message SystemHeader {
 }
 
 message CreationPoint {
+    option (gogoproto.goproto_stringer) = false;
+
     // UnixTime is a date of creation in unixtime format
     int64 UnixTime = 1;
     // Epoch is a date of creation in NeoFS epochs

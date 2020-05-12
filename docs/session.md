@@ -12,13 +12,6 @@
     - [CreateResponse](#session.CreateResponse)
     
 
-- [session/types.proto](#session/types.proto)
-
-  - Messages
-    - [Token](#session.Token)
-    - [VerificationHeader](#session.VerificationHeader)
-    
-
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -37,22 +30,13 @@
 
 
 ```
-rpc Create(stream CreateRequest) returns (stream CreateResponse);
+rpc Create(CreateRequest) returns (CreateResponse);
 
 ```
 
 #### Method Create
 
-Create is a method that used to open a trusted session to manipulate
-an object. In order to put or delete object client have to obtain session
-token with trusted node. Trusted node will modify client's object
-(add missing headers, checksums, homomorphic hash) and sign id with
-session key. Session is established during 4-step handshake in one gRPC stream
-
-- First client stream message SHOULD BE type of `CreateRequest_Init`.
-- First server stream message SHOULD BE type of `CreateResponse_Unsigned`.
-- Second client stream message SHOULD BE type of `CreateRequest_Signed`.
-- Second server stream message SHOULD BE type of `CreateResponse_Result`.
+Create opens new session between the client and the server
 
 | Name | Input | Output |
 | ---- | ----- | ------ |
@@ -63,13 +47,13 @@ session key. Session is established during 4-step handshake in one gRPC stream
 <a name="session.CreateRequest"></a>
 
 ### Message CreateRequest
-
+CreateRequest carries an information necessary for opening a session
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Init | [Token](#session.Token) |  | Init is a message to initialize session opening. Carry: owner of manipulation object; ID of manipulation object; token lifetime bounds. |
-| Signed | [Token](#session.Token) |  | Signed Init message response (Unsigned) from server with user private key |
+| OwnerID | [bytes](#bytes) |  | OwnerID carries an identifier of a session initiator |
+| Lifetime | [service.TokenLifetime](#service.TokenLifetime) |  | Lifetime carries a lifetime of the session |
 | Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
 | Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
 
@@ -77,57 +61,13 @@ session key. Session is established during 4-step handshake in one gRPC stream
 <a name="session.CreateResponse"></a>
 
 ### Message CreateResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| Unsigned | [Token](#session.Token) |  | Unsigned token with token ID and session public key generated on server side |
-| Result | [Token](#session.Token) |  | Result is a resulting token which can be used for object placing through an trusted intermediary |
-
- <!-- end messages -->
-
- <!-- end enums -->
-
-
-
-<a name="session/types.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## session/types.proto
-
-
- <!-- end services -->
-
-
-<a name="session.Token"></a>
-
-### Message Token
-User token granting rights for object manipulation
+CreateResponse carries an information about the opened session
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Header | [VerificationHeader](#session.VerificationHeader) |  | Header carries verification data of session key |
-| OwnerID | [bytes](#bytes) |  | OwnerID is an owner of manipulation object |
-| FirstEpoch | [uint64](#uint64) |  | FirstEpoch is an initial epoch of token lifetime |
-| LastEpoch | [uint64](#uint64) |  | LastEpoch is a last epoch of token lifetime |
-| ObjectID | [bytes](#bytes) | repeated | ObjectID is an object identifier of manipulation object |
-| Signature | [bytes](#bytes) |  | Signature is a token signature, signed by owner of manipulation object |
-| ID | [bytes](#bytes) |  | ID is a token identifier. valid UUIDv4 represented in bytes |
-| PublicKeys | [bytes](#bytes) | repeated | PublicKeys associated with owner |
-
-
-<a name="session.VerificationHeader"></a>
-
-### Message VerificationHeader
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| PublicKey | [bytes](#bytes) |  | PublicKey is a session public key |
-| KeySignature | [bytes](#bytes) |  | KeySignature is a session public key signature. Signed by trusted side |
+| ID | [bytes](#bytes) |  | ID carries an identifier of session token |
+| SessionKey | [bytes](#bytes) |  | SessionKey carries a session public key |
 
  <!-- end messages -->
 

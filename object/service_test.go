@@ -16,8 +16,8 @@ func TestRequest(t *testing.T) {
 		&DeleteRequest{},
 		&GetRangeRequest{},
 		&GetRangeHashRequest{},
-		MakePutRequestHeader(nil, nil),
-		MakePutRequestHeader(&Object{}, nil),
+		MakePutRequestHeader(nil),
+		MakePutRequestHeader(&Object{}),
 	}
 
 	types := []RequestType{

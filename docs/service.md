@@ -14,8 +14,10 @@
 
   - Messages
     - [RequestVerificationHeader](#service.RequestVerificationHeader)
-    - [RequestVerificationHeader.Sign](#service.RequestVerificationHeader.Sign)
     - [RequestVerificationHeader.Signature](#service.RequestVerificationHeader.Signature)
+    - [Token](#service.Token)
+    - [Token.Info](#service.Token.Info)
+    - [TokenLifetime](#service.TokenLifetime)
     
 
 - [service/verify_test.proto](#service/verify_test.proto)
@@ -49,6 +51,7 @@ RequestMetaHeader contains information about request meta headers
 | TTL | [uint32](#uint32) |  | TTL must be larger than zero, it decreased in every NeoFS Node |
 | Epoch | [uint64](#uint64) |  | Epoch for user can be empty, because node sets epoch to the actual value |
 | Version | [uint32](#uint32) |  | Version defines protocol version TODO: not used for now, should be implemented in future |
+| Raw | [bool](#bool) |  | Raw determines whether the request is raw or not |
 
 
 <a name="service.ResponseMetaHeader"></a>
@@ -88,18 +91,7 @@ RequestVerificationHeader is a set of signatures of every NeoFS Node that proces
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | Signatures | [RequestVerificationHeader.Signature](#service.RequestVerificationHeader.Signature) | repeated | Signatures is a set of signatures of every passed NeoFS Node |
-
-
-<a name="service.RequestVerificationHeader.Sign"></a>
-
-### Message RequestVerificationHeader.Sign
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| Sign | [bytes](#bytes) |  | Sign is signature of the request or session key. |
-| Peer | [bytes](#bytes) |  | Peer is compressed public key used for signature. |
+| Token | [Token](#service.Token) |  | Token is a token of the session within which the request is sent |
 
 
 <a name="service.RequestVerificationHeader.Signature"></a>
@@ -110,10 +102,67 @@ RequestVerificationHeader is a set of signatures of every NeoFS Node that proces
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| Sign | [RequestVerificationHeader.Sign](#service.RequestVerificationHeader.Sign) |  | Sign is a signature and public key of the request. |
-| Origin | [RequestVerificationHeader.Sign](#service.RequestVerificationHeader.Sign) |  | Origin used for requests, when trusted node changes it and re-sign with session key. If session key used for signature request, then Origin should contain public key of user and signed session key. |
+| Sign | [bytes](#bytes) |  | Sign is signature of the request or session key. |
+| Peer | [bytes](#bytes) |  | Peer is compressed public key used for signature. |
+
+
+<a name="service.Token"></a>
+
+### Message Token
+User token granting rights for object manipulation
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| TokenInfo | [Token.Info](#service.Token.Info) |  | TokenInfo is a grouped information about token |
+| Signature | [bytes](#bytes) |  | Signature is a signature of session token information |
+
+
+<a name="service.Token.Info"></a>
+
+### Message Token.Info
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ID | [bytes](#bytes) |  | ID is a token identifier. valid UUIDv4 represented in bytes |
+| OwnerID | [bytes](#bytes) |  | OwnerID is an owner of manipulation object |
+| verb | [Token.Info.Verb](#service.Token.Info.Verb) |  | Verb is a type of request for which the token is issued |
+| Address | [refs.Address](#refs.Address) |  | Address is an object address for which token is issued |
+| Lifetime | [TokenLifetime](#service.TokenLifetime) |  | Lifetime is a lifetime of the session |
+| SessionKey | [bytes](#bytes) |  | SessionKey is a public key of session key |
+
+
+<a name="service.TokenLifetime"></a>
+
+### Message TokenLifetime
+TokenLifetime carries a group of lifetime parameters of the token
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Created | [uint64](#uint64) |  | Created carries an initial epoch of token lifetime |
+| ValidUntil | [uint64](#uint64) |  | ValidUntil carries a last epoch of token lifetime |
 
  <!-- end messages -->
+
+
+<a name="service.Token.Info.Verb"></a>
+
+### Token.Info.Verb
+Verb is an enumeration of session request types
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| Put | 0 | Put refers to object.Put RPC call |
+| Get | 1 | Get refers to object.Get RPC call |
+| Head | 2 | Head refers to object.Head RPC call |
+| Search | 3 | Search refers to object.Search RPC call |
+| Delete | 4 | Delete refers to object.Delete RPC call |
+| Range | 5 | Range refers to object.GetRange RPC call |
+| RangeHash | 6 | RangeHash refers to object.GetRangeHash RPC call |
+
 
  <!-- end enums -->
 

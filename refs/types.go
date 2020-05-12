@@ -37,6 +37,23 @@ type (
 	OwnerID chain.WalletAddress
 )
 
+// OwnerIDSource is an interface of the container of an OwnerID value with read access.
+type OwnerIDSource interface {
+	GetOwnerID() OwnerID
+}
+
+// OwnerIDContainer is an interface of the container of an OwnerID value.
+type OwnerIDContainer interface {
+	OwnerIDSource
+	SetOwnerID(OwnerID)
+}
+
+// AddressContainer is an interface of the container of object address value.
+type AddressContainer interface {
+	GetAddress() Address
+	SetAddress(Address)
+}
+
 const (
 	// UUIDSize contains size of UUID.
 	UUIDSize = 16
