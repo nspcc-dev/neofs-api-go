@@ -55,3 +55,88 @@ func TestCID(t *testing.T) {
 		require.Equal(t, cid1, cid2)
 	})
 }
+
+func TestPutRequestGettersSetters(t *testing.T) {
+	t.Run("owner", func(t *testing.T) {
+		owner := OwnerID{1, 2, 3}
+		m := new(PutRequest)
+
+		m.SetOwnerID(owner)
+
+		require.Equal(t, owner, m.GetOwnerID())
+	})
+
+	t.Run("capacity", func(t *testing.T) {
+		cp := uint64(3)
+		m := new(PutRequest)
+
+		m.SetCapacity(cp)
+
+		require.Equal(t, cp, m.GetCapacity())
+	})
+
+	t.Run("message ID", func(t *testing.T) {
+		id, err := refs.NewUUID()
+		require.NoError(t, err)
+
+		m := new(PutRequest)
+
+		m.SetMessageID(id)
+
+		require.Equal(t, id, m.GetMessageID())
+	})
+
+	t.Run("rules", func(t *testing.T) {
+		rules := netmap.PlacementRule{
+			ReplFactor: 1,
+		}
+
+		m := new(PutRequest)
+
+		m.SetRules(rules)
+
+		require.Equal(t, rules, m.GetRules())
+	})
+
+	t.Run("basic ACL", func(t *testing.T) {
+		bACL := uint32(5)
+		m := new(PutRequest)
+
+		m.SetBasicACL(bACL)
+
+		require.Equal(t, bACL, m.GetBasicACL())
+	})
+}
+
+func TestDeleteRequestGettersSetters(t *testing.T) {
+	t.Run("cid", func(t *testing.T) {
+		cid := CID{1, 2, 3}
+		m := new(DeleteRequest)
+
+		m.SetCID(cid)
+
+		require.Equal(t, cid, m.GetCID())
+	})
+}
+
+func TestGetRequestGettersSetters(t *testing.T) {
+	t.Run("cid", func(t *testing.T) {
+		cid := CID{1, 2, 3}
+		m := new(GetRequest)
+
+		m.SetCID(cid)
+
+		require.Equal(t, cid, m.GetCID())
+	})
+}
+
+func TestListRequestGettersSetters(t *testing.T) {
+	t.Run("owner", func(t *testing.T) {
+		owner := OwnerID{1, 2, 3}
+		m := new(PutRequest)
+
+		m.SetOwnerID(owner)
+
+		require.Equal(t, owner, m.GetOwnerID())
+	})
+}

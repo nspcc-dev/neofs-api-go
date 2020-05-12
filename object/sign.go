@@ -3,34 +3,27 @@ package object
 import (
 	"encoding/binary"
 	"io"
+
+	"github.com/nspcc-dev/neofs-api-go/service"
 )
 
 // SignedData returns payload bytes of the request.
 //
 // If payload is nil, ErrHeaderNotFound returns.
 func (m PutRequest) SignedData() ([]byte, error) {
-	sz := m.SignedDataSize()
-	if sz < 0 {
-		return nil, ErrHeaderNotFound
-	}
-
-	data := make([]byte, sz)
-
-	return data, m.ReadSignedData(data)
+	return service.SignedDataFromReader(m)
 }
 
 // ReadSignedData copies payload bytes to passed buffer.
 //
 // If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
-func (m PutRequest) ReadSignedData(p []byte) error {
+func (m PutRequest) ReadSignedData(p []byte) (int, error) {
 	r := m.GetR()
 	if r == nil {
-		return ErrHeaderNotFound
+		return 0, ErrHeaderNotFound
 	}
 
-	_, err := r.MarshalTo(p)
-
-	return err
+	return r.MarshalTo(p)
 }
 
 // SignedDataSize returns the size of payload of the Put request.
@@ -47,26 +40,26 @@ func (m PutRequest) SignedDataSize() int {
 
 // SignedData returns payload bytes of the request.
 func (m GetRequest) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	return data, m.ReadSignedData(data)
+	return service.SignedDataFromReader(m)
 }
 
 // ReadSignedData copies payload bytes to passed buffer.
 //
 // If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
-func (m GetRequest) ReadSignedData(p []byte) error {
+func (m GetRequest) ReadSignedData(p []byte) (int, error) {
 	addr := m.GetAddress()
 
 	if len(p) < m.SignedDataSize() {
-		return io.ErrUnexpectedEOF
+		return 0, io.ErrUnexpectedEOF
 	}
 
-	off := copy(p, addr.CID.Bytes())
+	var off int
 
-	copy(p[off:], addr.ObjectID.Bytes())
+	off += copy(p[off:], addr.CID.Bytes())
 
-	return nil
+	off += copy(p[off:], addr.ObjectID.Bytes())
+
+	return off, nil
 }
 
 // SignedDataSize returns payload size of the request.
@@ -76,28 +69,28 @@ func (m GetRequest) SignedDataSize() int {
 
 // SignedData returns payload bytes of the request.
 func (m HeadRequest) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	return data, m.ReadSignedData(data)
+	return service.SignedDataFromReader(m)
 }
 
 // ReadSignedData copies payload bytes to passed buffer.
 //
 // If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
-func (m HeadRequest) ReadSignedData(p []byte) error {
+func (m HeadRequest) ReadSignedData(p []byte) (int, error) {
 	if len(p) < m.SignedDataSize() {
-		return io.ErrUnexpectedEOF
+		return 0, io.ErrUnexpectedEOF
 	}
 
 	if m.GetFullHeaders() {
 		p[0] = 1
 	}
 
-	off := 1 + copy(p[1:], m.Address.CID.Bytes())
+	off := 1
 
-	copy(p[off:], m.Address.ObjectID.Bytes())
+	off += copy(p[off:], m.Address.CID.Bytes())
 
-	return nil
+	off += copy(p[off:], m.Address.ObjectID.Bytes())
+
+	return off, nil
 }
 
 // SignedDataSize returns payload size of the request.
@@ -107,24 +100,24 @@ func (m HeadRequest) SignedDataSize() int {
 
 // SignedData returns payload bytes of the request.
 func (m DeleteRequest) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	return data, m.ReadSignedData(data)
+	return service.SignedDataFromReader(m)
 }
 
 // ReadSignedData copies payload bytes to passed buffer.
 //
 // If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
-func (m DeleteRequest) ReadSignedData(p []byte) error {
+func (m DeleteRequest) ReadSignedData(p []byte) (int, error) {
 	if len(p) < m.SignedDataSize() {
-		return io.ErrUnexpectedEOF
+		return 0, io.ErrUnexpectedEOF
 	}
 
-	off := copy(p, m.OwnerID.Bytes())
+	var off int
 
-	copy(p[off:], addressBytes(m.Address))
+	off += copy(p[off:], m.OwnerID.Bytes())
 
-	return nil
+	off += copy(p[off:], addressBytes(m.Address))
+
+	return off, nil
 }
 
 // SignedDataSize returns payload size of the request.
@@ -134,27 +127,25 @@ func (m DeleteRequest) SignedDataSize() int {
 
 // SignedData returns payload bytes of the request.
 func (m GetRangeRequest) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	return data, m.ReadSignedData(data)
+	return service.SignedDataFromReader(m)
 }
 
 // ReadSignedData copies payload bytes to passed buffer.
 //
 // If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
-func (m GetRangeRequest) ReadSignedData(p []byte) error {
+func (m GetRangeRequest) ReadSignedData(p []byte) (int, error) {
 	if len(p) < m.SignedDataSize() {
-		return io.ErrUnexpectedEOF
+		return 0, io.ErrUnexpectedEOF
 	}
 
 	n, err := (&m.Range).MarshalTo(p)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	copy(p[n:], addressBytes(m.GetAddress()))
+	n += copy(p[n:], addressBytes(m.GetAddress()))
 
-	return nil
+	return n, nil
 }
 
 // SignedDataSize returns payload size of the request.
@@ -164,17 +155,15 @@ func (m GetRangeRequest) SignedDataSize() int {
 
 // SignedData returns payload bytes of the request.
 func (m GetRangeHashRequest) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	return data, m.ReadSignedData(data)
+	return service.SignedDataFromReader(m)
 }
 
 // ReadSignedData copies payload bytes to passed buffer.
 //
 // If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
-func (m GetRangeHashRequest) ReadSignedData(p []byte) error {
+func (m GetRangeHashRequest) ReadSignedData(p []byte) (int, error) {
 	if len(p) < m.SignedDataSize() {
-		return io.ErrUnexpectedEOF
+		return 0, io.ErrUnexpectedEOF
 	}
 
 	var off int
@@ -185,7 +174,7 @@ func (m GetRangeHashRequest) ReadSignedData(p []byte) error {
 
 	off += copy(p[off:], m.GetSalt())
 
-	return nil
+	return off, nil
 }
 
 // SignedDataSize returns payload size of the request.
@@ -203,17 +192,15 @@ func (m GetRangeHashRequest) SignedDataSize() int {
 
 // SignedData returns payload bytes of the request.
 func (m SearchRequest) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	return data, m.ReadSignedData(data)
+	return service.SignedDataFromReader(m)
 }
 
 // ReadSignedData copies payload bytes to passed buffer.
 //
 // If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
-func (m SearchRequest) ReadSignedData(p []byte) error {
+func (m SearchRequest) ReadSignedData(p []byte) (int, error) {
 	if len(p) < m.SignedDataSize() {
-		return io.ErrUnexpectedEOF
+		return 0, io.ErrUnexpectedEOF
 	}
 
 	var off int
@@ -223,9 +210,9 @@ func (m SearchRequest) ReadSignedData(p []byte) error {
 	binary.BigEndian.PutUint32(p[off:], m.GetQueryVersion())
 	off += 4
 
-	copy(p[off:], m.GetQuery())
+	off += copy(p[off:], m.GetQuery())
 
-	return nil
+	return off, nil
 }
 
 // SignedDataSize returns payload size of the request.

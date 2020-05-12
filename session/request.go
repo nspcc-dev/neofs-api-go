@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/nspcc-dev/neofs-api-go/refs"
+	"github.com/nspcc-dev/neofs-api-go/service"
 )
 
 const signedRequestDataSize = 0 +
@@ -31,14 +32,7 @@ func (m *CreateRequest) SetOwnerID(id OwnerID) {
 
 // SignedData returns payload bytes of the request.
 func (m CreateRequest) SignedData() ([]byte, error) {
-	data := make([]byte, m.SignedDataSize())
-
-	_, err := m.ReadSignedData(data)
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return service.SignedDataFromReader(m)
 }
 
 // SignedDataSize returns payload size of the request.

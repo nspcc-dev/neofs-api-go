@@ -1,5 +1,7 @@
 package service
 
+import "encoding/binary"
+
 const (
 	_ NodeRole = iota
 	// InnerRingNode that work like IR node.
@@ -18,4 +20,18 @@ func (nt NodeRole) String() string {
 	default:
 		return "Unknown"
 	}
+}
+
+// Size returns the size necessary for a binary representation of the NodeRole.
+func (nt NodeRole) Size() int {
+	return 4
+}
+
+// Bytes returns a binary representation of the NodeRole.
+func (nt NodeRole) Bytes() []byte {
+	data := make([]byte, nt.Size())
+
+	binary.BigEndian.PutUint32(data, uint32(nt))
+
+	return data
 }
