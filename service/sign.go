@@ -2,6 +2,7 @@ package service
 
 import (
 	"crypto/ecdsa"
+	"sync"
 
 	crypto "github.com/nspcc-dev/neofs-crypto"
 )
@@ -9,6 +10,12 @@ import (
 type keySign struct {
 	key  *ecdsa.PublicKey
 	sign []byte
+}
+
+var bytesPool = sync.Pool{
+	New: func() interface{} {
+		return make([]byte, 5<<20)
+	},
 }
 
 // GetSignature is a sign field getter.
