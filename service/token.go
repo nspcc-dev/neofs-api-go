@@ -26,6 +26,10 @@ type signDataReaderWithToken struct {
 	token SessionToken
 }
 
+type signedSessionToken struct {
+	SessionToken
+}
+
 const verbSize = 4
 
 const fixedTokenDataSize = 0 +
@@ -116,33 +120,53 @@ func (x Token_Info_Verb) Bytes() []byte {
 	return data
 }
 
-// AddSignKey calls a Signature field setter with passed signature.
-func (m *Token) AddSignKey(sig []byte, _ *ecdsa.PublicKey) {
-	m.SetSignature(sig)
+// AddSignKey calls a Signature field setter of token with passed signature.
+func (s signedSessionToken) AddSignKey(sig []byte, _ *ecdsa.PublicKey) {
+	if s.SessionToken != nil {
+		s.SessionToken.SetSignature(sig)
+	}
 }
 
 // SignedData returns token information in a binary representation.
-func (m *Token) SignedData() ([]byte, error) {
-	return SignedDataFromReader(m)
+func (s signedSessionToken) SignedData() ([]byte, error) {
+	return SignedDataFromReader(s)
+}
+
+// SignedDataSize returns the length of signed token information slice.
+func (s signedSessionToken) SignedDataSize() int {
+	return tokenInfoSize(s.SessionToken)
 }
 
 // ReadSignedData copies a binary representation of the token information to passed buffer.
 //
 // If buffer length is less than required, io.ErrUnexpectedEOF returns.
-func (m *Token_Info) ReadSignedData(p []byte) (int, error) {
-	sz := m.SignedDataSize()
+func (s signedSessionToken) ReadSignedData(p []byte) (int, error) {
+	sz := s.SignedDataSize()
 	if len(p) < sz {
 		return 0, io.ErrUnexpectedEOF
 	}
 
-	copyTokenSignedData(p, m)
+	copyTokenSignedData(p, s.SessionToken)
 
 	return sz, nil
 }
 
-// SignedDataSize returns the length of signed token information slice.
-func (m *Token_Info) SignedDataSize() int {
-	return tokenInfoSize(m)
+// NewSignedSessionToken wraps passed SessionToken in a component suitable for signing.
+//
+// Result can be used in AddSignatureWithKey function.
+func NewSignedSessionToken(token SessionToken) DataWithSignKeyAccumulator {
+	return &signedSessionToken{
+		SessionToken: token,
+	}
+}
+
+// NewVerifiedSessionToken wraps passed SessionToken in a component suitable for signature verification.
+//
+// Result can be used in VerifySignatureWithKey function.
+func NewVerifiedSessionToken(token SessionToken) DataWithSignature {
+	return &signedSessionToken{
+		SessionToken: token,
+	}
 }
 
 func tokenInfoSize(v SessionKeySource) int {
