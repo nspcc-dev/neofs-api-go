@@ -158,6 +158,17 @@ type SignatureContainer interface {
 	SetSignature([]byte)
 }
 
+// OwnerKeySource is an interface of the container of owner key bytes with read access.
+type OwnerKeySource interface {
+	GetOwnerKey() []byte
+}
+
+// OwnerKeyContainer is an interface of the container of owner key bytes.
+type OwnerKeyContainer interface {
+	OwnerKeySource
+	SetOwnerKey([]byte)
+}
+
 // SessionTokenSource is an interface of the container of a SessionToken with read access.
 type SessionTokenSource interface {
 	GetSessionToken() SessionToken
@@ -170,7 +181,8 @@ type SessionTokenSource interface {
 // - verb of the session;
 // - address of the session object;
 // - token lifetime;
-// - public session key bytes.
+// - public session key bytes;
+// - owner's public key bytes.
 type SessionTokenInfo interface {
 	TokenIDContainer
 	OwnerIDContainer
@@ -178,6 +190,7 @@ type SessionTokenInfo interface {
 	AddressContainer
 	LifetimeContainer
 	SessionKeyContainer
+	OwnerKeyContainer
 }
 
 // SessionToken is an interface of token information and signature pair.

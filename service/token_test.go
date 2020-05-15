@@ -77,6 +77,16 @@ func TestTokenGettersSetters(t *testing.T) {
 		require.Equal(t, key, tok.GetSessionKey())
 	}
 
+	{
+		key := make([]byte, 10)
+		_, err := rand.Read(key)
+		require.NoError(t, err)
+
+		tok.SetOwnerKey(key)
+
+		require.Equal(t, key, tok.GetOwnerKey())
+	}
+
 	{ // Signature
 		sig := make([]byte, 10)
 		_, err := rand.Read(sig)
@@ -125,6 +135,11 @@ func TestSignToken(t *testing.T) {
 	_, err = rand.Read(sessionKey[:])
 	require.NoError(t, err)
 	token.SetSessionKey(sessionKey)
+
+	ownerKey := make([]byte, 10)
+	_, err = rand.Read(ownerKey[:])
+	require.NoError(t, err)
+	token.SetOwnerKey(ownerKey)
 
 	signedToken := NewSignedSessionToken(token)
 	verifiedToken := NewVerifiedSessionToken(token)
@@ -209,6 +224,18 @@ func TestSignToken(t *testing.T) {
 			restore: func() {
 				sessionKey[0]--
 				token.SetSessionKey(sessionKey)
+			},
+		},
+		{ // Owner key
+			corrupt: func() {
+				ownerKey := token.GetOwnerKey()
+				ownerKey[0]++
+				token.SetOwnerKey(ownerKey)
+			},
+			restore: func() {
+				ownerKey := token.GetOwnerKey()
+				ownerKey[0]--
+				token.SetOwnerKey(ownerKey)
 			},
 		},
 	}
