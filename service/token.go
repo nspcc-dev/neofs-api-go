@@ -174,11 +174,11 @@ func NewVerifiedSessionToken(token SessionToken) DataWithSignature {
 	}
 }
 
-func tokenInfoSize(v SessionKeySource) int {
+func tokenInfoSize(v SessionTokenInfo) int {
 	if v == nil {
 		return 0
 	}
-	return fixedTokenDataSize + len(v.GetSessionKey())
+	return fixedTokenDataSize + len(v.GetSessionKey()) + len(v.GetOwnerKey())
 }
 
 // Fills passed buffer with signing token information bytes.
@@ -208,7 +208,9 @@ func copyTokenSignedData(buf []byte, token SessionTokenInfo) {
 	tokenEndianness.PutUint64(buf[off:], token.ExpirationEpoch())
 	off += 8
 
-	copy(buf[off:], token.GetSessionKey())
+	off += copy(buf[off:], token.GetSessionKey())
+
+	copy(buf[off:], token.GetOwnerKey())
 }
 
 // SignedData concatenates signed data with session token information. Returns concatenation result.
