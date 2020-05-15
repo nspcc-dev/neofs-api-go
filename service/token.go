@@ -103,6 +103,11 @@ func (m *Token_Info) SetSessionKey(key []byte) {
 	m.SessionKey = key
 }
 
+// SetOwnerKey is an OwnerKey field setter.
+func (m *Token_Info) SetOwnerKey(key []byte) {
+	m.OwnerKey = key
+}
+
 // SetSignature is a Signature field setter.
 func (m *Token) SetSignature(sig []byte) {
 	m.Signature = sig
