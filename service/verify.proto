@@ -63,6 +63,9 @@ message Token {
 
         // SessionKey is a public key of session key
         bytes SessionKey = 6;
+
+        // OwnerKey is a public key of the token owner
+        bytes OwnerKey = 7;
     }
 
     // TokenInfo is a grouped information about token
