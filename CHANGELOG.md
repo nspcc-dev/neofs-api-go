@@ -1,6 +1,20 @@
 # Changelog
 This is the changelog for NeoFS-API-Go
 
+## [0.7.5] - 2020-05-16
+
+### Added
+
+- Owner key to the `SessionToken` signed payload.
+
+### Changed
+
+- `OwnerKeyContainer` interface embedded to `SessionTokenInfo` interface.
+
+### Updated
+
+- NeoFS API v0.7.5
+
 ## [0.7.4] - 2020-05-12
 
 ### Added
@@ -290,3 +304,4 @@ Initial public release
 [0.7.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.6.2...v0.7.0
 [0.7.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.0...v0.7.1
 [0.7.4]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.1...v0.7.4
+[0.7.5]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.4...v0.7.5
