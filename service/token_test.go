@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/refs"
+	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
@@ -219,4 +220,29 @@ func TestSignToken(t *testing.T) {
 		v.restore()
 		require.NoError(t, VerifySignatureWithKey(pk, verifiedToken))
 	}
+}
+
+func TestSignedSessionToken_AddSignKey(t *testing.T) {
+	// nil SessionToken
+	s := new(signedSessionToken)
+
+	require.NotPanics(t, func() {
+		s.AddSignKey(nil, nil)
+	})
+
+	// create test public key and signature
+	pk := &test.DecodeKey(0).PublicKey
+	sig := []byte{1, 2, 3}
+
+	s.SessionToken = new(Token)
+
+	// add key-signature pair to SessionToken
+	s.AddSignKey(sig, pk)
+
+	require.Equal(t, sig, s.GetSignature())
+
+	require.Equal(t,
+		crypto.MarshalPublicKey(pk),
+		s.GetOwnerKey(),
+	)
 }

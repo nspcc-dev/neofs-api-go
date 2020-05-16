@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/nspcc-dev/neofs-api-go/refs"
+	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
 type signAccumWithToken struct {
@@ -125,10 +126,14 @@ func (x Token_Info_Verb) Bytes() []byte {
 	return data
 }
 
-// AddSignKey calls a Signature field setter of token with passed signature.
-func (s signedSessionToken) AddSignKey(sig []byte, _ *ecdsa.PublicKey) {
+// AddSignKey calls a Signature field setter and an OwnerKey field setter with corresponding arguments.
+func (s signedSessionToken) AddSignKey(sig []byte, key *ecdsa.PublicKey) {
 	if s.SessionToken != nil {
 		s.SessionToken.SetSignature(sig)
+
+		s.SessionToken.SetOwnerKey(
+			crypto.MarshalPublicKey(key),
+		)
 	}
 }
 
