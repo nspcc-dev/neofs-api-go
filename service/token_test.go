@@ -77,6 +77,16 @@ func TestTokenGettersSetters(t *testing.T) {
 		require.Equal(t, key, tok.GetSessionKey())
 	}
 
+	{
+		key := make([]byte, 10)
+		_, err := rand.Read(key)
+		require.NoError(t, err)
+
+		tok.SetOwnerKey(key)
+
+		require.Equal(t, key, tok.GetOwnerKey())
+	}
+
 	{ // Signature
 		sig := make([]byte, 10)
 		_, err := rand.Read(sig)
@@ -89,7 +99,7 @@ func TestTokenGettersSetters(t *testing.T) {
 }
 
 func TestSignToken(t *testing.T) {
-	token := new(Token)
+	var token SessionToken = new(Token)
 
 	// create private key for signing
 	sk := test.DecodeKey(0)
@@ -126,9 +136,17 @@ func TestSignToken(t *testing.T) {
 	require.NoError(t, err)
 	token.SetSessionKey(sessionKey)
 
+	ownerKey := make([]byte, 10)
+	_, err = rand.Read(ownerKey[:])
+	require.NoError(t, err)
+	token.SetOwnerKey(ownerKey)
+
+	signedToken := NewSignedSessionToken(token)
+	verifiedToken := NewVerifiedSessionToken(token)
+
 	// sign and verify token
-	require.NoError(t, AddSignatureWithKey(sk, token))
-	require.NoError(t, VerifySignatureWithKey(pk, token))
+	require.NoError(t, AddSignatureWithKey(sk, signedToken))
+	require.NoError(t, VerifySignatureWithKey(pk, verifiedToken))
 
 	items := []struct {
 		corrupt func()
@@ -208,12 +226,24 @@ func TestSignToken(t *testing.T) {
 				token.SetSessionKey(sessionKey)
 			},
 		},
+		{ // Owner key
+			corrupt: func() {
+				ownerKey := token.GetOwnerKey()
+				ownerKey[0]++
+				token.SetOwnerKey(ownerKey)
+			},
+			restore: func() {
+				ownerKey := token.GetOwnerKey()
+				ownerKey[0]--
+				token.SetOwnerKey(ownerKey)
+			},
+		},
 	}
 
 	for _, v := range items {
 		v.corrupt()
-		require.Error(t, VerifySignatureWithKey(pk, token))
+		require.Error(t, VerifySignatureWithKey(pk, verifiedToken))
 		v.restore()
-		require.NoError(t, VerifySignatureWithKey(pk, token))
+		require.NoError(t, VerifySignatureWithKey(pk, verifiedToken))
 	}
 }

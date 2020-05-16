@@ -132,6 +132,7 @@ User token granting rights for object manipulation
 | Address | [refs.Address](#refs.Address) |  | Address is an object address for which token is issued |
 | Lifetime | [TokenLifetime](#service.TokenLifetime) |  | Lifetime is a lifetime of the session |
 | SessionKey | [bytes](#bytes) |  | SessionKey is a public key of session key |
+| OwnerKey | [bytes](#bytes) |  | OwnerKey is a public key of the token owner |
 
 
 <a name="service.TokenLifetime"></a>
