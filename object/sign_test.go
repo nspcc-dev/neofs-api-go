@@ -187,3 +187,29 @@ func TestSignVerifyRequests(t *testing.T) {
 		}
 	}
 }
+
+func TestHeadRequest_ReadSignedData(t *testing.T) {
+	t.Run("full headers", func(t *testing.T) {
+		req := new(HeadRequest)
+
+		// allocate buffer for reading
+		buf := make([]byte, req.SignedDataSize())
+		buf[0] = 2
+
+		// set FullHeaders option
+		req.SetFullHeaders(true)
+
+		_, err := req.ReadSignedData(buf)
+		require.NoError(t, err)
+
+		require.Equal(t, byte(1), buf[0])
+
+		// unset FullHeaders option
+		req.SetFullHeaders(false)
+
+		_, err = req.ReadSignedData(buf)
+		require.NoError(t, err)
+
+		require.Equal(t, byte(0), buf[0])
+	})
+}
