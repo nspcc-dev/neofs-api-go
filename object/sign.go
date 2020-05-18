@@ -82,6 +82,8 @@ func (m HeadRequest) ReadSignedData(p []byte) (int, error) {
 
 	if m.GetFullHeaders() {
 		p[0] = 1
+	} else {
+		p[0] = 0
 	}
 
 	off := 1

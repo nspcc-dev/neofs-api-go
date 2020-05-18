@@ -1,6 +1,7 @@
 package object
 
 import (
+	"crypto/rand"
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/service"
@@ -192,24 +193,29 @@ func TestHeadRequest_ReadSignedData(t *testing.T) {
 	t.Run("full headers", func(t *testing.T) {
 		req := new(HeadRequest)
 
-		// allocate buffer for reading
-		buf := make([]byte, req.SignedDataSize())
-		buf[0] = 2
-
-		// set FullHeaders option
-		req.SetFullHeaders(true)
-
-		_, err := req.ReadSignedData(buf)
-		require.NoError(t, err)
-
-		require.Equal(t, byte(1), buf[0])
-
-		// unset FullHeaders option
+		// unset FullHeaders flag
 		req.SetFullHeaders(false)
 
-		_, err = req.ReadSignedData(buf)
+		// allocate two different buffers for reading
+		buf1 := testData(t, req.SignedDataSize())
+		buf2 := testData(t, req.SignedDataSize())
+
+		// read to both buffers
+		n1, err := req.ReadSignedData(buf1)
 		require.NoError(t, err)
 
-		require.Equal(t, byte(0), buf[0])
+		n2, err := req.ReadSignedData(buf2)
+		require.NoError(t, err)
+
+		require.Equal(t, buf1[:n1], buf2[:n2])
 	})
+}
+
+func testData(t *testing.T, sz int) []byte {
+	data := make([]byte, sz)
+
+	_, err := rand.Read(data)
+	require.NoError(t, err)
+
+	return data
 }
