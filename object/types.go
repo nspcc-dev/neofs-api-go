@@ -386,3 +386,8 @@ func Stringify(dst io.Writer, obj *Object) error {
 
 	return nil
 }
+
+// SetFullHeaders is a FullHeaders field setter.
+func (m *HeadRequest) SetFullHeaders(v bool) {
+	m.FullHeaders = v
+}
