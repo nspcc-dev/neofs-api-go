@@ -1,35 +1,16 @@
 package session
 
 import (
-	"crypto/rand"
 	"testing"
 
-	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/stretchr/testify/require"
 )
 
-func TestPrivateToken(t *testing.T) {
+func TestPToken_PrivateKey(t *testing.T) {
 	// create new private token
 	pToken, err := NewPrivateToken(0)
 	require.NoError(t, err)
-
-	// generate data to sign
-	data := make([]byte, 10)
-	_, err = rand.Read(data)
-	require.NoError(t, err)
-
-	// sign data via private token
-	sig, err := pToken.Sign(data)
-	require.NoError(t, err)
-
-	// check signature
-	require.NoError(t,
-		crypto.Verify(
-			crypto.UnmarshalPublicKey(pToken.PublicKey()),
-			data,
-			sig,
-		),
-	)
+	require.NotNil(t, pToken.PrivateKey())
 }
 
 func TestPToken_Expired(t *testing.T) {
