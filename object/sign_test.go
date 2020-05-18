@@ -219,3 +219,21 @@ func testData(t *testing.T, sz int) []byte {
 
 	return data
 }
+
+func TestIntegrityHeaderSignMethods(t *testing.T) {
+	// create new IntegrityHeader
+	s := new(IntegrityHeader)
+
+	// set test headers checksum
+	s.SetHeadersChecksum([]byte{1, 2, 3})
+
+	data, err := s.SignedData()
+	require.NoError(t, err)
+	require.Equal(t, data, s.GetHeadersChecksum())
+
+	// add signature
+	sig := []byte{4, 5, 6}
+	s.AddSignKey(sig, nil)
+
+	require.Equal(t, sig, s.GetSignature())
+}
