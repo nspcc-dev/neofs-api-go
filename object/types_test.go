@@ -199,3 +199,23 @@ func TestObject_Copy(t *testing.T) {
 		require.Equal(t, token, h.GetValue().(*Header_Token).Token)
 	})
 }
+
+func TestIntegrityHeaderGettersSetters(t *testing.T) {
+	t.Run("headers checksum", func(t *testing.T) {
+		data := []byte{1, 2, 3}
+
+		v := new(IntegrityHeader)
+
+		v.SetHeadersChecksum(data)
+		require.Equal(t, data, v.GetHeadersChecksum())
+	})
+
+	t.Run("headers checksum", func(t *testing.T) {
+		data := []byte{1, 2, 3}
+
+		v := new(IntegrityHeader)
+
+		v.SetSignature(data)
+		require.Equal(t, data, v.GetSignature())
+	})
+}
