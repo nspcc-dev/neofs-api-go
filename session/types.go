@@ -10,14 +10,8 @@ import (
 
 // PrivateToken is an interface of session private part.
 type PrivateToken interface {
-	// PublicKey must return a binary representation of session public key.
-	PublicKey() []byte
-
-	// Sign must return the signature of passed data.
-	//
-	// Resulting signature must be verified by crypto.Verify function
-	// with the session public key.
-	Sign([]byte) ([]byte, error)
+	// PrivateKey must return session private key.
+	PrivateKey() *ecdsa.PrivateKey
 
 	// Expired must return true if and only if private token is expired in the given epoch number.
 	Expired(uint64) bool

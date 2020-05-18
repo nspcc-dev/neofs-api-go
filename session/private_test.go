@@ -1,35 +1,17 @@
 package session
 
 import (
-	"crypto/rand"
 	"testing"
 
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/stretchr/testify/require"
 )
 
-func TestPrivateToken(t *testing.T) {
+func TestPToken_PrivateKey(t *testing.T) {
 	// create new private token
 	pToken, err := NewPrivateToken(0)
 	require.NoError(t, err)
-
-	// generate data to sign
-	data := make([]byte, 10)
-	_, err = rand.Read(data)
-	require.NoError(t, err)
-
-	// sign data via private token
-	sig, err := pToken.Sign(data)
-	require.NoError(t, err)
-
-	// check signature
-	require.NoError(t,
-		crypto.Verify(
-			crypto.UnmarshalPublicKey(pToken.PublicKey()),
-			data,
-			sig,
-		),
-	)
+	require.NotNil(t, pToken.PrivateKey())
 }
 
 func TestPToken_Expired(t *testing.T) {
@@ -67,4 +49,28 @@ func TestPrivateTokenKey_SetTokenID(t *testing.T) {
 	s.SetTokenID(tokenID)
 
 	require.Equal(t, tokenID, s.token)
+}
+
+func TestPublicSessionToken(t *testing.T) {
+	var err error
+
+	// nil PrivateToken
+	_, err = PublicSessionToken(nil)
+	require.EqualError(t, err, ErrNilPrivateToken.Error())
+
+	// empty private key
+	var pToken PrivateToken = new(pToken)
+	_, err = PublicSessionToken(pToken)
+	require.EqualError(t, err, crypto.ErrEmptyPrivateKey.Error())
+
+	// correct PrivateToken
+	pToken, err = NewPrivateToken(0)
+	require.NoError(t, err)
+
+	key := pToken.PrivateKey()
+	require.NotNil(t, key)
+
+	res, err := PublicSessionToken(pToken)
+	require.NoError(t, err)
+	require.Equal(t, res, crypto.MarshalPublicKey(&key.PublicKey))
 }

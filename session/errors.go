@@ -13,3 +13,7 @@ const ErrNilGPRCClientConn = internal.Error("gRPC client connection is nil")
 // ErrPrivateTokenNotFound is returned when addressed private token was
 // not found in storage.
 const ErrPrivateTokenNotFound = internal.Error("private token not found")
+
+// ErrNilPrivateToken is returned by functions that expect a non-nil
+// PrivateToken, but received nil.
+const ErrNilPrivateToken = internal.Error("private token is nil")

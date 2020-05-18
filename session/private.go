@@ -30,14 +30,26 @@ func NewPrivateToken(validUntil uint64) (PrivateToken, error) {
 	}, nil
 }
 
-// Sign signs data with session private key.
-func (t *pToken) Sign(data []byte) ([]byte, error) {
-	return crypto.Sign(t.sessionKey, data)
+// PublicSessionToken returns a binary representation of session public key.
+//
+// If passed PrivateToken is nil, ErrNilPrivateToken returns.
+// If passed PrivateToken carries nil private key, crypto.ErrEmptyPrivateKey returns.
+func PublicSessionToken(pToken PrivateToken) ([]byte, error) {
+	if pToken == nil {
+		return nil, ErrNilPrivateToken
+	}
+
+	sk := pToken.PrivateKey()
+	if sk == nil {
+		return nil, crypto.ErrEmptyPrivateKey
+	}
+
+	return crypto.MarshalPublicKey(&sk.PublicKey), nil
 }
 
-// PublicKey returns a binary representation of the session public key.
-func (t *pToken) PublicKey() []byte {
-	return crypto.MarshalPublicKey(&t.sessionKey.PublicKey)
+// PrivateKey is a session private key getter.
+func (t *pToken) PrivateKey() *ecdsa.PrivateKey {
+	return t.sessionKey
 }
 
 func (t *pToken) Expired(epoch uint64) bool {
