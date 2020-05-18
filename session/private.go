@@ -4,6 +4,8 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+
+	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
 type pToken struct {
@@ -28,7 +30,24 @@ func NewPrivateToken(validUntil uint64) (PrivateToken, error) {
 	}, nil
 }
 
-// PrivateKey returns a binary representation of the session public key.
+// PublicSessionToken returns a binary representation of session public key.
+//
+// If passed PrivateToken is nil, ErrNilPrivateToken returns.
+// If passed PrivateToken carries nil private key, crypto.ErrEmptyPrivateKey returns.
+func PublicSessionToken(pToken PrivateToken) ([]byte, error) {
+	if pToken == nil {
+		return nil, ErrNilPrivateToken
+	}
+
+	sk := pToken.PrivateKey()
+	if sk == nil {
+		return nil, crypto.ErrEmptyPrivateKey
+	}
+
+	return crypto.MarshalPublicKey(&sk.PublicKey), nil
+}
+
+// PrivateKey is a session private key getter.
 func (t *pToken) PrivateKey() *ecdsa.PrivateKey {
 	return t.sessionKey
 }

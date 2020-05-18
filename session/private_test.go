@@ -3,6 +3,7 @@ package session
 import (
 	"testing"
 
+	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/stretchr/testify/require"
 )
 
@@ -48,4 +49,28 @@ func TestPrivateTokenKey_SetTokenID(t *testing.T) {
 	s.SetTokenID(tokenID)
 
 	require.Equal(t, tokenID, s.token)
+}
+
+func TestPublicSessionToken(t *testing.T) {
+	var err error
+
+	// nil PrivateToken
+	_, err = PublicSessionToken(nil)
+	require.EqualError(t, err, ErrNilPrivateToken.Error())
+
+	// empty private key
+	var pToken PrivateToken = new(pToken)
+	_, err = PublicSessionToken(pToken)
+	require.EqualError(t, err, crypto.ErrEmptyPrivateKey.Error())
+
+	// correct PrivateToken
+	pToken, err = NewPrivateToken(0)
+	require.NoError(t, err)
+
+	key := pToken.PrivateKey()
+	require.NotNil(t, key)
+
+	res, err := PublicSessionToken(pToken)
+	require.NoError(t, err)
+	require.Equal(t, res, crypto.MarshalPublicKey(&key.PublicKey))
 }
