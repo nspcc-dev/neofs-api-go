@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/nspcc-dev/neofs-api-go/refs"
+	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
 type signAccumWithToken struct {
@@ -125,10 +126,14 @@ func (x Token_Info_Verb) Bytes() []byte {
 	return data
 }
 
-// AddSignKey calls a Signature field setter of token with passed signature.
-func (s signedSessionToken) AddSignKey(sig []byte, _ *ecdsa.PublicKey) {
+// AddSignKey calls a Signature field setter and an OwnerKey field setter with corresponding arguments.
+func (s signedSessionToken) AddSignKey(sig []byte, key *ecdsa.PublicKey) {
 	if s.SessionToken != nil {
 		s.SessionToken.SetSignature(sig)
+
+		s.SessionToken.SetOwnerKey(
+			crypto.MarshalPublicKey(key),
+		)
 	}
 }
 
@@ -174,11 +179,11 @@ func NewVerifiedSessionToken(token SessionToken) DataWithSignature {
 	}
 }
 
-func tokenInfoSize(v SessionTokenInfo) int {
+func tokenInfoSize(v SessionKeySource) int {
 	if v == nil {
 		return 0
 	}
-	return fixedTokenDataSize + len(v.GetSessionKey()) + len(v.GetOwnerKey())
+	return fixedTokenDataSize + len(v.GetSessionKey())
 }
 
 // Fills passed buffer with signing token information bytes.
@@ -208,9 +213,7 @@ func copyTokenSignedData(buf []byte, token SessionTokenInfo) {
 	tokenEndianness.PutUint64(buf[off:], token.ExpirationEpoch())
 	off += 8
 
-	off += copy(buf[off:], token.GetSessionKey())
-
-	copy(buf[off:], token.GetOwnerKey())
+	copy(buf[off:], token.GetSessionKey())
 }
 
 // SignedData concatenates signed data with session token information. Returns concatenation result.
