@@ -386,3 +386,23 @@ func Stringify(dst io.Writer, obj *Object) error {
 
 	return nil
 }
+
+// SetFullHeaders is a FullHeaders field setter.
+func (m *HeadRequest) SetFullHeaders(v bool) {
+	m.FullHeaders = v
+}
+
+// GetSignature is a ChecksumSignature field getter.
+func (m IntegrityHeader) GetSignature() []byte {
+	return m.ChecksumSignature
+}
+
+// SetSignature is a ChecksumSignature field setter.
+func (m *IntegrityHeader) SetSignature(v []byte) {
+	m.ChecksumSignature = v
+}
+
+// SetHeadersChecksum is a HeadersChecksum field setter.
+func (m *IntegrityHeader) SetHeadersChecksum(v []byte) {
+	m.HeadersChecksum = v
+}

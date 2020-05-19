@@ -1,6 +1,7 @@
 package object
 
 import (
+	"crypto/ecdsa"
 	"encoding/binary"
 	"io"
 
@@ -82,6 +83,8 @@ func (m HeadRequest) ReadSignedData(p []byte) (int, error) {
 
 	if m.GetFullHeaders() {
 		p[0] = 1
+	} else {
+		p[0] = 0
 	}
 
 	off := 1
@@ -256,4 +259,14 @@ func addressSize(addr Address) int {
 
 func addressBytes(addr Address) []byte {
 	return append(addr.CID.Bytes(), addr.ObjectID.Bytes()...)
+}
+
+// SignedData returns the result of the ChecksumSignature field getter.
+func (m IntegrityHeader) SignedData() ([]byte, error) {
+	return m.GetHeadersChecksum(), nil
+}
+
+// AddSignKey calls the ChecksumSignature field setter with signature argument.
+func (m *IntegrityHeader) AddSignKey(sign []byte, _ *ecdsa.PublicKey) {
+	m.SetSignature(sign)
 }
