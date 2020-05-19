@@ -1,6 +1,26 @@
 # Changelog
 This is the changelog for NeoFS-API-Go
 
+## [0.7.6] - 2020-05-19
+
+### Added
+
+- `session.PublicSessionToken` function for session public key bytes receiving.
+- The implementation of `service.DataWithSignKeyAccumulator` methods on `object.IntegrityHeader`.
+
+### Changed
+
+- The implementation of `AddSignKey` method on `service.signedSessionToken` structure.
+- `session.PrivateTOken` interface methods group.
+
+### Removed
+
+- `OwnerKey` from `service.SessionToken` signed payload.
+
+### Fixed
+
+- Incorrect `object.HeadRequest.ReadSignedData` method implementation.
+
 ## [0.7.5] - 2020-05-16
 
 ### Added
@@ -305,3 +325,4 @@ Initial public release
 [0.7.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.0...v0.7.1
 [0.7.4]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.1...v0.7.4
 [0.7.5]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.4...v0.7.5
+[0.7.6]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.5...v0.7.6
