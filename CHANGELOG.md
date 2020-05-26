@@ -1,6 +1,18 @@
 # Changelog
 This is the changelog for NeoFS-API-Go
 
+## [1.0.0] - 2020-05-26
+
+- Bump major release
+
+### Updated
+
+- NeoFS API v0.7.5 => v1.0.0
+- github.com/golang/protobuf v1.4.0 => v1.4.2
+- github.com/prometheus/client_golang v1.5.1 => v1.6.0
+- github.com/spf13/viper v1.6.2 => v1.7.0
+- google.golang.org/grpc v1.28.1 => v1.29.1
+
 ## [0.7.6] - 2020-05-19
 
 ### Added
@@ -326,3 +338,4 @@ Initial public release
 [0.7.4]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.1...v0.7.4
 [0.7.5]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.4...v0.7.5
 [0.7.6]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.5...v0.7.6
+[1.0.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.6...v1.0.0
