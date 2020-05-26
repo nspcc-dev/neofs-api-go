@@ -338,3 +338,4 @@ Initial public release
 [0.7.4]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.1...v0.7.4
 [0.7.5]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.4...v0.7.5
 [0.7.6]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.5...v0.7.6
+[1.0.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.6...v1.0.0
