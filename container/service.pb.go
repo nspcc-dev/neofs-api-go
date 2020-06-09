@@ -377,6 +377,250 @@ func (m *ListResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ListResponse proto.InternalMessageInfo
 
+type ExtendedACLKey struct {
+	// ID (container id) is a SHA256 hash of the container structure
+	ID                   CID      `protobuf:"bytes,1,opt,name=ID,proto3,customtype=CID" json:"ID"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ExtendedACLKey) Reset()         { *m = ExtendedACLKey{} }
+func (m *ExtendedACLKey) String() string { return proto.CompactTextString(m) }
+func (*ExtendedACLKey) ProtoMessage()    {}
+func (*ExtendedACLKey) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e1fa9d7ab2e7ae06, []int{8}
+}
+func (m *ExtendedACLKey) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ExtendedACLKey) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *ExtendedACLKey) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ExtendedACLKey.Merge(m, src)
+}
+func (m *ExtendedACLKey) XXX_Size() int {
+	return m.Size()
+}
+func (m *ExtendedACLKey) XXX_DiscardUnknown() {
+	xxx_messageInfo_ExtendedACLKey.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ExtendedACLKey proto.InternalMessageInfo
+
+type ExtendedACLValue struct {
+	// EACL is a binary representation of extended ACL rule table
+	EACL []byte `protobuf:"bytes,1,opt,name=EACL,proto3" json:"EACL,omitempty"`
+	// Signature carries EACL signature
+	Signature            []byte   `protobuf:"bytes,2,opt,name=Signature,proto3" json:"Signature,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ExtendedACLValue) Reset()         { *m = ExtendedACLValue{} }
+func (m *ExtendedACLValue) String() string { return proto.CompactTextString(m) }
+func (*ExtendedACLValue) ProtoMessage()    {}
+func (*ExtendedACLValue) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e1fa9d7ab2e7ae06, []int{9}
+}
+func (m *ExtendedACLValue) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ExtendedACLValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *ExtendedACLValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ExtendedACLValue.Merge(m, src)
+}
+func (m *ExtendedACLValue) XXX_Size() int {
+	return m.Size()
+}
+func (m *ExtendedACLValue) XXX_DiscardUnknown() {
+	xxx_messageInfo_ExtendedACLValue.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ExtendedACLValue proto.InternalMessageInfo
+
+func (m *ExtendedACLValue) GetEACL() []byte {
+	if m != nil {
+		return m.EACL
+	}
+	return nil
+}
+
+func (m *ExtendedACLValue) GetSignature() []byte {
+	if m != nil {
+		return m.Signature
+	}
+	return nil
+}
+
+type SetExtendedACLRequest struct {
+	ExtendedACLKey `protobuf:"bytes,1,opt,name=Key,proto3,embedded=Key" json:"Key"`
+	// Value carries extended ACL information
+	ExtendedACLValue `protobuf:"bytes,2,opt,name=Value,proto3,embedded=Value" json:"Value"`
+	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
+	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
+}
+
+func (m *SetExtendedACLRequest) Reset()         { *m = SetExtendedACLRequest{} }
+func (m *SetExtendedACLRequest) String() string { return proto.CompactTextString(m) }
+func (*SetExtendedACLRequest) ProtoMessage()    {}
+func (*SetExtendedACLRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e1fa9d7ab2e7ae06, []int{10}
+}
+func (m *SetExtendedACLRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SetExtendedACLRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *SetExtendedACLRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetExtendedACLRequest.Merge(m, src)
+}
+func (m *SetExtendedACLRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *SetExtendedACLRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetExtendedACLRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetExtendedACLRequest proto.InternalMessageInfo
+
+type SetExtendedACLResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SetExtendedACLResponse) Reset()         { *m = SetExtendedACLResponse{} }
+func (m *SetExtendedACLResponse) String() string { return proto.CompactTextString(m) }
+func (*SetExtendedACLResponse) ProtoMessage()    {}
+func (*SetExtendedACLResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e1fa9d7ab2e7ae06, []int{11}
+}
+func (m *SetExtendedACLResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SetExtendedACLResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *SetExtendedACLResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetExtendedACLResponse.Merge(m, src)
+}
+func (m *SetExtendedACLResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *SetExtendedACLResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetExtendedACLResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetExtendedACLResponse proto.InternalMessageInfo
+
+type GetExtendedACLRequest struct {
+	ExtendedACLKey `protobuf:"bytes,1,opt,name=Key,proto3,embedded=Key" json:"Key"`
+	// RequestMetaHeader contains information about request meta headers (should be embedded into message)
+	service.RequestMetaHeader `protobuf:"bytes,98,opt,name=Meta,proto3,embedded=Meta" json:"Meta"`
+	// RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
+	service.RequestVerificationHeader `protobuf:"bytes,99,opt,name=Verify,proto3,embedded=Verify" json:"Verify"`
+	XXX_NoUnkeyedLiteral              struct{} `json:"-"`
+	XXX_unrecognized                  []byte   `json:"-"`
+	XXX_sizecache                     int32    `json:"-"`
+}
+
+func (m *GetExtendedACLRequest) Reset()         { *m = GetExtendedACLRequest{} }
+func (m *GetExtendedACLRequest) String() string { return proto.CompactTextString(m) }
+func (*GetExtendedACLRequest) ProtoMessage()    {}
+func (*GetExtendedACLRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e1fa9d7ab2e7ae06, []int{12}
+}
+func (m *GetExtendedACLRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GetExtendedACLRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *GetExtendedACLRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetExtendedACLRequest.Merge(m, src)
+}
+func (m *GetExtendedACLRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *GetExtendedACLRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetExtendedACLRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetExtendedACLRequest proto.InternalMessageInfo
+
+type GetExtendedACLResponse struct {
+	// ACL carries extended ACL information
+	ExtendedACLValue     `protobuf:"bytes,2,opt,name=ACL,proto3,embedded=ACL" json:"ACL"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetExtendedACLResponse) Reset()         { *m = GetExtendedACLResponse{} }
+func (m *GetExtendedACLResponse) String() string { return proto.CompactTextString(m) }
+func (*GetExtendedACLResponse) ProtoMessage()    {}
+func (*GetExtendedACLResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e1fa9d7ab2e7ae06, []int{13}
+}
+func (m *GetExtendedACLResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GetExtendedACLResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *GetExtendedACLResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetExtendedACLResponse.Merge(m, src)
+}
+func (m *GetExtendedACLResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *GetExtendedACLResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetExtendedACLResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetExtendedACLResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*PutRequest)(nil), "container.PutRequest")
 	proto.RegisterType((*PutResponse)(nil), "container.PutResponse")
@@ -386,50 +630,67 @@ func init() {
 	proto.RegisterType((*GetResponse)(nil), "container.GetResponse")
 	proto.RegisterType((*ListRequest)(nil), "container.ListRequest")
 	proto.RegisterType((*ListResponse)(nil), "container.ListResponse")
+	proto.RegisterType((*ExtendedACLKey)(nil), "container.ExtendedACLKey")
+	proto.RegisterType((*ExtendedACLValue)(nil), "container.ExtendedACLValue")
+	proto.RegisterType((*SetExtendedACLRequest)(nil), "container.SetExtendedACLRequest")
+	proto.RegisterType((*SetExtendedACLResponse)(nil), "container.SetExtendedACLResponse")
+	proto.RegisterType((*GetExtendedACLRequest)(nil), "container.GetExtendedACLRequest")
+	proto.RegisterType((*GetExtendedACLResponse)(nil), "container.GetExtendedACLResponse")
 }
 
 func init() { proto.RegisterFile("container/service.proto", fileDescriptor_e1fa9d7ab2e7ae06) }
 
 var fileDescriptor_e1fa9d7ab2e7ae06 = []byte{
-	// 596 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x54, 0xcb, 0x6e, 0xd3, 0x4c,
-	0x14, 0xee, 0x34, 0xe9, 0xed, 0xb8, 0xfd, 0x7f, 0x18, 0x5a, 0x6a, 0x2c, 0x91, 0x46, 0x5e, 0x85,
-	0x4b, 0x6c, 0x11, 0x2a, 0xc1, 0x86, 0x45, 0x93, 0x88, 0x52, 0xa9, 0x85, 0xc8, 0x95, 0x40, 0x62,
-	0x37, 0x71, 0x4f, 0x83, 0xa5, 0xc4, 0x63, 0x3c, 0xe3, 0xa2, 0xbe, 0x09, 0xcf, 0x00, 0x12, 0x6b,
-	0x1e, 0xa1, 0xcb, 0x4a, 0x6c, 0x10, 0x8b, 0x08, 0x85, 0x35, 0xef, 0x80, 0x3c, 0xbe, 0x26, 0x2d,
-	0xb0, 0xac, 0xd8, 0x58, 0x33, 0xdf, 0x77, 0xbe, 0x73, 0xf7, 0xc0, 0xa6, 0xcb, 0x7d, 0xc9, 0x3c,
-	0x1f, 0x43, 0x5b, 0x60, 0x78, 0xe2, 0xb9, 0x68, 0x05, 0x21, 0x97, 0x9c, 0xae, 0xe4, 0x84, 0x41,
-	0x53, 0xc6, 0x1e, 0xa1, 0x64, 0x09, 0x6d, 0xac, 0x67, 0xd8, 0x09, 0x86, 0xde, 0xf1, 0x69, 0x8a,
-	0x6e, 0x14, 0xde, 0xe4, 0x69, 0x80, 0x22, 0x85, 0xef, 0x0e, 0x3c, 0xf9, 0x26, 0xea, 0x5b, 0x2e,
-	0x1f, 0xd9, 0xbe, 0x08, 0x5c, 0xb7, 0x79, 0x84, 0x27, 0xb6, 0x8f, 0x72, 0xc4, 0x02, 0x5b, 0xe0,
-	0x10, 0x5d, 0xc9, 0xc3, 0xd4, 0xb6, 0x59, 0xb2, 0x1d, 0xf0, 0x01, 0xb7, 0x15, 0xdc, 0x8f, 0x8e,
-	0xd5, 0x4d, 0x5d, 0xd4, 0x29, 0x31, 0x37, 0xbf, 0xcc, 0x03, 0xf4, 0x22, 0xe9, 0xe0, 0xdb, 0x08,
-	0x85, 0xa4, 0x36, 0xac, 0x1c, 0xa0, 0x10, 0x6c, 0x80, 0x7b, 0x5d, 0x9d, 0xd4, 0x49, 0x63, 0xb5,
-	0x7d, 0xfd, 0x6c, 0xbc, 0x35, 0xf7, 0x6d, 0xbc, 0x55, 0x10, 0x4e, 0x71, 0xa4, 0x06, 0x2c, 0x77,
-	0x58, 0xc0, 0x5c, 0x4f, 0x9e, 0xea, 0xf3, 0x75, 0xd2, 0xa8, 0x3a, 0xf9, 0x9d, 0xde, 0x81, 0xa5,
-	0x17, 0xef, 0x7c, 0x0c, 0xf7, 0xba, 0x7a, 0x45, 0xb9, 0xfa, 0x3f, 0x75, 0x95, 0xc1, 0x4e, 0x76,
-	0xa0, 0x0f, 0x60, 0x21, 0x8c, 0x86, 0x28, 0xf4, 0x6a, 0x9d, 0x34, 0xb4, 0xd6, 0x86, 0x95, 0x14,
-	0x67, 0xf5, 0x86, 0xcc, 0xc5, 0x11, 0xfa, 0xd2, 0x89, 0x86, 0xd8, 0xae, 0xc6, 0x7a, 0x27, 0xb1,
-	0x8c, 0x23, 0xb7, 0x99, 0xf0, 0xdc, 0x9d, 0xce, 0xbe, 0xbe, 0x50, 0x27, 0x8d, 0x35, 0x27, 0xbf,
-	0xd3, 0xc7, 0x50, 0x3d, 0x40, 0xc9, 0xf4, 0xbe, 0xf2, 0x66, 0x58, 0xd9, 0x68, 0xd2, 0x32, 0x63,
-	0xee, 0x19, 0xb2, 0x23, 0x0c, 0xdb, 0xcb, 0xb1, 0xcb, 0xf3, 0xf1, 0x16, 0x71, 0x94, 0x82, 0x76,
-	0x61, 0xf1, 0xa5, 0x9a, 0x88, 0xee, 0x2a, 0xad, 0x39, 0xab, 0x55, 0xac, 0xe7, 0x32, 0xe9, 0x71,
-	0xff, 0x82, 0x8f, 0x54, 0x6b, 0xde, 0x07, 0x4d, 0x35, 0x55, 0x04, 0xdc, 0x17, 0x48, 0x6f, 0x43,
-	0xa5, 0x93, 0xf7, 0x53, 0x4b, 0x9b, 0x10, 0x43, 0x4e, 0xfc, 0x31, 0x3f, 0x11, 0x58, 0xeb, 0xe2,
-	0x10, 0x25, 0x66, 0x63, 0xf8, 0xb3, 0xe0, 0xca, 0xcb, 0xbb, 0x06, 0xff, 0x65, 0xf9, 0x26, 0x15,
-	0x9a, 0x1f, 0x09, 0xc0, 0x2e, 0xca, 0x7f, 0x24, 0xff, 0x1d, 0xd0, 0x54, 0xb2, 0xe9, 0x78, 0x5a,
-	0xb0, 0xd2, 0xc9, 0xfe, 0x3b, 0x95, 0xb3, 0xd6, 0x5a, 0xb7, 0xf2, 0x3f, 0xd1, 0xca, 0x39, 0xa7,
-	0x30, 0x33, 0x3f, 0x13, 0xd0, 0xf6, 0x3d, 0x91, 0x57, 0x5c, 0xda, 0x75, 0xf2, 0x97, 0x5d, 0xbf,
-	0xea, 0xea, 0x9b, 0xb0, 0x9a, 0x64, 0x3e, 0xbb, 0x9d, 0x95, 0xcb, 0x86, 0xd5, 0xfa, 0x49, 0x60,
-	0xe9, 0x30, 0x09, 0x43, 0xb7, 0xa1, 0xd2, 0x8b, 0x24, 0xdd, 0x28, 0x75, 0xa7, 0x78, 0x3c, 0x8c,
-	0x9b, 0xb3, 0x70, 0x1a, 0xe0, 0x09, 0x2c, 0x26, 0xeb, 0x42, 0xf5, 0x92, 0xc5, 0xd4, 0xc6, 0x1b,
-	0xb7, 0x2e, 0x61, 0x52, 0xf9, 0x36, 0x54, 0x76, 0x71, 0x3a, 0x68, 0xb1, 0x6a, 0x53, 0x41, 0xcb,
-	0x43, 0x7d, 0x04, 0xd5, 0xb8, 0x4a, 0x5a, 0xe6, 0x4b, 0x03, 0x33, 0x36, 0x2f, 0xe0, 0x89, 0xb0,
-	0xfd, 0xea, 0x6c, 0x52, 0x23, 0xe7, 0x93, 0x1a, 0xf9, 0x3a, 0xa9, 0x91, 0xef, 0x93, 0x1a, 0x79,
-	0xff, 0xa3, 0x36, 0xf7, 0xfa, 0xde, 0x6f, 0x9e, 0x60, 0x7e, 0x2c, 0x9a, 0x2c, 0xf0, 0x9a, 0x03,
-	0x6e, 0xe7, 0xfe, 0x3e, 0xcc, 0xdf, 0x78, 0x8e, 0xfc, 0xe9, 0xa1, 0xb5, 0xd3, 0xdb, 0x2b, 0xb6,
-	0xa7, 0xbf, 0xa8, 0x5e, 0xdc, 0x87, 0xbf, 0x02, 0x00, 0x00, 0xff, 0xff, 0x5b, 0x68, 0x23, 0x86,
-	0x33, 0x06, 0x00, 0x00,
+	// 773 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x56, 0xcb, 0x6e, 0xdb, 0x46,
+	0x14, 0x35, 0x45, 0xf9, 0xa1, 0x2b, 0xdb, 0x75, 0xa7, 0x96, 0x4d, 0xd3, 0xad, 0xac, 0x72, 0xa5,
+	0x3e, 0x44, 0xa2, 0xaa, 0x0b, 0x17, 0x28, 0xba, 0xd0, 0xc3, 0x55, 0x05, 0xdb, 0xad, 0x4a, 0xa1,
+	0x0e, 0x90, 0x1d, 0x45, 0x5d, 0x2b, 0x04, 0x24, 0x52, 0x21, 0x87, 0x4e, 0xf4, 0x0d, 0xf9, 0x81,
+	0x00, 0xf9, 0x83, 0x04, 0xc8, 0x3a, 0x9f, 0xe0, 0x55, 0x60, 0x20, 0x9b, 0x20, 0x0b, 0x23, 0x50,
+	0x7e, 0x24, 0xe0, 0xf0, 0x29, 0x59, 0xb6, 0x11, 0x20, 0x80, 0x90, 0x8d, 0x30, 0x73, 0xef, 0x3d,
+	0x67, 0xee, 0x5b, 0x84, 0x6d, 0xdd, 0x32, 0xa9, 0x66, 0x98, 0x68, 0x2b, 0x0e, 0xda, 0xe7, 0x86,
+	0x8e, 0xf2, 0xd0, 0xb6, 0xa8, 0x45, 0x32, 0x91, 0x42, 0x24, 0x81, 0x46, 0x19, 0x20, 0xd5, 0x7c,
+	0xb5, 0xb8, 0x19, 0xca, 0xce, 0xd1, 0x36, 0xce, 0x46, 0x81, 0x34, 0x17, 0xb3, 0xd1, 0xd1, 0x10,
+	0x9d, 0x40, 0xfc, 0x63, 0xcf, 0xa0, 0x0f, 0xdc, 0x8e, 0xac, 0x5b, 0x03, 0xc5, 0x74, 0x86, 0xba,
+	0x5e, 0xea, 0xe2, 0xb9, 0x62, 0x22, 0x1d, 0x68, 0x43, 0xc5, 0xc1, 0x3e, 0xea, 0xd4, 0xb2, 0x03,
+	0xdb, 0x52, 0xc2, 0xb6, 0x67, 0xf5, 0x2c, 0x85, 0x89, 0x3b, 0xee, 0x19, 0xbb, 0xb1, 0x0b, 0x3b,
+	0xf9, 0xe6, 0xd2, 0x9b, 0x14, 0x40, 0xcb, 0xa5, 0x2a, 0x3e, 0x74, 0xd1, 0xa1, 0x44, 0x81, 0xcc,
+	0x09, 0x3a, 0x8e, 0xd6, 0xc3, 0x66, 0x5d, 0xe0, 0x0a, 0x5c, 0x71, 0xb5, 0xfa, 0xf5, 0xc5, 0xd5,
+	0xde, 0xc2, 0xbb, 0xab, 0xbd, 0x58, 0xa1, 0xc6, 0x47, 0x22, 0xc2, 0x4a, 0x4d, 0x1b, 0x6a, 0xba,
+	0x41, 0x47, 0x42, 0xaa, 0xc0, 0x15, 0xd3, 0x6a, 0x74, 0x27, 0x3f, 0xc0, 0xf2, 0xbf, 0x8f, 0x4c,
+	0xb4, 0x9b, 0x75, 0x81, 0x67, 0x54, 0x5f, 0x05, 0x54, 0xa1, 0x58, 0x0d, 0x0f, 0xe4, 0x17, 0x58,
+	0xb4, 0xdd, 0x3e, 0x3a, 0x42, 0xba, 0xc0, 0x15, 0xb3, 0xe5, 0x9c, 0xec, 0x07, 0x27, 0xb7, 0xfa,
+	0x9a, 0x8e, 0x03, 0x34, 0xa9, 0xea, 0xf6, 0xb1, 0x9a, 0xf6, 0xf0, 0xaa, 0x6f, 0xe9, 0xbd, 0x5c,
+	0xd5, 0x1c, 0x43, 0xaf, 0xd4, 0x8e, 0x85, 0xc5, 0x02, 0x57, 0x5c, 0x53, 0xa3, 0x3b, 0xf9, 0x1d,
+	0xd2, 0x27, 0x48, 0x35, 0xa1, 0xc3, 0xd8, 0x44, 0x39, 0x2c, 0x4d, 0x10, 0xa6, 0xa7, 0xfb, 0x1b,
+	0xb5, 0x2e, 0xda, 0xd5, 0x15, 0x8f, 0xf2, 0xf2, 0x6a, 0x8f, 0x53, 0x19, 0x82, 0xd4, 0x61, 0xe9,
+	0x94, 0x55, 0x44, 0xd0, 0x19, 0x56, 0x9a, 0xc6, 0x32, 0xad, 0xa1, 0x6b, 0xd4, 0xb0, 0xcc, 0x6b,
+	0x1c, 0x01, 0x56, 0xfa, 0x19, 0xb2, 0x2c, 0xa9, 0xce, 0xd0, 0x32, 0x1d, 0x24, 0xdf, 0x01, 0x5f,
+	0x8b, 0xf2, 0x99, 0x0d, 0x92, 0xe0, 0x89, 0x54, 0xef, 0x47, 0x7a, 0xc9, 0xc1, 0x5a, 0x1d, 0xfb,
+	0x48, 0x31, 0x2c, 0xc3, 0xed, 0x80, 0xb9, 0x87, 0xb7, 0x01, 0xeb, 0xa1, 0xbf, 0x7e, 0x84, 0xd2,
+	0x0b, 0x0e, 0xa0, 0x81, 0xf4, 0x0b, 0xf1, 0xbf, 0x02, 0x59, 0xe6, 0x6c, 0x50, 0x9e, 0x32, 0x64,
+	0x6a, 0xe1, 0xdc, 0x31, 0x9f, 0xb3, 0xe5, 0x4d, 0x39, 0x9a, 0x44, 0x39, 0xd2, 0xa9, 0xb1, 0x99,
+	0xf4, 0x8a, 0x83, 0xec, 0xb1, 0xe1, 0x44, 0x11, 0x27, 0x7a, 0x9d, 0xbb, 0xa3, 0xd7, 0xe7, 0x1d,
+	0x7d, 0x09, 0x56, 0x7d, 0xcf, 0xa7, 0xbb, 0x93, 0x9f, 0xd9, 0x9d, 0x25, 0x58, 0x3f, 0x7c, 0x4c,
+	0xd1, 0xec, 0x62, 0xb7, 0x52, 0x3b, 0x3e, 0xc2, 0x11, 0xd9, 0x85, 0xd4, 0xec, 0xe2, 0xa6, 0x9a,
+	0x75, 0xa9, 0x0e, 0x1b, 0x09, 0xf3, 0x53, 0xad, 0xef, 0x22, 0x21, 0x90, 0x3e, 0xf4, 0xc6, 0x94,
+	0x41, 0x54, 0x76, 0x26, 0xdf, 0x42, 0xa6, 0x6d, 0xf4, 0x4c, 0x8d, 0xba, 0x36, 0xb2, 0xcd, 0xb1,
+	0xaa, 0xc6, 0x02, 0xe9, 0x49, 0x0a, 0x72, 0x6d, 0xa4, 0x09, 0xa6, 0x30, 0xd1, 0xbf, 0x01, 0x7f,
+	0x84, 0xa3, 0xa0, 0x4c, 0x3b, 0x89, 0x32, 0x4d, 0x3a, 0x99, 0x88, 0xdb, 0xb3, 0x27, 0x7f, 0xc0,
+	0x22, 0xf3, 0x85, 0x3d, 0x95, 0x2d, 0xef, 0xce, 0x06, 0x32, 0x93, 0x04, 0xd4, 0xc7, 0xcc, 0xbd,
+	0x62, 0x02, 0x6c, 0x4d, 0x27, 0x23, 0x98, 0xbb, 0xd7, 0x1c, 0xe4, 0x1a, 0x9f, 0x33, 0x4f, 0xf3,
+	0x0e, 0xf5, 0x3f, 0xd8, 0x6a, 0xcc, 0x0c, 0x95, 0x1c, 0x00, 0xef, 0xf5, 0xd0, 0x27, 0xd5, 0xcf,
+	0x43, 0x94, 0x9f, 0xf1, 0xb0, 0xdc, 0xf6, 0x5d, 0x21, 0xfb, 0xc0, 0xb7, 0x5c, 0x4a, 0x72, 0x09,
+	0x78, 0xfc, 0xef, 0x27, 0x6e, 0x4d, 0x8b, 0x83, 0xa7, 0xff, 0x84, 0x25, 0x7f, 0xdf, 0x11, 0x21,
+	0x61, 0x31, 0xb1, 0xb2, 0xc5, 0x9d, 0x19, 0x9a, 0x00, 0xbe, 0x0f, 0x7c, 0x03, 0x27, 0x1f, 0x8d,
+	0x77, 0xe5, 0xc4, 0xa3, 0xc9, 0xad, 0x74, 0x00, 0x69, 0x6f, 0x4c, 0x49, 0x52, 0x9f, 0xd8, 0x38,
+	0xe2, 0xf6, 0x35, 0x79, 0x00, 0xfc, 0x1f, 0xd6, 0x27, 0xbb, 0x85, 0x14, 0x12, 0xa6, 0x33, 0xa7,
+	0x4a, 0xfc, 0xfe, 0x16, 0x8b, 0x98, 0xb6, 0x71, 0x33, 0x6d, 0xe3, 0x4e, 0xda, 0xd9, 0x65, 0xad,
+	0xde, 0xbb, 0x18, 0xe7, 0xb9, 0xcb, 0x71, 0x9e, 0x7b, 0x3b, 0xce, 0x73, 0xef, 0xc7, 0x79, 0xee,
+	0xe9, 0x87, 0xfc, 0xc2, 0xfd, 0x9f, 0x6e, 0xf8, 0xe2, 0xb1, 0xce, 0x9c, 0x92, 0x36, 0x34, 0x4a,
+	0x3d, 0x4b, 0x89, 0x98, 0x9f, 0xa7, 0xbe, 0xf9, 0x07, 0xad, 0xbf, 0xda, 0x72, 0xa5, 0xd5, 0x8c,
+	0x97, 0x75, 0x67, 0x89, 0x7d, 0xe0, 0xfc, 0xfa, 0x31, 0x00, 0x00, 0xff, 0xff, 0x24, 0xf5, 0x81,
+	0x47, 0xa2, 0x09, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -455,6 +716,10 @@ type ServiceClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	// List returns all user's containers
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
+	// SetExtendedACL changes extended ACL rules of container
+	SetExtendedACL(ctx context.Context, in *SetExtendedACLRequest, opts ...grpc.CallOption) (*SetExtendedACLResponse, error)
+	// GetExtendedACL receives extended ACL rules iof container
+	GetExtendedACL(ctx context.Context, in *GetExtendedACLRequest, opts ...grpc.CallOption) (*GetExtendedACLResponse, error)
 }
 
 type serviceClient struct {
@@ -501,6 +766,24 @@ func (c *serviceClient) List(ctx context.Context, in *ListRequest, opts ...grpc.
 	return out, nil
 }
 
+func (c *serviceClient) SetExtendedACL(ctx context.Context, in *SetExtendedACLRequest, opts ...grpc.CallOption) (*SetExtendedACLResponse, error) {
+	out := new(SetExtendedACLResponse)
+	err := c.cc.Invoke(ctx, "/container.Service/SetExtendedACL", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *serviceClient) GetExtendedACL(ctx context.Context, in *GetExtendedACLRequest, opts ...grpc.CallOption) (*GetExtendedACLResponse, error) {
+	out := new(GetExtendedACLResponse)
+	err := c.cc.Invoke(ctx, "/container.Service/GetExtendedACL", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ServiceServer is the server API for Service service.
 type ServiceServer interface {
 	// Put request proposes container to the inner ring nodes. They will
@@ -514,6 +797,10 @@ type ServiceServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	// List returns all user's containers
 	List(context.Context, *ListRequest) (*ListResponse, error)
+	// SetExtendedACL changes extended ACL rules of container
+	SetExtendedACL(context.Context, *SetExtendedACLRequest) (*SetExtendedACLResponse, error)
+	// GetExtendedACL receives extended ACL rules iof container
+	GetExtendedACL(context.Context, *GetExtendedACLRequest) (*GetExtendedACLResponse, error)
 }
 
 // UnimplementedServiceServer can be embedded to have forward compatible implementations.
@@ -531,6 +818,12 @@ func (*UnimplementedServiceServer) Get(ctx context.Context, req *GetRequest) (*G
 }
 func (*UnimplementedServiceServer) List(ctx context.Context, req *ListRequest) (*ListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+}
+func (*UnimplementedServiceServer) SetExtendedACL(ctx context.Context, req *SetExtendedACLRequest) (*SetExtendedACLResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetExtendedACL not implemented")
+}
+func (*UnimplementedServiceServer) GetExtendedACL(ctx context.Context, req *GetExtendedACLRequest) (*GetExtendedACLResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetExtendedACL not implemented")
 }
 
 func RegisterServiceServer(s *grpc.Server, srv ServiceServer) {
@@ -609,6 +902,42 @@ func _Service_List_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Service_SetExtendedACL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetExtendedACLRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServiceServer).SetExtendedACL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/container.Service/SetExtendedACL",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServiceServer).SetExtendedACL(ctx, req.(*SetExtendedACLRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Service_GetExtendedACL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetExtendedACLRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServiceServer).GetExtendedACL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/container.Service/GetExtendedACL",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServiceServer).GetExtendedACL(ctx, req.(*GetExtendedACLRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Service_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "container.Service",
 	HandlerType: (*ServiceServer)(nil),
@@ -628,6 +957,14 @@ var _Service_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "List",
 			Handler:    _Service_List_Handler,
+		},
+		{
+			MethodName: "SetExtendedACL",
+			Handler:    _Service_SetExtendedACL_Handler,
+		},
+		{
+			MethodName: "GetExtendedACL",
+			Handler:    _Service_GetExtendedACL_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1052,6 +1389,280 @@ func (m *ListResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *ExtendedACLKey) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ExtendedACLKey) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ExtendedACLKey) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	{
+		size := m.ID.Size()
+		i -= size
+		if _, err := m.ID.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *ExtendedACLValue) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ExtendedACLValue) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ExtendedACLValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Signature) > 0 {
+		i -= len(m.Signature)
+		copy(dAtA[i:], m.Signature)
+		i = encodeVarintService(dAtA, i, uint64(len(m.Signature)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.EACL) > 0 {
+		i -= len(m.EACL)
+		copy(dAtA[i:], m.EACL)
+		i = encodeVarintService(dAtA, i, uint64(len(m.EACL)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *SetExtendedACLRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *SetExtendedACLRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SetExtendedACLRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
+	{
+		size, err := m.ExtendedACLValue.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	{
+		size, err := m.ExtendedACLKey.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *SetExtendedACLResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *SetExtendedACLResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SetExtendedACLResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *GetExtendedACLRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GetExtendedACLRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GetExtendedACLRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	{
+		size, err := m.RequestVerificationHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x9a
+	{
+		size, err := m.RequestMetaHeader.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x6
+	i--
+	dAtA[i] = 0x92
+	{
+		size, err := m.ExtendedACLKey.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *GetExtendedACLResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GetExtendedACLResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GetExtendedACLResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	{
+		size, err := m.ExtendedACLValue.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintService(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintService(dAtA []byte, offset int, v uint64) int {
 	offset -= sovService(v)
 	base := offset
@@ -1199,6 +1810,104 @@ func (m *ListResponse) Size() (n int) {
 			n += 1 + l + sovService(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ExtendedACLKey) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.ID.Size()
+	n += 1 + l + sovService(uint64(l))
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *ExtendedACLValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.EACL)
+	if l > 0 {
+		n += 1 + l + sovService(uint64(l))
+	}
+	l = len(m.Signature)
+	if l > 0 {
+		n += 1 + l + sovService(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *SetExtendedACLRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.ExtendedACLKey.Size()
+	n += 1 + l + sovService(uint64(l))
+	l = m.ExtendedACLValue.Size()
+	n += 1 + l + sovService(uint64(l))
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *SetExtendedACLResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *GetExtendedACLRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.ExtendedACLKey.Size()
+	n += 1 + l + sovService(uint64(l))
+	l = m.RequestMetaHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	l = m.RequestVerificationHeader.Size()
+	n += 2 + l + sovService(uint64(l))
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *GetExtendedACLResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.ExtendedACLValue.Size()
+	n += 1 + l + sovService(uint64(l))
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2219,6 +2928,695 @@ func (m *ListResponse) Unmarshal(dAtA []byte) error {
 			var v CID
 			m.CID = append(m.CID, v)
 			if err := m.CID[len(m.CID)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ExtendedACLKey) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ExtendedACLKey: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ExtendedACLKey: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ExtendedACLValue) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ExtendedACLValue: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ExtendedACLValue: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EACL", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.EACL = append(m.EACL[:0], dAtA[iNdEx:postIndex]...)
+			if m.EACL == nil {
+				m.EACL = []byte{}
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signature", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signature = append(m.Signature[:0], dAtA[iNdEx:postIndex]...)
+			if m.Signature == nil {
+				m.Signature = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *SetExtendedACLRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: SetExtendedACLRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: SetExtendedACLRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExtendedACLKey", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ExtendedACLKey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExtendedACLValue", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ExtendedACLValue.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *SetExtendedACLResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: SetExtendedACLResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: SetExtendedACLResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GetExtendedACLRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GetExtendedACLRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GetExtendedACLRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExtendedACLKey", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ExtendedACLKey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 98:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestMetaHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestMetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 99:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RequestVerificationHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.RequestVerificationHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipService(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthService
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GetExtendedACLResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowService
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GetExtendedACLResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GetExtendedACLResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExtendedACLValue", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthService
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ExtendedACLValue.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

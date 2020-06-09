@@ -140,3 +140,23 @@ func TestListRequestGettersSetters(t *testing.T) {
 		require.Equal(t, owner, m.GetOwnerID())
 	})
 }
+
+func TestExtendedACLKey(t *testing.T) {
+	s := new(ExtendedACLKey)
+
+	cid := CID{1, 2, 3}
+	s.SetCID(cid)
+	require.Equal(t, cid, s.CID())
+}
+
+func TestExtendedACLValue(t *testing.T) {
+	s := new(ExtendedACLValue)
+
+	acl := []byte{1, 2, 3}
+	s.SetEACL(acl)
+	require.Equal(t, acl, s.GetEACL())
+
+	sig := []byte{4, 5, 6}
+	s.SetSignature(sig)
+	require.Equal(t, sig, s.GetSignature())
+}

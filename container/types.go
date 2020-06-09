@@ -158,3 +158,23 @@ func (m ListRequest) GetOwnerID() OwnerID {
 func (m *ListRequest) SetOwnerID(owner OwnerID) {
 	m.OwnerID = owner
 }
+
+// CID is an ID field getter.
+func (m ExtendedACLKey) CID() CID {
+	return m.ID
+}
+
+// SetCID is an ID field setter.
+func (m *ExtendedACLKey) SetCID(v CID) {
+	m.ID = v
+}
+
+// SetEACL is an EACL field setter.
+func (m *ExtendedACLValue) SetEACL(v []byte) {
+	m.EACL = v
+}
+
+// SetSignature is a Signature field setter.
+func (m *ExtendedACLValue) SetSignature(sig []byte) {
+	m.Signature = sig
+}
