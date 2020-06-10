@@ -36,14 +36,18 @@ const ErrEmptyDataWithSignature = internal.Error("empty data with signature")
 // negative length for slice allocation.
 const ErrNegativeLength = internal.Error("negative slice length")
 
-// ErrNilDataWithTokenSignAccumulator is returned by functions that expect
-// a non-nil DataWithTokenSignAccumulator, but received nil.
-const ErrNilDataWithTokenSignAccumulator = internal.Error("signed data with token is nil")
+// ErrNilRequestSignedData is returned by functions that expect
+// a non-nil RequestSignedData, but received nil.
+const ErrNilRequestSignedData = internal.Error("request signed data is nil")
 
-// ErrNilSignatureKeySourceWithToken is returned by functions that expect
-// a non-nil SignatureKeySourceWithToken, but received nil.
-const ErrNilSignatureKeySourceWithToken = internal.Error("key-signature source with token is nil")
+// ErrNilRequestVerifyData is returned by functions that expect
+// a non-nil RequestVerifyData, but received nil.
+const ErrNilRequestVerifyData = internal.Error("request verification data is nil")
 
 // ErrNilSignedDataReader is returned by functions that expect
 // a non-nil SignedDataReader, but received nil.
 const ErrNilSignedDataReader = internal.Error("signed data reader is nil")
+
+// ErrNilSignKeyPairAccumulator is returned by functions that expect
+// a non-nil SignKeyPairAccumulator, but received nil.
+const ErrNilSignKeyPairAccumulator = internal.Error("signature-key pair accumulator is nil")

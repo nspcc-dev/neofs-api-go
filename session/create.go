@@ -53,7 +53,7 @@ func (s gRPCCreator) Create(ctx context.Context, p CreateParamsSource) (CreateRe
 	req.SetExpirationEpoch(p.ExpirationEpoch())
 
 	// sign with private key
-	if err := service.SignDataWithSessionToken(s.key, req); err != nil {
+	if err := service.SignRequestData(s.key, req); err != nil {
 		return nil, err
 	}
 
