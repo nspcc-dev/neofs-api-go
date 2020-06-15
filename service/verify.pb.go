@@ -360,7 +360,7 @@ func (m *TokenLifetime) GetValidUntil() uint64 {
 	return 0
 }
 
-// BearerTokenMsg carries information about extended ACL rules with limited lifetime
+// BearerTokenMsg carries information about request ACL rules with limited lifetime
 type BearerTokenMsg struct {
 	// TokenInfo is a grouped information about token
 	BearerTokenMsg_Info `protobuf:"bytes,1,opt,name=TokenInfo,proto3,embedded=TokenInfo" json:"TokenInfo"`

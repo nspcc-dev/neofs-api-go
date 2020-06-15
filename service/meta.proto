@@ -30,3 +30,17 @@ message ResponseMetaHeader {
     // TODO: not used for now, should be implemented in future
     uint32 Version = 2;
 }
+
+message RequestExtendedHeader {
+    // KV contains string key-value pair
+    message KV {
+        // K carries extended header key
+        string K = 1;
+
+        // V carries extra header value
+        string V = 2;
+    }
+
+    // Headers carries list of key-value headers
+    repeated KV Headers = 1 [(gogoproto.nullable) = false];
+}

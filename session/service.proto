@@ -23,6 +23,8 @@ message CreateRequest {
     // Lifetime carries a lifetime of the session
     service.TokenLifetime Lifetime = 2 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 
+    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
+    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)

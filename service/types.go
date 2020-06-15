@@ -255,6 +255,7 @@ type RequestData interface {
 	SignedDataSource
 	SessionTokenSource
 	BearerTokenSource
+	ExtendedHeadersSource
 }
 
 // RequestSignedData is an interface of request information with signature write access.
@@ -301,4 +302,15 @@ type BearerToken interface {
 // BearerTokenSource is an interface of the container of a BearerToken with read access.
 type BearerTokenSource interface {
 	GetBearerToken() BearerToken
+}
+
+// ExtendedHeader is an interface of string key-value pair with read access.
+type ExtendedHeader interface {
+	Key() string
+	Value() string
+}
+
+// ExtendedHeadersSource is an interface of ExtendedHeader list with read access.
+type ExtendedHeadersSource interface {
+	ExtendedHeaders() []ExtendedHeader
 }

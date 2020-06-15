@@ -13,6 +13,7 @@ message TestRequest {
     string StringField               = 2;
     bytes BytesField                 = 3;
     bytes CustomField                = 4 [(gogoproto.customtype) = "testCustomField"];
+    RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     RequestVerificationHeader Header = 99 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }

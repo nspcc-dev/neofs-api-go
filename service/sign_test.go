@@ -20,6 +20,8 @@ type testSignedDataSrc struct {
 	token SessionToken
 
 	bearer BearerToken
+
+	extHdrs []ExtendedHeader
 }
 
 type testSignedDataReader struct {
@@ -58,6 +60,10 @@ func (s testSignedDataSrc) GetSessionToken() SessionToken {
 
 func (s testSignedDataSrc) GetBearerToken() BearerToken {
 	return s.bearer
+}
+
+func (s testSignedDataSrc) ExtendedHeaders() []ExtendedHeader {
+	return s.extHdrs
 }
 
 func (s testSignedDataReader) SignedDataSize() int {
@@ -282,11 +288,16 @@ func TestSignVerifyRequestData(t *testing.T) {
 
 		bearer      = new(BearerTokenMsg)
 		bearerEpoch = uint64(8)
+
+		extHdrKey = "key"
+		extHdr    = new(RequestExtendedHeader_KV)
 	)
 
 	token.SetVerb(initVerb)
 
 	bearer.SetExpirationEpoch(bearerEpoch)
+
+	extHdr.SetK(extHdrKey)
 
 	// create test data with token
 	src := &testSignedDataSrc{
@@ -294,6 +305,12 @@ func TestSignVerifyRequestData(t *testing.T) {
 		token: token,
 
 		bearer: bearer,
+
+		extHdrs: []ExtendedHeader{
+			extHdrWrapper{
+				extHdr: extHdr,
+			},
+		},
 	}
 
 	// create test private key
@@ -334,6 +351,18 @@ func TestSignVerifyRequestData(t *testing.T) {
 
 	// restore the Bearer token
 	bearer.SetExpirationEpoch(bearerEpoch)
+
+	// ascertain that verification is passed
+	require.NoError(t, VerifyRequestData(src))
+
+	// break the extended header
+	extHdr.SetK(extHdrKey + "1")
+
+	// ascertain that verification is failed
+	require.Error(t, VerifyRequestData(src))
+
+	// restore the extended header
+	extHdr.SetK(extHdrKey)
 
 	// ascertain that verification is passed
 	require.NoError(t, VerifyRequestData(src))

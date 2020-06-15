@@ -212,6 +212,7 @@ func SignRequestData(key *ecdsa.PrivateKey, src RequestSignedData) error {
 		NewSignedBearerToken(
 			src.GetBearerToken(),
 		),
+		ExtendedHeadersSignedData(src),
 	)
 	if err != nil {
 		return err
@@ -237,6 +238,7 @@ func VerifyRequestData(src RequestVerifyData) error {
 		NewVerifiedBearerToken(
 			src.GetBearerToken(),
 		),
+		ExtendedHeadersSignedData(src),
 	)
 	if err != nil {
 		return err
