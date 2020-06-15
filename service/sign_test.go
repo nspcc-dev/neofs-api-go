@@ -18,6 +18,8 @@ type testSignedDataSrc struct {
 	sig   []byte
 	key   *ecdsa.PublicKey
 	token SessionToken
+
+	bearer BearerToken
 }
 
 type testSignedDataReader struct {
@@ -52,6 +54,10 @@ func testData(t *testing.T, sz int) []byte {
 
 func (s testSignedDataSrc) GetSessionToken() SessionToken {
 	return s.token
+}
+
+func (s testSignedDataSrc) GetBearerToken() BearerToken {
+	return s.bearer
 }
 
 func (s testSignedDataReader) SignedDataSize() int {
@@ -256,7 +262,7 @@ func TestVerifySignatureWithKey(t *testing.T) {
 	require.Error(t, VerifySignatureWithKey(&sk.PublicKey, src))
 }
 
-func TestSignVerifyDataWithSessionToken(t *testing.T) {
+func TestSignVerifyRequestData(t *testing.T) {
 	// sign with empty RequestSignedData
 	require.EqualError(t,
 		SignRequestData(nil, nil),
@@ -273,14 +279,21 @@ func TestSignVerifyDataWithSessionToken(t *testing.T) {
 	var (
 		token    = new(Token)
 		initVerb = Token_Info_Verb(1)
+
+		bearer      = new(BearerTokenMsg)
+		bearerEpoch = uint64(8)
 	)
 
 	token.SetVerb(initVerb)
+
+	bearer.SetExpirationEpoch(bearerEpoch)
 
 	// create test data with token
 	src := &testSignedDataSrc{
 		data:  testData(t, 10),
 		token: token,
+
+		bearer: bearer,
 	}
 
 	// create test private key
@@ -309,6 +322,18 @@ func TestSignVerifyDataWithSessionToken(t *testing.T) {
 
 	// restore the token
 	token.SetVerb(initVerb)
+
+	// ascertain that verification is passed
+	require.NoError(t, VerifyRequestData(src))
+
+	// break the Bearer token
+	bearer.SetExpirationEpoch(bearerEpoch + 1)
+
+	// ascertain that verification is failed
+	require.Error(t, VerifyRequestData(src))
+
+	// restore the Bearer token
+	bearer.SetExpirationEpoch(bearerEpoch)
 
 	// ascertain that verification is passed
 	require.NoError(t, VerifyRequestData(src))

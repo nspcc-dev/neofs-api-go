@@ -254,6 +254,7 @@ type DataWithSignKeySource interface {
 type RequestData interface {
 	SignedDataSource
 	SessionTokenSource
+	BearerTokenSource
 }
 
 // RequestSignedData is an interface of request information with signature write access.
@@ -266,4 +267,38 @@ type RequestSignedData interface {
 type RequestVerifyData interface {
 	RequestData
 	SignKeyPairSource
+}
+
+// ACLRulesSource is an interface of the container of binary ACL rules with read access.
+type ACLRulesSource interface {
+	GetACLRules() []byte
+}
+
+// ACLRulesContainer is an interface of the container of binary ACL rules.
+type ACLRulesContainer interface {
+	ACLRulesSource
+	SetACLRules([]byte)
+}
+
+// BearerTokenInfo is an interface of a fixed set of Bearer token information value containers.
+// Contains:
+// - binary ACL rules;
+// - expiration epoch number;
+// - ID of the token's owner.
+type BearerTokenInfo interface {
+	ACLRulesContainer
+	ExpirationEpochContainer
+	OwnerIDContainer
+}
+
+// BearerToken is an interface of Bearer token information and key-signature pair.
+type BearerToken interface {
+	BearerTokenInfo
+	OwnerKeyContainer
+	SignatureContainer
+}
+
+// BearerTokenSource is an interface of the container of a BearerToken with read access.
+type BearerTokenSource interface {
+	GetBearerToken() BearerToken
 }

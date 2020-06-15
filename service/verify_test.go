@@ -64,6 +64,7 @@ func BenchmarkSignDataWithSessionToken(b *testing.B) {
 	req.SetTTL(math.MaxInt32 - 8)
 	req.SetEpoch(math.MaxInt64 - 12)
 	req.SetToken(token)
+	req.SetBearer(new(BearerTokenMsg))
 
 	b.ResetTimer()
 	b.ReportAllocs()
@@ -88,6 +89,7 @@ func BenchmarkVerifyAccumulatedSignaturesWithToken(b *testing.B) {
 	req.SetTTL(math.MaxInt32 - 8)
 	req.SetEpoch(math.MaxInt64 - 12)
 	req.SetToken(token)
+	req.SetBearer(new(BearerTokenMsg))
 
 	for i := 0; i < 10; i++ {
 		key := test.DecodeKey(i)
@@ -114,4 +116,17 @@ func TestRequestVerificationHeader_SetToken(t *testing.T) {
 	h.SetToken(token)
 
 	require.Equal(t, token, h.GetToken())
+}
+
+func TestRequestVerificationHeader_SetBearer(t *testing.T) {
+	aclRules := []byte{1, 2, 3}
+
+	token := new(BearerTokenMsg)
+	token.SetACLRules(aclRules)
+
+	h := new(RequestVerificationHeader)
+
+	h.SetBearer(token)
+
+	require.Equal(t, token, h.GetBearer())
 }

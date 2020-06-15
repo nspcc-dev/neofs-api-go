@@ -17,6 +17,7 @@ func TestSignBalanceRequest(t *testing.T) {
 		service.SignKeyPairAccumulator
 		service.SignKeyPairSource
 		SetToken(*service.Token)
+		SetBearer(*service.BearerTokenMsg)
 	}
 
 	items := []struct {
@@ -164,6 +165,21 @@ func TestSignBalanceRequest(t *testing.T) {
 			require.NoError(t, service.VerifyRequestData(v))
 
 			token.SetSessionKey(append(token.GetSessionKey(), 1))
+
+			require.Error(t, service.VerifyRequestData(v))
+		}
+
+		{ // Bearer token corruptions
+			v := item.constructor()
+
+			token := new(service.BearerTokenMsg)
+			v.SetBearer(token)
+
+			require.NoError(t, service.SignRequestData(sk, v))
+
+			require.NoError(t, service.VerifyRequestData(v))
+
+			token.SetACLRules(append(token.GetACLRules(), 1))
 
 			require.Error(t, service.VerifyRequestData(v))
 		}

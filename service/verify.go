@@ -18,6 +18,17 @@ func (m RequestVerificationHeader) GetSessionToken() SessionToken {
 	return nil
 }
 
+// GetBearerToken returns BearerToken interface of Bearer field.
+//
+// If Bearer field value is nil, nil returns.
+func (m RequestVerificationHeader) GetBearerToken() BearerToken {
+	if t := m.GetBearer(); t != nil {
+		return t
+	}
+
+	return nil
+}
+
 // AddSignKey adds new element to Signatures field.
 //
 // Sets Sign field to passed sign. Set Peer field to marshaled passed key.
@@ -65,6 +76,11 @@ func (m *RequestVerificationHeader) SetSignatures(signatures []*RequestVerificat
 // SetToken is a Token field setter.
 func (m *RequestVerificationHeader) SetToken(token *Token) {
 	m.Token = token
+}
+
+// SetBearer is a Bearer field setter.
+func (m *RequestVerificationHeader) SetBearer(v *BearerTokenMsg) {
+	m.Bearer = v
 }
 
 // testCustomField for test usage only.
