@@ -69,7 +69,7 @@ func BenchmarkSignDataWithSessionToken(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		require.NoError(b, SignDataWithSessionToken(key, req))
+		require.NoError(b, SignRequestData(key, req))
 	}
 }
 
@@ -91,14 +91,14 @@ func BenchmarkVerifyAccumulatedSignaturesWithToken(b *testing.B) {
 
 	for i := 0; i < 10; i++ {
 		key := test.DecodeKey(i)
-		require.NoError(b, SignDataWithSessionToken(key, req))
+		require.NoError(b, SignRequestData(key, req))
 	}
 
 	b.ResetTimer()
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		require.NoError(b, VerifyAccumulatedSignaturesWithToken(req))
+		require.NoError(b, VerifyRequestData(req))
 	}
 }
 

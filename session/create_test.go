@@ -84,7 +84,7 @@ func TestGRPCCreator_Create(t *testing.T) {
 			require.Equal(t, ownerID, req.GetOwnerID())
 			require.Equal(t, created, req.CreationEpoch())
 			require.Equal(t, expired, req.ExpirationEpoch())
-			require.NoError(t, service.VerifyAccumulatedSignaturesWithToken(req))
+			require.NoError(t, service.VerifyRequestData(req))
 		},
 		resp: &CreateResponse{
 			ID:         TokenID{1, 2, 3},

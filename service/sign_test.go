@@ -257,16 +257,16 @@ func TestVerifySignatureWithKey(t *testing.T) {
 }
 
 func TestSignVerifyDataWithSessionToken(t *testing.T) {
-	// sign with empty DataWithTokenSignAccumulator
+	// sign with empty RequestSignedData
 	require.EqualError(t,
-		SignDataWithSessionToken(nil, nil),
-		ErrNilDataWithTokenSignAccumulator.Error(),
+		SignRequestData(nil, nil),
+		ErrNilRequestSignedData.Error(),
 	)
 
-	// verify with empty DataWithTokenSignSource
+	// verify with empty RequestVerifyData
 	require.EqualError(t,
-		VerifyAccumulatedSignaturesWithToken(nil),
-		ErrNilSignatureKeySourceWithToken.Error(),
+		VerifyRequestData(nil),
+		ErrNilRequestVerifyData.Error(),
 	)
 
 	// create test session token
@@ -287,16 +287,16 @@ func TestSignVerifyDataWithSessionToken(t *testing.T) {
 	sk := test.DecodeKey(0)
 
 	// sign with private key
-	require.NoError(t, SignDataWithSessionToken(sk, src))
+	require.NoError(t, SignRequestData(sk, src))
 
 	// ascertain that verification is passed
-	require.NoError(t, VerifyAccumulatedSignaturesWithToken(src))
+	require.NoError(t, VerifyRequestData(src))
 
 	// break the data
 	src.data[0]++
 
 	// ascertain that verification is failed
-	require.Error(t, VerifyAccumulatedSignaturesWithToken(src))
+	require.Error(t, VerifyRequestData(src))
 
 	// restore the data
 	src.data[0]--
@@ -305,13 +305,13 @@ func TestSignVerifyDataWithSessionToken(t *testing.T) {
 	token.SetVerb(initVerb + 1)
 
 	// ascertain that verification is failed
-	require.Error(t, VerifyAccumulatedSignaturesWithToken(src))
+	require.Error(t, VerifyRequestData(src))
 
 	// restore the token
 	token.SetVerb(initVerb)
 
 	// ascertain that verification is passed
-	require.NoError(t, VerifyAccumulatedSignaturesWithToken(src))
+	require.NoError(t, VerifyRequestData(src))
 
 	// wrap to data reader
 	rdr := &testSignedDataReader{
@@ -319,8 +319,8 @@ func TestSignVerifyDataWithSessionToken(t *testing.T) {
 	}
 
 	// sign with private key
-	require.NoError(t, SignDataWithSessionToken(sk, rdr))
+	require.NoError(t, SignRequestData(sk, rdr))
 
 	// ascertain that verification is passed
-	require.NoError(t, VerifyAccumulatedSignaturesWithToken(rdr))
+	require.NoError(t, VerifyRequestData(rdr))
 }

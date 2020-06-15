@@ -250,20 +250,20 @@ type DataWithSignKeySource interface {
 	SignKeyPairSource
 }
 
-// SignedDataWithToken is an interface of data-token pair with read access.
-type SignedDataWithToken interface {
+// RequestData is an interface of the request information with read access.
+type RequestData interface {
 	SignedDataSource
 	SessionTokenSource
 }
 
-// DataWithTokenSignAccumulator is an interface of data-token pair with signature write access.
-type DataWithTokenSignAccumulator interface {
-	SignedDataWithToken
+// RequestSignedData is an interface of request information with signature write access.
+type RequestSignedData interface {
+	RequestData
 	SignKeyPairAccumulator
 }
 
-// DataWithTokenSignSource is an interface of data-token pair with signature read access.
-type DataWithTokenSignSource interface {
-	SignedDataWithToken
+// RequestVerifyData is an interface of request information with signature read access.
+type RequestVerifyData interface {
+	RequestData
 	SignKeyPairSource
 }

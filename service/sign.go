@@ -2,14 +2,30 @@ package service
 
 import (
 	"crypto/ecdsa"
+	"io"
 	"sync"
 
 	crypto "github.com/nspcc-dev/neofs-crypto"
+	"github.com/pkg/errors"
 )
 
 type keySign struct {
 	key  *ecdsa.PublicKey
 	sign []byte
+}
+
+type signSourceGroup struct {
+	SignKeyPairSource
+	SignKeyPairAccumulator
+
+	sources []SignedDataSource
+}
+
+type signReadersGroup struct {
+	SignKeyPairSource
+	SignKeyPairAccumulator
+
+	readers []SignedDataReader
 }
 
 var bytesPool = sync.Pool{
@@ -176,54 +192,191 @@ func VerifySignatureWithKey(key *ecdsa.PublicKey, src DataWithSignature) error {
 	)
 }
 
-// SignDataWithSessionToken calculates data with token signature and adds it to accumulator.
+// SignRequestData calculates request data signature and adds it to accumulator.
 //
-// Any change of data or session token info provoke signature breakdown.
+// Any change of request data provoke signature breakdown.
 //
 // If passed private key is nil, crypto.ErrEmptyPrivateKey returns.
-// If passed DataWithTokenSignAccumulator is nil, ErrNilDataWithTokenSignAccumulator returns.
-func SignDataWithSessionToken(key *ecdsa.PrivateKey, src DataWithTokenSignAccumulator) error {
+// If passed RequestSignedData is nil, ErrNilRequestSignedData returns.
+func SignRequestData(key *ecdsa.PrivateKey, src RequestSignedData) error {
 	if src == nil {
-		return ErrNilDataWithTokenSignAccumulator
-	} else if r, ok := src.(SignedDataReader); ok {
-		return AddSignatureWithKey(key, &signDataReaderWithToken{
-			SignedDataSource:       src,
-			SignKeyPairAccumulator: src,
-
-			rdr:   r,
-			token: src.GetSessionToken(),
-		},
-		)
+		return ErrNilRequestSignedData
 	}
 
-	return AddSignatureWithKey(key, &signAccumWithToken{
-		SignedDataSource:       src,
-		SignKeyPairAccumulator: src,
+	sigSrc, err := GroupSignedPayloads(
+		src,
+		src,
+		NewSignedSessionToken(
+			src.GetSessionToken(),
+		),
+	)
+	if err != nil {
+		return err
+	}
 
-		token: src.GetSessionToken(),
-	})
+	return AddSignatureWithKey(key, sigSrc)
 }
 
-// VerifyAccumulatedSignaturesWithToken checks if accumulated key-signature pairs of data with token are valid.
+// VerifyRequestData checks if accumulated key-signature pairs of data with token are valid.
 //
-// If passed DataWithTokenSignSource is nil, ErrNilSignatureKeySourceWithToken returns.
-func VerifyAccumulatedSignaturesWithToken(src DataWithTokenSignSource) error {
+// If passed RequestVerifyData is nil, ErrNilRequestVerifyData returns.
+func VerifyRequestData(src RequestVerifyData) error {
 	if src == nil {
-		return ErrNilSignatureKeySourceWithToken
-	} else if r, ok := src.(SignedDataReader); ok {
-		return VerifyAccumulatedSignatures(&signDataReaderWithToken{
-			SignedDataSource:  src,
-			SignKeyPairSource: src,
-
-			rdr:   r,
-			token: src.GetSessionToken(),
-		})
+		return ErrNilRequestVerifyData
 	}
 
-	return VerifyAccumulatedSignatures(&signAccumWithToken{
-		SignedDataSource:  src,
-		SignKeyPairSource: src,
+	verSrc, err := GroupVerifyPayloads(
+		src,
+		src,
+		NewVerifiedSessionToken(
+			src.GetSessionToken(),
+		),
+	)
+	if err != nil {
+		return err
+	}
 
-		token: src.GetSessionToken(),
-	})
+	return VerifyAccumulatedSignatures(verSrc)
+}
+
+// SignedData returns payload bytes concatenation from all sources keeping order.
+func (s signSourceGroup) SignedData() ([]byte, error) {
+	chunks := make([][]byte, 0, len(s.sources))
+	sz := 0
+
+	for i := range s.sources {
+		data, err := s.sources[i].SignedData()
+		if err != nil {
+			return nil, errors.Wrapf(err, "could not get signed payload of element #%d", i)
+		}
+
+		chunks = append(chunks, data)
+
+		sz += len(data)
+	}
+
+	res := make([]byte, sz)
+	off := 0
+
+	for i := range chunks {
+		off += copy(res[off:], chunks[i])
+	}
+
+	return res, nil
+}
+
+// SignedData returns payload bytes concatenation from all readers.
+func (s signReadersGroup) SignedData() ([]byte, error) {
+	return SignedDataFromReader(s)
+}
+
+// SignedDataSize returns the sum of sizes of all readers.
+func (s signReadersGroup) SignedDataSize() (sz int) {
+	for i := range s.readers {
+		sz += s.readers[i].SignedDataSize()
+	}
+
+	return
+}
+
+// ReadSignedData reads data from all readers to passed buffer keeping order.
+//
+// If the buffer size is insufficient, io.ErrUnexpectedEOF returns.
+func (s signReadersGroup) ReadSignedData(p []byte) (int, error) {
+	sz := s.SignedDataSize()
+	if len(p) < sz {
+		return 0, io.ErrUnexpectedEOF
+	}
+
+	off := 0
+
+	for i := range s.readers {
+		n, err := s.readers[i].ReadSignedData(p[off:])
+		off += n
+		if err != nil {
+			return off, errors.Wrapf(err, "could not read signed payload of element #%d", i)
+		}
+	}
+
+	return off, nil
+}
+
+// GroupSignedPayloads groups SignKeyPairAccumulator and SignedDataSource list to DataWithSignKeyAccumulator.
+//
+// If passed SignKeyPairAccumulator is nil, ErrNilSignKeyPairAccumulator returns.
+//
+// Signed payload of the result is a concatenation of payloads of list elements keeping order.
+// Nil elements in list are ignored.
+//
+// If all elements implement SignedDataReader, result implements it too.
+func GroupSignedPayloads(acc SignKeyPairAccumulator, sources ...SignedDataSource) (DataWithSignKeyAccumulator, error) {
+	if acc == nil {
+		return nil, ErrNilSignKeyPairAccumulator
+	}
+
+	return groupPayloads(acc, nil, sources...), nil
+}
+
+// GroupVerifyPayloads groups SignKeyPairSource and SignedDataSource list to DataWithSignKeySource.
+//
+// If passed SignKeyPairSource is nil, ErrNilSignatureKeySource returns.
+//
+// Signed payload of the result is a concatenation of payloads of list elements keeping order.
+// Nil elements in list are ignored.
+//
+// If all elements implement SignedDataReader, result implements it too.
+func GroupVerifyPayloads(src SignKeyPairSource, sources ...SignedDataSource) (DataWithSignKeySource, error) {
+	if src == nil {
+		return nil, ErrNilSignatureKeySource
+	}
+
+	return groupPayloads(nil, src, sources...), nil
+}
+
+func groupPayloads(acc SignKeyPairAccumulator, src SignKeyPairSource, sources ...SignedDataSource) interface {
+	SignedDataSource
+	SignKeyPairSource
+	SignKeyPairAccumulator
+} {
+	var allReaders bool
+
+	for i := range sources {
+		if sources[i] == nil {
+			continue
+		} else if _, allReaders = sources[i].(SignedDataReader); !allReaders {
+			break
+		}
+	}
+
+	if !allReaders {
+		res := &signSourceGroup{
+			SignKeyPairSource:      src,
+			SignKeyPairAccumulator: acc,
+
+			sources: make([]SignedDataSource, 0, len(sources)),
+		}
+
+		for i := range sources {
+			if sources[i] != nil {
+				res.sources = append(res.sources, sources[i])
+			}
+		}
+
+		return res
+	}
+
+	res := &signReadersGroup{
+		SignKeyPairSource:      src,
+		SignKeyPairAccumulator: acc,
+
+		readers: make([]SignedDataReader, 0, len(sources)),
+	}
+
+	for i := range sources {
+		if sources[i] != nil {
+			res.readers = append(res.readers, sources[i].(SignedDataReader))
+		}
+	}
+
+	return res
 }
