@@ -286,7 +286,7 @@ func TestSignVerifyRequestData(t *testing.T) {
 		token    = new(Token)
 		initVerb = Token_Info_Verb(1)
 
-		bearer      = wrapBearerTokenMsg(new(BearerTokenMsg))
+		bearer      = new(BearerTokenMsg)
 		bearerEpoch = uint64(8)
 
 		extHdrKey = "key"

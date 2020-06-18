@@ -119,6 +119,16 @@ func (m *BearerTokenMsg_Info) SetOwnerID(v OwnerID) {
 	m.OwnerID = v
 }
 
+// ExpirationEpoch returns the result of ValidUntil field getter.
+func (m BearerTokenMsg_Info) ExpirationEpoch() uint64 {
+	return m.GetValidUntil()
+}
+
+// SetExpirationEpoch passes argument to ValidUntil field setter.
+func (m *BearerTokenMsg_Info) SetExpirationEpoch(v uint64) {
+	m.SetValidUntil(v)
+}
+
 // SetOwnerKey is an OwnerKey field setter.
 func (m *BearerTokenMsg) SetOwnerKey(v []byte) {
 	m.OwnerKey = v
@@ -127,30 +137,4 @@ func (m *BearerTokenMsg) SetOwnerKey(v []byte) {
 // SetSignature is a Signature field setter.
 func (m *BearerTokenMsg) SetSignature(v []byte) {
 	m.Signature = v
-}
-
-func wrapBearerTokenMsg(msg *BearerTokenMsg) bearerMsgWrapper {
-	return bearerMsgWrapper{
-		BearerTokenMsg: msg,
-	}
-}
-
-// ExpirationEpoch returns the result of ValidUntil field getter.
-//
-// If message is nil, 0 returns.
-func (s bearerMsgWrapper) ExpirationEpoch() uint64 {
-	if s.BearerTokenMsg != nil {
-		return s.GetValidUntil()
-	}
-
-	return 0
-}
-
-// SetExpirationEpoch passes argument to ValidUntil field setter.
-//
-// If message is nil, nothing changes.
-func (s bearerMsgWrapper) SetExpirationEpoch(v uint64) {
-	if s.BearerTokenMsg != nil {
-		s.SetValidUntil(v)
-	}
 }
