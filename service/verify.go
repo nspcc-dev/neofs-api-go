@@ -109,7 +109,7 @@ func (t testCustomField) Marshal() ([]byte, error) { return nil, nil }
 // If Bearer field value is nil, nil returns.
 func (m RequestVerificationHeader) GetBearerToken() BearerToken {
 	if t := m.GetBearer(); t != nil {
-		return wrapBearerTokenMsg(t)
+		return t
 	}
 
 	return nil

@@ -136,5 +136,5 @@ func TestRequestVerificationHeader_GetBearerToken(t *testing.T) {
 
 	bearer := new(BearerTokenMsg)
 	s.SetBearer(bearer)
-	require.Equal(t, wrapBearerTokenMsg(bearer), s.GetBearerToken())
+	require.Equal(t, bearer, s.GetBearerToken())
 }
