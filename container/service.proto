@@ -28,10 +28,10 @@ service Service {
     // List returns all user's containers
     rpc List(ListRequest) returns (ListResponse);
 
-    // SetExtendedACL changes extended ACL rules of container
+    // SetExtendedACL changes extended ACL rules of the container
     rpc SetExtendedACL(SetExtendedACLRequest) returns (SetExtendedACLResponse);
 
-    // GetExtendedACL receives extended ACL rules iof container
+    // GetExtendedACL returns extended ACL rules of the container
     rpc GetExtendedACL(GetExtendedACLRequest) returns (GetExtendedACLResponse);
 }
 
@@ -51,8 +51,6 @@ message PutRequest {
     // BasicACL of the container.
     uint32 BasicACL                          = 5;
 
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -68,8 +66,6 @@ message DeleteRequest {
     // CID (container id) is a SHA256 hash of the container structure
     bytes CID                                = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
 
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -85,8 +81,6 @@ message GetRequest {
     // CID (container id) is a SHA256 hash of the container structure
     bytes CID                                = 1 [(gogoproto.customtype) = "CID", (gogoproto.nullable) = false];
 
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -101,8 +95,6 @@ message GetResponse {
 message ListRequest {
     // OwnerID is a wallet address
     bytes OwnerID                            = 1 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -120,21 +112,17 @@ message ExtendedACLKey {
 }
 
 message ExtendedACLValue {
-    // EACL is a binary representation of extended ACL rule table
-    bytes EACL = 1;
-
-    // Signature carries EACL signature
+    // EACL carries binary representation of the table of extended ACL rules
+    bytes EACL      = 1;
+    // Signature carries EACL field signature
     bytes Signature = 2;
 }
 
 message SetExtendedACLRequest {
-    ExtendedACLKey Key = 1 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
-
+    // Key carries key to extended ACL information
+    ExtendedACLKey Key                       = 1 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // Value carries extended ACL information
-    ExtendedACLValue Value = 2 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
-
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    ExtendedACLValue Value                   = 2 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -144,10 +132,8 @@ message SetExtendedACLRequest {
 message SetExtendedACLResponse {}
 
 message GetExtendedACLRequest {
-    ExtendedACLKey Key = 1 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
-
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    // Key carries key to extended ACL information
+    ExtendedACLKey Key                       = 1 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -156,5 +142,5 @@ message GetExtendedACLRequest {
 
 message GetExtendedACLResponse {
     // ACL carries extended ACL information
-    ExtendedACLValue ACL = 2 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+    ExtendedACLValue ACL = 1 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }

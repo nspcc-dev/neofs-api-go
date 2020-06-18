@@ -98,7 +98,7 @@ message TokenLifetime {
 // BearerTokenMsg carries information about request ACL rules with limited lifetime
 message BearerTokenMsg {
     message Info {
-        // ACLRules is an ACL rules represented in bytes
+        // ACLRules carries a binary representation of the table of extended ACL rules
         bytes ACLRules = 1;
 
         // OwnerID is an owner of token

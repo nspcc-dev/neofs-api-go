@@ -35,8 +35,6 @@ message Request {
     bootstrap.NodeInfo info                  = 2 [(gogoproto.nullable) = false];
     // State contains node status
     State state                              = 3;
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)

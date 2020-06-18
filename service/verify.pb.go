@@ -417,7 +417,7 @@ func (m *BearerTokenMsg) GetSignature() []byte {
 }
 
 type BearerTokenMsg_Info struct {
-	// ACLRules is an ACL rules represented in bytes
+	// ACLRules carries a binary representation of the table of extended ACL rules
 	ACLRules []byte `protobuf:"bytes,1,opt,name=ACLRules,proto3" json:"ACLRules,omitempty"`
 	// OwnerID is an owner of token
 	OwnerID OwnerID `protobuf:"bytes,2,opt,name=OwnerID,proto3,customtype=OwnerID" json:"OwnerID"`

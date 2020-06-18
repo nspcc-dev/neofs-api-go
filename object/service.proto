@@ -57,8 +57,6 @@ service Service {
 message GetRequest {
     // Address of object (container id + object id)
     refs.Address Address                     = 1 [(gogoproto.nullable) = false];
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -92,8 +90,6 @@ message PutRequest {
         bytes Chunk      = 2;
     }
 
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -111,8 +107,6 @@ message DeleteRequest {
     refs.Address Address                     = 1 [(gogoproto.nullable) = false];
     // OwnerID is a wallet address
     bytes OwnerID                            = 2 [(gogoproto.nullable) = false, (gogoproto.customtype) = "OwnerID"];
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -131,8 +125,6 @@ message HeadRequest {
     refs.Address Address                     = 1 [(gogoproto.nullable) = false, (gogoproto.customtype) = "Address"];
     // FullHeaders can be set true for extended headers in the object
     bool FullHeaders                         = 2;
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -152,8 +144,6 @@ message SearchRequest {
     bytes Query                              = 2;
     // QueryVersion is a version of search query format
     uint32 QueryVersion                     = 3;
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -172,8 +162,6 @@ message GetRangeRequest {
     refs.Address Address                     = 1 [(gogoproto.nullable) = false];
     // Range of object's payload to return
     Range Range                              = 2 [(gogoproto.nullable) = false];
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -194,8 +182,6 @@ message GetRangeHashRequest {
     repeated Range Ranges                    = 2 [(gogoproto.nullable) = false];
     // Salt is used to XOR object's payload ranges before hashing, it can be nil
     bytes Salt                               = 3;
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)

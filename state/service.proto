@@ -36,8 +36,6 @@ service Status {
 
 // NetmapRequest message to request current node netmap
 message NetmapRequest {
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -46,8 +44,6 @@ message NetmapRequest {
 
 // MetricsRequest message to request node metrics
 message MetricsRequest {
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -63,8 +59,6 @@ message MetricsResponse {
 
 // HealthRequest message to check current state
 message HealthRequest {
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -81,8 +75,6 @@ message HealthResponse {
 
 // DumpRequest message to fetch current server config.
 message DumpRequest {
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -97,8 +89,6 @@ message DumpResponse {
 
 // DumpVarsRequest message to fetch current server debug variables.
 message DumpVarsRequest {
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
@@ -124,8 +114,6 @@ message ChangeStateRequest {
 
     // State is a new state of node.
     State state = 1;
-    // RequestExtendedHeader contains information about extended request headers (should be embedded into message)
-    service.RequestExtendedHeader Extended   = 97 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestMetaHeader contains information about request meta headers (should be embedded into message)
     service.RequestMetaHeader Meta           = 98 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
     // RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message)
