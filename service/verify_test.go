@@ -115,3 +115,16 @@ func TestRequestVerificationHeader_SetToken(t *testing.T) {
 
 	require.Equal(t, token, h.GetToken())
 }
+
+func TestRequestVerificationHeader_SetBearer(t *testing.T) {
+	aclRules := []byte{1, 2, 3}
+
+	token := new(BearerTokenMsg)
+	token.SetACLRules(aclRules)
+
+	h := new(RequestVerificationHeader)
+
+	h.SetBearer(token)
+
+	require.Equal(t, token, h.GetBearer())
+}

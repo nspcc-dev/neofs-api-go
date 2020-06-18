@@ -170,3 +170,27 @@ func TestSignVerifyBearerToken(t *testing.T) {
 		require.NoError(t, VerifySignatureWithKey(pk, verifiedToken))
 	}
 }
+
+func TestBearerTokenMsg_Setters(t *testing.T) {
+	s := new(BearerTokenMsg)
+
+	aclRules := []byte{1, 2, 3}
+	s.SetACLRules(aclRules)
+	require.Equal(t, aclRules, s.GetACLRules())
+
+	validUntil := uint64(6)
+	s.SetValidUntil(validUntil)
+	require.Equal(t, validUntil, s.GetValidUntil())
+
+	ownerID := OwnerID{1, 2, 3}
+	s.SetOwnerID(ownerID)
+	require.Equal(t, ownerID, s.GetOwnerID())
+
+	ownerKey := []byte{4, 5, 6}
+	s.SetOwnerKey(ownerKey)
+	require.Equal(t, ownerKey, s.GetOwnerKey())
+
+	sig := []byte{7, 8, 9}
+	s.SetSignature(sig)
+	require.Equal(t, sig, s.GetSignature())
+}

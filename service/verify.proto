@@ -23,6 +23,9 @@ message RequestVerificationHeader {
 
     // Token is a token of the session within which the request is sent
     Token Token = 2;
+
+    // Bearer is a Bearer token of the request
+    BearerTokenMsg Bearer = 3;
 }
 
 // User token granting rights for object manipulation
@@ -91,3 +94,26 @@ message TokenLifetime {
 //     uint32 Version = 2;
 //     bytes Data = 3;
 // }
+
+// BearerTokenMsg carries information about request ACL rules with limited lifetime
+message BearerTokenMsg {
+    message Info {
+        // ACLRules carries a binary representation of the table of extended ACL rules
+        bytes ACLRules = 1;
+
+        // OwnerID is an owner of token
+        bytes OwnerID = 2 [(gogoproto.customtype) = "OwnerID", (gogoproto.nullable) = false];
+
+        // ValidUntil carries a last epoch of token lifetime
+        uint64 ValidUntil = 3;
+    }
+
+    // TokenInfo is a grouped information about token
+    Info TokenInfo = 1 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
+
+    // OwnerKey is a public key of the token owner
+    bytes OwnerKey = 2;
+
+    // Signature is a signature of token information
+    bytes Signature = 3;
+}
