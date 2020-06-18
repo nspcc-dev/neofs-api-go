@@ -301,3 +301,14 @@ type BearerToken interface {
 type BearerTokenSource interface {
 	GetBearerToken() BearerToken
 }
+
+// ExtendedHeader is an interface of string key-value pair with read access.
+type ExtendedHeader interface {
+	Key() string
+	Value() string
+}
+
+// ExtendedHeadersSource is an interface of ExtendedHeader list with read access.
+type ExtendedHeadersSource interface {
+	ExtendedHeaders() []ExtendedHeader
+}
