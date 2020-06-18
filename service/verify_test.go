@@ -128,3 +128,13 @@ func TestRequestVerificationHeader_SetBearer(t *testing.T) {
 
 	require.Equal(t, token, h.GetBearer())
 }
+
+func TestRequestVerificationHeader_GetBearerToken(t *testing.T) {
+	s := new(RequestVerificationHeader)
+
+	require.Nil(t, s.GetBearerToken())
+
+	bearer := new(BearerTokenMsg)
+	s.SetBearer(bearer)
+	require.Equal(t, wrapBearerTokenMsg(bearer), s.GetBearerToken())
+}

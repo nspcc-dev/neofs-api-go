@@ -194,3 +194,18 @@ func TestBearerTokenMsg_Setters(t *testing.T) {
 	s.SetSignature(sig)
 	require.Equal(t, sig, s.GetSignature())
 }
+
+func TestBearerMsgWrapper_ExpirationEpoch(t *testing.T) {
+	s := wrapBearerTokenMsg(nil)
+	require.Zero(t, s.ExpirationEpoch())
+	require.NotPanics(t, func() {
+		s.SetExpirationEpoch(1)
+	})
+
+	msg := new(BearerTokenMsg)
+	s = wrapBearerTokenMsg(msg)
+
+	epoch := uint64(7)
+	s.SetExpirationEpoch(epoch)
+	require.Equal(t, epoch, s.ExpirationEpoch())
+}

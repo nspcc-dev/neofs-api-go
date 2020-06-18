@@ -254,6 +254,7 @@ type DataWithSignKeySource interface {
 type RequestData interface {
 	SignedDataSource
 	SessionTokenSource
+	BearerTokenSource
 }
 
 // RequestSignedData is an interface of request information with signature write access.

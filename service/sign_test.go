@@ -18,6 +18,8 @@ type testSignedDataSrc struct {
 	sig   []byte
 	key   *ecdsa.PublicKey
 	token SessionToken
+
+	bearer BearerToken
 }
 
 type testSignedDataReader struct {
@@ -52,6 +54,10 @@ func testData(t *testing.T, sz int) []byte {
 
 func (s testSignedDataSrc) GetSessionToken() SessionToken {
 	return s.token
+}
+
+func (s testSignedDataSrc) GetBearerToken() BearerToken {
+	return s.bearer
 }
 
 func (s testSignedDataReader) SignedDataSize() int {

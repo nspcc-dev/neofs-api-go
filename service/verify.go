@@ -103,3 +103,14 @@ func (t testCustomField) MarshalTo(data []byte) (int, error) { return 0, nil }
 
 // Marshal skip, it's for test usage only.
 func (t testCustomField) Marshal() ([]byte, error) { return nil, nil }
+
+// GetBearerToken returns wraps Bearer field and return BearerToken interface.
+//
+// If Bearer field value is nil, nil returns.
+func (m RequestVerificationHeader) GetBearerToken() BearerToken {
+	if t := m.GetBearer(); t != nil {
+		return wrapBearerTokenMsg(t)
+	}
+
+	return nil
+}
