@@ -1,6 +1,23 @@
 # Changelog
 This is the changelog for NeoFS-API-Go
 
+## [1.1.0] - 2020-06-18
+
+### Added
+
+- `container.SetExtendedACL` rpc.
+- `container.GetExtendedACL` rpc.
+- Bearer token to all request messages.
+- X-headers to all request messages.
+
+### Changed
+
+- Implementation and signatures of Sign/Verify request functions.
+
+### Updated
+
+- NeoFS API v1.0.0 => 1.1.0
+
 ## [1.0.0] - 2020-05-26
 
 - Bump major release
@@ -339,3 +356,4 @@ Initial public release
 [0.7.5]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.4...v0.7.5
 [0.7.6]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.5...v0.7.6
 [1.0.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.6...v1.0.0
+[1.1.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.0.0...v1.1.0

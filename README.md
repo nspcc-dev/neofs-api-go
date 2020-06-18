@@ -11,6 +11,12 @@
 NeoFS API repository contains implementation of core NeoFS structures that
 can be used for integration with NeoFS. 
 
+## Сompatibility
+
+[neofs-api v1.1.0]: https://github.com/nspcc-dev/neofs-api/releases/tag/v1.1.0
+[neofs-api-go v1.1.0]: https://github.com/nspcc-dev/neofs-api-go/releases/tag/v1.1.0
+[neofs-api-go v1.1.0] supports [neofs-api v1.1.0]
+
 ## Description
 
 Repository contains 13 packages that implement NeoFS core structures. These
