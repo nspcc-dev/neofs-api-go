@@ -279,14 +279,21 @@ func TestSignVerifyDataWithSessionToken(t *testing.T) {
 	var (
 		token    = new(Token)
 		initVerb = Token_Info_Verb(1)
+
+		bearer      = wrapBearerTokenMsg(new(BearerTokenMsg))
+		bearerEpoch = uint64(8)
 	)
 
 	token.SetVerb(initVerb)
+
+	bearer.SetExpirationEpoch(bearerEpoch)
 
 	// create test data with token
 	src := &testSignedDataSrc{
 		data:  testData(t, 10),
 		token: token,
+
+		bearer: bearer,
 	}
 
 	// create test private key
@@ -315,6 +322,18 @@ func TestSignVerifyDataWithSessionToken(t *testing.T) {
 
 	// restore the token
 	token.SetVerb(initVerb)
+
+	// ascertain that verification is passed
+	require.NoError(t, VerifyRequestData(src))
+
+	// break the Bearer token
+	bearer.SetExpirationEpoch(bearerEpoch + 1)
+
+	// ascertain that verification is failed
+	require.Error(t, VerifyRequestData(src))
+
+	// restore the Bearer token
+	bearer.SetExpirationEpoch(bearerEpoch)
 
 	// ascertain that verification is passed
 	require.NoError(t, VerifyRequestData(src))
