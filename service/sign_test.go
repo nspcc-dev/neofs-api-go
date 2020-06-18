@@ -20,6 +20,8 @@ type testSignedDataSrc struct {
 	token SessionToken
 
 	bearer BearerToken
+
+	extHdrs []ExtendedHeader
 }
 
 type testSignedDataReader struct {
@@ -58,6 +60,10 @@ func (s testSignedDataSrc) GetSessionToken() SessionToken {
 
 func (s testSignedDataSrc) GetBearerToken() BearerToken {
 	return s.bearer
+}
+
+func (s testSignedDataSrc) ExtendedHeaders() []ExtendedHeader {
+	return s.extHdrs
 }
 
 func (s testSignedDataReader) SignedDataSize() int {

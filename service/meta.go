@@ -4,6 +4,10 @@ import (
 	"io"
 )
 
+type extHdrWrapper struct {
+	msg *RequestExtendedHeader_KV
+}
+
 type extHdrSrcWrapper struct {
 	extHdrSrc ExtendedHeadersSource
 }
@@ -83,4 +87,45 @@ func (m *RequestExtendedHeader_KV) SetV(v string) {
 // SetHeaders is a Headers field setter.
 func (m *RequestExtendedHeader) SetHeaders(v []RequestExtendedHeader_KV) {
 	m.Headers = v
+}
+
+func wrapExtendedHeaderKV(msg *RequestExtendedHeader_KV) extHdrWrapper {
+	return extHdrWrapper{
+		msg: msg,
+	}
+}
+
+// Key returns the result of K field getter.
+//
+// If message is nil, empty string returns.
+func (m extHdrWrapper) Key() string {
+	if m.msg != nil {
+		return m.msg.GetK()
+	}
+
+	return ""
+}
+
+// Value returns the result of V field getter.
+//
+// If message is nil, empty string returns.
+func (m extHdrWrapper) Value() string {
+	if m.msg != nil {
+		return m.msg.GetV()
+	}
+
+	return ""
+}
+
+// ExtendedHeaders composes ExtendedHeader list from the Headers field getter result.
+func (m RequestExtendedHeader) ExtendedHeaders() []ExtendedHeader {
+	hs := m.GetHeaders()
+
+	res := make([]ExtendedHeader, 0, len(hs))
+
+	for i := range hs {
+		res = append(res, wrapExtendedHeaderKV(&hs[i]))
+	}
+
+	return res
 }

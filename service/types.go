@@ -255,6 +255,7 @@ type RequestData interface {
 	SignedDataSource
 	SessionTokenSource
 	BearerTokenSource
+	ExtendedHeadersSource
 }
 
 // RequestSignedData is an interface of request information with signature write access.
