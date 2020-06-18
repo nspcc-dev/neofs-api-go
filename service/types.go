@@ -250,20 +250,67 @@ type DataWithSignKeySource interface {
 	SignKeyPairSource
 }
 
-// SignedDataWithToken is an interface of data-token pair with read access.
-type SignedDataWithToken interface {
+// RequestData is an interface of the request information with read access.
+type RequestData interface {
 	SignedDataSource
 	SessionTokenSource
+	BearerTokenSource
+	ExtendedHeadersSource
 }
 
-// DataWithTokenSignAccumulator is an interface of data-token pair with signature write access.
-type DataWithTokenSignAccumulator interface {
-	SignedDataWithToken
+// RequestSignedData is an interface of request information with signature write access.
+type RequestSignedData interface {
+	RequestData
 	SignKeyPairAccumulator
 }
 
-// DataWithTokenSignSource is an interface of data-token pair with signature read access.
-type DataWithTokenSignSource interface {
-	SignedDataWithToken
+// RequestVerifyData is an interface of request information with signature read access.
+type RequestVerifyData interface {
+	RequestData
 	SignKeyPairSource
+}
+
+// ACLRulesSource is an interface of the container of binary extended ACL rules with read access.
+type ACLRulesSource interface {
+	GetACLRules() []byte
+}
+
+// ACLRulesContainer is an interface of the container of binary extended ACL rules.
+type ACLRulesContainer interface {
+	ACLRulesSource
+	SetACLRules([]byte)
+}
+
+// BearerTokenInfo is an interface of a fixed set of Bearer token information value containers.
+// Contains:
+// - binary extended ACL rules;
+// - expiration epoch number;
+// - ID of the token's owner.
+type BearerTokenInfo interface {
+	ACLRulesContainer
+	ExpirationEpochContainer
+	OwnerIDContainer
+}
+
+// BearerToken is an interface of Bearer token information and key-signature pair.
+type BearerToken interface {
+	BearerTokenInfo
+	OwnerKeyContainer
+	SignatureContainer
+}
+
+// BearerTokenSource is an interface of the container of a BearerToken with read access.
+type BearerTokenSource interface {
+	GetBearerToken() BearerToken
+}
+
+// ExtendedHeader is an interface of string key-value pair with read access.
+type ExtendedHeader interface {
+	Key() string
+	Value() string
+}
+
+// ExtendedHeadersSource is an interface of ExtendedHeader list with read access.
+type ExtendedHeadersSource interface {
+	ExtendedHeaders() []ExtendedHeader
 }

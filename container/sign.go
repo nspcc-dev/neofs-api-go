@@ -135,3 +135,60 @@ func (m ListRequest) ReadSignedData(p []byte) (int, error) {
 
 	return off, nil
 }
+
+// SignedData returns payload bytes of the request.
+func (m GetExtendedACLRequest) SignedData() ([]byte, error) {
+	return service.SignedDataFromReader(m)
+}
+
+// SignedDataSize returns payload size of the request.
+func (m GetExtendedACLRequest) SignedDataSize() int {
+	return m.GetID().Size()
+}
+
+// ReadSignedData copies payload bytes to passed buffer.
+//
+// If the Request size is insufficient, io.ErrUnexpectedEOF returns.
+func (m GetExtendedACLRequest) ReadSignedData(p []byte) (int, error) {
+	if len(p) < m.SignedDataSize() {
+		return 0, io.ErrUnexpectedEOF
+	}
+
+	var off int
+
+	off += copy(p[off:], m.GetID().Bytes())
+
+	return off, nil
+}
+
+// SignedData returns payload bytes of the request.
+func (m SetExtendedACLRequest) SignedData() ([]byte, error) {
+	return service.SignedDataFromReader(m)
+}
+
+// SignedDataSize returns payload size of the request.
+func (m SetExtendedACLRequest) SignedDataSize() int {
+	return 0 +
+		m.GetID().Size() +
+		len(m.GetEACL()) +
+		len(m.GetSignature())
+}
+
+// ReadSignedData copies payload bytes to passed buffer.
+//
+// If the Request size is insufficient, io.ErrUnexpectedEOF returns.
+func (m SetExtendedACLRequest) ReadSignedData(p []byte) (int, error) {
+	if len(p) < m.SignedDataSize() {
+		return 0, io.ErrUnexpectedEOF
+	}
+
+	var off int
+
+	off += copy(p[off:], m.GetID().Bytes())
+
+	off += copy(p[off:], m.GetEACL())
+
+	off += copy(p[off:], m.GetSignature())
+
+	return off, nil
+}

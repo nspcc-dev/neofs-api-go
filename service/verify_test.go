@@ -69,7 +69,7 @@ func BenchmarkSignDataWithSessionToken(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		require.NoError(b, SignDataWithSessionToken(key, req))
+		require.NoError(b, SignRequestData(key, req))
 	}
 }
 
@@ -91,14 +91,14 @@ func BenchmarkVerifyAccumulatedSignaturesWithToken(b *testing.B) {
 
 	for i := 0; i < 10; i++ {
 		key := test.DecodeKey(i)
-		require.NoError(b, SignDataWithSessionToken(key, req))
+		require.NoError(b, SignRequestData(key, req))
 	}
 
 	b.ResetTimer()
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		require.NoError(b, VerifyAccumulatedSignaturesWithToken(req))
+		require.NoError(b, VerifyRequestData(req))
 	}
 }
 
@@ -114,4 +114,27 @@ func TestRequestVerificationHeader_SetToken(t *testing.T) {
 	h.SetToken(token)
 
 	require.Equal(t, token, h.GetToken())
+}
+
+func TestRequestVerificationHeader_SetBearer(t *testing.T) {
+	aclRules := []byte{1, 2, 3}
+
+	token := new(BearerTokenMsg)
+	token.SetACLRules(aclRules)
+
+	h := new(RequestVerificationHeader)
+
+	h.SetBearer(token)
+
+	require.Equal(t, token, h.GetBearer())
+}
+
+func TestRequestVerificationHeader_GetBearerToken(t *testing.T) {
+	s := new(RequestVerificationHeader)
+
+	require.Nil(t, s.GetBearerToken())
+
+	bearer := new(BearerTokenMsg)
+	s.SetBearer(bearer)
+	require.Equal(t, bearer, s.GetBearerToken())
 }

@@ -13,7 +13,7 @@ func TestSignBalanceRequest(t *testing.T) {
 	sk := test.DecodeKey(0)
 
 	type sigType interface {
-		service.SignedDataWithToken
+		service.RequestData
 		service.SignKeyPairAccumulator
 		service.SignKeyPairSource
 		SetToken(*service.Token)
@@ -159,26 +159,26 @@ func TestSignBalanceRequest(t *testing.T) {
 			token := new(service.Token)
 			v.SetToken(token)
 
-			require.NoError(t, service.SignDataWithSessionToken(sk, v))
+			require.NoError(t, service.SignRequestData(sk, v))
 
-			require.NoError(t, service.VerifyAccumulatedSignaturesWithToken(v))
+			require.NoError(t, service.VerifyRequestData(v))
 
 			token.SetSessionKey(append(token.GetSessionKey(), 1))
 
-			require.Error(t, service.VerifyAccumulatedSignaturesWithToken(v))
+			require.Error(t, service.VerifyRequestData(v))
 		}
 
 		{ // payload corruptions
 			for _, corruption := range item.payloadCorrupt {
 				v := item.constructor()
 
-				require.NoError(t, service.SignDataWithSessionToken(sk, v))
+				require.NoError(t, service.SignRequestData(sk, v))
 
-				require.NoError(t, service.VerifyAccumulatedSignaturesWithToken(v))
+				require.NoError(t, service.VerifyRequestData(v))
 
 				corruption(v)
 
-				require.Error(t, service.VerifyAccumulatedSignaturesWithToken(v))
+				require.Error(t, service.VerifyRequestData(v))
 			}
 		}
 	}

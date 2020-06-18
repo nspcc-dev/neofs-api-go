@@ -12,7 +12,7 @@ func TestRequestSign(t *testing.T) {
 	sk := test.DecodeKey(0)
 
 	type sigType interface {
-		service.SignedDataWithToken
+		service.RequestData
 		service.SignKeyPairAccumulator
 		service.SignKeyPairSource
 		SetToken(*service.Token)
@@ -108,6 +108,50 @@ func TestRequestSign(t *testing.T) {
 				},
 			},
 		},
+		{ // GetExtendedACLRequest
+			constructor: func() sigType {
+				return new(GetExtendedACLRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					req := s.(*GetExtendedACLRequest)
+
+					id := req.GetID()
+					id[0]++
+
+					req.SetID(id)
+				},
+			},
+		},
+		{ // SetExtendedACLRequest
+			constructor: func() sigType {
+				return new(SetExtendedACLRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					req := s.(*SetExtendedACLRequest)
+
+					id := req.GetID()
+					id[0]++
+
+					req.SetID(id)
+				},
+				func(s sigType) {
+					req := s.(*SetExtendedACLRequest)
+
+					req.SetEACL(
+						append(req.GetEACL(), 1),
+					)
+				},
+				func(s sigType) {
+					req := s.(*SetExtendedACLRequest)
+
+					req.SetSignature(
+						append(req.GetSignature(), 1),
+					)
+				},
+			},
+		},
 	}
 
 	for _, item := range items {
@@ -117,26 +161,26 @@ func TestRequestSign(t *testing.T) {
 			token := new(service.Token)
 			v.SetToken(token)
 
-			require.NoError(t, service.SignDataWithSessionToken(sk, v))
+			require.NoError(t, service.SignRequestData(sk, v))
 
-			require.NoError(t, service.VerifyAccumulatedSignaturesWithToken(v))
+			require.NoError(t, service.VerifyRequestData(v))
 
 			token.SetSessionKey(append(token.GetSessionKey(), 1))
 
-			require.Error(t, service.VerifyAccumulatedSignaturesWithToken(v))
+			require.Error(t, service.VerifyRequestData(v))
 		}
 
 		{ // payload corruptions
 			for _, corruption := range item.payloadCorrupt {
 				v := item.constructor()
 
-				require.NoError(t, service.SignDataWithSessionToken(sk, v))
+				require.NoError(t, service.SignRequestData(sk, v))
 
-				require.NoError(t, service.VerifyAccumulatedSignaturesWithToken(v))
+				require.NoError(t, service.VerifyRequestData(v))
 
 				corruption(v)
 
-				require.Error(t, service.VerifyAccumulatedSignaturesWithToken(v))
+				require.Error(t, service.VerifyRequestData(v))
 			}
 		}
 	}

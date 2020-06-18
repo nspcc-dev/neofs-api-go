@@ -18,6 +18,10 @@ type testSignedDataSrc struct {
 	sig   []byte
 	key   *ecdsa.PublicKey
 	token SessionToken
+
+	bearer BearerToken
+
+	extHdrs []ExtendedHeader
 }
 
 type testSignedDataReader struct {
@@ -52,6 +56,14 @@ func testData(t *testing.T, sz int) []byte {
 
 func (s testSignedDataSrc) GetSessionToken() SessionToken {
 	return s.token
+}
+
+func (s testSignedDataSrc) GetBearerToken() BearerToken {
+	return s.bearer
+}
+
+func (s testSignedDataSrc) ExtendedHeaders() []ExtendedHeader {
+	return s.extHdrs
 }
 
 func (s testSignedDataReader) SignedDataSize() int {
@@ -256,47 +268,63 @@ func TestVerifySignatureWithKey(t *testing.T) {
 	require.Error(t, VerifySignatureWithKey(&sk.PublicKey, src))
 }
 
-func TestSignVerifyDataWithSessionToken(t *testing.T) {
-	// sign with empty DataWithTokenSignAccumulator
+func TestSignVerifyRequestData(t *testing.T) {
+	// sign with empty RequestSignedData
 	require.EqualError(t,
-		SignDataWithSessionToken(nil, nil),
-		ErrNilDataWithTokenSignAccumulator.Error(),
+		SignRequestData(nil, nil),
+		ErrNilRequestSignedData.Error(),
 	)
 
-	// verify with empty DataWithTokenSignSource
+	// verify with empty RequestVerifyData
 	require.EqualError(t,
-		VerifyAccumulatedSignaturesWithToken(nil),
-		ErrNilSignatureKeySourceWithToken.Error(),
+		VerifyRequestData(nil),
+		ErrNilRequestVerifyData.Error(),
 	)
 
 	// create test session token
 	var (
 		token    = new(Token)
 		initVerb = Token_Info_Verb(1)
+
+		bearer      = new(BearerTokenMsg)
+		bearerEpoch = uint64(8)
+
+		extHdrKey = "key"
+		extHdr    = new(RequestExtendedHeader_KV)
 	)
 
 	token.SetVerb(initVerb)
+
+	bearer.SetExpirationEpoch(bearerEpoch)
+
+	extHdr.SetK(extHdrKey)
 
 	// create test data with token
 	src := &testSignedDataSrc{
 		data:  testData(t, 10),
 		token: token,
+
+		bearer: bearer,
+
+		extHdrs: []ExtendedHeader{
+			wrapExtendedHeaderKV(extHdr),
+		},
 	}
 
 	// create test private key
 	sk := test.DecodeKey(0)
 
 	// sign with private key
-	require.NoError(t, SignDataWithSessionToken(sk, src))
+	require.NoError(t, SignRequestData(sk, src))
 
 	// ascertain that verification is passed
-	require.NoError(t, VerifyAccumulatedSignaturesWithToken(src))
+	require.NoError(t, VerifyRequestData(src))
 
 	// break the data
 	src.data[0]++
 
 	// ascertain that verification is failed
-	require.Error(t, VerifyAccumulatedSignaturesWithToken(src))
+	require.Error(t, VerifyRequestData(src))
 
 	// restore the data
 	src.data[0]--
@@ -305,13 +333,37 @@ func TestSignVerifyDataWithSessionToken(t *testing.T) {
 	token.SetVerb(initVerb + 1)
 
 	// ascertain that verification is failed
-	require.Error(t, VerifyAccumulatedSignaturesWithToken(src))
+	require.Error(t, VerifyRequestData(src))
 
 	// restore the token
 	token.SetVerb(initVerb)
 
 	// ascertain that verification is passed
-	require.NoError(t, VerifyAccumulatedSignaturesWithToken(src))
+	require.NoError(t, VerifyRequestData(src))
+
+	// break the Bearer token
+	bearer.SetExpirationEpoch(bearerEpoch + 1)
+
+	// ascertain that verification is failed
+	require.Error(t, VerifyRequestData(src))
+
+	// restore the Bearer token
+	bearer.SetExpirationEpoch(bearerEpoch)
+
+	// ascertain that verification is passed
+	require.NoError(t, VerifyRequestData(src))
+
+	// break the extended header
+	extHdr.SetK(extHdrKey + "1")
+
+	// ascertain that verification is failed
+	require.Error(t, VerifyRequestData(src))
+
+	// restore the extended header
+	extHdr.SetK(extHdrKey)
+
+	// ascertain that verification is passed
+	require.NoError(t, VerifyRequestData(src))
 
 	// wrap to data reader
 	rdr := &testSignedDataReader{
@@ -319,8 +371,8 @@ func TestSignVerifyDataWithSessionToken(t *testing.T) {
 	}
 
 	// sign with private key
-	require.NoError(t, SignDataWithSessionToken(sk, rdr))
+	require.NoError(t, SignRequestData(sk, rdr))
 
 	// ascertain that verification is passed
-	require.NoError(t, VerifyAccumulatedSignaturesWithToken(rdr))
+	require.NoError(t, VerifyRequestData(rdr))
 }
