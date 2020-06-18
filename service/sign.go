@@ -209,6 +209,9 @@ func SignRequestData(key *ecdsa.PrivateKey, src RequestSignedData) error {
 		NewSignedSessionToken(
 			src.GetSessionToken(),
 		),
+		NewSignedBearerToken(
+			src.GetBearerToken(),
+		),
 	)
 	if err != nil {
 		return err
@@ -230,6 +233,9 @@ func VerifyRequestData(src RequestVerifyData) error {
 		src,
 		NewVerifiedSessionToken(
 			src.GetSessionToken(),
+		),
+		NewVerifiedBearerToken(
+			src.GetBearerToken(),
 		),
 	)
 	if err != nil {

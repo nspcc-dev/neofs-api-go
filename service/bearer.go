@@ -12,6 +12,10 @@ type signedBearerToken struct {
 	BearerToken
 }
 
+type bearerMsgWrapper struct {
+	*BearerTokenMsg
+}
+
 const fixedBearerTokenDataSize = 0 +
 	refs.OwnerIDSize +
 	8
@@ -123,4 +127,30 @@ func (m *BearerTokenMsg) SetOwnerKey(v []byte) {
 // SetSignature is a Signature field setter.
 func (m *BearerTokenMsg) SetSignature(v []byte) {
 	m.Signature = v
+}
+
+func wrapBearerTokenMsg(msg *BearerTokenMsg) bearerMsgWrapper {
+	return bearerMsgWrapper{
+		BearerTokenMsg: msg,
+	}
+}
+
+// ExpirationEpoch returns the result of ValidUntil field getter.
+//
+// If message is nil, 0 returns.
+func (s bearerMsgWrapper) ExpirationEpoch() uint64 {
+	if s.BearerTokenMsg != nil {
+		return s.GetValidUntil()
+	}
+
+	return 0
+}
+
+// SetExpirationEpoch passes argument to ValidUntil field setter.
+//
+// If message is nil, nothing changes.
+func (s bearerMsgWrapper) SetExpirationEpoch(v uint64) {
+	if s.BearerTokenMsg != nil {
+		s.SetValidUntil(v)
+	}
 }
