@@ -67,6 +67,11 @@ func (m *RequestVerificationHeader) SetToken(token *Token) {
 	m.Token = token
 }
 
+// SetBearer is a Bearer field setter.
+func (m *RequestVerificationHeader) SetBearer(v *BearerTokenMsg) {
+	m.Bearer = v
+}
+
 // testCustomField for test usage only.
 type testCustomField [8]uint32
 

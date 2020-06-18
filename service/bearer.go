@@ -94,3 +94,33 @@ func copyBearerTokenSignedData(buf []byte, token BearerTokenInfo) {
 	tokenEndianness.PutUint64(buf[off:], token.ExpirationEpoch())
 	off += 8
 }
+
+// SetACLRules is an ACLRules field setter.
+func (m *BearerTokenMsg_Info) SetACLRules(v []byte) {
+	m.ACLRules = v
+}
+
+// SetValidUntil is a ValidUntil field setter.
+func (m *BearerTokenMsg_Info) SetValidUntil(v uint64) {
+	m.ValidUntil = v
+}
+
+// GetOwnerID if an OwnerID field getter.
+func (m BearerTokenMsg_Info) GetOwnerID() OwnerID {
+	return m.OwnerID
+}
+
+// SetOwnerID is an OwnerID field setter.
+func (m *BearerTokenMsg_Info) SetOwnerID(v OwnerID) {
+	m.OwnerID = v
+}
+
+// SetOwnerKey is an OwnerKey field setter.
+func (m *BearerTokenMsg) SetOwnerKey(v []byte) {
+	m.OwnerKey = v
+}
+
+// SetSignature is a Signature field setter.
+func (m *BearerTokenMsg) SetSignature(v []byte) {
+	m.Signature = v
+}

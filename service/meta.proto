@@ -19,6 +19,8 @@ message RequestMetaHeader {
     uint32 Version = 3;
     // Raw determines whether the request is raw or not
     bool Raw       = 4;
+    // ExtendedHeader carries extended headers of the request
+    RequestExtendedHeader ExtendedHeader = 5 [(gogoproto.embed) = true, (gogoproto.nullable) = false];
 }
 
 // ResponseMetaHeader contains meta information based on request processing by server
@@ -29,4 +31,19 @@ message ResponseMetaHeader {
     // Version defines protocol version
     // TODO: not used for now, should be implemented in future
     uint32 Version = 2;
+}
+
+// RequestExtendedHeader contains extended headers of request
+message RequestExtendedHeader {
+    // KV contains string key-value pair
+    message KV {
+        // K carries extended header key
+        string K = 1;
+
+        // V carries extended header value
+        string V = 2;
+    }
+
+    // Headers carries list of key-value headers
+    repeated KV Headers = 1 [(gogoproto.nullable) = false];
 }

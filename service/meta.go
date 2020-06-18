@@ -69,3 +69,18 @@ func (s extHdrSrcWrapper) ReadSignedData(p []byte) (int, error) {
 
 	return sz, nil
 }
+
+// SetK is a K field setter.
+func (m *RequestExtendedHeader_KV) SetK(v string) {
+	m.K = v
+}
+
+// SetV is a V field setter.
+func (m *RequestExtendedHeader_KV) SetV(v string) {
+	m.V = v
+}
+
+// SetHeaders is a Headers field setter.
+func (m *RequestExtendedHeader) SetHeaders(v []RequestExtendedHeader_KV) {
+	m.Headers = v
+}

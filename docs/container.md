@@ -10,12 +10,18 @@
   - Messages
     - [DeleteRequest](#container.DeleteRequest)
     - [DeleteResponse](#container.DeleteResponse)
+    - [ExtendedACLKey](#container.ExtendedACLKey)
+    - [ExtendedACLValue](#container.ExtendedACLValue)
+    - [GetExtendedACLRequest](#container.GetExtendedACLRequest)
+    - [GetExtendedACLResponse](#container.GetExtendedACLResponse)
     - [GetRequest](#container.GetRequest)
     - [GetResponse](#container.GetResponse)
     - [ListRequest](#container.ListRequest)
     - [ListResponse](#container.ListResponse)
     - [PutRequest](#container.PutRequest)
     - [PutResponse](#container.PutResponse)
+    - [SetExtendedACLRequest](#container.SetExtendedACLRequest)
+    - [SetExtendedACLResponse](#container.SetExtendedACLResponse)
     
 
 - [container/types.proto](#container/types.proto)
@@ -46,6 +52,8 @@ rpc Put(PutRequest) returns (PutResponse);
 rpc Delete(DeleteRequest) returns (DeleteResponse);
 rpc Get(GetRequest) returns (GetResponse);
 rpc List(ListRequest) returns (ListResponse);
+rpc SetExtendedACL(SetExtendedACLRequest) returns (SetExtendedACLResponse);
+rpc GetExtendedACL(GetExtendedACLRequest) returns (GetExtendedACLResponse);
 
 ```
 
@@ -80,6 +88,20 @@ List returns all user's containers
 | Name | Input | Output |
 | ---- | ----- | ------ |
 | List | [ListRequest](#container.ListRequest) | [ListResponse](#container.ListResponse) |
+#### Method SetExtendedACL
+
+SetExtendedACL changes extended ACL rules of the container
+
+| Name | Input | Output |
+| ---- | ----- | ------ |
+| SetExtendedACL | [SetExtendedACLRequest](#container.SetExtendedACLRequest) | [SetExtendedACLResponse](#container.SetExtendedACLResponse) |
+#### Method GetExtendedACL
+
+GetExtendedACL returns extended ACL rules of the container
+
+| Name | Input | Output |
+| ---- | ----- | ------ |
+| GetExtendedACL | [GetExtendedACLRequest](#container.GetExtendedACLRequest) | [GetExtendedACLResponse](#container.GetExtendedACLResponse) |
  <!-- end services -->
 
 
@@ -102,6 +124,53 @@ List returns all user's containers
 DeleteResponse is empty because delete operation is asynchronous and done
 via consensus in inner ring nodes
 
+
+
+<a name="container.ExtendedACLKey"></a>
+
+### Message ExtendedACLKey
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ID | [bytes](#bytes) |  | ID (container id) is a SHA256 hash of the container structure |
+
+
+<a name="container.ExtendedACLValue"></a>
+
+### Message ExtendedACLValue
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| EACL | [bytes](#bytes) |  | EACL carries binary representation of the table of extended ACL rules |
+| Signature | [bytes](#bytes) |  | Signature carries EACL field signature |
+
+
+<a name="container.GetExtendedACLRequest"></a>
+
+### Message GetExtendedACLRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Key | [ExtendedACLKey](#container.ExtendedACLKey) |  | Key carries key to extended ACL information |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
+
+
+<a name="container.GetExtendedACLResponse"></a>
+
+### Message GetExtendedACLResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ACL | [ExtendedACLValue](#container.ExtendedACLValue) |  | ACL carries extended ACL information |
 
 
 <a name="container.GetRequest"></a>
@@ -178,6 +247,27 @@ via consensus in inner ring nodes
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | CID | [bytes](#bytes) |  | CID (container id) is a SHA256 hash of the container structure |
+
+
+<a name="container.SetExtendedACLRequest"></a>
+
+### Message SetExtendedACLRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Key | [ExtendedACLKey](#container.ExtendedACLKey) |  | Key carries key to extended ACL information |
+| Value | [ExtendedACLValue](#container.ExtendedACLValue) |  | Value carries extended ACL information |
+| Meta | [service.RequestMetaHeader](#service.RequestMetaHeader) |  | RequestMetaHeader contains information about request meta headers (should be embedded into message) |
+| Verify | [service.RequestVerificationHeader](#service.RequestVerificationHeader) |  | RequestVerificationHeader is a set of signatures of every NeoFS Node that processed request (should be embedded into message) |
+
+
+<a name="container.SetExtendedACLResponse"></a>
+
+### Message SetExtendedACLResponse
+
+
 
  <!-- end messages -->
 

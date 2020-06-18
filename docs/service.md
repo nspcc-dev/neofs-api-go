@@ -6,6 +6,8 @@
 - [service/meta.proto](#service/meta.proto)
 
   - Messages
+    - [RequestExtendedHeader](#service.RequestExtendedHeader)
+    - [RequestExtendedHeader.KV](#service.RequestExtendedHeader.KV)
     - [RequestMetaHeader](#service.RequestMetaHeader)
     - [ResponseMetaHeader](#service.ResponseMetaHeader)
     
@@ -13,6 +15,8 @@
 - [service/verify.proto](#service/verify.proto)
 
   - Messages
+    - [BearerTokenMsg](#service.BearerTokenMsg)
+    - [BearerTokenMsg.Info](#service.BearerTokenMsg.Info)
     - [RequestVerificationHeader](#service.RequestVerificationHeader)
     - [RequestVerificationHeader.Signature](#service.RequestVerificationHeader.Signature)
     - [Token](#service.Token)
@@ -39,6 +43,29 @@
  <!-- end services -->
 
 
+<a name="service.RequestExtendedHeader"></a>
+
+### Message RequestExtendedHeader
+RequestExtendedHeader contains extended headers of request
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Headers | [RequestExtendedHeader.KV](#service.RequestExtendedHeader.KV) | repeated | Headers carries list of key-value headers |
+
+
+<a name="service.RequestExtendedHeader.KV"></a>
+
+### Message RequestExtendedHeader.KV
+KV contains string key-value pair
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| K | [string](#string) |  | K carries extended header key |
+| V | [string](#string) |  | V carries extended header value |
+
+
 <a name="service.RequestMetaHeader"></a>
 
 ### Message RequestMetaHeader
@@ -52,6 +79,7 @@ RequestMetaHeader contains information about request meta headers
 | Epoch | [uint64](#uint64) |  | Epoch for user can be empty, because node sets epoch to the actual value |
 | Version | [uint32](#uint32) |  | Version defines protocol version TODO: not used for now, should be implemented in future |
 | Raw | [bool](#bool) |  | Raw determines whether the request is raw or not |
+| ExtendedHeader | [RequestExtendedHeader](#service.RequestExtendedHeader) |  | ExtendedHeader carries extended headers of the request |
 
 
 <a name="service.ResponseMetaHeader"></a>
@@ -81,6 +109,32 @@ ResponseMetaHeader contains meta information based on request processing by serv
  <!-- end services -->
 
 
+<a name="service.BearerTokenMsg"></a>
+
+### Message BearerTokenMsg
+BearerTokenMsg carries information about request ACL rules with limited lifetime
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| TokenInfo | [BearerTokenMsg.Info](#service.BearerTokenMsg.Info) |  | TokenInfo is a grouped information about token |
+| OwnerKey | [bytes](#bytes) |  | OwnerKey is a public key of the token owner |
+| Signature | [bytes](#bytes) |  | Signature is a signature of token information |
+
+
+<a name="service.BearerTokenMsg.Info"></a>
+
+### Message BearerTokenMsg.Info
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ACLRules | [bytes](#bytes) |  | ACLRules carries a binary representation of the table of extended ACL rules |
+| OwnerID | [bytes](#bytes) |  | OwnerID is an owner of token |
+| ValidUntil | [uint64](#uint64) |  | ValidUntil carries a last epoch of token lifetime |
+
+
 <a name="service.RequestVerificationHeader"></a>
 
 ### Message RequestVerificationHeader
@@ -92,6 +146,7 @@ RequestVerificationHeader is a set of signatures of every NeoFS Node that proces
 | ----- | ---- | ----- | ----------- |
 | Signatures | [RequestVerificationHeader.Signature](#service.RequestVerificationHeader.Signature) | repeated | Signatures is a set of signatures of every passed NeoFS Node |
 | Token | [Token](#service.Token) |  | Token is a token of the session within which the request is sent |
+| Bearer | [BearerTokenMsg](#service.BearerTokenMsg) |  | Bearer is a Bearer token of the request |
 
 
 <a name="service.RequestVerificationHeader.Signature"></a>
