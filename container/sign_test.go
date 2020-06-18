@@ -108,6 +108,50 @@ func TestRequestSign(t *testing.T) {
 				},
 			},
 		},
+		{ // GetExtendedACLRequest
+			constructor: func() sigType {
+				return new(GetExtendedACLRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					req := s.(*GetExtendedACLRequest)
+
+					id := req.GetID()
+					id[0]++
+
+					req.SetID(id)
+				},
+			},
+		},
+		{ // SetExtendedACLRequest
+			constructor: func() sigType {
+				return new(SetExtendedACLRequest)
+			},
+			payloadCorrupt: []func(sigType){
+				func(s sigType) {
+					req := s.(*SetExtendedACLRequest)
+
+					id := req.GetID()
+					id[0]++
+
+					req.SetID(id)
+				},
+				func(s sigType) {
+					req := s.(*SetExtendedACLRequest)
+
+					req.SetEACL(
+						append(req.GetEACL(), 1),
+					)
+				},
+				func(s sigType) {
+					req := s.(*SetExtendedACLRequest)
+
+					req.SetSignature(
+						append(req.GetSignature(), 1),
+					)
+				},
+			},
+		},
 	}
 
 	for _, item := range items {
