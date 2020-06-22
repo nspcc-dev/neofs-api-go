@@ -262,6 +262,7 @@ type RequestData interface {
 type RequestSignedData interface {
 	RequestData
 	SignKeyPairAccumulator
+	SignKeyPairSource
 }
 
 // RequestVerifyData is an interface of request information with signature read access.

@@ -15,13 +15,13 @@ import (
 type testSignedDataSrc struct {
 	err   error
 	data  []byte
-	sig   []byte
-	key   *ecdsa.PublicKey
 	token SessionToken
 
 	bearer BearerToken
 
 	extHdrs []ExtendedHeader
+
+	signKeys []SignKeyPair
 }
 
 type testSignedDataReader struct {
@@ -29,13 +29,15 @@ type testSignedDataReader struct {
 }
 
 func (s testSignedDataSrc) GetSignature() []byte {
-	return s.sig
+	if len(s.signKeys) > 0 {
+		return s.signKeys[0].GetSignature()
+	}
+
+	return nil
 }
 
 func (s testSignedDataSrc) GetSignKeyPairs() []SignKeyPair {
-	return []SignKeyPair{
-		newSignatureKeyPair(s.key, s.sig),
-	}
+	return s.signKeys
 }
 
 func (s testSignedDataSrc) SignedData() ([]byte, error) {
@@ -43,8 +45,9 @@ func (s testSignedDataSrc) SignedData() ([]byte, error) {
 }
 
 func (s *testSignedDataSrc) AddSignKey(sig []byte, key *ecdsa.PublicKey) {
-	s.key = key
-	s.sig = sig
+	s.signKeys = append(s.signKeys,
+		newSignatureKeyPair(key, sig),
+	)
 }
 
 func testData(t *testing.T, sz int) []byte {
@@ -209,23 +212,27 @@ func TestVerifyAccumulatedSignatures(t *testing.T) {
 	// create test private key
 	sk := test.DecodeKey(0)
 
+	signKey := new(RequestVerificationHeader_Signature)
+	signKey.Peer = crypto.MarshalPublicKey(&sk.PublicKey)
+
 	// create signature source
 	src := &testSignedDataSrc{
 		data: testData(t, 10),
-		key:  &sk.PublicKey,
+
+		signKeys: []SignKeyPair{signKey},
 	}
 
 	var err error
 
 	// calculate a signature
-	src.sig, err = crypto.Sign(sk, src.data)
+	signKey.Sign, err = crypto.Sign(sk, src.data)
 	require.NoError(t, err)
 
 	// ascertain that verification is passed
 	require.NoError(t, VerifyAccumulatedSignatures(src))
 
 	// break the signature
-	src.sig[0]++
+	signKey.Sign[0]++
 
 	// ascertain that verification is failed
 	require.Error(t, VerifyAccumulatedSignatures(src))
@@ -238,9 +245,13 @@ func TestVerifySignatureWithKey(t *testing.T) {
 		ErrEmptyDataWithSignature.Error(),
 	)
 
+	signKey := new(RequestVerificationHeader_Signature)
+
 	// create test signature source
 	src := &testSignedDataSrc{
 		data: testData(t, 10),
+
+		signKeys: []SignKeyPair{signKey},
 	}
 
 	// nil public key
@@ -255,14 +266,14 @@ func TestVerifySignatureWithKey(t *testing.T) {
 	var err error
 
 	// calculate a signature
-	src.sig, err = crypto.Sign(sk, src.data)
+	signKey.Sign, err = crypto.Sign(sk, src.data)
 	require.NoError(t, err)
 
 	// ascertain that verification is passed
 	require.NoError(t, VerifySignatureWithKey(&sk.PublicKey, src))
 
 	// break the signature
-	src.sig[0]++
+	signKey.Sign[0]++
 
 	// ascertain that verification is failed
 	require.Error(t, VerifySignatureWithKey(&sk.PublicKey, src))
@@ -375,4 +386,15 @@ func TestSignVerifyRequestData(t *testing.T) {
 
 	// ascertain that verification is passed
 	require.NoError(t, VerifyRequestData(rdr))
+
+	if len(rdr.GetSignKeyPairs()) < 2 {
+		// add one more signature
+		require.NoError(t, SignRequestData(test.DecodeKey(1), rdr))
+	}
+
+	// change key-signature order
+	rdr.signKeys[0], rdr.signKeys[1] = rdr.signKeys[1], rdr.signKeys[0]
+
+	// ascertain that verification is failed
+	require.Error(t, VerifyRequestData(src))
 }
