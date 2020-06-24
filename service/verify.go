@@ -2,10 +2,15 @@ package service
 
 import (
 	"crypto/ecdsa"
+	"io"
 
 	"github.com/nspcc-dev/neofs-api-go/internal"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 )
+
+type signKeyPairsWrapper struct {
+	items []SignKeyPair
+}
 
 // GetSessionToken returns SessionToken interface of Token field.
 //
@@ -113,4 +118,49 @@ func (m RequestVerificationHeader) GetBearerToken() BearerToken {
 	}
 
 	return nil
+}
+
+// SignKeyPairsSignedData wraps passed SignKeyPair slice and returns SignedDataSource interface.
+func SignKeyPairsSignedData(v ...SignKeyPair) SignedDataSource {
+	return &signKeyPairsWrapper{
+		items: v,
+	}
+}
+
+// SignedData returns signed SignKeyPair slice in a binary representation.
+func (s signKeyPairsWrapper) SignedData() ([]byte, error) {
+	return SignedDataFromReader(s)
+}
+
+// SignedDataSize returns the length of signed SignKeyPair slice.
+func (s signKeyPairsWrapper) SignedDataSize() (sz int) {
+	for i := range s.items {
+		// add key length
+		sz += len(
+			crypto.MarshalPublicKey(s.items[i].GetPublicKey()),
+		)
+	}
+
+	return
+}
+
+// ReadSignedData copies a binary representation of the signed SignKeyPair slice to passed buffer.
+//
+// If buffer length is less than required, io.ErrUnexpectedEOF returns.
+func (s signKeyPairsWrapper) ReadSignedData(p []byte) (int, error) {
+	sz := s.SignedDataSize()
+	if len(p) < sz {
+		return 0, io.ErrUnexpectedEOF
+	}
+
+	off := 0
+
+	for i := range s.items {
+		// copy public key bytes
+		off += copy(p[off:], crypto.MarshalPublicKey(
+			s.items[i].GetPublicKey(),
+		))
+	}
+
+	return off, nil
 }

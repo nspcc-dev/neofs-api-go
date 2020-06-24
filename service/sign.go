@@ -137,11 +137,24 @@ func verifySignatures(src SignedDataSource, items ...SignKeyPair) error {
 	}
 	defer bytesPool.Put(data)
 
-	for _, signKey := range items {
+	for i := range items {
+		if i > 0 {
+			// add previous key bytes to the signed message
+
+			signKeyDataSrc := SignKeyPairsSignedData(items[i-1])
+
+			signKeyData, err := signKeyDataSrc.SignedData()
+			if err != nil {
+				return errors.Wrapf(err, "could not get signed data of key-signature #%d", i)
+			}
+
+			data = append(data, signKeyData...)
+		}
+
 		if err := crypto.Verify(
-			signKey.GetPublicKey(),
+			items[i].GetPublicKey(),
 			data,
-			signKey.GetSignature(),
+			items[i].GetSignature(),
 		); err != nil {
 			return err
 		}
@@ -213,6 +226,7 @@ func SignRequestData(key *ecdsa.PrivateKey, src RequestSignedData) error {
 			src.GetBearerToken(),
 		),
 		ExtendedHeadersSignedData(src),
+		SignKeyPairsSignedData(src.GetSignKeyPairs()...),
 	)
 	if err != nil {
 		return err
