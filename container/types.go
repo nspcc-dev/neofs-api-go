@@ -3,6 +3,7 @@ package container
 import (
 	"bytes"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/google/uuid"
 	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/refs"
@@ -61,6 +62,13 @@ func (m *Container) ID() (CID, error) {
 	}
 
 	return refs.CIDForBytes(data), nil
+}
+
+// Merge used by proto.Clone
+func (m *Container) Merge(src proto.Message) {
+	if tmp, ok := src.(*Container); ok {
+		*m = *tmp
+	}
 }
 
 // Empty checks that container is empty.

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/hex"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
@@ -73,4 +74,11 @@ func (u *UUID) Parse(id string) error {
 
 	copy((*u)[:], tmp[:])
 	return nil
+}
+
+// Merge used by proto.Clone
+func (u *UUID) Merge(src proto.Message) {
+	if tmp, ok := src.(*UUID); ok {
+		*u = *tmp
+	}
 }

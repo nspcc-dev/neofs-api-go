@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/ecdsa"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/mr-tron/base58"
 	"github.com/nspcc-dev/neofs-api-go/chain"
 	"github.com/pkg/errors"
@@ -62,4 +63,11 @@ func (o *OwnerID) Unmarshal(data []byte) error {
 
 	copy((*o)[:], data)
 	return nil
+}
+
+// Merge used by proto.Clone
+func (o *OwnerID) Merge(src proto.Message) {
+	if uid, ok := src.(*OwnerID); ok {
+		*o = *uid
+	}
 }

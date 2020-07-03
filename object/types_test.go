@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/nspcc-dev/neofs-api-go/refs"
 	"github.com/nspcc-dev/neofs-api-go/service"
 	"github.com/nspcc-dev/neofs-api-go/storagegroup"
@@ -192,11 +193,23 @@ func TestObject_Copy(t *testing.T) {
 			},
 		})
 
-		cp := obj.Copy()
+		{ // Copying
+			cp := obj.Copy()
 
-		_, h := cp.LastHeader(HeaderType(TokenHdr))
-		require.NotNil(t, h)
-		require.Equal(t, token, h.GetValue().(*Header_Token).Token)
+			_, h := cp.LastHeader(HeaderType(TokenHdr))
+			require.NotNil(t, h)
+			require.Equal(t, token, h.GetValue().(*Header_Token).Token)
+		}
+
+		{ // Cloning
+			cl := proto.Clone(obj).(*Object)
+			require.Equal(t, obj, cl)
+
+			_, h := cl.LastHeader(HeaderType(TokenHdr))
+			h.GetToken().SetID(service.TokenID{3, 2, 1})
+
+			require.NotEqual(t, token, h.GetToken())
+		}
 	})
 }
 

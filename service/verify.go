@@ -3,6 +3,7 @@ package service
 import (
 	"crypto/ecdsa"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/nspcc-dev/neofs-api-go/internal"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 )
@@ -103,6 +104,13 @@ func (t testCustomField) MarshalTo(data []byte) (int, error) { return 0, nil }
 
 // Marshal skip, it's for test usage only.
 func (t testCustomField) Marshal() ([]byte, error) { return nil, nil }
+
+// Merge used by proto.Clone
+func (t *testCustomField) Merge(src proto.Message) {
+	if tmp, ok := src.(*testCustomField); ok {
+		*t = *tmp
+	}
+}
 
 // GetBearerToken wraps Bearer field and return BearerToken interface.
 //
