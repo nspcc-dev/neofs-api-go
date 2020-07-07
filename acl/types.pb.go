@@ -7,7 +7,9 @@ import (
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/golang/protobuf/proto"
+	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -63,26 +65,1344 @@ func (Target) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_9b63aff5f3a35e32, []int{0}
 }
 
+// Operation is an enumeration of operation types.
+type EACLRecord_Operation int32
+
+const (
+	EACLRecord_OPERATION_UNKNOWN EACLRecord_Operation = 0
+	EACLRecord_GET               EACLRecord_Operation = 1
+	EACLRecord_HEAD              EACLRecord_Operation = 2
+	EACLRecord_PUT               EACLRecord_Operation = 3
+	EACLRecord_DELETE            EACLRecord_Operation = 4
+	EACLRecord_SEARCH            EACLRecord_Operation = 5
+	EACLRecord_GETRANGE          EACLRecord_Operation = 6
+	EACLRecord_GETRANGEHASH      EACLRecord_Operation = 7
+)
+
+var EACLRecord_Operation_name = map[int32]string{
+	0: "OPERATION_UNKNOWN",
+	1: "GET",
+	2: "HEAD",
+	3: "PUT",
+	4: "DELETE",
+	5: "SEARCH",
+	6: "GETRANGE",
+	7: "GETRANGEHASH",
+}
+
+var EACLRecord_Operation_value = map[string]int32{
+	"OPERATION_UNKNOWN": 0,
+	"GET":               1,
+	"HEAD":              2,
+	"PUT":               3,
+	"DELETE":            4,
+	"SEARCH":            5,
+	"GETRANGE":          6,
+	"GETRANGEHASH":      7,
+}
+
+func (x EACLRecord_Operation) String() string {
+	return proto.EnumName(EACLRecord_Operation_name, int32(x))
+}
+
+func (EACLRecord_Operation) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_9b63aff5f3a35e32, []int{0, 0}
+}
+
+// Action is an enumeration of EACL actions.
+type EACLRecord_Action int32
+
+const (
+	EACLRecord_ActionUnknown EACLRecord_Action = 0
+	EACLRecord_Allow         EACLRecord_Action = 1
+	EACLRecord_Deny          EACLRecord_Action = 2
+)
+
+var EACLRecord_Action_name = map[int32]string{
+	0: "ActionUnknown",
+	1: "Allow",
+	2: "Deny",
+}
+
+var EACLRecord_Action_value = map[string]int32{
+	"ActionUnknown": 0,
+	"Allow":         1,
+	"Deny":          2,
+}
+
+func (x EACLRecord_Action) String() string {
+	return proto.EnumName(EACLRecord_Action_name, int32(x))
+}
+
+func (EACLRecord_Action) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_9b63aff5f3a35e32, []int{0, 1}
+}
+
+// Header is an enumeration of filtering header types.
+type EACLRecord_FilterInfo_Header int32
+
+const (
+	EACLRecord_FilterInfo_HeaderUnknown EACLRecord_FilterInfo_Header = 0
+	EACLRecord_FilterInfo_Request       EACLRecord_FilterInfo_Header = 1
+	EACLRecord_FilterInfo_ObjectSystem  EACLRecord_FilterInfo_Header = 2
+	EACLRecord_FilterInfo_ObjectUser    EACLRecord_FilterInfo_Header = 3
+)
+
+var EACLRecord_FilterInfo_Header_name = map[int32]string{
+	0: "HeaderUnknown",
+	1: "Request",
+	2: "ObjectSystem",
+	3: "ObjectUser",
+}
+
+var EACLRecord_FilterInfo_Header_value = map[string]int32{
+	"HeaderUnknown": 0,
+	"Request":       1,
+	"ObjectSystem":  2,
+	"ObjectUser":    3,
+}
+
+func (x EACLRecord_FilterInfo_Header) String() string {
+	return proto.EnumName(EACLRecord_FilterInfo_Header_name, int32(x))
+}
+
+func (EACLRecord_FilterInfo_Header) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_9b63aff5f3a35e32, []int{0, 0, 0}
+}
+
+// MatchType is an enumeration of match types.
+type EACLRecord_FilterInfo_MatchType int32
+
+const (
+	EACLRecord_FilterInfo_MatchUnknown   EACLRecord_FilterInfo_MatchType = 0
+	EACLRecord_FilterInfo_StringEqual    EACLRecord_FilterInfo_MatchType = 1
+	EACLRecord_FilterInfo_StringNotEqual EACLRecord_FilterInfo_MatchType = 2
+)
+
+var EACLRecord_FilterInfo_MatchType_name = map[int32]string{
+	0: "MatchUnknown",
+	1: "StringEqual",
+	2: "StringNotEqual",
+}
+
+var EACLRecord_FilterInfo_MatchType_value = map[string]int32{
+	"MatchUnknown":   0,
+	"StringEqual":    1,
+	"StringNotEqual": 2,
+}
+
+func (x EACLRecord_FilterInfo_MatchType) String() string {
+	return proto.EnumName(EACLRecord_FilterInfo_MatchType_name, int32(x))
+}
+
+func (EACLRecord_FilterInfo_MatchType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_9b63aff5f3a35e32, []int{0, 0, 1}
+}
+
+// EACLRecord groups information about extended ACL rule.
+type EACLRecord struct {
+	// Operation carries type of operation.
+	Operation EACLRecord_Operation `protobuf:"varint,1,opt,name=operation,json=Operation,proto3,enum=acl.EACLRecord_Operation" json:"operation,omitempty"`
+	// Action carries ACL target action.
+	Action EACLRecord_Action `protobuf:"varint,2,opt,name=action,json=Action,proto3,enum=acl.EACLRecord_Action" json:"action,omitempty"`
+	// Filters carries set of filters.
+	Filters []*EACLRecord_FilterInfo `protobuf:"bytes,3,rep,name=Filters,proto3" json:"Filters,omitempty"`
+	// Targets carries information about extended ACL target list.
+	Targets              []*EACLRecord_TargetInfo `protobuf:"bytes,4,rep,name=Targets,proto3" json:"Targets,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
+	XXX_unrecognized     []byte                   `json:"-"`
+	XXX_sizecache        int32                    `json:"-"`
+}
+
+func (m *EACLRecord) Reset()         { *m = EACLRecord{} }
+func (m *EACLRecord) String() string { return proto.CompactTextString(m) }
+func (*EACLRecord) ProtoMessage()    {}
+func (*EACLRecord) Descriptor() ([]byte, []int) {
+	return fileDescriptor_9b63aff5f3a35e32, []int{0}
+}
+func (m *EACLRecord) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EACLRecord) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *EACLRecord) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EACLRecord.Merge(m, src)
+}
+func (m *EACLRecord) XXX_Size() int {
+	return m.Size()
+}
+func (m *EACLRecord) XXX_DiscardUnknown() {
+	xxx_messageInfo_EACLRecord.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EACLRecord proto.InternalMessageInfo
+
+func (m *EACLRecord) GetOperation() EACLRecord_Operation {
+	if m != nil {
+		return m.Operation
+	}
+	return EACLRecord_OPERATION_UNKNOWN
+}
+
+func (m *EACLRecord) GetAction() EACLRecord_Action {
+	if m != nil {
+		return m.Action
+	}
+	return EACLRecord_ActionUnknown
+}
+
+func (m *EACLRecord) GetFilters() []*EACLRecord_FilterInfo {
+	if m != nil {
+		return m.Filters
+	}
+	return nil
+}
+
+func (m *EACLRecord) GetTargets() []*EACLRecord_TargetInfo {
+	if m != nil {
+		return m.Targets
+	}
+	return nil
+}
+
+// FilterInfo groups information about filter.
+type EACLRecord_FilterInfo struct {
+	// Header carries type of header.
+	Header EACLRecord_FilterInfo_Header `protobuf:"varint,1,opt,name=header,json=HeaderType,proto3,enum=acl.EACLRecord_FilterInfo_Header" json:"header,omitempty"`
+	// MatchType carries type of match.
+	MatchType EACLRecord_FilterInfo_MatchType `protobuf:"varint,2,opt,name=matchType,json=MatchType,proto3,enum=acl.EACLRecord_FilterInfo_MatchType" json:"matchType,omitempty"`
+	// HeaderName carries name of filtering header.
+	HeaderName string `protobuf:"bytes,3,opt,name=HeaderName,json=Name,proto3" json:"HeaderName,omitempty"`
+	// HeaderVal carries value of filtering header.
+	HeaderVal            string   `protobuf:"bytes,4,opt,name=HeaderVal,json=Value,proto3" json:"HeaderVal,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *EACLRecord_FilterInfo) Reset()         { *m = EACLRecord_FilterInfo{} }
+func (m *EACLRecord_FilterInfo) String() string { return proto.CompactTextString(m) }
+func (*EACLRecord_FilterInfo) ProtoMessage()    {}
+func (*EACLRecord_FilterInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_9b63aff5f3a35e32, []int{0, 0}
+}
+func (m *EACLRecord_FilterInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EACLRecord_FilterInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *EACLRecord_FilterInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EACLRecord_FilterInfo.Merge(m, src)
+}
+func (m *EACLRecord_FilterInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *EACLRecord_FilterInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_EACLRecord_FilterInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EACLRecord_FilterInfo proto.InternalMessageInfo
+
+func (m *EACLRecord_FilterInfo) GetHeader() EACLRecord_FilterInfo_Header {
+	if m != nil {
+		return m.Header
+	}
+	return EACLRecord_FilterInfo_HeaderUnknown
+}
+
+func (m *EACLRecord_FilterInfo) GetMatchType() EACLRecord_FilterInfo_MatchType {
+	if m != nil {
+		return m.MatchType
+	}
+	return EACLRecord_FilterInfo_MatchUnknown
+}
+
+func (m *EACLRecord_FilterInfo) GetHeaderName() string {
+	if m != nil {
+		return m.HeaderName
+	}
+	return ""
+}
+
+func (m *EACLRecord_FilterInfo) GetHeaderVal() string {
+	if m != nil {
+		return m.HeaderVal
+	}
+	return ""
+}
+
+// TargetInfo groups information about extended ACL target.
+type EACLRecord_TargetInfo struct {
+	// Target carries target of ACL rule.
+	Target Target `protobuf:"varint,1,opt,name=Target,json=Role,proto3,enum=acl.Target" json:"Target,omitempty"`
+	// KeyList carries public keys of ACL target.
+	KeyList              [][]byte `protobuf:"bytes,2,rep,name=KeyList,json=Keys,proto3" json:"KeyList,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *EACLRecord_TargetInfo) Reset()         { *m = EACLRecord_TargetInfo{} }
+func (m *EACLRecord_TargetInfo) String() string { return proto.CompactTextString(m) }
+func (*EACLRecord_TargetInfo) ProtoMessage()    {}
+func (*EACLRecord_TargetInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_9b63aff5f3a35e32, []int{0, 1}
+}
+func (m *EACLRecord_TargetInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EACLRecord_TargetInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *EACLRecord_TargetInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EACLRecord_TargetInfo.Merge(m, src)
+}
+func (m *EACLRecord_TargetInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *EACLRecord_TargetInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_EACLRecord_TargetInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EACLRecord_TargetInfo proto.InternalMessageInfo
+
+func (m *EACLRecord_TargetInfo) GetTarget() Target {
+	if m != nil {
+		return m.Target
+	}
+	return Target_Unknown
+}
+
+func (m *EACLRecord_TargetInfo) GetKeyList() [][]byte {
+	if m != nil {
+		return m.KeyList
+	}
+	return nil
+}
+
+// EACLRecord carries the information about extended ACL rules.
+type EACLTable struct {
+	// Records carries list of extended ACL rule records.
+	Records              []*EACLRecord `protobuf:"bytes,1,rep,name=Records,proto3" json:"Records,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *EACLTable) Reset()         { *m = EACLTable{} }
+func (m *EACLTable) String() string { return proto.CompactTextString(m) }
+func (*EACLTable) ProtoMessage()    {}
+func (*EACLTable) Descriptor() ([]byte, []int) {
+	return fileDescriptor_9b63aff5f3a35e32, []int{1}
+}
+func (m *EACLTable) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EACLTable) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *EACLTable) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EACLTable.Merge(m, src)
+}
+func (m *EACLTable) XXX_Size() int {
+	return m.Size()
+}
+func (m *EACLTable) XXX_DiscardUnknown() {
+	xxx_messageInfo_EACLTable.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EACLTable proto.InternalMessageInfo
+
+func (m *EACLTable) GetRecords() []*EACLRecord {
+	if m != nil {
+		return m.Records
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterEnum("acl.Target", Target_name, Target_value)
+	proto.RegisterEnum("acl.EACLRecord_Operation", EACLRecord_Operation_name, EACLRecord_Operation_value)
+	proto.RegisterEnum("acl.EACLRecord_Action", EACLRecord_Action_name, EACLRecord_Action_value)
+	proto.RegisterEnum("acl.EACLRecord_FilterInfo_Header", EACLRecord_FilterInfo_Header_name, EACLRecord_FilterInfo_Header_value)
+	proto.RegisterEnum("acl.EACLRecord_FilterInfo_MatchType", EACLRecord_FilterInfo_MatchType_name, EACLRecord_FilterInfo_MatchType_value)
+	proto.RegisterType((*EACLRecord)(nil), "acl.EACLRecord")
+	proto.RegisterType((*EACLRecord_FilterInfo)(nil), "acl.EACLRecord.FilterInfo")
+	proto.RegisterType((*EACLRecord_TargetInfo)(nil), "acl.EACLRecord.TargetInfo")
+	proto.RegisterType((*EACLTable)(nil), "acl.EACLTable")
 }
 
 func init() { proto.RegisterFile("acl/types.proto", fileDescriptor_9b63aff5f3a35e32) }
 
 var fileDescriptor_9b63aff5f3a35e32 = []byte{
-	// 216 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4f, 0x4c, 0xce, 0xd1,
-	0x2f, 0xa9, 0x2c, 0x48, 0x2d, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x4e, 0x4c, 0xce,
-	0x91, 0xd2, 0x4d, 0xcf, 0x2c, 0xc9, 0x28, 0x4d, 0xd2, 0x4b, 0xce, 0xcf, 0xd5, 0x4f, 0xcf, 0x4f,
-	0xcf, 0xd7, 0x07, 0xcb, 0x25, 0x95, 0xa6, 0x81, 0x79, 0x60, 0x0e, 0x98, 0x05, 0xd1, 0xa3, 0xe5,
-	0xcc, 0xc5, 0x16, 0x92, 0x58, 0x94, 0x9e, 0x5a, 0x22, 0xc4, 0xcd, 0xc5, 0x1e, 0x9a, 0x97, 0x9d,
-	0x97, 0x5f, 0x9e, 0x27, 0xc0, 0x20, 0xc4, 0xc1, 0xc5, 0x12, 0x5a, 0x9c, 0x5a, 0x24, 0xc0, 0x28,
-	0xc4, 0xc5, 0xc5, 0x16, 0x5c, 0x59, 0x5c, 0x92, 0x9a, 0x2b, 0xc0, 0x04, 0x62, 0xfb, 0x97, 0x64,
-	0xa4, 0x16, 0x15, 0x0b, 0x30, 0x83, 0xd8, 0x01, 0xa5, 0x49, 0xde, 0xa9, 0x95, 0x02, 0x2c, 0x4e,
-	0xde, 0x27, 0x1e, 0xc9, 0x31, 0x5e, 0x78, 0x24, 0xc7, 0x78, 0xe3, 0x91, 0x1c, 0xe3, 0x83, 0x47,
-	0x72, 0x8c, 0x33, 0x1e, 0xcb, 0x31, 0x44, 0xa9, 0x22, 0xb9, 0x24, 0xaf, 0xb8, 0x20, 0x39, 0x59,
-	0x37, 0x25, 0xb5, 0x4c, 0x3f, 0x2f, 0x35, 0x3f, 0xad, 0x58, 0x37, 0xb1, 0x20, 0x53, 0x37, 0x3d,
-	0x5f, 0x3f, 0x31, 0x39, 0x67, 0x15, 0x13, 0xaf, 0x5f, 0x6a, 0xbe, 0x5b, 0xb0, 0x9e, 0x63, 0x80,
-	0xa7, 0x9e, 0x63, 0x72, 0x4e, 0x12, 0x1b, 0xd8, 0x61, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0xb3, 0xda, 0x09, 0x81, 0xdf, 0x00, 0x00, 0x00,
+	// 676 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x54, 0xcd, 0x6e, 0xda, 0x58,
+	0x14, 0x8e, 0x7f, 0x62, 0xc2, 0x01, 0x92, 0x9b, 0x2b, 0x65, 0xe4, 0x61, 0x41, 0x08, 0x9a, 0x91,
+	0x98, 0x91, 0x30, 0xa3, 0x4c, 0xd5, 0x45, 0x77, 0x26, 0x31, 0x81, 0x92, 0x1a, 0x6a, 0x4c, 0x2a,
+	0x75, 0x53, 0x5d, 0x9c, 0x1b, 0xa0, 0x35, 0xbe, 0xc4, 0x36, 0x89, 0x78, 0x93, 0x3e, 0x43, 0x9f,
+	0xa4, 0xcb, 0x2e, 0xbb, 0x4a, 0x2b, 0xba, 0xef, 0x33, 0x54, 0xbe, 0x17, 0xc7, 0x51, 0xd4, 0x76,
+	0xe5, 0xef, 0x3b, 0xbf, 0xf7, 0x7c, 0xe7, 0xc8, 0xb0, 0x47, 0x3c, 0xbf, 0x19, 0xaf, 0x16, 0x34,
+	0x32, 0x16, 0x21, 0x8b, 0x19, 0x56, 0x88, 0xe7, 0x97, 0x1b, 0x93, 0x59, 0x3c, 0x5d, 0x8e, 0x0d,
+	0x8f, 0xcd, 0x9b, 0x13, 0x36, 0x61, 0x4d, 0xee, 0x1b, 0x2f, 0xaf, 0x38, 0xe3, 0x84, 0x23, 0x91,
+	0x53, 0xfb, 0xa2, 0x01, 0x58, 0xe6, 0xc9, 0xb9, 0x43, 0x3d, 0x16, 0x5e, 0xe2, 0x36, 0xe4, 0xd9,
+	0x82, 0x86, 0x24, 0x9e, 0xb1, 0x40, 0x97, 0xaa, 0x52, 0x7d, 0xf7, 0xf8, 0x4f, 0x83, 0x78, 0xbe,
+	0x91, 0xc5, 0x18, 0xfd, 0x34, 0xa0, 0x55, 0x5a, 0xdf, 0x1d, 0xe6, 0xef, 0xa9, 0x93, 0x41, 0xfc,
+	0x0c, 0x34, 0xe2, 0xf1, 0x22, 0x32, 0x2f, 0xf2, 0xc7, 0xe3, 0x22, 0x26, 0xf7, 0xb6, 0x60, 0x7d,
+	0x77, 0xa8, 0x09, 0xec, 0x6c, 0xbe, 0xf8, 0x09, 0xe4, 0xda, 0x33, 0x3f, 0xa6, 0x61, 0xa4, 0x2b,
+	0x55, 0xa5, 0x5e, 0x38, 0x2e, 0x3f, 0x4e, 0x16, 0xee, 0x6e, 0x70, 0xc5, 0x9c, 0x34, 0x34, 0xc9,
+	0x72, 0x49, 0x38, 0xa1, 0x71, 0xa4, 0xab, 0x3f, 0xcf, 0x12, 0x6e, 0x91, 0xb5, 0x09, 0x2d, 0x7f,
+	0x97, 0x01, 0xb2, 0x6a, 0xb8, 0x0b, 0xda, 0x94, 0x92, 0x4b, 0x1a, 0x6e, 0x66, 0x3f, 0xfa, 0x75,
+	0x67, 0xa3, 0xc3, 0x03, 0xc5, 0x04, 0x02, 0x3b, 0x20, 0xbe, 0xee, 0x6a, 0x41, 0xf1, 0x4b, 0xc8,
+	0xcf, 0x49, 0xec, 0x4d, 0x13, 0xb2, 0x11, 0xe1, 0xaf, 0xdf, 0x54, 0x7b, 0x91, 0xc6, 0x0a, 0x51,
+	0xef, 0xa9, 0x93, 0x41, 0xac, 0xc3, 0xa6, 0x81, 0x4d, 0xe6, 0x54, 0x57, 0xaa, 0x52, 0x3d, 0xef,
+	0xa8, 0x09, 0xc6, 0x3a, 0xe4, 0x85, 0xe7, 0x82, 0xf8, 0xba, 0xca, 0x1d, 0xdb, 0x17, 0xc4, 0x5f,
+	0xd2, 0xda, 0x73, 0xd8, 0x3c, 0x0e, 0xef, 0x43, 0x49, 0xa0, 0x51, 0xf0, 0x2e, 0x60, 0xb7, 0x01,
+	0xda, 0xc2, 0x05, 0xc8, 0x39, 0xf4, 0x7a, 0x49, 0xa3, 0x18, 0x49, 0x18, 0x41, 0xb1, 0x3f, 0x7e,
+	0x4b, 0xbd, 0x78, 0xb8, 0x8a, 0x62, 0x3a, 0x47, 0x32, 0xde, 0x05, 0x10, 0x96, 0x51, 0x44, 0x43,
+	0xa4, 0xd4, 0x5a, 0xf0, 0xe0, 0x31, 0x08, 0x8a, 0x9c, 0x64, 0xd5, 0xf6, 0xa0, 0x30, 0x8c, 0xc3,
+	0x59, 0x30, 0xb1, 0xae, 0x97, 0xc4, 0x47, 0x12, 0xc6, 0xb0, 0x2b, 0x0c, 0x36, 0x8b, 0x85, 0x4d,
+	0x2e, 0xb7, 0x01, 0xb2, 0x3d, 0xe0, 0x23, 0xd0, 0x04, 0xdb, 0xe8, 0x5d, 0xe0, 0x0a, 0x09, 0x93,
+	0xa3, 0x3a, 0xcc, 0xa7, 0xf8, 0x00, 0x72, 0x3d, 0xba, 0x3a, 0x9f, 0x45, 0xb1, 0x2e, 0x57, 0x95,
+	0x7a, 0xd1, 0x51, 0x7b, 0x74, 0x15, 0xd5, 0x6e, 0xe0, 0xc1, 0xb5, 0x1d, 0xc0, 0x7e, 0x7f, 0x60,
+	0x39, 0xa6, 0xdb, 0xed, 0xdb, 0x6f, 0x46, 0x76, 0xcf, 0xee, 0xbf, 0xb2, 0xd1, 0x16, 0xce, 0x81,
+	0x72, 0x66, 0xb9, 0x48, 0xc2, 0x3b, 0xa0, 0x76, 0x2c, 0xf3, 0x14, 0xc9, 0x89, 0x69, 0x30, 0x72,
+	0x91, 0x82, 0x01, 0xb4, 0x53, 0xeb, 0xdc, 0x72, 0x2d, 0xa4, 0x26, 0x78, 0x68, 0x99, 0xce, 0x49,
+	0x07, 0x6d, 0xe3, 0x22, 0xec, 0x9c, 0x59, 0xae, 0x63, 0xda, 0x67, 0x16, 0xd2, 0x92, 0x21, 0x53,
+	0xd6, 0x31, 0x87, 0x1d, 0x94, 0xab, 0xfd, 0x07, 0xe9, 0x99, 0xee, 0x43, 0x49, 0xa0, 0x4c, 0x81,
+	0x3c, 0x6c, 0x9b, 0xbe, 0xcf, 0x6e, 0x45, 0xcb, 0x53, 0x1a, 0xac, 0x90, 0x5c, 0x7b, 0x0a, 0xf9,
+	0x64, 0xe5, 0x2e, 0x19, 0xfb, 0x14, 0xff, 0x93, 0x28, 0x9e, 0xec, 0x3e, 0xd2, 0x25, 0x7e, 0xa5,
+	0x7b, 0x8f, 0x6e, 0xc2, 0x49, 0xfd, 0xff, 0x9e, 0xa4, 0xda, 0x24, 0x6b, 0xca, 0x7a, 0xec, 0x80,
+	0xca, 0xd7, 0x21, 0xf1, 0x67, 0xa7, 0xab, 0x02, 0xd0, 0xfa, 0xf1, 0x94, 0x86, 0x91, 0x18, 0x6d,
+	0xb0, 0x1c, 0xf7, 0xe8, 0x0a, 0xa9, 0xad, 0xde, 0xc7, 0x75, 0x45, 0xfa, 0xb4, 0xae, 0x48, 0x9f,
+	0xd7, 0x15, 0xe9, 0xeb, 0xba, 0x22, 0xbd, 0xff, 0x56, 0xd9, 0x7a, 0xfd, 0xf7, 0x83, 0x7f, 0x44,
+	0x10, 0x2d, 0x3c, 0xaf, 0x71, 0x49, 0x6f, 0x9a, 0x01, 0x65, 0x57, 0x51, 0x83, 0x2c, 0x66, 0x8d,
+	0x09, 0x6b, 0x12, 0xcf, 0xff, 0x20, 0x97, 0x6c, 0xca, 0xda, 0x43, 0xc3, 0x1c, 0x74, 0x0d, 0xd3,
+	0xf3, 0xc7, 0x1a, 0xff, 0x65, 0xfc, 0xff, 0x23, 0x00, 0x00, 0xff, 0xff, 0x39, 0x7b, 0x27, 0xe6,
+	0x79, 0x04, 0x00, 0x00,
 }
+
+func (m *EACLRecord) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EACLRecord) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EACLRecord) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Targets) > 0 {
+		for iNdEx := len(m.Targets) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Targets[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTypes(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if len(m.Filters) > 0 {
+		for iNdEx := len(m.Filters) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Filters[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTypes(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if m.Action != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.Action))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Operation != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.Operation))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *EACLRecord_FilterInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EACLRecord_FilterInfo) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EACLRecord_FilterInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.HeaderVal) > 0 {
+		i -= len(m.HeaderVal)
+		copy(dAtA[i:], m.HeaderVal)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.HeaderVal)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.HeaderName) > 0 {
+		i -= len(m.HeaderName)
+		copy(dAtA[i:], m.HeaderName)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.HeaderName)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.MatchType != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.MatchType))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Header != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.Header))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *EACLRecord_TargetInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EACLRecord_TargetInfo) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EACLRecord_TargetInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.KeyList) > 0 {
+		for iNdEx := len(m.KeyList) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.KeyList[iNdEx])
+			copy(dAtA[i:], m.KeyList[iNdEx])
+			i = encodeVarintTypes(dAtA, i, uint64(len(m.KeyList[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if m.Target != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.Target))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *EACLTable) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EACLTable) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EACLTable) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Records) > 0 {
+		for iNdEx := len(m.Records) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Records[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTypes(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintTypes(dAtA []byte, offset int, v uint64) int {
+	offset -= sovTypes(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func (m *EACLRecord) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Operation != 0 {
+		n += 1 + sovTypes(uint64(m.Operation))
+	}
+	if m.Action != 0 {
+		n += 1 + sovTypes(uint64(m.Action))
+	}
+	if len(m.Filters) > 0 {
+		for _, e := range m.Filters {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
+	if len(m.Targets) > 0 {
+		for _, e := range m.Targets {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *EACLRecord_FilterInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Header != 0 {
+		n += 1 + sovTypes(uint64(m.Header))
+	}
+	if m.MatchType != 0 {
+		n += 1 + sovTypes(uint64(m.MatchType))
+	}
+	l = len(m.HeaderName)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	l = len(m.HeaderVal)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *EACLRecord_TargetInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Target != 0 {
+		n += 1 + sovTypes(uint64(m.Target))
+	}
+	if len(m.KeyList) > 0 {
+		for _, b := range m.KeyList {
+			l = len(b)
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *EACLTable) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Records) > 0 {
+		for _, e := range m.Records {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func sovTypes(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozTypes(x uint64) (n int) {
+	return sovTypes(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *EACLRecord) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: EACLRecord: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: EACLRecord: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Operation", wireType)
+			}
+			m.Operation = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Operation |= EACLRecord_Operation(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Action", wireType)
+			}
+			m.Action = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Action |= EACLRecord_Action(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Filters", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Filters = append(m.Filters, &EACLRecord_FilterInfo{})
+			if err := m.Filters[len(m.Filters)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Targets", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Targets = append(m.Targets, &EACLRecord_TargetInfo{})
+			if err := m.Targets[len(m.Targets)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EACLRecord_FilterInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: FilterInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: FilterInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Header", wireType)
+			}
+			m.Header = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Header |= EACLRecord_FilterInfo_Header(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MatchType", wireType)
+			}
+			m.MatchType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MatchType |= EACLRecord_FilterInfo_MatchType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HeaderName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.HeaderName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HeaderVal", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.HeaderVal = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EACLRecord_TargetInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TargetInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TargetInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Target", wireType)
+			}
+			m.Target = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Target |= Target(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field KeyList", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.KeyList = append(m.KeyList, make([]byte, postIndex-iNdEx))
+			copy(m.KeyList[len(m.KeyList)-1], dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EACLTable) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: EACLTable: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: EACLTable: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Records", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Records = append(m.Records, &EACLRecord{})
+			if err := m.Records[len(m.Records)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipTypes(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthTypes
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupTypes
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthTypes
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthTypes        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowTypes          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupTypes = fmt.Errorf("proto: unexpected end of group")
+)
