@@ -238,7 +238,7 @@ func (s EACLTargetWrapper) SetKeyList(v [][]byte) {
 	}
 }
 
-// KeyList returns casted result of Operation field getter.
+// OperationType returns casted result of Operation field getter.
 //
 // If record is not initialized, 0 returns.
 //
