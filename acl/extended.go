@@ -1,11 +1,5 @@
 package acl
 
-import (
-	"context"
-
-	"github.com/nspcc-dev/neofs-api-go/refs"
-)
-
 // OperationType is an enumeration of operation types for extended ACL.
 type OperationType uint32
 
@@ -33,13 +27,6 @@ type TypedHeader interface {
 
 	// Must return type of filtered header.
 	HeaderType() HeaderType
-}
-
-// TypedHeaderSource is a various types of header set interface.
-type TypedHeaderSource interface {
-	// Must return list of Header of particular type.
-	// Must return false if there is no ability to compose header list.
-	HeadersOfType(HeaderType) ([]Header, bool)
 }
 
 // HeaderFilter is an interface of grouped information about filtered header.
@@ -78,20 +65,6 @@ type ExtendedACLRecord interface {
 type ExtendedACLTable interface {
 	// Must return list of extended ACL rules.
 	Records() []ExtendedACLRecord
-}
-
-// ExtendedACLSource is an interface of storage of extended ACL tables with read access.
-type ExtendedACLSource interface {
-	// Must return extended ACL table by container ID key.
-	GetExtendedACLTable(context.Context, refs.CID) (ExtendedACLTable, error)
-}
-
-// ExtendedACLStore is an interface of storage of extended ACL tables.
-type ExtendedACLStore interface {
-	ExtendedACLSource
-
-	// Must store extended ACL table for container ID key.
-	PutExtendedACLTable(context.Context, refs.CID, ExtendedACLTable) error
 }
 
 const (

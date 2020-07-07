@@ -1,10 +1,5 @@
 package acl
 
-import (
-	"github.com/nspcc-dev/neofs-api-go/object"
-	"github.com/nspcc-dev/neofs-api-go/service"
-)
-
 const (
 	_ MatchType = iota
 	stringEqual
@@ -74,47 +69,6 @@ const (
 	// HdrObjSysLinkSG is a name of storage group link header in extended headers of object.
 	HdrObjSysLinkSG = "LINK_SG"
 )
-
-type objectHeaderSource struct {
-	obj *object.Object
-}
-
-type typedHeader struct {
-	n string
-	v string
-	t HeaderType
-}
-
-type extendedHeadersWrapper struct {
-	hdrSrc service.ExtendedHeadersSource
-}
-
-type typedExtendedHeader struct {
-	hdr service.ExtendedHeader
-}
-
-func newTypedHeader(name, value string, typ HeaderType) TypedHeader {
-	return &typedHeader{
-		n: name,
-		v: value,
-		t: typ,
-	}
-}
-
-// Name is a name field getter.
-func (s typedHeader) Name() string {
-	return s.n
-}
-
-// Value is a value field getter.
-func (s typedHeader) Value() string {
-	return s.v
-}
-
-// HeaderType is a type field getter.
-func (s typedHeader) HeaderType() HeaderType {
-	return s.t
-}
 
 // SetMatchType is MatchType field setter.
 func (m *EACLRecord_FilterInfo) SetMatchType(v EACLRecord_FilterInfo_MatchType) {
