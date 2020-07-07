@@ -2,8 +2,12 @@ package acl
 
 const (
 	_ MatchType = iota
-	stringEqual
-	stringNotEqual
+
+	// StringEqual is a MatchType of string equality.
+	StringEqual
+
+	// StringNotEqual is a MatchType of string inequality.
+	StringNotEqual
 )
 
 const (
