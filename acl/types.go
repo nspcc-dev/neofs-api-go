@@ -1,5 +1,121 @@
 package acl
 
+import (
+	"github.com/nspcc-dev/neofs-api-go/object"
+	"github.com/nspcc-dev/neofs-api-go/service"
+)
+
+const (
+	_ MatchType = iota
+	stringEqual
+	stringNotEqual
+)
+
+const (
+	// ActionUndefined is ExtendedACLAction used to mark value as undefined.
+	// Most of the tools consider ActionUndefined as incalculable.
+	// Using ActionUndefined in ExtendedACLRecord is unsafe.
+	ActionUndefined ExtendedACLAction = iota
+
+	// ActionAllow is ExtendedACLAction used to mark an applicability of ACL rule.
+	ActionAllow
+
+	// ActionDeny is ExtendedACLAction used to mark an inapplicability of ACL rule.
+	ActionDeny
+)
+
+const (
+	_ HeaderType = iota
+
+	// HdrTypeRequest is a HeaderType for request header.
+	HdrTypeRequest
+
+	// HdrTypeObjSys is a HeaderType for system headers of object.
+	HdrTypeObjSys
+
+	// HdrTypeObjUsr is a HeaderType for user headers of object.
+	HdrTypeObjUsr
+)
+
+const (
+	// HdrObjSysNameID is a name of ID field in system header of object.
+	HdrObjSysNameID = "ID"
+
+	// HdrObjSysNameCID is a name of CID field in system header of object.
+	HdrObjSysNameCID = "CID"
+
+	// HdrObjSysNameOwnerID is a name of OwnerID field in system header of object.
+	HdrObjSysNameOwnerID = "OWNER_ID"
+
+	// HdrObjSysNameVersion is a name of Version field in system header of object.
+	HdrObjSysNameVersion = "VERSION"
+
+	// HdrObjSysNamePayloadLength is a name of PayloadLength field in system header of object.
+	HdrObjSysNamePayloadLength = "PAYLOAD_LENGTH"
+
+	// HdrObjSysNameCreatedUnix is a name of CreatedAt.UnitTime field in system header of object.
+	HdrObjSysNameCreatedUnix = "CREATED_UNIX"
+
+	// HdrObjSysNameCreatedEpoch is a name of CreatedAt.Epoch field in system header of object.
+	HdrObjSysNameCreatedEpoch = "CREATED_EPOCH"
+
+	// HdrObjSysLinkPrev is a name of previous link header in extended headers of object.
+	HdrObjSysLinkPrev = "LINK_PREV"
+
+	// HdrObjSysLinkNext is a name of next link header in extended headers of object.
+	HdrObjSysLinkNext = "LINK_NEXT"
+
+	// HdrObjSysLinkChild is a name of child link header in extended headers of object.
+	HdrObjSysLinkChild = "LINK_CHILD"
+
+	// HdrObjSysLinkPar is a name of parent link header in extended headers of object.
+	HdrObjSysLinkPar = "LINK_PAR"
+
+	// HdrObjSysLinkSG is a name of storage group link header in extended headers of object.
+	HdrObjSysLinkSG = "LINK_SG"
+)
+
+type objectHeaderSource struct {
+	obj *object.Object
+}
+
+type typedHeader struct {
+	n string
+	v string
+	t HeaderType
+}
+
+type extendedHeadersWrapper struct {
+	hdrSrc service.ExtendedHeadersSource
+}
+
+type typedExtendedHeader struct {
+	hdr service.ExtendedHeader
+}
+
+func newTypedHeader(name, value string, typ HeaderType) TypedHeader {
+	return &typedHeader{
+		n: name,
+		v: value,
+		t: typ,
+	}
+}
+
+// Name is a name field getter.
+func (s typedHeader) Name() string {
+	return s.n
+}
+
+// Value is a value field getter.
+func (s typedHeader) Value() string {
+	return s.v
+}
+
+// HeaderType is a type field getter.
+func (s typedHeader) HeaderType() HeaderType {
+	return s.t
+}
+
 // SetMatchType is MatchType field setter.
 func (m *EACLRecord_FilterInfo) SetMatchType(v EACLRecord_FilterInfo_MatchType) {
 	m.MatchType = v

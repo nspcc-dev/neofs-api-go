@@ -83,9 +83,9 @@ func (s EACLFilterWrapper) MatchType() (res MatchType) {
 	if s.filter != nil {
 		switch s.filter.GetMatchType() {
 		case EACLRecord_FilterInfo_StringEqual:
-			res = StringEqual
+			res = stringEqual
 		case EACLRecord_FilterInfo_StringNotEqual:
-			res = StringNotEqual
+			res = stringNotEqual
 		}
 	}
 
@@ -102,9 +102,9 @@ func (s EACLFilterWrapper) MatchType() (res MatchType) {
 func (s EACLFilterWrapper) SetMatchType(v MatchType) {
 	if s.filter != nil {
 		switch v {
-		case StringEqual:
+		case stringEqual:
 			s.filter.SetMatchType(EACLRecord_FilterInfo_StringEqual)
-		case StringNotEqual:
+		case stringNotEqual:
 			s.filter.SetMatchType(EACLRecord_FilterInfo_StringNotEqual)
 		default:
 			s.filter.SetMatchType(EACLRecord_FilterInfo_MatchUnknown)

@@ -9,7 +9,7 @@ import (
 func TestEACLFilterWrapper(t *testing.T) {
 	s := WrapFilterInfo(nil)
 
-	mt := StringEqual
+	mt := stringEqual
 	s.SetMatchType(mt)
 	require.Equal(t, mt, s.MatchType())
 
