@@ -25,3 +25,82 @@ enum Target {
     // extended ACL.
     PubKey  = 4;
 }
+
+// EACLRecord groups information about extended ACL rule.
+message EACLRecord {
+    // Operation is an enumeration of operation types.
+    enum Operation {
+        OPERATION_UNKNOWN = 0;
+        GET = 1;
+        HEAD = 2;
+        PUT = 3;
+        DELETE = 4;
+        SEARCH = 5;
+        GETRANGE = 6;
+        GETRANGEHASH = 7;
+    }
+
+    // Operation carries type of operation.
+    Operation operation = 1 [(gogoproto.customname) = "Operation", json_name="Operation"];
+
+    // Action is an enumeration of EACL actions.
+    enum Action {
+        ActionUnknown = 0;
+        Allow = 1;
+        Deny = 2;
+    }
+
+    // Action carries ACL target action.
+    Action action = 2 [(gogoproto.customname) = "Action", json_name="Action"];
+
+    // FilterInfo groups information about filter.
+    message FilterInfo {
+        // Header is an enumeration of filtering header types.
+        enum Header {
+            HeaderUnknown = 0;
+            Request = 1;
+            ObjectSystem = 2;
+            ObjectUser = 3;
+        }
+
+        // Header carries type of header.
+        Header header = 1 [(gogoproto.customname) = "Header", json_name="HeaderType"];
+
+        // MatchType is an enumeration of match types.
+        enum MatchType {
+            MatchUnknown = 0;
+            StringEqual = 1;
+            StringNotEqual = 2;
+        }
+
+        // MatchType carries type of match.
+        MatchType matchType = 2 [(gogoproto.customname) = "MatchType", json_name="MatchType"];
+
+        // HeaderName carries name of filtering header.
+        string HeaderName = 3 [json_name="Name"];
+
+        // HeaderVal carries value of filtering header.
+        string HeaderVal = 4 [json_name="Value"];
+    }
+
+    // Filters carries set of filters.
+    repeated FilterInfo Filters = 3 [json_name="Filters"];
+
+    // TargetInfo groups information about extended ACL target.
+    message TargetInfo {
+        // Target carries target of ACL rule.
+        acl.Target Target = 1 [json_name="Role"];
+
+        // KeyList carries public keys of ACL target.
+        repeated bytes KeyList = 2 [json_name="Keys"];
+    }
+
+    // Targets carries information about extended ACL target list.
+    repeated TargetInfo Targets = 4 [json_name="Targets"];
+}
+
+// EACLRecord carries the information about extended ACL rules.
+message EACLTable {
+    // Records carries list of extended ACL rule records.
+    repeated EACLRecord Records = 1 [json_name="Records"];
+}
