@@ -5,7 +5,12 @@
 
 - [acl/types.proto](#acl/types.proto)
 
-
+  - Messages
+    - [EACLRecord](#acl.EACLRecord)
+    - [EACLRecord.FilterInfo](#acl.EACLRecord.FilterInfo)
+    - [EACLRecord.TargetInfo](#acl.EACLRecord.TargetInfo)
+    - [EACLTable](#acl.EACLTable)
+    
 
 - [Scalar Value Types](#scalar-value-types)
 
@@ -19,7 +24,116 @@
 
  <!-- end services -->
 
+
+<a name="acl.EACLRecord"></a>
+
+### Message EACLRecord
+EACLRecord groups information about extended ACL rule.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| operation | [EACLRecord.Operation](#acl.EACLRecord.Operation) |  | Operation carries type of operation. |
+| action | [EACLRecord.Action](#acl.EACLRecord.Action) |  | Action carries ACL target action. |
+| Filters | [EACLRecord.FilterInfo](#acl.EACLRecord.FilterInfo) | repeated | Filters carries set of filters. |
+| Targets | [EACLRecord.TargetInfo](#acl.EACLRecord.TargetInfo) | repeated | Targets carries information about extended ACL target list. |
+
+
+<a name="acl.EACLRecord.FilterInfo"></a>
+
+### Message EACLRecord.FilterInfo
+FilterInfo groups information about filter.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| header | [EACLRecord.FilterInfo.Header](#acl.EACLRecord.FilterInfo.Header) |  | Header carries type of header. |
+| matchType | [EACLRecord.FilterInfo.MatchType](#acl.EACLRecord.FilterInfo.MatchType) |  | MatchType carries type of match. |
+| HeaderName | [string](#string) |  | HeaderName carries name of filtering header. |
+| HeaderVal | [string](#string) |  | HeaderVal carries value of filtering header. |
+
+
+<a name="acl.EACLRecord.TargetInfo"></a>
+
+### Message EACLRecord.TargetInfo
+TargetInfo groups information about extended ACL target.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Target | [Target](#acl.Target) |  | Target carries target of ACL rule. |
+| KeyList | [bytes](#bytes) | repeated | KeyList carries public keys of ACL target. |
+
+
+<a name="acl.EACLTable"></a>
+
+### Message EACLTable
+EACLRecord carries the information about extended ACL rules.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Records | [EACLRecord](#acl.EACLRecord) | repeated | Records carries list of extended ACL rule records. |
+
  <!-- end messages -->
+
+
+<a name="acl.EACLRecord.Action"></a>
+
+### EACLRecord.Action
+Action is an enumeration of EACL actions.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ActionUnknown | 0 |  |
+| Allow | 1 |  |
+| Deny | 2 |  |
+
+
+
+<a name="acl.EACLRecord.FilterInfo.Header"></a>
+
+### EACLRecord.FilterInfo.Header
+Header is an enumeration of filtering header types.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| HeaderUnknown | 0 |  |
+| Request | 1 |  |
+| ObjectSystem | 2 |  |
+| ObjectUser | 3 |  |
+
+
+
+<a name="acl.EACLRecord.FilterInfo.MatchType"></a>
+
+### EACLRecord.FilterInfo.MatchType
+MatchType is an enumeration of match types.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| MatchUnknown | 0 |  |
+| StringEqual | 1 |  |
+| StringNotEqual | 2 |  |
+
+
+
+<a name="acl.EACLRecord.Operation"></a>
+
+### EACLRecord.Operation
+Operation is an enumeration of operation types.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| OPERATION_UNKNOWN | 0 |  |
+| GET | 1 |  |
+| HEAD | 2 |  |
+| PUT | 3 |  |
+| DELETE | 4 |  |
+| SEARCH | 5 |  |
+| GETRANGE | 6 |  |
+| GETRANGEHASH | 7 |  |
+
 
 
 <a name="acl.Target"></a>
