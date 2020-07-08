@@ -1,6 +1,23 @@
 # Changelog
 This is the changelog for NeoFS-API-Go
 
+## [1.2.0] - 2020-07-08
+
+### Added
+
+- Extended ACL types.
+- Getters and setters of ```EACLTable``` and its internal messages.
+- Wrappers over ```EACLTable``` and its internal messages.
+- Getters, setters and marshaling methods of wrappers.
+
+### Changed
+
+- Mechanism for signing requests on the principle of Matryoshka.
+
+### Updated
+
+- NeoFS API v1.1.0 => 1.2.0
+
 ## [1.1.0] - 2020-06-18
 
 ### Added
@@ -357,3 +374,4 @@ Initial public release
 [0.7.6]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.5...v0.7.6
 [1.0.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.6...v1.0.0
 [1.1.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.0.0...v1.1.0
+[1.2.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.1.0...v1.2.0
