@@ -13,4 +13,7 @@ type Custom interface {
 	MarshalTo(data []byte) (int, error)
 	Unmarshal(data []byte) error
 	proto.Message
+
+	// Should contains for proto.Clone
+	proto.Merger
 }

@@ -3,6 +3,7 @@ package hash
 import (
 	"bytes"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/mr-tron/base58"
 	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/tzhash/tz"
@@ -76,6 +77,13 @@ func (h Hash) Validate(hashes []Hash) bool {
 	}
 	ok, err := tz.Validate(h.Bytes(), hashBytes)
 	return err == nil && ok
+}
+
+// Merge used by proto.Clone
+func (h *Hash) Merge(src proto.Message) {
+	if tmp, ok := src.(*Hash); ok {
+		*h = *tmp
+	}
 }
 
 // Sum returns Tillich-Zémor checksum of data.

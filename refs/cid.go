@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/mr-tron/base58"
 	"github.com/pkg/errors"
 )
@@ -93,4 +94,11 @@ func (c CID) Verify(data []byte) error {
 		return errors.New("wrong hash for data")
 	}
 	return nil
+}
+
+// Merge used by proto.Clone
+func (c *CID) Merge(src proto.Message) {
+	if cid, ok := src.(*CID); ok {
+		*c = *cid
+	}
 }

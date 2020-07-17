@@ -163,6 +163,13 @@ func (m *Object) SetHeader(h *Header) {
 	m.AddHeader(h)
 }
 
+// Merge used by proto.Clone
+func (m *Object) Merge(src proto.Message) {
+	if tmp, ok := src.(*Object); ok {
+		tmp.CopyTo(m)
+	}
+}
+
 func (m Header) typeOf(t isHeader_Value) (ok bool) {
 	switch t.(type) {
 	case *Header_Link:
@@ -233,8 +240,15 @@ func (m *Object) Copy() (obj *Object) {
 // This function creates copies on every available data slice.
 func (m *Object) CopyTo(o *Object) {
 	o.SystemHeader = m.SystemHeader
-	o.Headers = make([]Header, len(m.Headers))
-	o.Payload = make([]byte, len(m.Payload))
+
+	if m.Headers != nil {
+		o.Headers = make([]Header, len(m.Headers))
+	}
+
+	if m.Payload != nil {
+		o.Payload = make([]byte, len(m.Payload))
+		copy(o.Payload, m.Payload)
+	}
 
 	for i := range m.Headers {
 		switch v := m.Headers[i].Value.(type) {
@@ -246,23 +260,23 @@ func (m *Object) CopyTo(o *Object) {
 				},
 			}
 		case *Header_HomoHash:
+			hash := proto.Clone(&v.HomoHash).(*Hash)
 			o.Headers[i] = Header{
 				Value: &Header_HomoHash{
-					HomoHash: v.HomoHash,
+					HomoHash: *hash,
 				},
 			}
 		case *Header_Token:
+			token := *v.Token
 			o.Headers[i] = Header{
 				Value: &Header_Token{
-					Token: v.Token,
+					Token: &token,
 				},
 			}
 		default:
 			o.Headers[i] = *proto.Clone(&m.Headers[i]).(*Header)
 		}
 	}
-
-	copy(o.Payload, m.Payload)
 }
 
 // Address returns object's address.
