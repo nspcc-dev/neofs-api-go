@@ -79,7 +79,7 @@ func TestOwnerID(t *testing.T) {
 	t.Run("check that marshal/unmarshal works like expected", func(t *testing.T) {
 		var u1, u2 OwnerID
 
-		owner, err := NewOwnerID()
+		owner, err := NewOwnerID(nil)
 		require.NoError(t, err)
 		require.True(t, owner.Empty())
 

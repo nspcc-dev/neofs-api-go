@@ -10,18 +10,22 @@ import (
 	"github.com/pkg/errors"
 )
 
-// NewOwnerID returns generated OwnerID from passed public keys.
-func NewOwnerID(keys ...*ecdsa.PublicKey) (owner OwnerID, err error) {
-	if len(keys) == 0 {
+// NewOwnerID returns generated OwnerID from passed public key.
+func NewOwnerID(key *ecdsa.PublicKey) (owner OwnerID, err error) {
+	if key == nil {
 		return
 	}
+
 	var d []byte
-	d, err = base58.Decode(chain.KeysToAddress(keys...))
+
+	d, err = base58.Decode(chain.KeyToAddress(key))
 	if err != nil {
 		return
 	}
+
 	copy(owner[:], d)
-	return owner, nil
+
+	return
 }
 
 // Size returns OwnerID size in bytes (OwnerIDSize).
