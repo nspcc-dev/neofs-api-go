@@ -1,6 +1,14 @@
 # Changelog
 This is the changelog for NeoFS-API-Go
 
+## [1.3.0] - 2020-07-23
+
+### Changed
+
+- Format of ```refs.OwnerID``` based on NEO3.
+- Binary format of extended ACL table.
+- ```acl``` package structure.
+
 ## [1.2.0] - 2020-07-08
 
 ### Added
@@ -375,3 +383,4 @@ Initial public release
 [1.0.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v0.7.6...v1.0.0
 [1.1.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.0.0...v1.1.0
 [1.2.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.1.0...v1.2.0
+[1.3.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.2.0...v1.3.0
