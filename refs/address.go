@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"strings"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/nspcc-dev/neofs-api-go/internal"
 )
 
@@ -65,4 +66,15 @@ func (m Address) Hash() ([]byte, error) {
 	}
 	h := sha256.Sum256(append(m.ObjectID.Bytes(), m.CID.Bytes()...))
 	return h[:], nil
+}
+
+// Merge used by proto.Clone
+func (m *Address) Merge(src proto.Message) {
+	if addr, ok := src.(*Address); ok {
+		cid := proto.Clone(&addr.CID).(*CID)
+		oid := proto.Clone(&addr.ObjectID).(*ObjectID)
+
+		m.CID = *cid
+		m.ObjectID = *oid
+	}
 }

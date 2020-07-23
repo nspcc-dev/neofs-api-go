@@ -4,23 +4,28 @@ import (
 	"bytes"
 	"crypto/ecdsa"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/mr-tron/base58"
 	"github.com/nspcc-dev/neofs-api-go/chain"
 	"github.com/pkg/errors"
 )
 
-// NewOwnerID returns generated OwnerID from passed public keys.
-func NewOwnerID(keys ...*ecdsa.PublicKey) (owner OwnerID, err error) {
-	if len(keys) == 0 {
+// NewOwnerID returns generated OwnerID from passed public key.
+func NewOwnerID(key *ecdsa.PublicKey) (owner OwnerID, err error) {
+	if key == nil {
 		return
 	}
+
 	var d []byte
-	d, err = base58.Decode(chain.KeysToAddress(keys...))
+
+	d, err = base58.Decode(chain.KeyToAddress(key))
 	if err != nil {
 		return
 	}
+
 	copy(owner[:], d)
-	return owner, nil
+
+	return
 }
 
 // Size returns OwnerID size in bytes (OwnerIDSize).
@@ -62,4 +67,11 @@ func (o *OwnerID) Unmarshal(data []byte) error {
 
 	copy((*o)[:], data)
 	return nil
+}
+
+// Merge used by proto.Clone
+func (o *OwnerID) Merge(src proto.Message) {
+	if uid, ok := src.(*OwnerID); ok {
+		*o = *uid
+	}
 }

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/nspcc-dev/neofs-api-go/refs"
 	"github.com/nspcc-dev/neofs-api-go/service"
 	"github.com/nspcc-dev/neofs-api-go/storagegroup"
@@ -17,7 +18,7 @@ Object:
 	SystemHeader:
 		- ID=7e0b9c6c-aabc-4985-949e-2680e577b48b
 		- CID=11111111111111111111111111111111
-		- OwnerID=ALYeYC41emF6MrmUMc4a8obEPdgFhq9ran
+		- OwnerID=NQHKh7fKGieCPrPuiEkY58ucRFwWMyU1Mc
 		- Version=1
 		- PayloadLength=1
 		- CreatedAt={UnixTime=1 Epoch=1}
@@ -33,7 +34,7 @@ Object:
 		- Type=Tombstone
 		  Value=MARKED
 		- Type=Token
-		  Value={ID=7e0b9c6c-aabc-4985-949e-2680e577b48b OwnerID=ALYeYC41emF6MrmUMc4a8obEPdgFhq9ran Verb=Search Address=11111111111111111111111111111111/7e0b9c6c-aabc-4985-949e-2680e577b48b Created=1 ValidUntil=2 SessionKey=010203040506 Signature=010203040506}
+		  Value={ID=7e0b9c6c-aabc-4985-949e-2680e577b48b OwnerID=NQHKh7fKGieCPrPuiEkY58ucRFwWMyU1Mc Verb=Search Address=11111111111111111111111111111111/7e0b9c6c-aabc-4985-949e-2680e577b48b Created=1 ValidUntil=2 SessionKey=010203040506 Signature=010203040506}
 		- Type=HomoHash
 		  Value=1111111111111111111111111111111111111111111111111111111111111111
 		- Type=PayloadChecksum
@@ -192,11 +193,23 @@ func TestObject_Copy(t *testing.T) {
 			},
 		})
 
-		cp := obj.Copy()
+		{ // Copying
+			cp := obj.Copy()
 
-		_, h := cp.LastHeader(HeaderType(TokenHdr))
-		require.NotNil(t, h)
-		require.Equal(t, token, h.GetValue().(*Header_Token).Token)
+			_, h := cp.LastHeader(HeaderType(TokenHdr))
+			require.NotNil(t, h)
+			require.Equal(t, token, h.GetValue().(*Header_Token).Token)
+		}
+
+		{ // Cloning
+			cl := proto.Clone(obj).(*Object)
+			require.Equal(t, obj, cl)
+
+			_, h := cl.LastHeader(HeaderType(TokenHdr))
+			h.GetToken().SetID(service.TokenID{3, 2, 1})
+
+			require.NotEqual(t, token, h.GetToken())
+		}
 	})
 }
 

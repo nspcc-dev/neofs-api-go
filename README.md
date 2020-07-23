@@ -21,6 +21,9 @@ can be used for integration with NeoFS.
 [neofs-api-go v1.2.0]: https://github.com/nspcc-dev/neofs-api-go/releases/tag/v1.2.0
 * [neofs-api-go v1.2.0] supports [neofs-api v1.2.0]
 
+[neofs-api-go v1.3.0]: https://github.com/nspcc-dev/neofs-api-go/releases/tag/v1.3.0
+* [neofs-api-go v1.3.0] supports [neofs-api v1.2.0]
+
 ## Description
 
 Repository contains 13 packages that implement NeoFS core structures. These

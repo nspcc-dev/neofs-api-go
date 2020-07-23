@@ -23,6 +23,19 @@ func TestSGID(t *testing.T) {
 		require.NoError(t, sgid2.Unmarshal(data))
 		require.Equal(t, sgid1, sgid2)
 	})
+
+	t.Run("check that proto.Clone works like expected", func(t *testing.T) {
+		var (
+			sgid1 UUID
+			sgid2 *UUID
+		)
+
+		sgid1, err := NewSGID()
+		require.NoError(t, err)
+
+		sgid2 = proto.Clone(&sgid1).(*SGID)
+		require.Equal(t, sgid1, *sgid2)
+	})
 }
 
 func TestUUID(t *testing.T) {
@@ -66,7 +79,7 @@ func TestOwnerID(t *testing.T) {
 	t.Run("check that marshal/unmarshal works like expected", func(t *testing.T) {
 		var u1, u2 OwnerID
 
-		owner, err := NewOwnerID()
+		owner, err := NewOwnerID(nil)
 		require.NoError(t, err)
 		require.True(t, owner.Empty())
 
@@ -79,6 +92,18 @@ func TestOwnerID(t *testing.T) {
 
 		require.NoError(t, u2.Unmarshal(data))
 		require.Equal(t, u1, u2)
+	})
+
+	t.Run("check that proto.Clone works like expected", func(t *testing.T) {
+		var u2 *OwnerID
+
+		key := test.DecodeKey(0)
+
+		u1, err := NewOwnerID(&key.PublicKey)
+		require.NoError(t, err)
+
+		u2 = proto.Clone(&u1).(*OwnerID)
+		require.Equal(t, u1, *u2)
 	})
 }
 
@@ -109,4 +134,8 @@ func TestAddress(t *testing.T) {
 	actual, err := ParseAddress(expect)
 	require.NoError(t, err)
 	require.Equal(t, expect, actual.String())
+
+	addr := proto.Clone(actual).(*Address)
+	require.Equal(t, actual, addr)
+	require.Equal(t, expect, addr.String())
 }
