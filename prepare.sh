@@ -12,7 +12,7 @@ API_PATH=$1
 
 # MOVE FILES FROM API REPO
 cd $API_PATH
-ARGS=$(find ./ -name '*.proto')
+ARGS=$(find ./ -name '*.proto' -not -path './vendor/*')
 for file in $ARGS; do
     dir=$(dirname $file)
     cp -r $dir $API_GO_PATH
