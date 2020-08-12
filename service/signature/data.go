@@ -8,7 +8,7 @@ import (
 
 type DataSource interface {
 	ReadSignedData([]byte) ([]byte, error)
-	SignedDataLength() int
+	SignedDataSize() int
 }
 
 type DataWithSignature interface {

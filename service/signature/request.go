@@ -7,8 +7,8 @@ import (
 )
 
 type SignedRequest interface {
-	Body() DataSource
-	MetaHeader() DataSource
+	RequestBody() DataSource
+	RequestMetaHeader() DataSource
 	OriginVerificationHeader() DataSource
 
 	SetBodySignatureWithKey(key, sig []byte)
@@ -27,12 +27,12 @@ func SignRequest(key *ecdsa.PrivateKey, src SignedRequest) error {
 	}
 
 	// sign body
-	if err := SignDataWithHandler(key, src.Body(), src.SetBodySignatureWithKey); err != nil {
+	if err := SignDataWithHandler(key, src.RequestBody(), src.SetBodySignatureWithKey); err != nil {
 		return errors.Wrap(err, "could not sign body")
 	}
 
 	// sign meta
-	if err := SignDataWithHandler(key, src.Body(), src.SetMetaSignatureWithKey); err != nil {
+	if err := SignDataWithHandler(key, src.RequestMetaHeader(), src.SetMetaSignatureWithKey); err != nil {
 		return errors.Wrap(err, "could not sign meta header")
 	}
 
@@ -46,12 +46,12 @@ func SignRequest(key *ecdsa.PrivateKey, src SignedRequest) error {
 
 func VerifyRequest(src SignedRequest) error {
 	// verify body signature
-	if err := VerifyDataWithSource(src.Body(), src.BodySignatureWithKey); err != nil {
+	if err := VerifyDataWithSource(src.RequestBody(), src.BodySignatureWithKey); err != nil {
 		return errors.Wrap(err, "could not verify body")
 	}
 
 	// verify meta header
-	if err := VerifyDataWithSource(src.MetaHeader(), src.MetaSignatureWithKey); err != nil {
+	if err := VerifyDataWithSource(src.RequestMetaHeader(), src.MetaSignatureWithKey); err != nil {
 		return errors.Wrap(err, "could not verify meta header")
 	}
 
