@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package acl.v2;
+
+option go_package = "github.com/nspcc-dev/neofs-api-go/acl/v2";
+option csharp_namespace = "NeoFS.API.Acl";
+
+import "refs/v2/types.proto";
+
+// Target of the access control rule in access control list.
+enum Target {
+  // Unknown target, default value.
+  UNKNOWN = 0;
+
+  // User target rule is applied if sender is the owner of the container.v2.
+  USER = 1;
+
+  // System target rule is applied if sender is the storage node within the
+  // container or inner ring node.
+  SYSTEM = 2;
+
+  // Others target rule is applied if sender is not user or system target.
+  OTHERS = 3;
+}
+
+// EACLRecord groups information about extended ACL rule.
+message EACLRecord {
+  // Operation is an enumeration of operation types.
+  enum Operation {
+    OPERATION_UNKNOWN = 0;
+    GET = 1;
+    HEAD = 2;
+    PUT = 3;
+    DELETE = 4;
+    SEARCH = 5;
+    GETRANGE = 6;
+    GETRANGEHASH = 7;
+  }
+
+  // Operation carries type of operation.
+  Operation operation = 1 [json_name = "Operation"];
+
+  // Action is an enumeration of EACL actions.
+  enum Action {
+    ACTION_UNKNOWN = 0;
+    ALLOW = 1;
+    DENY = 2;
+  }
+
+  // Action carries ACL target action.
+  Action action = 2 [json_name = "Action"];
+
+  // FilterInfo groups information about filter.
+  message FilterInfo {
+    // Header is an enumeration of filtering header types.
+    enum Header {
+      HEADER_UNKNOWN = 0;
+      REQUEST = 1;
+      OBJECT = 2;
+    }
+
+    // Header carries type of header.
+    Header header = 1 [json_name = "HeaderType"];
+
+    // MatchType is an enumeration of match types.
+    enum MatchType {
+      MATCH_UNKNOWN = 0;
+      STRING_EQUAL = 1;
+      STRING_NOT_EQUAL = 2;
+    }
+
+    // MatchType carries type of match.
+    MatchType match_type = 2 [json_name = "MatchType"];
+
+    // header_name carries name of filtering header.
+    string header_name = 3 [json_name="Name"];
+
+    // header_val carries value of filtering header.
+    string header_val = 4 [json_name="Value"];
+  }
+
+  // filters carries set of filters.
+  repeated FilterInfo filters = 3 [json_name="Filters"];
+
+  // TargetInfo groups information about extended ACL target.
+  message TargetInfo {
+    // target carries target of ACL rule.
+    acl.v2.Target target = 1 [json_name="Role"];
+
+    // key_list carries public keys of ACL target.
+    repeated bytes key_list = 2 [json_name="Keys"];
+  }
+
+  // targets carries information about extended ACL target list.
+  repeated TargetInfo targets = 4 [json_name="Targets"];
+}
+
+// EACLRecord carries the information about extended ACL rules.
+message EACLTable {
+  // Carries identifier of the container that should use given
+  // access control rules.
+  refs.v2.ContainerID container_id = 1 [json_name="ContainerID"];
+
+  // Records carries list of extended ACL rule records.
+  repeated EACLRecord records = 2 [json_name="Records"];
+}
