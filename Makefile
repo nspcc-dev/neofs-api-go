@@ -47,7 +47,7 @@ docgen: deps
 	done
 
 # Regenerate proto files:
-protoc: deps
+protoc:
 	@echo "${B}${G}⇒ Cleanup old files ${R}"
 	@find . -type f -name '*.pb.go' -not -path './vendor/*' -exec rm {} \;
 
