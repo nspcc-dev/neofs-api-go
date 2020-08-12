@@ -19,7 +19,7 @@ func dataForSignature(src DataSource) ([]byte, error) {
 
 	buf := bytesPool.Get().([]byte)
 
-	if size := src.SignedDataLength(); size < 0 {
+	if size := src.SignedDataSize(); size < 0 {
 		return nil, errors.New("negative length")
 	} else if size <= cap(buf) {
 		buf = buf[:size]
