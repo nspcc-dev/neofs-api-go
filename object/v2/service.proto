@@ -1,0 +1,407 @@
+syntax = "proto3";
+
+package object.v2;
+
+option go_package = "github.com/nspcc-dev/neofs-api-go/object/v2";
+option csharp_namespace = "NeoFS.API.Object";
+
+import "object/v2/types.proto";
+import "refs/v2/types.proto";
+import "service/v2/meta.proto";
+import "service/v2/verify.proto";
+
+// Object service provides API for manipulating with the object.v2.
+service Service {
+  // Get the object from container.v2. Response uses gRPC stream. First response
+  // message carry object of requested address. Chunk messages are parts of
+  // the object's payload if it is needed. All messages except first carry
+  // chunks. Requested object can be restored by concatenation of object
+  // message payload and all chunks keeping receiving order.
+  rpc Get(GetRequest) returns (stream GetResponse);
+
+  // Put the object into container.v2. Request uses gRPC stream. First message
+  // SHOULD BE type of PutHeader. Container id and Owner id of object SHOULD
+  // BE set. Session token SHOULD BE obtained before put operation (see
+  // session package). Chunk messages considered by server as part of object
+  // payload. All messages except first SHOULD BE chunks. Chunk messages
+  // SHOULD BE sent in direct order of fragmentation.
+  rpc Put(stream PutRequest) returns (PutResponse);
+
+  // Delete the object from a container
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+
+  // Head returns the object without data payload. Object in the
+  // response has system header only. If full headers flag is set, extended
+  // headers are also present.
+  rpc Head(HeadRequest) returns (HeadResponse);
+
+  // Search objects in container.v2. Version of query language format SHOULD BE
+  // set to 1. Search query represented in serialized format (see query
+  // package).
+  rpc Search(SearchRequest) returns (stream SearchResponse);
+
+  // GetRange of data payload. Range is a pair (offset, length).
+  // Requested range can be restored by concatenation of all chunks
+  // keeping receiving order.
+  rpc GetRange(GetRangeRequest) returns (stream GetRangeResponse);
+
+  // GetRangeHash returns homomorphic hash of object payload range after XOR
+  // operation. Ranges are set of pairs (offset, length). Hashes order in
+  // response corresponds to ranges order in request. Homomorphic hash is
+  // calculated for XORed data.
+  rpc GetRangeHash(GetRangeHashRequest) returns (GetRangeHashResponse);
+}
+
+message GetRequest {
+  message Body {
+    // Address of the requested object.v2.
+    refs.v2.Address address = 1;
+
+    // Carries the raw option flag of the request.
+    // Raw request is sent to receive only the objects
+    // that are physically stored on the server.
+    bool raw = 2;
+  }
+  // Body of get object request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate message
+  // transport and does not affect request execution.
+  service.v2.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to authenticate
+  // the nodes of the message route and check the correctness of transmission.
+  service.v2.RequestVerificationHeader verify_header = 3;
+}
+
+message GetResponse {
+  message Body {
+    // Initialization parameters of the object got from NeoFS.
+    message Init {
+      // Object ID
+      refs.v2.ObjectID object_id = 1;
+      // Object signature
+      service.v2.Signature signature =2;
+      // Object header.
+      Header header = 3;
+    }
+    // Carries the single message of the response stream.
+    oneof object_part {
+      // Initialization parameters of the object stream.
+      Init init =1;
+      // Part of the object payload.
+      bytes chunk = 2;
+    }
+  }
+  // Body of get object response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  service.v2.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  service.v2.ResponseVerificationHeader verify_header = 3;
+}
+
+message PutRequest {
+  message Body {
+    // Groups initialization parameters of object placement in NeoFS.
+    message Init {
+      // Object ID, where available
+      refs.v2.ObjectID object_id = 1;
+      // Object signature, were available
+      service.v2.Signature signature =2;
+      // Header of the object to save in the system.
+      Header header = 3;
+      // Number of the object copies to store within the RPC call.
+      // Default zero value is processed according to the
+      // container placement rules.
+      uint32 copies_number = 4;
+    }
+
+    // Carries the single part of the query stream.
+    oneof object_part {
+      // Carries the initialization parameters of the object stream.
+      Init init = 1;
+      // Carries part of the object payload.
+      bytes chunk = 2;
+    }
+  }
+  // Body of put object request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate message
+  // transport and does not affect request execution.
+  service.v2.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to authenticate
+  // the nodes of the message route and check the correctness of transmission.
+  service.v2.RequestVerificationHeader verify_header = 3;
+}
+
+message PutResponse {
+  message Body {
+    // Carries identifier of the saved object.v2.
+    // It is used to access an object in the container.v2.
+    refs.v2.ObjectID object_id = 1;
+  }
+  // Body of put object response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  service.v2.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  service.v2.ResponseVerificationHeader verify_header = 3;
+}
+
+message DeleteRequest {
+  message Body {
+    // Carries the address of the object to be deleted.
+    refs.v2.Address address = 1;
+    // Carries identifier the object owner.
+    refs.v2.OwnerID owner_id = 2;
+  }
+  // Body of delete object request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate message
+  // transport and does not affect request execution.
+  service.v2.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to authenticate
+  // the nodes of the message route and check the correctness of transmission.
+  service.v2.RequestVerificationHeader verify_header = 3;
+}
+
+// DeleteResponse is empty because we cannot guarantee permanent object removal
+// in distributed system.
+message DeleteResponse {
+  message Body { }
+
+  // Body of delete object response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  service.v2.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  service.v2.ResponseVerificationHeader verify_header = 3;
+}
+
+message HeadRequest {
+  message Body {
+    // Address of the object with the requested header.
+    refs.v2.Address address = 1;
+    // Return only minimal header subset
+    bool main_only = 2;
+    // Carries the raw option flag of the request.
+    // Raw request is sent to receive only the headers of the objects
+    // that are physically stored on the server.
+    bool raw = 3;
+  }
+  // Body of head object request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate message
+  // transport and does not affect request execution.
+  service.v2.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to authenticate
+  // the nodes of the message route and check the correctness of transmission.
+  service.v2.RequestVerificationHeader verify_header = 3;
+}
+
+message HeadResponse {
+  message Body {
+    message ShortHeader {
+      // Object format version.
+      service.v2.Version version = 1;
+      // Epoch when the object was created
+      uint64 creation_epoch = 2;
+      // Object's owner
+      refs.v2.OwnerID owner_id = 3;
+      // Type of the object payload content
+      ObjectType object_type = 4;
+      // Size of payload in bytes.
+      // 0xFFFFFFFFFFFFFFFF means `payload_length` is unknown
+      uint64 payload_length = 5;
+    }
+    // Carries the requested object header or it's part
+    oneof head{
+      Header header = 1;
+      ShortHeader short_header = 2;
+    }
+  }
+  // Body of head object response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  service.v2.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  service.v2.ResponseVerificationHeader verify_header = 3;
+}
+
+message SearchRequest {
+  message Body {
+    // Carries search container identifier.
+    refs.v2.ContainerID container_id = 1;
+
+    message Query {
+      uint32 version = 1;
+
+      message Filter {
+        enum MatchType {
+          MATCH_UNKNOWN = 0;
+          STRING_EQUAL = 1;
+        }
+
+        MatchType match_type = 1;
+
+        string name = 2;
+
+        string value = 3;
+      }
+
+      repeated Filter filters = 2;
+    }
+
+    Query query = 2;
+  }
+
+  // Body of search object request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate message
+  // transport and does not affect request execution.
+  service.v2.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to authenticate
+  // the nodes of the message route and check the correctness of transmission.
+  service.v2.RequestVerificationHeader verify_header = 3;
+}
+
+message SearchResponse {
+  message Body {
+    // Carries list of object identifiers that match the search query.
+    repeated refs.v2.ObjectID id_list = 1;
+  }
+
+  // Body of search object response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  service.v2.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  service.v2.ResponseVerificationHeader verify_header = 3;
+}
+
+// Range groups the parameters of object payload range.
+message Range {
+  // Carries the offset of the range from the object payload start.
+  uint64 offset = 1;
+
+  // Carries the length of the object payload range.
+  uint64 length = 2;
+}
+
+message GetRangeRequest {
+  message Body {
+    // Address carries address of the object that contains the requested payload range.
+    refs.v2.Address address = 1;
+
+    // Range carries the parameters of the requested payload range.
+    Range range = 2;
+  }
+
+  // Body of get range object request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate message
+  // transport and does not affect request execution.
+  service.v2.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to authenticate
+  // the nodes of the message route and check the correctness of transmission.
+  service.v2.RequestVerificationHeader verify_header = 3;
+}
+
+message GetRangeResponse {
+  message Body {
+    // Carries part of the object payload.
+    bytes chunk = 1;
+  }
+
+  // Body of get range object response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  service.v2.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  service.v2.ResponseVerificationHeader verify_header = 3;
+}
+
+message GetRangeHashRequest {
+  message Body {
+    // Carries address of the object that contains the requested payload range.
+    refs.v2.Address address = 1;
+
+    // Carries the list of object payload range to calculate homomorphic hash.
+    repeated Range ranges = 2;
+
+    // Carries binary salt to XOR object payload ranges before hash calculation.
+    bytes salt = 3;
+  }
+
+  // Body of get range hash object request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate message
+  // transport and does not affect request execution.
+  service.v2.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to authenticate
+  // the nodes of the message route and check the correctness of transmission.
+  service.v2.RequestVerificationHeader verify_header = 3;
+}
+
+message GetRangeHashResponse {
+  message Body {
+    // Carries list of homomorphic hashes in a binary format.
+    repeated bytes hash_list = 1;
+  }
+
+  // Body of get range hash object response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  service.v2.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  service.v2.ResponseVerificationHeader verify_header = 3;
+}
+

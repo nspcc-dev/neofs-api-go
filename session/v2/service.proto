@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package session.v2;
+
+option go_package = "github.com/nspcc-dev/neofs-api-go/session/v2";
+option csharp_namespace = "NeoFS.API.Session";
+
+import "refs/v2/types.proto";
+import "service/v2/meta.proto";
+import "service/v2/verify.proto";
+
+service Session {
+  // Create opens new session between the client and the server.
+  rpc Create (CreateRequest) returns (CreateResponse);
+}
+
+// CreateRequest carries an information necessary for opening a session.v2.
+message CreateRequest {
+  message Body {
+    // Carries an identifier of a session initiator.
+    refs.v2.OwnerID owner_id = 1;
+
+    // Carries a lifetime of the session.v2.
+    service.v2.TokenLifetime lifetime = 2;
+  }
+
+  // Body of create session token request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate message
+  // transport and does not affect request execution.
+  service.v2.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to authenticate
+  // the nodes of the message route and check the correctness of transmission.
+  service.v2.RequestVerificationHeader verify_header = 3;
+}
+
+// CreateResponse carries an information about the opened session.v2.
+message CreateResponse {
+  message Body {
+    // id carries an identifier of session token.
+    bytes id = 1;
+
+    // session_key carries a session public key.
+    bytes session_key = 2;
+  }
+
+  // Body of create session token response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  service.v2.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  service.v2.ResponseVerificationHeader verify_header = 3;
+}
