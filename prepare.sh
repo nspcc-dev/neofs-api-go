@@ -18,15 +18,19 @@ for file in $ARGS; do
     dir=$(dirname $file)
     cp -r $dir $API_GO_PATH/$prefix
 done
-cd $API_GO_PATH/$prefix
 
 # MODIFY FILES
+cd $API_GO_PATH/$prefix
 for file in $ARGS; do
-	sed -i "s/import\ \"\(.*\)\";/import\ \"$prefix\/\1\";/" $file
+    sed -i "s/import\ \"\(.*\)\";/import\ \"$prefix\/\1\";/" $file
 done
 
+cd $API_GO_PATH
 # COMPILE
 make protoc
 
-# REMOVE PROTO FILES
-# TO BE DONE AS NEOFS-API WILL BE STABLE
+# REMOVE PROTO DEFINITIONS
+ARGS=$(find ./ -name '*.proto' -not -path './vendor/*')
+for file in $ARGS; do
+    rm $file
+done
