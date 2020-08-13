@@ -18,8 +18,9 @@ func TestOwnerID_StableMarshal(t *testing.T) {
 	gotOwner := new(OwnerID)
 
 	t.Run("small buffer", func(t *testing.T) {
-		_, err = expectedOwner.StableMarshal(make([]byte, 1))
-		require.Error(t, err)
+		require.Panics(t, func() {
+			expectedOwner.StableMarshal(make([]byte, 1))
+		})
 	})
 
 	t.Run("empty owner", func(t *testing.T) {
