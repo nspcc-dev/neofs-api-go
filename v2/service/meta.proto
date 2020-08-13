@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package neo.fs.v2.service;
+
+option go_package = "github.com/nspcc-dev/neofs-api-go/v2/service";
+option csharp_namespace = "NeoFS.API.Service";
+
+import "v2/acl/types.proto";
+import "v2/refs/types.proto";
+import "v2/service/verify.proto";
+
+message XHeader {
+  // Key of the X-Header.
+  string key = 1;
+  // Value of the X-Header.
+  string value = 2;
+}
+
+// Represents API version used by node.
+message Version {
+  // Major API version.
+  uint32 major = 1;
+  // Minor API version.
+  uint32 minor = 2;
+}
+
+// Lifetime parameters of the token. Filed names taken from rfc7519.
+message TokenLifetime {
+  // Expiration Epoch
+  uint64 exp = 1;
+  // Not valid before Epoch
+  uint64 nbf = 2;
+  // Issued at Epoch
+  uint64 iat = 3;
+}
+
+// NeoFS session token.
+message SessionToken {
+  message Body {
+    // ID is a token identifier. valid UUIDv4 represented in bytes
+    bytes id = 1;
+    // OwnerID carries identifier of the session initiator.
+    neo.fs.v2.refs.OwnerID owner_id = 2;
+    // Verb is an enumeration of session request types
+    enum Verb {
+      // Refers to object.Put RPC call
+      OBJECT_PUT = 0;
+      // Refers to object.Get RPC call
+      OBJECT_GET = 1;
+      // Refers to object.Head RPC call
+      OBJECT_HEAD = 2;
+      // Refers to object.Search RPC call
+      OBJECT_SEARCH = 3;
+      // Refers to object.Delete RPC call
+      OBJECT_DELETE = 4;
+      // Refers to object.GetRange RPC call
+      OBJECT_RANGE = 5;
+      // Refers to object.GetRangeHash RPC call
+      OBJECT_RANGEHASH = 6;
+    }
+    // Verb is a type of request for which the token is issued
+    Verb verb = 3;
+    // Lifetime is a lifetime of the session
+    TokenLifetime lifetime = 4;
+    // SessionKey is a public key of session key
+    bytes session_key = 5;
+    // Carries context of the session.
+    oneof context {
+      // object_address represents the object session context.
+      neo.fs.v2.refs.Address object_address = 6;
+    }
+  }
+  // Session Token body
+  Body token = 1;
+
+  // Signature is a signature of session token information
+  Signature signature = 2;
+}
+
+// BearerToken has information about request ACL rules with limited lifetime
+message BearerToken {
+  message Body {
+    // EACLTable carries table of extended ACL rules
+    neo.fs.v2.acl.EACLTable eacl_table = 1;
+    // OwnerID carries identifier of the token owner
+    neo.fs.v2.refs.OwnerID owner_id = 2;
+    // Token expiration and valid time period parameters
+    TokenLifetime lifetime = 3;
+  }
+  // Bearer Token body
+  Body token = 1;
+
+  // Signature of BearerToken body
+  Signature signature = 2;
+}
+
+// Information about the request
+message RequestMetaHeader {
+  // Client API version.
+  Version version = 1;
+  // Client local epoch number. Set to 0 if unknown.
+  uint64 epoch = 2;
+  // Maximum number of nodes in the request route.
+  uint32 ttl = 3;
+  // Request X-Headers.
+  repeated XHeader x_headers = 4;
+  // Token is a token of the session within which the request is sent
+  SessionToken token = 5;
+  // Bearer is a Bearer token of the request
+  BearerToken bearer = 6;
+
+  // RequestMetaHeader of the origin request.
+  RequestMetaHeader origin = 7;
+}
+
+// Information about the response
+message ResponseMetaHeader {
+  // Server API version.
+  Version version = 1;
+  // Server local epoch number.
+  uint64 epoch = 2;
+  // Maximum number of nodes in the response route.
+  uint32 ttl = 3;
+  // Response X-Headers.
+  repeated XHeader x_headers = 4;
+
+  // Carries response meta header of the origin response.
+  ResponseMetaHeader origin = 5;
+}

@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package neo.fs.v2.service;
+
+option go_package = "github.com/nspcc-dev/neofs-api-go/v2/service";
+option csharp_namespace = "NeoFS.API.Service";
+
+// Signature of something in NeoFS
+message Signature {
+  // Public key used for signing.
+  bytes key = 1;
+  // Signature
+  bytes sign = 2;
+}
+
+// Verification info for request signed by all intermediate nodes
+message RequestVerificationHeader {
+  // Request Body signature. Should be generated once by request initiator.
+  Signature body_signature = 1;
+  // Request Meta signature is added and signed by any intermediate node
+  Signature meta_signature = 2;
+  // Sign previous hops
+  Signature origin_signature = 3;
+
+  // Chain of previous hops signatures
+  RequestVerificationHeader origin = 4;
+}
+
+// Verification info for response signed by all intermediate nodes
+message ResponseVerificationHeader {
+  // Response Body signature. Should be generated once by answering node.
+  Signature body_signature = 1;
+  // Response Meta signature is added and signed by any intermediate node
+  Signature meta_signature = 2;
+  // Sign previous hops
+  Signature origin_signature = 3;
+
+  // Chain of previous hops signatures
+  ResponseVerificationHeader origin = 4;
+}
