@@ -1,0 +1,285 @@
+syntax = "proto3";
+
+package neo.fs.v2.container;
+
+option go_package = "github.com/nspcc-dev/neofs-api-go/v2/container";
+option csharp_namespace = "NeoFS.API.Container";
+
+import "v2/acl/types.proto";
+import "v2/container/types.proto";
+import "v2/refs/types.proto";
+import "v2/service/meta.proto";
+import "v2/service/verify.proto";
+
+// Service provides API to access container smart-contract in morph chain
+// via NeoFS node.
+service Service {
+  // Put invokes 'Put' method in container smart-contract and returns
+  // response immediately. After new block in morph chain, request is verified
+  // by inner ring nodes. After one more block in morph chain, container
+  // added into smart-contract storage.
+  rpc Put(PutRequest) returns (PutResponse);
+
+  // Delete invokes 'Delete' method in container smart-contract and returns
+  // response immediately. After new block in morph chain, request is verified
+  // by inner ring nodes. After one more block in morph chain, container
+  // removed from smart-contract storage.
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+
+  // Get returns container from container smart-contract storage.
+  rpc Get(GetRequest) returns (GetResponse);
+
+  // List returns all owner's containers from container smart-contract
+  // storage.
+  rpc List(ListRequest) returns (ListResponse);
+
+  // SetExtendedACL invokes 'SetEACL' method in container smart-contract and
+  // returns response immediately. After new block in morph chain,
+  // Extended ACL added into smart-contract storage.
+  rpc SetExtendedACL(SetExtendedACLRequest) returns (SetExtendedACLResponse);
+
+  // GetExtendedACL returns Extended ACL table and signature from container
+  // smart-contract storage.
+  rpc GetExtendedACL(GetExtendedACLRequest) returns (GetExtendedACLResponse);
+}
+
+message PutRequest {
+  message Body {
+    // Container to create in NeoFS.
+    neo.fs.v2.container.Container container = 1;
+
+    // Public Key of container owner. It can be public key of the owner
+    // or it can be public key that bound in neofs.id smart-contract.
+    bytes public_key = 2;
+
+    // Signature of stable-marshalled container according to RFC-6979.
+    bytes signature = 3;
+  }
+
+  // Body of container put request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  neo.fs.v2.service.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  neo.fs.v2.service.RequestVerificationHeader verify_header = 3;
+}
+
+message PutResponse {
+  message Body {
+    // container_id carries identifier of the new container.
+    neo.fs.v2.refs.ContainerID container_id = 1;
+  }
+
+  // Body of container put response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  neo.fs.v2.service.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  neo.fs.v2.service.ResponseVerificationHeader verify_header = 3;
+}
+
+message DeleteRequest {
+  message Body {
+    // container_id carries identifier of the container to delete
+    // from NeoFS.
+    neo.fs.v2.refs.ContainerID container_id = 1;
+
+    // Signature of container id according to RFC-6979.
+    bytes signature = 2;
+  }
+
+  // Body of container delete request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  neo.fs.v2.service.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  neo.fs.v2.service.RequestVerificationHeader verify_header = 3;
+}
+
+// DeleteResponse is empty because delete operation is asynchronous and done
+// via consensus in inner ring nodes
+message DeleteResponse {
+  message Body {}
+
+  // Body of container delete response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  neo.fs.v2.service.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  neo.fs.v2.service.ResponseVerificationHeader verify_header = 3;
+}
+
+message GetRequest {
+  message Body {
+    // container_id carries identifier of the container to get.
+    neo.fs.v2.refs.ContainerID container_id = 1;
+  }
+
+  // Body of container get request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  neo.fs.v2.service.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  neo.fs.v2.service.RequestVerificationHeader verify_header = 3;
+}
+
+message GetResponse {
+  message Body {
+    // Container that has been requested.
+    neo.fs.v2.container.Container container = 1;
+  }
+
+  // Body of container get response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  neo.fs.v2.service.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  neo.fs.v2.service.ResponseVerificationHeader verify_header = 3;
+}
+
+message ListRequest {
+  message Body {
+    // owner_id carries identifier of the container owner.
+    neo.fs.v2.refs.OwnerID owner_id = 1;
+  }
+
+  // Body of list containers request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  neo.fs.v2.service.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  neo.fs.v2.service.RequestVerificationHeader verify_header = 3;
+}
+
+message ListResponse {
+  message Body {
+    // ContainerIDs carries list of identifiers of the containers that belong to the owner.
+    repeated refs.ContainerID container_ids = 1;
+  }
+
+  // Body of list containers response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  neo.fs.v2.service.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  neo.fs.v2.service.ResponseVerificationHeader verify_header = 3;
+}
+
+message SetExtendedACLRequest {
+  message Body {
+    // Extended ACL to set for the container.
+    neo.fs.v2.acl.EACLTable eacl = 1;
+
+    // Signature of stable-marshalled Extended ACL according to RFC-6979.
+    bytes signature = 2;
+  }
+
+  // Body of set extended acl request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  neo.fs.v2.service.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  neo.fs.v2.service.RequestVerificationHeader verify_header = 3;
+}
+
+message SetExtendedACLResponse {
+  message Body { }
+
+  // Body of set extended acl response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  neo.fs.v2.service.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  neo.fs.v2.service.ResponseVerificationHeader verify_header = 3;
+}
+
+message GetExtendedACLRequest {
+  message Body {
+    // container_id carries identifier of the container that has Extended ACL.
+    neo.fs.v2.refs.ContainerID container_id = 1;
+  }
+
+  // Body of get extended acl request message.
+  Body body = 1;
+
+  // Carries request meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  neo.fs.v2.service.RequestMetaHeader meta_header = 2;
+
+  // Carries request verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  neo.fs.v2.service.RequestVerificationHeader verify_header = 3;
+}
+
+message GetExtendedACLResponse {
+  message Body {
+    // Extended ACL that has been requested if it was set up.
+   neo.fs.v2.acl.EACLTable eacl = 1;
+
+    // Signature of stable-marshalled Extended ACL according to RFC-6979.
+    bytes signature = 2;
+  }
+
+  // Body of get extended acl response message.
+  Body body = 1;
+
+  // Carries response meta information. Header data is used only to regulate
+  // message transport and does not affect request execution.
+  neo.fs.v2.service.ResponseMetaHeader meta_header = 2;
+
+  // Carries response verification information. This header is used to
+  // authenticate the nodes of the message route and check the correctness
+  // of transmission.
+  neo.fs.v2.service.ResponseVerificationHeader verify_header = 3;
+}
