@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 prefix=v2
 
@@ -9,35 +9,20 @@ fi
 
 API_GO_PATH=$(pwd)
 API_PATH=$1 
+mkdir $API_GO_PATH/$prefix 2>/dev/null
 
 # MOVE FILES FROM API REPO
 cd $API_PATH
 ARGS=$(find ./ -name '*.proto' -not -path './vendor/*')
 for file in $ARGS; do
     dir=$(dirname $file)
-    cp -r $dir $API_GO_PATH
+    cp -r $dir $API_GO_PATH/$prefix
 done
-cd $API_GO_PATH
+cd $API_GO_PATH/$prefix
 
 # MODIFY FILES
 for file in $ARGS; do
-    TYPES=$(grep '^import' $file | sed 's/import\ \"\(.*\)\/.*/\1/' | sort | uniq)
-    PKG=$(grep '^package' $file | sed 's/package\ \(.*\);/\1/')
-
-    TYPES=( "${TYPES[@]}" "${PKG[@]}") # merge two arrays
-    TYPES=$(printf "%s\n" "${TYPES[@]}" | sort | uniq) # left only uniq elemetns
-
-    for t in $TYPES; do
-        sed -i "s/$t\./$t\.$prefix\./" $file
-        sed -i "s/$t\//$t\/$prefix\//" $file
-    done 
-
-    sed -i "s/^package\(.*\);/package\1.$prefix;/" $file
-    sed -i "s/go_package\(.*\)\";$/go_package\1\/$prefix\";/" $file
-
-    dir=$(dirname $file)
-    mkdir $dir/v2 2>/dev/null
-    mv $file $dir/v2
+	sed -i "s/import\ \"\(.*\)\";/import\ \"$prefix\/\1\";/" $file
 done
 
 # COMPILE
