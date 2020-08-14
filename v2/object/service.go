@@ -368,35 +368,35 @@ func (m *HeadResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
 }
 
 // SetMatchType sets match type of the filter.
-func (m *SearchRequest_Body_Query_Filter) SetMatchType(v SearchRequest_Body_Query_Filter_MatchType) {
+func (m *SearchRequest_Body_Filter) SetMatchType(v SearchRequest_Body_Filter_MatchType) {
 	if m != nil {
 		m.MatchType = v
 	}
 }
 
 // SetName sets name of the filtering header.
-func (m *SearchRequest_Body_Query_Filter) SetName(v string) {
+func (m *SearchRequest_Body_Filter) SetName(v string) {
 	if m != nil {
 		m.Name = v
 	}
 }
 
 // SetValue sets value of the filtering header.
-func (m *SearchRequest_Body_Query_Filter) SetValue(v string) {
+func (m *SearchRequest_Body_Filter) SetValue(v string) {
 	if m != nil {
 		m.Value = v
 	}
 }
 
 // SetVersion sets version of the search query.
-func (m *SearchRequest_Body_Query) SetVersion(v uint32) {
+func (m *SearchRequest_Body) SetVersion(v uint32) {
 	if m != nil {
 		m.Version = v
 	}
 }
 
 // SetFilters sets list of the query filters.
-func (m *SearchRequest_Body_Query) SetFilters(v []*SearchRequest_Body_Query_Filter) {
+func (m *SearchRequest_Body) SetFilters(v []*SearchRequest_Body_Filter) {
 	if m != nil {
 		m.Filters = v
 	}
@@ -406,13 +406,6 @@ func (m *SearchRequest_Body_Query) SetFilters(v []*SearchRequest_Body_Query_Filt
 func (m *SearchRequest_Body) SetContainerId(v *refs.ContainerID) {
 	if m != nil {
 		m.ContainerId = v
-	}
-}
-
-// SetQuery sets search query structure.
-func (m *SearchRequest_Body) SetQuery(v *SearchRequest_Body_Query) {
-	if m != nil {
-		m.Query = v
 	}
 }
 

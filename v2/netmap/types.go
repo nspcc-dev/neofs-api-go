@@ -1,97 +1,97 @@
 package netmap
 
 // SetOp sets operation of the simple filter.
-func (m *PlacementRule_SFGroup_Filter_SimpleFilter) SetOp(v PlacementRule_SFGroup_Filter_SimpleFilter_Operation) {
+func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) SetOp(v PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation) {
 	if m != nil {
 		m.Op = v
 	}
 }
 
 // SetValue sets value of the simple filter.
-func (m *PlacementRule_SFGroup_Filter_SimpleFilter) SetValue(v string) {
+func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) SetValue(v string) {
 	if m != nil {
-		m.Args = &PlacementRule_SFGroup_Filter_SimpleFilter_Value{
+		m.Args = &PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value{
 			Value: v,
 		}
 	}
 }
 
 // SetFArgs sets filter args of the simple filter.
-func (m *PlacementRule_SFGroup_Filter_SimpleFilter) SetFArgs(v *PlacementRule_SFGroup_Filter_SimpleFilters) {
+func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) SetFArgs(v *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) {
 	if m != nil {
-		m.Args = &PlacementRule_SFGroup_Filter_SimpleFilter_FArgs{
+		m.Args = &PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs{
 			FArgs: v,
 		}
 	}
 }
 
 // SetFilters sets list of the simple filters.
-func (m *PlacementRule_SFGroup_Filter_SimpleFilters) SetFilters(v []*PlacementRule_SFGroup_Filter_SimpleFilter) {
+func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) SetFilters(v []*PlacementPolicy_FilterGroup_Filter_SimpleFilter) {
 	if m != nil {
 		m.Filters = v
 	}
 }
 
 // SeyKey sets key of the filter.
-func (m *PlacementRule_SFGroup_Filter) SeyKey(v string) {
+func (m *PlacementPolicy_FilterGroup_Filter) SeyKey(v string) {
 	if m != nil {
 		m.Key = v
 	}
 }
 
 // SetF sets simple filter of the filter.
-func (m *PlacementRule_SFGroup_Filter) SetF(v *PlacementRule_SFGroup_Filter_SimpleFilter) {
+func (m *PlacementPolicy_FilterGroup_Filter) SetF(v *PlacementPolicy_FilterGroup_Filter_SimpleFilter) {
 	if m != nil {
 		m.F = v
 	}
 }
 
 // SetCount sets count value of the selector.
-func (m *PlacementRule_SFGroup_Selector) SetCount(v uint32) {
+func (m *PlacementPolicy_FilterGroup_Selector) SetCount(v uint32) {
 	if m != nil {
 		m.Count = v
 	}
 }
 
 // SetKey sets key of the selector.
-func (m *PlacementRule_SFGroup_Selector) SetKey(v string) {
+func (m *PlacementPolicy_FilterGroup_Selector) SetKey(v string) {
 	if m != nil {
 		m.Key = v
 	}
 }
 
 // SetFilters sets list of the filters.
-func (m *PlacementRule_SFGroup) SetFilters(v []*PlacementRule_SFGroup_Filter) {
+func (m *PlacementPolicy_FilterGroup) SetFilters(v []*PlacementPolicy_FilterGroup_Filter) {
 	if m != nil {
 		m.Filters = v
 	}
 }
 
 // SetSelectors sets list of the selectors.
-func (m *PlacementRule_SFGroup) SetSelectors(v []*PlacementRule_SFGroup_Selector) {
+func (m *PlacementPolicy_FilterGroup) SetSelectors(v []*PlacementPolicy_FilterGroup_Selector) {
 	if m != nil {
 		m.Selectors = v
 	}
 }
 
 // SetExclude sets exclude list.
-func (m *PlacementRule_SFGroup) SetExclude(v []uint32) {
+func (m *PlacementPolicy_FilterGroup) SetExclude(v []uint32) {
 	if m != nil {
 		m.Exclude = v
 	}
 }
 
 // SetReplFactor sets replication factor of the placement rule.
-func (m *PlacementRule) SetReplFactor(v uint32) {
+func (m *PlacementPolicy) SetReplFactor(v uint32) {
 	if m != nil {
 		m.ReplFactor = v
 	}
 }
 
 // SetSfGroups sets list of the selector-filter groups.
-func (m *PlacementRule) SetSfGroups(v []*PlacementRule_SFGroup) {
+func (m *PlacementPolicy) SetSfGroups(v []*PlacementPolicy_FilterGroup) {
 	if m != nil {
-		m.SfGroups = v
+		m.FilterGroups = v
 	}
 }
 

@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (m *PlacementRule) StableMarshal(buf []byte) ([]byte, error) {
+func (m *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
 	if m == nil {
 		return []byte{}, nil
 	}
@@ -27,13 +27,13 @@ func (m *PlacementRule) StableMarshal(buf []byte) ([]byte, error) {
 	i += 1 + offset
 
 	// write select/filter groups field
-	for j := range m.SfGroups {
+	for j := range m.FilterGroups {
 		buf[i] = 0x12 // id:0x2 << 3 | wiretype:0x2
 
-		n, _ = m.SfGroups[j].stableSizeWithExclude()
+		n, _ = m.FilterGroups[j].stableSizeWithExclude()
 		offset = binary.PutUvarint(buf[i+1:], uint64(n))
 
-		_, err := m.SfGroups[j].StableMarshal(buf[i+1+offset:])
+		_, err := m.FilterGroups[j].StableMarshal(buf[i+1+offset:])
 		if err != nil {
 			return nil, errors.Wrapf(err, "can't marshal SFGroup id:%d", j)
 		}
@@ -44,7 +44,7 @@ func (m *PlacementRule) StableMarshal(buf []byte) ([]byte, error) {
 	return buf, nil
 }
 
-func (m *PlacementRule) StableSize() int {
+func (m *PlacementPolicy) StableSize() int {
 	if m == nil {
 		return 0
 	}
@@ -57,15 +57,15 @@ func (m *PlacementRule) StableSize() int {
 	// size of replication factor field
 	size += 1 + uvarIntSize(uint64(m.ReplFactor)) // wiretype + varint
 
-	for i := range m.SfGroups {
-		ln, _ = m.SfGroups[i].stableSizeWithExclude()
+	for i := range m.FilterGroups {
+		ln, _ = m.FilterGroups[i].stableSizeWithExclude()
 		size += 1 + uvarIntSize(uint64(ln)) + ln // wiretype + size of struct + struct
 	}
 
 	return size
 }
 
-func (m *PlacementRule_SFGroup) StableMarshal(buf []byte) ([]byte, error) {
+func (m *PlacementPolicy_FilterGroup) StableMarshal(buf []byte) ([]byte, error) {
 	if m == nil {
 		return []byte{}, nil
 	}
@@ -115,7 +115,7 @@ func (m *PlacementRule_SFGroup) StableMarshal(buf []byte) ([]byte, error) {
 	return buf, nil
 }
 
-func (m *PlacementRule_SFGroup) stableSizeWithExclude() (int, int) {
+func (m *PlacementPolicy_FilterGroup) stableSizeWithExclude() (int, int) {
 	if m == nil {
 		return 0, 0
 	}
@@ -146,7 +146,7 @@ func (m *PlacementRule_SFGroup) stableSizeWithExclude() (int, int) {
 	return size, ln
 }
 
-func (m *PlacementRule_SFGroup_Selector) StableMarshal(buf []byte) ([]byte, error) {
+func (m *PlacementPolicy_FilterGroup_Selector) StableMarshal(buf []byte) ([]byte, error) {
 	if m == nil {
 		return []byte{}, nil
 	}
@@ -172,7 +172,7 @@ func (m *PlacementRule_SFGroup_Selector) StableMarshal(buf []byte) ([]byte, erro
 	return buf, nil
 }
 
-func (m *PlacementRule_SFGroup_Selector) stableSize() int {
+func (m *PlacementPolicy_FilterGroup_Selector) stableSize() int {
 	if m == nil {
 		return 0
 	}
@@ -191,7 +191,7 @@ func (m *PlacementRule_SFGroup_Selector) stableSize() int {
 	return size
 }
 
-func (m *PlacementRule_SFGroup_Filter) StableMarshal(buf []byte) ([]byte, error) {
+func (m *PlacementPolicy_FilterGroup_Filter) StableMarshal(buf []byte) ([]byte, error) {
 	if m == nil {
 		return []byte{}, nil
 	}
@@ -224,7 +224,7 @@ func (m *PlacementRule_SFGroup_Filter) StableMarshal(buf []byte) ([]byte, error)
 	return buf, nil
 }
 
-func (m *PlacementRule_SFGroup_Filter) stableSize() int {
+func (m *PlacementPolicy_FilterGroup_Filter) stableSize() int {
 	if m == nil {
 		return 0
 	}
@@ -246,7 +246,7 @@ func (m *PlacementRule_SFGroup_Filter) stableSize() int {
 	return size
 }
 
-func (m *PlacementRule_SFGroup_Filter_SimpleFilter) StableMarshal(buf []byte) ([]byte, error) {
+func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) StableMarshal(buf []byte) ([]byte, error) {
 	if m == nil {
 		return []byte{}, nil
 	}
@@ -265,11 +265,11 @@ func (m *PlacementRule_SFGroup_Filter_SimpleFilter) StableMarshal(buf []byte) ([
 	i += 1 + offset
 
 	// write value if present
-	if val, ok := m.Args.(*PlacementRule_SFGroup_Filter_SimpleFilter_Value); ok {
+	if val, ok := m.Args.(*PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value); ok {
 		buf[i] = 0x12 // id:0x2 << 3 | wiretype:0x2
 		offset = binary.PutUvarint(buf[i+1:], uint64(len(val.Value)))
 		copy(buf[i+1+offset:], val.Value)
-	} else if filters, ok := m.Args.(*PlacementRule_SFGroup_Filter_SimpleFilter_FArgs); ok {
+	} else if filters, ok := m.Args.(*PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs); ok {
 		if filters.FArgs != nil {
 			buf[i] = 0x1A // id:0x3 << 3 | wiretype:0x2
 			n = filters.FArgs.stableSize()
@@ -284,7 +284,7 @@ func (m *PlacementRule_SFGroup_Filter_SimpleFilter) StableMarshal(buf []byte) ([
 	return buf, nil
 }
 
-func (m *PlacementRule_SFGroup_Filter_SimpleFilter) stableSize() int {
+func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) stableSize() int {
 	if m == nil {
 		return 0
 	}
@@ -296,11 +296,11 @@ func (m *PlacementRule_SFGroup_Filter_SimpleFilter) stableSize() int {
 	// size of key field
 	size += 1 + uvarIntSize(uint64(m.Op))
 
-	if val, ok := m.Args.(*PlacementRule_SFGroup_Filter_SimpleFilter_Value); ok {
+	if val, ok := m.Args.(*PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value); ok {
 		// size of value if present
 		ln = len(val.Value)
 		size += 1 + uvarIntSize(uint64(ln)) + ln
-	} else if filters, ok := m.Args.(*PlacementRule_SFGroup_Filter_SimpleFilter_FArgs); ok {
+	} else if filters, ok := m.Args.(*PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs); ok {
 		// size of simple filters if present
 		if filters.FArgs != nil {
 			ln = filters.FArgs.stableSize()
@@ -311,7 +311,7 @@ func (m *PlacementRule_SFGroup_Filter_SimpleFilter) stableSize() int {
 	return size
 }
 
-func (m *PlacementRule_SFGroup_Filter_SimpleFilters) StableMarshal(buf []byte) ([]byte, error) {
+func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) StableMarshal(buf []byte) ([]byte, error) {
 	if m == nil {
 		return []byte{}, nil
 	}
@@ -339,7 +339,7 @@ func (m *PlacementRule_SFGroup_Filter_SimpleFilters) StableMarshal(buf []byte) (
 	return buf, nil
 }
 
-func (m *PlacementRule_SFGroup_Filter_SimpleFilters) stableSize() int {
+func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) stableSize() int {
 	if m == nil {
 		return 0
 	}

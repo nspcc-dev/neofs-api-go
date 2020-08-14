@@ -23,17 +23,17 @@ var (
 				Value: "Mir",
 			},
 		},
-		Rules: &netmap.PlacementRule{
+		PlacementPolicy: &netmap.PlacementPolicy{
 			ReplFactor: 4,
-			SfGroups: []*netmap.PlacementRule_SFGroup{
+			FilterGroups: []*netmap.PlacementPolicy_FilterGroup{
 				{
-					Selectors: []*netmap.PlacementRule_SFGroup_Selector{
+					Selectors: []*netmap.PlacementPolicy_FilterGroup_Selector{
 						{
 							Count: 1,
 							Key:   "Node",
 						},
 					},
-					Filters: []*netmap.PlacementRule_SFGroup_Filter{
+					Filters: []*netmap.PlacementPolicy_FilterGroup_Filter{
 						{
 							Key: "City",
 						},
