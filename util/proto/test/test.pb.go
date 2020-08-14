@@ -22,17 +22,46 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+type Primitives_SomeEnum int32
+
+const (
+	Primitives_UNKNOWN  Primitives_SomeEnum = 0
+	Primitives_POSITIVE Primitives_SomeEnum = 1
+	Primitives_NEGATIVE Primitives_SomeEnum = -1
+)
+
+var Primitives_SomeEnum_name = map[int32]string{
+	0:  "UNKNOWN",
+	1:  "POSITIVE",
+	-1: "NEGATIVE",
+}
+
+var Primitives_SomeEnum_value = map[string]int32{
+	"UNKNOWN":  0,
+	"POSITIVE": 1,
+	"NEGATIVE": -1,
+}
+
+func (x Primitives_SomeEnum) String() string {
+	return proto.EnumName(Primitives_SomeEnum_name, int32(x))
+}
+
+func (Primitives_SomeEnum) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_998ad0e1a3de8558, []int{0, 0}
+}
+
 type Primitives struct {
-	FieldA               []byte   `protobuf:"bytes,1,opt,name=field_a,json=fieldA,proto3" json:"field_a,omitempty"`
-	FieldB               string   `protobuf:"bytes,2,opt,name=field_b,json=fieldB,proto3" json:"field_b,omitempty"`
-	FieldC               bool     `protobuf:"varint,200,opt,name=field_c,json=fieldC,proto3" json:"field_c,omitempty"`
-	FieldD               int32    `protobuf:"varint,201,opt,name=field_d,json=fieldD,proto3" json:"field_d,omitempty"`
-	FieldE               uint32   `protobuf:"varint,202,opt,name=field_e,json=fieldE,proto3" json:"field_e,omitempty"`
-	FieldF               int64    `protobuf:"varint,203,opt,name=field_f,json=fieldF,proto3" json:"field_f,omitempty"`
-	FieldG               uint64   `protobuf:"varint,204,opt,name=field_g,json=fieldG,proto3" json:"field_g,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	FieldA               []byte              `protobuf:"bytes,1,opt,name=field_a,json=fieldA,proto3" json:"field_a,omitempty"`
+	FieldB               string              `protobuf:"bytes,2,opt,name=field_b,json=fieldB,proto3" json:"field_b,omitempty"`
+	FieldC               bool                `protobuf:"varint,200,opt,name=field_c,json=fieldC,proto3" json:"field_c,omitempty"`
+	FieldD               int32               `protobuf:"varint,201,opt,name=field_d,json=fieldD,proto3" json:"field_d,omitempty"`
+	FieldE               uint32              `protobuf:"varint,202,opt,name=field_e,json=fieldE,proto3" json:"field_e,omitempty"`
+	FieldF               int64               `protobuf:"varint,203,opt,name=field_f,json=fieldF,proto3" json:"field_f,omitempty"`
+	FieldG               uint64              `protobuf:"varint,204,opt,name=field_g,json=fieldG,proto3" json:"field_g,omitempty"`
+	FieldH               Primitives_SomeEnum `protobuf:"varint,300,opt,name=field_h,json=fieldH,proto3,enum=test.Primitives_SomeEnum" json:"field_h,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
 }
 
 func (m *Primitives) Reset()         { *m = Primitives{} }
@@ -117,26 +146,38 @@ func (m *Primitives) GetFieldG() uint64 {
 	return 0
 }
 
+func (m *Primitives) GetFieldH() Primitives_SomeEnum {
+	if m != nil {
+		return m.FieldH
+	}
+	return Primitives_UNKNOWN
+}
+
 func init() {
+	proto.RegisterEnum("test.Primitives_SomeEnum", Primitives_SomeEnum_name, Primitives_SomeEnum_value)
 	proto.RegisterType((*Primitives)(nil), "test.Primitives")
 }
 
 func init() { proto.RegisterFile("util/proto/test/test.proto", fileDescriptor_998ad0e1a3de8558) }
 
 var fileDescriptor_998ad0e1a3de8558 = []byte{
-	// 178 bytes of a gzipped FileDescriptorProto
+	// 254 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2a, 0x2d, 0xc9, 0xcc,
 	0xd1, 0x2f, 0x28, 0xca, 0x2f, 0xc9, 0xd7, 0x2f, 0x49, 0x2d, 0x2e, 0x01, 0x13, 0x7a, 0x60, 0xbe,
-	0x10, 0x0b, 0x88, 0xad, 0x74, 0x80, 0x91, 0x8b, 0x2b, 0xa0, 0x28, 0x33, 0x37, 0xb3, 0x24, 0xb3,
+	0x10, 0x0b, 0x88, 0xad, 0xb4, 0x99, 0x89, 0x8b, 0x2b, 0xa0, 0x28, 0x33, 0x37, 0xb3, 0x24, 0xb3,
 	0x2c, 0xb5, 0x58, 0x48, 0x9c, 0x8b, 0x3d, 0x2d, 0x33, 0x35, 0x27, 0x25, 0x3e, 0x51, 0x82, 0x51,
 	0x81, 0x51, 0x83, 0x27, 0x88, 0x0d, 0xcc, 0x75, 0x44, 0x48, 0x24, 0x49, 0x30, 0x29, 0x30, 0x6a,
 	0x70, 0x42, 0x25, 0x9c, 0x84, 0x24, 0x60, 0x12, 0xc9, 0x12, 0x27, 0x40, 0x5a, 0x38, 0xa0, 0x32,
 	0xce, 0x08, 0x99, 0x14, 0x89, 0x93, 0x20, 0x19, 0x56, 0xa8, 0x8c, 0x0b, 0x42, 0x26, 0x55, 0xe2,
 	0x14, 0x48, 0x86, 0x17, 0x2a, 0xe3, 0x8a, 0x90, 0x49, 0x93, 0x38, 0x0d, 0x92, 0x61, 0x86, 0xca,
-	0xb8, 0x21, 0x64, 0xd2, 0x25, 0xce, 0x80, 0x64, 0x58, 0xa0, 0x32, 0xee, 0x4e, 0x02, 0x27, 0x1e,
-	0xc9, 0x31, 0x5e, 0x78, 0x24, 0xc7, 0xf8, 0xe0, 0x91, 0x1c, 0xe3, 0x8c, 0xc7, 0x72, 0x0c, 0x49,
-	0x6c, 0x60, 0x1f, 0x1a, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0xcc, 0xee, 0x55, 0x82, 0xff, 0x00,
-	0x00, 0x00,
+	0xb8, 0x21, 0x64, 0xd2, 0x25, 0xce, 0x80, 0x64, 0x58, 0xa0, 0x32, 0xee, 0x42, 0xc6, 0x30, 0x99,
+	0x0c, 0x89, 0x35, 0x20, 0xb7, 0xf1, 0x19, 0x49, 0xea, 0x81, 0xfd, 0x89, 0xf0, 0x97, 0x5e, 0x70,
+	0x7e, 0x6e, 0xaa, 0x6b, 0x5e, 0x69, 0x2e, 0x54, 0x93, 0x87, 0x92, 0x0d, 0x17, 0x07, 0x4c, 0x4c,
+	0x88, 0x9b, 0x8b, 0x3d, 0xd4, 0xcf, 0xdb, 0xcf, 0x3f, 0xdc, 0x4f, 0x80, 0x41, 0x88, 0x87, 0x8b,
+	0x23, 0xc0, 0x3f, 0xd8, 0x33, 0xc4, 0x33, 0xcc, 0x55, 0x80, 0x51, 0x48, 0x94, 0x8b, 0xc3, 0xcf,
+	0xd5, 0xdd, 0x11, 0xcc, 0xfb, 0x0f, 0x03, 0x8c, 0x4e, 0x02, 0x27, 0x1e, 0xc9, 0x31, 0x5e, 0x78,
+	0x24, 0xc7, 0xf8, 0xe0, 0x91, 0x1c, 0xe3, 0x8c, 0xc7, 0x72, 0x0c, 0x49, 0x6c, 0xe0, 0x40, 0x35,
+	0x06, 0x04, 0x00, 0x00, 0xff, 0xff, 0x10, 0xfa, 0xa0, 0xf4, 0x72, 0x01, 0x00, 0x00,
 }
 
 func (m *Primitives) Marshal() (dAtA []byte, err error) {
@@ -162,6 +203,13 @@ func (m *Primitives) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.XXX_unrecognized != nil {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.FieldH != 0 {
+		i = encodeVarintTest(dAtA, i, uint64(m.FieldH))
+		i--
+		dAtA[i] = 0x12
+		i--
+		dAtA[i] = 0xe0
 	}
 	if m.FieldG != 0 {
 		i = encodeVarintTest(dAtA, i, uint64(m.FieldG))
@@ -259,6 +307,9 @@ func (m *Primitives) Size() (n int) {
 	}
 	if m.FieldG != 0 {
 		n += 2 + sovTest(uint64(m.FieldG))
+	}
+	if m.FieldH != 0 {
+		n += 2 + sovTest(uint64(m.FieldH))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -459,6 +510,25 @@ func (m *Primitives) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.FieldG |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 300:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FieldH", wireType)
+			}
+			m.FieldH = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTest
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.FieldH |= Primitives_SomeEnum(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}

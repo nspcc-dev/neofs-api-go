@@ -10,4 +10,11 @@ message Primitives {
     uint32 field_e = 202;
     int64 field_f  = 203;
     uint64 field_g = 204;
+
+    enum SomeEnum {
+        UNKNOWN = 0;
+        POSITIVE = 1;
+        NEGATIVE = -1;
+    }
+    SomeEnum field_h = 300;
 }

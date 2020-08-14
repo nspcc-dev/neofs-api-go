@@ -120,6 +120,14 @@ func Int32Size(field int, v int32) int {
 	return UInt64Size(field, uint64(v))
 }
 
+func EnumMarshal(field int, buf []byte, v int32) (int, error) {
+	return UInt64Marshal(field, buf, uint64(v))
+}
+
+func EnumSize(field int, v int32) int {
+	return UInt64Size(field, uint64(v))
+}
+
 // varUIntSize returns length of varint byte sequence for uint64 value 'x'.
 func VarUIntSize(x uint64) int {
 	return (bits.Len64(x|1) + 6) / 7
