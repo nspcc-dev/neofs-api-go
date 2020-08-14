@@ -18,3 +18,12 @@ message Primitives {
     }
     SomeEnum field_h = 300;
 }
+
+message RepPrimitives {
+    repeated bytes field_a  = 1;
+    repeated string field_b = 2;
+    repeated int32 field_c  = 3;
+    repeated uint32 field_d = 4;
+    repeated int64 field_e  = 5;
+    repeated uint64 field_f = 6;
+}

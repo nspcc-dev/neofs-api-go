@@ -128,6 +128,165 @@ func EnumSize(field int, v int32) int {
 	return UInt64Size(field, uint64(v))
 }
 
+func RepeatedBytesMarshal(field int, buf []byte, v [][]byte) (int, error) {
+	var offset int
+
+	for i := range v {
+		off, err := BytesMarshal(field, buf[offset:], v[i])
+		if err != nil {
+			return 0, err
+		}
+
+		offset += off
+	}
+
+	return offset, nil
+}
+
+func RepeatedBytesSize(field int, v [][]byte) (size int) {
+	for i := range v {
+		size += BytesSize(field, v[i])
+	}
+
+	return size
+}
+
+func RepeatedStringMarshal(field int, buf []byte, v []string) (int, error) {
+	var offset int
+
+	for i := range v {
+		off, err := StringMarshal(field, buf[offset:], v[i])
+		if err != nil {
+			return 0, err
+		}
+
+		offset += off
+	}
+
+	return offset, nil
+}
+
+func RepeatedStringSize(field int, v []string) (size int) {
+	for i := range v {
+		size += StringSize(field, v[i])
+	}
+
+	return size
+}
+
+func RepeatedUInt64Marshal(field int, buf []byte, v []uint64) (int, error) {
+	if len(v) == 0 {
+		return 0, nil
+	}
+
+	prefix := field<<3 | 0x02
+	offset := binary.PutUvarint(buf, uint64(prefix))
+
+	_, arrSize := RepeatedUInt64Size(field, v)
+	offset += binary.PutUvarint(buf[offset:], uint64(arrSize))
+	for i := range v {
+		offset += binary.PutUvarint(buf[offset:], v[i])
+	}
+
+	return offset, nil
+}
+
+func RepeatedUInt64Size(field int, v []uint64) (size, arraySize int) {
+	if len(v) == 0 {
+		return 0, 0
+	}
+
+	for i := range v {
+		size += VarUIntSize(v[i])
+	}
+	arraySize = size
+
+	size += VarUIntSize(uint64(size))
+
+	prefix := field<<3 | 0x2
+	size += VarUIntSize(uint64(prefix))
+
+	return size, arraySize
+}
+
+func RepeatedInt64Marshal(field int, buf []byte, v []int64) (int, error) {
+	if len(v) == 0 {
+		return 0, nil
+	}
+
+	convert := make([]uint64, len(v))
+	for i := range v {
+		convert[i] = uint64(v[i])
+	}
+
+	return RepeatedUInt64Marshal(field, buf, convert)
+}
+
+func RepeatedInt64Size(field int, v []int64) (size, arraySize int) {
+	if len(v) == 0 {
+		return 0, 0
+	}
+
+	convert := make([]uint64, len(v))
+	for i := range v {
+		convert[i] = uint64(v[i])
+	}
+
+	return RepeatedUInt64Size(field, convert)
+}
+
+func RepeatedUInt32Marshal(field int, buf []byte, v []uint32) (int, error) {
+	if len(v) == 0 {
+		return 0, nil
+	}
+
+	convert := make([]uint64, len(v))
+	for i := range v {
+		convert[i] = uint64(v[i])
+	}
+
+	return RepeatedUInt64Marshal(field, buf, convert)
+}
+
+func RepeatedUInt32Size(field int, v []uint32) (size, arraySize int) {
+	if len(v) == 0 {
+		return 0, 0
+	}
+
+	convert := make([]uint64, len(v))
+	for i := range v {
+		convert[i] = uint64(v[i])
+	}
+
+	return RepeatedUInt64Size(field, convert)
+}
+
+func RepeatedInt32Marshal(field int, buf []byte, v []int32) (int, error) {
+	if len(v) == 0 {
+		return 0, nil
+	}
+
+	convert := make([]uint64, len(v))
+	for i := range v {
+		convert[i] = uint64(v[i])
+	}
+
+	return RepeatedUInt64Marshal(field, buf, convert)
+}
+
+func RepeatedInt32Size(field int, v []int32) (size, arraySize int) {
+	if len(v) == 0 {
+		return 0, 0
+	}
+
+	convert := make([]uint64, len(v))
+	for i := range v {
+		convert[i] = uint64(v[i])
+	}
+
+	return RepeatedUInt64Size(field, convert)
+}
+
 // varUIntSize returns length of varint byte sequence for uint64 value 'x'.
 func VarUIntSize(x uint64) int {
 	return (bits.Len64(x|1) + 6) / 7
