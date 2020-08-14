@@ -38,6 +38,14 @@ func BytesSize(field int, v []byte) int {
 	return VarUIntSize(uint64(prefix)) + VarUIntSize(uint64(ln)) + ln
 }
 
+func StringMarshal(field int, buf []byte, v string) (int, error) {
+	return BytesMarshal(field, buf, []byte(v))
+}
+
+func StringSize(field int, v string) int {
+	return BytesSize(field, []byte(v))
+}
+
 // varUIntSize returns length of varint byte sequence for uint64 value 'x'.
 func VarUIntSize(x uint64) int {
 	return (bits.Len64(x|1) + 6) / 7
