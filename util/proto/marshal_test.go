@@ -10,6 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+type SomeEnum int32
+
 type stablePrimitives struct {
 	FieldA []byte
 	FieldB string
@@ -18,7 +20,14 @@ type stablePrimitives struct {
 	FieldE uint32
 	FieldF int64
 	FieldG uint64
+	FieldH SomeEnum
 }
+
+const (
+	ENUM_UNKNOWN  SomeEnum = 0
+	ENUM_POSITIVE          = 1
+	ENUM_NEGATIVE          = -1
+)
 
 func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, error) {
 	if s == nil {
@@ -103,6 +112,16 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	}
 	i += offset
 
+	fieldNum = 300
+	if wrongField {
+		fieldNum++
+	}
+	offset, err = proto.EnumMarshal(fieldNum, buf, int32(s.FieldH))
+	if err != nil {
+		return nil, errors.Wrap(err, "can't marshal field g")
+	}
+	i += offset
+
 	return buf, nil
 }
 
@@ -113,7 +132,8 @@ func (s *stablePrimitives) stableSize() int {
 		proto.Int32Size(201, s.FieldD) +
 		proto.UInt32Size(202, s.FieldE) +
 		proto.Int64Size(203, s.FieldF) +
-		proto.UInt64Size(204, s.FieldG)
+		proto.UInt64Size(204, s.FieldG) +
+		proto.EnumSize(300, int32(s.FieldH))
 }
 
 func TestBytesMarshal(t *testing.T) {
@@ -207,6 +227,14 @@ func TestUInt64Marshal(t *testing.T) {
 		testUInt64Marshal(t, math.MaxUint64, false)
 		testUInt64Marshal(t, math.MaxUint64, true)
 	})
+}
+
+func TestEnumMarshal(t *testing.T) {
+	testEnumMarshal(t, ENUM_UNKNOWN, false)
+	testEnumMarshal(t, ENUM_POSITIVE, false)
+	testEnumMarshal(t, ENUM_POSITIVE, true)
+	testEnumMarshal(t, ENUM_NEGATIVE, false)
+	testEnumMarshal(t, ENUM_NEGATIVE, true)
 }
 
 func testBytesMarshal(t *testing.T, data []byte, wrongField bool) {
@@ -396,5 +424,38 @@ func testUInt64Marshal(t *testing.T, n uint64, wrongField bool) {
 		require.Equal(t, n, result.FieldG)
 	} else {
 		require.EqualValues(t, 0, result.FieldG)
+	}
+}
+
+func testEnumMarshal(t *testing.T, e SomeEnum, wrongField bool) {
+	var (
+		wire []byte
+		err  error
+
+		custom    = stablePrimitives{FieldH: e}
+		transport = test.Primitives{FieldH: test.Primitives_SomeEnum(e)}
+	)
+
+	wire, err = custom.stableMarshal(nil, wrongField)
+	require.NoError(t, err)
+
+	wireGen, err := transport.Marshal()
+	require.NoError(t, err)
+
+	if !wrongField {
+		// we can check equality because single field cannot be unstable marshalled
+		require.Equal(t, wireGen, wire)
+	} else {
+		require.NotEqual(t, wireGen, wire)
+	}
+
+	result := new(test.Primitives)
+	err = result.Unmarshal(wire)
+	require.NoError(t, err)
+
+	if !wrongField {
+		require.EqualValues(t, custom.FieldH, result.FieldH)
+	} else {
+		require.EqualValues(t, 0, result.FieldH)
 	}
 }
