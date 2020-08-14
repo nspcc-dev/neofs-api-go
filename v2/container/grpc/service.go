@@ -1,9 +1,9 @@
 package container
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/v2/acl"
-	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
+	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
+	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
+	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
 )
 
 // SetContainer sets container of the request.

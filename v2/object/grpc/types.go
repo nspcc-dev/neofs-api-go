@@ -1,8 +1,8 @@
 package object
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
+	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
+	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
 )
 
 // SetKey sets key to the object attribute.

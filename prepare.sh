@@ -16,13 +16,16 @@ cd $API_PATH
 ARGS=$(find ./ -name '*.proto' -not -path './vendor/*')
 for file in $ARGS; do
     dir=$(dirname $file)
-    cp -r $dir $API_GO_PATH/$prefix
+    mkdir -p $API_GO_PATH/$prefix/$dir/grpc
+    cp -r $dir/* $API_GO_PATH/$prefix/$dir/grpc
 done
 
 # MODIFY FILES
 cd $API_GO_PATH/$prefix
-for file in $ARGS; do
-    sed -i "s/import\ \"\(.*\)\";/import\ \"$prefix\/\1\";/" $file
+ARGS2=$(find ./ -name '*.proto')
+for file in $ARGS2; do
+    echo $file
+    sed -i "s/import\ \"\(.*\)\/\(.*\)\.proto\";/import\ \"$prefix\/\1\/grpc\/\2\.proto\";/" $file
 done
 
 cd $API_GO_PATH
@@ -30,7 +33,7 @@ cd $API_GO_PATH
 make protoc
 
 # REMOVE PROTO DEFINITIONS
-ARGS=$(find ./ -name '*.proto' -not -path './vendor/*')
+ARGS=$(find ./$prefix -name '*.proto' -not -path './vendor/*')
 for file in $ARGS; do
     rm $file
 done

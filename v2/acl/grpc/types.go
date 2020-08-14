@@ -1,7 +1,7 @@
 package acl
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
 // SetContainerId sets container identifier of the eACL table.
