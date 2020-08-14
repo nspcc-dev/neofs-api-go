@@ -67,10 +67,64 @@ func BoolSize(field int, v bool) int {
 	}
 
 	prefix := field << 3
+
 	return VarUIntSize(uint64(prefix)) + 1 // bool is always 1 byte long
+}
+
+func UInt64Marshal(field int, buf []byte, v uint64) (int, error) {
+	if v == 0 {
+		return 0, nil
+	}
+
+	prefix := field << 3
+
+	// buf length check can prevent panic at PutUvarint, but it will make
+	// marshaller a bit slower.
+	i := binary.PutUvarint(buf, uint64(prefix))
+	i += binary.PutUvarint(buf[i:], v)
+
+	return i, nil
+}
+
+func UInt64Size(field int, v uint64) int {
+	if v == 0 {
+		return 0
+	}
+
+	prefix := field << 3
+
+	return VarUIntSize(uint64(prefix)) + VarUIntSize(v)
+}
+
+func Int64Marshal(field int, buf []byte, v int64) (int, error) {
+	return UInt64Marshal(field, buf, uint64(v))
+}
+
+func Int64Size(field int, v int64) int {
+	return UInt64Size(field, uint64(v))
+}
+
+func UInt32Marshal(field int, buf []byte, v uint32) (int, error) {
+	return UInt64Marshal(field, buf, uint64(v))
+}
+
+func UInt32Size(field int, v uint32) int {
+	return UInt64Size(field, uint64(v))
+}
+
+func Int32Marshal(field int, buf []byte, v int32) (int, error) {
+	return UInt64Marshal(field, buf, uint64(v))
+}
+
+func Int32Size(field int, v int32) int {
+	return UInt64Size(field, uint64(v))
 }
 
 // varUIntSize returns length of varint byte sequence for uint64 value 'x'.
 func VarUIntSize(x uint64) int {
 	return (bits.Len64(x|1) + 6) / 7
+}
+
+func NestedStructurePrefixSize(field int64) int {
+	return VarUIntSize(uint64(field<<3 | 0x02))
 }
