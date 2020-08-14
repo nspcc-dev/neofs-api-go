@@ -48,8 +48,8 @@ func (m *Container) SetAttributes(v []*Container_Attribute) {
 }
 
 // SetRules sets placement rules of the container.
-func (m *Container) SetRules(v *netmap.PlacementRule) {
+func (m *Container) SetRules(v *netmap.PlacementPolicy) {
 	if m != nil {
-		m.Rules = v
+		m.PlacementPolicy = v
 	}
 }

@@ -101,7 +101,7 @@ func (m *SessionToken_Body) SetObjectAddressContext(v *refs.Address) {
 // SetBody sets session token body.
 func (m *SessionToken) SetBody(v *SessionToken_Body) {
 	if m != nil {
-		m.Token = v
+		m.Body = v
 	}
 }
 
@@ -136,7 +136,7 @@ func (m *BearerToken_Body) SetLifetime(v *TokenLifetime) {
 // SetBody sets bearer token body.
 func (m *BearerToken) SetBody(v *BearerToken_Body) {
 	if m != nil {
-		m.Token = v
+		m.Body = v
 	}
 }
 
@@ -178,14 +178,14 @@ func (m *RequestMetaHeader) SetXHeaders(v []*XHeader) {
 // SetSessionToken sets session token of the request.
 func (m *RequestMetaHeader) SetSessionToken(v *SessionToken) {
 	if m != nil {
-		m.Token = v
+		m.SessionToken = v
 	}
 }
 
 // SetBearerToken sets bearer token of the request.
 func (m *RequestMetaHeader) SetBearerToken(v *BearerToken) {
 	if m != nil {
-		m.Bearer = v
+		m.BearerToken = v
 	}
 }
 

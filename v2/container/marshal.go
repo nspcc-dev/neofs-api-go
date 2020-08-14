@@ -68,12 +68,12 @@ func (m *Container) StableMarshal(buf []byte) ([]byte, error) {
 
 	// Write placement rule field.
 
-	if m.Rules != nil {
+	if m.PlacementPolicy != nil {
 		buf[i] = 0x2A // id:0x5 << 3 | wiretype:0x2
-		n = m.Rules.StableSize()
+		n = m.PlacementPolicy.StableSize()
 		offset = binary.PutUvarint(buf[i+1:], uint64(n))
 
-		_, err := m.Rules.StableMarshal(buf[i+1+offset:])
+		_, err := m.PlacementPolicy.StableMarshal(buf[i+1+offset:])
 		if err != nil {
 			return nil, errors.Wrapf(err, "can't marshal attribute %v",
 				m.Attributes[i].Key)
@@ -110,8 +110,8 @@ func (m *Container) StableSize() int {
 	}
 
 	// size of placement rule
-	if m.Rules != nil {
-		ln = m.Rules.StableSize()
+	if m.PlacementPolicy != nil {
+		ln = m.PlacementPolicy.StableSize()
 		size += 1 + uvarIntSize(uint64(ln)) + ln // wiretype + size of struct + struct
 	}
 
