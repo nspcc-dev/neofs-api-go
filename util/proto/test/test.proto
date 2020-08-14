@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package test;
+
+message Primitives {
+    bytes field_a = 1;
+}
