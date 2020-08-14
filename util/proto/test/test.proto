@@ -3,6 +3,7 @@ syntax = "proto3";
 package test;
 
 message Primitives {
-    bytes field_a = 1;
+    bytes field_a  = 1;
     string field_b = 2;
+    bool field_c   = 200;
 }
