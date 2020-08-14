@@ -4,4 +4,5 @@ package test;
 
 message Primitives {
     bytes field_a = 1;
+    string field_b = 2;
 }
