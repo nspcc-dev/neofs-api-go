@@ -28,31 +28,35 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type SearchRequest_Body_Query_Filter_MatchType int32
+// Type of match expression
+type SearchRequest_Body_Filter_MatchType int32
 
 const (
-	SearchRequest_Body_Query_Filter_MATCH_UNKNOWN SearchRequest_Body_Query_Filter_MatchType = 0
-	SearchRequest_Body_Query_Filter_STRING_EQUAL  SearchRequest_Body_Query_Filter_MatchType = 1
+	// Unknown. Not used
+	SearchRequest_Body_Filter_MATCH_TYPE_UNSPECIFIED SearchRequest_Body_Filter_MatchType = 0
+	// Full string match
+	SearchRequest_Body_Filter_STRING_EQUAL SearchRequest_Body_Filter_MatchType = 1
 )
 
-var SearchRequest_Body_Query_Filter_MatchType_name = map[int32]string{
-	0: "MATCH_UNKNOWN",
+var SearchRequest_Body_Filter_MatchType_name = map[int32]string{
+	0: "MATCH_TYPE_UNSPECIFIED",
 	1: "STRING_EQUAL",
 }
 
-var SearchRequest_Body_Query_Filter_MatchType_value = map[string]int32{
-	"MATCH_UNKNOWN": 0,
-	"STRING_EQUAL":  1,
+var SearchRequest_Body_Filter_MatchType_value = map[string]int32{
+	"MATCH_TYPE_UNSPECIFIED": 0,
+	"STRING_EQUAL":           1,
 }
 
-func (x SearchRequest_Body_Query_Filter_MatchType) String() string {
-	return proto.EnumName(SearchRequest_Body_Query_Filter_MatchType_name, int32(x))
+func (x SearchRequest_Body_Filter_MatchType) String() string {
+	return proto.EnumName(SearchRequest_Body_Filter_MatchType_name, int32(x))
 }
 
-func (SearchRequest_Body_Query_Filter_MatchType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_6233c87a2945599e, []int{8, 0, 0, 0, 0}
+func (SearchRequest_Body_Filter_MatchType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_6233c87a2945599e, []int{8, 0, 0, 0}
 }
 
+// Get object request
 type GetRequest struct {
 	// Body of get object request message.
 	Body *GetRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -121,6 +125,7 @@ func (m *GetRequest) GetVerifyHeader() *service.RequestVerificationHeader {
 	return nil
 }
 
+// Request body
 type GetRequest_Body struct {
 	// Address of the requested object.
 	Address *refs.Address `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
@@ -180,6 +185,7 @@ func (m *GetRequest_Body) GetRaw() bool {
 	return false
 }
 
+// get object response
 type GetResponse struct {
 	// Body of get object response message.
 	Body *GetResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -249,6 +255,7 @@ func (m *GetResponse) GetVerifyHeader() *service.ResponseVerificationHeader {
 	return nil
 }
 
+// Response body
 type GetResponse_Body struct {
 	// Carries the single message of the response stream.
 	//
@@ -406,6 +413,7 @@ func (m *GetResponse_Body_Init) GetHeader() *Header {
 	return nil
 }
 
+// Put object request
 type PutRequest struct {
 	// Body of put object request message.
 	Body *PutRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -474,6 +482,7 @@ func (m *PutRequest) GetVerifyHeader() *service.RequestVerificationHeader {
 	return nil
 }
 
+// Request body
 type PutRequest_Body struct {
 	// Carries the single part of the query stream.
 	//
@@ -642,6 +651,7 @@ func (m *PutRequest_Body_Init) GetCopiesNumber() uint32 {
 	return 0
 }
 
+// Put object response
 type PutResponse struct {
 	// Body of put object response message.
 	Body *PutResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -711,6 +721,7 @@ func (m *PutResponse) GetVerifyHeader() *service.ResponseVerificationHeader {
 	return nil
 }
 
+// Response body
 type PutResponse_Body struct {
 	// Carries identifier of the saved object.
 	// It is used to access an object in the container.
@@ -760,6 +771,7 @@ func (m *PutResponse_Body) GetObjectId() *refs.ObjectID {
 	return nil
 }
 
+// Object Delete request
 type DeleteRequest struct {
 	// Body of delete object request message.
 	Body *DeleteRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -828,6 +840,7 @@ func (m *DeleteRequest) GetVerifyHeader() *service.RequestVerificationHeader {
 	return nil
 }
 
+// Request body
 type DeleteRequest_Body struct {
 	// Carries the address of the object to be deleted.
 	Address *refs.Address `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
@@ -956,6 +969,7 @@ func (m *DeleteResponse) GetVerifyHeader() *service.ResponseVerificationHeader {
 	return nil
 }
 
+// Response body
 type DeleteResponse_Body struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -995,6 +1009,7 @@ func (m *DeleteResponse_Body) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DeleteResponse_Body proto.InternalMessageInfo
 
+// Object head request
 type HeadRequest struct {
 	// Body of head object request message.
 	Body *HeadRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -1063,6 +1078,7 @@ func (m *HeadRequest) GetVerifyHeader() *service.RequestVerificationHeader {
 	return nil
 }
 
+// Request body
 type HeadRequest_Body struct {
 	// Address of the object with the requested header.
 	Address *refs.Address `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
@@ -1131,6 +1147,7 @@ func (m *HeadRequest_Body) GetRaw() bool {
 	return false
 }
 
+// Head response
 type HeadResponse struct {
 	// Body of head object response message.
 	Body *HeadResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -1200,6 +1217,7 @@ func (m *HeadResponse) GetVerifyHeader() *service.ResponseVerificationHeader {
 	return nil
 }
 
+// Response body
 type HeadResponse_Body struct {
 	// Carries the requested object header or it's part
 	//
@@ -1290,6 +1308,7 @@ func (*HeadResponse_Body) XXX_OneofWrappers() []interface{} {
 	}
 }
 
+// Short header fields
 type HeadResponse_Body_ShortHeader struct {
 	// Object format version.
 	Version *service.Version `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
@@ -1375,6 +1394,7 @@ func (m *HeadResponse_Body_ShortHeader) GetPayloadLength() uint64 {
 	return 0
 }
 
+// Search objects request
 type SearchRequest struct {
 	// Body of search object request message.
 	Body *SearchRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -1443,13 +1463,17 @@ func (m *SearchRequest) GetVerifyHeader() *service.RequestVerificationHeader {
 	return nil
 }
 
+// Request body
 type SearchRequest_Body struct {
 	// Carries search container identifier.
-	ContainerId          *refs.ContainerID         `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
-	Query                *SearchRequest_Body_Query `protobuf:"bytes,2,opt,name=query,proto3" json:"query,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
-	XXX_unrecognized     []byte                    `json:"-"`
-	XXX_sizecache        int32                     `json:"-"`
+	ContainerId *refs.ContainerID `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
+	// Version of the Query Language used
+	Version uint32 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
+	// List of search expressions
+	Filters              []*SearchRequest_Body_Filter `protobuf:"bytes,3,rep,name=filters,proto3" json:"filters,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                     `json:"-"`
+	XXX_unrecognized     []byte                       `json:"-"`
+	XXX_sizecache        int32                        `json:"-"`
 }
 
 func (m *SearchRequest_Body) Reset()         { *m = SearchRequest_Body{} }
@@ -1492,89 +1516,45 @@ func (m *SearchRequest_Body) GetContainerId() *refs.ContainerID {
 	return nil
 }
 
-func (m *SearchRequest_Body) GetQuery() *SearchRequest_Body_Query {
-	if m != nil {
-		return m.Query
-	}
-	return nil
-}
-
-type SearchRequest_Body_Query struct {
-	Version              uint32                             `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`
-	Filters              []*SearchRequest_Body_Query_Filter `protobuf:"bytes,2,rep,name=filters,proto3" json:"filters,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                           `json:"-"`
-	XXX_unrecognized     []byte                             `json:"-"`
-	XXX_sizecache        int32                              `json:"-"`
-}
-
-func (m *SearchRequest_Body_Query) Reset()         { *m = SearchRequest_Body_Query{} }
-func (m *SearchRequest_Body_Query) String() string { return proto.CompactTextString(m) }
-func (*SearchRequest_Body_Query) ProtoMessage()    {}
-func (*SearchRequest_Body_Query) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6233c87a2945599e, []int{8, 0, 0}
-}
-func (m *SearchRequest_Body_Query) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *SearchRequest_Body_Query) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_SearchRequest_Body_Query.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *SearchRequest_Body_Query) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SearchRequest_Body_Query.Merge(m, src)
-}
-func (m *SearchRequest_Body_Query) XXX_Size() int {
-	return m.Size()
-}
-func (m *SearchRequest_Body_Query) XXX_DiscardUnknown() {
-	xxx_messageInfo_SearchRequest_Body_Query.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SearchRequest_Body_Query proto.InternalMessageInfo
-
-func (m *SearchRequest_Body_Query) GetVersion() uint32 {
+func (m *SearchRequest_Body) GetVersion() uint32 {
 	if m != nil {
 		return m.Version
 	}
 	return 0
 }
 
-func (m *SearchRequest_Body_Query) GetFilters() []*SearchRequest_Body_Query_Filter {
+func (m *SearchRequest_Body) GetFilters() []*SearchRequest_Body_Filter {
 	if m != nil {
 		return m.Filters
 	}
 	return nil
 }
 
-type SearchRequest_Body_Query_Filter struct {
-	MatchType            SearchRequest_Body_Query_Filter_MatchType `protobuf:"varint,1,opt,name=match_type,json=matchType,proto3,enum=neo.fs.v2.object.SearchRequest_Body_Query_Filter_MatchType" json:"match_type,omitempty"`
-	Name                 string                                    `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Value                string                                    `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                                  `json:"-"`
-	XXX_unrecognized     []byte                                    `json:"-"`
-	XXX_sizecache        int32                                     `json:"-"`
+// Filter structure
+type SearchRequest_Body_Filter struct {
+	// Match type to use
+	MatchType SearchRequest_Body_Filter_MatchType `protobuf:"varint,1,opt,name=match_type,json=matchType,proto3,enum=neo.fs.v2.object.SearchRequest_Body_Filter_MatchType" json:"match_type,omitempty"`
+	// Header name to match
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// Header value to match
+	Value                string   `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *SearchRequest_Body_Query_Filter) Reset()         { *m = SearchRequest_Body_Query_Filter{} }
-func (m *SearchRequest_Body_Query_Filter) String() string { return proto.CompactTextString(m) }
-func (*SearchRequest_Body_Query_Filter) ProtoMessage()    {}
-func (*SearchRequest_Body_Query_Filter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_6233c87a2945599e, []int{8, 0, 0, 0}
+func (m *SearchRequest_Body_Filter) Reset()         { *m = SearchRequest_Body_Filter{} }
+func (m *SearchRequest_Body_Filter) String() string { return proto.CompactTextString(m) }
+func (*SearchRequest_Body_Filter) ProtoMessage()    {}
+func (*SearchRequest_Body_Filter) Descriptor() ([]byte, []int) {
+	return fileDescriptor_6233c87a2945599e, []int{8, 0, 0}
 }
-func (m *SearchRequest_Body_Query_Filter) XXX_Unmarshal(b []byte) error {
+func (m *SearchRequest_Body_Filter) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *SearchRequest_Body_Query_Filter) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *SearchRequest_Body_Filter) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_SearchRequest_Body_Query_Filter.Marshal(b, m, deterministic)
+		return xxx_messageInfo_SearchRequest_Body_Filter.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1584,39 +1564,40 @@ func (m *SearchRequest_Body_Query_Filter) XXX_Marshal(b []byte, deterministic bo
 		return b[:n], nil
 	}
 }
-func (m *SearchRequest_Body_Query_Filter) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SearchRequest_Body_Query_Filter.Merge(m, src)
+func (m *SearchRequest_Body_Filter) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SearchRequest_Body_Filter.Merge(m, src)
 }
-func (m *SearchRequest_Body_Query_Filter) XXX_Size() int {
+func (m *SearchRequest_Body_Filter) XXX_Size() int {
 	return m.Size()
 }
-func (m *SearchRequest_Body_Query_Filter) XXX_DiscardUnknown() {
-	xxx_messageInfo_SearchRequest_Body_Query_Filter.DiscardUnknown(m)
+func (m *SearchRequest_Body_Filter) XXX_DiscardUnknown() {
+	xxx_messageInfo_SearchRequest_Body_Filter.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_SearchRequest_Body_Query_Filter proto.InternalMessageInfo
+var xxx_messageInfo_SearchRequest_Body_Filter proto.InternalMessageInfo
 
-func (m *SearchRequest_Body_Query_Filter) GetMatchType() SearchRequest_Body_Query_Filter_MatchType {
+func (m *SearchRequest_Body_Filter) GetMatchType() SearchRequest_Body_Filter_MatchType {
 	if m != nil {
 		return m.MatchType
 	}
-	return SearchRequest_Body_Query_Filter_MATCH_UNKNOWN
+	return SearchRequest_Body_Filter_MATCH_TYPE_UNSPECIFIED
 }
 
-func (m *SearchRequest_Body_Query_Filter) GetName() string {
+func (m *SearchRequest_Body_Filter) GetName() string {
 	if m != nil {
 		return m.Name
 	}
 	return ""
 }
 
-func (m *SearchRequest_Body_Query_Filter) GetValue() string {
+func (m *SearchRequest_Body_Filter) GetValue() string {
 	if m != nil {
 		return m.Value
 	}
 	return ""
 }
 
+// Search response
 type SearchResponse struct {
 	// Body of search object response message.
 	Body *SearchResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -1686,8 +1667,9 @@ func (m *SearchResponse) GetVerifyHeader() *service.ResponseVerificationHeader {
 	return nil
 }
 
+// Response body
 type SearchResponse_Body struct {
-	// Carries list of object identifiers that match the search query.
+	// Carries list of object identifiers that match the search query
 	IdList               []*refs.ObjectID `protobuf:"bytes,1,rep,name=id_list,json=idList,proto3" json:"id_list,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
@@ -1792,6 +1774,7 @@ func (m *Range) GetLength() uint64 {
 	return 0
 }
 
+// Request to get part of object's payload
 type GetRangeRequest struct {
 	// Body of get range object request message.
 	Body *GetRangeRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -1860,6 +1843,7 @@ func (m *GetRangeRequest) GetVerifyHeader() *service.RequestVerificationHeader {
 	return nil
 }
 
+// Request Body
 type GetRangeRequest_Body struct {
 	// Address carries address of the object that contains the requested payload range.
 	Address *refs.Address `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
@@ -1917,6 +1901,7 @@ func (m *GetRangeRequest_Body) GetRange() *Range {
 	return nil
 }
 
+// Get part of object's payload
 type GetRangeResponse struct {
 	// Body of get range object response message.
 	Body *GetRangeResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -1986,6 +1971,7 @@ func (m *GetRangeResponse) GetVerifyHeader() *service.ResponseVerificationHeader
 	return nil
 }
 
+// Response body
 type GetRangeResponse_Body struct {
 	// Carries part of the object payload.
 	Chunk                []byte   `protobuf:"bytes,1,opt,name=chunk,proto3" json:"chunk,omitempty"`
@@ -2034,6 +2020,7 @@ func (m *GetRangeResponse_Body) GetChunk() []byte {
 	return nil
 }
 
+// Get hash of object's payload part
 type GetRangeHashRequest struct {
 	// Body of get range hash object request message.
 	Body *GetRangeHashRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -2102,6 +2089,7 @@ func (m *GetRangeHashRequest) GetVerifyHeader() *service.RequestVerificationHead
 	return nil
 }
 
+// Request body
 type GetRangeHashRequest_Body struct {
 	// Carries address of the object that contains the requested payload range.
 	Address *refs.Address `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
@@ -2168,6 +2156,7 @@ func (m *GetRangeHashRequest_Body) GetSalt() []byte {
 	return nil
 }
 
+// Get hash of object's payload part
 type GetRangeHashResponse struct {
 	// Body of get range hash object response message.
 	Body *GetRangeHashResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -2237,6 +2226,7 @@ func (m *GetRangeHashResponse) GetVerifyHeader() *service.ResponseVerificationHe
 	return nil
 }
 
+// Response body
 type GetRangeHashResponse_Body struct {
 	// Carries list of homomorphic hashes in a binary format.
 	HashList             [][]byte `protobuf:"bytes,1,rep,name=hash_list,json=hashList,proto3" json:"hash_list,omitempty"`
@@ -2286,7 +2276,7 @@ func (m *GetRangeHashResponse_Body) GetHashList() [][]byte {
 }
 
 func init() {
-	proto.RegisterEnum("neo.fs.v2.object.SearchRequest_Body_Query_Filter_MatchType", SearchRequest_Body_Query_Filter_MatchType_name, SearchRequest_Body_Query_Filter_MatchType_value)
+	proto.RegisterEnum("neo.fs.v2.object.SearchRequest_Body_Filter_MatchType", SearchRequest_Body_Filter_MatchType_name, SearchRequest_Body_Filter_MatchType_value)
 	proto.RegisterType((*GetRequest)(nil), "neo.fs.v2.object.GetRequest")
 	proto.RegisterType((*GetRequest_Body)(nil), "neo.fs.v2.object.GetRequest.Body")
 	proto.RegisterType((*GetResponse)(nil), "neo.fs.v2.object.GetResponse")
@@ -2308,8 +2298,7 @@ func init() {
 	proto.RegisterType((*HeadResponse_Body_ShortHeader)(nil), "neo.fs.v2.object.HeadResponse.Body.ShortHeader")
 	proto.RegisterType((*SearchRequest)(nil), "neo.fs.v2.object.SearchRequest")
 	proto.RegisterType((*SearchRequest_Body)(nil), "neo.fs.v2.object.SearchRequest.Body")
-	proto.RegisterType((*SearchRequest_Body_Query)(nil), "neo.fs.v2.object.SearchRequest.Body.Query")
-	proto.RegisterType((*SearchRequest_Body_Query_Filter)(nil), "neo.fs.v2.object.SearchRequest.Body.Query.Filter")
+	proto.RegisterType((*SearchRequest_Body_Filter)(nil), "neo.fs.v2.object.SearchRequest.Body.Filter")
 	proto.RegisterType((*SearchResponse)(nil), "neo.fs.v2.object.SearchResponse")
 	proto.RegisterType((*SearchResponse_Body)(nil), "neo.fs.v2.object.SearchResponse.Body")
 	proto.RegisterType((*Range)(nil), "neo.fs.v2.object.Range")
@@ -2326,95 +2315,95 @@ func init() {
 func init() { proto.RegisterFile("v2/object/service.proto", fileDescriptor_6233c87a2945599e) }
 
 var fileDescriptor_6233c87a2945599e = []byte{
-	// 1401 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xdc, 0x59, 0xcd, 0x72, 0xdb, 0x54,
-	0x14, 0x8e, 0xe4, 0x9f, 0xc4, 0xc7, 0x76, 0x30, 0xb7, 0xa5, 0xf5, 0xa8, 0x6d, 0x48, 0xd5, 0xa6,
-	0xcd, 0xb4, 0x44, 0x4e, 0x0d, 0xa5, 0xb4, 0xa5, 0x85, 0xa4, 0x49, 0x1b, 0x4f, 0x1a, 0x27, 0xbd,
-	0x4e, 0xcb, 0x4c, 0x67, 0x18, 0x8f, 0x22, 0x5d, 0xc7, 0x02, 0x5b, 0x72, 0x25, 0xd9, 0x1d, 0x6f,
-	0x58, 0xc1, 0x82, 0x37, 0xe8, 0xb0, 0x00, 0xa6, 0xcb, 0xc2, 0x86, 0x3d, 0xc3, 0xb0, 0x84, 0x5d,
-	0xe1, 0x09, 0x98, 0xf0, 0x00, 0x7d, 0x03, 0x86, 0xb9, 0x3f, 0xb2, 0xad, 0xd4, 0x7f, 0x64, 0x67,
-	0x76, 0xd2, 0xd1, 0x77, 0x8e, 0xcf, 0xf9, 0xee, 0xa7, 0x73, 0xee, 0x95, 0xe1, 0x64, 0x2b, 0x9f,
-	0x73, 0xf6, 0x3e, 0x23, 0x86, 0x9f, 0xf3, 0x88, 0xdb, 0xb2, 0x0c, 0xa2, 0x35, 0x5c, 0xc7, 0x77,
-	0x50, 0xc6, 0x26, 0x8e, 0x56, 0xf1, 0xb4, 0x56, 0x5e, 0xe3, 0xcf, 0x95, 0xb7, 0xba, 0x50, 0xbf,
-	0xdd, 0x20, 0x1e, 0x07, 0x2a, 0xc7, 0x5a, 0xf9, 0x9c, 0x4b, 0x2a, 0x5e, 0xc8, 0x48, 0xb1, 0x22,
-	0x5e, 0xae, 0x4e, 0x7c, 0x5d, 0x98, 0x4f, 0xf6, 0x98, 0x5b, 0xc4, 0xb5, 0x2a, 0x6d, 0xfe, 0x40,
-	0x7d, 0x21, 0x03, 0xdc, 0x23, 0x3e, 0x26, 0x4f, 0x9a, 0xc4, 0xf3, 0xd1, 0x55, 0x88, 0xee, 0x39,
-	0x66, 0x3b, 0x2b, 0xcd, 0x4b, 0x8b, 0xc9, 0xfc, 0x59, 0xed, 0x70, 0x2e, 0x5a, 0x17, 0xab, 0xad,
-	0x3a, 0x66, 0x1b, 0x33, 0x38, 0x5a, 0x87, 0x24, 0xfd, 0xb1, 0x72, 0x95, 0xe8, 0x26, 0x71, 0xb3,
-	0x32, 0xf3, 0x3e, 0xdf, 0xe3, 0x1d, 0x94, 0x28, 0x7c, 0xb7, 0x88, 0xaf, 0x6f, 0x30, 0x2c, 0x86,
-	0x7a, 0xe7, 0x1a, 0x3d, 0x80, 0x34, 0x4f, 0x2e, 0x08, 0x14, 0x61, 0x81, 0xde, 0x19, 0x1c, 0xe8,
-	0x11, 0x85, 0x5b, 0x86, 0xee, 0x5b, 0x8e, 0x2d, 0x02, 0xa6, 0x78, 0x08, 0x7e, 0xa7, 0x6c, 0x42,
-	0x94, 0xe6, 0x89, 0xae, 0xc0, 0xb4, 0x6e, 0x9a, 0x2e, 0xf1, 0x3c, 0x51, 0xdb, 0xc9, 0x9e, 0xa0,
-	0x94, 0x45, 0x6d, 0x85, 0x3f, 0xc6, 0x01, 0x0e, 0x65, 0x20, 0xe2, 0xea, 0x4f, 0x59, 0x31, 0x33,
-	0x98, 0x5e, 0xaa, 0xff, 0x44, 0x20, 0xc9, 0x08, 0xf0, 0x1a, 0x8e, 0xed, 0x11, 0xf4, 0x7e, 0x88,
-	0x2d, 0x75, 0x00, 0x5b, 0x1c, 0xdc, 0x4b, 0xd7, 0xdd, 0x7e, 0x74, 0x2d, 0xf4, 0xad, 0x92, 0x3b,
-	0x0f, 0xe0, 0x0b, 0xf7, 0xe7, 0x6b, 0x69, 0x48, 0xa4, 0x91, 0x84, 0x7d, 0x23, 0x0b, 0xc6, 0x6e,
-	0x41, 0xd4, 0xb2, 0x2d, 0x5f, 0x14, 0x77, 0x71, 0x74, 0x71, 0x5a, 0xc1, 0xb6, 0xfc, 0x8d, 0x29,
-	0xcc, 0xdc, 0xd0, 0x09, 0x88, 0x19, 0xd5, 0xa6, 0xfd, 0x39, 0xab, 0x2e, 0xb5, 0x31, 0x85, 0xf9,
-	0xad, 0xf2, 0x83, 0x04, 0x51, 0x0a, 0x44, 0x57, 0x21, 0xc1, 0x03, 0x95, 0x2d, 0x53, 0xfc, 0x48,
-	0xf6, 0xf0, 0x9a, 0x6c, 0x33, 0x40, 0x61, 0x0d, 0xcf, 0x70, 0x68, 0xc1, 0x44, 0x37, 0x20, 0xe1,
-	0x59, 0xfb, 0xb6, 0xee, 0x37, 0x5d, 0x22, 0x98, 0x3b, 0xdd, 0xa7, 0xde, 0x52, 0x80, 0xc1, 0x5d,
-	0x38, 0x5a, 0x86, 0x78, 0x88, 0xa8, 0xec, 0xeb, 0x45, 0x09, 0x4e, 0x04, 0x6e, 0x35, 0x0d, 0x49,
-	0x91, 0x64, 0x43, 0x77, 0x7d, 0xf5, 0xdb, 0x28, 0xc0, 0x4e, 0x73, 0xfc, 0xb7, 0xa5, 0x8b, 0x9d,
-	0x8c, 0xb7, 0xe5, 0x97, 0x60, 0xf1, 0x3f, 0x0c, 0x2d, 0xfe, 0x85, 0x91, 0x95, 0x8d, 0xb7, 0xf6,
-	0x2f, 0x27, 0x69, 0xed, 0xd1, 0x39, 0x48, 0x1b, 0x4e, 0xc3, 0x22, 0x5e, 0xd9, 0x6e, 0xd6, 0xf7,
-	0x88, 0x9b, 0x8d, 0xce, 0x4b, 0x8b, 0x69, 0x9c, 0xe2, 0xc6, 0x22, 0xb3, 0x1d, 0x16, 0xc8, 0xf7,
-	0x32, 0x24, 0x19, 0x35, 0xe3, 0x76, 0x88, 0x1e, 0xf0, 0xa4, 0x74, 0x88, 0x5b, 0x42, 0x23, 0x47,
-	0x5b, 0x44, 0xf5, 0x4f, 0x19, 0xd2, 0x6b, 0xa4, 0x46, 0x7c, 0x12, 0xbc, 0x46, 0x1f, 0x84, 0x48,
-	0x3a, 0xff, 0x3a, 0x49, 0x21, 0xf8, 0x64, 0xbc, 0x49, 0xf5, 0xa3, 0xcf, 0x9d, 0x3c, 0xcc, 0x38,
-	0x4f, 0x6d, 0xe2, 0x52, 0x5a, 0xe5, 0xfe, 0x3e, 0xdb, 0xf4, 0x79, 0x61, 0x0d, 0x4f, 0x33, 0x60,
-	0xc1, 0x54, 0x5f, 0x49, 0x30, 0x1b, 0xb0, 0x24, 0xa4, 0x77, 0x3d, 0xc4, 0xea, 0xc2, 0x60, 0x56,
-	0x27, 0x4b, 0x7d, 0x71, 0x4e, 0xac, 0xfa, 0xbb, 0x0c, 0x49, 0x6a, 0x0a, 0x44, 0x34, 0xf2, 0x4d,
-	0xeb, 0x01, 0x4f, 0x86, 0x84, 0xaa, 0x47, 0x97, 0xd0, 0x29, 0x48, 0xd4, 0x75, 0xcb, 0x2e, 0x3b,
-	0x76, 0xad, 0x2d, 0x36, 0x30, 0x33, 0xd4, 0xb0, 0x6d, 0xd7, 0xda, 0xc1, 0xbe, 0x26, 0xd2, 0xdd,
-	0xd7, 0x7c, 0x15, 0x83, 0x14, 0xa7, 0x47, 0x68, 0xe7, 0x5a, 0x88, 0xcc, 0x73, 0x83, 0xc8, 0x9c,
-	0x2c, 0xe5, 0x7c, 0x17, 0x11, 0x84, 0xe6, 0x3b, 0xa3, 0x40, 0x1a, 0x3e, 0x0a, 0x36, 0xa6, 0x3a,
-	0xc3, 0x60, 0x17, 0x52, 0x5e, 0xd5, 0x71, 0xfd, 0x70, 0x65, 0xb9, 0x31, 0x98, 0xd1, 0x4a, 0xd4,
-	0xaf, 0x13, 0x30, 0xe9, 0x75, 0x6f, 0x95, 0x2f, 0x65, 0x48, 0xf6, 0x3c, 0x46, 0xef, 0xc1, 0x74,
-	0x8b, 0xb8, 0x9e, 0xe5, 0xd8, 0x22, 0x35, 0xa5, 0x4f, 0xc1, 0x8f, 0x38, 0x02, 0x07, 0x50, 0xb4,
-	0x00, 0xb3, 0x86, 0x4b, 0x58, 0xe1, 0x65, 0xd2, 0x70, 0x8c, 0x2a, 0xcb, 0x2e, 0x8a, 0xd3, 0x81,
-	0x75, 0x9d, 0x1a, 0x43, 0x7d, 0x25, 0x32, 0x5e, 0x5f, 0x41, 0xb7, 0x3a, 0xe3, 0x8d, 0x1e, 0x32,
-	0xd8, 0x04, 0x9c, 0x0d, 0xcd, 0x5c, 0x51, 0x35, 0xef, 0xf3, 0xbb, 0xed, 0x06, 0xc1, 0xe0, 0x74,
-	0xae, 0x69, 0x66, 0x0d, 0xbd, 0x5d, 0x73, 0x74, 0xb3, 0x5c, 0x23, 0xf6, 0xbe, 0x5f, 0xcd, 0xc6,
-	0x78, 0x66, 0xc2, 0x7a, 0x9f, 0x19, 0x57, 0xe3, 0x10, 0xa5, 0xb4, 0xaa, 0xcf, 0x63, 0x90, 0x2e,
-	0x11, 0xdd, 0x35, 0xaa, 0x63, 0x8f, 0x86, 0x10, 0x7c, 0x32, 0xde, 0xeb, 0x9f, 0x03, 0x1d, 0xde,
-	0x86, 0x94, 0xe1, 0xd8, 0xbe, 0x6e, 0x89, 0x45, 0xe1, 0x45, 0x9e, 0x3a, 0xbc, 0x28, 0x77, 0x02,
-	0x4c, 0x61, 0x0d, 0x27, 0x3b, 0x0e, 0x05, 0x13, 0x7d, 0x0c, 0xb1, 0x27, 0x4d, 0xe2, 0xb6, 0x45,
-	0x71, 0x97, 0xc6, 0x61, 0x47, 0x7b, 0x40, 0x3d, 0x30, 0x77, 0x54, 0x7e, 0x92, 0x21, 0xc6, 0x0c,
-	0x28, 0x1b, 0x56, 0x5e, 0xba, 0xab, 0xae, 0x4d, 0x98, 0xae, 0x58, 0x35, 0x9f, 0xb8, 0x5e, 0x56,
-	0x9e, 0x8f, 0x2c, 0x26, 0xf3, 0x57, 0xc6, 0xff, 0x1d, 0xed, 0x2e, 0xf3, 0xc4, 0x41, 0x04, 0xe5,
-	0x57, 0x09, 0xe2, 0xdc, 0x86, 0x1e, 0x03, 0xd4, 0x75, 0xdf, 0xa8, 0x72, 0x65, 0x49, 0x4c, 0x59,
-	0x37, 0xff, 0x73, 0x68, 0x6d, 0x8b, 0xc6, 0x60, 0xc2, 0x4b, 0xd4, 0x83, 0x4b, 0x84, 0x20, 0x6a,
-	0xeb, 0x75, 0xbe, 0x47, 0x4c, 0x60, 0x76, 0x8d, 0x8e, 0x43, 0xac, 0xa5, 0xd7, 0x9a, 0x84, 0xad,
-	0x60, 0x02, 0xf3, 0x1b, 0x75, 0x19, 0x12, 0x9d, 0x08, 0xe8, 0x4d, 0x48, 0x6f, 0xad, 0xec, 0xde,
-	0xd9, 0x28, 0x3f, 0x2c, 0x6e, 0x16, 0xb7, 0x3f, 0x29, 0x66, 0xa6, 0x50, 0x06, 0x52, 0xa5, 0x5d,
-	0x5c, 0x28, 0xde, 0x2b, 0xaf, 0x3f, 0x78, 0xb8, 0x72, 0x3f, 0x23, 0xa9, 0xcf, 0x65, 0x98, 0x0d,
-	0x92, 0x1a, 0x77, 0xd4, 0x86, 0xf1, 0x93, 0xd2, 0x30, 0xaf, 0x77, 0x07, 0x90, 0x65, 0x96, 0x6b,
-	0x96, 0x47, 0xcf, 0x03, 0x91, 0xa1, 0xdb, 0xbc, 0xb8, 0x65, 0xde, 0xb7, 0x3c, 0x5f, 0xbd, 0x06,
-	0x31, 0xac, 0xdb, 0xfb, 0x04, 0x9d, 0x80, 0xb8, 0x53, 0xa9, 0x78, 0x84, 0x1f, 0x25, 0xa2, 0x58,
-	0xdc, 0x51, 0xbb, 0xe8, 0x08, 0xbc, 0x57, 0x89, 0x3b, 0xf5, 0x0f, 0x19, 0xde, 0xa0, 0x07, 0x4b,
-	0xea, 0x1c, 0x34, 0x81, 0x1b, 0x21, 0x7a, 0x2f, 0xf4, 0x3f, 0x89, 0xf6, 0x38, 0xfc, 0xef, 0xc7,
-	0xfb, 0x12, 0xc4, 0x5c, 0x5a, 0x6f, 0x9f, 0xed, 0xa1, 0x60, 0x84, 0xd3, 0xc1, 0x51, 0xea, 0xd7,
-	0x32, 0x64, 0xba, 0x14, 0x09, 0xcd, 0xde, 0x0c, 0x91, 0x7a, 0x71, 0x18, 0xa9, 0x93, 0xa5, 0xda,
-	0xd3, 0x82, 0xd7, 0xe3, 0xc1, 0x21, 0x94, 0x56, 0x98, 0x12, 0x47, 0x50, 0xf5, 0x95, 0x0c, 0xc7,
-	0x82, 0xca, 0x36, 0x74, 0xaf, 0x33, 0x68, 0x6e, 0x87, 0xe8, 0xb8, 0x34, 0x98, 0x8e, 0x1e, 0xa7,
-	0xc9, 0xd0, 0xd9, 0x17, 0x47, 0xd7, 0x59, 0x0e, 0xe2, 0x4c, 0x41, 0x41, 0xe7, 0x1f, 0x28, 0x34,
-	0x01, 0xa3, 0x7d, 0xd7, 0xd3, 0x6b, 0x3e, 0xcb, 0x3a, 0x85, 0xd9, 0xb5, 0xfa, 0x4c, 0x86, 0xe3,
-	0x61, 0xf2, 0x84, 0x02, 0x3f, 0x0a, 0x51, 0x7e, 0x79, 0x14, 0xe5, 0x93, 0xa5, 0xc2, 0x73, 0x82,
-	0xf5, 0x53, 0x90, 0xa8, 0xea, 0x5e, 0xb5, 0xdb, 0x3d, 0x53, 0x78, 0x86, 0x1a, 0x68, 0x97, 0xcc,
-	0xff, 0x18, 0x85, 0xe9, 0x12, 0x8f, 0x8c, 0xd6, 0x20, 0x72, 0x8f, 0xf8, 0xe8, 0xf4, 0xb0, 0x4f,
-	0xae, 0xca, 0x99, 0xa1, 0x5f, 0xe1, 0x96, 0x25, 0x1a, 0x65, 0xa7, 0xd9, 0x37, 0x4a, 0xf7, 0x83,
-	0x4d, 0xbf, 0x28, 0x3d, 0x9f, 0x21, 0x16, 0x25, 0xb4, 0x09, 0x71, 0x7e, 0x38, 0x44, 0x6f, 0x8f,
-	0x38, 0x8c, 0x2b, 0xf3, 0xa3, 0xce, 0x95, 0x68, 0x1d, 0xa2, 0x94, 0x13, 0x74, 0x66, 0xe8, 0x91,
-	0x4c, 0x99, 0x1b, 0xbe, 0x95, 0x46, 0x5b, 0x10, 0xe7, 0x53, 0xb4, 0x5f, 0x4e, 0xa1, 0x4d, 0x42,
-	0xbf, 0x9c, 0xc2, 0x03, 0x78, 0x59, 0x42, 0x25, 0x98, 0x09, 0xe4, 0x85, 0xce, 0x8e, 0x9c, 0x28,
-	0x8a, 0x3a, 0xba, 0x3f, 0x2e, 0x4b, 0xe8, 0x53, 0x48, 0xf5, 0x6a, 0x16, 0x2d, 0x8c, 0xd5, 0x46,
-	0x94, 0x0b, 0xe3, 0x49, 0x7f, 0x75, 0xe7, 0xb7, 0x83, 0x39, 0xe9, 0xe5, 0xc1, 0x9c, 0xf4, 0xd7,
-	0xc1, 0x9c, 0xf4, 0xec, 0xef, 0xb9, 0xa9, 0xc7, 0x97, 0xf7, 0x2d, 0xbf, 0xda, 0xdc, 0xd3, 0x0c,
-	0xa7, 0x9e, 0xb3, 0xbd, 0x86, 0x61, 0x2c, 0x99, 0xa4, 0x95, 0xb3, 0x89, 0x53, 0xf1, 0x96, 0xf4,
-	0x86, 0xb5, 0xb4, 0xef, 0xe4, 0x3a, 0xff, 0x1d, 0xbc, 0x90, 0x33, 0x45, 0xe2, 0xdc, 0x2d, 0x69,
-	0x2b, 0x3b, 0x05, 0x31, 0xb0, 0xf7, 0xe2, 0xec, 0x4f, 0x80, 0x77, 0xff, 0x0d, 0x00, 0x00, 0xff,
-	0xff, 0xbb, 0xcd, 0x0d, 0x36, 0x8d, 0x18, 0x00, 0x00,
+	// 1396 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xdc, 0x58, 0x4f, 0x73, 0xdb, 0x44,
+	0x14, 0x8f, 0x64, 0xc5, 0x89, 0x9f, 0xed, 0x90, 0xd9, 0x96, 0xd6, 0xa3, 0xb6, 0x21, 0x55, 0x9b,
+	0x36, 0x43, 0x89, 0x1c, 0x0c, 0xa5, 0xb4, 0xa5, 0x65, 0x92, 0xc6, 0x69, 0x3c, 0x6d, 0xd2, 0x54,
+	0x4e, 0x3b, 0x43, 0x67, 0x18, 0x8f, 0x22, 0xad, 0x63, 0x81, 0x2d, 0x19, 0xad, 0xec, 0x8e, 0x2f,
+	0x9c, 0xe0, 0xc0, 0x37, 0xe8, 0x70, 0x00, 0x86, 0x63, 0xb9, 0xf1, 0x01, 0xb8, 0x70, 0x81, 0x5b,
+	0x81, 0x2f, 0xc0, 0x84, 0x33, 0xd3, 0x6f, 0xc0, 0x30, 0xfb, 0x47, 0xb6, 0x95, 0xfa, 0x1f, 0xb9,
+	0x89, 0x93, 0xa5, 0xa7, 0xdf, 0x7b, 0xde, 0xf7, 0xdb, 0xdf, 0xbe, 0xb7, 0xbb, 0x70, 0xba, 0x5d,
+	0xc8, 0x7b, 0xfb, 0x9f, 0x60, 0x2b, 0xc8, 0x13, 0xec, 0xb7, 0x1d, 0x0b, 0xeb, 0x4d, 0xdf, 0x0b,
+	0x3c, 0x34, 0xef, 0x62, 0x4f, 0xaf, 0x12, 0xbd, 0x5d, 0xd0, 0xf9, 0x77, 0xf5, 0xf5, 0x1e, 0x34,
+	0xe8, 0x34, 0x31, 0xe1, 0x40, 0xf5, 0x44, 0xbb, 0x90, 0xf7, 0x71, 0x95, 0x44, 0x8c, 0x14, 0x2b,
+	0xe2, 0xe5, 0x1b, 0x38, 0x30, 0x85, 0xf9, 0x74, 0x9f, 0xb9, 0x8d, 0x7d, 0xa7, 0xda, 0xe1, 0x1f,
+	0xb4, 0xe7, 0x32, 0xc0, 0x5d, 0x1c, 0x18, 0xf8, 0xb3, 0x16, 0x26, 0x01, 0xba, 0x0a, 0xca, 0xbe,
+	0x67, 0x77, 0x72, 0xd2, 0xa2, 0xb4, 0x9c, 0x2e, 0x9c, 0xd7, 0x8f, 0x8e, 0x45, 0xef, 0x61, 0xf5,
+	0x75, 0xcf, 0xee, 0x18, 0x0c, 0x8e, 0x8a, 0x90, 0xa6, 0x7f, 0x56, 0xa9, 0x61, 0xd3, 0xc6, 0x7e,
+	0x4e, 0x66, 0xde, 0x17, 0xfb, 0xbc, 0xc3, 0x14, 0x85, 0xef, 0x36, 0x0e, 0xcc, 0x2d, 0x86, 0x35,
+	0xa0, 0xd1, 0x7d, 0x46, 0x0f, 0x21, 0xcb, 0x07, 0x17, 0x06, 0x4a, 0xb0, 0x40, 0x6f, 0x0d, 0x0f,
+	0xf4, 0x98, 0xc2, 0x1d, 0xcb, 0x0c, 0x1c, 0xcf, 0x15, 0x01, 0x33, 0x3c, 0x04, 0x7f, 0x53, 0xef,
+	0x81, 0x42, 0xc7, 0x89, 0xde, 0x86, 0x19, 0xd3, 0xb6, 0x7d, 0x4c, 0x88, 0xc8, 0xed, 0x74, 0x5f,
+	0x50, 0xca, 0xa2, 0xbe, 0xc6, 0x3f, 0x1b, 0x21, 0x0e, 0xcd, 0x43, 0xc2, 0x37, 0x9f, 0xb2, 0x64,
+	0x66, 0x0d, 0xfa, 0xa8, 0xfd, 0x93, 0x80, 0x34, 0x23, 0x80, 0x34, 0x3d, 0x97, 0x60, 0xf4, 0x5e,
+	0x84, 0x2d, 0x6d, 0x08, 0x5b, 0x1c, 0xdc, 0x4f, 0xd7, 0xe6, 0x20, 0xba, 0x96, 0x06, 0x66, 0xc9,
+	0x9d, 0x87, 0xf0, 0x65, 0x0c, 0xe6, 0x6b, 0x65, 0x44, 0xa4, 0xb1, 0x84, 0x7d, 0x2d, 0x0b, 0xc6,
+	0x6e, 0x81, 0xe2, 0xb8, 0x4e, 0x20, 0x92, 0xbb, 0x3c, 0x3e, 0x39, 0xbd, 0xe4, 0x3a, 0xc1, 0xd6,
+	0x94, 0xc1, 0xdc, 0xd0, 0x29, 0x98, 0xb6, 0x6a, 0x2d, 0xf7, 0x53, 0x96, 0x5d, 0x66, 0x6b, 0xca,
+	0xe0, 0xaf, 0xea, 0x0f, 0x12, 0x28, 0x14, 0x88, 0xae, 0x42, 0x8a, 0x07, 0xaa, 0x38, 0xb6, 0xf8,
+	0x93, 0xdc, 0xd1, 0x39, 0x79, 0xc0, 0x00, 0xa5, 0x0d, 0x63, 0x96, 0x43, 0x4b, 0x36, 0xba, 0x01,
+	0x29, 0xe2, 0x1c, 0xb8, 0x66, 0xd0, 0xf2, 0xb1, 0x60, 0xee, 0xec, 0x80, 0x7c, 0xcb, 0x21, 0xc6,
+	0xe8, 0xc1, 0xd1, 0x2a, 0x24, 0x23, 0x44, 0xe5, 0x5e, 0x4d, 0x4a, 0x70, 0x22, 0x70, 0xeb, 0x59,
+	0x48, 0x8b, 0x41, 0x36, 0x4d, 0x3f, 0xd0, 0xbe, 0x51, 0x00, 0x76, 0x5b, 0x93, 0xaf, 0x96, 0x1e,
+	0x36, 0x1e, 0xab, 0xe5, 0xa7, 0x70, 0xf2, 0x3f, 0x88, 0x4c, 0xfe, 0xa5, 0xb1, 0x99, 0x4d, 0x36,
+	0xf7, 0x2f, 0xe2, 0x34, 0xf7, 0xe8, 0x02, 0x64, 0x2d, 0xaf, 0xe9, 0x60, 0x52, 0x71, 0x5b, 0x8d,
+	0x7d, 0xec, 0xe7, 0x94, 0x45, 0x69, 0x39, 0x6b, 0x64, 0xb8, 0x71, 0x87, 0xd9, 0x8e, 0x0a, 0xe4,
+	0x3b, 0x19, 0xd2, 0x8c, 0x9a, 0x49, 0x2b, 0x44, 0x1f, 0x38, 0x2e, 0x15, 0xe2, 0x96, 0xd0, 0xc8,
+	0xf1, 0x26, 0x51, 0xfb, 0x5d, 0x86, 0xec, 0x06, 0xae, 0xe3, 0x00, 0x87, 0xcb, 0xe8, 0xfd, 0x08,
+	0x49, 0x17, 0x5f, 0x25, 0x29, 0x02, 0x8f, 0xc7, 0x4a, 0x6a, 0x1c, 0xbf, 0xef, 0x14, 0x60, 0xd6,
+	0x7b, 0xea, 0x62, 0x9f, 0xd2, 0x2a, 0x0f, 0xf6, 0x79, 0x40, 0xbf, 0x97, 0x36, 0x8c, 0x19, 0x06,
+	0x2c, 0xd9, 0xda, 0x4b, 0x09, 0xe6, 0x42, 0x96, 0x84, 0xf4, 0xae, 0x47, 0x58, 0x5d, 0x1a, 0xce,
+	0x6a, 0xbc, 0xd4, 0x97, 0xe4, 0xc4, 0x6a, 0xbf, 0xca, 0x90, 0xa6, 0xa6, 0x50, 0x44, 0x63, 0x57,
+	0x5a, 0x1f, 0x38, 0x1e, 0x12, 0xaa, 0x1d, 0x5f, 0x42, 0x67, 0x20, 0xd5, 0x30, 0x1d, 0xb7, 0xe2,
+	0xb9, 0xf5, 0x8e, 0xd8, 0xc0, 0xcc, 0x52, 0xc3, 0x03, 0xb7, 0xde, 0x09, 0xf7, 0x35, 0x89, 0xde,
+	0xbe, 0xe6, 0xcb, 0x69, 0xc8, 0x70, 0x7a, 0x84, 0x76, 0xae, 0x45, 0xc8, 0xbc, 0x30, 0x8c, 0xcc,
+	0x78, 0x29, 0xe7, 0xdb, 0x84, 0x20, 0xb4, 0xd0, 0x6d, 0x05, 0xd2, 0xe8, 0x56, 0xb0, 0x35, 0xd5,
+	0x6d, 0x06, 0x7b, 0x90, 0x21, 0x35, 0xcf, 0x0f, 0xa2, 0x99, 0xe5, 0x27, 0x60, 0x46, 0x2f, 0x53,
+	0xbf, 0x6e, 0xc0, 0x34, 0xe9, 0xbd, 0xaa, 0x5f, 0xc8, 0x90, 0xee, 0xfb, 0x8c, 0xde, 0x85, 0x99,
+	0x36, 0xf6, 0x89, 0xe3, 0xb9, 0x62, 0x68, 0xea, 0x80, 0x84, 0x1f, 0x73, 0x84, 0x11, 0x42, 0xd1,
+	0x12, 0xcc, 0x59, 0x3e, 0x66, 0x89, 0x57, 0x70, 0xd3, 0xb3, 0x6a, 0x6c, 0x74, 0x8a, 0x91, 0x0d,
+	0xad, 0x45, 0x6a, 0x8c, 0xd4, 0x95, 0xc4, 0x64, 0x75, 0x05, 0xdd, 0xea, 0xb6, 0x37, 0x7a, 0xc8,
+	0x60, 0x1d, 0x70, 0x2e, 0xd2, 0x73, 0x45, 0xd6, 0xbc, 0xce, 0xef, 0x75, 0x9a, 0xd8, 0x00, 0xaf,
+	0xfb, 0x4c, 0x47, 0xd6, 0x34, 0x3b, 0x75, 0xcf, 0xb4, 0x2b, 0x75, 0xec, 0x1e, 0x04, 0xb5, 0xdc,
+	0x34, 0x1f, 0x99, 0xb0, 0xde, 0x67, 0xc6, 0xf5, 0x24, 0x28, 0x94, 0x56, 0xed, 0x0f, 0x05, 0xb2,
+	0x65, 0x6c, 0xfa, 0x56, 0x6d, 0xe2, 0xd6, 0x10, 0x81, 0xc7, 0x63, 0x5d, 0xff, 0x1d, 0x6e, 0xb2,
+	0x6e, 0x43, 0xc6, 0xf2, 0xdc, 0xc0, 0x74, 0xc4, 0xa4, 0xf0, 0x24, 0xcf, 0x1c, 0x9d, 0x94, 0x3b,
+	0x21, 0xa6, 0xb4, 0x61, 0xa4, 0xbb, 0x0e, 0x25, 0x1b, 0xe5, 0x7a, 0x6a, 0x91, 0xd9, 0xd6, 0xa4,
+	0xab, 0x88, 0x22, 0xcc, 0x54, 0x9d, 0x7a, 0x80, 0x7d, 0x92, 0x4b, 0x2c, 0x26, 0x96, 0xd3, 0x85,
+	0x2b, 0x93, 0x30, 0xa7, 0x6f, 0x32, 0x1f, 0x23, 0xf4, 0x55, 0x7f, 0x96, 0x20, 0xc9, 0x6d, 0x68,
+	0x0f, 0xa0, 0x61, 0x06, 0x56, 0x8d, 0xeb, 0x40, 0x62, 0x3a, 0xb8, 0xfa, 0x1f, 0x82, 0xea, 0xdb,
+	0xd4, 0x9b, 0x09, 0x24, 0xd5, 0x08, 0x1f, 0x11, 0x02, 0xc5, 0x35, 0x1b, 0x7c, 0x2f, 0x97, 0x32,
+	0xd8, 0x33, 0x3a, 0x09, 0xd3, 0x6d, 0xb3, 0xde, 0xc2, 0x8c, 0xe9, 0x94, 0xc1, 0x5f, 0xb4, 0xeb,
+	0x90, 0xea, 0x46, 0x40, 0x2a, 0x9c, 0xda, 0x5e, 0xdb, 0xbb, 0xb3, 0x55, 0xd9, 0xfb, 0x68, 0xb7,
+	0x58, 0x79, 0xb4, 0x53, 0xde, 0x2d, 0xde, 0x29, 0x6d, 0x96, 0x8a, 0x1b, 0xf3, 0x53, 0x68, 0x1e,
+	0x32, 0xe5, 0x3d, 0xa3, 0xb4, 0x73, 0xb7, 0x52, 0x7c, 0xf8, 0x68, 0xed, 0xfe, 0xbc, 0xa4, 0x7d,
+	0x2f, 0xc3, 0x5c, 0x38, 0xae, 0x49, 0x7b, 0x63, 0x14, 0x1f, 0x97, 0x0a, 0x77, 0xbd, 0xd7, 0x31,
+	0x1c, 0xbb, 0x52, 0x77, 0x08, 0xdd, 0xc0, 0x27, 0x46, 0xee, 0xcb, 0x92, 0x8e, 0x7d, 0xdf, 0x21,
+	0x81, 0x76, 0x0d, 0xa6, 0x0d, 0xd3, 0x3d, 0xc0, 0xe8, 0x14, 0x24, 0xbd, 0x6a, 0x95, 0x60, 0xbe,
+	0xf7, 0x57, 0x0c, 0xf1, 0x46, 0xed, 0x62, 0x09, 0xf3, 0xe2, 0x22, 0xde, 0xb4, 0xdf, 0x64, 0x78,
+	0x8d, 0x9e, 0x04, 0xa9, 0x73, 0xb8, 0x6a, 0x6f, 0x44, 0xe8, 0xbd, 0x34, 0xf8, 0xe8, 0xd8, 0xe7,
+	0xf0, 0xbf, 0xef, 0xc7, 0x2b, 0x30, 0xed, 0xd3, 0x7c, 0x07, 0xec, 0xe7, 0x04, 0x23, 0x9c, 0x0e,
+	0x8e, 0xd2, 0xbe, 0x92, 0x61, 0xbe, 0x47, 0x91, 0xd0, 0xec, 0xcd, 0x08, 0xa9, 0x97, 0x47, 0x91,
+	0x1a, 0x2f, 0xd5, 0x9e, 0x15, 0xbc, 0x9e, 0x0c, 0x4f, 0x8d, 0x34, 0xc3, 0x8c, 0x38, 0x33, 0x6a,
+	0x2f, 0x65, 0x38, 0x11, 0x66, 0xb6, 0x65, 0x92, 0x6e, 0x67, 0xb8, 0x1d, 0xa1, 0xe3, 0xcd, 0xe1,
+	0x74, 0xf4, 0x39, 0xc5, 0x43, 0x67, 0x9f, 0x1f, 0x5f, 0x67, 0x79, 0x48, 0x32, 0x05, 0x91, 0x9c,
+	0xcc, 0xd6, 0xfd, 0x50, 0xa1, 0x09, 0x18, 0x2d, 0xc0, 0xc4, 0xac, 0x07, 0x6c, 0xd4, 0x19, 0x83,
+	0x3d, 0x6b, 0xcf, 0x64, 0x38, 0x19, 0x25, 0x4f, 0x28, 0xf0, 0xc3, 0x08, 0xe5, 0x57, 0xc6, 0x51,
+	0x1e, 0x2f, 0x15, 0x5e, 0x10, 0xac, 0x9f, 0x81, 0x54, 0xcd, 0x24, 0xb5, 0x5e, 0xf5, 0xcc, 0x18,
+	0xb3, 0xd4, 0x40, 0xab, 0x64, 0xe1, 0x47, 0x05, 0xb2, 0xbc, 0x74, 0x96, 0x79, 0x7c, 0xb4, 0x01,
+	0x89, 0xbb, 0x38, 0x40, 0x67, 0x47, 0xdd, 0x94, 0xaa, 0xe7, 0x46, 0x5e, 0x9e, 0xad, 0x4a, 0x34,
+	0xca, 0x6e, 0x6b, 0x60, 0x94, 0xde, 0x3d, 0xcb, 0xa0, 0x28, 0x7d, 0xb7, 0x07, 0xcb, 0x12, 0xba,
+	0x07, 0x49, 0x7e, 0xa6, 0x43, 0x6f, 0x8c, 0x39, 0x43, 0xab, 0x8b, 0xe3, 0x8e, 0x83, 0xa8, 0x08,
+	0x0a, 0x65, 0x06, 0x9d, 0x1b, 0x79, 0x92, 0x52, 0x17, 0x46, 0xef, 0x80, 0xd1, 0x36, 0x24, 0x79,
+	0x2f, 0x1d, 0x34, 0xa6, 0xc8, 0x6e, 0x61, 0xd0, 0x98, 0xa2, 0x6d, 0x78, 0x55, 0x42, 0x65, 0x98,
+	0x0d, 0x45, 0x86, 0xce, 0x8f, 0xed, 0x2b, 0xaa, 0x36, 0xbe, 0x4a, 0xae, 0x4a, 0xe8, 0x63, 0xc8,
+	0xf4, 0x2b, 0x17, 0x2d, 0x4d, 0x54, 0x4c, 0xd4, 0x4b, 0x93, 0x2d, 0x80, 0xf5, 0x27, 0xbf, 0x1c,
+	0x2e, 0x48, 0x2f, 0x0e, 0x17, 0xa4, 0x3f, 0x0f, 0x17, 0xa4, 0x67, 0x7f, 0x2d, 0x4c, 0x3d, 0x29,
+	0x1c, 0x38, 0x41, 0xad, 0xb5, 0xaf, 0x5b, 0x5e, 0x23, 0xef, 0x92, 0xa6, 0x65, 0xad, 0xd8, 0xb8,
+	0x9d, 0x77, 0xb1, 0x57, 0x25, 0x2b, 0x66, 0xd3, 0x59, 0x39, 0xf0, 0xf2, 0xdd, 0x2b, 0xff, 0x9b,
+	0xfc, 0xe7, 0xb9, 0x7c, 0x62, 0x07, 0x7b, 0x9b, 0x65, 0x7d, 0x6d, 0xb7, 0x44, 0xff, 0x90, 0xab,
+	0x70, 0x3f, 0xc9, 0x6e, 0xf1, 0xdf, 0xf9, 0x37, 0x00, 0x00, 0xff, 0xff, 0xd6, 0xca, 0xeb, 0x7d,
+	0x4e, 0x18, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -2425,23 +2414,23 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// ServiceClient is the client API for Service service.
+// ObjectServiceClient is the client API for ObjectService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type ServiceClient interface {
+type ObjectServiceClient interface {
 	// Get the object from container. Response uses gRPC stream. First response
 	// message carry object of requested address. Chunk messages are parts of
 	// the object's payload if it is needed. All messages except first carry
 	// chunks. Requested object can be restored by concatenation of object
 	// message payload and all chunks keeping receiving order.
-	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (Service_GetClient, error)
+	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (ObjectService_GetClient, error)
 	// Put the object into container. Request uses gRPC stream. First message
 	// SHOULD BE type of PutHeader. Container id and Owner id of object SHOULD
 	// BE set. Session token SHOULD BE obtained before put operation (see
 	// session package). Chunk messages considered by server as part of object
 	// payload. All messages except first SHOULD BE chunks. Chunk messages
 	// SHOULD BE sent in direct order of fragmentation.
-	Put(ctx context.Context, opts ...grpc.CallOption) (Service_PutClient, error)
+	Put(ctx context.Context, opts ...grpc.CallOption) (ObjectService_PutClient, error)
 	// Delete the object from a container
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	// Head returns the object without data payload. Object in the
@@ -2451,11 +2440,11 @@ type ServiceClient interface {
 	// Search objects in container. Version of query language format SHOULD BE
 	// set to 1. Search query represented in serialized format (see query
 	// package).
-	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (Service_SearchClient, error)
+	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (ObjectService_SearchClient, error)
 	// GetRange of data payload. Range is a pair (offset, length).
 	// Requested range can be restored by concatenation of all chunks
 	// keeping receiving order.
-	GetRange(ctx context.Context, in *GetRangeRequest, opts ...grpc.CallOption) (Service_GetRangeClient, error)
+	GetRange(ctx context.Context, in *GetRangeRequest, opts ...grpc.CallOption) (ObjectService_GetRangeClient, error)
 	// GetRangeHash returns homomorphic hash of object payload range after XOR
 	// operation. Ranges are set of pairs (offset, length). Hashes order in
 	// response corresponds to ranges order in request. Homomorphic hash is
@@ -2463,20 +2452,20 @@ type ServiceClient interface {
 	GetRangeHash(ctx context.Context, in *GetRangeHashRequest, opts ...grpc.CallOption) (*GetRangeHashResponse, error)
 }
 
-type serviceClient struct {
+type objectServiceClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewServiceClient(cc *grpc.ClientConn) ServiceClient {
-	return &serviceClient{cc}
+func NewObjectServiceClient(cc *grpc.ClientConn) ObjectServiceClient {
+	return &objectServiceClient{cc}
 }
 
-func (c *serviceClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (Service_GetClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Service_serviceDesc.Streams[0], "/neo.fs.v2.object.Service/Get", opts...)
+func (c *objectServiceClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (ObjectService_GetClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_ObjectService_serviceDesc.Streams[0], "/neo.fs.v2.object.ObjectService/Get", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &serviceGetClient{stream}
+	x := &objectServiceGetClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -2486,16 +2475,16 @@ func (c *serviceClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.Ca
 	return x, nil
 }
 
-type Service_GetClient interface {
+type ObjectService_GetClient interface {
 	Recv() (*GetResponse, error)
 	grpc.ClientStream
 }
 
-type serviceGetClient struct {
+type objectServiceGetClient struct {
 	grpc.ClientStream
 }
 
-func (x *serviceGetClient) Recv() (*GetResponse, error) {
+func (x *objectServiceGetClient) Recv() (*GetResponse, error) {
 	m := new(GetResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -2503,30 +2492,30 @@ func (x *serviceGetClient) Recv() (*GetResponse, error) {
 	return m, nil
 }
 
-func (c *serviceClient) Put(ctx context.Context, opts ...grpc.CallOption) (Service_PutClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Service_serviceDesc.Streams[1], "/neo.fs.v2.object.Service/Put", opts...)
+func (c *objectServiceClient) Put(ctx context.Context, opts ...grpc.CallOption) (ObjectService_PutClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_ObjectService_serviceDesc.Streams[1], "/neo.fs.v2.object.ObjectService/Put", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &servicePutClient{stream}
+	x := &objectServicePutClient{stream}
 	return x, nil
 }
 
-type Service_PutClient interface {
+type ObjectService_PutClient interface {
 	Send(*PutRequest) error
 	CloseAndRecv() (*PutResponse, error)
 	grpc.ClientStream
 }
 
-type servicePutClient struct {
+type objectServicePutClient struct {
 	grpc.ClientStream
 }
 
-func (x *servicePutClient) Send(m *PutRequest) error {
+func (x *objectServicePutClient) Send(m *PutRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *servicePutClient) CloseAndRecv() (*PutResponse, error) {
+func (x *objectServicePutClient) CloseAndRecv() (*PutResponse, error) {
 	if err := x.ClientStream.CloseSend(); err != nil {
 		return nil, err
 	}
@@ -2537,30 +2526,30 @@ func (x *servicePutClient) CloseAndRecv() (*PutResponse, error) {
 	return m, nil
 }
 
-func (c *serviceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
+func (c *objectServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error) {
 	out := new(DeleteResponse)
-	err := c.cc.Invoke(ctx, "/neo.fs.v2.object.Service/Delete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/neo.fs.v2.object.ObjectService/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *serviceClient) Head(ctx context.Context, in *HeadRequest, opts ...grpc.CallOption) (*HeadResponse, error) {
+func (c *objectServiceClient) Head(ctx context.Context, in *HeadRequest, opts ...grpc.CallOption) (*HeadResponse, error) {
 	out := new(HeadResponse)
-	err := c.cc.Invoke(ctx, "/neo.fs.v2.object.Service/Head", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/neo.fs.v2.object.ObjectService/Head", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *serviceClient) Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (Service_SearchClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Service_serviceDesc.Streams[2], "/neo.fs.v2.object.Service/Search", opts...)
+func (c *objectServiceClient) Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (ObjectService_SearchClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_ObjectService_serviceDesc.Streams[2], "/neo.fs.v2.object.ObjectService/Search", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &serviceSearchClient{stream}
+	x := &objectServiceSearchClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -2570,16 +2559,16 @@ func (c *serviceClient) Search(ctx context.Context, in *SearchRequest, opts ...g
 	return x, nil
 }
 
-type Service_SearchClient interface {
+type ObjectService_SearchClient interface {
 	Recv() (*SearchResponse, error)
 	grpc.ClientStream
 }
 
-type serviceSearchClient struct {
+type objectServiceSearchClient struct {
 	grpc.ClientStream
 }
 
-func (x *serviceSearchClient) Recv() (*SearchResponse, error) {
+func (x *objectServiceSearchClient) Recv() (*SearchResponse, error) {
 	m := new(SearchResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -2587,12 +2576,12 @@ func (x *serviceSearchClient) Recv() (*SearchResponse, error) {
 	return m, nil
 }
 
-func (c *serviceClient) GetRange(ctx context.Context, in *GetRangeRequest, opts ...grpc.CallOption) (Service_GetRangeClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Service_serviceDesc.Streams[3], "/neo.fs.v2.object.Service/GetRange", opts...)
+func (c *objectServiceClient) GetRange(ctx context.Context, in *GetRangeRequest, opts ...grpc.CallOption) (ObjectService_GetRangeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_ObjectService_serviceDesc.Streams[3], "/neo.fs.v2.object.ObjectService/GetRange", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &serviceGetRangeClient{stream}
+	x := &objectServiceGetRangeClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -2602,16 +2591,16 @@ func (c *serviceClient) GetRange(ctx context.Context, in *GetRangeRequest, opts 
 	return x, nil
 }
 
-type Service_GetRangeClient interface {
+type ObjectService_GetRangeClient interface {
 	Recv() (*GetRangeResponse, error)
 	grpc.ClientStream
 }
 
-type serviceGetRangeClient struct {
+type objectServiceGetRangeClient struct {
 	grpc.ClientStream
 }
 
-func (x *serviceGetRangeClient) Recv() (*GetRangeResponse, error) {
+func (x *objectServiceGetRangeClient) Recv() (*GetRangeResponse, error) {
 	m := new(GetRangeResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -2619,30 +2608,30 @@ func (x *serviceGetRangeClient) Recv() (*GetRangeResponse, error) {
 	return m, nil
 }
 
-func (c *serviceClient) GetRangeHash(ctx context.Context, in *GetRangeHashRequest, opts ...grpc.CallOption) (*GetRangeHashResponse, error) {
+func (c *objectServiceClient) GetRangeHash(ctx context.Context, in *GetRangeHashRequest, opts ...grpc.CallOption) (*GetRangeHashResponse, error) {
 	out := new(GetRangeHashResponse)
-	err := c.cc.Invoke(ctx, "/neo.fs.v2.object.Service/GetRangeHash", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/neo.fs.v2.object.ObjectService/GetRangeHash", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ServiceServer is the server API for Service service.
-type ServiceServer interface {
+// ObjectServiceServer is the server API for ObjectService service.
+type ObjectServiceServer interface {
 	// Get the object from container. Response uses gRPC stream. First response
 	// message carry object of requested address. Chunk messages are parts of
 	// the object's payload if it is needed. All messages except first carry
 	// chunks. Requested object can be restored by concatenation of object
 	// message payload and all chunks keeping receiving order.
-	Get(*GetRequest, Service_GetServer) error
+	Get(*GetRequest, ObjectService_GetServer) error
 	// Put the object into container. Request uses gRPC stream. First message
 	// SHOULD BE type of PutHeader. Container id and Owner id of object SHOULD
 	// BE set. Session token SHOULD BE obtained before put operation (see
 	// session package). Chunk messages considered by server as part of object
 	// payload. All messages except first SHOULD BE chunks. Chunk messages
 	// SHOULD BE sent in direct order of fragmentation.
-	Put(Service_PutServer) error
+	Put(ObjectService_PutServer) error
 	// Delete the object from a container
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	// Head returns the object without data payload. Object in the
@@ -2652,11 +2641,11 @@ type ServiceServer interface {
 	// Search objects in container. Version of query language format SHOULD BE
 	// set to 1. Search query represented in serialized format (see query
 	// package).
-	Search(*SearchRequest, Service_SearchServer) error
+	Search(*SearchRequest, ObjectService_SearchServer) error
 	// GetRange of data payload. Range is a pair (offset, length).
 	// Requested range can be restored by concatenation of all chunks
 	// keeping receiving order.
-	GetRange(*GetRangeRequest, Service_GetRangeServer) error
+	GetRange(*GetRangeRequest, ObjectService_GetRangeServer) error
 	// GetRangeHash returns homomorphic hash of object payload range after XOR
 	// operation. Ranges are set of pairs (offset, length). Hashes order in
 	// response corresponds to ranges order in request. Homomorphic hash is
@@ -2664,76 +2653,76 @@ type ServiceServer interface {
 	GetRangeHash(context.Context, *GetRangeHashRequest) (*GetRangeHashResponse, error)
 }
 
-// UnimplementedServiceServer can be embedded to have forward compatible implementations.
-type UnimplementedServiceServer struct {
+// UnimplementedObjectServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedObjectServiceServer struct {
 }
 
-func (*UnimplementedServiceServer) Get(req *GetRequest, srv Service_GetServer) error {
+func (*UnimplementedObjectServiceServer) Get(req *GetRequest, srv ObjectService_GetServer) error {
 	return status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (*UnimplementedServiceServer) Put(srv Service_PutServer) error {
+func (*UnimplementedObjectServiceServer) Put(srv ObjectService_PutServer) error {
 	return status.Errorf(codes.Unimplemented, "method Put not implemented")
 }
-func (*UnimplementedServiceServer) Delete(ctx context.Context, req *DeleteRequest) (*DeleteResponse, error) {
+func (*UnimplementedObjectServiceServer) Delete(ctx context.Context, req *DeleteRequest) (*DeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (*UnimplementedServiceServer) Head(ctx context.Context, req *HeadRequest) (*HeadResponse, error) {
+func (*UnimplementedObjectServiceServer) Head(ctx context.Context, req *HeadRequest) (*HeadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Head not implemented")
 }
-func (*UnimplementedServiceServer) Search(req *SearchRequest, srv Service_SearchServer) error {
+func (*UnimplementedObjectServiceServer) Search(req *SearchRequest, srv ObjectService_SearchServer) error {
 	return status.Errorf(codes.Unimplemented, "method Search not implemented")
 }
-func (*UnimplementedServiceServer) GetRange(req *GetRangeRequest, srv Service_GetRangeServer) error {
+func (*UnimplementedObjectServiceServer) GetRange(req *GetRangeRequest, srv ObjectService_GetRangeServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetRange not implemented")
 }
-func (*UnimplementedServiceServer) GetRangeHash(ctx context.Context, req *GetRangeHashRequest) (*GetRangeHashResponse, error) {
+func (*UnimplementedObjectServiceServer) GetRangeHash(ctx context.Context, req *GetRangeHashRequest) (*GetRangeHashResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRangeHash not implemented")
 }
 
-func RegisterServiceServer(s *grpc.Server, srv ServiceServer) {
-	s.RegisterService(&_Service_serviceDesc, srv)
+func RegisterObjectServiceServer(s *grpc.Server, srv ObjectServiceServer) {
+	s.RegisterService(&_ObjectService_serviceDesc, srv)
 }
 
-func _Service_Get_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _ObjectService_Get_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(GetRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(ServiceServer).Get(m, &serviceGetServer{stream})
+	return srv.(ObjectServiceServer).Get(m, &objectServiceGetServer{stream})
 }
 
-type Service_GetServer interface {
+type ObjectService_GetServer interface {
 	Send(*GetResponse) error
 	grpc.ServerStream
 }
 
-type serviceGetServer struct {
+type objectServiceGetServer struct {
 	grpc.ServerStream
 }
 
-func (x *serviceGetServer) Send(m *GetResponse) error {
+func (x *objectServiceGetServer) Send(m *GetResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _Service_Put_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(ServiceServer).Put(&servicePutServer{stream})
+func _ObjectService_Put_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ObjectServiceServer).Put(&objectServicePutServer{stream})
 }
 
-type Service_PutServer interface {
+type ObjectService_PutServer interface {
 	SendAndClose(*PutResponse) error
 	Recv() (*PutRequest, error)
 	grpc.ServerStream
 }
 
-type servicePutServer struct {
+type objectServicePutServer struct {
 	grpc.ServerStream
 }
 
-func (x *servicePutServer) SendAndClose(m *PutResponse) error {
+func (x *objectServicePutServer) SendAndClose(m *PutResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *servicePutServer) Recv() (*PutRequest, error) {
+func (x *objectServicePutServer) Recv() (*PutRequest, error) {
 	m := new(PutRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -2741,138 +2730,138 @@ func (x *servicePutServer) Recv() (*PutRequest, error) {
 	return m, nil
 }
 
-func _Service_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ObjectService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServiceServer).Delete(ctx, in)
+		return srv.(ObjectServiceServer).Delete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/neo.fs.v2.object.Service/Delete",
+		FullMethod: "/neo.fs.v2.object.ObjectService/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServiceServer).Delete(ctx, req.(*DeleteRequest))
+		return srv.(ObjectServiceServer).Delete(ctx, req.(*DeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Service_Head_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ObjectService_Head_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(HeadRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServiceServer).Head(ctx, in)
+		return srv.(ObjectServiceServer).Head(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/neo.fs.v2.object.Service/Head",
+		FullMethod: "/neo.fs.v2.object.ObjectService/Head",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServiceServer).Head(ctx, req.(*HeadRequest))
+		return srv.(ObjectServiceServer).Head(ctx, req.(*HeadRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Service_Search_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _ObjectService_Search_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(SearchRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(ServiceServer).Search(m, &serviceSearchServer{stream})
+	return srv.(ObjectServiceServer).Search(m, &objectServiceSearchServer{stream})
 }
 
-type Service_SearchServer interface {
+type ObjectService_SearchServer interface {
 	Send(*SearchResponse) error
 	grpc.ServerStream
 }
 
-type serviceSearchServer struct {
+type objectServiceSearchServer struct {
 	grpc.ServerStream
 }
 
-func (x *serviceSearchServer) Send(m *SearchResponse) error {
+func (x *objectServiceSearchServer) Send(m *SearchResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _Service_GetRange_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _ObjectService_GetRange_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(GetRangeRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(ServiceServer).GetRange(m, &serviceGetRangeServer{stream})
+	return srv.(ObjectServiceServer).GetRange(m, &objectServiceGetRangeServer{stream})
 }
 
-type Service_GetRangeServer interface {
+type ObjectService_GetRangeServer interface {
 	Send(*GetRangeResponse) error
 	grpc.ServerStream
 }
 
-type serviceGetRangeServer struct {
+type objectServiceGetRangeServer struct {
 	grpc.ServerStream
 }
 
-func (x *serviceGetRangeServer) Send(m *GetRangeResponse) error {
+func (x *objectServiceGetRangeServer) Send(m *GetRangeResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _Service_GetRangeHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ObjectService_GetRangeHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRangeHashRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServiceServer).GetRangeHash(ctx, in)
+		return srv.(ObjectServiceServer).GetRangeHash(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/neo.fs.v2.object.Service/GetRangeHash",
+		FullMethod: "/neo.fs.v2.object.ObjectService/GetRangeHash",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServiceServer).GetRangeHash(ctx, req.(*GetRangeHashRequest))
+		return srv.(ObjectServiceServer).GetRangeHash(ctx, req.(*GetRangeHashRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Service_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "neo.fs.v2.object.Service",
-	HandlerType: (*ServiceServer)(nil),
+var _ObjectService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "neo.fs.v2.object.ObjectService",
+	HandlerType: (*ObjectServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Delete",
-			Handler:    _Service_Delete_Handler,
+			Handler:    _ObjectService_Delete_Handler,
 		},
 		{
 			MethodName: "Head",
-			Handler:    _Service_Head_Handler,
+			Handler:    _ObjectService_Head_Handler,
 		},
 		{
 			MethodName: "GetRangeHash",
-			Handler:    _Service_GetRangeHash_Handler,
+			Handler:    _ObjectService_GetRangeHash_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "Get",
-			Handler:       _Service_Get_Handler,
+			Handler:       _ObjectService_Get_Handler,
 			ServerStreams: true,
 		},
 		{
 			StreamName:    "Put",
-			Handler:       _Service_Put_Handler,
+			Handler:       _ObjectService_Put_Handler,
 			ClientStreams: true,
 		},
 		{
 			StreamName:    "Search",
-			Handler:       _Service_Search_Handler,
+			Handler:       _ObjectService_Search_Handler,
 			ServerStreams: true,
 		},
 		{
 			StreamName:    "GetRange",
-			Handler:       _Service_GetRange_Handler,
+			Handler:       _ObjectService_GetRange_Handler,
 			ServerStreams: true,
 		},
 	},
@@ -4116,17 +4105,24 @@ func (m *SearchRequest_Body) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.Query != nil {
-		{
-			size, err := m.Query.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
+	if len(m.Filters) > 0 {
+		for iNdEx := len(m.Filters) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Filters[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintService(dAtA, i, uint64(size))
 			}
-			i -= size
-			i = encodeVarintService(dAtA, i, uint64(size))
+			i--
+			dAtA[i] = 0x1a
 		}
+	}
+	if m.Version != 0 {
+		i = encodeVarintService(dAtA, i, uint64(m.Version))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x10
 	}
 	if m.ContainerId != nil {
 		{
@@ -4143,7 +4139,7 @@ func (m *SearchRequest_Body) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *SearchRequest_Body_Query) Marshal() (dAtA []byte, err error) {
+func (m *SearchRequest_Body_Filter) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -4153,58 +4149,12 @@ func (m *SearchRequest_Body_Query) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *SearchRequest_Body_Query) MarshalTo(dAtA []byte) (int, error) {
+func (m *SearchRequest_Body_Filter) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *SearchRequest_Body_Query) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.Filters) > 0 {
-		for iNdEx := len(m.Filters) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Filters[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintService(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x12
-		}
-	}
-	if m.Version != 0 {
-		i = encodeVarintService(dAtA, i, uint64(m.Version))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *SearchRequest_Body_Query_Filter) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *SearchRequest_Body_Query_Filter) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *SearchRequest_Body_Query_Filter) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *SearchRequest_Body_Filter) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -5332,22 +5282,6 @@ func (m *SearchRequest_Body) Size() (n int) {
 		l = m.ContainerId.Size()
 		n += 1 + l + sovService(uint64(l))
 	}
-	if m.Query != nil {
-		l = m.Query.Size()
-		n += 1 + l + sovService(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *SearchRequest_Body_Query) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
 	if m.Version != 0 {
 		n += 1 + sovService(uint64(m.Version))
 	}
@@ -5363,7 +5297,7 @@ func (m *SearchRequest_Body_Query) Size() (n int) {
 	return n
 }
 
-func (m *SearchRequest_Body_Query_Filter) Size() (n int) {
+func (m *SearchRequest_Body_Filter) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -8556,96 +8490,6 @@ func (m *SearchRequest_Body) Unmarshal(dAtA []byte) error {
 			}
 			iNdEx = postIndex
 		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Query", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowService
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthService
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthService
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Query == nil {
-				m.Query = &SearchRequest_Body_Query{}
-			}
-			if err := m.Query.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipService(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthService
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthService
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *SearchRequest_Body_Query) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowService
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Query: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Query: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
 			}
@@ -8664,7 +8508,7 @@ func (m *SearchRequest_Body_Query) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 2:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Filters", wireType)
 			}
@@ -8693,7 +8537,7 @@ func (m *SearchRequest_Body_Query) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Filters = append(m.Filters, &SearchRequest_Body_Query_Filter{})
+			m.Filters = append(m.Filters, &SearchRequest_Body_Filter{})
 			if err := m.Filters[len(m.Filters)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -8723,7 +8567,7 @@ func (m *SearchRequest_Body_Query) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *SearchRequest_Body_Query_Filter) Unmarshal(dAtA []byte) error {
+func (m *SearchRequest_Body_Filter) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -8766,7 +8610,7 @@ func (m *SearchRequest_Body_Query_Filter) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MatchType |= SearchRequest_Body_Query_Filter_MatchType(b&0x7F) << shift
+				m.MatchType |= SearchRequest_Body_Filter_MatchType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
