@@ -26,6 +26,10 @@ type Primitives struct {
 	FieldA               []byte   `protobuf:"bytes,1,opt,name=field_a,json=fieldA,proto3" json:"field_a,omitempty"`
 	FieldB               string   `protobuf:"bytes,2,opt,name=field_b,json=fieldB,proto3" json:"field_b,omitempty"`
 	FieldC               bool     `protobuf:"varint,200,opt,name=field_c,json=fieldC,proto3" json:"field_c,omitempty"`
+	FieldD               int32    `protobuf:"varint,201,opt,name=field_d,json=fieldD,proto3" json:"field_d,omitempty"`
+	FieldE               uint32   `protobuf:"varint,202,opt,name=field_e,json=fieldE,proto3" json:"field_e,omitempty"`
+	FieldF               int64    `protobuf:"varint,203,opt,name=field_f,json=fieldF,proto3" json:"field_f,omitempty"`
+	FieldG               uint64   `protobuf:"varint,204,opt,name=field_g,json=fieldG,proto3" json:"field_g,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -85,6 +89,34 @@ func (m *Primitives) GetFieldC() bool {
 	return false
 }
 
+func (m *Primitives) GetFieldD() int32 {
+	if m != nil {
+		return m.FieldD
+	}
+	return 0
+}
+
+func (m *Primitives) GetFieldE() uint32 {
+	if m != nil {
+		return m.FieldE
+	}
+	return 0
+}
+
+func (m *Primitives) GetFieldF() int64 {
+	if m != nil {
+		return m.FieldF
+	}
+	return 0
+}
+
+func (m *Primitives) GetFieldG() uint64 {
+	if m != nil {
+		return m.FieldG
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*Primitives)(nil), "test.Primitives")
 }
@@ -92,16 +124,19 @@ func init() {
 func init() { proto.RegisterFile("util/proto/test/test.proto", fileDescriptor_998ad0e1a3de8558) }
 
 var fileDescriptor_998ad0e1a3de8558 = []byte{
-	// 134 bytes of a gzipped FileDescriptorProto
+	// 178 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2a, 0x2d, 0xc9, 0xcc,
 	0xd1, 0x2f, 0x28, 0xca, 0x2f, 0xc9, 0xd7, 0x2f, 0x49, 0x2d, 0x2e, 0x01, 0x13, 0x7a, 0x60, 0xbe,
-	0x10, 0x0b, 0x88, 0xad, 0x14, 0xc1, 0xc5, 0x15, 0x50, 0x94, 0x99, 0x9b, 0x59, 0x92, 0x59, 0x96,
-	0x5a, 0x2c, 0x24, 0xce, 0xc5, 0x9e, 0x96, 0x99, 0x9a, 0x93, 0x12, 0x9f, 0x28, 0xc1, 0xa8, 0xc0,
-	0xa8, 0xc1, 0x13, 0xc4, 0x06, 0xe6, 0x3a, 0x22, 0x24, 0x92, 0x24, 0x98, 0x14, 0x18, 0x35, 0x38,
-	0xa1, 0x12, 0x4e, 0x42, 0x12, 0x30, 0x89, 0x64, 0x89, 0x13, 0x20, 0x2d, 0x1c, 0x50, 0x19, 0x67,
-	0x27, 0x81, 0x13, 0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92, 0x63, 0x7c, 0xf0, 0x48, 0x8e, 0x71, 0xc6,
-	0x63, 0x39, 0x86, 0x24, 0x36, 0xb0, 0xc5, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x1a, 0x10,
-	0x20, 0x0a, 0x96, 0x00, 0x00, 0x00,
+	0x10, 0x0b, 0x88, 0xad, 0x74, 0x80, 0x91, 0x8b, 0x2b, 0xa0, 0x28, 0x33, 0x37, 0xb3, 0x24, 0xb3,
+	0x2c, 0xb5, 0x58, 0x48, 0x9c, 0x8b, 0x3d, 0x2d, 0x33, 0x35, 0x27, 0x25, 0x3e, 0x51, 0x82, 0x51,
+	0x81, 0x51, 0x83, 0x27, 0x88, 0x0d, 0xcc, 0x75, 0x44, 0x48, 0x24, 0x49, 0x30, 0x29, 0x30, 0x6a,
+	0x70, 0x42, 0x25, 0x9c, 0x84, 0x24, 0x60, 0x12, 0xc9, 0x12, 0x27, 0x40, 0x5a, 0x38, 0xa0, 0x32,
+	0xce, 0x08, 0x99, 0x14, 0x89, 0x93, 0x20, 0x19, 0x56, 0xa8, 0x8c, 0x0b, 0x42, 0x26, 0x55, 0xe2,
+	0x14, 0x48, 0x86, 0x17, 0x2a, 0xe3, 0x8a, 0x90, 0x49, 0x93, 0x38, 0x0d, 0x92, 0x61, 0x86, 0xca,
+	0xb8, 0x21, 0x64, 0xd2, 0x25, 0xce, 0x80, 0x64, 0x58, 0xa0, 0x32, 0xee, 0x4e, 0x02, 0x27, 0x1e,
+	0xc9, 0x31, 0x5e, 0x78, 0x24, 0xc7, 0xf8, 0xe0, 0x91, 0x1c, 0xe3, 0x8c, 0xc7, 0x72, 0x0c, 0x49,
+	0x6c, 0x60, 0x1f, 0x1a, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0xcc, 0xee, 0x55, 0x82, 0xff, 0x00,
+	0x00, 0x00,
 }
 
 func (m *Primitives) Marshal() (dAtA []byte, err error) {
@@ -127,6 +162,34 @@ func (m *Primitives) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.XXX_unrecognized != nil {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.FieldG != 0 {
+		i = encodeVarintTest(dAtA, i, uint64(m.FieldG))
+		i--
+		dAtA[i] = 0xc
+		i--
+		dAtA[i] = 0xe0
+	}
+	if m.FieldF != 0 {
+		i = encodeVarintTest(dAtA, i, uint64(m.FieldF))
+		i--
+		dAtA[i] = 0xc
+		i--
+		dAtA[i] = 0xd8
+	}
+	if m.FieldE != 0 {
+		i = encodeVarintTest(dAtA, i, uint64(m.FieldE))
+		i--
+		dAtA[i] = 0xc
+		i--
+		dAtA[i] = 0xd0
+	}
+	if m.FieldD != 0 {
+		i = encodeVarintTest(dAtA, i, uint64(m.FieldD))
+		i--
+		dAtA[i] = 0xc
+		i--
+		dAtA[i] = 0xc8
 	}
 	if m.FieldC {
 		i--
@@ -184,6 +247,18 @@ func (m *Primitives) Size() (n int) {
 	}
 	if m.FieldC {
 		n += 3
+	}
+	if m.FieldD != 0 {
+		n += 2 + sovTest(uint64(m.FieldD))
+	}
+	if m.FieldE != 0 {
+		n += 2 + sovTest(uint64(m.FieldE))
+	}
+	if m.FieldF != 0 {
+		n += 2 + sovTest(uint64(m.FieldF))
+	}
+	if m.FieldG != 0 {
+		n += 2 + sovTest(uint64(m.FieldG))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -312,6 +387,82 @@ func (m *Primitives) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.FieldC = bool(v != 0)
+		case 201:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FieldD", wireType)
+			}
+			m.FieldD = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTest
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.FieldD |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 202:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FieldE", wireType)
+			}
+			m.FieldE = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTest
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.FieldE |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 203:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FieldF", wireType)
+			}
+			m.FieldF = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTest
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.FieldF |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 204:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FieldG", wireType)
+			}
+			m.FieldG = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTest
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.FieldG |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTest(dAtA[iNdEx:])
