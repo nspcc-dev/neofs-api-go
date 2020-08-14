@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/v2/acl"
-	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
+	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
 // SetKey sets key to the X-Header.

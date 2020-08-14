@@ -1,4 +1,8 @@
-package v2
+package service
+
+import (
+	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
+)
 
 type Signature struct {
 	key, sign []byte
@@ -40,10 +44,6 @@ type RequestMetaHeader struct {
 	bearerToken *BearerToken
 
 	origin *RequestMetaHeader
-}
-
-type OwnerID struct {
-	val []byte
 }
 
 func (s *Signature) GetKey() []byte {
@@ -316,16 +316,28 @@ func (r *RequestMetaHeader) StableSize() int {
 	return RequestMetaHeaderToGRPCMessage(r).Size()
 }
 
-func (o *OwnerID) GetValue() []byte {
-	if o != nil {
-		return o.val
+func SignatureToGRPCMessage(s *Signature) *service.Signature {
+	if s == nil {
+		return nil
 	}
 
-	return nil
+	m := new(service.Signature)
+
+	m.SetKey(s.GetKey())
+	m.SetSign(s.GetSign())
+
+	return m
 }
 
-func (o *OwnerID) SetValue(v []byte) {
-	if o != nil {
-		o.val = v
+func SignatureFromGRPCMessage(m *service.Signature) *Signature {
+	if m == nil {
+		return nil
 	}
+
+	s := new(Signature)
+
+	s.SetKey(m.GetKey())
+	s.SetSign(m.GetSign())
+
+	return s
 }

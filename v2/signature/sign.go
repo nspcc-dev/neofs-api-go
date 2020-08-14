@@ -5,14 +5,15 @@ import (
 	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/util/signature"
-	v2 "github.com/nspcc-dev/neofs-api-go/v2"
+	"github.com/nspcc-dev/neofs-api-go/v2/accounting"
+	"github.com/nspcc-dev/neofs-api-go/v2/service"
 	"github.com/pkg/errors"
 )
 
 type SignedRequest interface {
-	GetRequestMetaHeader() *v2.RequestMetaHeader
-	GetRequestVerificationHeader() *v2.RequestVerificationHeader
-	SetRequestVerificationHeader(*v2.RequestVerificationHeader)
+	GetRequestMetaHeader() *service.RequestMetaHeader
+	GetRequestVerificationHeader() *service.RequestVerificationHeader
+	SetRequestVerificationHeader(*service.RequestVerificationHeader)
 }
 
 type stableMarshaler interface {
@@ -32,14 +33,14 @@ func (s stableMarshalerWrapper) SignedDataSize() int {
 	return s.sm.StableSize()
 }
 
-func keySignatureHandler(s *v2.Signature) signature.KeySignatureHandler {
+func keySignatureHandler(s *service.Signature) signature.KeySignatureHandler {
 	return func(key []byte, sig []byte) {
 		s.SetKey(key)
 		s.SetSign(sig)
 	}
 }
 
-func keySignatureSource(s *v2.Signature) signature.KeySignatureSource {
+func keySignatureSource(s *service.Signature) signature.KeySignatureSource {
 	return func() ([]byte, []byte) {
 		return s.GetKey(), s.GetSign()
 	}
@@ -47,7 +48,7 @@ func keySignatureSource(s *v2.Signature) signature.KeySignatureSource {
 
 func requestBody(req SignedRequest) stableMarshaler {
 	switch v := req.(type) {
-	case *v2.BalanceRequest:
+	case *accounting.BalanceRequest:
 		return v.GetBody()
 	default:
 		panic(fmt.Sprintf("unknown request %T", req))
@@ -60,7 +61,7 @@ func SignRequest(key *ecdsa.PrivateKey, req SignedRequest) error {
 	}
 
 	// create new level of matryoshka
-	verifyHdr := new(v2.RequestVerificationHeader)
+	verifyHdr := new(service.RequestVerificationHeader)
 
 	// attach the previous matryoshka
 	verifyHdr.SetOrigin(req.GetRequestVerificationHeader())
@@ -86,8 +87,8 @@ func SignRequest(key *ecdsa.PrivateKey, req SignedRequest) error {
 	return nil
 }
 
-func signRequestPart(key *ecdsa.PrivateKey, part stableMarshaler, sigWrite func(*v2.Signature)) error {
-	sig := new(v2.Signature)
+func signRequestPart(key *ecdsa.PrivateKey, part stableMarshaler, sigWrite func(*service.Signature)) error {
+	sig := new(service.Signature)
 
 	// sign part
 	if err := signature.SignDataWithHandler(
@@ -125,7 +126,7 @@ func VerifyRequest(req SignedRequest) error {
 	return nil
 }
 
-func verifyRequestPart(part stableMarshaler, sigRdr func() *v2.Signature) error {
+func verifyRequestPart(part stableMarshaler, sigRdr func() *service.Signature) error {
 	if err := signature.VerifyDataWithSource(
 		&stableMarshalerWrapper{part},
 		keySignatureSource(sigRdr()),

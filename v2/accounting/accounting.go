@@ -1,18 +1,23 @@
-package v2
+package accounting
+
+import (
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	"github.com/nspcc-dev/neofs-api-go/v2/service"
+)
 
 type BalanceRequestBody struct {
-	ownerID *OwnerID
+	ownerID *refs.OwnerID
 }
 
 type BalanceRequest struct {
 	body *BalanceRequestBody
 
-	metaHeader *RequestMetaHeader
+	metaHeader *service.RequestMetaHeader
 
-	verifyHeader *RequestVerificationHeader
+	verifyHeader *service.RequestVerificationHeader
 }
 
-func (b *BalanceRequestBody) GetOwnerID() *OwnerID {
+func (b *BalanceRequestBody) GetOwnerID() *refs.OwnerID {
 	if b != nil {
 		return b.ownerID
 	}
@@ -20,7 +25,7 @@ func (b *BalanceRequestBody) GetOwnerID() *OwnerID {
 	return nil
 }
 
-func (b *BalanceRequestBody) SetOwnerID(v *OwnerID) {
+func (b *BalanceRequestBody) SetOwnerID(v *refs.OwnerID) {
 	if b != nil {
 		b.ownerID = v
 	}
@@ -56,7 +61,7 @@ func (b *BalanceRequest) SetBody(v *BalanceRequestBody) {
 	}
 }
 
-func (b *BalanceRequest) GetRequestMetaHeader() *RequestMetaHeader {
+func (b *BalanceRequest) GetRequestMetaHeader() *service.RequestMetaHeader {
 	if b != nil {
 		return b.metaHeader
 	}
@@ -64,13 +69,13 @@ func (b *BalanceRequest) GetRequestMetaHeader() *RequestMetaHeader {
 	return nil
 }
 
-func (b *BalanceRequest) SetRequestMetaHeader(v *RequestMetaHeader) {
+func (b *BalanceRequest) SetRequestMetaHeader(v *service.RequestMetaHeader) {
 	if b != nil {
 		b.metaHeader = v
 	}
 }
 
-func (b *BalanceRequest) GetRequestVerificationHeader() *RequestVerificationHeader {
+func (b *BalanceRequest) GetRequestVerificationHeader() *service.RequestVerificationHeader {
 	if b != nil {
 		return b.verifyHeader
 	}
@@ -78,7 +83,7 @@ func (b *BalanceRequest) GetRequestVerificationHeader() *RequestVerificationHead
 	return nil
 }
 
-func (b *BalanceRequest) SetRequestVerificationHeader(v *RequestVerificationHeader) {
+func (b *BalanceRequest) SetRequestVerificationHeader(v *service.RequestVerificationHeader) {
 	if b != nil {
 		b.verifyHeader = v
 	}

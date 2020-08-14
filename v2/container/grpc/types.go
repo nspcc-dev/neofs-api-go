@@ -1,8 +1,8 @@
 package container
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
-	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
+	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
 // SetKey sets key to the container attribute.
