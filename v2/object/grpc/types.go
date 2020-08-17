@@ -158,3 +158,38 @@ func (m *Object) SetPayload(v []byte) {
 		m.Payload = v
 	}
 }
+
+// SetVersion sets version of the object.
+func (m *ShortHeader) SetVersion(v *service.Version) {
+	if m != nil {
+		m.Version = v
+	}
+}
+
+// SetCreationEpoch sets creation epoch number.
+func (m *ShortHeader) SetCreationEpoch(v uint64) {
+	if m != nil {
+		m.CreationEpoch = v
+	}
+}
+
+// SetOwnerId sets identifier of the object owner.
+func (m *ShortHeader) SetOwnerId(v *refs.OwnerID) {
+	if m != nil {
+		m.OwnerId = v
+	}
+}
+
+// SetObjectType sets type of the object.
+func (m *ShortHeader) SetObjectType(v ObjectType) {
+	if m != nil {
+		m.ObjectType = v
+	}
+}
+
+// SetPayloadLength sets length of the object payload.
+func (m *ShortHeader) SetPayloadLength(v uint64) {
+	if m != nil {
+		m.PayloadLength = v
+	}
+}
