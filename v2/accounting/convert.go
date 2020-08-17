@@ -4,7 +4,6 @@ import (
 	accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-api-go/v2/service"
-	grpcService "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
 )
 
 func BalanceRequestBodyToGRPCMessage(b *BalanceRequestBody) *accounting.BalanceRequest_Body {
@@ -35,44 +34,6 @@ func BalanceRequestBodyFromGRPCMessage(m *accounting.BalanceRequest_Body) *Balan
 	return b
 }
 
-func headersToGRPC(
-	src interface {
-		GetRequestMetaHeader() *service.RequestMetaHeader
-		GetRequestVerificationHeader() *service.RequestVerificationHeader
-	},
-	dst interface {
-		SetMetaHeader(*grpcService.RequestMetaHeader)
-		SetVerifyHeader(*grpcService.RequestVerificationHeader)
-	},
-) {
-	dst.SetMetaHeader(
-		service.RequestMetaHeaderToGRPCMessage(src.GetRequestMetaHeader()),
-	)
-
-	dst.SetVerifyHeader(
-		service.RequestVerificationHeaderToGRPCMessage(src.GetRequestVerificationHeader()),
-	)
-}
-
-func headersFromGRPC(
-	src interface {
-		GetMetaHeader() *grpcService.RequestMetaHeader
-		GetVerifyHeader() *grpcService.RequestVerificationHeader
-	},
-	dst interface {
-		SetRequestMetaHeader(*service.RequestMetaHeader)
-		SetRequestVerificationHeader(*service.RequestVerificationHeader)
-	},
-) {
-	dst.SetRequestMetaHeader(
-		service.RequestMetaHeaderFromGRPCMessage(src.GetMetaHeader()),
-	)
-
-	dst.SetRequestVerificationHeader(
-		service.RequestVerificationHeaderFromGRPCMessage(src.GetVerifyHeader()),
-	)
-}
-
 func BalanceRequestToGRPCMessage(b *BalanceRequest) *accounting.BalanceRequest {
 	if b == nil {
 		return nil
@@ -84,7 +45,7 @@ func BalanceRequestToGRPCMessage(b *BalanceRequest) *accounting.BalanceRequest {
 		BalanceRequestBodyToGRPCMessage(b.GetBody()),
 	)
 
-	headersToGRPC(b, m)
+	service.RequestHeadersToGRPC(b, m)
 
 	return m
 }
@@ -100,7 +61,7 @@ func BalanceRequestFromGRPCMessage(m *accounting.BalanceRequest) *BalanceRequest
 		BalanceRequestBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	headersFromGRPC(m, b)
+	service.RequestHeadersFromGRPC(m, b)
 
 	return b
 }
