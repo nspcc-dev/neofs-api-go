@@ -217,6 +217,8 @@ func RequestMetaHeaderToGRPCMessage(r *RequestMetaHeader) *service.RequestMetaHe
 		xHdrMsg = append(xHdrMsg, XHeaderToGRPCMessage(xHeaders[i]))
 	}
 
+	m.SetXHeaders(xHdrMsg)
+
 	return m
 }
 
@@ -252,6 +254,8 @@ func RequestMetaHeaderFromGRPCMessage(m *service.RequestMetaHeader) *RequestMeta
 	for i := range xHdrMsg {
 		xHeaders = append(xHeaders, XHeaderFromGRPCMessage(xHdrMsg[i]))
 	}
+
+	r.SetXHeaders(xHeaders)
 
 	return r
 }
@@ -469,6 +473,8 @@ func ResponseMetaHeaderToGRPCMessage(r *ResponseMetaHeader) *service.ResponseMet
 		xHdrMsg = append(xHdrMsg, XHeaderToGRPCMessage(xHeaders[i]))
 	}
 
+	m.SetXHeaders(xHdrMsg)
+
 	return m
 }
 
@@ -496,6 +502,8 @@ func ResponseMetaHeaderFromGRPCMessage(m *service.ResponseMetaHeader) *ResponseM
 	for i := range xHdrMsg {
 		xHeaders = append(xHeaders, XHeaderFromGRPCMessage(xHdrMsg[i]))
 	}
+
+	r.SetXHeaders(xHeaders)
 
 	return r
 }
