@@ -6,6 +6,7 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
 	grpc "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
 )
 
@@ -118,5 +119,30 @@ func TestRecord_StableMarshal(t *testing.T) {
 
 		recordTo := acl.RecordFromGRPCMessage(transport)
 		require.Equal(t, recordFrom, recordTo)
+	})
+}
+
+func TestTable_StableMarshal(t *testing.T) {
+	tableFrom := new(acl.Table)
+	transport := new(grpc.EACLTable)
+
+	t.Run("non empty", func(t *testing.T) {
+		cid := new(refs.ContainerID)
+		cid.SetValue([]byte("Container ID"))
+
+		r1 := generateRecord(false)
+		r2 := generateRecord(true)
+
+		tableFrom.SetContainerID(cid)
+		tableFrom.SetRecords([]*acl.Record{r1, r2})
+
+		wire, err := tableFrom.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = transport.Unmarshal(wire)
+		require.NoError(t, err)
+
+		tableTo := acl.TableFromGRPCMessage(transport)
+		require.Equal(t, tableFrom, tableTo)
 	})
 }
