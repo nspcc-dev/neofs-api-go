@@ -31,108 +31,108 @@ func TargetFromGRPCField(t acl.Target) Target {
 	}
 }
 
-func OperationToGRPCField(t Operation) acl.EACLRecord_Operation {
+func OperationToGRPCField(t Operation) acl.Operation {
 	switch t {
 	case OperationPut:
-		return acl.EACLRecord_PUT
+		return acl.Operation_PUT
 	case OperationDelete:
-		return acl.EACLRecord_DELETE
+		return acl.Operation_DELETE
 	case OperationGet:
-		return acl.EACLRecord_GET
+		return acl.Operation_GET
 	case OperationHead:
-		return acl.EACLRecord_HEAD
+		return acl.Operation_HEAD
 	case OperationSearch:
-		return acl.EACLRecord_SEARCH
+		return acl.Operation_SEARCH
 	case OperationRange:
-		return acl.EACLRecord_GETRANGE
+		return acl.Operation_GETRANGE
 	case OperationRangeHash:
-		return acl.EACLRecord_GETRANGEHASH
+		return acl.Operation_GETRANGEHASH
 	default:
-		return acl.EACLRecord_OPERATION_UNSPECIFIED
+		return acl.Operation_OPERATION_UNSPECIFIED
 	}
 }
 
-func OperationFromGRPCField(t acl.EACLRecord_Operation) Operation {
+func OperationFromGRPCField(t acl.Operation) Operation {
 	switch t {
-	case acl.EACLRecord_PUT:
+	case acl.Operation_PUT:
 		return OperationPut
-	case acl.EACLRecord_DELETE:
+	case acl.Operation_DELETE:
 		return OperationDelete
-	case acl.EACLRecord_GET:
+	case acl.Operation_GET:
 		return OperationGet
-	case acl.EACLRecord_HEAD:
+	case acl.Operation_HEAD:
 		return OperationHead
-	case acl.EACLRecord_SEARCH:
+	case acl.Operation_SEARCH:
 		return OperationSearch
-	case acl.EACLRecord_GETRANGE:
+	case acl.Operation_GETRANGE:
 		return OperationRange
-	case acl.EACLRecord_GETRANGEHASH:
+	case acl.Operation_GETRANGEHASH:
 		return OperationRangeHash
 	default:
 		return OperationUnknown
 	}
 }
 
-func ActionToGRPCField(t Action) acl.EACLRecord_Action {
+func ActionToGRPCField(t Action) acl.Action {
 	switch t {
 	case ActionDeny:
-		return acl.EACLRecord_DENY
+		return acl.Action_DENY
 	case ActionAllow:
-		return acl.EACLRecord_ALLOW
+		return acl.Action_ALLOW
 	default:
-		return acl.EACLRecord_ACTION_UNSPECIFIED
+		return acl.Action_ACTION_UNSPECIFIED
 	}
 }
 
-func ActionFromGRPCField(t acl.EACLRecord_Action) Action {
+func ActionFromGRPCField(t acl.Action) Action {
 	switch t {
-	case acl.EACLRecord_DENY:
+	case acl.Action_DENY:
 		return ActionDeny
-	case acl.EACLRecord_ALLOW:
+	case acl.Action_ALLOW:
 		return ActionAllow
 	default:
 		return ActionUnknown
 	}
 }
 
-func HeaderTypeToGRPCField(t HeaderType) acl.EACLRecord_FilterInfo_Header {
+func HeaderTypeToGRPCField(t HeaderType) acl.HeaderType {
 	switch t {
 	case HeaderTypeRequest:
-		return acl.EACLRecord_FilterInfo_REQUEST
+		return acl.HeaderType_REQUEST
 	case HeaderTypeObject:
-		return acl.EACLRecord_FilterInfo_OBJECT
+		return acl.HeaderType_OBJECT
 	default:
-		return acl.EACLRecord_FilterInfo_HEADER_UNSPECIFIED
+		return acl.HeaderType_HEADER_UNSPECIFIED
 	}
 }
 
-func HeaderTypeFromGRPCField(t acl.EACLRecord_FilterInfo_Header) HeaderType {
+func HeaderTypeFromGRPCField(t acl.HeaderType) HeaderType {
 	switch t {
-	case acl.EACLRecord_FilterInfo_REQUEST:
+	case acl.HeaderType_REQUEST:
 		return HeaderTypeRequest
-	case acl.EACLRecord_FilterInfo_OBJECT:
+	case acl.HeaderType_OBJECT:
 		return HeaderTypeObject
 	default:
 		return HeaderTypeUnknown
 	}
 }
 
-func MatchTypeToGRPCField(t MatchType) acl.EACLRecord_FilterInfo_MatchType {
+func MatchTypeToGRPCField(t MatchType) acl.MatchType {
 	switch t {
 	case MatchTypeStringEqual:
-		return acl.EACLRecord_FilterInfo_STRING_EQUAL
+		return acl.MatchType_STRING_EQUAL
 	case MatchTypeStringNotEqual:
-		return acl.EACLRecord_FilterInfo_STRING_NOT_EQUAL
+		return acl.MatchType_STRING_NOT_EQUAL
 	default:
-		return acl.EACLRecord_FilterInfo_MATCH_TYPE_UNSPECIFIED
+		return acl.MatchType_MATCH_TYPE_UNSPECIFIED
 	}
 }
 
-func MatchTypeFromGRPCField(t acl.EACLRecord_FilterInfo_MatchType) MatchType {
+func MatchTypeFromGRPCField(t acl.MatchType) MatchType {
 	switch t {
-	case acl.EACLRecord_FilterInfo_STRING_EQUAL:
+	case acl.MatchType_STRING_EQUAL:
 		return MatchTypeStringEqual
-	case acl.EACLRecord_FilterInfo_STRING_NOT_EQUAL:
+	case acl.MatchType_STRING_NOT_EQUAL:
 		return MatchTypeStringNotEqual
 	default:
 		return MatchTypeUnknown

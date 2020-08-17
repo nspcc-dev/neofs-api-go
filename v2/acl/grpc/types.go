@@ -19,14 +19,14 @@ func (m *EACLTable) SetRecords(v []*EACLRecord) {
 }
 
 // SetOperation sets operation of the eACL record.
-func (m *EACLRecord) SetOperation(v EACLRecord_Operation) {
+func (m *EACLRecord) SetOperation(v Operation) {
 	if m != nil {
 		m.Operation = v
 	}
 }
 
 // SetAction sets action of the eACL record.
-func (m *EACLRecord) SetAction(v EACLRecord_Action) {
+func (m *EACLRecord) SetAction(v Action) {
 	if m != nil {
 		m.Action = v
 	}
@@ -47,14 +47,14 @@ func (m *EACLRecord) SetTargets(v []*EACLRecord_TargetInfo) {
 }
 
 // SetHeader sets header type of the eACL filter.
-func (m *EACLRecord_FilterInfo) SetHeader(v EACLRecord_FilterInfo_Header) {
+func (m *EACLRecord_FilterInfo) SetHeader(v HeaderType) {
 	if m != nil {
 		m.Header = v
 	}
 }
 
 // SetMatchType sets match type of the eACL filter.
-func (m *EACLRecord_FilterInfo) SetMatchType(v EACLRecord_FilterInfo_MatchType) {
+func (m *EACLRecord_FilterInfo) SetMatchType(v MatchType) {
 	if m != nil {
 		m.MatchType = v
 	}
