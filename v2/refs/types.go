@@ -32,17 +32,17 @@ func (o *OwnerID) SetValue(v []byte) {
 	}
 }
 
-func (o *ContainerID) GetValue() []byte {
-	if o != nil {
-		return o.val
+func (c *ContainerID) GetValue() []byte {
+	if c != nil {
+		return c.val
 	}
 
 	return nil
 }
 
-func (o *ContainerID) SetValue(v []byte) {
-	if o != nil {
-		o.val = v
+func (c *ContainerID) SetValue(v []byte) {
+	if c != nil {
+		c.val = v
 	}
 }
 
