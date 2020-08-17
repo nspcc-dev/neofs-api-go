@@ -15,6 +15,7 @@ func generateTarget(u acl.Target, k int) *acl.TargetInfo {
 	target.SetTarget(u)
 
 	keys := make([][]byte, k)
+
 	for i := 0; i < k; i++ {
 		s := fmt.Sprintf("Public Key %d", i+1)
 		keys[i] = []byte(s)
@@ -23,10 +24,10 @@ func generateTarget(u acl.Target, k int) *acl.TargetInfo {
 	return target
 }
 
-func generateFilter(t acl.HeaderType, m acl.MatchType, k, v string) *acl.HeaderFilter {
+func generateFilter(t acl.HeaderType, k, v string) *acl.HeaderFilter {
 	filter := new(acl.HeaderFilter)
 	filter.SetHeaderType(t)
-	filter.SetMatchType(m)
+	filter.SetMatchType(acl.MatchTypeStringEqual)
 	filter.SetName(k)
 	filter.SetValue(v)
 
@@ -34,12 +35,12 @@ func generateFilter(t acl.HeaderType, m acl.MatchType, k, v string) *acl.HeaderF
 }
 
 func generateRecord(another bool) *acl.Record {
-	var record = new(acl.Record)
+	record := new(acl.Record)
+
 	switch another {
 	case true:
 		t1 := generateTarget(acl.TargetUser, 2)
-		f1 := generateFilter(acl.HeaderTypeObject, acl.MatchTypeStringEqual,
-			"OID", "ObjectID Value")
+		f1 := generateFilter(acl.HeaderTypeObject, "OID", "ObjectID Value")
 
 		record.SetOperation(acl.OperationHead)
 		record.SetAction(acl.ActionDeny)
@@ -48,10 +49,8 @@ func generateRecord(another bool) *acl.Record {
 	default:
 		t1 := generateTarget(acl.TargetUser, 2)
 		t2 := generateTarget(acl.TargetSystem, 0)
-		f1 := generateFilter(acl.HeaderTypeObject, acl.MatchTypeStringEqual,
-			"CID", "Container ID Value")
-		f2 := generateFilter(acl.HeaderTypeRequest, acl.MatchTypeStringEqual,
-			"X-Header-Key", "X-Header-Value")
+		f1 := generateFilter(acl.HeaderTypeObject, "CID", "Container ID Value")
+		f2 := generateFilter(acl.HeaderTypeRequest, "X-Header-Key", "X-Header-Value")
 
 		record.SetOperation(acl.OperationPut)
 		record.SetAction(acl.ActionAllow)
@@ -63,8 +62,7 @@ func generateRecord(another bool) *acl.Record {
 }
 
 func TestHeaderFilter_StableMarshal(t *testing.T) {
-	filterFrom := generateFilter(acl.HeaderTypeObject, acl.MatchTypeStringEqual,
-		"CID", "Container ID Value")
+	filterFrom := generateFilter(acl.HeaderTypeObject, "CID", "Container ID Value")
 	transport := new(grpc.EACLRecord_FilterInfo)
 
 	t.Run("non empty", func(t *testing.T) {
