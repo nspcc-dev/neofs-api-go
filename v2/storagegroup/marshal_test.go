@@ -12,6 +12,7 @@ import (
 func TestStorageGroup_StableMarshal(t *testing.T) {
 	ownerID1 := new(refs.ObjectID)
 	ownerID1.SetValue([]byte("Object ID 1"))
+
 	ownerID2 := new(refs.ObjectID)
 	ownerID2.SetValue([]byte("Object ID 2"))
 
