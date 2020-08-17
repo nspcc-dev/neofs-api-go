@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
@@ -59,13 +61,39 @@ func XHeaderFromGRPCMessage(m *service.XHeader) *XHeader {
 }
 
 func SessionTokenToGRPCMessage(t *SessionToken) *service.SessionToken {
-	// TODO: fill me
-	return nil
+	if t == nil {
+		return nil
+	}
+
+	m := new(service.SessionToken)
+
+	m.SetBody(
+		SessionTokenBodyToGRPCMessage(t.GetBody()),
+	)
+
+	m.SetSignature(
+		SignatureToGRPCMessage(t.GetSignature()),
+	)
+
+	return m
 }
 
 func SessionTokenFromGRPCMessage(m *service.SessionToken) *SessionToken {
-	// TODO: fill me
-	return nil
+	if m == nil {
+		return nil
+	}
+
+	t := new(SessionToken)
+
+	t.SetBody(
+		SessionTokenBodyFromGRPCMessage(m.GetBody()),
+	)
+
+	t.SetSignature(
+		SignatureFromGRPCMessage(m.GetSignature()),
+	)
+
+	return t
 }
 
 func BearerTokenToGRPCMessage(t *BearerToken) *service.BearerToken {
@@ -508,4 +536,146 @@ func ResponseHeadersFromGRPC(
 	dst.SetVerificationHeader(
 		ResponseVerificationHeaderFromGRPCMessage(src.GetVerifyHeader()),
 	)
+}
+
+func ObjectSessionVerbToGRPCField(v ObjectSessionVerb) service.ObjectServiceContext_Verb {
+	switch v {
+	case ObjectVerbPut:
+		return service.ObjectServiceContext_PUT
+	case ObjectVerbGet:
+		return service.ObjectServiceContext_GET
+	case ObjectVerbHead:
+		return service.ObjectServiceContext_HEAD
+	case ObjectVerbSearch:
+		return service.ObjectServiceContext_SEARCH
+	case ObjectVerbDelete:
+		return service.ObjectServiceContext_DELETE
+	case ObjectVerbRange:
+		return service.ObjectServiceContext_RANGE
+	case ObjectVerbRangeHash:
+		return service.ObjectServiceContext_RANGEHASH
+	default:
+		return service.ObjectServiceContext_VERB_UNSPECIFIED
+	}
+}
+
+func ObjectSessionVerbFromGRPCField(v service.ObjectServiceContext_Verb) ObjectSessionVerb {
+	switch v {
+	case service.ObjectServiceContext_PUT:
+		return ObjectVerbPut
+	case service.ObjectServiceContext_GET:
+		return ObjectVerbGet
+	case service.ObjectServiceContext_HEAD:
+		return ObjectVerbHead
+	case service.ObjectServiceContext_SEARCH:
+		return ObjectVerbSearch
+	case service.ObjectServiceContext_DELETE:
+		return ObjectVerbDelete
+	case service.ObjectServiceContext_RANGE:
+		return ObjectVerbRange
+	case service.ObjectServiceContext_RANGEHASH:
+		return ObjectVerbRangeHash
+	default:
+		return ObjectVerbUnknown
+	}
+}
+
+func ObjectSessionContextToGRPCMessage(c *ObjectSessionContext) *service.ObjectServiceContext {
+	if c == nil {
+		return nil
+	}
+
+	m := new(service.ObjectServiceContext)
+
+	m.SetVerb(
+		ObjectSessionVerbToGRPCField(c.GetVerb()),
+	)
+
+	m.SetAddress(
+		refs.AddressToGRPCMessage(c.GetAddress()),
+	)
+
+	return m
+}
+
+func ObjectSessionContextFromGRPCMessage(m *service.ObjectServiceContext) *ObjectSessionContext {
+	if m == nil {
+		return nil
+	}
+
+	c := new(ObjectSessionContext)
+
+	c.SetVerb(
+		ObjectSessionVerbFromGRPCField(m.GetVerb()),
+	)
+
+	c.SetAddress(
+		refs.AddressFromGRPCMessage(m.GetAddress()),
+	)
+
+	return c
+}
+
+func SessionTokenBodyToGRPCMessage(t *SessionTokenBody) *service.SessionToken_Body {
+	if t == nil {
+		return nil
+	}
+
+	m := new(service.SessionToken_Body)
+
+	switch v := t.GetContext(); t := v.(type) {
+	case nil:
+	case *ObjectSessionContext:
+		m.SetObjectServiceContext(
+			ObjectSessionContextToGRPCMessage(t),
+		)
+	default:
+		panic(fmt.Sprintf("unknown session context %T", t))
+	}
+
+	m.SetId(t.GetID())
+
+	m.SetOwnerId(
+		refs.OwnerIDToGRPCMessage(t.GetOwnerID()),
+	)
+
+	m.SetLifetime(
+		TokenLifetimeToGRPCMessage(t.GetLifetime()),
+	)
+
+	m.SetSessionKey(t.GetSessionKey())
+
+	return m
+}
+
+func SessionTokenBodyFromGRPCMessage(m *service.SessionToken_Body) *SessionTokenBody {
+	if m == nil {
+		return nil
+	}
+
+	t := new(SessionTokenBody)
+
+	switch v := m.GetContext().(type) {
+	case nil:
+	case *service.SessionToken_Body_ObjectService:
+		t.SetContext(
+			ObjectSessionContextFromGRPCMessage(v.ObjectService),
+		)
+	default:
+		panic(fmt.Sprintf("unknown session context %T", v))
+	}
+
+	t.SetID(m.GetId())
+
+	t.SetOwnerID(
+		refs.OwnerIDFromGRPCMessage(m.GetOwnerId()),
+	)
+
+	t.SetLifetime(
+		TokenLifetimeFromGRPCMessage(m.GetLifetime()),
+	)
+
+	t.SetSessionKey(m.GetSessionKey())
+
+	return t
 }
