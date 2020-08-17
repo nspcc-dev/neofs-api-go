@@ -17,6 +17,12 @@ type BalanceRequest struct {
 	verifyHeader *service.RequestVerificationHeader
 }
 
+type Decimal struct {
+	val int64
+
+	prec uint32
+}
+
 func (b *BalanceRequestBody) GetOwnerID() *refs.OwnerID {
 	if b != nil {
 		return b.ownerID
@@ -86,5 +92,33 @@ func (b *BalanceRequest) GetRequestVerificationHeader() *service.RequestVerifica
 func (b *BalanceRequest) SetRequestVerificationHeader(v *service.RequestVerificationHeader) {
 	if b != nil {
 		b.verifyHeader = v
+	}
+}
+
+func (d *Decimal) GetValue() int64 {
+	if d != nil {
+		return d.val
+	}
+
+	return 0
+}
+
+func (d *Decimal) SetValue(v int64) {
+	if d != nil {
+		d.val = v
+	}
+}
+
+func (d *Decimal) GetPrecision() uint32 {
+	if d != nil {
+		return d.prec
+	}
+
+	return 0
+}
+
+func (d *Decimal) SetPrecision(v uint32) {
+	if d != nil {
+		d.prec = v
 	}
 }
