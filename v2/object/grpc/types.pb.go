@@ -6,8 +6,8 @@ package object
 import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
-	grpc "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
-	grpc1 "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
+	grpc1 "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
+	grpc "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -56,17 +56,131 @@ func (ObjectType) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_545319325da7b9b1, []int{0}
 }
 
+// Type of match expression
+type MatchType int32
+
+const (
+	// Unknown. Not used
+	MatchType_MATCH_TYPE_UNSPECIFIED MatchType = 0
+	// Full string match
+	MatchType_STRING_EQUAL MatchType = 1
+)
+
+var MatchType_name = map[int32]string{
+	0: "MATCH_TYPE_UNSPECIFIED",
+	1: "STRING_EQUAL",
+}
+
+var MatchType_value = map[string]int32{
+	"MATCH_TYPE_UNSPECIFIED": 0,
+	"STRING_EQUAL":           1,
+}
+
+func (x MatchType) String() string {
+	return proto.EnumName(MatchType_name, int32(x))
+}
+
+func (MatchType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_545319325da7b9b1, []int{1}
+}
+
+// Short header fields
+type ShortHeader struct {
+	// Object format version.
+	Version *grpc.Version `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	// Epoch when the object was created
+	CreationEpoch uint64 `protobuf:"varint,2,opt,name=creation_epoch,json=creationEpoch,proto3" json:"creation_epoch,omitempty"`
+	// Object's owner
+	OwnerId *grpc1.OwnerID `protobuf:"bytes,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	// Type of the object payload content
+	ObjectType ObjectType `protobuf:"varint,4,opt,name=object_type,json=objectType,proto3,enum=neo.fs.v2.object.ObjectType" json:"object_type,omitempty"`
+	// Size of payload in bytes.
+	// 0xFFFFFFFFFFFFFFFF means `payload_length` is unknown
+	PayloadLength        uint64   `protobuf:"varint,5,opt,name=payload_length,json=payloadLength,proto3" json:"payload_length,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ShortHeader) Reset()         { *m = ShortHeader{} }
+func (m *ShortHeader) String() string { return proto.CompactTextString(m) }
+func (*ShortHeader) ProtoMessage()    {}
+func (*ShortHeader) Descriptor() ([]byte, []int) {
+	return fileDescriptor_545319325da7b9b1, []int{0}
+}
+func (m *ShortHeader) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ShortHeader) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ShortHeader.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ShortHeader) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ShortHeader.Merge(m, src)
+}
+func (m *ShortHeader) XXX_Size() int {
+	return m.Size()
+}
+func (m *ShortHeader) XXX_DiscardUnknown() {
+	xxx_messageInfo_ShortHeader.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ShortHeader proto.InternalMessageInfo
+
+func (m *ShortHeader) GetVersion() *grpc.Version {
+	if m != nil {
+		return m.Version
+	}
+	return nil
+}
+
+func (m *ShortHeader) GetCreationEpoch() uint64 {
+	if m != nil {
+		return m.CreationEpoch
+	}
+	return 0
+}
+
+func (m *ShortHeader) GetOwnerId() *grpc1.OwnerID {
+	if m != nil {
+		return m.OwnerId
+	}
+	return nil
+}
+
+func (m *ShortHeader) GetObjectType() ObjectType {
+	if m != nil {
+		return m.ObjectType
+	}
+	return ObjectType_REGULAR
+}
+
+func (m *ShortHeader) GetPayloadLength() uint64 {
+	if m != nil {
+		return m.PayloadLength
+	}
+	return 0
+}
+
 // Object Headers
 type Header struct {
-	// Object's container
-	ContainerId *grpc.ContainerID `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
-	// Object's owner
-	OwnerId *grpc.OwnerID `protobuf:"bytes,2,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
-	// Epoch when the object was created
-	CreationEpoch uint64 `protobuf:"varint,3,opt,name=creation_epoch,json=creationEpoch,proto3" json:"creation_epoch,omitempty"`
 	// Object format version.
 	// Effectively the version of API library used to create particular object
-	Version *grpc1.Version `protobuf:"bytes,4,opt,name=version,proto3" json:"version,omitempty"`
+	Version *grpc.Version `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	// Object's container
+	ContainerId *grpc1.ContainerID `protobuf:"bytes,2,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
+	// Object's owner
+	OwnerId *grpc1.OwnerID `protobuf:"bytes,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	// Object creation Epoch
+	CreationEpoch uint64 `protobuf:"varint,4,opt,name=creation_epoch,json=creationEpoch,proto3" json:"creation_epoch,omitempty"`
 	// Size of payload in bytes.
 	// 0xFFFFFFFFFFFFFFFF means `payload_length` is unknown
 	PayloadLength uint64 `protobuf:"varint,5,opt,name=payload_length,json=payloadLength,proto3" json:"payload_length,omitempty"`
@@ -78,7 +192,7 @@ type Header struct {
 	HomomorphicHash []byte `protobuf:"bytes,8,opt,name=homomorphic_hash,json=homomorphicHash,proto3" json:"homomorphic_hash,omitempty"`
 	// Session token, if it was used during Object creation.
 	// Need it to verify integrity and authenticity out of Request scope.
-	SessionToken *grpc1.SessionToken `protobuf:"bytes,9,opt,name=session_token,json=sessionToken,proto3" json:"session_token,omitempty"`
+	SessionToken *grpc.SessionToken `protobuf:"bytes,9,opt,name=session_token,json=sessionToken,proto3" json:"session_token,omitempty"`
 	// User-defined object attributes
 	Attributes []*Header_Attribute `protobuf:"bytes,10,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	// Position of the object in the split hierarchy.
@@ -92,7 +206,7 @@ func (m *Header) Reset()         { *m = Header{} }
 func (m *Header) String() string { return proto.CompactTextString(m) }
 func (*Header) ProtoMessage()    {}
 func (*Header) Descriptor() ([]byte, []int) {
-	return fileDescriptor_545319325da7b9b1, []int{0}
+	return fileDescriptor_545319325da7b9b1, []int{1}
 }
 func (m *Header) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -121,14 +235,21 @@ func (m *Header) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Header proto.InternalMessageInfo
 
-func (m *Header) GetContainerId() *grpc.ContainerID {
+func (m *Header) GetVersion() *grpc.Version {
+	if m != nil {
+		return m.Version
+	}
+	return nil
+}
+
+func (m *Header) GetContainerId() *grpc1.ContainerID {
 	if m != nil {
 		return m.ContainerId
 	}
 	return nil
 }
 
-func (m *Header) GetOwnerId() *grpc.OwnerID {
+func (m *Header) GetOwnerId() *grpc1.OwnerID {
 	if m != nil {
 		return m.OwnerId
 	}
@@ -140,13 +261,6 @@ func (m *Header) GetCreationEpoch() uint64 {
 		return m.CreationEpoch
 	}
 	return 0
-}
-
-func (m *Header) GetVersion() *grpc1.Version {
-	if m != nil {
-		return m.Version
-	}
-	return nil
 }
 
 func (m *Header) GetPayloadLength() uint64 {
@@ -177,7 +291,7 @@ func (m *Header) GetHomomorphicHash() []byte {
 	return nil
 }
 
-func (m *Header) GetSessionToken() *grpc1.SessionToken {
+func (m *Header) GetSessionToken() *grpc.SessionToken {
 	if m != nil {
 		return m.SessionToken
 	}
@@ -213,7 +327,7 @@ func (m *Header_Attribute) Reset()         { *m = Header_Attribute{} }
 func (m *Header_Attribute) String() string { return proto.CompactTextString(m) }
 func (*Header_Attribute) ProtoMessage()    {}
 func (*Header_Attribute) Descriptor() ([]byte, []int) {
-	return fileDescriptor_545319325da7b9b1, []int{0, 0}
+	return fileDescriptor_545319325da7b9b1, []int{1, 0}
 }
 func (m *Header_Attribute) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -261,25 +375,25 @@ type Header_Split struct {
 	// Identifier of the origin object.
 	// Parent and children objects must be within the same container.
 	// Parent object_id is known only to the minor child.
-	Parent *grpc.ObjectID `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
+	Parent *grpc1.ObjectID `protobuf:"bytes,1,opt,name=parent,proto3" json:"parent,omitempty"`
 	// Previous carries identifier of the left split neighbor.
-	Previous *grpc.ObjectID `protobuf:"bytes,2,opt,name=previous,proto3" json:"previous,omitempty"`
+	Previous *grpc1.ObjectID `protobuf:"bytes,2,opt,name=previous,proto3" json:"previous,omitempty"`
 	// `signature` field of the parent object. Used to reconstruct parent.
-	ParentSignature *grpc1.Signature `protobuf:"bytes,3,opt,name=parent_signature,json=parentSignature,proto3" json:"parent_signature,omitempty"`
+	ParentSignature *grpc.Signature `protobuf:"bytes,3,opt,name=parent_signature,json=parentSignature,proto3" json:"parent_signature,omitempty"`
 	// `header` field of the parent object. Used to reconstruct parent.
 	ParentHeader *Header `protobuf:"bytes,4,opt,name=parent_header,json=parentHeader,proto3" json:"parent_header,omitempty"`
 	// Children carries list of identifiers of the objects generated by splitting the current.
-	Children             []*grpc.ObjectID `protobuf:"bytes,5,rep,name=children,proto3" json:"children,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
+	Children             []*grpc1.ObjectID `protobuf:"bytes,5,rep,name=children,proto3" json:"children,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
 }
 
 func (m *Header_Split) Reset()         { *m = Header_Split{} }
 func (m *Header_Split) String() string { return proto.CompactTextString(m) }
 func (*Header_Split) ProtoMessage()    {}
 func (*Header_Split) Descriptor() ([]byte, []int) {
-	return fileDescriptor_545319325da7b9b1, []int{0, 1}
+	return fileDescriptor_545319325da7b9b1, []int{1, 1}
 }
 func (m *Header_Split) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -308,21 +422,21 @@ func (m *Header_Split) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Header_Split proto.InternalMessageInfo
 
-func (m *Header_Split) GetParent() *grpc.ObjectID {
+func (m *Header_Split) GetParent() *grpc1.ObjectID {
 	if m != nil {
 		return m.Parent
 	}
 	return nil
 }
 
-func (m *Header_Split) GetPrevious() *grpc.ObjectID {
+func (m *Header_Split) GetPrevious() *grpc1.ObjectID {
 	if m != nil {
 		return m.Previous
 	}
 	return nil
 }
 
-func (m *Header_Split) GetParentSignature() *grpc1.Signature {
+func (m *Header_Split) GetParentSignature() *grpc.Signature {
 	if m != nil {
 		return m.ParentSignature
 	}
@@ -336,7 +450,7 @@ func (m *Header_Split) GetParentHeader() *Header {
 	return nil
 }
 
-func (m *Header_Split) GetChildren() []*grpc.ObjectID {
+func (m *Header_Split) GetChildren() []*grpc1.ObjectID {
 	if m != nil {
 		return m.Children
 	}
@@ -349,9 +463,9 @@ type Object struct {
 	// Object is content-addressed. It means id will change if header or payload
 	// changes. It's calculated as a hash of header field, which contains hash of
 	// object's payload
-	ObjectId *grpc.ObjectID `protobuf:"bytes,1,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
+	ObjectId *grpc1.ObjectID `protobuf:"bytes,1,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
 	// Signed object_id
-	Signature *grpc1.Signature `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
+	Signature *grpc.Signature `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
 	// Object metadata headers
 	Header *Header `protobuf:"bytes,3,opt,name=header,proto3" json:"header,omitempty"`
 	// Payload bytes.
@@ -365,7 +479,7 @@ func (m *Object) Reset()         { *m = Object{} }
 func (m *Object) String() string { return proto.CompactTextString(m) }
 func (*Object) ProtoMessage()    {}
 func (*Object) Descriptor() ([]byte, []int) {
-	return fileDescriptor_545319325da7b9b1, []int{1}
+	return fileDescriptor_545319325da7b9b1, []int{2}
 }
 func (m *Object) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -394,14 +508,14 @@ func (m *Object) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Object proto.InternalMessageInfo
 
-func (m *Object) GetObjectId() *grpc.ObjectID {
+func (m *Object) GetObjectId() *grpc1.ObjectID {
 	if m != nil {
 		return m.ObjectId
 	}
 	return nil
 }
 
-func (m *Object) GetSignature() *grpc1.Signature {
+func (m *Object) GetSignature() *grpc.Signature {
 	if m != nil {
 		return m.Signature
 	}
@@ -424,6 +538,8 @@ func (m *Object) GetPayload() []byte {
 
 func init() {
 	proto.RegisterEnum("neo.fs.v2.object.ObjectType", ObjectType_name, ObjectType_value)
+	proto.RegisterEnum("neo.fs.v2.object.MatchType", MatchType_name, MatchType_value)
+	proto.RegisterType((*ShortHeader)(nil), "neo.fs.v2.object.ShortHeader")
 	proto.RegisterType((*Header)(nil), "neo.fs.v2.object.Header")
 	proto.RegisterType((*Header_Attribute)(nil), "neo.fs.v2.object.Header.Attribute")
 	proto.RegisterType((*Header_Split)(nil), "neo.fs.v2.object.Header.Split")
@@ -433,53 +549,124 @@ func init() {
 func init() { proto.RegisterFile("v2/object/grpc/types.proto", fileDescriptor_545319325da7b9b1) }
 
 var fileDescriptor_545319325da7b9b1 = []byte{
-	// 726 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x94, 0xdd, 0x6e, 0xda, 0x48,
-	0x14, 0xc7, 0x63, 0x08, 0x5f, 0xc7, 0x90, 0xb0, 0xb3, 0x2b, 0xad, 0xc5, 0x46, 0x2c, 0x1b, 0x69,
-	0x25, 0x5a, 0x29, 0xa6, 0x22, 0x54, 0x95, 0x1a, 0xa5, 0x12, 0x69, 0x28, 0x41, 0x4a, 0x43, 0x34,
-	0x90, 0x5e, 0xf4, 0xc6, 0x32, 0xf6, 0x80, 0xdd, 0x80, 0xc7, 0xf2, 0x18, 0x47, 0xbc, 0x49, 0x9f,
-	0xa1, 0x52, 0x6f, 0xfa, 0x12, 0xed, 0x65, 0x1f, 0xa1, 0x4a, 0x5f, 0xa4, 0xf2, 0xcc, 0x18, 0x48,
-	0xd2, 0xa4, 0xbd, 0xf2, 0xcc, 0x99, 0xdf, 0xff, 0xcc, 0xf9, 0x1a, 0x43, 0x25, 0x6a, 0x36, 0xe8,
-	0xe8, 0x1d, 0xb1, 0xc2, 0xc6, 0x24, 0xf0, 0xad, 0x46, 0xb8, 0xf0, 0x09, 0xd3, 0xfd, 0x80, 0x86,
-	0x14, 0x95, 0x3d, 0x42, 0xf5, 0x31, 0xd3, 0xa3, 0xa6, 0x2e, 0x90, 0x8a, 0x16, 0x35, 0x1b, 0x01,
-	0x19, 0xb3, 0x3b, 0x6c, 0x25, 0xf6, 0xc3, 0x48, 0x10, 0xb9, 0x16, 0x11, 0x87, 0x33, 0x12, 0x9a,
-	0xf2, 0x6c, 0xe7, 0xf6, 0x59, 0x44, 0x02, 0x77, 0xbc, 0x10, 0xa7, 0xbb, 0x9f, 0x72, 0x90, 0x3d,
-	0x21, 0xa6, 0x4d, 0x02, 0xf4, 0x02, 0x8a, 0x16, 0xf5, 0x42, 0xd3, 0xf5, 0x48, 0x60, 0xb8, 0xb6,
-	0xa6, 0xd4, 0x94, 0xba, 0xda, 0xfc, 0x47, 0x5f, 0xc5, 0x11, 0x5f, 0xae, 0xbf, 0x4c, 0x98, 0xde,
-	0x31, 0x56, 0x97, 0x82, 0x9e, 0x8d, 0x9a, 0x90, 0xa7, 0x57, 0x52, 0x9b, 0xe2, 0xda, 0xbf, 0x6f,
-	0x6b, 0xfb, 0x57, 0x42, 0x97, 0xe3, 0x60, 0xcf, 0x46, 0xff, 0xc3, 0x96, 0x15, 0x10, 0x33, 0x74,
-	0xa9, 0x67, 0x10, 0x9f, 0x5a, 0x8e, 0x96, 0xae, 0x29, 0xf5, 0x4d, 0x5c, 0x4a, 0xac, 0x9d, 0xd8,
-	0x88, 0x5a, 0x90, 0x8b, 0x48, 0xc0, 0x5c, 0xea, 0x69, 0x9b, 0xdc, 0x73, 0x65, 0xcd, 0xb3, 0x4c,
-	0x4e, 0x7f, 0x23, 0x08, 0x9c, 0xa0, 0xb1, 0x73, 0xdf, 0x5c, 0x4c, 0xa9, 0x69, 0x1b, 0x53, 0xe2,
-	0x4d, 0x42, 0x47, 0xcb, 0x08, 0xe7, 0xd2, 0x7a, 0xca, 0x8d, 0xe8, 0x3f, 0x28, 0x26, 0x98, 0x63,
-	0x32, 0x47, 0xcb, 0xd6, 0x94, 0x7a, 0x11, 0xab, 0xd2, 0x76, 0x62, 0x32, 0x07, 0x1d, 0x82, 0x2a,
-	0x7a, 0x60, 0xc4, 0x55, 0xd7, 0x72, 0x35, 0xa5, 0xbe, 0xd5, 0xdc, 0xd1, 0x6f, 0x77, 0x48, 0xef,
-	0xf3, 0xcf, 0x70, 0xe1, 0x13, 0x0c, 0x74, 0xb9, 0x46, 0x8f, 0xa0, 0xec, 0xd0, 0x19, 0x9d, 0xd1,
-	0xc0, 0x77, 0x5c, 0x4b, 0xdc, 0x92, 0xe7, 0xb7, 0x6c, 0xaf, 0xd9, 0xf9, 0x4d, 0xc7, 0x50, 0x62,
-	0x84, 0xc5, 0xe1, 0x1b, 0x21, 0xbd, 0x24, 0x9e, 0x56, 0xe0, 0xf9, 0xfe, 0xfb, 0x93, 0x7c, 0x07,
-	0x82, 0x1b, 0xc6, 0x18, 0x2e, 0xb2, 0xb5, 0x1d, 0x3a, 0x02, 0x30, 0xc3, 0x30, 0x70, 0x47, 0xf3,
-	0x90, 0x30, 0x0d, 0x6a, 0xe9, 0xba, 0xda, 0xdc, 0xbd, 0x1b, 0xae, 0x68, 0xbc, 0xde, 0x4e, 0x50,
-	0xbc, 0xa6, 0x42, 0x2d, 0xc8, 0x30, 0x7f, 0xea, 0x86, 0x9a, 0xca, 0x23, 0xa8, 0xde, 0x2b, 0x1f,
-	0xc4, 0x14, 0x16, 0x70, 0x65, 0x1f, 0x0a, 0x4b, 0x77, 0xa8, 0x0c, 0xe9, 0x4b, 0xb2, 0xe0, 0x83,
-	0x54, 0xc0, 0xf1, 0x12, 0xfd, 0x05, 0x99, 0xc8, 0x9c, 0xce, 0x09, 0x1f, 0x90, 0x02, 0x16, 0x9b,
-	0xca, 0xc7, 0x14, 0x64, 0xb8, 0x17, 0xf4, 0x04, 0xb2, 0xbe, 0x19, 0x10, 0x2f, 0x94, 0xd3, 0xa7,
-	0xdd, 0x99, 0x20, 0x7e, 0x75, 0xef, 0x18, 0x4b, 0x0e, 0xb5, 0x20, 0xef, 0x07, 0x24, 0x72, 0xe9,
-	0x9c, 0xc9, 0xa9, 0xbb, 0x5f, 0xb3, 0x24, 0x51, 0x17, 0xca, 0x42, 0x6f, 0x30, 0x77, 0xe2, 0x99,
-	0xe1, 0x3c, 0x20, 0x7c, 0xf2, 0xd4, 0x1b, 0x5d, 0x5d, 0x56, 0x3a, 0x61, 0xf0, 0xb6, 0x50, 0x2d,
-	0x0d, 0xe8, 0x10, 0x4a, 0xd2, 0x91, 0xc3, 0xab, 0x21, 0xe7, 0x53, 0xbb, 0xaf, 0x5a, 0xb8, 0x28,
-	0x70, 0xf9, 0xe6, 0x5a, 0x90, 0xb7, 0x1c, 0x77, 0x6a, 0x07, 0xc4, 0xd3, 0x32, 0xbc, 0x4d, 0x0f,
-	0x44, 0x9f, 0x90, 0xbb, 0x9f, 0x15, 0xc8, 0x0a, 0x33, 0x7a, 0x0a, 0x05, 0x39, 0x99, 0xcb, 0x17,
-	0xfb, 0x80, 0x07, 0x81, 0xf6, 0x6c, 0xf4, 0x1c, 0x0a, 0xab, 0xc4, 0x53, 0xbf, 0x91, 0xf8, 0x0a,
-	0x8f, 0x7b, 0x24, 0x73, 0x4d, 0xff, 0x22, 0x57, 0xc9, 0x21, 0x0d, 0x72, 0xf2, 0x35, 0xf1, 0xf2,
-	0x14, 0x71, 0xb2, 0x7d, 0x7c, 0x00, 0xb0, 0x7a, 0x33, 0x48, 0x85, 0x1c, 0xee, 0x74, 0x2f, 0x4e,
-	0xdb, 0xb8, 0xbc, 0x81, 0x4a, 0x50, 0x18, 0xf6, 0x5f, 0x1f, 0x0d, 0x86, 0xfd, 0xb3, 0x4e, 0x59,
-	0x41, 0x7f, 0x40, 0x69, 0x30, 0xec, 0xe3, 0x76, 0xb7, 0x63, 0x74, 0x71, 0xff, 0xe2, 0xbc, 0x9c,
-	0x3a, 0x32, 0xbe, 0x5c, 0x57, 0x95, 0xaf, 0xd7, 0x55, 0xe5, 0xdb, 0x75, 0x55, 0x79, 0xff, 0xbd,
-	0xba, 0xf1, 0xf6, 0xd9, 0xc4, 0x0d, 0x9d, 0xf9, 0x48, 0xb7, 0xe8, 0xac, 0xe1, 0x31, 0xdf, 0xb2,
-	0xf6, 0x6c, 0x12, 0x35, 0x3c, 0x42, 0xc7, 0x6c, 0xcf, 0xf4, 0xdd, 0xbd, 0x09, 0x6d, 0xdc, 0xfc,
-	0xe3, 0x1e, 0x88, 0xf5, 0x87, 0xd4, 0x9f, 0x67, 0x84, 0xbe, 0x1a, 0xe8, 0xed, 0xf3, 0x5e, 0x9c,
-	0x86, 0x88, 0x69, 0x94, 0xe5, 0xff, 0xc8, 0xfd, 0x1f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x65, 0x74,
-	0xce, 0xc4, 0xa7, 0x05, 0x00, 0x00,
+	// 808 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x95, 0xdd, 0x6e, 0xe3, 0x44,
+	0x14, 0xc7, 0xeb, 0xb4, 0xf9, 0x3a, 0x49, 0x76, 0xcd, 0x80, 0xc0, 0x0a, 0x55, 0x08, 0x95, 0x90,
+	0xc2, 0x4a, 0x75, 0x50, 0xb6, 0x08, 0xc1, 0x6a, 0x91, 0xd2, 0xc6, 0x9b, 0x5a, 0x6a, 0x9b, 0x32,
+	0x76, 0x91, 0xe0, 0xc6, 0x72, 0xed, 0x69, 0x6c, 0x36, 0xf5, 0x58, 0x33, 0x13, 0xa3, 0xdc, 0xf3,
+	0x10, 0x3c, 0x03, 0x12, 0x37, 0xbc, 0x04, 0x5c, 0xf2, 0x08, 0xa8, 0xbc, 0x08, 0xf2, 0x8c, 0x9d,
+	0x7e, 0x2e, 0xbb, 0xb0, 0x57, 0x9e, 0x39, 0xf3, 0x3b, 0x67, 0xce, 0xf9, 0x9f, 0x33, 0x32, 0x74,
+	0xb3, 0xd1, 0x90, 0x9e, 0xff, 0x40, 0x02, 0x31, 0x9c, 0xb3, 0x34, 0x18, 0x8a, 0x55, 0x4a, 0xb8,
+	0x99, 0x32, 0x2a, 0x28, 0xd2, 0x13, 0x42, 0xcd, 0x0b, 0x6e, 0x66, 0x23, 0x53, 0x21, 0x5d, 0x23,
+	0x1b, 0x0d, 0x19, 0xb9, 0xe0, 0xf7, 0xd8, 0x6e, 0x1e, 0x87, 0x13, 0x96, 0xc5, 0x01, 0x51, 0x87,
+	0x97, 0x44, 0xf8, 0xc5, 0xd9, 0xf6, 0xdd, 0xb3, 0x8c, 0xb0, 0xf8, 0x62, 0xa5, 0x4e, 0x77, 0x7e,
+	0xaa, 0x40, 0xcb, 0x89, 0x28, 0x13, 0x87, 0xc4, 0x0f, 0x09, 0x43, 0x7b, 0x50, 0xcf, 0x08, 0xe3,
+	0x31, 0x4d, 0x0c, 0xad, 0xaf, 0x0d, 0x5a, 0xa3, 0xae, 0x79, 0x9d, 0x47, 0x11, 0xc6, 0xfc, 0x56,
+	0x11, 0xb8, 0x44, 0xd1, 0x27, 0xf0, 0x28, 0x60, 0xc4, 0x17, 0x31, 0x4d, 0x3c, 0x92, 0xd2, 0x20,
+	0x32, 0x2a, 0x7d, 0x6d, 0xb0, 0x85, 0x3b, 0xa5, 0xd5, 0xca, 0x8d, 0x68, 0x04, 0x0d, 0xfa, 0x63,
+	0x42, 0x98, 0x17, 0x87, 0xc6, 0xa6, 0x8c, 0xfe, 0xc1, 0x8d, 0xe8, 0x79, 0x69, 0xe6, 0x2c, 0x3f,
+	0xb7, 0x27, 0xb8, 0x2e, 0x41, 0x3b, 0x44, 0xcf, 0xa1, 0xa5, 0xca, 0xf7, 0xf2, 0x82, 0x8d, 0xad,
+	0xbe, 0x36, 0x78, 0x34, 0xda, 0x36, 0xef, 0x8a, 0x63, 0xce, 0xe4, 0xc7, 0x5d, 0xa5, 0x04, 0x03,
+	0x5d, 0xaf, 0xf3, 0xcc, 0x52, 0x7f, 0xb5, 0xa0, 0x7e, 0xe8, 0x2d, 0x48, 0x32, 0x17, 0x91, 0x51,
+	0x55, 0x99, 0x15, 0xd6, 0x23, 0x69, 0xdc, 0xf9, 0xad, 0x0e, 0xb5, 0xb7, 0x52, 0xe0, 0x6b, 0x68,
+	0x07, 0x34, 0x11, 0x7e, 0x5c, 0x94, 0x57, 0x91, 0xae, 0x1f, 0xde, 0x2d, 0xef, 0xa0, 0x64, 0xec,
+	0x09, 0x6e, 0xad, 0x1d, 0xec, 0xf0, 0x7f, 0x49, 0x73, 0x5f, 0xf5, 0xad, 0x87, 0x54, 0x7f, 0x33,
+	0x09, 0xd0, 0xc7, 0xd0, 0x2e, 0xb1, 0xc8, 0xe7, 0x91, 0x51, 0xeb, 0x6b, 0x83, 0x36, 0x6e, 0x15,
+	0xb6, 0x43, 0x9f, 0x47, 0x77, 0x7b, 0x51, 0xff, 0x8f, 0xbd, 0xf8, 0x14, 0xf4, 0x88, 0x5e, 0xd2,
+	0x4b, 0xca, 0xd2, 0x28, 0x0e, 0xd4, 0x2d, 0x0d, 0x79, 0xcb, 0xe3, 0x1b, 0x76, 0x79, 0xd3, 0x04,
+	0x3a, 0x9c, 0xf0, 0x5c, 0x59, 0x4f, 0xd0, 0x97, 0x24, 0x31, 0x9a, 0x52, 0x93, 0x8f, 0x1e, 0x68,
+	0x85, 0xa3, 0x38, 0x37, 0xc7, 0x70, 0x9b, 0xdf, 0xd8, 0xa1, 0x7d, 0x00, 0x5f, 0x08, 0x16, 0x9f,
+	0x2f, 0x05, 0xe1, 0x06, 0xf4, 0x37, 0x07, 0xad, 0xd1, 0xce, 0xfd, 0x74, 0x55, 0xe3, 0xcd, 0x71,
+	0x89, 0xe2, 0x1b, 0x5e, 0x68, 0x0f, 0xaa, 0x3c, 0x5d, 0xc4, 0xc2, 0x68, 0xc9, 0x0c, 0x7a, 0xaf,
+	0x74, 0x77, 0x72, 0x0a, 0x2b, 0xb8, 0xfb, 0x14, 0x9a, 0xeb, 0x70, 0x48, 0x87, 0xcd, 0x97, 0x64,
+	0x25, 0xa7, 0xa9, 0x89, 0xf3, 0x25, 0x7a, 0x0f, 0xaa, 0x99, 0xbf, 0x58, 0x12, 0x39, 0x26, 0x4d,
+	0xac, 0x36, 0xdd, 0x5f, 0x2b, 0x50, 0x95, 0x51, 0xd0, 0x67, 0x50, 0x4b, 0x7d, 0x46, 0x12, 0x51,
+	0x8c, 0xa0, 0x71, 0x6f, 0x16, 0xe4, 0xd5, 0xf6, 0x04, 0x17, 0x1c, 0xda, 0x83, 0x46, 0xca, 0x48,
+	0x16, 0xd3, 0x25, 0x2f, 0x66, 0xef, 0xd5, 0x3e, 0x6b, 0x12, 0x4d, 0x41, 0x57, 0xfe, 0x1e, 0x8f,
+	0xe7, 0x89, 0x2f, 0x96, 0x8c, 0x14, 0xd3, 0xb7, 0xfd, 0x90, 0xd2, 0x25, 0x83, 0x1f, 0x2b, 0xaf,
+	0xb5, 0x01, 0x3d, 0x87, 0x4e, 0x11, 0x28, 0x92, 0x6a, 0xc8, 0x49, 0xbc, 0x9d, 0xc3, 0x2d, 0xb5,
+	0x70, 0x5b, 0xe1, 0xeb, 0x37, 0xd7, 0x08, 0xa2, 0x78, 0x11, 0x32, 0x92, 0x18, 0x55, 0xd9, 0xa6,
+	0x7f, 0xc9, 0xbe, 0x24, 0x77, 0x7e, 0xd7, 0xa0, 0xa6, 0xcc, 0xe8, 0x73, 0x68, 0x16, 0x93, 0x19,
+	0x87, 0xaf, 0xd5, 0xac, 0xa1, 0x50, 0x3b, 0x44, 0x5f, 0x41, 0xf3, 0xba, 0xf0, 0xca, 0x1b, 0x14,
+	0x7e, 0x8d, 0xe7, 0x3d, 0x2a, 0x6a, 0xdd, 0x7c, 0x4d, 0xad, 0x05, 0x87, 0x0c, 0xa8, 0x17, 0xaf,
+	0x49, 0xca, 0xd3, 0xc6, 0xe5, 0xf6, 0xc9, 0x33, 0x80, 0xeb, 0x37, 0x83, 0x5a, 0x50, 0xc7, 0xd6,
+	0xf4, 0xec, 0x68, 0x8c, 0xf5, 0x0d, 0xd4, 0x81, 0xa6, 0x3b, 0x3b, 0xde, 0x77, 0xdc, 0xd9, 0x89,
+	0xa5, 0x6b, 0xe8, 0x1d, 0xe8, 0x38, 0xee, 0x0c, 0x8f, 0xa7, 0x96, 0x37, 0xc5, 0xb3, 0xb3, 0x53,
+	0xbd, 0xf2, 0xe4, 0x4b, 0x68, 0x1e, 0xfb, 0x22, 0x88, 0xa4, 0x6f, 0x17, 0xde, 0x3f, 0x1e, 0xbb,
+	0x07, 0x87, 0x9e, 0xfb, 0xdd, 0xa9, 0xe5, 0x9d, 0x9d, 0x38, 0xa7, 0xd6, 0x81, 0xfd, 0xc2, 0xb6,
+	0x26, 0xfa, 0x06, 0xd2, 0xa1, 0xed, 0xb8, 0xd8, 0x3e, 0x99, 0x7a, 0xd6, 0x37, 0x67, 0xe3, 0x23,
+	0x5d, 0xdb, 0xf7, 0xfe, 0xb8, 0xea, 0x69, 0x7f, 0x5e, 0xf5, 0xb4, 0xbf, 0xae, 0x7a, 0xda, 0xcf,
+	0x7f, 0xf7, 0x36, 0xbe, 0xff, 0x62, 0x1e, 0x8b, 0x68, 0x79, 0x6e, 0x06, 0xf4, 0x72, 0x98, 0xf0,
+	0x34, 0x08, 0x76, 0x43, 0x92, 0x0d, 0x13, 0x42, 0x2f, 0xf8, 0xae, 0x9f, 0xc6, 0xbb, 0x73, 0x3a,
+	0xbc, 0xfd, 0xcf, 0x7a, 0xa6, 0xd6, 0xbf, 0x54, 0xde, 0x3d, 0x21, 0xf4, 0x85, 0x63, 0x8e, 0x4f,
+	0xed, 0x5c, 0x01, 0x55, 0xce, 0x79, 0x4d, 0xfe, 0x65, 0x9e, 0xfe, 0x13, 0x00, 0x00, 0xff, 0xff,
+	0x47, 0xd1, 0x60, 0xa2, 0xe9, 0x06, 0x00, 0x00,
+}
+
+func (m *ShortHeader) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ShortHeader) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ShortHeader) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.PayloadLength != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.PayloadLength))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.ObjectType != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.ObjectType))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.OwnerId != nil {
+		{
+			size, err := m.OwnerId.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTypes(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.CreationEpoch != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.CreationEpoch))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Version != nil {
+		{
+			size, err := m.Version.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTypes(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *Header) Marshal() (dAtA []byte, err error) {
@@ -568,22 +755,10 @@ func (m *Header) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x28
 	}
-	if m.Version != nil {
-		{
-			size, err := m.Version.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintTypes(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x22
-	}
 	if m.CreationEpoch != 0 {
 		i = encodeVarintTypes(dAtA, i, uint64(m.CreationEpoch))
 		i--
-		dAtA[i] = 0x18
+		dAtA[i] = 0x20
 	}
 	if m.OwnerId != nil {
 		{
@@ -595,11 +770,23 @@ func (m *Header) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i = encodeVarintTypes(dAtA, i, uint64(size))
 		}
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x1a
 	}
 	if m.ContainerId != nil {
 		{
 			size, err := m.ContainerId.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTypes(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Version != nil {
+		{
+			size, err := m.Version.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -823,12 +1010,45 @@ func encodeVarintTypes(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *ShortHeader) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Version != nil {
+		l = m.Version.Size()
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	if m.CreationEpoch != 0 {
+		n += 1 + sovTypes(uint64(m.CreationEpoch))
+	}
+	if m.OwnerId != nil {
+		l = m.OwnerId.Size()
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	if m.ObjectType != 0 {
+		n += 1 + sovTypes(uint64(m.ObjectType))
+	}
+	if m.PayloadLength != 0 {
+		n += 1 + sovTypes(uint64(m.PayloadLength))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *Header) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
+	if m.Version != nil {
+		l = m.Version.Size()
+		n += 1 + l + sovTypes(uint64(l))
+	}
 	if m.ContainerId != nil {
 		l = m.ContainerId.Size()
 		n += 1 + l + sovTypes(uint64(l))
@@ -839,10 +1059,6 @@ func (m *Header) Size() (n int) {
 	}
 	if m.CreationEpoch != 0 {
 		n += 1 + sovTypes(uint64(m.CreationEpoch))
-	}
-	if m.Version != nil {
-		l = m.Version.Size()
-		n += 1 + l + sovTypes(uint64(l))
 	}
 	if m.PayloadLength != 0 {
 		n += 1 + sovTypes(uint64(m.PayloadLength))
@@ -966,6 +1182,189 @@ func sovTypes(x uint64) (n int) {
 func sozTypes(x uint64) (n int) {
 	return sovTypes(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
+func (m *ShortHeader) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ShortHeader: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ShortHeader: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Version == nil {
+				m.Version = &grpc.Version{}
+			}
+			if err := m.Version.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CreationEpoch", wireType)
+			}
+			m.CreationEpoch = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CreationEpoch |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OwnerId", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.OwnerId == nil {
+				m.OwnerId = &grpc1.OwnerID{}
+			}
+			if err := m.OwnerId.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ObjectType", wireType)
+			}
+			m.ObjectType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ObjectType |= ObjectType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PayloadLength", wireType)
+			}
+			m.PayloadLength = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PayloadLength |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *Header) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -997,6 +1396,42 @@ func (m *Header) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Version == nil {
+				m.Version = &grpc.Version{}
+			}
+			if err := m.Version.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ContainerId", wireType)
 			}
 			var msglen int
@@ -1025,13 +1460,13 @@ func (m *Header) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.ContainerId == nil {
-				m.ContainerId = &grpc.ContainerID{}
+				m.ContainerId = &grpc1.ContainerID{}
 			}
 			if err := m.ContainerId.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
-		case 2:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field OwnerId", wireType)
 			}
@@ -1061,13 +1496,13 @@ func (m *Header) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.OwnerId == nil {
-				m.OwnerId = &grpc.OwnerID{}
+				m.OwnerId = &grpc1.OwnerID{}
 			}
 			if err := m.OwnerId.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
+		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CreationEpoch", wireType)
 			}
@@ -1086,42 +1521,6 @@ func (m *Header) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Version == nil {
-				m.Version = &grpc1.Version{}
-			}
-			if err := m.Version.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
 		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PayloadLength", wireType)
@@ -1258,7 +1657,7 @@ func (m *Header) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.SessionToken == nil {
-				m.SessionToken = &grpc1.SessionToken{}
+				m.SessionToken = &grpc.SessionToken{}
 			}
 			if err := m.SessionToken.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -1536,7 +1935,7 @@ func (m *Header_Split) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Parent == nil {
-				m.Parent = &grpc.ObjectID{}
+				m.Parent = &grpc1.ObjectID{}
 			}
 			if err := m.Parent.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -1572,7 +1971,7 @@ func (m *Header_Split) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Previous == nil {
-				m.Previous = &grpc.ObjectID{}
+				m.Previous = &grpc1.ObjectID{}
 			}
 			if err := m.Previous.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -1608,7 +2007,7 @@ func (m *Header_Split) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.ParentSignature == nil {
-				m.ParentSignature = &grpc1.Signature{}
+				m.ParentSignature = &grpc.Signature{}
 			}
 			if err := m.ParentSignature.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -1679,7 +2078,7 @@ func (m *Header_Split) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Children = append(m.Children, &grpc.ObjectID{})
+			m.Children = append(m.Children, &grpc1.ObjectID{})
 			if err := m.Children[len(m.Children)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -1768,7 +2167,7 @@ func (m *Object) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.ObjectId == nil {
-				m.ObjectId = &grpc.ObjectID{}
+				m.ObjectId = &grpc1.ObjectID{}
 			}
 			if err := m.ObjectId.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -1804,7 +2203,7 @@ func (m *Object) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Signature == nil {
-				m.Signature = &grpc1.Signature{}
+				m.Signature = &grpc.Signature{}
 			}
 			if err := m.Signature.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
