@@ -9,6 +9,9 @@ const (
 	FilterMatchTypeField  = 2
 	FilterNameField       = 3
 	FilterValueField      = 4
+
+	TargetTypeField = 1
+	TargetKeysField = 2
 )
 
 func (t *Table) StableMarshal(buf []byte) ([]byte, error) {
@@ -83,10 +86,42 @@ func (f *HeaderFilter) StableSize() (size int) {
 	return size
 }
 
-func (t *HeaderType) StableMarshal(buf []byte) ([]byte, error) {
-	panic("not implemented")
+func (t *TargetInfo) StableMarshal(buf []byte) ([]byte, error) {
+	if t == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, t.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = proto.EnumMarshal(TargetTypeField, buf, int32(t.target))
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = proto.RepeatedBytesMarshal(TargetKeysField, buf[offset:], t.keys)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
 }
 
-func (t *HeaderType) StableSize() int {
-	panic("not implemented")
+func (t *TargetInfo) StableSize() (size int) {
+	if t == nil {
+		return 0
+	}
+
+	size += proto.EnumSize(TargetTypeField, int32(t.target))
+	size += proto.RepeatedBytesSize(TargetKeysField, t.keys)
+
+	return size
 }
