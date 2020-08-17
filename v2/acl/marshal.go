@@ -24,6 +24,8 @@ const (
 	tableRecordsField     = 2
 )
 
+// StableMarshal marshals unified acl table structure in a protobuf
+// compatible way without field order shuffle.
 func (t *Table) StableMarshal(buf []byte) ([]byte, error) {
 	if t == nil {
 		return []byte{}, nil
@@ -73,6 +75,7 @@ func (t *Table) StableMarshal(buf []byte) ([]byte, error) {
 	return buf, nil
 }
 
+// StableSize of acl table structure marshalled by StableMarshal function.
 func (t *Table) StableSize() (size int) {
 	if t == nil {
 		return 0
@@ -94,6 +97,8 @@ func (t *Table) StableSize() (size int) {
 	return size
 }
 
+// StableMarshal marshals unified acl record structure in a protobuf
+// compatible way without field order shuffle.
 func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -158,6 +163,7 @@ func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
 	return buf, nil
 }
 
+// StableSize of acl record structure marshalled by StableMarshal function.
 func (r *Record) StableSize() (size int) {
 	if r == nil {
 		return 0
@@ -183,6 +189,8 @@ func (r *Record) StableSize() (size int) {
 	return size
 }
 
+// StableMarshal marshals unified header filter structure in a protobuf
+// compatible way without field order shuffle.
 func (f *HeaderFilter) StableMarshal(buf []byte) ([]byte, error) {
 	if f == nil {
 		return []byte{}, nil
@@ -218,7 +226,7 @@ func (f *HeaderFilter) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.StringMarshal(filterValueField, buf[offset:], f.value)
+	_, err = proto.StringMarshal(filterValueField, buf[offset:], f.value)
 	if err != nil {
 		return nil, err
 	}
@@ -226,6 +234,7 @@ func (f *HeaderFilter) StableMarshal(buf []byte) ([]byte, error) {
 	return buf, nil
 }
 
+// StableSize of header filter structure marshalled by StableMarshal function.
 func (f *HeaderFilter) StableSize() (size int) {
 	if f == nil {
 		return 0
@@ -239,6 +248,8 @@ func (f *HeaderFilter) StableSize() (size int) {
 	return size
 }
 
+// StableMarshal marshals unified target info structure in a protobuf
+// compatible way without field order shuffle.
 func (t *TargetInfo) StableMarshal(buf []byte) ([]byte, error) {
 	if t == nil {
 		return []byte{}, nil
@@ -260,7 +271,7 @@ func (t *TargetInfo) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.RepeatedBytesMarshal(targetKeysField, buf[offset:], t.keys)
+	_, err = proto.RepeatedBytesMarshal(targetKeysField, buf[offset:], t.keys)
 	if err != nil {
 		return nil, err
 	}
@@ -268,6 +279,7 @@ func (t *TargetInfo) StableMarshal(buf []byte) ([]byte, error) {
 	return buf, nil
 }
 
+// StableSize of target info structure marshalled by StableMarshal function.
 func (t *TargetInfo) StableSize() (size int) {
 	if t == nil {
 		return 0

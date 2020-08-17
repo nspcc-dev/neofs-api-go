@@ -2,6 +2,8 @@ package acl
 
 import "github.com/nspcc-dev/neofs-api-go/v2/refs"
 
+// HeaderFilter is a unified structure of FilterInfo
+// message from proto definition.
 type HeaderFilter struct {
 	hdrType HeaderType
 
@@ -10,12 +12,16 @@ type HeaderFilter struct {
 	name, value string
 }
 
+// TargetInfo is a unified structure of TargetInfo
+// message from proto definition.
 type TargetInfo struct {
 	target Target
 
 	keys [][]byte
 }
 
+// Record is a unified structure of EACLRecord
+// message from proto definition.
 type Record struct {
 	op Operation
 
@@ -26,20 +32,27 @@ type Record struct {
 	targets []*TargetInfo
 }
 
+// Table is a unified structure of EACLTable
+// message from proto definition.
 type Table struct {
 	cid *refs.ContainerID
 
 	records []*Record
 }
 
+// TargetInfo is a unified enum of MatchType enum from proto definition.
 type MatchType uint32
 
+// HeaderType is a unified enum of HeaderType enum from proto definition.
 type HeaderType uint32
 
+// Action is a unified enum of Action enum from proto definition.
 type Action uint32
 
+// Operation is a unified enum of Operation enum from proto definition.
 type Operation uint32
 
+// Target is a unified enum of Target enum from proto definition.
 type Target uint32
 
 const (
