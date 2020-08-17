@@ -61,6 +61,24 @@ type RequestMetaHeader struct {
 	origin *RequestMetaHeader
 }
 
+type ResponseVerificationHeader struct {
+	bodySig, metaSig, originSig *Signature
+
+	origin *ResponseVerificationHeader
+}
+
+type ResponseMetaHeader struct {
+	version *Version
+
+	ttl uint32
+
+	epoch uint64
+
+	xHeaders []*XHeader
+
+	origin *ResponseMetaHeader
+}
+
 func (s *Signature) GetKey() []byte {
 	if s != nil {
 		return s.key
@@ -440,5 +458,131 @@ func (bt *BearerToken) GetSignature() *Signature {
 func (bt *BearerToken) SetSignature(v *Signature) {
 	if bt != nil {
 		bt.sig = v
+	}
+}
+
+func (r *ResponseVerificationHeader) GetBodySignature() *Signature {
+	if r != nil {
+		return r.bodySig
+	}
+
+	return nil
+}
+
+func (r *ResponseVerificationHeader) SetBodySignature(v *Signature) {
+	if r != nil {
+		r.bodySig = v
+	}
+}
+
+func (r *ResponseVerificationHeader) GetMetaSignature() *Signature {
+	if r != nil {
+		return r.metaSig
+	}
+
+	return nil
+}
+
+func (r *ResponseVerificationHeader) SetMetaSignature(v *Signature) {
+	if r != nil {
+		r.metaSig = v
+	}
+}
+
+func (r *ResponseVerificationHeader) GetOriginSignature() *Signature {
+	if r != nil {
+		return r.originSig
+	}
+
+	return nil
+}
+
+func (r *ResponseVerificationHeader) SetOriginSignature(v *Signature) {
+	if r != nil {
+		r.originSig = v
+	}
+}
+
+func (r *ResponseVerificationHeader) GetOrigin() *ResponseVerificationHeader {
+	if r != nil {
+		return r.origin
+	}
+
+	return nil
+}
+
+func (r *ResponseVerificationHeader) SetOrigin(v *ResponseVerificationHeader) {
+	if r != nil {
+		r.origin = v
+	}
+}
+
+func (r *ResponseMetaHeader) GetVersion() *Version {
+	if r != nil {
+		return r.version
+	}
+
+	return nil
+}
+
+func (r *ResponseMetaHeader) SetVersion(v *Version) {
+	if r != nil {
+		r.version = v
+	}
+}
+
+func (r *ResponseMetaHeader) GetTTL() uint32 {
+	if r != nil {
+		return r.ttl
+	}
+
+	return 0
+}
+
+func (r *ResponseMetaHeader) SetTTL(v uint32) {
+	if r != nil {
+		r.ttl = v
+	}
+}
+
+func (r *ResponseMetaHeader) GetEpoch() uint64 {
+	if r != nil {
+		return r.epoch
+	}
+
+	return 0
+}
+
+func (r *ResponseMetaHeader) SetEpoch(v uint64) {
+	if r != nil {
+		r.epoch = v
+	}
+}
+
+func (r *ResponseMetaHeader) GetXHeaders() []*XHeader {
+	if r != nil {
+		return r.xHeaders
+	}
+
+	return nil
+}
+
+func (r *ResponseMetaHeader) SetXHeaders(v []*XHeader) {
+	if r != nil {
+		r.xHeaders = v
+	}
+}
+
+func (r *ResponseMetaHeader) GetOrigin() *ResponseMetaHeader {
+	if r != nil {
+		return r.origin
+	}
+
+	return nil
+}
+
+func (r *ResponseMetaHeader) SetOrigin(v *ResponseMetaHeader) {
+	if r != nil {
+		r.origin = v
 	}
 }
