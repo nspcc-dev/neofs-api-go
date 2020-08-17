@@ -5,6 +5,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 )
 
+// TargetToGRPCField converts unified target enum into grpc enum.
 func TargetToGRPCField(t Target) acl.Target {
 	switch t {
 	case TargetUser:
@@ -18,6 +19,7 @@ func TargetToGRPCField(t Target) acl.Target {
 	}
 }
 
+// TargetFromGRPCField converts grpc enum into unified target enum.
 func TargetFromGRPCField(t acl.Target) Target {
 	switch t {
 	case acl.Target_USER:
@@ -31,6 +33,7 @@ func TargetFromGRPCField(t acl.Target) Target {
 	}
 }
 
+// OperationToGRPCField converts unified operation enum into grpc enum.
 func OperationToGRPCField(t Operation) acl.Operation {
 	switch t {
 	case OperationPut:
@@ -52,6 +55,7 @@ func OperationToGRPCField(t Operation) acl.Operation {
 	}
 }
 
+// OperationFromGRPCField converts grpc enum into unified operation enum.
 func OperationFromGRPCField(t acl.Operation) Operation {
 	switch t {
 	case acl.Operation_PUT:
@@ -73,6 +77,7 @@ func OperationFromGRPCField(t acl.Operation) Operation {
 	}
 }
 
+// ActionToGRPCField converts unified action enum into grpc enum.
 func ActionToGRPCField(t Action) acl.Action {
 	switch t {
 	case ActionDeny:
@@ -84,6 +89,7 @@ func ActionToGRPCField(t Action) acl.Action {
 	}
 }
 
+// ActionFromGRPCField converts grpc enum into unified action enum.
 func ActionFromGRPCField(t acl.Action) Action {
 	switch t {
 	case acl.Action_DENY:
@@ -95,6 +101,7 @@ func ActionFromGRPCField(t acl.Action) Action {
 	}
 }
 
+// HeaderTypeToGRPCField converts unified header type enum into grpc enum.
 func HeaderTypeToGRPCField(t HeaderType) acl.HeaderType {
 	switch t {
 	case HeaderTypeRequest:
@@ -106,6 +113,7 @@ func HeaderTypeToGRPCField(t HeaderType) acl.HeaderType {
 	}
 }
 
+// HeaderTypeFromGRPCField converts grpc enum into unified header type enum.
 func HeaderTypeFromGRPCField(t acl.HeaderType) HeaderType {
 	switch t {
 	case acl.HeaderType_REQUEST:
@@ -117,6 +125,7 @@ func HeaderTypeFromGRPCField(t acl.HeaderType) HeaderType {
 	}
 }
 
+// MatchTypeToGRPCField converts unified match type enum into grpc enum.
 func MatchTypeToGRPCField(t MatchType) acl.MatchType {
 	switch t {
 	case MatchTypeStringEqual:
@@ -128,6 +137,7 @@ func MatchTypeToGRPCField(t MatchType) acl.MatchType {
 	}
 }
 
+// MatchTypeFromGRPCField converts grpc enum into unified match type enum.
 func MatchTypeFromGRPCField(t acl.MatchType) MatchType {
 	switch t {
 	case acl.MatchType_STRING_EQUAL:
@@ -139,6 +149,7 @@ func MatchTypeFromGRPCField(t acl.MatchType) MatchType {
 	}
 }
 
+// HeaderFilterToGRPCMessage converts unified header filter struct into grpc struct.
 func HeaderFilterToGRPCMessage(f *HeaderFilter) *acl.EACLRecord_FilterInfo {
 	if f == nil {
 		return nil
@@ -160,6 +171,7 @@ func HeaderFilterToGRPCMessage(f *HeaderFilter) *acl.EACLRecord_FilterInfo {
 	return m
 }
 
+// HeaderFilterFromGRPCMessage converts grpc struct into unified header filter struct.
 func HeaderFilterFromGRPCMessage(m *acl.EACLRecord_FilterInfo) *HeaderFilter {
 	if m == nil {
 		return nil
@@ -181,6 +193,7 @@ func HeaderFilterFromGRPCMessage(m *acl.EACLRecord_FilterInfo) *HeaderFilter {
 	return f
 }
 
+// TargetInfoToGRPCMessage converts unified target info struct into grpc struct.
 func TargetInfoToGRPCMessage(t *TargetInfo) *acl.EACLRecord_TargetInfo {
 	if t == nil {
 		return nil
@@ -197,6 +210,7 @@ func TargetInfoToGRPCMessage(t *TargetInfo) *acl.EACLRecord_TargetInfo {
 	return m
 }
 
+// TargetInfoFromGRPCMessage converts grpc struct into unified target info struct.
 func TargetInfoFromGRPCMessage(m *acl.EACLRecord_TargetInfo) *TargetInfo {
 	if m == nil {
 		return nil
@@ -213,6 +227,7 @@ func TargetInfoFromGRPCMessage(m *acl.EACLRecord_TargetInfo) *TargetInfo {
 	return t
 }
 
+// RecordToGRPCMessage converts unified acl record struct into grpc struct.
 func RecordToGRPCMessage(r *Record) *acl.EACLRecord {
 	if r == nil {
 		return nil
@@ -249,6 +264,7 @@ func RecordToGRPCMessage(r *Record) *acl.EACLRecord {
 	return m
 }
 
+// RecordFromGRPCMessage converts grpc struct into unified acl record struct.
 func RecordFromGRPCMessage(m *acl.EACLRecord) *Record {
 	if m == nil {
 		return nil
@@ -285,6 +301,7 @@ func RecordFromGRPCMessage(m *acl.EACLRecord) *Record {
 	return r
 }
 
+// TableToGRPCMessage converts unified acl table struct into grpc struct.
 func TableToGRPCMessage(t *Table) *acl.EACLTable {
 	if t == nil {
 		return nil
@@ -308,6 +325,7 @@ func TableToGRPCMessage(t *Table) *acl.EACLTable {
 	return m
 }
 
+// TableFromGRPCMessage converts grpc struct into unified acl table struct.
 func TableFromGRPCMessage(m *acl.EACLTable) *Table {
 	if m == nil {
 		return nil
