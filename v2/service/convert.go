@@ -363,3 +363,149 @@ func RequestHeadersFromGRPC(
 		RequestVerificationHeaderFromGRPCMessage(src.GetVerifyHeader()),
 	)
 }
+
+func ResponseVerificationHeaderToGRPCMessage(r *ResponseVerificationHeader) *service.ResponseVerificationHeader {
+	if r == nil {
+		return nil
+	}
+
+	m := new(service.ResponseVerificationHeader)
+
+	m.SetBodySignature(
+		SignatureToGRPCMessage(r.GetBodySignature()),
+	)
+
+	m.SetMetaSignature(
+		SignatureToGRPCMessage(r.GetMetaSignature()),
+	)
+
+	m.SetOriginSignature(
+		SignatureToGRPCMessage(r.GetOriginSignature()),
+	)
+
+	m.SetOrigin(
+		ResponseVerificationHeaderToGRPCMessage(r.GetOrigin()),
+	)
+
+	return m
+}
+
+func ResponseVerificationHeaderFromGRPCMessage(m *service.ResponseVerificationHeader) *ResponseVerificationHeader {
+	if m == nil {
+		return nil
+	}
+
+	r := new(ResponseVerificationHeader)
+
+	r.SetBodySignature(
+		SignatureFromGRPCMessage(m.GetBodySignature()),
+	)
+
+	r.SetMetaSignature(
+		SignatureFromGRPCMessage(m.GetMetaSignature()),
+	)
+
+	r.SetOriginSignature(
+		SignatureFromGRPCMessage(m.GetOriginSignature()),
+	)
+
+	r.SetOrigin(
+		ResponseVerificationHeaderFromGRPCMessage(m.GetOrigin()),
+	)
+
+	return r
+}
+
+func ResponseMetaHeaderToGRPCMessage(r *ResponseMetaHeader) *service.ResponseMetaHeader {
+	if r == nil {
+		return nil
+	}
+
+	m := new(service.ResponseMetaHeader)
+
+	m.SetTtl(r.GetTTL())
+	m.SetEpoch(r.GetEpoch())
+
+	m.SetVersion(
+		VersionToGRPCMessage(r.GetVersion()),
+	)
+
+	m.SetOrigin(
+		ResponseMetaHeaderToGRPCMessage(r.GetOrigin()),
+	)
+
+	xHeaders := r.GetXHeaders()
+	xHdrMsg := make([]*service.XHeader, 0, len(xHeaders))
+
+	for i := range xHeaders {
+		xHdrMsg = append(xHdrMsg, XHeaderToGRPCMessage(xHeaders[i]))
+	}
+
+	return m
+}
+
+func ResponseMetaHeaderFromGRPCMessage(m *service.ResponseMetaHeader) *ResponseMetaHeader {
+	if m == nil {
+		return nil
+	}
+
+	r := new(ResponseMetaHeader)
+
+	r.SetTTL(m.GetTtl())
+	r.SetEpoch(m.GetEpoch())
+
+	r.SetVersion(
+		VersionFromGRPCMessage(m.GetVersion()),
+	)
+
+	r.SetOrigin(
+		ResponseMetaHeaderFromGRPCMessage(m.GetOrigin()),
+	)
+
+	xHdrMsg := m.GetXHeaders()
+	xHeaders := make([]*XHeader, 0, len(xHdrMsg))
+
+	for i := range xHdrMsg {
+		xHeaders = append(xHeaders, XHeaderFromGRPCMessage(xHdrMsg[i]))
+	}
+
+	return r
+}
+
+func ResponseHeadersToGRPC(
+	src interface {
+		GetResponseMetaHeader() *ResponseMetaHeader
+		GetResponseVerificationHeader() *ResponseVerificationHeader
+	},
+	dst interface {
+		SetMetaHeader(*service.ResponseMetaHeader)
+		SetVerifyHeader(*service.ResponseVerificationHeader)
+	},
+) {
+	dst.SetMetaHeader(
+		ResponseMetaHeaderToGRPCMessage(src.GetResponseMetaHeader()),
+	)
+
+	dst.SetVerifyHeader(
+		ResponseVerificationHeaderToGRPCMessage(src.GetResponseVerificationHeader()),
+	)
+}
+
+func ResponseHeadersFromGRPC(
+	src interface {
+		GetMetaHeader() *service.ResponseMetaHeader
+		GetVerifyHeader() *service.ResponseVerificationHeader
+	},
+	dst interface {
+		SetResponseMetaHeader(*ResponseMetaHeader)
+		SetResponseVerificationHeader(*ResponseVerificationHeader)
+	},
+) {
+	dst.SetResponseMetaHeader(
+		ResponseMetaHeaderFromGRPCMessage(src.GetMetaHeader()),
+	)
+
+	dst.SetResponseVerificationHeader(
+		ResponseVerificationHeaderFromGRPCMessage(src.GetVerifyHeader()),
+	)
+}
