@@ -325,3 +325,41 @@ func BearerTokenBodyFromGRPCMessage(m *service.BearerToken_Body) *BearerTokenBod
 
 	return bt
 }
+
+func RequestHeadersToGRPC(
+	src interface {
+		GetRequestMetaHeader() *RequestMetaHeader
+		GetRequestVerificationHeader() *RequestVerificationHeader
+	},
+	dst interface {
+		SetMetaHeader(*service.RequestMetaHeader)
+		SetVerifyHeader(*service.RequestVerificationHeader)
+	},
+) {
+	dst.SetMetaHeader(
+		RequestMetaHeaderToGRPCMessage(src.GetRequestMetaHeader()),
+	)
+
+	dst.SetVerifyHeader(
+		RequestVerificationHeaderToGRPCMessage(src.GetRequestVerificationHeader()),
+	)
+}
+
+func RequestHeadersFromGRPC(
+	src interface {
+		GetMetaHeader() *service.RequestMetaHeader
+		GetVerifyHeader() *service.RequestVerificationHeader
+	},
+	dst interface {
+		SetRequestMetaHeader(*RequestMetaHeader)
+		SetRequestVerificationHeader(*RequestVerificationHeader)
+	},
+) {
+	dst.SetRequestMetaHeader(
+		RequestMetaHeaderFromGRPCMessage(src.GetMetaHeader()),
+	)
+
+	dst.SetRequestVerificationHeader(
+		RequestVerificationHeaderFromGRPCMessage(src.GetVerifyHeader()),
+	)
+}
