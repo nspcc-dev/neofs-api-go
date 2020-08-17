@@ -28,3 +28,25 @@ func TestHeaderFilter_StableMarshal(t *testing.T) {
 		require.Equal(t, filterFrom, filterTo)
 	})
 }
+
+func TestTargetInfo_StableMarshal(t *testing.T) {
+	targetFrom := new(acl.TargetInfo)
+	transport := new(grpc.EACLRecord_TargetInfo)
+
+	t.Run("non empty", func(t *testing.T) {
+		targetFrom.SetTarget(acl.TargetUser)
+		targetFrom.SetKeyList([][]byte{
+			[]byte("Public Key 1"),
+			[]byte("Public Key 2"),
+		})
+
+		wire, err := targetFrom.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = transport.Unmarshal(wire)
+		require.NoError(t, err)
+
+		targetTo := acl.TargetInfoFromGRPCMessage(transport)
+		require.Equal(t, targetFrom, targetTo)
+	})
+}
