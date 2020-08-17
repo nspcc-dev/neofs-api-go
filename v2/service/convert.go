@@ -1,6 +1,8 @@
 package service
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/v2/acl"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
 )
 
@@ -67,13 +69,39 @@ func SessionTokenFromGRPCMessage(m *service.SessionToken) *SessionToken {
 }
 
 func BearerTokenToGRPCMessage(t *BearerToken) *service.BearerToken {
-	// TODO: fill me
-	return nil
+	if t == nil {
+		return nil
+	}
+
+	m := new(service.BearerToken)
+
+	m.SetBody(
+		BearerTokenBodyToGRPCMessage(t.GetBody()),
+	)
+
+	m.SetSignature(
+		SignatureToGRPCMessage(t.GetSignature()),
+	)
+
+	return m
 }
 
 func BearerTokenFromGRPCMessage(m *service.BearerToken) *BearerToken {
-	// TODO: fill me
-	return nil
+	if m == nil {
+		return nil
+	}
+
+	bt := new(BearerToken)
+
+	bt.SetBody(
+		BearerTokenBodyFromGRPCMessage(m.GetBody()),
+	)
+
+	bt.SetSignature(
+		SignatureFromGRPCMessage(m.GetSignature()),
+	)
+
+	return bt
 }
 
 func RequestVerificationHeaderToGRPCMessage(r *RequestVerificationHeader) *service.RequestVerificationHeader {
@@ -224,4 +252,76 @@ func SignatureFromGRPCMessage(m *service.Signature) *Signature {
 	s.SetSign(m.GetSign())
 
 	return s
+}
+
+func TokenLifetimeToGRPCMessage(tl *TokenLifetime) *service.TokenLifetime {
+	if tl == nil {
+		return nil
+	}
+
+	m := new(service.TokenLifetime)
+
+	m.SetExp(tl.GetExp())
+	m.SetNbf(tl.GetNbf())
+	m.SetIat(tl.GetIat())
+
+	return m
+}
+
+func TokenLifetimeFromGRPCMessage(m *service.TokenLifetime) *TokenLifetime {
+	if m == nil {
+		return nil
+	}
+
+	tl := new(TokenLifetime)
+
+	tl.SetExp(m.GetExp())
+	tl.SetNbf(m.GetNbf())
+	tl.SetIat(m.GetIat())
+
+	return tl
+}
+
+func BearerTokenBodyToGRPCMessage(v *BearerTokenBody) *service.BearerToken_Body {
+	if v == nil {
+		return nil
+	}
+
+	m := new(service.BearerToken_Body)
+
+	m.SetEaclTable(
+		acl.TableToGRPCMessage(v.GetEACL()),
+	)
+
+	m.SetOwnerId(
+		refs.OwnerIDToGRPCMessage(v.GetOwnerID()),
+	)
+
+	m.SetLifetime(
+		TokenLifetimeToGRPCMessage(v.GetLifetime()),
+	)
+
+	return m
+}
+
+func BearerTokenBodyFromGRPCMessage(m *service.BearerToken_Body) *BearerTokenBody {
+	if m == nil {
+		return nil
+	}
+
+	bt := new(BearerTokenBody)
+
+	bt.SetEACL(
+		acl.TableFromGRPCMessage(m.GetEaclTable()),
+	)
+
+	bt.SetOwnerID(
+		refs.OwnerIDFromGRPCMessage(m.GetOwnerId()),
+	)
+
+	bt.SetLifetime(
+		TokenLifetimeFromGRPCMessage(m.GetLifetime()),
+	)
+
+	return bt
 }

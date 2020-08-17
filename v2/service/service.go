@@ -1,5 +1,10 @@
 package service
 
+import (
+	"github.com/nspcc-dev/neofs-api-go/v2/acl"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+)
+
 type Signature struct {
 	key, sign []byte
 }
@@ -12,12 +17,26 @@ type XHeader struct {
 	key, val string
 }
 
+type TokenLifetime struct {
+	exp, nbf, iat uint64
+}
+
 type SessionToken struct {
 	// TODO: fill me
 }
 
+type BearerTokenBody struct {
+	eacl *acl.Table
+
+	ownerID *refs.OwnerID
+
+	lifetime *TokenLifetime
+}
+
 type BearerToken struct {
-	// TODO: fill me
+	body *BearerTokenBody
+
+	sig *Signature
 }
 
 type RequestVerificationHeader struct {
@@ -310,4 +329,116 @@ func (r *RequestMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
 func (r *RequestMetaHeader) StableSize() int {
 	// TODO: do not use hack
 	return RequestMetaHeaderToGRPCMessage(r).Size()
+}
+
+func (tl *TokenLifetime) GetExp() uint64 {
+	if tl != nil {
+		return tl.exp
+	}
+
+	return 0
+}
+
+func (tl *TokenLifetime) SetExp(v uint64) {
+	if tl != nil {
+		tl.exp = v
+	}
+}
+
+func (tl *TokenLifetime) GetNbf() uint64 {
+	if tl != nil {
+		return tl.nbf
+	}
+
+	return 0
+}
+
+func (tl *TokenLifetime) SetNbf(v uint64) {
+	if tl != nil {
+		tl.nbf = v
+	}
+}
+
+func (tl *TokenLifetime) GetIat() uint64 {
+	if tl != nil {
+		return tl.iat
+	}
+
+	return 0
+}
+
+func (tl *TokenLifetime) SetIat(v uint64) {
+	if tl != nil {
+		tl.iat = v
+	}
+}
+
+func (bt *BearerTokenBody) GetEACL() *acl.Table {
+	if bt != nil {
+		return bt.eacl
+	}
+
+	return nil
+}
+
+func (bt *BearerTokenBody) SetEACL(v *acl.Table) {
+	if bt != nil {
+		bt.eacl = v
+	}
+}
+
+func (bt *BearerTokenBody) GetOwnerID() *refs.OwnerID {
+	if bt != nil {
+		return bt.ownerID
+	}
+
+	return nil
+}
+
+func (bt *BearerTokenBody) SetOwnerID(v *refs.OwnerID) {
+	if bt != nil {
+		bt.ownerID = v
+	}
+}
+
+func (bt *BearerTokenBody) GetLifetime() *TokenLifetime {
+	if bt != nil {
+		return bt.lifetime
+	}
+
+	return nil
+}
+
+func (bt *BearerTokenBody) SetLifetime(v *TokenLifetime) {
+	if bt != nil {
+		bt.lifetime = v
+	}
+}
+
+func (bt *BearerToken) GetBody() *BearerTokenBody {
+	if bt != nil {
+		return bt.body
+	}
+
+	return nil
+}
+
+func (bt *BearerToken) SetBody(v *BearerTokenBody) {
+	if bt != nil {
+		bt.body = v
+	}
+}
+
+func (bt *BearerToken) GetSignature() *Signature {
+	if bt != nil {
+		return bt.sig
+	}
+
+	return nil
+}
+
+func (bt *BearerToken) SetSignature(v *Signature) {
+	if bt != nil {
+		bt.sig = v
+	}
 }
