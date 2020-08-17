@@ -21,8 +21,34 @@ type TokenLifetime struct {
 	exp, nbf, iat uint64
 }
 
+type ObjectSessionVerb uint32
+
+type ObjectSessionContext struct {
+	verb ObjectSessionVerb
+
+	addr *refs.Address
+}
+
+type SessionTokenContext interface {
+	sessionTokenContext()
+}
+
+type SessionTokenBody struct {
+	id []byte
+
+	ownerID *refs.OwnerID
+
+	lifetime *TokenLifetime
+
+	sessionKey []byte
+
+	ctx SessionTokenContext
+}
+
 type SessionToken struct {
-	// TODO: fill me
+	body *SessionTokenBody
+
+	sig *Signature
 }
 
 type BearerTokenBody struct {
@@ -78,6 +104,17 @@ type ResponseMetaHeader struct {
 
 	origin *ResponseMetaHeader
 }
+
+const (
+	ObjectVerbUnknown ObjectSessionVerb = iota
+	ObjectVerbPut
+	ObjectVerbGet
+	ObjectVerbHead
+	ObjectVerbSearch
+	ObjectVerbDelete
+	ObjectVerbRange
+	ObjectVerbRangeHash
+)
 
 func (s *Signature) GetKey() []byte {
 	if s != nil {
@@ -584,5 +621,133 @@ func (r *ResponseMetaHeader) GetOrigin() *ResponseMetaHeader {
 func (r *ResponseMetaHeader) SetOrigin(v *ResponseMetaHeader) {
 	if r != nil {
 		r.origin = v
+	}
+}
+
+func (c *ObjectSessionContext) sessionTokenContext() {}
+
+func (c *ObjectSessionContext) GetVerb() ObjectSessionVerb {
+	if c != nil {
+		return c.verb
+	}
+
+	return ObjectVerbUnknown
+}
+
+func (c *ObjectSessionContext) SetVerb(v ObjectSessionVerb) {
+	if c != nil {
+		c.verb = v
+	}
+}
+
+func (c *ObjectSessionContext) GetAddress() *refs.Address {
+	if c != nil {
+		return c.addr
+	}
+
+	return nil
+}
+
+func (c *ObjectSessionContext) SetAddress(v *refs.Address) {
+	if c != nil {
+		c.addr = v
+	}
+}
+
+func (t *SessionTokenBody) GetID() []byte {
+	if t != nil {
+		return t.id
+	}
+
+	return nil
+}
+
+func (t *SessionTokenBody) SetID(v []byte) {
+	if t != nil {
+		t.id = v
+	}
+}
+
+func (t *SessionTokenBody) GetOwnerID() *refs.OwnerID {
+	if t != nil {
+		return t.ownerID
+	}
+
+	return nil
+}
+
+func (t *SessionTokenBody) SetOwnerID(v *refs.OwnerID) {
+	if t != nil {
+		t.ownerID = v
+	}
+}
+
+func (t *SessionTokenBody) GetLifetime() *TokenLifetime {
+	if t != nil {
+		return t.lifetime
+	}
+
+	return nil
+}
+
+func (t *SessionTokenBody) SetLifetime(v *TokenLifetime) {
+	if t != nil {
+		t.lifetime = v
+	}
+}
+
+func (t *SessionTokenBody) GetSessionKey() []byte {
+	if t != nil {
+		return t.sessionKey
+	}
+
+	return nil
+}
+
+func (t *SessionTokenBody) SetSessionKey(v []byte) {
+	if t != nil {
+		t.sessionKey = v
+	}
+}
+
+func (t *SessionTokenBody) GetContext() SessionTokenContext {
+	if t != nil {
+		return t.ctx
+	}
+
+	return nil
+}
+
+func (t *SessionTokenBody) SetContext(v SessionTokenContext) {
+	if t != nil {
+		t.ctx = v
+	}
+}
+
+func (t *SessionToken) GetBody() *SessionTokenBody {
+	if t != nil {
+		return t.body
+	}
+
+	return nil
+}
+
+func (t *SessionToken) SetBody(v *SessionTokenBody) {
+	if t != nil {
+		t.body = v
+	}
+}
+
+func (t *SessionToken) GetSignature() *Signature {
+	if t != nil {
+		return t.sig
+	}
+
+	return nil
+}
+
+func (t *SessionToken) SetSignature(v *Signature) {
+	if t != nil {
+		t.sig = v
 	}
 }
