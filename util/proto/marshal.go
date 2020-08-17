@@ -292,6 +292,7 @@ func VarUIntSize(x uint64) int {
 	return (bits.Len64(x|1) + 6) / 7
 }
 
-func NestedStructurePrefixSize(field int64) int {
-	return VarUIntSize(uint64(field<<3 | 0x02))
+func NestedStructurePrefix(field int64) (prefix uint64, ln int) {
+	prefix = uint64(field<<3 | 0x02)
+	return prefix, VarUIntSize(prefix)
 }
