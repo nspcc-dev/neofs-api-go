@@ -68,13 +68,6 @@ func (m *SessionToken_Body) SetOwnerId(v *refs.OwnerID) {
 	}
 }
 
-// SetVerb sets verb of the session token.
-func (m *SessionToken_Body) SetVerb(v SessionToken_Body_Verb) {
-	if m != nil {
-		m.Verb = v
-	}
-}
-
 // SetLifetime sets lifetime of the session token.
 func (m *SessionToken_Body) SetLifetime(v *TokenLifetime) {
 	if m != nil {
@@ -90,11 +83,25 @@ func (m *SessionToken_Body) SetSessionKey(v []byte) {
 }
 
 // SetObjectAddressContext sets object context of the session token.
-func (m *SessionToken_Body) SetObjectAddressContext(v *refs.Address) {
+func (m *SessionToken_Body) SetObjectServiceContext(v *ObjectServiceContext) {
 	if m != nil {
-		m.Context = &SessionToken_Body_ObjectAddress{
-			ObjectAddress: v,
+		m.Context = &SessionToken_Body_ObjectService{
+			ObjectService: v,
 		}
+	}
+}
+
+// SetObjectAddressContext sets object context of the session token.
+func (m *ObjectServiceContext) SetAddress(v *refs.Address) {
+	if m != nil {
+		m.Address = v
+	}
+}
+
+// SetObjectAddressContext sets object context of the session token.
+func (m *ObjectServiceContext) SetVerb(v ObjectServiceContext_Verb) {
+	if m != nil {
+		m.Verb = v
 	}
 }
 
