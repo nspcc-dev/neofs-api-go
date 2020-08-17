@@ -328,8 +328,8 @@ func BearerTokenBodyFromGRPCMessage(m *service.BearerToken_Body) *BearerTokenBod
 
 func RequestHeadersToGRPC(
 	src interface {
-		GetRequestMetaHeader() *RequestMetaHeader
-		GetRequestVerificationHeader() *RequestVerificationHeader
+		GetMetaHeader() *RequestMetaHeader
+		GetVerificationHeader() *RequestVerificationHeader
 	},
 	dst interface {
 		SetMetaHeader(*service.RequestMetaHeader)
@@ -337,11 +337,11 @@ func RequestHeadersToGRPC(
 	},
 ) {
 	dst.SetMetaHeader(
-		RequestMetaHeaderToGRPCMessage(src.GetRequestMetaHeader()),
+		RequestMetaHeaderToGRPCMessage(src.GetMetaHeader()),
 	)
 
 	dst.SetVerifyHeader(
-		RequestVerificationHeaderToGRPCMessage(src.GetRequestVerificationHeader()),
+		RequestVerificationHeaderToGRPCMessage(src.GetVerificationHeader()),
 	)
 }
 
@@ -351,15 +351,15 @@ func RequestHeadersFromGRPC(
 		GetVerifyHeader() *service.RequestVerificationHeader
 	},
 	dst interface {
-		SetRequestMetaHeader(*RequestMetaHeader)
-		SetRequestVerificationHeader(*RequestVerificationHeader)
+		SetMetaHeader(*RequestMetaHeader)
+		SetVerificationHeader(*RequestVerificationHeader)
 	},
 ) {
-	dst.SetRequestMetaHeader(
+	dst.SetMetaHeader(
 		RequestMetaHeaderFromGRPCMessage(src.GetMetaHeader()),
 	)
 
-	dst.SetRequestVerificationHeader(
+	dst.SetVerificationHeader(
 		RequestVerificationHeaderFromGRPCMessage(src.GetVerifyHeader()),
 	)
 }
@@ -474,8 +474,8 @@ func ResponseMetaHeaderFromGRPCMessage(m *service.ResponseMetaHeader) *ResponseM
 
 func ResponseHeadersToGRPC(
 	src interface {
-		GetResponseMetaHeader() *ResponseMetaHeader
-		GetResponseVerificationHeader() *ResponseVerificationHeader
+		GetMetaHeader() *ResponseMetaHeader
+		GetVerificationHeader() *ResponseVerificationHeader
 	},
 	dst interface {
 		SetMetaHeader(*service.ResponseMetaHeader)
@@ -483,11 +483,11 @@ func ResponseHeadersToGRPC(
 	},
 ) {
 	dst.SetMetaHeader(
-		ResponseMetaHeaderToGRPCMessage(src.GetResponseMetaHeader()),
+		ResponseMetaHeaderToGRPCMessage(src.GetMetaHeader()),
 	)
 
 	dst.SetVerifyHeader(
-		ResponseVerificationHeaderToGRPCMessage(src.GetResponseVerificationHeader()),
+		ResponseVerificationHeaderToGRPCMessage(src.GetVerificationHeader()),
 	)
 }
 
@@ -497,15 +497,15 @@ func ResponseHeadersFromGRPC(
 		GetVerifyHeader() *service.ResponseVerificationHeader
 	},
 	dst interface {
-		SetResponseMetaHeader(*ResponseMetaHeader)
-		SetResponseVerificationHeader(*ResponseVerificationHeader)
+		SetMetaHeader(*ResponseMetaHeader)
+		SetVerificationHeader(*ResponseVerificationHeader)
 	},
 ) {
-	dst.SetResponseMetaHeader(
+	dst.SetMetaHeader(
 		ResponseMetaHeaderFromGRPCMessage(src.GetMetaHeader()),
 	)
 
-	dst.SetResponseVerificationHeader(
+	dst.SetVerificationHeader(
 		ResponseVerificationHeaderFromGRPCMessage(src.GetVerifyHeader()),
 	)
 }

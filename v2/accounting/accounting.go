@@ -79,7 +79,7 @@ func (b *BalanceRequest) SetBody(v *BalanceRequestBody) {
 	}
 }
 
-func (b *BalanceRequest) GetRequestMetaHeader() *service.RequestMetaHeader {
+func (b *BalanceRequest) GetMetaHeader() *service.RequestMetaHeader {
 	if b != nil {
 		return b.metaHeader
 	}
@@ -87,13 +87,13 @@ func (b *BalanceRequest) GetRequestMetaHeader() *service.RequestMetaHeader {
 	return nil
 }
 
-func (b *BalanceRequest) SetRequestMetaHeader(v *service.RequestMetaHeader) {
+func (b *BalanceRequest) SetMetaHeader(v *service.RequestMetaHeader) {
 	if b != nil {
 		b.metaHeader = v
 	}
 }
 
-func (b *BalanceRequest) GetRequestVerificationHeader() *service.RequestVerificationHeader {
+func (b *BalanceRequest) GetVerificationHeader() *service.RequestVerificationHeader {
 	if b != nil {
 		return b.verifyHeader
 	}
@@ -101,7 +101,7 @@ func (b *BalanceRequest) GetRequestVerificationHeader() *service.RequestVerifica
 	return nil
 }
 
-func (b *BalanceRequest) SetRequestVerificationHeader(v *service.RequestVerificationHeader) {
+func (b *BalanceRequest) SetVerificationHeader(v *service.RequestVerificationHeader) {
 	if b != nil {
 		b.verifyHeader = v
 	}
@@ -163,7 +163,7 @@ func (br *BalanceResponse) SetBody(v *BalanceResponseBody) {
 	}
 }
 
-func (br *BalanceResponse) GetResponseMetaHeader() *service.ResponseMetaHeader {
+func (br *BalanceResponse) GetMetaHeader() *service.ResponseMetaHeader {
 	if br != nil {
 		return br.metaHeader
 	}
@@ -171,13 +171,13 @@ func (br *BalanceResponse) GetResponseMetaHeader() *service.ResponseMetaHeader {
 	return nil
 }
 
-func (br *BalanceResponse) SetResponseMetaHeader(v *service.ResponseMetaHeader) {
+func (br *BalanceResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
 	if br != nil {
 		br.metaHeader = v
 	}
 }
 
-func (br *BalanceResponse) GetResponseVerificationHeader() *service.ResponseVerificationHeader {
+func (br *BalanceResponse) GetVerificationHeader() *service.ResponseVerificationHeader {
 	if br != nil {
 		return br.verifyHeader
 	}
@@ -185,7 +185,7 @@ func (br *BalanceResponse) GetResponseVerificationHeader() *service.ResponseVeri
 	return nil
 }
 
-func (br *BalanceResponse) SetResponseVerificationHeader(v *service.ResponseVerificationHeader) {
+func (br *BalanceResponse) SetVerificationHeader(v *service.ResponseVerificationHeader) {
 	if br != nil {
 		br.verifyHeader = v
 	}

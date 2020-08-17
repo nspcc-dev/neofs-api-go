@@ -11,9 +11,9 @@ import (
 )
 
 type SignedRequest interface {
-	GetRequestMetaHeader() *service.RequestMetaHeader
-	GetRequestVerificationHeader() *service.RequestVerificationHeader
-	SetRequestVerificationHeader(*service.RequestVerificationHeader)
+	GetMetaHeader() *service.RequestMetaHeader
+	GetVerificationHeader() *service.RequestVerificationHeader
+	SetVerificationHeader(*service.RequestVerificationHeader)
 }
 
 type stableMarshaler interface {
@@ -64,7 +64,7 @@ func SignRequest(key *ecdsa.PrivateKey, req SignedRequest) error {
 	verifyHdr := new(service.RequestVerificationHeader)
 
 	// attach the previous matryoshka
-	verifyHdr.SetOrigin(req.GetRequestVerificationHeader())
+	verifyHdr.SetOrigin(req.GetVerificationHeader())
 
 	// sign request body
 	if err := signRequestPart(key, requestBody(req), verifyHdr.SetBodySignature); err != nil {
@@ -72,7 +72,7 @@ func SignRequest(key *ecdsa.PrivateKey, req SignedRequest) error {
 	}
 
 	// sign meta header
-	if err := signRequestPart(key, req.GetRequestMetaHeader(), verifyHdr.SetMetaSignature); err != nil {
+	if err := signRequestPart(key, req.GetMetaHeader(), verifyHdr.SetMetaSignature); err != nil {
 		return errors.Wrap(err, "could not sign request meta header")
 	}
 
@@ -82,7 +82,7 @@ func SignRequest(key *ecdsa.PrivateKey, req SignedRequest) error {
 	}
 
 	// make a new top of the matryoshka
-	req.SetRequestVerificationHeader(verifyHdr)
+	req.SetVerificationHeader(verifyHdr)
 
 	return nil
 }
@@ -106,7 +106,7 @@ func signRequestPart(key *ecdsa.PrivateKey, part stableMarshaler, sigWrite func(
 }
 
 func VerifyRequest(req SignedRequest) error {
-	verifyHdr := req.GetRequestVerificationHeader()
+	verifyHdr := req.GetVerificationHeader()
 
 	// verify body signature
 	if err := verifyRequestPart(requestBody(req), verifyHdr.GetBodySignature); err != nil {
@@ -114,7 +114,7 @@ func VerifyRequest(req SignedRequest) error {
 	}
 
 	// verify meta header
-	if err := verifyRequestPart(req.GetRequestMetaHeader(), verifyHdr.GetMetaSignature); err != nil {
+	if err := verifyRequestPart(req.GetMetaHeader(), verifyHdr.GetMetaSignature); err != nil {
 		return errors.Wrap(err, "could not verify request meta header")
 	}
 
