@@ -1,9 +1,5 @@
 package service
 
-import (
-	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
-)
-
 type Signature struct {
 	key, sign []byte
 }
@@ -314,30 +310,4 @@ func (r *RequestMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
 func (r *RequestMetaHeader) StableSize() int {
 	// TODO: do not use hack
 	return RequestMetaHeaderToGRPCMessage(r).Size()
-}
-
-func SignatureToGRPCMessage(s *Signature) *service.Signature {
-	if s == nil {
-		return nil
-	}
-
-	m := new(service.Signature)
-
-	m.SetKey(s.GetKey())
-	m.SetSign(s.GetSign())
-
-	return m
-}
-
-func SignatureFromGRPCMessage(m *service.Signature) *Signature {
-	if m == nil {
-		return nil
-	}
-
-	s := new(Signature)
-
-	s.SetKey(m.GetKey())
-	s.SetSign(m.GetSign())
-
-	return s
 }
