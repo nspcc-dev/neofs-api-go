@@ -199,3 +199,29 @@ func RequestMetaHeaderFromGRPCMessage(m *service.RequestMetaHeader) *RequestMeta
 
 	return r
 }
+
+func SignatureToGRPCMessage(s *Signature) *service.Signature {
+	if s == nil {
+		return nil
+	}
+
+	m := new(service.Signature)
+
+	m.SetKey(s.GetKey())
+	m.SetSign(s.GetSign())
+
+	return m
+}
+
+func SignatureFromGRPCMessage(m *service.Signature) *Signature {
+	if m == nil {
+		return nil
+	}
+
+	s := new(Signature)
+
+	s.SetKey(m.GetKey())
+	s.SetSign(m.GetSign())
+
+	return s
+}
