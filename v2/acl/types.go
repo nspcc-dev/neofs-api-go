@@ -56,15 +56,15 @@ const (
 
 const (
 	ActionUnknown Action = iota
-	ActionDeny
 	ActionAllow
+	ActionDeny
 )
 
 const (
 	OperationUnknown Operation = iota
 	OperationGet
-	OperationPut
 	OperationHead
+	OperationPut
 	OperationDelete
 	OperationSearch
 	OperationRange
