@@ -296,35 +296,35 @@ func (m *HeadRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
 // SetVersion sets version of the object format.
 func (m *HeadResponse_Body_ShortHeader) SetVersion(v *service.Version) {
 	if m != nil {
-		m.Version = v
+		m.ShortHeader.Version = v
 	}
 }
 
 // SetCreationEpoch sets creation epoch number of the object.
 func (m *HeadResponse_Body_ShortHeader) SetCreationEpoch(v uint64) {
 	if m != nil {
-		m.CreationEpoch = v
+		m.ShortHeader.CreationEpoch = v
 	}
 }
 
 // SetOwnerId sets identifier of the object owner.
 func (m *HeadResponse_Body_ShortHeader) SetOwnerId(v *refs.OwnerID) {
 	if m != nil {
-		m.OwnerId = v
+		m.ShortHeader.OwnerId = v
 	}
 }
 
 // SetObjectType sets type of the object.
 func (m *HeadResponse_Body_ShortHeader) SetObjectType(v ObjectType) {
 	if m != nil {
-		m.ObjectType = v
+		m.ShortHeader.ObjectType = v
 	}
 }
 
 // SetPayloadLength sets length of the object payload.
 func (m *HeadResponse_Body_ShortHeader) SetPayloadLength(v uint64) {
 	if m != nil {
-		m.PayloadLength = v
+		m.ShortHeader.PayloadLength = v
 	}
 }
 
@@ -340,9 +340,7 @@ func (m *HeadResponse_Body) SetHeader(v *Header) {
 // SetShortHeader sets short header of the object.
 func (m *HeadResponse_Body) SetShortHeader(v *HeadResponse_Body_ShortHeader) {
 	if m != nil {
-		m.Head = &HeadResponse_Body_ShortHeader_{
-			ShortHeader: v,
-		}
+		m.Head = v
 	}
 }
 
@@ -368,7 +366,7 @@ func (m *HeadResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
 }
 
 // SetMatchType sets match type of the filter.
-func (m *SearchRequest_Body_Filter) SetMatchType(v SearchRequest_Body_Filter_MatchType) {
+func (m *SearchRequest_Body_Filter) SetMatchType(v MatchType) {
 	if m != nil {
 		m.MatchType = v
 	}
