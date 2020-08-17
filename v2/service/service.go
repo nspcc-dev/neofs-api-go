@@ -256,22 +256,6 @@ func (r *RequestVerificationHeader) SetOrigin(v *RequestVerificationHeader) {
 	}
 }
 
-func (r *RequestVerificationHeader) StableMarshal(buf []byte) ([]byte, error) {
-	if r == nil {
-		return nil, nil
-	}
-
-	// TODO: do not use hack
-	_, err := RequestVerificationHeaderToGRPCMessage(r).MarshalTo(buf)
-
-	return buf, err
-}
-
-func (r *RequestVerificationHeader) StableSize() int {
-	// TODO: do not use hack
-	return RequestVerificationHeaderToGRPCMessage(r).Size()
-}
-
 func (r *RequestMetaHeader) GetVersion() *Version {
 	if r != nil {
 		return r.version
@@ -370,61 +354,45 @@ func (r *RequestMetaHeader) SetOrigin(v *RequestMetaHeader) {
 	}
 }
 
-func (r *RequestMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
-	if r == nil {
-		return nil, nil
-	}
-
-	// TODO: do not use hack
-	_, err := RequestMetaHeaderToGRPCMessage(r).MarshalTo(buf)
-
-	return buf, err
-}
-
-func (r *RequestMetaHeader) StableSize() int {
-	// TODO: do not use hack
-	return RequestMetaHeaderToGRPCMessage(r).Size()
-}
-
-func (tl *TokenLifetime) GetExp() uint64 {
-	if tl != nil {
-		return tl.exp
+func (l *TokenLifetime) GetExp() uint64 {
+	if l != nil {
+		return l.exp
 	}
 
 	return 0
 }
 
-func (tl *TokenLifetime) SetExp(v uint64) {
-	if tl != nil {
-		tl.exp = v
+func (l *TokenLifetime) SetExp(v uint64) {
+	if l != nil {
+		l.exp = v
 	}
 }
 
-func (tl *TokenLifetime) GetNbf() uint64 {
-	if tl != nil {
-		return tl.nbf
-	}
-
-	return 0
-}
-
-func (tl *TokenLifetime) SetNbf(v uint64) {
-	if tl != nil {
-		tl.nbf = v
-	}
-}
-
-func (tl *TokenLifetime) GetIat() uint64 {
-	if tl != nil {
-		return tl.iat
+func (l *TokenLifetime) GetNbf() uint64 {
+	if l != nil {
+		return l.nbf
 	}
 
 	return 0
 }
 
-func (tl *TokenLifetime) SetIat(v uint64) {
-	if tl != nil {
-		tl.iat = v
+func (l *TokenLifetime) SetNbf(v uint64) {
+	if l != nil {
+		l.nbf = v
+	}
+}
+
+func (l *TokenLifetime) GetIat() uint64 {
+	if l != nil {
+		return l.iat
+	}
+
+	return 0
+}
+
+func (l *TokenLifetime) SetIat(v uint64) {
+	if l != nil {
+		l.iat = v
 	}
 }
 
