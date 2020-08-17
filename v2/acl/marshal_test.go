@@ -1,6 +1,7 @@
 package acl_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
@@ -8,8 +9,61 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func generateTarget(u acl.Target, k int) *acl.TargetInfo {
+	target := new(acl.TargetInfo)
+	target.SetTarget(u)
+
+	keys := make([][]byte, k)
+	for i := 0; i < k; i++ {
+		s := fmt.Sprintf("Public Key %d", i+1)
+		keys[i] = []byte(s)
+	}
+
+	return target
+}
+
+func generateFilter(t acl.HeaderType, m acl.MatchType, k, v string) *acl.HeaderFilter {
+	filter := new(acl.HeaderFilter)
+	filter.SetHeaderType(t)
+	filter.SetMatchType(m)
+	filter.SetName(k)
+	filter.SetValue(v)
+
+	return filter
+}
+
+func generateRecord(another bool) *acl.Record {
+	var record = new(acl.Record)
+	switch another {
+	case true:
+		t1 := generateTarget(acl.TargetUser, 2)
+		f1 := generateFilter(acl.HeaderTypeObject, acl.MatchTypeStringEqual,
+			"OID", "ObjectID Value")
+
+		record.SetOperation(acl.OperationHead)
+		record.SetAction(acl.ActionDeny)
+		record.SetTargets([]*acl.TargetInfo{t1})
+		record.SetFilters([]*acl.HeaderFilter{f1})
+	default:
+		t1 := generateTarget(acl.TargetUser, 2)
+		t2 := generateTarget(acl.TargetSystem, 0)
+		f1 := generateFilter(acl.HeaderTypeObject, acl.MatchTypeStringEqual,
+			"CID", "Container ID Value")
+		f2 := generateFilter(acl.HeaderTypeRequest, acl.MatchTypeStringEqual,
+			"X-Header-Key", "X-Header-Value")
+
+		record.SetOperation(acl.OperationPut)
+		record.SetAction(acl.ActionAllow)
+		record.SetTargets([]*acl.TargetInfo{t1, t2})
+		record.SetFilters([]*acl.HeaderFilter{f1, f2})
+	}
+
+	return record
+}
+
 func TestHeaderFilter_StableMarshal(t *testing.T) {
-	filterFrom := new(acl.HeaderFilter)
+	filterFrom := generateFilter(acl.HeaderTypeObject, acl.MatchTypeStringEqual,
+		"CID", "Container ID Value")
 	transport := new(grpc.EACLRecord_FilterInfo)
 
 	t.Run("non empty", func(t *testing.T) {
@@ -30,7 +84,7 @@ func TestHeaderFilter_StableMarshal(t *testing.T) {
 }
 
 func TestTargetInfo_StableMarshal(t *testing.T) {
-	targetFrom := new(acl.TargetInfo)
+	targetFrom := generateTarget(acl.TargetUser, 2)
 	transport := new(grpc.EACLRecord_TargetInfo)
 
 	t.Run("non empty", func(t *testing.T) {
@@ -48,5 +102,21 @@ func TestTargetInfo_StableMarshal(t *testing.T) {
 
 		targetTo := acl.TargetInfoFromGRPCMessage(transport)
 		require.Equal(t, targetFrom, targetTo)
+	})
+}
+
+func TestRecord_StableMarshal(t *testing.T) {
+	recordFrom := generateRecord(false)
+	transport := new(grpc.EACLRecord)
+
+	t.Run("non empty", func(t *testing.T) {
+		wire, err := recordFrom.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = transport.Unmarshal(wire)
+		require.NoError(t, err)
+
+		recordTo := acl.RecordFromGRPCMessage(transport)
+		require.Equal(t, recordFrom, recordTo)
 	})
 }

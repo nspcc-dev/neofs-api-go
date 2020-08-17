@@ -1,6 +1,8 @@
 package acl
 
 import (
+	"encoding/binary"
+
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 )
 
@@ -12,6 +14,11 @@ const (
 
 	TargetTypeField = 1
 	TargetKeysField = 2
+
+	RecordOperationField = 1
+	RecordActionField    = 2
+	RecordFiltersField   = 3
+	RecordTargetsField   = 4
 )
 
 func (t *Table) StableMarshal(buf []byte) ([]byte, error) {
@@ -23,11 +30,92 @@ func (t *Table) StableSize() int {
 }
 
 func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
-	panic("not implemented")
+	if r == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, r.StableSize())
+	}
+
+	var (
+		offset, n int
+		prefix    uint64
+		err       error
+	)
+
+	n, err = proto.EnumMarshal(RecordOperationField, buf, int32(r.op))
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = proto.EnumMarshal(RecordActionField, buf[offset:], int32(r.action))
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	prefix, _ = proto.NestedStructurePrefix(RecordFiltersField)
+
+	for i := range r.filters {
+		offset += binary.PutUvarint(buf[offset:], prefix)
+
+		n = r.filters[i].StableSize()
+		offset += binary.PutUvarint(buf[offset:], uint64(n))
+
+		_, err = r.filters[i].StableMarshal(buf[offset:])
+		if err != nil {
+			return nil, err
+		}
+
+		offset += n
+	}
+
+	prefix, _ = proto.NestedStructurePrefix(RecordTargetsField)
+
+	for i := range r.targets {
+		offset += binary.PutUvarint(buf[offset:], prefix)
+
+		n = r.targets[i].StableSize()
+		offset += binary.PutUvarint(buf[offset:], uint64(n))
+
+		_, err = r.targets[i].StableMarshal(buf[offset:])
+		if err != nil {
+			return nil, err
+		}
+
+		offset += n
+	}
+
+	return buf, nil
 }
 
-func (r *Record) StableSize() int {
-	panic("not implemented")
+func (r *Record) StableSize() (size int) {
+	if r == nil {
+		return 0
+	}
+
+	size += proto.EnumSize(RecordOperationField, int32(r.op))
+	size += proto.EnumSize(RecordActionField, int32(r.op))
+
+	_, ln := proto.NestedStructurePrefix(RecordFiltersField)
+
+	for i := range r.filters {
+		n := r.filters[i].StableSize()
+		size += ln + proto.VarUIntSize(uint64(n)) + n
+	}
+
+	_, ln = proto.NestedStructurePrefix(RecordTargetsField)
+
+	for i := range r.targets {
+		n := r.targets[i].StableSize()
+		size += ln + proto.VarUIntSize(uint64(n)) + n
+	}
+
+	return size
 }
 
 func (f *HeaderFilter) StableMarshal(buf []byte) ([]byte, error) {
