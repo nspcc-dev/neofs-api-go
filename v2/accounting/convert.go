@@ -91,3 +91,63 @@ func DecimalFromGRPCMessage(m *accounting.Decimal) *Decimal {
 
 	return d
 }
+
+func BalanceResponseBodyToGRPCMessage(br *BalanceResponseBody) *accounting.BalanceResponse_Body {
+	if br == nil {
+		return nil
+	}
+
+	m := new(accounting.BalanceResponse_Body)
+
+	m.SetBalance(
+		DecimalToGRPCMessage(br.GetBalance()),
+	)
+
+	return m
+}
+
+func BalanceResponseBodyFromGRPCMessage(m *accounting.BalanceResponse_Body) *BalanceResponseBody {
+	if m == nil {
+		return nil
+	}
+
+	br := new(BalanceResponseBody)
+
+	br.SetBalance(
+		DecimalFromGRPCMessage(m.GetBalance()),
+	)
+
+	return br
+}
+
+func BalanceResponseToGRPCMessage(br *BalanceResponse) *accounting.BalanceResponse {
+	if br == nil {
+		return nil
+	}
+
+	m := new(accounting.BalanceResponse)
+
+	m.SetBody(
+		BalanceResponseBodyToGRPCMessage(br.GetBody()),
+	)
+
+	service.ResponseHeadersToGRPC(br, m)
+
+	return m
+}
+
+func BalanceResponseFromGRPCMessage(m *accounting.BalanceResponse) *BalanceResponse {
+	if m == nil {
+		return nil
+	}
+
+	br := new(BalanceResponse)
+
+	br.SetBody(
+		BalanceResponseBodyFromGRPCMessage(m.GetBody()),
+	)
+
+	service.ResponseHeadersFromGRPC(m, br)
+
+	return br
+}

@@ -17,6 +17,18 @@ type BalanceRequest struct {
 	verifyHeader *service.RequestVerificationHeader
 }
 
+type BalanceResponseBody struct {
+	bal *Decimal
+}
+
+type BalanceResponse struct {
+	body *BalanceResponseBody
+
+	metaHeader *service.ResponseMetaHeader
+
+	verifyHeader *service.ResponseVerificationHeader
+}
+
 type Decimal struct {
 	val int64
 
@@ -120,5 +132,61 @@ func (d *Decimal) GetPrecision() uint32 {
 func (d *Decimal) SetPrecision(v uint32) {
 	if d != nil {
 		d.prec = v
+	}
+}
+
+func (br *BalanceResponseBody) GetBalance() *Decimal {
+	if br != nil {
+		return br.bal
+	}
+
+	return nil
+}
+
+func (br *BalanceResponseBody) SetBalance(v *Decimal) {
+	if br != nil {
+		br.SetBalance(v)
+	}
+}
+
+func (br *BalanceResponse) GetBody() *BalanceResponseBody {
+	if br != nil {
+		return br.body
+	}
+
+	return nil
+}
+
+func (br *BalanceResponse) SetBody(v *BalanceResponseBody) {
+	if br != nil {
+		br.body = v
+	}
+}
+
+func (br *BalanceResponse) GetResponseMetaHeader() *service.ResponseMetaHeader {
+	if br != nil {
+		return br.metaHeader
+	}
+
+	return nil
+}
+
+func (br *BalanceResponse) SetResponseMetaHeader(v *service.ResponseMetaHeader) {
+	if br != nil {
+		br.metaHeader = v
+	}
+}
+
+func (br *BalanceResponse) GetResponseVerificationHeader() *service.ResponseVerificationHeader {
+	if br != nil {
+		return br.verifyHeader
+	}
+
+	return nil
+}
+
+func (br *BalanceResponse) SetResponseVerificationHeader(v *service.ResponseVerificationHeader) {
+	if br != nil {
+		br.verifyHeader = v
 	}
 }
