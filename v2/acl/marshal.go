@@ -1,8 +1,6 @@
 package acl
 
 import (
-	"encoding/binary"
-
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 )
 
@@ -37,34 +35,18 @@ func (t *Table) StableMarshal(buf []byte) ([]byte, error) {
 
 	var (
 		offset, n int
-		prefix    uint64
 		err       error
 	)
 
-	if t.cid != nil {
-		prefix, _ = proto.NestedStructurePrefix(tableContainerIDField)
-		offset += binary.PutUvarint(buf[offset:], prefix)
-
-		n = t.cid.StableSize()
-		offset += binary.PutUvarint(buf[offset:], uint64(n))
-
-		_, err = t.cid.StableMarshal(buf[offset:])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+	n, err = proto.NestedStructureMarshal(tableContainerIDField, buf[offset:], t.cid)
+	if err != nil {
+		return nil, err
 	}
 
-	prefix, _ = proto.NestedStructurePrefix(tableRecordsField)
+	offset += n
 
 	for i := range t.records {
-		offset += binary.PutUvarint(buf[offset:], prefix)
-
-		n = t.records[i].StableSize()
-		offset += binary.PutUvarint(buf[offset:], uint64(n))
-
-		_, err = t.records[i].StableMarshal(buf[offset:])
+		n, err = proto.NestedStructureMarshal(tableRecordsField, buf[offset:], t.records[i])
 		if err != nil {
 			return nil, err
 		}
@@ -81,17 +63,10 @@ func (t *Table) StableSize() (size int) {
 		return 0
 	}
 
-	if t.cid != nil {
-		_, ln := proto.NestedStructurePrefix(tableContainerIDField)
-		n := t.cid.StableSize()
-		size += ln + proto.VarUIntSize(uint64(n)) + n
-	}
-
-	_, ln := proto.NestedStructurePrefix(tableRecordsField)
+	size += proto.NestedStructureSize(tableContainerIDField, t.cid)
 
 	for i := range t.records {
-		n := t.records[i].StableSize()
-		size += ln + proto.VarUIntSize(uint64(n)) + n
+		size += proto.NestedStructureSize(tableRecordsField, t.records[i])
 	}
 
 	return size
@@ -110,11 +85,10 @@ func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
 
 	var (
 		offset, n int
-		prefix    uint64
 		err       error
 	)
 
-	n, err = proto.EnumMarshal(recordOperationField, buf, int32(r.op))
+	n, err = proto.EnumMarshal(recordOperationField, buf[offset:], int32(r.op))
 	if err != nil {
 		return nil, err
 	}
@@ -128,15 +102,8 @@ func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	prefix, _ = proto.NestedStructurePrefix(recordFiltersField)
-
 	for i := range r.filters {
-		offset += binary.PutUvarint(buf[offset:], prefix)
-
-		n = r.filters[i].StableSize()
-		offset += binary.PutUvarint(buf[offset:], uint64(n))
-
-		_, err = r.filters[i].StableMarshal(buf[offset:])
+		n, err = proto.NestedStructureMarshal(recordFiltersField, buf[offset:], r.filters[i])
 		if err != nil {
 			return nil, err
 		}
@@ -144,15 +111,8 @@ func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
 		offset += n
 	}
 
-	prefix, _ = proto.NestedStructurePrefix(recordTargetsField)
-
 	for i := range r.targets {
-		offset += binary.PutUvarint(buf[offset:], prefix)
-
-		n = r.targets[i].StableSize()
-		offset += binary.PutUvarint(buf[offset:], uint64(n))
-
-		_, err = r.targets[i].StableMarshal(buf[offset:])
+		n, err = proto.NestedStructureMarshal(recordTargetsField, buf[offset:], r.targets[i])
 		if err != nil {
 			return nil, err
 		}
@@ -172,18 +132,12 @@ func (r *Record) StableSize() (size int) {
 	size += proto.EnumSize(recordOperationField, int32(r.op))
 	size += proto.EnumSize(recordActionField, int32(r.op))
 
-	_, ln := proto.NestedStructurePrefix(recordFiltersField)
-
 	for i := range r.filters {
-		n := r.filters[i].StableSize()
-		size += ln + proto.VarUIntSize(uint64(n)) + n
+		size += proto.NestedStructureSize(recordFiltersField, r.filters[i])
 	}
 
-	_, ln = proto.NestedStructurePrefix(recordTargetsField)
-
 	for i := range r.targets {
-		n := r.targets[i].StableSize()
-		size += ln + proto.VarUIntSize(uint64(n)) + n
+		size += proto.NestedStructureSize(recordTargetsField, r.targets[i])
 	}
 
 	return size
@@ -205,7 +159,7 @@ func (f *HeaderFilter) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.EnumMarshal(filterHeaderTypeField, buf, int32(f.hdrType))
+	n, err = proto.EnumMarshal(filterHeaderTypeField, buf[offset:], int32(f.hdrType))
 	if err != nil {
 		return nil, err
 	}
@@ -264,7 +218,7 @@ func (t *TargetInfo) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.EnumMarshal(targetTypeField, buf, int32(t.target))
+	n, err = proto.EnumMarshal(targetTypeField, buf[offset:], int32(t.target))
 	if err != nil {
 		return nil, err
 	}
