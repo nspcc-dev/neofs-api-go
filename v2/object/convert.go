@@ -758,10 +758,6 @@ func DeleteRequestBodyToGRPCMessage(r *DeleteRequestBody) *object.DeleteRequest_
 		refs.AddressToGRPCMessage(r.GetAddress()),
 	)
 
-	m.SetOwnerId(
-		refs.OwnerIDToGRPCMessage(r.GetOwnerID()),
-	)
-
 	return m
 }
 
@@ -774,10 +770,6 @@ func DeleteRequestBodyFromGRPCMessage(m *object.DeleteRequest_Body) *DeleteReque
 
 	r.SetAddress(
 		refs.AddressFromGRPCMessage(m.GetAddress()),
-	)
-
-	r.SetOwnerID(
-		refs.OwnerIDFromGRPCMessage(m.GetOwnerId()),
 	)
 
 	return r
