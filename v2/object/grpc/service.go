@@ -61,6 +61,22 @@ func (m *GetResponse_Body_Init) SetHeader(v *Header) {
 	}
 }
 
+// GetChunk returns chunk of the object payload bytes.
+func (m *GetResponse_Body_Chunk) GetChunk() []byte {
+	if m != nil {
+		return m.Chunk
+	}
+
+	return nil
+}
+
+// SetChunk sets chunk of the object payload bytes.
+func (m *GetResponse_Body_Chunk) SetChunk(v []byte) {
+	if m != nil {
+		m.Chunk = v
+	}
+}
+
 // SetInit sets initial part of the object.
 func (m *GetResponse_Body) SetInit(v *GetResponse_Body_Init) {
 	if m != nil {
@@ -70,12 +86,10 @@ func (m *GetResponse_Body) SetInit(v *GetResponse_Body_Init) {
 	}
 }
 
-// SetChunk sets chunk of the object payload bytes.
-func (m *GetResponse_Body) SetChunk(v []byte) {
+// SetChunk sets part of the object payload.
+func (m *GetResponse_Body) SetChunk(v *GetResponse_Body_Chunk) {
 	if m != nil {
-		m.ObjectPart = &GetResponse_Body_Chunk{
-			Chunk: v,
-		}
+		m.ObjectPart = v
 	}
 }
 
@@ -128,6 +142,22 @@ func (m *PutRequest_Body_Init) SetCopiesNumber(v uint32) {
 	}
 }
 
+// GetChunk returns chunk of the object payload bytes.
+func (m *PutRequest_Body_Chunk) GetChunk() []byte {
+	if m != nil {
+		return m.Chunk
+	}
+
+	return nil
+}
+
+// SetChunk sets chunk of the object payload bytes.
+func (m *PutRequest_Body_Chunk) SetChunk(v []byte) {
+	if m != nil {
+		m.Chunk = v
+	}
+}
+
 // SetInit sets initial part of the object.
 func (m *PutRequest_Body) SetInit(v *PutRequest_Body_Init) {
 	if m != nil {
@@ -137,12 +167,10 @@ func (m *PutRequest_Body) SetInit(v *PutRequest_Body_Init) {
 	}
 }
 
-// SetChunk sets chunk of the object paloyad bytes.
-func (m *PutRequest_Body) SetChunk(v []byte) {
+// SetChunk sets part of the object payload.
+func (m *PutRequest_Body) SetChunk(v *PutRequest_Body_Chunk) {
 	if m != nil {
-		m.ObjectPart = &PutRequest_Body_Chunk{
-			Chunk: v,
-		}
+		m.ObjectPart = v
 	}
 }
 
@@ -251,8 +279,8 @@ func (m *DeleteResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) 
 	}
 }
 
-// SetOwnerId sets identifier of the object with the requested header.
-func (m *HeadRequest_Body) SetOwnerId(v *refs.Address) {
+// SetAddress sets address of the object with the requested header.
+func (m *HeadRequest_Body) SetAddress(v *refs.Address) {
 	if m != nil {
 		m.Address = v
 	}
@@ -293,47 +321,42 @@ func (m *HeadRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
 	}
 }
 
-// SetVersion sets version of the object format.
-func (m *HeadResponse_Body_ShortHeader) SetVersion(v *service.Version) {
+// GetShortHeader returns short header of the object.
+func (m *HeadResponse_Body_ShortHeader) GetShortHeader() *ShortHeader {
 	if m != nil {
-		m.ShortHeader.Version = v
+		return m.ShortHeader
+	}
+
+	return nil
+}
+
+// SetShortHeader sets short header of the object.
+func (m *HeadResponse_Body_ShortHeader) SetShortHeader(v *ShortHeader) {
+	if m != nil {
+		m.ShortHeader = v
 	}
 }
 
-// SetCreationEpoch sets creation epoch number of the object.
-func (m *HeadResponse_Body_ShortHeader) SetCreationEpoch(v uint64) {
+// GetHeader returns object header.
+func (m *HeadResponse_Body_Header) GetHeader() *Header {
 	if m != nil {
-		m.ShortHeader.CreationEpoch = v
+		return m.Header
 	}
+
+	return nil
 }
 
-// SetOwnerId sets identifier of the object owner.
-func (m *HeadResponse_Body_ShortHeader) SetOwnerId(v *refs.OwnerID) {
+// SetHeader sets object header.
+func (m *HeadResponse_Body_Header) SetHeader(v *Header) {
 	if m != nil {
-		m.ShortHeader.OwnerId = v
-	}
-}
-
-// SetObjectType sets type of the object.
-func (m *HeadResponse_Body_ShortHeader) SetObjectType(v ObjectType) {
-	if m != nil {
-		m.ShortHeader.ObjectType = v
-	}
-}
-
-// SetPayloadLength sets length of the object payload.
-func (m *HeadResponse_Body_ShortHeader) SetPayloadLength(v uint64) {
-	if m != nil {
-		m.ShortHeader.PayloadLength = v
+		m.Header = v
 	}
 }
 
 // SetHeader sets full header of the object.
-func (m *HeadResponse_Body) SetHeader(v *Header) {
+func (m *HeadResponse_Body) SetHeader(v *HeadResponse_Body_Header) {
 	if m != nil {
-		m.Head = &HeadResponse_Body_Header{
-			Header: v,
-		}
+		m.Head = v
 	}
 }
 
@@ -570,6 +593,34 @@ func (m *GetRangeHashRequest) SetMetaHeader(v *service.RequestMetaHeader) {
 
 // SetVerifyHeader sets verification header of the request.
 func (m *GetRangeHashRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+	if m != nil {
+		m.VerifyHeader = v
+	}
+}
+
+// SetHashList returns list of the range hashes.
+func (m *GetRangeHashResponse_Body) SetHashList(v [][]byte) {
+	if m != nil {
+		m.HashList = v
+	}
+}
+
+// SetBody sets body of the response.
+func (m *GetRangeHashResponse) SetBody(v *GetRangeHashResponse_Body) {
+	if m != nil {
+		m.Body = v
+	}
+}
+
+// SetMetaHeader sets meta header of the response.
+func (m *GetRangeHashResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+	if m != nil {
+		m.MetaHeader = v
+	}
+}
+
+// SetVerifyHeader sets verification header of the response.
+func (m *GetRangeHashResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
