@@ -83,23 +83,23 @@ func (m *SessionToken_Body) SetSessionKey(v []byte) {
 }
 
 // SetObjectAddressContext sets object context of the session token.
-func (m *SessionToken_Body) SetObjectServiceContext(v *ObjectServiceContext) {
+func (m *SessionToken_Body) SetObjectServiceContext(v *ObjectSessionContext) {
 	if m != nil {
-		m.Context = &SessionToken_Body_ObjectService{
-			ObjectService: v,
+		m.Context = &SessionToken_Body_Object{
+			Object: v,
 		}
 	}
 }
 
 // SetObjectAddressContext sets object context of the session token.
-func (m *ObjectServiceContext) SetAddress(v *refs.Address) {
+func (m *ObjectSessionContext) SetAddress(v *refs.Address) {
 	if m != nil {
 		m.Address = v
 	}
 }
 
 // SetObjectAddressContext sets object context of the session token.
-func (m *ObjectServiceContext) SetVerb(v ObjectServiceContext_Verb) {
+func (m *ObjectSessionContext) SetVerb(v ObjectSessionContext_Verb) {
 	if m != nil {
 		m.Verb = v
 	}

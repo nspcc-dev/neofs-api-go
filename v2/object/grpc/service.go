@@ -230,13 +230,6 @@ func (m *DeleteRequest_Body) SetAddress(v *refs.Address) {
 	}
 }
 
-// SetOwnerId sets identifier of the removing object owner.
-func (m *DeleteRequest_Body) SetOwnerId(v *refs.OwnerID) {
-	if m != nil {
-		m.OwnerId = v
-	}
-}
-
 // SetBody sets body of the request.
 func (m *DeleteRequest) SetBody(v *DeleteRequest_Body) {
 	if m != nil {

@@ -546,54 +546,54 @@ func ResponseHeadersFromGRPC(
 	)
 }
 
-func ObjectSessionVerbToGRPCField(v ObjectSessionVerb) service.ObjectServiceContext_Verb {
+func ObjectSessionVerbToGRPCField(v ObjectSessionVerb) service.ObjectSessionContext_Verb {
 	switch v {
 	case ObjectVerbPut:
-		return service.ObjectServiceContext_PUT
+		return service.ObjectSessionContext_PUT
 	case ObjectVerbGet:
-		return service.ObjectServiceContext_GET
+		return service.ObjectSessionContext_GET
 	case ObjectVerbHead:
-		return service.ObjectServiceContext_HEAD
+		return service.ObjectSessionContext_HEAD
 	case ObjectVerbSearch:
-		return service.ObjectServiceContext_SEARCH
+		return service.ObjectSessionContext_SEARCH
 	case ObjectVerbDelete:
-		return service.ObjectServiceContext_DELETE
+		return service.ObjectSessionContext_DELETE
 	case ObjectVerbRange:
-		return service.ObjectServiceContext_RANGE
+		return service.ObjectSessionContext_RANGE
 	case ObjectVerbRangeHash:
-		return service.ObjectServiceContext_RANGEHASH
+		return service.ObjectSessionContext_RANGEHASH
 	default:
-		return service.ObjectServiceContext_VERB_UNSPECIFIED
+		return service.ObjectSessionContext_VERB_UNSPECIFIED
 	}
 }
 
-func ObjectSessionVerbFromGRPCField(v service.ObjectServiceContext_Verb) ObjectSessionVerb {
+func ObjectSessionVerbFromGRPCField(v service.ObjectSessionContext_Verb) ObjectSessionVerb {
 	switch v {
-	case service.ObjectServiceContext_PUT:
+	case service.ObjectSessionContext_PUT:
 		return ObjectVerbPut
-	case service.ObjectServiceContext_GET:
+	case service.ObjectSessionContext_GET:
 		return ObjectVerbGet
-	case service.ObjectServiceContext_HEAD:
+	case service.ObjectSessionContext_HEAD:
 		return ObjectVerbHead
-	case service.ObjectServiceContext_SEARCH:
+	case service.ObjectSessionContext_SEARCH:
 		return ObjectVerbSearch
-	case service.ObjectServiceContext_DELETE:
+	case service.ObjectSessionContext_DELETE:
 		return ObjectVerbDelete
-	case service.ObjectServiceContext_RANGE:
+	case service.ObjectSessionContext_RANGE:
 		return ObjectVerbRange
-	case service.ObjectServiceContext_RANGEHASH:
+	case service.ObjectSessionContext_RANGEHASH:
 		return ObjectVerbRangeHash
 	default:
 		return ObjectVerbUnknown
 	}
 }
 
-func ObjectSessionContextToGRPCMessage(c *ObjectSessionContext) *service.ObjectServiceContext {
+func ObjectSessionContextToGRPCMessage(c *ObjectSessionContext) *service.ObjectSessionContext {
 	if c == nil {
 		return nil
 	}
 
-	m := new(service.ObjectServiceContext)
+	m := new(service.ObjectSessionContext)
 
 	m.SetVerb(
 		ObjectSessionVerbToGRPCField(c.GetVerb()),
@@ -606,7 +606,7 @@ func ObjectSessionContextToGRPCMessage(c *ObjectSessionContext) *service.ObjectS
 	return m
 }
 
-func ObjectSessionContextFromGRPCMessage(m *service.ObjectServiceContext) *ObjectSessionContext {
+func ObjectSessionContextFromGRPCMessage(m *service.ObjectSessionContext) *ObjectSessionContext {
 	if m == nil {
 		return nil
 	}
@@ -665,9 +665,9 @@ func SessionTokenBodyFromGRPCMessage(m *service.SessionToken_Body) *SessionToken
 
 	switch v := m.GetContext().(type) {
 	case nil:
-	case *service.SessionToken_Body_ObjectService:
+	case *service.SessionToken_Body_Object:
 		t.SetContext(
-			ObjectSessionContextFromGRPCMessage(v.ObjectService),
+			ObjectSessionContextFromGRPCMessage(v.Object),
 		)
 	default:
 		panic(fmt.Sprintf("unknown session context %T", v))
