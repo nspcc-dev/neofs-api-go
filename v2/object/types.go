@@ -326,7 +326,7 @@ func (h *ShortHeader) GetVersion() *service.Version {
 
 func (h *ShortHeader) SetVersion(v *service.Version) {
 	if h != nil {
-		h.SetVersion(v)
+		h.version = v
 	}
 }
 
