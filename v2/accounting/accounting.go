@@ -49,22 +49,6 @@ func (b *BalanceRequestBody) SetOwnerID(v *refs.OwnerID) {
 	}
 }
 
-func (r *BalanceRequestBody) StableMarshal(buf []byte) ([]byte, error) {
-	if r == nil {
-		return nil, nil
-	}
-
-	// TODO: do not use hack
-	_, err := BalanceRequestBodyToGRPCMessage(r).MarshalTo(buf)
-
-	return buf, err
-}
-
-func (r *BalanceRequestBody) StableSize() int {
-	// TODO: do not use hack
-	return BalanceRequestBodyToGRPCMessage(r).Size()
-}
-
 func (b *BalanceRequest) GetBody() *BalanceRequestBody {
 	if b != nil {
 		return b.body
