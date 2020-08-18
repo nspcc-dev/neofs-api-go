@@ -11,6 +11,13 @@ import (
 	"math/bits"
 )
 
+type (
+	stableMarshaller interface {
+		StableMarshal([]byte) ([]byte, error)
+		StableSize() int
+	}
+)
+
 func BytesMarshal(field int, buf, v []byte) (int, error) {
 	if len(v) == 0 {
 		return 0, nil
@@ -295,4 +302,35 @@ func VarUIntSize(x uint64) int {
 func NestedStructurePrefix(field int64) (prefix uint64, ln int) {
 	prefix = uint64(field<<3 | 0x02)
 	return prefix, VarUIntSize(prefix)
+}
+
+func NestedStructureMarshal(field int64, buf []byte, v stableMarshaller) (int, error) {
+	if v == nil {
+		return 0, nil
+	}
+
+	prefix, _ := NestedStructurePrefix(field)
+	offset := binary.PutUvarint(buf, prefix)
+
+	n := v.StableSize()
+	offset += binary.PutUvarint(buf[offset:], uint64(n))
+
+	_, err := v.StableMarshal(buf[offset:])
+	if err != nil {
+		return 0, err
+	}
+
+	return offset + n, nil
+}
+
+func NestedStructureSize(field int64, v stableMarshaller) (size int) {
+	if v == nil {
+		return 0
+	}
+
+	_, ln := NestedStructurePrefix(field)
+	n := v.StableSize()
+	size = ln + VarUIntSize(uint64(n)) + n
+
+	return size
 }
