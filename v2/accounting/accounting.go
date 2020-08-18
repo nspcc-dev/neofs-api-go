@@ -145,7 +145,7 @@ func (br *BalanceResponseBody) GetBalance() *Decimal {
 
 func (br *BalanceResponseBody) SetBalance(v *Decimal) {
 	if br != nil {
-		br.SetBalance(v)
+		br.bal = v
 	}
 }
 
