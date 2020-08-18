@@ -13,15 +13,8 @@ func (m *PutRequest_Body) SetContainer(v *Container) {
 	}
 }
 
-// SetPublicKey sets public key of the container owner.
-func (m *PutRequest_Body) SetPublicKey(v []byte) {
-	if m != nil {
-		m.PublicKey = v
-	}
-}
-
 // SetSignature sets signature of the container structure.
-func (m *PutRequest_Body) SetSignature(v []byte) {
+func (m *PutRequest_Body) SetSignature(v *service.Signature) {
 	if m != nil {
 		m.Signature = v
 	}
@@ -84,7 +77,7 @@ func (m *DeleteRequest_Body) SetContainerId(v *refs.ContainerID) {
 }
 
 // SetSignature sets signature of the container identifier.
-func (m *DeleteRequest_Body) SetSignature(v []byte) {
+func (m *DeleteRequest_Body) SetSignature(v *service.Signature) {
 	if m != nil {
 		m.Signature = v
 	}
@@ -250,7 +243,7 @@ func (m *SetExtendedACLRequest_Body) SetEacl(v *acl.EACLTable) {
 }
 
 // SetSignature sets signature of the eACL table.
-func (m *SetExtendedACLRequest_Body) SetSignature(v []byte) {
+func (m *SetExtendedACLRequest_Body) SetSignature(v *service.Signature) {
 	if m != nil {
 		m.Signature = v
 	}
@@ -334,7 +327,7 @@ func (m *GetExtendedACLResponse_Body) SetEacl(v *acl.EACLTable) {
 }
 
 // SetSignature sets signature of the eACL table.
-func (m *GetExtendedACLResponse_Body) SetSignature(v []byte) {
+func (m *GetExtendedACLResponse_Body) SetSignature(v *service.Signature) {
 	if m != nil {
 		m.Signature = v
 	}

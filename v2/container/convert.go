@@ -116,8 +116,9 @@ func PutRequestBodyToGRPCMessage(r *PutRequestBody) *container.PutRequest_Body {
 		ContainerToGRPCMessage(r.GetContainer()),
 	)
 
-	m.SetPublicKey(r.GetPublicKey())
-	m.SetSignature(r.GetSignature())
+	m.SetSignature(
+		service.SignatureToGRPCMessage(r.GetSignature()),
+	)
 
 	return m
 }
@@ -133,8 +134,9 @@ func PutRequestBodyFromGRPCMessage(m *container.PutRequest_Body) *PutRequestBody
 		ContainerFromGRPCMessage(m.GetContainer()),
 	)
 
-	r.SetPublicKey(m.GetPublicKey())
-	r.SetSignature(m.GetSignature())
+	r.SetSignature(
+		service.SignatureFromGRPCMessage(m.GetSignature()),
+	)
 
 	return r
 }
@@ -362,7 +364,9 @@ func DeleteRequestBodyToGRPCMessage(r *DeleteRequestBody) *container.DeleteReque
 		refs.ContainerIDToGRPCMessage(r.GetContainerID()),
 	)
 
-	m.SetSignature(r.GetSignature())
+	m.SetSignature(
+		service.SignatureToGRPCMessage(r.GetSignature()),
+	)
 
 	return m
 }
@@ -378,7 +382,9 @@ func DeleteRequestBodyFromGRPCMessage(m *container.DeleteRequest_Body) *DeleteRe
 		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
 	)
 
-	r.SetSignature(m.GetSignature())
+	r.SetSignature(
+		service.SignatureFromGRPCMessage(m.GetSignature()),
+	)
 
 	return r
 }
@@ -608,7 +614,8 @@ func SetExtendedACLRequestBodyToGRPCMessage(r *SetExtendedACLRequestBody) *conta
 		acl.TableToGRPCMessage(r.GetEACL()),
 	)
 
-	m.SetSignature(r.GetSignature())
+	m.SetSignature(
+		service.SignatureToGRPCMessage(r.GetSignature()))
 
 	return m
 }
@@ -622,6 +629,10 @@ func SetExtendedACLRequestBodyFromGRPCMessage(m *container.SetExtendedACLRequest
 
 	r.SetEACL(
 		acl.TableFromGRPCMessage(m.GetEacl()),
+	)
+
+	r.SetSignature(
+		service.SignatureFromGRPCMessage(m.GetSignature()),
 	)
 
 	return r
@@ -782,7 +793,9 @@ func GetExtendedACLResponseBodyToGRPCMessage(r *GetExtendedACLResponseBody) *con
 		acl.TableToGRPCMessage(r.GetEACL()),
 	)
 
-	m.SetSignature(r.GetSignature())
+	m.SetSignature(
+		service.SignatureToGRPCMessage(r.GetSignature()),
+	)
 
 	return m
 }
@@ -798,7 +811,9 @@ func GetExtendedACLResponseBodyFromGRPCMessage(m *container.GetExtendedACLRespon
 		acl.TableFromGRPCMessage(m.GetEacl()),
 	)
 
-	r.SetSignature(m.GetSignature())
+	r.SetSignature(
+		service.SignatureFromGRPCMessage(m.GetSignature()),
+	)
 
 	return r
 }

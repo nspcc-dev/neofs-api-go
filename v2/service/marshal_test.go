@@ -77,7 +77,7 @@ func TestTokenLifetime_StableMarshal(t *testing.T) {
 
 func TestObjectSessionContext_StableMarshal(t *testing.T) {
 	objectCtxFrom := generateObjectCtx("Object ID")
-	transport := new(grpc.ObjectServiceContext)
+	transport := new(grpc.ObjectSessionContext)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := objectCtxFrom.StableMarshal(nil)
