@@ -62,11 +62,9 @@ func (b *BalanceRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, b.StableSize())
 	}
 
-	if b.ownerID != nil {
-		_, err := proto.NestedStructureMarshal(balanceReqBodyOwnerField, buf, b.ownerID)
-		if err != nil {
-			return nil, err
-		}
+	_, err := proto.NestedStructureMarshal(balanceReqBodyOwnerField, buf, b.ownerID)
+	if err != nil {
+		return nil, err
 	}
 
 	return buf, nil
@@ -77,9 +75,7 @@ func (b *BalanceRequestBody) StableSize() (size int) {
 		return 0
 	}
 
-	if b.ownerID != nil {
-		size = proto.NestedStructureSize(balanceReqBodyOwnerField, b.ownerID)
-	}
+	size = proto.NestedStructureSize(balanceReqBodyOwnerField, b.ownerID)
 
 	return size
 }
@@ -93,11 +89,9 @@ func (br *BalanceResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, br.StableSize())
 	}
 
-	if br.bal != nil {
-		_, err := proto.NestedStructureMarshal(balanceRespBodyDecimalField, buf, br.bal)
-		if err != nil {
-			return nil, err
-		}
+	_, err := proto.NestedStructureMarshal(balanceRespBodyDecimalField, buf, br.bal)
+	if err != nil {
+		return nil, err
 	}
 
 	return buf, nil
@@ -108,9 +102,7 @@ func (br *BalanceResponseBody) StableSize() (size int) {
 		return 0
 	}
 
-	if br.bal != nil {
-		size = proto.NestedStructureSize(balanceRespBodyDecimalField, br.bal)
-	}
+	size = proto.NestedStructureSize(balanceRespBodyDecimalField, br.bal)
 
 	return size
 }
