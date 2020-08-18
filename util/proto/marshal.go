@@ -9,6 +9,7 @@ package proto
 import (
 	"encoding/binary"
 	"math/bits"
+	"reflect"
 )
 
 type (
@@ -305,7 +306,7 @@ func NestedStructurePrefix(field int64) (prefix uint64, ln int) {
 }
 
 func NestedStructureMarshal(field int64, buf []byte, v stableMarshaller) (int, error) {
-	if v == nil {
+	if v == nil || reflect.ValueOf(v).IsNil() {
 		return 0, nil
 	}
 
@@ -324,7 +325,7 @@ func NestedStructureMarshal(field int64, buf []byte, v stableMarshaller) (int, e
 }
 
 func NestedStructureSize(field int64, v stableMarshaller) (size int) {
-	if v == nil {
+	if v == nil || reflect.ValueOf(v).IsNil() {
 		return 0
 	}
 
