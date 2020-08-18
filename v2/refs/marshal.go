@@ -1,20 +1,18 @@
 package refs
 
 import (
-	"encoding/binary"
-
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 )
 
 const (
-	OwnerIDValField = 1
+	ownerIDValField = 1
 
-	ContainerIDValField = 1
+	containerIDValField = 1
 
-	ObjectIDValField = 1
+	objectIDValField = 1
 
-	AddressContainerField = 1
-	AddressObjectField    = 2
+	addressContainerField = 1
+	addressObjectField    = 2
 )
 
 func (o *OwnerID) StableMarshal(buf []byte) ([]byte, error) {
@@ -26,7 +24,7 @@ func (o *OwnerID) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, o.StableSize())
 	}
 
-	_, err := proto.BytesMarshal(OwnerIDValField, buf, o.val)
+	_, err := proto.BytesMarshal(ownerIDValField, buf, o.val)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +36,8 @@ func (o *OwnerID) StableSize() int {
 	if o == nil {
 		return 0
 	}
-	return proto.BytesSize(OwnerIDValField, o.val)
+
+	return proto.BytesSize(ownerIDValField, o.val)
 }
 
 func (c *ContainerID) StableMarshal(buf []byte) ([]byte, error) {
@@ -50,7 +49,7 @@ func (c *ContainerID) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, c.StableSize())
 	}
 
-	_, err := proto.BytesMarshal(ContainerIDValField, buf, c.val)
+	_, err := proto.BytesMarshal(containerIDValField, buf, c.val)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +61,8 @@ func (c *ContainerID) StableSize() int {
 	if c == nil {
 		return 0
 	}
-	return proto.BytesSize(ContainerIDValField, c.val)
+
+	return proto.BytesSize(containerIDValField, c.val)
 }
 
 func (o *ObjectID) StableMarshal(buf []byte) ([]byte, error) {
@@ -74,7 +74,7 @@ func (o *ObjectID) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, o.StableSize())
 	}
 
-	_, err := proto.BytesMarshal(ObjectIDValField, buf, o.val)
+	_, err := proto.BytesMarshal(objectIDValField, buf, o.val)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (o *ObjectID) StableSize() int {
 		return 0
 	}
 
-	return proto.BytesSize(ObjectIDValField, o.val)
+	return proto.BytesSize(objectIDValField, o.val)
 }
 
 func (a *Address) StableMarshal(buf []byte) ([]byte, error) {
@@ -101,36 +101,19 @@ func (a *Address) StableMarshal(buf []byte) ([]byte, error) {
 
 	var (
 		offset, n int
-		prefix    uint64
 		err       error
 	)
 
-	if a.cid != nil {
-		prefix, _ = proto.NestedStructurePrefix(AddressContainerField)
-		offset = binary.PutUvarint(buf, prefix)
-
-		n = a.cid.StableSize()
-		offset += binary.PutUvarint(buf[offset:], uint64(n))
-
-		_, err = a.cid.StableMarshal(buf[offset:])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+	n, err = proto.NestedStructureMarshal(addressContainerField, buf[offset:], a.cid)
+	if err != nil {
+		return nil, err
 	}
 
-	if a.oid != nil {
-		prefix, _ = proto.NestedStructurePrefix(AddressObjectField)
-		offset += binary.PutUvarint(buf[offset:], prefix)
+	offset += n
 
-		n = a.oid.StableSize()
-		offset += binary.PutUvarint(buf[offset:], uint64(n))
-
-		_, err = a.oid.StableMarshal(buf[offset:])
-		if err != nil {
-			return nil, err
-		}
+	_, err = proto.NestedStructureMarshal(addressObjectField, buf[offset:], a.oid)
+	if err != nil {
+		return nil, err
 	}
 
 	return buf, nil
@@ -141,17 +124,9 @@ func (a *Address) StableSize() (size int) {
 		return 0
 	}
 
-	if a.cid != nil {
-		_, ln := proto.NestedStructurePrefix(AddressContainerField)
-		n := a.cid.StableSize()
-		size += ln + proto.VarUIntSize(uint64(n)) + n
-	}
+	size += proto.NestedStructureSize(addressContainerField, a.cid)
 
-	if a.oid != nil {
-		_, ln := proto.NestedStructurePrefix(AddressObjectField)
-		n := a.oid.StableSize()
-		size += ln + proto.VarUIntSize(uint64(n)) + n
-	}
+	size += proto.NestedStructureSize(addressObjectField, a.oid)
 
 	return size
 }
