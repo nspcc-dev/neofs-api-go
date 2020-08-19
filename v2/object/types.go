@@ -153,8 +153,6 @@ type PutResponse struct {
 
 type DeleteRequestBody struct {
 	addr *refs.Address
-
-	ownerID *refs.OwnerID
 }
 
 type DeleteRequest struct {
@@ -1077,20 +1075,6 @@ func (r *DeleteRequestBody) GetAddress() *refs.Address {
 func (r *DeleteRequestBody) SetAddress(v *refs.Address) {
 	if r != nil {
 		r.addr = v
-	}
-}
-
-func (r *DeleteRequestBody) GetOwnerID() *refs.OwnerID {
-	if r != nil {
-		return r.ownerID
-	}
-
-	return nil
-}
-
-func (r *DeleteRequestBody) SetOwnerID(v *refs.OwnerID) {
-	if r != nil {
-		r.ownerID = v
 	}
 }
 
