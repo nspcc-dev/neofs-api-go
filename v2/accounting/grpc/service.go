@@ -5,20 +5,6 @@ import (
 	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
 )
 
-// SetValue sets value of the decimal number.
-func (m *Decimal) SetValue(v int64) {
-	if m != nil {
-		m.Value = v
-	}
-}
-
-// SetPrecision sets precision of the decimal number.
-func (m *Decimal) SetPrecision(v uint32) {
-	if m != nil {
-		m.Precision = v
-	}
-}
-
 // SetOwnerId sets identifier of the account owner.
 func (m *BalanceRequest_Body) SetOwnerId(v *refs.OwnerID) {
 	if m != nil {
