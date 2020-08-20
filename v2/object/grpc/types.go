@@ -2,7 +2,7 @@ package object
 
 import (
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
-	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
+	session "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
 )
 
 // SetKey sets key to the object attribute.
@@ -111,7 +111,7 @@ func (m *Header) SetHomomorphicHash(v *refs.Checksum) {
 }
 
 // SetSessionToken sets session token.
-func (m *Header) SetSessionToken(v *service.SessionToken) {
+func (m *Header) SetSessionToken(v *session.SessionToken) {
 	if m != nil {
 		m.SessionToken = v
 	}

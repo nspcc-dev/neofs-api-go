@@ -2,7 +2,7 @@ package accounting
 
 import (
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
-	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
+	session "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
 )
 
 // SetOwnerId sets identifier of the account owner.
@@ -20,14 +20,14 @@ func (m *BalanceRequest) SetBody(v *BalanceRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *BalanceRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *BalanceRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *BalanceRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *BalanceRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -48,14 +48,14 @@ func (m *BalanceResponse) SetBody(v *BalanceResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *BalanceResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *BalanceResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *BalanceResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *BalanceResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
