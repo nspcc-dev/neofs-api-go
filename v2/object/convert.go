@@ -196,9 +196,13 @@ func HeaderToGRPCMessage(h *Header) *object.Header {
 
 	m.SetPayloadLength(h.GetPayloadLength())
 
-	m.SetPayloadHash(h.GetPayloadHash())
+	m.SetPayloadHash(
+		refs.ChecksumToGRPCMessage(h.GetPayloadHash()),
+	)
 
-	m.SetHomomorphicHash(h.GetHomomorphicHash())
+	m.SetHomomorphicHash(
+		refs.ChecksumToGRPCMessage(h.GetHomomorphicHash()),
+	)
 
 	m.SetObjectType(
 		TypeToGRPCField(h.GetObjectType()),
@@ -247,9 +251,13 @@ func HeaderFromGRPCMessage(m *object.Header) *Header {
 
 	h.SetPayloadLength(m.GetPayloadLength())
 
-	h.SetPayloadHash(m.GetPayloadHash())
+	h.SetPayloadHash(
+		refs.ChecksumFromGRPCMessage(m.GetPayloadHash()),
+	)
 
-	h.SetHomomorphicHash(m.GetHomomorphicHash())
+	h.SetHomomorphicHash(
+		refs.ChecksumFromGRPCMessage(m.GetHomomorphicHash()),
+	)
 
 	h.SetObjectType(
 		TypeFromGRPCField(m.GetObjectType()),
@@ -1423,6 +1431,8 @@ func GetRangeHashRequestBodyToGRPCMessage(r *GetRangeHashRequestBody) *object.Ge
 
 	m.SetRanges(rngMsg)
 
+	m.SetType(refsGRPC.ChecksumType(r.GetType()))
+
 	return m
 }
 
@@ -1447,6 +1457,8 @@ func GetRangeHashRequestBodyFromGRPCMessage(m *object.GetRangeHashRequest_Body) 
 	}
 
 	r.SetRanges(rngs)
+
+	r.SetType(refs.ChecksumType(m.GetType()))
 
 	return r
 }
@@ -1490,6 +1502,8 @@ func GetRangeHashResponseBodyToGRPCMessage(r *GetRangeHashResponseBody) *object.
 
 	m := new(object.GetRangeHashResponse_Body)
 
+	m.SetType(refsGRPC.ChecksumType(r.GetType()))
+
 	m.SetHashList(r.GetHashList())
 
 	return m
@@ -1501,6 +1515,8 @@ func GetRangeHashResponseBodyFromGRPCMessage(m *object.GetRangeHashResponse_Body
 	}
 
 	r := new(GetRangeHashResponseBody)
+
+	r.SetType(refs.ChecksumType(m.GetType()))
 
 	r.SetHashList(m.GetHashList())
 
