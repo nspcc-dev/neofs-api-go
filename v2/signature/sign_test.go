@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/accounting"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/stretchr/testify/require"
 )
@@ -16,7 +16,7 @@ func TestBalanceResponse(t *testing.T) {
 	body := new(accounting.BalanceResponseBody)
 	body.SetBalance(dec)
 
-	meta := new(service.ResponseMetaHeader)
+	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
 
 	req := new(accounting.BalanceResponse)
@@ -36,7 +36,7 @@ func TestBalanceResponse(t *testing.T) {
 	require.NoError(t, VerifyServiceMessage(req))
 
 	// add level to meta header matryoshka
-	meta = new(service.ResponseMetaHeader)
+	meta = new(session.ResponseMetaHeader)
 	meta.SetOrigin(req.GetMetaHeader())
 	req.SetMetaHeader(meta)
 

@@ -9,21 +9,20 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/container"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/pkg/errors"
 )
 
 type serviceRequest interface {
-	GetMetaHeader() *service.RequestMetaHeader
-	GetVerificationHeader() *service.RequestVerificationHeader
-	SetVerificationHeader(*service.RequestVerificationHeader)
+	GetMetaHeader() *session.RequestMetaHeader
+	GetVerificationHeader() *session.RequestVerificationHeader
+	SetVerificationHeader(*session.RequestVerificationHeader)
 }
 
 type serviceResponse interface {
-	GetMetaHeader() *service.ResponseMetaHeader
-	GetVerificationHeader() *service.ResponseVerificationHeader
-	SetVerificationHeader(*service.ResponseVerificationHeader)
+	GetMetaHeader() *session.ResponseMetaHeader
+	GetVerificationHeader() *session.ResponseVerificationHeader
+	SetVerificationHeader(*session.ResponseVerificationHeader)
 }
 
 type stableMarshaler interface {
@@ -55,19 +54,19 @@ type verificationHeader interface {
 }
 
 type requestMetaHeader struct {
-	*service.RequestMetaHeader
+	*session.RequestMetaHeader
 }
 
 type responseMetaHeader struct {
-	*service.ResponseMetaHeader
+	*session.ResponseMetaHeader
 }
 
 type requestVerificationHeader struct {
-	*service.RequestVerificationHeader
+	*session.RequestVerificationHeader
 }
 
 type responseVerificationHeader struct {
-	*service.ResponseVerificationHeader
+	*session.ResponseVerificationHeader
 }
 
 func (h *requestMetaHeader) getOrigin() metaHeader {
@@ -94,7 +93,7 @@ func (h *requestVerificationHeader) getOrigin() verificationHeader {
 
 func (h *requestVerificationHeader) setOrigin(m stableMarshaler) {
 	if m != nil {
-		h.SetOrigin(m.(*service.RequestVerificationHeader))
+		h.SetOrigin(m.(*session.RequestVerificationHeader))
 	}
 }
 
@@ -110,7 +109,7 @@ func (r *responseVerificationHeader) getOrigin() verificationHeader {
 
 func (r *responseVerificationHeader) setOrigin(m stableMarshaler) {
 	if m != nil {
-		r.SetOrigin(m.(*service.ResponseVerificationHeader))
+		r.SetOrigin(m.(*session.ResponseVerificationHeader))
 	}
 }
 
@@ -156,7 +155,7 @@ func SignServiceMessage(key *ecdsa.PrivateKey, msg interface{}) error {
 	case serviceRequest:
 		body = serviceMessageBody(v)
 		meta = v.GetMetaHeader()
-		verifyHdr = &requestVerificationHeader{new(service.RequestVerificationHeader)}
+		verifyHdr = &requestVerificationHeader{new(session.RequestVerificationHeader)}
 		verifyHdrSetter = func(h verificationHeader) {
 			v.SetVerificationHeader(h.(*requestVerificationHeader).RequestVerificationHeader)
 		}
@@ -167,7 +166,7 @@ func SignServiceMessage(key *ecdsa.PrivateKey, msg interface{}) error {
 	case serviceResponse:
 		body = serviceMessageBody(v)
 		meta = v.GetMetaHeader()
-		verifyHdr = &responseVerificationHeader{new(service.ResponseVerificationHeader)}
+		verifyHdr = &responseVerificationHeader{new(session.ResponseVerificationHeader)}
 		verifyHdrSetter = func(h verificationHeader) {
 			v.SetVerificationHeader(h.(*responseVerificationHeader).ResponseVerificationHeader)
 		}
@@ -176,11 +175,11 @@ func SignServiceMessage(key *ecdsa.PrivateKey, msg interface{}) error {
 			verifyOrigin = h
 		}
 	default:
-		panic(fmt.Sprintf("unsupported service message %T", v))
+		panic(fmt.Sprintf("unsupported session message %T", v))
 	}
 
 	if verifyOrigin == nil {
-		// sign service message body
+		// sign session message body
 		if err := signServiceMessagePart(key, body, verifyHdr.SetBodySignature); err != nil {
 			return errors.Wrap(err, "could not sign body")
 		}
@@ -249,7 +248,7 @@ func VerifyServiceMessage(msg interface{}) error {
 			ResponseVerificationHeader: v.GetVerificationHeader(),
 		}
 	default:
-		panic(fmt.Sprintf("unsupported service message %T", v))
+		panic(fmt.Sprintf("unsupported session message %T", v))
 	}
 
 	return verifyMatryoshkaLevel(serviceMessageBody(msg), meta, verify)
@@ -291,7 +290,7 @@ func verifyServiceMessagePart(part stableMarshaler, sigRdr func() *refs.Signatur
 func serviceMessageBody(req interface{}) stableMarshaler {
 	switch v := req.(type) {
 	default:
-		panic(fmt.Sprintf("unsupported service message %T", req))
+		panic(fmt.Sprintf("unsupported session message %T", req))
 
 		/* Accounting */
 	case *accounting.BalanceRequest:

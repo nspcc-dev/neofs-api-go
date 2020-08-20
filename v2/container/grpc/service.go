@@ -3,7 +3,7 @@ package container
 import (
 	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
-	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
+	session "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
 )
 
 // SetContainer sets container of the request.
@@ -28,14 +28,14 @@ func (m *PutRequest) SetBody(v *PutRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *PutRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *PutRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *PutRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *PutRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -56,14 +56,14 @@ func (m *PutResponse) SetBody(v *PutResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *PutResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *PutResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *PutResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *PutResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -91,14 +91,14 @@ func (m *DeleteRequest) SetBody(v *DeleteRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *DeleteRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *DeleteRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *DeleteRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *DeleteRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -112,14 +112,14 @@ func (m *DeleteResponse) SetBody(v *DeleteResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *DeleteResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *DeleteResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *DeleteResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *DeleteResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -138,14 +138,14 @@ func (m *GetRequest) SetBody(v *GetRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *GetRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *GetRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *GetRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *GetRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -166,14 +166,14 @@ func (m *GetResponse) SetBody(v *GetResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *GetResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *GetResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *GetResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *GetResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -194,14 +194,14 @@ func (m *ListRequest) SetBody(v *ListRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *ListRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *ListRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *ListRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *ListRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -222,14 +222,14 @@ func (m *ListResponse) SetBody(v *ListResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *ListResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *ListResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *ListResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *ListResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -257,14 +257,14 @@ func (m *SetExtendedACLRequest) SetBody(v *SetExtendedACLRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *SetExtendedACLRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *SetExtendedACLRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *SetExtendedACLRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *SetExtendedACLRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -278,14 +278,14 @@ func (m *SetExtendedACLResponse) SetBody(v *SetExtendedACLResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *SetExtendedACLResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *SetExtendedACLResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *SetExtendedACLResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *SetExtendedACLResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -306,14 +306,14 @@ func (m *GetExtendedACLRequest) SetBody(v *GetExtendedACLRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *GetExtendedACLRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *GetExtendedACLRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *GetExtendedACLRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *GetExtendedACLRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -341,14 +341,14 @@ func (m *GetExtendedACLResponse) SetBody(v *GetExtendedACLResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *GetExtendedACLResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *GetExtendedACLResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *GetExtendedACLResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *GetExtendedACLResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}

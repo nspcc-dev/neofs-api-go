@@ -6,7 +6,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
 )
 
 func AttributeToGRPCMessage(a *Attribute) *container.Container_Attribute {
@@ -152,7 +152,7 @@ func PutRequestToGRPCMessage(r *PutRequest) *container.PutRequest {
 		PutRequestBodyToGRPCMessage(r.GetBody()),
 	)
 
-	service.RequestHeadersToGRPC(r, m)
+	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
@@ -168,7 +168,7 @@ func PutRequestFromGRPCMessage(m *container.PutRequest) *PutRequest {
 		PutRequestBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.RequestHeadersFromGRPC(m, r)
+	session.RequestHeadersFromGRPC(m, r)
 
 	return r
 }
@@ -212,7 +212,7 @@ func PutResponseToGRPCMessage(r *PutResponse) *container.PutResponse {
 		PutResponseBodyToGRPCMessage(r.GetBody()),
 	)
 
-	service.ResponseHeadersToGRPC(r, m)
+	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
@@ -228,7 +228,7 @@ func PutResponseFromGRPCMessage(m *container.PutResponse) *PutResponse {
 		PutResponseBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.ResponseHeadersFromGRPC(m, r)
+	session.ResponseHeadersFromGRPC(m, r)
 
 	return r
 }
@@ -272,7 +272,7 @@ func GetRequestToGRPCMessage(r *GetRequest) *container.GetRequest {
 		GetRequestBodyToGRPCMessage(r.GetBody()),
 	)
 
-	service.RequestHeadersToGRPC(r, m)
+	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
@@ -288,7 +288,7 @@ func GetRequestFromGRPCMessage(m *container.GetRequest) *GetRequest {
 		GetRequestBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.RequestHeadersFromGRPC(m, r)
+	session.RequestHeadersFromGRPC(m, r)
 
 	return r
 }
@@ -332,7 +332,7 @@ func GetResponseToGRPCMessage(r *GetResponse) *container.GetResponse {
 		GetResponseBodyToGRPCMessage(r.GetBody()),
 	)
 
-	service.ResponseHeadersToGRPC(r, m)
+	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
@@ -348,7 +348,7 @@ func GetResponseFromGRPCMessage(m *container.GetResponse) *GetResponse {
 		GetResponseBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.ResponseHeadersFromGRPC(m, r)
+	session.ResponseHeadersFromGRPC(m, r)
 
 	return r
 }
@@ -400,7 +400,7 @@ func DeleteRequestToGRPCMessage(r *DeleteRequest) *container.DeleteRequest {
 		DeleteRequestBodyToGRPCMessage(r.GetBody()),
 	)
 
-	service.RequestHeadersToGRPC(r, m)
+	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
@@ -416,7 +416,7 @@ func DeleteRequestFromGRPCMessage(m *container.DeleteRequest) *DeleteRequest {
 		DeleteRequestBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.RequestHeadersFromGRPC(m, r)
+	session.RequestHeadersFromGRPC(m, r)
 
 	return r
 }
@@ -452,7 +452,7 @@ func DeleteResponseToGRPCMessage(r *DeleteResponse) *container.DeleteResponse {
 		DeleteResponseBodyToGRPCMessage(r.GetBody()),
 	)
 
-	service.ResponseHeadersToGRPC(r, m)
+	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
@@ -468,7 +468,7 @@ func DeleteResponseFromGRPCMessage(m *container.DeleteResponse) *DeleteResponse 
 		DeleteResponseBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.ResponseHeadersFromGRPC(m, r)
+	session.ResponseHeadersFromGRPC(m, r)
 
 	return r
 }
@@ -512,7 +512,7 @@ func ListRequestToGRPCMessage(r *ListRequest) *container.ListRequest {
 		ListRequestBodyToGRPCMessage(r.GetBody()),
 	)
 
-	service.RequestHeadersToGRPC(r, m)
+	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
@@ -528,7 +528,7 @@ func ListRequestFromGRPCMessage(m *container.ListRequest) *ListRequest {
 		ListRequestBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.RequestHeadersFromGRPC(m, r)
+	session.RequestHeadersFromGRPC(m, r)
 
 	return r
 }
@@ -582,7 +582,7 @@ func ListResponseToGRPCMessage(r *ListResponse) *container.ListResponse {
 		ListResponseBodyToGRPCMessage(r.GetBody()),
 	)
 
-	service.ResponseHeadersToGRPC(r, m)
+	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
@@ -598,7 +598,7 @@ func ListResponseFromGRPCMessage(m *container.ListResponse) *ListResponse {
 		ListResponseBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.ResponseHeadersFromGRPC(m, r)
+	session.ResponseHeadersFromGRPC(m, r)
 
 	return r
 }
@@ -649,7 +649,7 @@ func SetExtendedACLRequestToGRPCMessage(r *SetExtendedACLRequest) *container.Set
 		SetExtendedACLRequestBodyToGRPCMessage(r.GetBody()),
 	)
 
-	service.RequestHeadersToGRPC(r, m)
+	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
@@ -665,7 +665,7 @@ func SetExtendedACLRequestFromGRPCMessage(m *container.SetExtendedACLRequest) *S
 		SetExtendedACLRequestBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.RequestHeadersFromGRPC(m, r)
+	session.RequestHeadersFromGRPC(m, r)
 
 	return r
 }
@@ -701,7 +701,7 @@ func SetExtendedACLResponseToGRPCMessage(r *SetExtendedACLResponse) *container.S
 		SetExtendedACLResponseBodyToGRPCMessage(r.GetBody()),
 	)
 
-	service.ResponseHeadersToGRPC(r, m)
+	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
@@ -717,7 +717,7 @@ func SetExtendedACLResponseFromGRPCMessage(m *container.SetExtendedACLResponse) 
 		SetExtendedACLResponseBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.ResponseHeadersFromGRPC(m, r)
+	session.ResponseHeadersFromGRPC(m, r)
 
 	return r
 }
@@ -761,7 +761,7 @@ func GetExtendedACLRequestToGRPCMessage(r *GetExtendedACLRequest) *container.Get
 		GetExtendedACLRequestBodyToGRPCMessage(r.GetBody()),
 	)
 
-	service.RequestHeadersToGRPC(r, m)
+	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
@@ -777,7 +777,7 @@ func GetExtendedACLRequestFromGRPCMessage(m *container.GetExtendedACLRequest) *G
 		GetExtendedACLRequestBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.RequestHeadersFromGRPC(m, r)
+	session.RequestHeadersFromGRPC(m, r)
 
 	return r
 }
@@ -829,7 +829,7 @@ func GetExtendedACLResponseToGRPCMessage(r *GetExtendedACLResponse) *container.G
 		GetExtendedACLResponseBodyToGRPCMessage(r.GetBody()),
 	)
 
-	service.ResponseHeadersToGRPC(r, m)
+	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
@@ -845,7 +845,7 @@ func GetExtendedACLResponseFromGRPCMessage(m *container.GetExtendedACLResponse) 
 		GetExtendedACLResponseBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.ResponseHeadersFromGRPC(m, r)
+	session.ResponseHeadersFromGRPC(m, r)
 
 	return r
 }

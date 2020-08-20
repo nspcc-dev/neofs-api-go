@@ -2,7 +2,7 @@ package object
 
 import (
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
 )
 
 type Type uint32
@@ -50,7 +50,7 @@ type Header struct {
 
 	typ Type
 
-	sessionToken *service.SessionToken
+	sessionToken *session.SessionToken
 
 	attr []*Attribute
 
@@ -76,9 +76,9 @@ type GetRequestBody struct {
 type GetRequest struct {
 	body *GetRequestBody
 
-	metaHeader *service.RequestMetaHeader
+	metaHeader *session.RequestMetaHeader
 
-	verifyHeader *service.RequestVerificationHeader
+	verifyHeader *session.RequestVerificationHeader
 }
 
 type GetObjectPart interface {
@@ -104,9 +104,9 @@ type GetResponseBody struct {
 type GetResponse struct {
 	body *GetResponseBody
 
-	metaHeader *service.ResponseMetaHeader
+	metaHeader *session.ResponseMetaHeader
 
-	verifyHeader *service.ResponseVerificationHeader
+	verifyHeader *session.ResponseVerificationHeader
 }
 
 type PutObjectPart interface {
@@ -134,9 +134,9 @@ type PutRequestBody struct {
 type PutRequest struct {
 	body *PutRequestBody
 
-	metaHeader *service.RequestMetaHeader
+	metaHeader *session.RequestMetaHeader
 
-	verifyHeader *service.RequestVerificationHeader
+	verifyHeader *session.RequestVerificationHeader
 }
 
 type PutResponseBody struct {
@@ -146,9 +146,9 @@ type PutResponseBody struct {
 type PutResponse struct {
 	body *PutResponseBody
 
-	metaHeader *service.ResponseMetaHeader
+	metaHeader *session.ResponseMetaHeader
 
-	verifyHeader *service.ResponseVerificationHeader
+	verifyHeader *session.ResponseVerificationHeader
 }
 
 type DeleteRequestBody struct {
@@ -158,9 +158,9 @@ type DeleteRequestBody struct {
 type DeleteRequest struct {
 	body *DeleteRequestBody
 
-	metaHeader *service.RequestMetaHeader
+	metaHeader *session.RequestMetaHeader
 
-	verifyHeader *service.RequestVerificationHeader
+	verifyHeader *session.RequestVerificationHeader
 }
 
 type DeleteResponseBody struct{}
@@ -168,9 +168,9 @@ type DeleteResponseBody struct{}
 type DeleteResponse struct {
 	body *DeleteResponseBody
 
-	metaHeader *service.ResponseMetaHeader
+	metaHeader *session.ResponseMetaHeader
 
-	verifyHeader *service.ResponseVerificationHeader
+	verifyHeader *session.ResponseVerificationHeader
 }
 
 type HeadRequestBody struct {
@@ -182,9 +182,9 @@ type HeadRequestBody struct {
 type HeadRequest struct {
 	body *HeadRequestBody
 
-	metaHeader *service.RequestMetaHeader
+	metaHeader *session.RequestMetaHeader
 
-	verifyHeader *service.RequestVerificationHeader
+	verifyHeader *session.RequestVerificationHeader
 }
 
 type GetHeaderPart interface {
@@ -206,9 +206,9 @@ type HeadResponseBody struct {
 type HeadResponse struct {
 	body *HeadResponseBody
 
-	metaHeader *service.ResponseMetaHeader
+	metaHeader *session.ResponseMetaHeader
 
-	verifyHeader *service.ResponseVerificationHeader
+	verifyHeader *session.ResponseVerificationHeader
 }
 
 type SearchFilter struct {
@@ -228,9 +228,9 @@ type SearchRequestBody struct {
 type SearchRequest struct {
 	body *SearchRequestBody
 
-	metaHeader *service.RequestMetaHeader
+	metaHeader *session.RequestMetaHeader
 
-	verifyHeader *service.RequestVerificationHeader
+	verifyHeader *session.RequestVerificationHeader
 }
 
 type SearchResponseBody struct {
@@ -240,9 +240,9 @@ type SearchResponseBody struct {
 type SearchResponse struct {
 	body *SearchResponseBody
 
-	metaHeader *service.ResponseMetaHeader
+	metaHeader *session.ResponseMetaHeader
 
-	verifyHeader *service.ResponseVerificationHeader
+	verifyHeader *session.ResponseVerificationHeader
 }
 
 type Range struct {
@@ -258,9 +258,9 @@ type GetRangeRequestBody struct {
 type GetRangeRequest struct {
 	body *GetRangeRequestBody
 
-	metaHeader *service.RequestMetaHeader
+	metaHeader *session.RequestMetaHeader
 
-	verifyHeader *service.RequestVerificationHeader
+	verifyHeader *session.RequestVerificationHeader
 }
 
 type GetRangeResponseBody struct {
@@ -270,9 +270,9 @@ type GetRangeResponseBody struct {
 type GetRangeResponse struct {
 	body *GetRangeResponseBody
 
-	metaHeader *service.ResponseMetaHeader
+	metaHeader *session.ResponseMetaHeader
 
-	verifyHeader *service.ResponseVerificationHeader
+	verifyHeader *session.ResponseVerificationHeader
 }
 
 type GetRangeHashRequestBody struct {
@@ -288,9 +288,9 @@ type GetRangeHashRequestBody struct {
 type GetRangeHashRequest struct {
 	body *GetRangeHashRequestBody
 
-	metaHeader *service.RequestMetaHeader
+	metaHeader *session.RequestMetaHeader
 
-	verifyHeader *service.RequestVerificationHeader
+	verifyHeader *session.RequestVerificationHeader
 }
 
 type GetRangeHashResponseBody struct {
@@ -302,9 +302,9 @@ type GetRangeHashResponseBody struct {
 type GetRangeHashResponse struct {
 	body *GetRangeHashResponseBody
 
-	metaHeader *service.ResponseMetaHeader
+	metaHeader *session.ResponseMetaHeader
 
-	verifyHeader *service.ResponseVerificationHeader
+	verifyHeader *session.ResponseVerificationHeader
 }
 
 const (
@@ -598,7 +598,7 @@ func (h *Header) SetHomomorphicHash(v *refs.Checksum) {
 	}
 }
 
-func (h *Header) GetSessionToken() *service.SessionToken {
+func (h *Header) GetSessionToken() *session.SessionToken {
 	if h != nil {
 		return h.sessionToken
 	}
@@ -606,7 +606,7 @@ func (h *Header) GetSessionToken() *service.SessionToken {
 	return nil
 }
 
-func (h *Header) SetSessionToken(v *service.SessionToken) {
+func (h *Header) SetSessionToken(v *session.SessionToken) {
 	if h != nil {
 		h.sessionToken = v
 	}
@@ -738,7 +738,7 @@ func (r *GetRequest) SetBody(v *GetRequestBody) {
 	}
 }
 
-func (r *GetRequest) GetMetaHeader() *service.RequestMetaHeader {
+func (r *GetRequest) GetMetaHeader() *session.RequestMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -746,13 +746,13 @@ func (r *GetRequest) GetMetaHeader() *service.RequestMetaHeader {
 	return nil
 }
 
-func (r *GetRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (r *GetRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *GetRequest) GetVerificationHeader() *service.RequestVerificationHeader {
+func (r *GetRequest) GetVerificationHeader() *session.RequestVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -760,7 +760,7 @@ func (r *GetRequest) GetVerificationHeader() *service.RequestVerificationHeader 
 	return nil
 }
 
-func (r *GetRequest) SetVerificationHeader(v *service.RequestVerificationHeader) {
+func (r *GetRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -854,7 +854,7 @@ func (r *GetResponse) SetBody(v *GetResponseBody) {
 	}
 }
 
-func (r *GetResponse) GetMetaHeader() *service.ResponseMetaHeader {
+func (r *GetResponse) GetMetaHeader() *session.ResponseMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -862,13 +862,13 @@ func (r *GetResponse) GetMetaHeader() *service.ResponseMetaHeader {
 	return nil
 }
 
-func (r *GetResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (r *GetResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *GetResponse) GetVerificationHeader() *service.ResponseVerificationHeader {
+func (r *GetResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -876,7 +876,7 @@ func (r *GetResponse) GetVerificationHeader() *service.ResponseVerificationHeade
 	return nil
 }
 
-func (r *GetResponse) SetVerificationHeader(v *service.ResponseVerificationHeader) {
+func (r *GetResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -984,7 +984,7 @@ func (r *PutRequest) SetBody(v *PutRequestBody) {
 	}
 }
 
-func (r *PutRequest) GetMetaHeader() *service.RequestMetaHeader {
+func (r *PutRequest) GetMetaHeader() *session.RequestMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -992,13 +992,13 @@ func (r *PutRequest) GetMetaHeader() *service.RequestMetaHeader {
 	return nil
 }
 
-func (r *PutRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (r *PutRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *PutRequest) GetVerificationHeader() *service.RequestVerificationHeader {
+func (r *PutRequest) GetVerificationHeader() *session.RequestVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -1006,7 +1006,7 @@ func (r *PutRequest) GetVerificationHeader() *service.RequestVerificationHeader 
 	return nil
 }
 
-func (r *PutRequest) SetVerificationHeader(v *service.RequestVerificationHeader) {
+func (r *PutRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -1040,7 +1040,7 @@ func (r *PutResponse) SetBody(v *PutResponseBody) {
 	}
 }
 
-func (r *PutResponse) GetMetaHeader() *service.ResponseMetaHeader {
+func (r *PutResponse) GetMetaHeader() *session.ResponseMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -1048,13 +1048,13 @@ func (r *PutResponse) GetMetaHeader() *service.ResponseMetaHeader {
 	return nil
 }
 
-func (r *PutResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (r *PutResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *PutResponse) GetVerificationHeader() *service.ResponseVerificationHeader {
+func (r *PutResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -1062,7 +1062,7 @@ func (r *PutResponse) GetVerificationHeader() *service.ResponseVerificationHeade
 	return nil
 }
 
-func (r *PutResponse) SetVerificationHeader(v *service.ResponseVerificationHeader) {
+func (r *PutResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -1096,7 +1096,7 @@ func (r *DeleteRequest) SetBody(v *DeleteRequestBody) {
 	}
 }
 
-func (r *DeleteRequest) GetMetaHeader() *service.RequestMetaHeader {
+func (r *DeleteRequest) GetMetaHeader() *session.RequestMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -1104,13 +1104,13 @@ func (r *DeleteRequest) GetMetaHeader() *service.RequestMetaHeader {
 	return nil
 }
 
-func (r *DeleteRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (r *DeleteRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *DeleteRequest) GetVerificationHeader() *service.RequestVerificationHeader {
+func (r *DeleteRequest) GetVerificationHeader() *session.RequestVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -1118,7 +1118,7 @@ func (r *DeleteRequest) GetVerificationHeader() *service.RequestVerificationHead
 	return nil
 }
 
-func (r *DeleteRequest) SetVerificationHeader(v *service.RequestVerificationHeader) {
+func (r *DeleteRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -1138,7 +1138,7 @@ func (r *DeleteResponse) SetBody(v *DeleteResponseBody) {
 	}
 }
 
-func (r *DeleteResponse) GetMetaHeader() *service.ResponseMetaHeader {
+func (r *DeleteResponse) GetMetaHeader() *session.ResponseMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -1146,13 +1146,13 @@ func (r *DeleteResponse) GetMetaHeader() *service.ResponseMetaHeader {
 	return nil
 }
 
-func (r *DeleteResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (r *DeleteResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *DeleteResponse) GetVerificationHeader() *service.ResponseVerificationHeader {
+func (r *DeleteResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -1160,7 +1160,7 @@ func (r *DeleteResponse) GetVerificationHeader() *service.ResponseVerificationHe
 	return nil
 }
 
-func (r *DeleteResponse) SetVerificationHeader(v *service.ResponseVerificationHeader) {
+func (r *DeleteResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -1222,7 +1222,7 @@ func (r *HeadRequest) SetBody(v *HeadRequestBody) {
 	}
 }
 
-func (r *HeadRequest) GetMetaHeader() *service.RequestMetaHeader {
+func (r *HeadRequest) GetMetaHeader() *session.RequestMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -1230,13 +1230,13 @@ func (r *HeadRequest) GetMetaHeader() *service.RequestMetaHeader {
 	return nil
 }
 
-func (r *HeadRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (r *HeadRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *HeadRequest) GetVerificationHeader() *service.RequestVerificationHeader {
+func (r *HeadRequest) GetVerificationHeader() *session.RequestVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -1244,7 +1244,7 @@ func (r *HeadRequest) GetVerificationHeader() *service.RequestVerificationHeader
 	return nil
 }
 
-func (r *HeadRequest) SetVerificationHeader(v *service.RequestVerificationHeader) {
+func (r *HeadRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -1310,7 +1310,7 @@ func (r *HeadResponse) SetBody(v *HeadResponseBody) {
 	}
 }
 
-func (r *HeadResponse) GetMetaHeader() *service.ResponseMetaHeader {
+func (r *HeadResponse) GetMetaHeader() *session.ResponseMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -1318,13 +1318,13 @@ func (r *HeadResponse) GetMetaHeader() *service.ResponseMetaHeader {
 	return nil
 }
 
-func (r *HeadResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (r *HeadResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *HeadResponse) GetVerificationHeader() *service.ResponseVerificationHeader {
+func (r *HeadResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -1332,7 +1332,7 @@ func (r *HeadResponse) GetVerificationHeader() *service.ResponseVerificationHead
 	return nil
 }
 
-func (r *HeadResponse) SetVerificationHeader(v *service.ResponseVerificationHeader) {
+func (r *HeadResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -1436,7 +1436,7 @@ func (r *SearchRequest) SetBody(v *SearchRequestBody) {
 	}
 }
 
-func (r *SearchRequest) GetMetaHeader() *service.RequestMetaHeader {
+func (r *SearchRequest) GetMetaHeader() *session.RequestMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -1444,13 +1444,13 @@ func (r *SearchRequest) GetMetaHeader() *service.RequestMetaHeader {
 	return nil
 }
 
-func (r *SearchRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (r *SearchRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *SearchRequest) GetVerificationHeader() *service.RequestVerificationHeader {
+func (r *SearchRequest) GetVerificationHeader() *session.RequestVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -1458,7 +1458,7 @@ func (r *SearchRequest) GetVerificationHeader() *service.RequestVerificationHead
 	return nil
 }
 
-func (r *SearchRequest) SetVerificationHeader(v *service.RequestVerificationHeader) {
+func (r *SearchRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -1492,7 +1492,7 @@ func (r *SearchResponse) SetBody(v *SearchResponseBody) {
 	}
 }
 
-func (r *SearchResponse) GetMetaHeader() *service.ResponseMetaHeader {
+func (r *SearchResponse) GetMetaHeader() *session.ResponseMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -1500,13 +1500,13 @@ func (r *SearchResponse) GetMetaHeader() *service.ResponseMetaHeader {
 	return nil
 }
 
-func (r *SearchResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (r *SearchResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *SearchResponse) GetVerificationHeader() *service.ResponseVerificationHeader {
+func (r *SearchResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -1514,7 +1514,7 @@ func (r *SearchResponse) GetVerificationHeader() *service.ResponseVerificationHe
 	return nil
 }
 
-func (r *SearchResponse) SetVerificationHeader(v *service.ResponseVerificationHeader) {
+func (r *SearchResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -1590,7 +1590,7 @@ func (r *GetRangeRequest) SetBody(v *GetRangeRequestBody) {
 	}
 }
 
-func (r *GetRangeRequest) GetMetaHeader() *service.RequestMetaHeader {
+func (r *GetRangeRequest) GetMetaHeader() *session.RequestMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -1598,13 +1598,13 @@ func (r *GetRangeRequest) GetMetaHeader() *service.RequestMetaHeader {
 	return nil
 }
 
-func (r *GetRangeRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (r *GetRangeRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *GetRangeRequest) GetVerificationHeader() *service.RequestVerificationHeader {
+func (r *GetRangeRequest) GetVerificationHeader() *session.RequestVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -1612,7 +1612,7 @@ func (r *GetRangeRequest) GetVerificationHeader() *service.RequestVerificationHe
 	return nil
 }
 
-func (r *GetRangeRequest) SetVerificationHeader(v *service.RequestVerificationHeader) {
+func (r *GetRangeRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -1646,7 +1646,7 @@ func (r *GetRangeResponse) SetBody(v *GetRangeResponseBody) {
 	}
 }
 
-func (r *GetRangeResponse) GetMetaHeader() *service.ResponseMetaHeader {
+func (r *GetRangeResponse) GetMetaHeader() *session.ResponseMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -1654,13 +1654,13 @@ func (r *GetRangeResponse) GetMetaHeader() *service.ResponseMetaHeader {
 	return nil
 }
 
-func (r *GetRangeResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (r *GetRangeResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *GetRangeResponse) GetVerificationHeader() *service.ResponseVerificationHeader {
+func (r *GetRangeResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -1668,7 +1668,7 @@ func (r *GetRangeResponse) GetVerificationHeader() *service.ResponseVerification
 	return nil
 }
 
-func (r *GetRangeResponse) SetVerificationHeader(v *service.ResponseVerificationHeader) {
+func (r *GetRangeResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -1744,7 +1744,7 @@ func (r *GetRangeHashRequest) SetBody(v *GetRangeHashRequestBody) {
 	}
 }
 
-func (r *GetRangeHashRequest) GetMetaHeader() *service.RequestMetaHeader {
+func (r *GetRangeHashRequest) GetMetaHeader() *session.RequestMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -1752,13 +1752,13 @@ func (r *GetRangeHashRequest) GetMetaHeader() *service.RequestMetaHeader {
 	return nil
 }
 
-func (r *GetRangeHashRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (r *GetRangeHashRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *GetRangeHashRequest) GetVerificationHeader() *service.RequestVerificationHeader {
+func (r *GetRangeHashRequest) GetVerificationHeader() *session.RequestVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -1766,7 +1766,7 @@ func (r *GetRangeHashRequest) GetVerificationHeader() *service.RequestVerificati
 	return nil
 }
 
-func (r *GetRangeHashRequest) SetVerificationHeader(v *service.RequestVerificationHeader) {
+func (r *GetRangeHashRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}
@@ -1814,7 +1814,7 @@ func (r *GetRangeHashResponse) SetBody(v *GetRangeHashResponseBody) {
 	}
 }
 
-func (r *GetRangeHashResponse) GetMetaHeader() *service.ResponseMetaHeader {
+func (r *GetRangeHashResponse) GetMetaHeader() *session.ResponseMetaHeader {
 	if r != nil {
 		return r.metaHeader
 	}
@@ -1822,13 +1822,13 @@ func (r *GetRangeHashResponse) GetMetaHeader() *service.ResponseMetaHeader {
 	return nil
 }
 
-func (r *GetRangeHashResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (r *GetRangeHashResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if r != nil {
 		r.metaHeader = v
 	}
 }
 
-func (r *GetRangeHashResponse) GetVerificationHeader() *service.ResponseVerificationHeader {
+func (r *GetRangeHashResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
 	if r != nil {
 		return r.verifyHeader
 	}
@@ -1836,7 +1836,7 @@ func (r *GetRangeHashResponse) GetVerificationHeader() *service.ResponseVerifica
 	return nil
 }
 
-func (r *GetRangeHashResponse) SetVerificationHeader(v *service.ResponseVerificationHeader) {
+func (r *GetRangeHashResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}

@@ -3,7 +3,7 @@ package accounting
 import (
 	accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
 )
 
 func BalanceRequestBodyToGRPCMessage(b *BalanceRequestBody) *accounting.BalanceRequest_Body {
@@ -45,7 +45,7 @@ func BalanceRequestToGRPCMessage(b *BalanceRequest) *accounting.BalanceRequest {
 		BalanceRequestBodyToGRPCMessage(b.GetBody()),
 	)
 
-	service.RequestHeadersToGRPC(b, m)
+	session.RequestHeadersToGRPC(b, m)
 
 	return m
 }
@@ -61,7 +61,7 @@ func BalanceRequestFromGRPCMessage(m *accounting.BalanceRequest) *BalanceRequest
 		BalanceRequestBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.RequestHeadersFromGRPC(m, b)
+	session.RequestHeadersFromGRPC(m, b)
 
 	return b
 }
@@ -131,7 +131,7 @@ func BalanceResponseToGRPCMessage(br *BalanceResponse) *accounting.BalanceRespon
 		BalanceResponseBodyToGRPCMessage(br.GetBody()),
 	)
 
-	service.ResponseHeadersToGRPC(br, m)
+	session.ResponseHeadersToGRPC(br, m)
 
 	return m
 }
@@ -147,7 +147,7 @@ func BalanceResponseFromGRPCMessage(m *accounting.BalanceResponse) *BalanceRespo
 		BalanceResponseBodyFromGRPCMessage(m.GetBody()),
 	)
 
-	service.ResponseHeadersFromGRPC(m, br)
+	session.ResponseHeadersFromGRPC(m, br)
 
 	return br
 }
