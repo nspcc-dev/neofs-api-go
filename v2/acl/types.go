@@ -40,6 +40,24 @@ type Table struct {
 	records []*Record
 }
 
+type TokenLifetime struct {
+	exp, nbf, iat uint64
+}
+
+type BearerTokenBody struct {
+	eacl *Table
+
+	ownerID *refs.OwnerID
+
+	lifetime *TokenLifetime
+}
+
+type BearerToken struct {
+	body *BearerTokenBody
+
+	sig *refs.Signature
+}
+
 // TargetInfo is a unified enum of MatchType enum from proto definition.
 type MatchType uint32
 
@@ -256,5 +274,117 @@ func (t *Table) GetRecords() []*Record {
 func (t *Table) SetRecords(v []*Record) {
 	if t != nil {
 		t.records = v
+	}
+}
+
+func (l *TokenLifetime) GetExp() uint64 {
+	if l != nil {
+		return l.exp
+	}
+
+	return 0
+}
+
+func (l *TokenLifetime) SetExp(v uint64) {
+	if l != nil {
+		l.exp = v
+	}
+}
+
+func (l *TokenLifetime) GetNbf() uint64 {
+	if l != nil {
+		return l.nbf
+	}
+
+	return 0
+}
+
+func (l *TokenLifetime) SetNbf(v uint64) {
+	if l != nil {
+		l.nbf = v
+	}
+}
+
+func (l *TokenLifetime) GetIat() uint64 {
+	if l != nil {
+		return l.iat
+	}
+
+	return 0
+}
+
+func (l *TokenLifetime) SetIat(v uint64) {
+	if l != nil {
+		l.iat = v
+	}
+}
+
+func (bt *BearerTokenBody) GetEACL() *Table {
+	if bt != nil {
+		return bt.eacl
+	}
+
+	return nil
+}
+
+func (bt *BearerTokenBody) SetEACL(v *Table) {
+	if bt != nil {
+		bt.eacl = v
+	}
+}
+
+func (bt *BearerTokenBody) GetOwnerID() *refs.OwnerID {
+	if bt != nil {
+		return bt.ownerID
+	}
+
+	return nil
+}
+
+func (bt *BearerTokenBody) SetOwnerID(v *refs.OwnerID) {
+	if bt != nil {
+		bt.ownerID = v
+	}
+}
+
+func (bt *BearerTokenBody) GetLifetime() *TokenLifetime {
+	if bt != nil {
+		return bt.lifetime
+	}
+
+	return nil
+}
+
+func (bt *BearerTokenBody) SetLifetime(v *TokenLifetime) {
+	if bt != nil {
+		bt.lifetime = v
+	}
+}
+
+func (bt *BearerToken) GetBody() *BearerTokenBody {
+	if bt != nil {
+		return bt.body
+	}
+
+	return nil
+}
+
+func (bt *BearerToken) SetBody(v *BearerTokenBody) {
+	if bt != nil {
+		bt.body = v
+	}
+}
+
+func (bt *BearerToken) GetSignature() *refs.Signature {
+	if bt != nil {
+		return bt.sig
+	}
+
+	return nil
+}
+
+func (bt *BearerToken) SetSignature(v *refs.Signature) {
+	if bt != nil {
+		bt.sig = v
 	}
 }

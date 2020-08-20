@@ -20,6 +20,17 @@ const (
 
 	tableContainerIDField = 1
 	tableRecordsField     = 2
+
+	lifetimeExpirationField     = 1
+	lifetimeNotValidBeforeField = 2
+	lifetimeIssuedAtField       = 3
+
+	bearerTokenBodyACLField      = 1
+	bearerTokenBodyOwnerField    = 2
+	bearerTokenBodyLifetimeField = 3
+
+	bearerTokenBodyField      = 1
+	bearerTokenSignatureField = 2
 )
 
 // StableMarshal marshals unified acl table structure in a protobuf
@@ -241,6 +252,142 @@ func (t *TargetInfo) StableSize() (size int) {
 
 	size += proto.EnumSize(targetTypeField, int32(t.target))
 	size += proto.RepeatedBytesSize(targetKeysField, t.keys)
+
+	return size
+}
+
+func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
+	if l == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, l.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = proto.UInt64Marshal(lifetimeExpirationField, buf[offset:], l.exp)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = proto.UInt64Marshal(lifetimeNotValidBeforeField, buf[offset:], l.nbf)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.UInt64Marshal(lifetimeIssuedAtField, buf[offset:], l.iat)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (l *TokenLifetime) StableSize() (size int) {
+	if l == nil {
+		return 0
+	}
+
+	size += proto.UInt64Size(lifetimeExpirationField, l.exp)
+	size += proto.UInt64Size(lifetimeNotValidBeforeField, l.nbf)
+	size += proto.UInt64Size(lifetimeIssuedAtField, l.iat)
+
+	return size
+}
+
+func (bt *BearerTokenBody) StableMarshal(buf []byte) ([]byte, error) {
+	if bt == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, bt.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = proto.NestedStructureMarshal(bearerTokenBodyACLField, buf[offset:], bt.eacl)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = proto.NestedStructureMarshal(bearerTokenBodyOwnerField, buf[offset:], bt.ownerID)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.NestedStructureMarshal(bearerTokenBodyLifetimeField, buf[offset:], bt.lifetime)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (bt *BearerTokenBody) StableSize() (size int) {
+	if bt == nil {
+		return 0
+	}
+
+	size += proto.NestedStructureSize(bearerTokenBodyACLField, bt.eacl)
+	size += proto.NestedStructureSize(bearerTokenBodyOwnerField, bt.ownerID)
+	size += proto.NestedStructureSize(bearerTokenBodyLifetimeField, bt.lifetime)
+
+	return size
+}
+
+func (bt *BearerToken) StableMarshal(buf []byte) ([]byte, error) {
+	if bt == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, bt.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = proto.NestedStructureMarshal(bearerTokenBodyField, buf[offset:], bt.body)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.NestedStructureMarshal(bearerTokenSignatureField, buf[offset:], bt.sig)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (bt *BearerToken) StableSize() (size int) {
+	if bt == nil {
+		return 0
+	}
+
+	size += proto.NestedStructureSize(bearerTokenBodyField, bt.body)
+	size += proto.NestedStructureSize(bearerTokenSignatureField, bt.sig)
 
 	return size
 }

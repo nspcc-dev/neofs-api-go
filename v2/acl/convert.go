@@ -348,3 +348,111 @@ func TableFromGRPCMessage(m *acl.EACLTable) *Table {
 
 	return t
 }
+
+func TokenLifetimeToGRPCMessage(tl *TokenLifetime) *acl.BearerToken_Body_TokenLifetime {
+	if tl == nil {
+		return nil
+	}
+
+	m := new(acl.BearerToken_Body_TokenLifetime)
+
+	m.SetExp(tl.GetExp())
+	m.SetNbf(tl.GetNbf())
+	m.SetIat(tl.GetIat())
+
+	return m
+}
+
+func TokenLifetimeFromGRPCMessage(m *acl.BearerToken_Body_TokenLifetime) *TokenLifetime {
+	if m == nil {
+		return nil
+	}
+
+	tl := new(TokenLifetime)
+
+	tl.SetExp(m.GetExp())
+	tl.SetNbf(m.GetNbf())
+	tl.SetIat(m.GetIat())
+
+	return tl
+}
+
+func BearerTokenBodyToGRPCMessage(v *BearerTokenBody) *acl.BearerToken_Body {
+	if v == nil {
+		return nil
+	}
+
+	m := new(acl.BearerToken_Body)
+
+	m.SetEaclTable(
+		TableToGRPCMessage(v.GetEACL()),
+	)
+
+	m.SetOwnerId(
+		refs.OwnerIDToGRPCMessage(v.GetOwnerID()),
+	)
+
+	m.SetLifetime(
+		TokenLifetimeToGRPCMessage(v.GetLifetime()),
+	)
+
+	return m
+}
+
+func BearerTokenBodyFromGRPCMessage(m *acl.BearerToken_Body) *BearerTokenBody {
+	if m == nil {
+		return nil
+	}
+
+	bt := new(BearerTokenBody)
+
+	bt.SetEACL(
+		TableFromGRPCMessage(m.GetEaclTable()),
+	)
+
+	bt.SetOwnerID(
+		refs.OwnerIDFromGRPCMessage(m.GetOwnerId()),
+	)
+
+	bt.SetLifetime(
+		TokenLifetimeFromGRPCMessage(m.GetLifetime()),
+	)
+
+	return bt
+}
+
+func BearerTokenToGRPCMessage(t *BearerToken) *acl.BearerToken {
+	if t == nil {
+		return nil
+	}
+
+	m := new(acl.BearerToken)
+
+	m.SetBody(
+		BearerTokenBodyToGRPCMessage(t.GetBody()),
+	)
+
+	m.SetSignature(
+		refs.SignatureToGRPCMessage(t.GetSignature()),
+	)
+
+	return m
+}
+
+func BearerTokenFromGRPCMessage(m *acl.BearerToken) *BearerToken {
+	if m == nil {
+		return nil
+	}
+
+	bt := new(BearerToken)
+
+	bt.SetBody(
+		BearerTokenBodyFromGRPCMessage(m.GetBody()),
+	)
+
+	bt.SetSignature(
+		refs.SignatureFromGRPCMessage(m.GetSignature()),
+	)
+
+	return bt
+}
