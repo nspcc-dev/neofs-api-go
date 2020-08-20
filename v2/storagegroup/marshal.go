@@ -34,7 +34,7 @@ func (s *StorageGroup) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.BytesMarshal(hashField, buf[offset:], s.hash)
+	n, err = proto.NestedStructureMarshal(hashField, buf[offset:], s.hash)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (s *StorageGroup) StableSize() (size int) {
 	}
 
 	size += proto.UInt64Size(sizeField, s.size)
-	size += proto.BytesSize(hashField, s.hash)
+	size += proto.NestedStructureSize(hashField, s.hash)
 	size += proto.UInt64Size(expirationField, s.exp)
 
 	for i := range s.members {

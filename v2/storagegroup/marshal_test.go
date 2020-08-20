@@ -21,7 +21,7 @@ func TestStorageGroup_StableMarshal(t *testing.T) {
 
 	t.Run("non empty", func(t *testing.T) {
 		storageGroupFrom.SetValidationDataSize(300)
-		storageGroupFrom.SetValidationHash([]byte("Homomorphic hash value"))
+		storageGroupFrom.SetValidationHash(generateChecksum("Homomorphic hash"))
 		storageGroupFrom.SetExpirationEpoch(100)
 		storageGroupFrom.SetMembers([]*refs.ObjectID{ownerID1, ownerID2})
 
@@ -34,4 +34,12 @@ func TestStorageGroup_StableMarshal(t *testing.T) {
 		storageGroupTo := storagegroup.StorageGroupFromGRPCMessage(transport)
 		require.Equal(t, storageGroupFrom, storageGroupTo)
 	})
+}
+
+func generateChecksum(data string) *refs.Checksum {
+	checksum := new(refs.Checksum)
+	checksum.SetType(refs.TillichZemor)
+	checksum.SetSum([]byte(data))
+
+	return checksum
 }

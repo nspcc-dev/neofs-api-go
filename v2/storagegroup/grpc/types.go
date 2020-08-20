@@ -12,7 +12,7 @@ func (m *StorageGroup) SetValidationDataSize(v uint64) {
 }
 
 // SetValidationHash sets total homomorphic hash of the storage group payloads.
-func (m *StorageGroup) SetValidationHash(v []byte) {
+func (m *StorageGroup) SetValidationHash(v *refs.Checksum) {
 	if m != nil {
 		m.ValidationHash = v
 	}
