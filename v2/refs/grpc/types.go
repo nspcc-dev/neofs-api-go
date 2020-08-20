@@ -34,3 +34,17 @@ func (m *Address) SetObjectId(v *ObjectID) {
 		m.ObjectId = v
 	}
 }
+
+// SetChecksumType in generic checksum structure.
+func (m *Checksum) SetChecksumType(v ChecksumType) {
+	if m != nil {
+		m.Type = v
+	}
+}
+
+// SetChecksumSum in generic checksum structure.
+func (m *Checksum) SetSum(v []byte) {
+	if m != nil {
+		m.Sum = v
+	}
+}

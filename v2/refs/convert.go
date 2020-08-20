@@ -111,3 +111,31 @@ func AddressFromGRPCMessage(m *refs.Address) *Address {
 
 	return a
 }
+
+func ChecksumToGRPCMessage(c *Checksum) *refs.Checksum {
+	if c == nil {
+		return nil
+	}
+
+	m := new(refs.Checksum)
+
+	m.SetChecksumType(refs.ChecksumType(c.GetType()))
+
+	m.SetSum(c.GetSum())
+
+	return m
+}
+
+func ChecksumFromGRPCMessage(m *refs.Checksum) *Checksum {
+	if m == nil {
+		return nil
+	}
+
+	c := new(Checksum)
+
+	c.SetType(ChecksumType(m.GetType()))
+
+	c.SetSum(m.GetSum())
+
+	return c
+}
