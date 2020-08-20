@@ -106,3 +106,51 @@ func TestChecksum_StableMarshal(t *testing.T) {
 		require.Equal(t, checksumFrom, checksumTo)
 	})
 }
+
+func TestSignature_StableMarshal(t *testing.T) {
+	signatureFrom := generateSignature("Public Key", "Signature")
+	transport := new(grpc.Signature)
+
+	t.Run("non empty", func(t *testing.T) {
+		wire, err := signatureFrom.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = transport.Unmarshal(wire)
+		require.NoError(t, err)
+
+		signatureTo := refs.SignatureFromGRPCMessage(transport)
+		require.Equal(t, signatureFrom, signatureTo)
+	})
+}
+
+func TestVersion_StableMarshal(t *testing.T) {
+	versionFrom := generateVersion(2, 0)
+	transport := new(grpc.Version)
+
+	t.Run("non empty", func(t *testing.T) {
+		wire, err := versionFrom.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = transport.Unmarshal(wire)
+		require.NoError(t, err)
+
+		versionTo := refs.VersionFromGRPCMessage(transport)
+		require.Equal(t, versionFrom, versionTo)
+	})
+}
+
+func generateSignature(k, v string) *refs.Signature {
+	sig := new(refs.Signature)
+	sig.SetKey([]byte(k))
+	sig.SetSign([]byte(v))
+
+	return sig
+}
+
+func generateVersion(maj, min uint32) *refs.Version {
+	version := new(refs.Version)
+	version.SetMajor(maj)
+	version.SetMinor(min)
+
+	return version
+}

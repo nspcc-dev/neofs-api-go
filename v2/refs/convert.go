@@ -139,3 +139,55 @@ func ChecksumFromGRPCMessage(m *refs.Checksum) *Checksum {
 
 	return c
 }
+
+func VersionToGRPCMessage(v *Version) *refs.Version {
+	if v == nil {
+		return nil
+	}
+
+	msg := new(refs.Version)
+
+	msg.SetMajor(v.GetMajor())
+	msg.SetMinor(v.GetMinor())
+
+	return msg
+}
+
+func VersionFromGRPCMessage(m *refs.Version) *Version {
+	if m == nil {
+		return nil
+	}
+
+	v := new(Version)
+
+	v.SetMajor(m.GetMajor())
+	v.SetMinor(m.GetMinor())
+
+	return v
+}
+
+func SignatureToGRPCMessage(s *Signature) *refs.Signature {
+	if s == nil {
+		return nil
+	}
+
+	m := new(refs.Signature)
+
+	m.SetKey(s.GetKey())
+	m.SetSign(s.GetSign())
+
+	return m
+}
+
+func SignatureFromGRPCMessage(m *refs.Signature) *Signature {
+	if m == nil {
+		return nil
+	}
+
+	s := new(Signature)
+
+	s.SetKey(m.GetKey())
+	s.SetSign(m.GetSign())
+
+	return s
+}

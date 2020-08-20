@@ -43,7 +43,7 @@ func ContainerToGRPCMessage(c *Container) *container.Container {
 	m := new(container.Container)
 
 	m.SetVersion(
-		service.VersionToGRPCMessage(c.GetVersion()),
+		refs.VersionToGRPCMessage(c.GetVersion()),
 	)
 
 	m.SetOwnerId(
@@ -78,7 +78,7 @@ func ContainerFromGRPCMessage(m *container.Container) *Container {
 	c := new(Container)
 
 	c.SetVersion(
-		service.VersionFromGRPCMessage(m.GetVersion()),
+		refs.VersionFromGRPCMessage(m.GetVersion()),
 	)
 
 	c.SetOwnerID(
@@ -117,7 +117,7 @@ func PutRequestBodyToGRPCMessage(r *PutRequestBody) *container.PutRequest_Body {
 	)
 
 	m.SetSignature(
-		service.SignatureToGRPCMessage(r.GetSignature()),
+		refs.SignatureToGRPCMessage(r.GetSignature()),
 	)
 
 	return m
@@ -135,7 +135,7 @@ func PutRequestBodyFromGRPCMessage(m *container.PutRequest_Body) *PutRequestBody
 	)
 
 	r.SetSignature(
-		service.SignatureFromGRPCMessage(m.GetSignature()),
+		refs.SignatureFromGRPCMessage(m.GetSignature()),
 	)
 
 	return r
@@ -365,7 +365,7 @@ func DeleteRequestBodyToGRPCMessage(r *DeleteRequestBody) *container.DeleteReque
 	)
 
 	m.SetSignature(
-		service.SignatureToGRPCMessage(r.GetSignature()),
+		refs.SignatureToGRPCMessage(r.GetSignature()),
 	)
 
 	return m
@@ -383,7 +383,7 @@ func DeleteRequestBodyFromGRPCMessage(m *container.DeleteRequest_Body) *DeleteRe
 	)
 
 	r.SetSignature(
-		service.SignatureFromGRPCMessage(m.GetSignature()),
+		refs.SignatureFromGRPCMessage(m.GetSignature()),
 	)
 
 	return r
@@ -615,7 +615,7 @@ func SetExtendedACLRequestBodyToGRPCMessage(r *SetExtendedACLRequestBody) *conta
 	)
 
 	m.SetSignature(
-		service.SignatureToGRPCMessage(r.GetSignature()))
+		refs.SignatureToGRPCMessage(r.GetSignature()))
 
 	return m
 }
@@ -632,7 +632,7 @@ func SetExtendedACLRequestBodyFromGRPCMessage(m *container.SetExtendedACLRequest
 	)
 
 	r.SetSignature(
-		service.SignatureFromGRPCMessage(m.GetSignature()),
+		refs.SignatureFromGRPCMessage(m.GetSignature()),
 	)
 
 	return r
@@ -794,7 +794,7 @@ func GetExtendedACLResponseBodyToGRPCMessage(r *GetExtendedACLResponseBody) *con
 	)
 
 	m.SetSignature(
-		service.SignatureToGRPCMessage(r.GetSignature()),
+		refs.SignatureToGRPCMessage(r.GetSignature()),
 	)
 
 	return m
@@ -812,7 +812,7 @@ func GetExtendedACLResponseBodyFromGRPCMessage(m *container.GetExtendedACLRespon
 	)
 
 	r.SetSignature(
-		service.SignatureFromGRPCMessage(m.GetSignature()),
+		refs.SignatureFromGRPCMessage(m.GetSignature()),
 	)
 
 	return r

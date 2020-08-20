@@ -10,7 +10,7 @@ type Type uint32
 type MatchType uint32
 
 type ShortHeader struct {
-	version *service.Version
+	version *refs.Version
 
 	creatEpoch uint64
 
@@ -28,7 +28,7 @@ type Attribute struct {
 type SplitHeader struct {
 	par, prev *refs.ObjectID
 
-	parSig *service.Signature
+	parSig *refs.Signature
 
 	parHdr *Header
 
@@ -36,7 +36,7 @@ type SplitHeader struct {
 }
 
 type Header struct {
-	version *service.Version
+	version *refs.Version
 
 	cid *refs.ContainerID
 
@@ -60,7 +60,7 @@ type Header struct {
 type Object struct {
 	objectID *refs.ObjectID
 
-	idSig *service.Signature
+	idSig *refs.Signature
 
 	header *Header
 
@@ -88,7 +88,7 @@ type GetObjectPart interface {
 type GetObjectPartInit struct {
 	id *refs.ObjectID
 
-	sig *service.Signature
+	sig *refs.Signature
 
 	hdr *Header
 }
@@ -116,7 +116,7 @@ type PutObjectPart interface {
 type PutObjectPartInit struct {
 	id *refs.ObjectID
 
-	sig *service.Signature
+	sig *refs.Signature
 
 	hdr *Header
 
@@ -318,7 +318,7 @@ const (
 	MatchStringEqual
 )
 
-func (h *ShortHeader) GetVersion() *service.Version {
+func (h *ShortHeader) GetVersion() *refs.Version {
 	if h != nil {
 		return h.version
 	}
@@ -326,7 +326,7 @@ func (h *ShortHeader) GetVersion() *service.Version {
 	return nil
 }
 
-func (h *ShortHeader) SetVersion(v *service.Version) {
+func (h *ShortHeader) SetVersion(v *refs.Version) {
 	if h != nil {
 		h.version = v
 	}
@@ -444,7 +444,7 @@ func (h *SplitHeader) SetPrevious(v *refs.ObjectID) {
 	}
 }
 
-func (h *SplitHeader) GetParentSignature() *service.Signature {
+func (h *SplitHeader) GetParentSignature() *refs.Signature {
 	if h != nil {
 		return h.parSig
 	}
@@ -452,7 +452,7 @@ func (h *SplitHeader) GetParentSignature() *service.Signature {
 	return nil
 }
 
-func (h *SplitHeader) SetParentSignature(v *service.Signature) {
+func (h *SplitHeader) SetParentSignature(v *refs.Signature) {
 	if h != nil {
 		h.parSig = v
 	}
@@ -486,7 +486,7 @@ func (h *SplitHeader) SetChildren(v []*refs.ObjectID) {
 	}
 }
 
-func (h *Header) GetVersion() *service.Version {
+func (h *Header) GetVersion() *refs.Version {
 	if h != nil {
 		return h.version
 	}
@@ -494,7 +494,7 @@ func (h *Header) GetVersion() *service.Version {
 	return nil
 }
 
-func (h *Header) SetVersion(v *service.Version) {
+func (h *Header) SetVersion(v *refs.Version) {
 	if h != nil {
 		h.version = v
 	}
@@ -654,7 +654,7 @@ func (o *Object) SetObjectID(v *refs.ObjectID) {
 	}
 }
 
-func (o *Object) GetSignature() *service.Signature {
+func (o *Object) GetSignature() *refs.Signature {
 	if o != nil {
 		return o.idSig
 	}
@@ -662,7 +662,7 @@ func (o *Object) GetSignature() *service.Signature {
 	return nil
 }
 
-func (o *Object) SetSignature(v *service.Signature) {
+func (o *Object) SetSignature(v *refs.Signature) {
 	if o != nil {
 		o.idSig = v
 	}
@@ -780,7 +780,7 @@ func (r *GetObjectPartInit) SetObjectID(v *refs.ObjectID) {
 	}
 }
 
-func (r *GetObjectPartInit) GetSignature() *service.Signature {
+func (r *GetObjectPartInit) GetSignature() *refs.Signature {
 	if r != nil {
 		return r.sig
 	}
@@ -788,7 +788,7 @@ func (r *GetObjectPartInit) GetSignature() *service.Signature {
 	return nil
 }
 
-func (r *GetObjectPartInit) SetSignature(v *service.Signature) {
+func (r *GetObjectPartInit) SetSignature(v *refs.Signature) {
 	if r != nil {
 		r.sig = v
 	}
@@ -896,7 +896,7 @@ func (r *PutObjectPartInit) SetObjectID(v *refs.ObjectID) {
 	}
 }
 
-func (r *PutObjectPartInit) GetSignature() *service.Signature {
+func (r *PutObjectPartInit) GetSignature() *refs.Signature {
 	if r != nil {
 		return r.sig
 	}
@@ -904,7 +904,7 @@ func (r *PutObjectPartInit) GetSignature() *service.Signature {
 	return nil
 }
 
-func (r *PutObjectPartInit) SetSignature(v *service.Signature) {
+func (r *PutObjectPartInit) SetSignature(v *refs.Signature) {
 	if r != nil {
 		r.sig = v
 	}

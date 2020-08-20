@@ -33,7 +33,7 @@ func ShortHeaderToGRPCMessage(h *ShortHeader) *object.ShortHeader {
 	m := new(object.ShortHeader)
 
 	m.SetVersion(
-		service.VersionToGRPCMessage(h.GetVersion()),
+		refs.VersionToGRPCMessage(h.GetVersion()),
 	)
 
 	m.SetCreationEpoch(h.GetCreationEpoch())
@@ -59,7 +59,7 @@ func ShortHeaderFromGRPCMessage(m *object.ShortHeader) *ShortHeader {
 	h := new(ShortHeader)
 
 	h.SetVersion(
-		service.VersionFromGRPCMessage(m.GetVersion()),
+		refs.VersionFromGRPCMessage(m.GetVersion()),
 	)
 
 	h.SetCreationEpoch(m.GetCreationEpoch())
@@ -119,7 +119,7 @@ func SplitHeaderToGRPCMessage(h *SplitHeader) *object.Header_Split {
 	)
 
 	m.SetParentSignature(
-		service.SignatureToGRPCMessage(h.GetParentSignature()),
+		refs.SignatureToGRPCMessage(h.GetParentSignature()),
 	)
 
 	m.SetParentHeader(
@@ -154,7 +154,7 @@ func SplitHeaderFromGRPCMessage(m *object.Header_Split) *SplitHeader {
 	)
 
 	h.SetParentSignature(
-		service.SignatureFromGRPCMessage(m.GetParentSignature()),
+		refs.SignatureFromGRPCMessage(m.GetParentSignature()),
 	)
 
 	h.SetParentHeader(
@@ -181,7 +181,7 @@ func HeaderToGRPCMessage(h *Header) *object.Header {
 	m := new(object.Header)
 
 	m.SetVersion(
-		service.VersionToGRPCMessage(h.GetVersion()),
+		refs.VersionToGRPCMessage(h.GetVersion()),
 	)
 
 	m.SetContainerId(
@@ -236,7 +236,7 @@ func HeaderFromGRPCMessage(m *object.Header) *Header {
 	h := new(Header)
 
 	h.SetVersion(
-		service.VersionFromGRPCMessage(m.GetVersion()),
+		refs.VersionFromGRPCMessage(m.GetVersion()),
 	)
 
 	h.SetContainerID(
@@ -295,7 +295,7 @@ func ObjectToGRPCMessage(o *Object) *object.Object {
 	)
 
 	m.SetSignature(
-		service.SignatureToGRPCMessage(o.GetSignature()),
+		refs.SignatureToGRPCMessage(o.GetSignature()),
 	)
 
 	m.SetHeader(
@@ -319,7 +319,7 @@ func ObjectFromGRPCMessage(m *object.Object) *Object {
 	)
 
 	o.SetSignature(
-		service.SignatureFromGRPCMessage(m.GetSignature()),
+		refs.SignatureFromGRPCMessage(m.GetSignature()),
 	)
 
 	o.SetHeader(
@@ -407,7 +407,7 @@ func GetObjectPartInitToGRPCMessage(r *GetObjectPartInit) *object.GetResponse_Bo
 	)
 
 	m.SetSignature(
-		service.SignatureToGRPCMessage(r.GetSignature()),
+		refs.SignatureToGRPCMessage(r.GetSignature()),
 	)
 
 	m.SetHeader(
@@ -429,7 +429,7 @@ func GetObjectPartInitFromGRPCMessage(m *object.GetResponse_Body_Init) *GetObjec
 	)
 
 	r.SetSignature(
-		service.SignatureFromGRPCMessage(m.GetSignature()),
+		refs.SignatureFromGRPCMessage(m.GetSignature()),
 	)
 
 	r.SetHeader(
@@ -555,7 +555,7 @@ func PutObjectPartInitToGRPCMessage(r *PutObjectPartInit) *object.PutRequest_Bod
 	)
 
 	m.SetSignature(
-		service.SignatureToGRPCMessage(r.GetSignature()),
+		refs.SignatureToGRPCMessage(r.GetSignature()),
 	)
 
 	m.SetHeader(
@@ -579,7 +579,7 @@ func PutObjectPartInitFromGRPCMessage(m *object.PutRequest_Body_Init) *PutObject
 	)
 
 	r.SetSignature(
-		service.SignatureFromGRPCMessage(m.GetSignature()),
+		refs.SignatureFromGRPCMessage(m.GetSignature()),
 	)
 
 	r.SetHeader(

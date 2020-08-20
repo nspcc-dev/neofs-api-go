@@ -3,7 +3,6 @@ package container
 import (
 	netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
-	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
 )
 
 // SetKey sets key to the container attribute.
@@ -56,7 +55,7 @@ func (m *Container) SetPlacementPolicy(v *netmap.PlacementPolicy) {
 }
 
 // SetVersion sets version of the container.
-func (m *Container) SetVersion(v *service.Version) {
+func (m *Container) SetVersion(v *refs.Version) {
 	if m != nil {
 		m.Version = v
 	}

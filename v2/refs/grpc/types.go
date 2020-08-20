@@ -48,3 +48,31 @@ func (m *Checksum) SetSum(v []byte) {
 		m.Sum = v
 	}
 }
+
+// SetMajor sets major version number.
+func (m *Version) SetMajor(v uint32) {
+	if m != nil {
+		m.Major = v
+	}
+}
+
+// SetMinor sets minor version number.
+func (m *Version) SetMinor(v uint32) {
+	if m != nil {
+		m.Minor = v
+	}
+}
+
+// SetKey sets public key in a binary format.
+func (m *Signature) SetKey(v []byte) {
+	if m != nil {
+		m.Key = v
+	}
+}
+
+// SetSign sets signature.
+func (m *Signature) SetSign(v []byte) {
+	if m != nil {
+		m.Sign = v
+	}
+}
