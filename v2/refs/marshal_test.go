@@ -87,3 +87,22 @@ func TestAddress_StableMarshal(t *testing.T) {
 		require.Equal(t, addressFrom, addressTo)
 	})
 }
+
+func TestChecksum_StableMarshal(t *testing.T) {
+	checksumFrom := new(refs.Checksum)
+	transport := new(grpc.Checksum)
+
+	t.Run("non empty", func(t *testing.T) {
+		checksumFrom.SetType(refs.TillichZemor)
+		checksumFrom.SetSum([]byte("Homomorphic Hash"))
+
+		wire, err := checksumFrom.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = transport.Unmarshal(wire)
+		require.NoError(t, err)
+
+		checksumTo := refs.ChecksumFromGRPCMessage(transport)
+		require.Equal(t, checksumFrom, checksumTo)
+	})
+}

@@ -13,6 +13,9 @@ const (
 
 	addressContainerField = 1
 	addressObjectField    = 2
+
+	checksumTypeField  = 1
+	checksumValueField = 2
 )
 
 func (o *OwnerID) StableMarshal(buf []byte) ([]byte, error) {
@@ -127,6 +130,46 @@ func (a *Address) StableSize() (size int) {
 	size += proto.NestedStructureSize(addressContainerField, a.cid)
 
 	size += proto.NestedStructureSize(addressObjectField, a.oid)
+
+	return size
+}
+
+func (c *Checksum) StableMarshal(buf []byte) ([]byte, error) {
+	if c == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, c.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = proto.EnumMarshal(checksumTypeField, buf[offset:], int32(c.typ))
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.BytesMarshal(checksumValueField, buf[offset:], c.sum)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (c *Checksum) StableSize() (size int) {
+	if c == nil {
+		return 0
+	}
+
+	size += proto.EnumSize(checksumTypeField, int32(c.typ))
+	size += proto.BytesSize(checksumValueField, c.sum)
 
 	return size
 }
