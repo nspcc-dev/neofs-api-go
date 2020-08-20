@@ -46,7 +46,7 @@ type Header struct {
 
 	payloadLen uint64
 
-	payloadHash, homoHash []byte
+	payloadHash, homoHash *refs.Checksum
 
 	typ Type
 
@@ -281,6 +281,8 @@ type GetRangeHashRequestBody struct {
 	rngs []*Range
 
 	salt []byte
+
+	typ refs.ChecksumType
 }
 
 type GetRangeHashRequest struct {
@@ -292,6 +294,8 @@ type GetRangeHashRequest struct {
 }
 
 type GetRangeHashResponseBody struct {
+	typ refs.ChecksumType
+
 	hashList [][]byte
 }
 
@@ -552,7 +556,7 @@ func (h *Header) SetPayloadLength(v uint64) {
 	}
 }
 
-func (h *Header) GetPayloadHash() []byte {
+func (h *Header) GetPayloadHash() *refs.Checksum {
 	if h != nil {
 		return h.payloadHash
 	}
@@ -560,7 +564,7 @@ func (h *Header) GetPayloadHash() []byte {
 	return nil
 }
 
-func (h *Header) SetPayloadHash(v []byte) {
+func (h *Header) SetPayloadHash(v *refs.Checksum) {
 	if h != nil {
 		h.payloadHash = v
 	}
@@ -580,7 +584,7 @@ func (h *Header) SetObjectType(v Type) {
 	}
 }
 
-func (h *Header) GetHomomorphicHash() []byte {
+func (h *Header) GetHomomorphicHash() *refs.Checksum {
 	if h != nil {
 		return h.homoHash
 	}
@@ -588,7 +592,7 @@ func (h *Header) GetHomomorphicHash() []byte {
 	return nil
 }
 
-func (h *Header) SetHomomorphicHash(v []byte) {
+func (h *Header) SetHomomorphicHash(v *refs.Checksum) {
 	if h != nil {
 		h.homoHash = v
 	}
@@ -1712,6 +1716,20 @@ func (r *GetRangeHashRequestBody) SetSalt(v []byte) {
 	}
 }
 
+func (r *GetRangeHashRequestBody) GetType() refs.ChecksumType {
+	if r != nil {
+		return r.typ
+	}
+
+	return refs.UnknownChecksum
+}
+
+func (r *GetRangeHashRequestBody) SetType(v refs.ChecksumType) {
+	if r != nil {
+		r.typ = v
+	}
+}
+
 func (r *GetRangeHashRequest) GetBody() *GetRangeHashRequestBody {
 	if r != nil {
 		return r.body
@@ -1751,6 +1769,20 @@ func (r *GetRangeHashRequest) GetVerificationHeader() *service.RequestVerificati
 func (r *GetRangeHashRequest) SetVerificationHeader(v *service.RequestVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
+	}
+}
+
+func (r *GetRangeHashResponseBody) GetType() refs.ChecksumType {
+	if r != nil {
+		return r.typ
+	}
+
+	return refs.UnknownChecksum
+}
+
+func (r *GetRangeHashResponseBody) SetType(v refs.ChecksumType) {
+	if r != nil {
+		r.typ = v
 	}
 }
 

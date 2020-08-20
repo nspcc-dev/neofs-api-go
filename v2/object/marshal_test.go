@@ -461,6 +461,14 @@ func generateSplit(sig string) *object.SplitHeader {
 	return split
 }
 
+func generateChecksum(data string) *refs.Checksum {
+	checksum := new(refs.Checksum)
+	checksum.SetType(refs.TillichZemor)
+	checksum.SetSum([]byte(data))
+
+	return checksum
+}
+
 func generateHeader(ln uint64) *object.Header {
 	hdr := new(object.Header)
 	hdr.SetPayloadLength(ln)
@@ -472,9 +480,9 @@ func generateHeader(ln uint64) *object.Header {
 		generateAttribute("One", "Two"),
 		generateAttribute("Three", "Four"),
 	})
-	hdr.SetHomomorphicHash([]byte("Homomorphic Hash"))
+	hdr.SetHomomorphicHash(generateChecksum("Homomorphic Hash"))
 	hdr.SetObjectType(object.TypeRegular)
-	hdr.SetPayloadHash([]byte("Payload Hash"))
+	hdr.SetPayloadHash(generateChecksum("Payload Hash"))
 	hdr.SetSessionToken(generateSessionToken(string(ln)))
 
 	return hdr
@@ -662,6 +670,7 @@ func generateRangeHashRequestBody(cid, oid string, n int) *object.GetRangeHashRe
 
 	req.SetRanges(rngs)
 	req.SetSalt([]byte("xor salt"))
+	req.SetType(refs.TillichZemor)
 
 	return req
 }
@@ -674,6 +683,7 @@ func generateRangeHashResponseBody(n int) *object.GetRangeHashResponseBody {
 		list[i] = []byte("Some homomorphic hash data" + string(n))
 	}
 
+	resp.SetType(refs.TillichZemor)
 	resp.SetHashList(list)
 
 	return resp

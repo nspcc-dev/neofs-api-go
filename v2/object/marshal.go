@@ -87,8 +87,10 @@ const (
 	getRangeHashReqBodyAddressField = 1
 	getRangeHashReqBodyRangesField  = 2
 	getRangeHashReqBodySaltField    = 3
+	getRangeHashReqBodyTypeField    = 4
 
-	getRangeHashRespBodyHashList = 1
+	getRangeHashRespBodyTypeField     = 1
+	getRangeHashRespBodyHashListField = 2
 )
 
 func (h *ShortHeader) StableMarshal(buf []byte) ([]byte, error) {
@@ -315,7 +317,7 @@ func (h *Header) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.BytesMarshal(hdrPayloadHashField, buf[offset:], h.payloadHash)
+	n, err = proto.NestedStructureMarshal(hdrPayloadHashField, buf[offset:], h.payloadHash)
 	if err != nil {
 		return nil, err
 	}
@@ -329,7 +331,7 @@ func (h *Header) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.BytesMarshal(hdrHomomorphicHashField, buf[offset:], h.homoHash)
+	n, err = proto.NestedStructureMarshal(hdrHomomorphicHashField, buf[offset:], h.homoHash)
 	if err != nil {
 		return nil, err
 	}
@@ -370,9 +372,9 @@ func (h *Header) StableSize() (size int) {
 	size += proto.NestedStructureSize(hdrOwnerIDField, h.ownerID)
 	size += proto.UInt64Size(hdrEpochField, h.creatEpoch)
 	size += proto.UInt64Size(hdrPayloadLengthField, h.payloadLen)
-	size += proto.BytesSize(hdrPayloadHashField, h.payloadHash)
+	size += proto.NestedStructureSize(hdrPayloadHashField, h.payloadHash)
 	size += proto.EnumSize(hdrObjectTypeField, int32(h.typ))
-	size += proto.BytesSize(hdrHomomorphicHashField, h.homoHash)
+	size += proto.NestedStructureSize(hdrHomomorphicHashField, h.homoHash)
 	size += proto.NestedStructureSize(hdrSessionTokenField, h.sessionToken)
 	for i := range h.attr {
 		size += proto.NestedStructureSize(hdrAttributesField, h.attr[i])
@@ -1130,7 +1132,14 @@ func (r *GetRangeHashRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		offset += n
 	}
 
-	_, err = proto.BytesMarshal(getRangeHashReqBodySaltField, buf[offset:], r.salt)
+	n, err = proto.BytesMarshal(getRangeHashReqBodySaltField, buf[offset:], r.salt)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.EnumMarshal(getRangeHashReqBodyTypeField, buf[offset:], int32(r.typ))
 	if err != nil {
 		return nil, err
 	}
@@ -1150,6 +1159,7 @@ func (r *GetRangeHashRequestBody) StableSize() (size int) {
 	}
 
 	size += proto.BytesSize(getRangeHashReqBodySaltField, r.salt)
+	size += proto.EnumSize(getRangeHashReqBodyTypeField, int32(r.typ))
 
 	return size
 }
@@ -1163,7 +1173,19 @@ func (r *GetRangeHashResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	_, err := proto.RepeatedBytesMarshal(getRangeHashRespBodyHashList, buf, r.hashList)
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = proto.EnumMarshal(getRangeHashRespBodyTypeField, buf, int32(r.typ))
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.RepeatedBytesMarshal(getRangeHashRespBodyHashListField, buf[offset:], r.hashList)
 	if err != nil {
 		return nil, err
 	}
@@ -1176,7 +1198,8 @@ func (r *GetRangeHashResponseBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.RepeatedBytesSize(getRangeHashRespBodyHashList, r.hashList)
+	size += proto.EnumSize(getRangeHashRespBodyTypeField, int32(r.typ))
+	size += proto.RepeatedBytesSize(getRangeHashRespBodyHashListField, r.hashList)
 
 	return size
 }
