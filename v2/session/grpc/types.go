@@ -1,4 +1,4 @@
-package service
+package session
 
 import (
 	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
@@ -19,36 +19,22 @@ func (m *XHeader) SetValue(v string) {
 	}
 }
 
-// SetMajor sets major version number.
-func (m *Version) SetMajor(v uint32) {
-	if m != nil {
-		m.Major = v
-	}
-}
-
-// SetMinor sets minor version number.
-func (m *Version) SetMinor(v uint32) {
-	if m != nil {
-		m.Minor = v
-	}
-}
-
 // SetExp sets epoch number of the token expiration.
-func (m *TokenLifetime) SetExp(v uint64) {
+func (m *SessionToken_Body_TokenLifetime) SetExp(v uint64) {
 	if m != nil {
 		m.Exp = v
 	}
 }
 
 // SetNbf sets starting epoch number of the token.
-func (m *TokenLifetime) SetNbf(v uint64) {
+func (m *SessionToken_Body_TokenLifetime) SetNbf(v uint64) {
 	if m != nil {
 		m.Nbf = v
 	}
 }
 
 // SetIat sets the number of the epoch in which the token was issued.
-func (m *TokenLifetime) SetIat(v uint64) {
+func (m *SessionToken_Body_TokenLifetime) SetIat(v uint64) {
 	if m != nil {
 		m.Iat = v
 	}
@@ -69,7 +55,7 @@ func (m *SessionToken_Body) SetOwnerId(v *refs.OwnerID) {
 }
 
 // SetLifetime sets lifetime of the session token.
-func (m *SessionToken_Body) SetLifetime(v *TokenLifetime) {
+func (m *SessionToken_Body) SetLifetime(v *SessionToken_Body_TokenLifetime) {
 	if m != nil {
 		m.Lifetime = v
 	}
@@ -83,7 +69,7 @@ func (m *SessionToken_Body) SetSessionKey(v []byte) {
 }
 
 // SetObjectAddressContext sets object context of the session token.
-func (m *SessionToken_Body) SetObjectServiceContext(v *ObjectSessionContext) {
+func (m *SessionToken_Body) SetObjectSessionContext(v *ObjectSessionContext) {
 	if m != nil {
 		m.Context = &SessionToken_Body_Object{
 			Object: v,
@@ -113,49 +99,14 @@ func (m *SessionToken) SetBody(v *SessionToken_Body) {
 }
 
 // SetSignature sets session token signature.
-func (m *SessionToken) SetSignature(v *Signature) {
-	if m != nil {
-		m.Signature = v
-	}
-}
-
-// SetEaclTable sets eACL table of the bearer token.
-func (m *BearerToken_Body) SetEaclTable(v *acl.EACLTable) {
-	if m != nil {
-		m.EaclTable = v
-	}
-}
-
-// SetOwnerId sets identifier of the bearer token owner.
-func (m *BearerToken_Body) SetOwnerId(v *refs.OwnerID) {
-	if m != nil {
-		m.OwnerId = v
-	}
-}
-
-// SetLifetime sets lifetime of the bearer token.
-func (m *BearerToken_Body) SetLifetime(v *TokenLifetime) {
-	if m != nil {
-		m.Lifetime = v
-	}
-}
-
-// SetBody sets bearer token body.
-func (m *BearerToken) SetBody(v *BearerToken_Body) {
-	if m != nil {
-		m.Body = v
-	}
-}
-
-// SetSignature sets bearer token signature.
-func (m *BearerToken) SetSignature(v *Signature) {
+func (m *SessionToken) SetSignature(v *refs.Signature) {
 	if m != nil {
 		m.Signature = v
 	}
 }
 
 // SetVersion sets client protocol version.
-func (m *RequestMetaHeader) SetVersion(v *Version) {
+func (m *RequestMetaHeader) SetVersion(v *refs.Version) {
 	if m != nil {
 		m.Version = v
 	}
@@ -190,7 +141,7 @@ func (m *RequestMetaHeader) SetSessionToken(v *SessionToken) {
 }
 
 // SetBearerToken sets bearer token of the request.
-func (m *RequestMetaHeader) SetBearerToken(v *BearerToken) {
+func (m *RequestMetaHeader) SetBearerToken(v *acl.BearerToken) {
 	if m != nil {
 		m.BearerToken = v
 	}
@@ -204,7 +155,7 @@ func (m *RequestMetaHeader) SetOrigin(v *RequestMetaHeader) {
 }
 
 // SetVersion sets server protocol version.
-func (m *ResponseMetaHeader) SetVersion(v *Version) {
+func (m *ResponseMetaHeader) SetVersion(v *refs.Version) {
 	if m != nil {
 		m.Version = v
 	}
@@ -233,6 +184,62 @@ func (m *ResponseMetaHeader) SetXHeaders(v []*XHeader) {
 
 // SetOrigin sets origin response meta header.
 func (m *ResponseMetaHeader) SetOrigin(v *ResponseMetaHeader) {
+	if m != nil {
+		m.Origin = v
+	}
+}
+
+// SetBodySignature sets signature of the request body.
+func (m *RequestVerificationHeader) SetBodySignature(v *refs.Signature) {
+	if m != nil {
+		m.BodySignature = v
+	}
+}
+
+// SetMetaSignature sets signature of the request meta.
+func (m *RequestVerificationHeader) SetMetaSignature(v *refs.Signature) {
+	if m != nil {
+		m.MetaSignature = v
+	}
+}
+
+// SetOriginSignature sets signature of the origin verification header of the request.
+func (m *RequestVerificationHeader) SetOriginSignature(v *refs.Signature) {
+	if m != nil {
+		m.OriginSignature = v
+	}
+}
+
+// SetOrigin sets origin verification header of the request.
+func (m *RequestVerificationHeader) SetOrigin(v *RequestVerificationHeader) {
+	if m != nil {
+		m.Origin = v
+	}
+}
+
+// SetBodySignature sets signature of the response body.
+func (m *ResponseVerificationHeader) SetBodySignature(v *refs.Signature) {
+	if m != nil {
+		m.BodySignature = v
+	}
+}
+
+// SetMetaSignature sets signature of the response meta.
+func (m *ResponseVerificationHeader) SetMetaSignature(v *refs.Signature) {
+	if m != nil {
+		m.MetaSignature = v
+	}
+}
+
+// SetOriginSignature sets signature of the origin verification header of the response.
+func (m *ResponseVerificationHeader) SetOriginSignature(v *refs.Signature) {
+	if m != nil {
+		m.OriginSignature = v
+	}
+}
+
+// SetOrigin sets origin verification header of the response.
+func (m *ResponseVerificationHeader) SetOrigin(v *ResponseVerificationHeader) {
 	if m != nil {
 		m.Origin = v
 	}
