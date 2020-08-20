@@ -7,9 +7,8 @@ import (
 	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
-	grpc1 "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
-	grpc "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
-	grpc2 "google.golang.org/grpc"
+	grpc "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
+	grpc1 "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	io "io"
@@ -34,13 +33,13 @@ type CreateRequest struct {
 	Body *CreateRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
 	// Carries request meta information. Header data is used only to regulate message
 	// transport and does not affect request execution.
-	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
+	MetaHeader *RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries request verification information. This header is used to authenticate
 	// the nodes of the message route and check the correctness of transmission.
-	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
-	XXX_unrecognized     []byte                          `json:"-"`
-	XXX_sizecache        int32                           `json:"-"`
+	VerifyHeader         *RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                   `json:"-"`
+	XXX_unrecognized     []byte                     `json:"-"`
+	XXX_sizecache        int32                      `json:"-"`
 }
 
 func (m *CreateRequest) Reset()         { *m = CreateRequest{} }
@@ -83,14 +82,14 @@ func (m *CreateRequest) GetBody() *CreateRequest_Body {
 	return nil
 }
 
-func (m *CreateRequest) GetMetaHeader() *grpc.RequestMetaHeader {
+func (m *CreateRequest) GetMetaHeader() *RequestMetaHeader {
 	if m != nil {
 		return m.MetaHeader
 	}
 	return nil
 }
 
-func (m *CreateRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
+func (m *CreateRequest) GetVerifyHeader() *RequestVerificationHeader {
 	if m != nil {
 		return m.VerifyHeader
 	}
@@ -100,12 +99,12 @@ func (m *CreateRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 // Request body
 type CreateRequest_Body struct {
 	// Carries an identifier of a session initiator.
-	OwnerId *grpc1.OwnerID `protobuf:"bytes,1,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
-	// Carries a lifetime of the session.
-	Lifetime             *grpc.TokenLifetime `protobuf:"bytes,2,opt,name=lifetime,proto3" json:"lifetime,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
-	XXX_unrecognized     []byte              `json:"-"`
-	XXX_sizecache        int32               `json:"-"`
+	OwnerId *grpc.OwnerID `protobuf:"bytes,1,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	// Expiration Epoch
+	Expiration           uint64   `protobuf:"varint,2,opt,name=expiration,proto3" json:"expiration,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *CreateRequest_Body) Reset()         { *m = CreateRequest_Body{} }
@@ -141,18 +140,18 @@ func (m *CreateRequest_Body) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_CreateRequest_Body proto.InternalMessageInfo
 
-func (m *CreateRequest_Body) GetOwnerId() *grpc1.OwnerID {
+func (m *CreateRequest_Body) GetOwnerId() *grpc.OwnerID {
 	if m != nil {
 		return m.OwnerId
 	}
 	return nil
 }
 
-func (m *CreateRequest_Body) GetLifetime() *grpc.TokenLifetime {
+func (m *CreateRequest_Body) GetExpiration() uint64 {
 	if m != nil {
-		return m.Lifetime
+		return m.Expiration
 	}
-	return nil
+	return 0
 }
 
 // CreateResponse carries an information about the opened session.
@@ -161,14 +160,14 @@ type CreateResponse struct {
 	Body *CreateResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
 	// Carries response meta information. Header data is used only to regulate
 	// message transport and does not affect request execution.
-	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
+	MetaHeader *ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
 	// authenticate the nodes of the message route and check the correctness
 	// of transmission.
-	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
-	XXX_unrecognized     []byte                           `json:"-"`
-	XXX_sizecache        int32                            `json:"-"`
+	VerifyHeader         *ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                    `json:"-"`
+	XXX_unrecognized     []byte                      `json:"-"`
+	XXX_sizecache        int32                       `json:"-"`
 }
 
 func (m *CreateResponse) Reset()         { *m = CreateResponse{} }
@@ -211,14 +210,14 @@ func (m *CreateResponse) GetBody() *CreateResponse_Body {
 	return nil
 }
 
-func (m *CreateResponse) GetMetaHeader() *grpc.ResponseMetaHeader {
+func (m *CreateResponse) GetMetaHeader() *ResponseMetaHeader {
 	if m != nil {
 		return m.MetaHeader
 	}
 	return nil
 }
 
-func (m *CreateResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
+func (m *CreateResponse) GetVerifyHeader() *ResponseVerificationHeader {
 	if m != nil {
 		return m.VerifyHeader
 	}
@@ -293,63 +292,62 @@ func init() {
 func init() { proto.RegisterFile("v2/session/grpc/service.proto", fileDescriptor_4ed1365cc8e16cd4) }
 
 var fileDescriptor_4ed1365cc8e16cd4 = []byte{
-	// 458 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x93, 0x4f, 0x6f, 0xd3, 0x30,
-	0x18, 0xc6, 0x49, 0x98, 0xc6, 0xe4, 0x76, 0x95, 0xb0, 0x90, 0xa8, 0x8a, 0x28, 0x65, 0x62, 0x88,
-	0x03, 0x75, 0xa4, 0x70, 0x40, 0x03, 0x2e, 0x0c, 0x98, 0xa8, 0x60, 0xfc, 0x71, 0x11, 0x07, 0x2e,
-	0x51, 0xfe, 0xbc, 0xe9, 0xac, 0x11, 0x3b, 0xd8, 0x5e, 0x20, 0xdf, 0x84, 0x2b, 0x57, 0x3e, 0x09,
-	0x47, 0x3e, 0x01, 0x42, 0xe5, 0x8b, 0xa0, 0xd8, 0xde, 0xb4, 0x6e, 0x59, 0x7b, 0xcb, 0x1b, 0x3f,
-	0xcf, 0xf3, 0xbe, 0xef, 0x4f, 0x36, 0xba, 0x59, 0x85, 0x81, 0x02, 0xa5, 0x98, 0xe0, 0xc1, 0x4c,
-	0x96, 0x69, 0xa0, 0x40, 0x56, 0x2c, 0x05, 0x52, 0x4a, 0xa1, 0x05, 0xbe, 0xca, 0x41, 0x90, 0x5c,
-	0x91, 0x2a, 0x24, 0x4e, 0x35, 0xe8, 0x57, 0x61, 0x20, 0x21, 0x57, 0x56, 0xae, 0xeb, 0x12, 0x94,
-	0x15, 0x0f, 0x6e, 0x98, 0x2c, 0x63, 0x3f, 0x77, 0xb8, 0xf5, 0xc7, 0x47, 0x9b, 0xcf, 0x24, 0xc4,
-	0x1a, 0x28, 0x7c, 0x39, 0x02, 0xa5, 0xf1, 0x0e, 0x5a, 0x4b, 0x44, 0x56, 0xf7, 0xbd, 0x91, 0x77,
-	0xaf, 0x13, 0x6e, 0x93, 0x73, 0xad, 0xc8, 0x82, 0x9e, 0xec, 0x8a, 0xac, 0xa6, 0xc6, 0x82, 0x5f,
-	0xa0, 0x4e, 0x01, 0x3a, 0x8e, 0x0e, 0x20, 0xce, 0x40, 0xf6, 0x7d, 0x93, 0x70, 0x67, 0x21, 0xc1,
-	0x6e, 0xe1, 0xbc, 0xfb, 0xa0, 0xe3, 0x97, 0x46, 0x4b, 0x51, 0x71, 0xf2, 0x8d, 0xdf, 0xa3, 0xcd,
-	0x0a, 0x24, 0xcb, 0xeb, 0xe3, 0xa0, 0xcb, 0x26, 0xe8, 0xfe, 0xc5, 0x41, 0x1f, 0x1b, 0x39, 0x4b,
-	0x63, 0xcd, 0x04, 0x77, 0x81, 0x5d, 0x1b, 0x61, 0xab, 0xc1, 0x37, 0xb4, 0xd6, 0xcc, 0x89, 0x43,
-	0xb4, 0x21, 0xbe, 0x72, 0x90, 0x11, 0xcb, 0xdc, 0x82, 0xd7, 0x4f, 0xa5, 0x36, 0xfc, 0xc8, 0xdb,
-	0xe6, 0x7c, 0xf2, 0x9c, 0x5e, 0x31, 0xc2, 0x49, 0x86, 0x9f, 0xa0, 0x8d, 0xcf, 0x2c, 0x07, 0xcd,
-	0x0a, 0x70, 0x2b, 0x8d, 0x5a, 0x26, 0xf9, 0x20, 0x0e, 0x81, 0xbf, 0x76, 0x3a, 0x7a, 0xe2, 0xd8,
-	0xfa, 0xe1, 0xa3, 0xde, 0x31, 0x30, 0x55, 0x0a, 0xae, 0x00, 0x3f, 0x5a, 0x20, 0x7c, 0x77, 0x09,
-	0x61, 0x6b, 0x38, 0x8d, 0x78, 0xaf, 0x0d, 0xf1, 0x76, 0x2b, 0x19, 0x6b, 0xbe, 0x80, 0x31, 0x6d,
-	0x67, 0x3c, 0x5e, 0x92, 0xb4, 0x12, 0xf2, 0x43, 0x07, 0xb9, 0x87, 0x7c, 0x87, 0xb7, 0x4b, 0x7d,
-	0x96, 0xe1, 0x5b, 0xa8, 0xe3, 0x16, 0x8b, 0x0e, 0xa1, 0x36, 0x33, 0x77, 0x29, 0x72, 0xbf, 0x5e,
-	0x41, 0x1d, 0x46, 0xa8, 0x37, 0xb5, 0xd5, 0xd4, 0xf6, 0xc4, 0xfb, 0x68, 0xdd, 0x32, 0xc0, 0xa3,
-	0x55, 0x17, 0x70, 0x70, 0x7b, 0x25, 0xc0, 0xdd, 0xe4, 0xd7, 0x7c, 0xe8, 0xfd, 0x9e, 0x0f, 0xbd,
-	0xbf, 0xf3, 0xa1, 0xf7, 0xfd, 0xdf, 0xf0, 0xd2, 0xa7, 0x9d, 0x19, 0xd3, 0x07, 0x47, 0x09, 0x49,
-	0x45, 0x11, 0x70, 0x55, 0xa6, 0xe9, 0x38, 0x83, 0x2a, 0xe0, 0x20, 0x72, 0x35, 0x8e, 0x4b, 0x36,
-	0x9e, 0x89, 0xe0, 0xcc, 0x13, 0x7c, 0xec, 0x8a, 0x9f, 0xfe, 0xb5, 0x37, 0x20, 0xf6, 0xa6, 0xe4,
-	0xe9, 0xbb, 0x49, 0xd3, 0xd2, 0x4d, 0x9e, 0xac, 0x9b, 0x07, 0xf5, 0xe0, 0x7f, 0x00, 0x00, 0x00,
-	0xff, 0xff, 0x9a, 0x12, 0x33, 0x00, 0xbb, 0x03, 0x00, 0x00,
+	// 444 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x93, 0x4d, 0x6f, 0xd3, 0x30,
+	0x18, 0xc7, 0x49, 0xa8, 0x06, 0x7a, 0xda, 0x55, 0xc2, 0x42, 0xa2, 0x2a, 0x22, 0x8c, 0x89, 0x21,
+	0x0e, 0xd4, 0x91, 0xc2, 0x01, 0x0d, 0x4e, 0x0c, 0x98, 0xa8, 0xd0, 0x78, 0x71, 0x25, 0x0e, 0xbb,
+	0x54, 0x79, 0x79, 0xd2, 0x59, 0xa8, 0x71, 0xb0, 0xbd, 0x40, 0xbe, 0x09, 0x57, 0xae, 0x7c, 0x0a,
+	0x8e, 0x1c, 0xf9, 0x08, 0xa8, 0x7c, 0x11, 0x14, 0xdb, 0x43, 0xd9, 0x96, 0xad, 0xb7, 0x38, 0xfe,
+	0x3f, 0x3f, 0x3f, 0xcf, 0x4f, 0x36, 0xdc, 0xa9, 0xa2, 0x50, 0xa1, 0x52, 0x5c, 0x14, 0xe1, 0x42,
+	0x96, 0x69, 0xa8, 0x50, 0x56, 0x3c, 0x45, 0x5a, 0x4a, 0xa1, 0x05, 0xb9, 0x51, 0xa0, 0xa0, 0xb9,
+	0xa2, 0x55, 0x44, 0x5d, 0x6a, 0x3c, 0xaa, 0xa2, 0x50, 0x62, 0xae, 0x6c, 0x5c, 0xd7, 0x25, 0x2a,
+	0x1b, 0x1e, 0xdf, 0x3e, 0xcb, 0x6a, 0x6d, 0x6e, 0xff, 0xf4, 0x61, 0xf3, 0x85, 0xc4, 0x58, 0x23,
+	0xc3, 0xcf, 0xc7, 0xa8, 0x34, 0xd9, 0x85, 0x5e, 0x22, 0xb2, 0x7a, 0xe4, 0x6d, 0x79, 0x0f, 0xfb,
+	0xd1, 0x0e, 0x3d, 0x77, 0x14, 0x3d, 0x95, 0xa7, 0x7b, 0x22, 0xab, 0x99, 0x29, 0x21, 0xaf, 0xa0,
+	0xbf, 0x44, 0x1d, 0xcf, 0x8f, 0x30, 0xce, 0x50, 0x8e, 0x7c, 0x43, 0xb8, 0xdf, 0x41, 0x70, 0xb5,
+	0x07, 0xa8, 0xe3, 0xd7, 0x26, 0xcb, 0x60, 0xf9, 0xff, 0x9b, 0x7c, 0x80, 0xcd, 0x0a, 0x25, 0xcf,
+	0xeb, 0x13, 0xd0, 0x55, 0x03, 0x7a, 0x74, 0x31, 0xe8, 0x63, 0x13, 0xe7, 0x69, 0xac, 0xb9, 0x28,
+	0x1c, 0x70, 0x60, 0x11, 0x76, 0x35, 0x3e, 0x84, 0x5e, 0xd3, 0x27, 0x89, 0xe0, 0xba, 0xf8, 0x52,
+	0xa0, 0x9c, 0xf3, 0xcc, 0x0d, 0x78, 0xab, 0x45, 0x6d, 0xfc, 0xd1, 0x77, 0xcd, 0xfe, 0xf4, 0x25,
+	0xbb, 0x66, 0x82, 0xd3, 0x8c, 0x04, 0x00, 0xf8, 0xb5, 0xe4, 0xd2, 0xd0, 0xcd, 0x50, 0x3d, 0xd6,
+	0xfa, 0xb3, 0xfd, 0xdd, 0x87, 0xe1, 0x89, 0x12, 0x55, 0x8a, 0x42, 0x21, 0x79, 0x7a, 0xca, 0xe1,
+	0x83, 0x4b, 0x1c, 0xda, 0x82, 0xb6, 0xc4, 0xfd, 0x2e, 0x89, 0x3b, 0x9d, 0xb3, 0xdb, 0xe2, 0x0b,
+	0x2c, 0xb2, 0x6e, 0x8b, 0x93, 0x4b, 0x48, 0x6b, 0x35, 0x3e, 0x71, 0x1a, 0x87, 0xe0, 0x3b, 0x81,
+	0x03, 0xe6, 0xf3, 0x8c, 0xdc, 0x85, 0xbe, 0x63, 0xcd, 0x3f, 0x61, 0x6d, 0x7a, 0x1e, 0x30, 0x70,
+	0xbf, 0xde, 0x60, 0x1d, 0xcd, 0x61, 0x38, 0xb3, 0xab, 0x99, 0xbd, 0xc8, 0xe4, 0x00, 0x36, 0xac,
+	0x03, 0xb2, 0xb5, 0xee, 0x8a, 0x8d, 0xef, 0xad, 0x15, 0xb8, 0x97, 0xfc, 0x5a, 0x05, 0xde, 0xef,
+	0x55, 0xe0, 0xfd, 0x59, 0x05, 0xde, 0xb7, 0xbf, 0xc1, 0x95, 0xc3, 0xdd, 0x05, 0xd7, 0x47, 0xc7,
+	0x09, 0x4d, 0xc5, 0x32, 0x2c, 0x54, 0x99, 0xa6, 0x93, 0x0c, 0xab, 0xb0, 0x40, 0x91, 0xab, 0x49,
+	0x5c, 0xf2, 0xc9, 0x42, 0x84, 0x67, 0x1e, 0xc6, 0x33, 0xb7, 0xf8, 0xe1, 0xdf, 0x7c, 0x8b, 0x62,
+	0x7f, 0x46, 0x9f, 0xbf, 0x9f, 0x36, 0x47, 0xba, 0xce, 0x93, 0x0d, 0xf3, 0x64, 0x1e, 0xff, 0x0b,
+	0x00, 0x00, 0xff, 0xff, 0xd3, 0xaa, 0x38, 0x65, 0x9d, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
-var _ grpc2.ClientConn
+var _ grpc1.ClientConn
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc2.SupportPackageIsVersion4
+const _ = grpc1.SupportPackageIsVersion4
 
 // SessionServiceClient is the client API for SessionService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SessionServiceClient interface {
 	// Create opens new session between the client and the server.
-	Create(ctx context.Context, in *CreateRequest, opts ...grpc2.CallOption) (*CreateResponse, error)
+	Create(ctx context.Context, in *CreateRequest, opts ...grpc1.CallOption) (*CreateResponse, error)
 }
 
 type sessionServiceClient struct {
-	cc *grpc2.ClientConn
+	cc *grpc1.ClientConn
 }
 
-func NewSessionServiceClient(cc *grpc2.ClientConn) SessionServiceClient {
+func NewSessionServiceClient(cc *grpc1.ClientConn) SessionServiceClient {
 	return &sessionServiceClient{cc}
 }
 
-func (c *sessionServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc2.CallOption) (*CreateResponse, error) {
+func (c *sessionServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc1.CallOption) (*CreateResponse, error) {
 	out := new(CreateResponse)
 	err := c.cc.Invoke(ctx, "/neo.fs.v2.session.SessionService/Create", in, out, opts...)
 	if err != nil {
@@ -372,11 +370,11 @@ func (*UnimplementedSessionServiceServer) Create(ctx context.Context, req *Creat
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 
-func RegisterSessionServiceServer(s *grpc2.Server, srv SessionServiceServer) {
+func RegisterSessionServiceServer(s *grpc1.Server, srv SessionServiceServer) {
 	s.RegisterService(&_SessionService_serviceDesc, srv)
 }
 
-func _SessionService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc2.UnaryServerInterceptor) (interface{}, error) {
+func _SessionService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc1.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -384,7 +382,7 @@ func _SessionService_Create_Handler(srv interface{}, ctx context.Context, dec fu
 	if interceptor == nil {
 		return srv.(SessionServiceServer).Create(ctx, in)
 	}
-	info := &grpc2.UnaryServerInfo{
+	info := &grpc1.UnaryServerInfo{
 		Server:     srv,
 		FullMethod: "/neo.fs.v2.session.SessionService/Create",
 	}
@@ -394,16 +392,16 @@ func _SessionService_Create_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-var _SessionService_serviceDesc = grpc2.ServiceDesc{
+var _SessionService_serviceDesc = grpc1.ServiceDesc{
 	ServiceName: "neo.fs.v2.session.SessionService",
 	HandlerType: (*SessionServiceServer)(nil),
-	Methods: []grpc2.MethodDesc{
+	Methods: []grpc1.MethodDesc{
 		{
 			MethodName: "Create",
 			Handler:    _SessionService_Create_Handler,
 		},
 	},
-	Streams:  []grpc2.StreamDesc{},
+	Streams:  []grpc1.StreamDesc{},
 	Metadata: "v2/session/grpc/service.proto",
 }
 
@@ -494,17 +492,10 @@ func (m *CreateRequest_Body) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.Lifetime != nil {
-		{
-			size, err := m.Lifetime.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintService(dAtA, i, uint64(size))
-		}
+	if m.Expiration != 0 {
+		i = encodeVarintService(dAtA, i, uint64(m.Expiration))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x10
 	}
 	if m.OwnerId != nil {
 		{
@@ -670,9 +661,8 @@ func (m *CreateRequest_Body) Size() (n int) {
 		l = m.OwnerId.Size()
 		n += 1 + l + sovService(uint64(l))
 	}
-	if m.Lifetime != nil {
-		l = m.Lifetime.Size()
-		n += 1 + l + sovService(uint64(l))
+	if m.Expiration != 0 {
+		n += 1 + sovService(uint64(m.Expiration))
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -825,7 +815,7 @@ func (m *CreateRequest) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.MetaHeader == nil {
-				m.MetaHeader = &grpc.RequestMetaHeader{}
+				m.MetaHeader = &RequestMetaHeader{}
 			}
 			if err := m.MetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -861,7 +851,7 @@ func (m *CreateRequest) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.VerifyHeader == nil {
-				m.VerifyHeader = &grpc.RequestVerificationHeader{}
+				m.VerifyHeader = &RequestVerificationHeader{}
 			}
 			if err := m.VerifyHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -951,17 +941,17 @@ func (m *CreateRequest_Body) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.OwnerId == nil {
-				m.OwnerId = &grpc1.OwnerID{}
+				m.OwnerId = &grpc.OwnerID{}
 			}
 			if err := m.OwnerId.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Lifetime", wireType)
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Expiration", wireType)
 			}
-			var msglen int
+			m.Expiration = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowService
@@ -971,28 +961,11 @@ func (m *CreateRequest_Body) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				m.Expiration |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
-				return ErrInvalidLengthService
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthService
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Lifetime == nil {
-				m.Lifetime = &grpc.TokenLifetime{}
-			}
-			if err := m.Lifetime.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipService(dAtA[iNdEx:])
@@ -1113,7 +1086,7 @@ func (m *CreateResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.MetaHeader == nil {
-				m.MetaHeader = &grpc.ResponseMetaHeader{}
+				m.MetaHeader = &ResponseMetaHeader{}
 			}
 			if err := m.MetaHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -1149,7 +1122,7 @@ func (m *CreateResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.VerifyHeader == nil {
-				m.VerifyHeader = &grpc.ResponseVerificationHeader{}
+				m.VerifyHeader = &ResponseVerificationHeader{}
 			}
 			if err := m.VerifyHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
