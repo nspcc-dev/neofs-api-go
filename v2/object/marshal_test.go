@@ -381,16 +381,16 @@ func generateContainerID(id string) *refs.ContainerID {
 	return cid
 }
 
-func generateSignature(k, v string) *service.Signature {
-	sig := new(service.Signature)
+func generateSignature(k, v string) *refs.Signature {
+	sig := new(refs.Signature)
 	sig.SetKey([]byte(k))
 	sig.SetSign([]byte(v))
 
 	return sig
 }
 
-func generateVersion(maj, min uint32) *service.Version {
-	version := new(service.Version)
+func generateVersion(maj, min uint32) *refs.Version {
+	version := new(refs.Version)
 	version.SetMajor(maj)
 	version.SetMinor(min)
 

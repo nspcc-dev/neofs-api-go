@@ -34,7 +34,7 @@ func (m *Header_Split) SetPrevious(v *refs.ObjectID) {
 }
 
 // SetParentSignature sets signature of the parent object header.
-func (m *Header_Split) SetParentSignature(v *service.Signature) {
+func (m *Header_Split) SetParentSignature(v *refs.Signature) {
 	if m != nil {
 		m.ParentSignature = v
 	}
@@ -76,7 +76,7 @@ func (m *Header) SetCreationEpoch(v uint64) {
 }
 
 // SetVersion sets version of the object format.
-func (m *Header) SetVersion(v *service.Version) {
+func (m *Header) SetVersion(v *refs.Version) {
 	if m != nil {
 		m.Version = v
 	}
@@ -139,7 +139,7 @@ func (m *Object) SetObjectId(v *refs.ObjectID) {
 }
 
 // SetSignature sets signature of the object identifier.
-func (m *Object) SetSignature(v *service.Signature) {
+func (m *Object) SetSignature(v *refs.Signature) {
 	if m != nil {
 		m.Signature = v
 	}
@@ -160,7 +160,7 @@ func (m *Object) SetPayload(v []byte) {
 }
 
 // SetVersion sets version of the object.
-func (m *ShortHeader) SetVersion(v *service.Version) {
+func (m *ShortHeader) SetVersion(v *refs.Version) {
 	if m != nil {
 		m.Version = v
 	}
