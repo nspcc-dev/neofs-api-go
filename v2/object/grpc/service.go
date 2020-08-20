@@ -2,7 +2,7 @@ package object
 
 import (
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
-	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
+	session "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
 )
 
 // SetAddress sets address of the requested object.
@@ -27,14 +27,14 @@ func (m *GetRequest) SetBody(v *GetRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *GetRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *GetRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *GetRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *GetRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -101,14 +101,14 @@ func (m *GetResponse) SetBody(v *GetResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *GetResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *GetResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *GetResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *GetResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -182,14 +182,14 @@ func (m *PutRequest) SetBody(v *PutRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *PutRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *PutRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *PutRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *PutRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -210,14 +210,14 @@ func (m *PutResponse) SetBody(v *PutResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *PutResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *PutResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *PutResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *PutResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -238,14 +238,14 @@ func (m *DeleteRequest) SetBody(v *DeleteRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *DeleteRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *DeleteRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *DeleteRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *DeleteRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -259,14 +259,14 @@ func (m *DeleteResponse) SetBody(v *DeleteResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *DeleteResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *DeleteResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *DeleteResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *DeleteResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -301,14 +301,14 @@ func (m *HeadRequest) SetBody(v *HeadRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *HeadRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *HeadRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *HeadRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *HeadRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -368,14 +368,14 @@ func (m *HeadResponse) SetBody(v *HeadResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *HeadResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *HeadResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *HeadResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *HeadResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -431,14 +431,14 @@ func (m *SearchRequest) SetBody(v *SearchRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *SearchRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *SearchRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *SearchRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *SearchRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -459,14 +459,14 @@ func (m *SearchResponse) SetBody(v *SearchResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *SearchResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *SearchResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *SearchResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *SearchResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -508,14 +508,14 @@ func (m *GetRangeRequest) SetBody(v *GetRangeRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *GetRangeRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *GetRangeRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *GetRangeRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *GetRangeRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -536,14 +536,14 @@ func (m *GetRangeResponse) SetBody(v *GetRangeResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *GetRangeResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *GetRangeResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *GetRangeResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *GetRangeResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -585,14 +585,14 @@ func (m *GetRangeHashRequest) SetBody(v *GetRangeHashRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *GetRangeHashRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *GetRangeHashRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *GetRangeHashRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *GetRangeHashRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -620,14 +620,14 @@ func (m *GetRangeHashResponse) SetBody(v *GetRangeHashResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *GetRangeHashResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *GetRangeHashResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *GetRangeHashResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *GetRangeHashResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}

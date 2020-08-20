@@ -7,7 +7,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	grpc "github.com/nspcc-dev/neofs-api-go/v2/object/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/stretchr/testify/require"
 )
 
@@ -405,24 +405,24 @@ func generateAddress(cid, oid string) *refs.Address {
 	return addr
 }
 
-func generateSessionToken(id string) *service.SessionToken {
-	lifetime := new(service.TokenLifetime)
+func generateSessionToken(id string) *session.SessionToken {
+	lifetime := new(session.TokenLifetime)
 	lifetime.SetExp(1)
 	lifetime.SetNbf(2)
 	lifetime.SetIat(3)
 
-	objectCtx := new(service.ObjectSessionContext)
-	objectCtx.SetVerb(service.ObjectVerbPut)
+	objectCtx := new(session.ObjectSessionContext)
+	objectCtx.SetVerb(session.ObjectVerbPut)
 	objectCtx.SetAddress(generateAddress("Container ID", "Object ID"))
 
-	tokenBody := new(service.SessionTokenBody)
+	tokenBody := new(session.SessionTokenBody)
 	tokenBody.SetID([]byte(id))
 	tokenBody.SetOwnerID(generateOwner("Owner ID"))
 	tokenBody.SetSessionKey([]byte(id))
 	tokenBody.SetLifetime(lifetime)
 	tokenBody.SetContext(objectCtx)
 
-	sessionToken := new(service.SessionToken)
+	sessionToken := new(session.SessionToken)
 	sessionToken.SetBody(tokenBody)
 	sessionToken.SetSignature(generateSignature("public key", id))
 

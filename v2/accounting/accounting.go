@@ -2,7 +2,7 @@ package accounting
 
 import (
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
 )
 
 type BalanceRequestBody struct {
@@ -12,9 +12,9 @@ type BalanceRequestBody struct {
 type BalanceRequest struct {
 	body *BalanceRequestBody
 
-	metaHeader *service.RequestMetaHeader
+	metaHeader *session.RequestMetaHeader
 
-	verifyHeader *service.RequestVerificationHeader
+	verifyHeader *session.RequestVerificationHeader
 }
 
 type BalanceResponseBody struct {
@@ -24,9 +24,9 @@ type BalanceResponseBody struct {
 type BalanceResponse struct {
 	body *BalanceResponseBody
 
-	metaHeader *service.ResponseMetaHeader
+	metaHeader *session.ResponseMetaHeader
 
-	verifyHeader *service.ResponseVerificationHeader
+	verifyHeader *session.ResponseVerificationHeader
 }
 
 type Decimal struct {
@@ -63,7 +63,7 @@ func (b *BalanceRequest) SetBody(v *BalanceRequestBody) {
 	}
 }
 
-func (b *BalanceRequest) GetMetaHeader() *service.RequestMetaHeader {
+func (b *BalanceRequest) GetMetaHeader() *session.RequestMetaHeader {
 	if b != nil {
 		return b.metaHeader
 	}
@@ -71,13 +71,13 @@ func (b *BalanceRequest) GetMetaHeader() *service.RequestMetaHeader {
 	return nil
 }
 
-func (b *BalanceRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (b *BalanceRequest) SetMetaHeader(v *session.RequestMetaHeader) {
 	if b != nil {
 		b.metaHeader = v
 	}
 }
 
-func (b *BalanceRequest) GetVerificationHeader() *service.RequestVerificationHeader {
+func (b *BalanceRequest) GetVerificationHeader() *session.RequestVerificationHeader {
 	if b != nil {
 		return b.verifyHeader
 	}
@@ -85,7 +85,7 @@ func (b *BalanceRequest) GetVerificationHeader() *service.RequestVerificationHea
 	return nil
 }
 
-func (b *BalanceRequest) SetVerificationHeader(v *service.RequestVerificationHeader) {
+func (b *BalanceRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
 	if b != nil {
 		b.verifyHeader = v
 	}
@@ -147,7 +147,7 @@ func (br *BalanceResponse) SetBody(v *BalanceResponseBody) {
 	}
 }
 
-func (br *BalanceResponse) GetMetaHeader() *service.ResponseMetaHeader {
+func (br *BalanceResponse) GetMetaHeader() *session.ResponseMetaHeader {
 	if br != nil {
 		return br.metaHeader
 	}
@@ -155,13 +155,13 @@ func (br *BalanceResponse) GetMetaHeader() *service.ResponseMetaHeader {
 	return nil
 }
 
-func (br *BalanceResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (br *BalanceResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
 	if br != nil {
 		br.metaHeader = v
 	}
 }
 
-func (br *BalanceResponse) GetVerificationHeader() *service.ResponseVerificationHeader {
+func (br *BalanceResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
 	if br != nil {
 		return br.verifyHeader
 	}
@@ -169,7 +169,7 @@ func (br *BalanceResponse) GetVerificationHeader() *service.ResponseVerification
 	return nil
 }
 
-func (br *BalanceResponse) SetVerificationHeader(v *service.ResponseVerificationHeader) {
+func (br *BalanceResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
 	if br != nil {
 		br.verifyHeader = v
 	}
