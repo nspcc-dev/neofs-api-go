@@ -87,3 +87,59 @@ func (m *EACLRecord_TargetInfo) SetKeyList(v [][]byte) {
 		m.KeyList = v
 	}
 }
+
+// SetEaclTable sets eACL table of the bearer token.
+func (m *BearerToken_Body) SetEaclTable(v *EACLTable) {
+	if m != nil {
+		m.EaclTable = v
+	}
+}
+
+// SetOwnerId sets identifier of the bearer token owner.
+func (m *BearerToken_Body) SetOwnerId(v *refs.OwnerID) {
+	if m != nil {
+		m.OwnerId = v
+	}
+}
+
+// SetLifetime sets lifetime of the bearer token.
+func (m *BearerToken_Body) SetLifetime(v *BearerToken_Body_TokenLifetime) {
+	if m != nil {
+		m.Lifetime = v
+	}
+}
+
+// SetBody sets bearer token body.
+func (m *BearerToken) SetBody(v *BearerToken_Body) {
+	if m != nil {
+		m.Body = v
+	}
+}
+
+// SetSignature sets bearer token signature.
+func (m *BearerToken) SetSignature(v *refs.Signature) {
+	if m != nil {
+		m.Signature = v
+	}
+}
+
+// SetExp sets epoch number of the token expiration.
+func (m *BearerToken_Body_TokenLifetime) SetExp(v uint64) {
+	if m != nil {
+		m.Exp = v
+	}
+}
+
+// SetNbf sets starting epoch number of the token.
+func (m *BearerToken_Body_TokenLifetime) SetNbf(v uint64) {
+	if m != nil {
+		m.Nbf = v
+	}
+}
+
+// SetIat sets the number of the epoch in which the token was issued.
+func (m *BearerToken_Body_TokenLifetime) SetIat(v uint64) {
+	if m != nil {
+		m.Iat = v
+	}
+}
