@@ -2,7 +2,6 @@ package session
 
 import (
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
-	service "github.com/nspcc-dev/neofs-api-go/v2/service/grpc"
 )
 
 // SetOwnerId sets identifier of the session initiator.
@@ -12,10 +11,10 @@ func (m *CreateRequest_Body) SetOwnerId(v *refs.OwnerID) {
 	}
 }
 
-// SetLifetime sets lifetime of the session.
-func (m *CreateRequest_Body) SetLifetime(v *service.TokenLifetime) {
+// SetExpiration sets lifetime of the session.
+func (m *CreateRequest_Body) SetExpiration(v uint64) {
 	if m != nil {
-		m.Lifetime = v
+		m.Expiration = v
 	}
 }
 
@@ -27,14 +26,14 @@ func (m *CreateRequest) SetBody(v *CreateRequest_Body) {
 }
 
 // SetMetaHeader sets meta header of the request.
-func (m *CreateRequest) SetMetaHeader(v *service.RequestMetaHeader) {
+func (m *CreateRequest) SetMetaHeader(v *RequestMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the request.
-func (m *CreateRequest) SetVerifyHeader(v *service.RequestVerificationHeader) {
+func (m *CreateRequest) SetVerifyHeader(v *RequestVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
@@ -62,14 +61,14 @@ func (m *CreateResponse) SetBody(v *CreateResponse_Body) {
 }
 
 // SetMetaHeader sets meta header of the response.
-func (m *CreateResponse) SetMetaHeader(v *service.ResponseMetaHeader) {
+func (m *CreateResponse) SetMetaHeader(v *ResponseMetaHeader) {
 	if m != nil {
 		m.MetaHeader = v
 	}
 }
 
 // SetVerifyHeader sets verification header of the response.
-func (m *CreateResponse) SetVerifyHeader(v *service.ResponseVerificationHeader) {
+func (m *CreateResponse) SetVerifyHeader(v *ResponseVerificationHeader) {
 	if m != nil {
 		m.VerifyHeader = v
 	}
