@@ -15,7 +15,9 @@ func StorageGroupToGRPCMessage(s *StorageGroup) *sg.StorageGroup {
 	m := new(sg.StorageGroup)
 
 	m.SetValidationDataSize(s.GetValidationDataSize())
-	m.SetValidationHash(s.GetValidationHash())
+	m.SetValidationHash(
+		refs.ChecksumToGRPCMessage(s.GetValidationHash()),
+	)
 	m.SetExpirationEpoch(s.GetExpirationEpoch())
 
 	members := s.GetMembers()
@@ -39,7 +41,9 @@ func StorageGroupFromGRPCMessage(m *sg.StorageGroup) *StorageGroup {
 	s := new(StorageGroup)
 
 	s.SetValidationDataSize(m.GetValidationDataSize())
-	s.SetValidationHash(m.GetValidationHash())
+	s.SetValidationHash(
+		refs.ChecksumFromGRPCMessage(m.GetValidationHash()),
+	)
 	s.SetExpirationEpoch(m.GetExpirationEpoch())
 
 	memberMsg := m.GetMembers()
