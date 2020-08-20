@@ -12,7 +12,7 @@ type Attribute struct {
 }
 
 type Container struct {
-	version *service.Version
+	version *refs.Version
 
 	ownerID *refs.OwnerID
 
@@ -28,7 +28,7 @@ type Container struct {
 type PutRequestBody struct {
 	cnr *Container
 
-	sig *service.Signature
+	sig *refs.Signature
 }
 
 type PutRequest struct {
@@ -78,7 +78,7 @@ type GetResponse struct {
 type DeleteRequestBody struct {
 	cid *refs.ContainerID
 
-	sig *service.Signature
+	sig *refs.Signature
 }
 
 type DeleteRequest struct {
@@ -126,7 +126,7 @@ type ListResponse struct {
 type SetExtendedACLRequestBody struct {
 	eacl *acl.Table
 
-	sig *service.Signature
+	sig *refs.Signature
 }
 
 type SetExtendedACLRequest struct {
@@ -162,7 +162,7 @@ type GetExtendedACLRequest struct {
 type GetExtendedACLResponseBody struct {
 	eacl *acl.Table
 
-	sig *service.Signature
+	sig *refs.Signature
 }
 
 type GetExtendedACLResponse struct {
@@ -201,7 +201,7 @@ func (a *Attribute) SetValue(v string) {
 	}
 }
 
-func (c *Container) GetVersion() *service.Version {
+func (c *Container) GetVersion() *refs.Version {
 	if c != nil {
 		return c.version
 	}
@@ -209,7 +209,7 @@ func (c *Container) GetVersion() *service.Version {
 	return nil
 }
 
-func (c *Container) SetVersion(v *service.Version) {
+func (c *Container) SetVersion(v *refs.Version) {
 	if c != nil {
 		c.version = v
 	}
@@ -299,7 +299,7 @@ func (r *PutRequestBody) SetContainer(v *Container) {
 	}
 }
 
-func (r *PutRequestBody) GetSignature() *service.Signature {
+func (r *PutRequestBody) GetSignature() *refs.Signature {
 	if r != nil {
 		return r.sig
 	}
@@ -307,7 +307,7 @@ func (r *PutRequestBody) GetSignature() *service.Signature {
 	return nil
 }
 
-func (r *PutRequestBody) SetSignature(v *service.Signature) {
+func (r *PutRequestBody) SetSignature(v *refs.Signature) {
 	if r != nil {
 		r.sig = v
 	}
@@ -537,7 +537,7 @@ func (r *DeleteRequestBody) SetContainerID(v *refs.ContainerID) {
 	}
 }
 
-func (r *DeleteRequestBody) GetSignature() *service.Signature {
+func (r *DeleteRequestBody) GetSignature() *refs.Signature {
 	if r != nil {
 		return r.sig
 	}
@@ -545,7 +545,7 @@ func (r *DeleteRequestBody) GetSignature() *service.Signature {
 	return nil
 }
 
-func (r *DeleteRequestBody) SetSignature(v *service.Signature) {
+func (r *DeleteRequestBody) SetSignature(v *refs.Signature) {
 	if r != nil {
 		r.sig = v
 	}
@@ -761,7 +761,7 @@ func (r *SetExtendedACLRequestBody) SetEACL(v *acl.Table) {
 	}
 }
 
-func (r *SetExtendedACLRequestBody) GetSignature() *service.Signature {
+func (r *SetExtendedACLRequestBody) GetSignature() *refs.Signature {
 	if r != nil {
 		return r.sig
 	}
@@ -769,7 +769,7 @@ func (r *SetExtendedACLRequestBody) GetSignature() *service.Signature {
 	return nil
 }
 
-func (r *SetExtendedACLRequestBody) SetSignature(v *service.Signature) {
+func (r *SetExtendedACLRequestBody) SetSignature(v *refs.Signature) {
 	if r != nil {
 		r.sig = v
 	}
@@ -929,7 +929,7 @@ func (r *GetExtendedACLResponseBody) SetEACL(v *acl.Table) {
 	}
 }
 
-func (r *GetExtendedACLResponseBody) GetSignature() *service.Signature {
+func (r *GetExtendedACLResponseBody) GetSignature() *refs.Signature {
 	if r != nil {
 		return r.sig
 	}
@@ -937,7 +937,7 @@ func (r *GetExtendedACLResponseBody) GetSignature() *service.Signature {
 	return nil
 }
 
-func (r *GetExtendedACLResponseBody) SetSignature(v *service.Signature) {
+func (r *GetExtendedACLResponseBody) SetSignature(v *refs.Signature) {
 	if r != nil {
 		r.sig = v
 	}

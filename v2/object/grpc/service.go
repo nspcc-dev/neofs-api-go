@@ -48,7 +48,7 @@ func (m *GetResponse_Body_Init) SetObjectId(v *refs.ObjectID) {
 }
 
 // SetSignature sets signature of the object identifier.
-func (m *GetResponse_Body_Init) SetSignature(v *service.Signature) {
+func (m *GetResponse_Body_Init) SetSignature(v *refs.Signature) {
 	if m != nil {
 		m.Signature = v
 	}
@@ -122,7 +122,7 @@ func (m *PutRequest_Body_Init) SetObjectId(v *refs.ObjectID) {
 }
 
 // SetSignature sets signature of the object identifier.
-func (m *PutRequest_Body_Init) SetSignature(v *service.Signature) {
+func (m *PutRequest_Body_Init) SetSignature(v *refs.Signature) {
 	if m != nil {
 		m.Signature = v
 	}

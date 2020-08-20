@@ -8,6 +8,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/accounting"
 	"github.com/nspcc-dev/neofs-api-go/v2/container"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-api-go/v2/service"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/pkg/errors"
@@ -42,12 +43,12 @@ type metaHeader interface {
 type verificationHeader interface {
 	stableMarshaler
 
-	GetBodySignature() *service.Signature
-	SetBodySignature(*service.Signature)
-	GetMetaSignature() *service.Signature
-	SetMetaSignature(*service.Signature)
-	GetOriginSignature() *service.Signature
-	SetOriginSignature(*service.Signature)
+	GetBodySignature() *refs.Signature
+	SetBodySignature(*refs.Signature)
+	GetMetaSignature() *refs.Signature
+	SetMetaSignature(*refs.Signature)
+	GetOriginSignature() *refs.Signature
+	SetOriginSignature(*refs.Signature)
 
 	setOrigin(stableMarshaler)
 	getOrigin() verificationHeader
@@ -129,14 +130,14 @@ func (s stableMarshalerWrapper) SignedDataSize() int {
 	return 0
 }
 
-func keySignatureHandler(s *service.Signature) signature.KeySignatureHandler {
+func keySignatureHandler(s *refs.Signature) signature.KeySignatureHandler {
 	return func(key []byte, sig []byte) {
 		s.SetKey(key)
 		s.SetSign(sig)
 	}
 }
 
-func keySignatureSource(s *service.Signature) signature.KeySignatureSource {
+func keySignatureSource(s *refs.Signature) signature.KeySignatureSource {
 	return func() ([]byte, []byte) {
 		return s.GetKey(), s.GetSign()
 	}
@@ -204,8 +205,8 @@ func SignServiceMessage(key *ecdsa.PrivateKey, msg interface{}) error {
 	return nil
 }
 
-func signServiceMessagePart(key *ecdsa.PrivateKey, part stableMarshaler, sigWrite func(*service.Signature)) error {
-	sig := new(service.Signature)
+func signServiceMessagePart(key *ecdsa.PrivateKey, part stableMarshaler, sigWrite func(*refs.Signature)) error {
+	sig := new(refs.Signature)
 
 	// sign part
 	if err := signature.SignDataWithHandler(
@@ -280,7 +281,7 @@ func verifyMatryoshkaLevel(body stableMarshaler, meta metaHeader, verify verific
 	return verifyMatryoshkaLevel(body, meta.getOrigin(), origin)
 }
 
-func verifyServiceMessagePart(part stableMarshaler, sigRdr func() *service.Signature) error {
+func verifyServiceMessagePart(part stableMarshaler, sigRdr func() *refs.Signature) error {
 	return signature.VerifyDataWithSource(
 		&stableMarshalerWrapper{part},
 		keySignatureSource(sigRdr()),

@@ -8,7 +8,6 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/container"
 	grpc "github.com/nspcc-dev/neofs-api-go/v2/container/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
 	"github.com/stretchr/testify/require"
 )
 
@@ -248,7 +247,7 @@ func generateContainer(n string) *container.Container {
 	owner := new(refs.OwnerID)
 	owner.SetValue([]byte("Owner ID"))
 
-	version := new(service.Version)
+	version := new(refs.Version)
 	version.SetMajor(2)
 	version.SetMinor(0)
 
@@ -267,8 +266,8 @@ func generateContainer(n string) *container.Container {
 	return cnr
 }
 
-func generateSignature(k, v string) *service.Signature {
-	sig := new(service.Signature)
+func generateSignature(k, v string) *refs.Signature {
+	sig := new(refs.Signature)
 	sig.SetKey([]byte(k))
 	sig.SetSign([]byte(v))
 

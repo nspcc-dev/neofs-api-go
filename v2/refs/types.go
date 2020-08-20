@@ -26,6 +26,14 @@ type Checksum struct {
 
 type ChecksumType uint32
 
+type Signature struct {
+	key, sign []byte
+}
+
+type Version struct {
+	major, minor uint32
+}
+
 const (
 	UnknownChecksum ChecksumType = iota
 	TillichZemor
@@ -127,5 +135,61 @@ func (c *Checksum) GetSum() []byte {
 func (c *Checksum) SetSum(v []byte) {
 	if c != nil {
 		c.sum = v
+	}
+}
+
+func (s *Signature) GetKey() []byte {
+	if s != nil {
+		return s.key
+	}
+
+	return nil
+}
+
+func (s *Signature) SetKey(v []byte) {
+	if s != nil {
+		s.key = v
+	}
+}
+
+func (s *Signature) GetSign() []byte {
+	if s != nil {
+		return s.sign
+	}
+
+	return nil
+}
+
+func (s *Signature) SetSign(v []byte) {
+	if s != nil {
+		s.sign = v
+	}
+}
+
+func (v *Version) GetMajor() uint32 {
+	if v != nil {
+		return v.major
+	}
+
+	return 0
+}
+
+func (v *Version) SetMajor(val uint32) {
+	if v != nil {
+		v.major = val
+	}
+}
+
+func (v *Version) GetMinor() uint32 {
+	if v != nil {
+		return v.minor
+	}
+
+	return 0
+}
+
+func (v *Version) SetMinor(val uint32) {
+	if v != nil {
+		v.minor = val
 	}
 }

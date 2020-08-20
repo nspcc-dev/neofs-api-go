@@ -16,6 +16,12 @@ const (
 
 	checksumTypeField  = 1
 	checksumValueField = 2
+
+	signatureKeyField   = 1
+	signatureValueField = 2
+
+	versionMajorField = 1
+	versionMinorField = 2
 )
 
 func (o *OwnerID) StableMarshal(buf []byte) ([]byte, error) {
@@ -170,6 +176,86 @@ func (c *Checksum) StableSize() (size int) {
 
 	size += proto.EnumSize(checksumTypeField, int32(c.typ))
 	size += proto.BytesSize(checksumValueField, c.sum)
+
+	return size
+}
+
+func (s *Signature) StableMarshal(buf []byte) ([]byte, error) {
+	if s == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, s.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = proto.BytesMarshal(signatureKeyField, buf[offset:], s.key)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.BytesMarshal(signatureValueField, buf[offset:], s.sign)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (s *Signature) StableSize() (size int) {
+	if s == nil {
+		return 0
+	}
+
+	size += proto.BytesSize(signatureKeyField, s.key)
+	size += proto.BytesSize(signatureValueField, s.sign)
+
+	return size
+}
+
+func (v *Version) StableMarshal(buf []byte) ([]byte, error) {
+	if v == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, v.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = proto.UInt32Marshal(versionMajorField, buf[offset:], v.major)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.UInt32Marshal(versionMinorField, buf[offset:], v.minor)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (v *Version) StableSize() (size int) {
+	if v == nil {
+		return 0
+	}
+
+	size += proto.UInt32Size(versionMajorField, v.major)
+	size += proto.UInt32Size(versionMinorField, v.minor)
 
 	return size
 }
