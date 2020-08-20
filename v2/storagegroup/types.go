@@ -9,7 +9,7 @@ import (
 type StorageGroup struct {
 	size uint64
 
-	hash []byte
+	hash *refs.Checksum
 
 	exp uint64
 
@@ -33,7 +33,7 @@ func (s *StorageGroup) SetValidationDataSize(v uint64) {
 }
 
 // GetValidationHash of unified storage group structure.
-func (s *StorageGroup) GetValidationHash() []byte {
+func (s *StorageGroup) GetValidationHash() *refs.Checksum {
 	if s != nil {
 		return s.hash
 	}
@@ -42,7 +42,7 @@ func (s *StorageGroup) GetValidationHash() []byte {
 }
 
 // SetValidationHash into unified storage group structure.
-func (s *StorageGroup) SetValidationHash(v []byte) {
+func (s *StorageGroup) SetValidationHash(v *refs.Checksum) {
 	if s != nil {
 		s.hash = v
 	}
