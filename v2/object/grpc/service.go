@@ -570,6 +570,13 @@ func (m *GetRangeHashRequest_Body) SetSalt(v []byte) {
 	}
 }
 
+// Set sets salt for the object payload ranges.
+func (m *GetRangeHashRequest_Body) SetType(v refs.ChecksumType) {
+	if m != nil {
+		m.Type = v
+	}
+}
+
 // SetBody sets body of the request.
 func (m *GetRangeHashRequest) SetBody(v *GetRangeHashRequest_Body) {
 	if m != nil {
@@ -595,6 +602,13 @@ func (m *GetRangeHashRequest) SetVerifyHeader(v *service.RequestVerificationHead
 func (m *GetRangeHashResponse_Body) SetHashList(v [][]byte) {
 	if m != nil {
 		m.HashList = v
+	}
+}
+
+// SetHashList returns list of the range hashes.
+func (m *GetRangeHashResponse_Body) SetType(v refs.ChecksumType) {
+	if m != nil {
+		m.Type = v
 	}
 }
 

@@ -90,7 +90,7 @@ func (m *Header) SetPayloadLength(v uint64) {
 }
 
 // SetPayloadHash sets hash of the object payload.
-func (m *Header) SetPayloadHash(v []byte) {
+func (m *Header) SetPayloadHash(v *refs.Checksum) {
 	if m != nil {
 		m.PayloadHash = v
 	}
@@ -104,7 +104,7 @@ func (m *Header) SetObjectType(v ObjectType) {
 }
 
 // SetHomomorphicHash sets homomorphic hash of the object payload.
-func (m *Header) SetHomomorphicHash(v []byte) {
+func (m *Header) SetHomomorphicHash(v *refs.Checksum) {
 	if m != nil {
 		m.HomomorphicHash = v
 	}
