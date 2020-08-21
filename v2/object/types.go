@@ -73,14 +73,6 @@ type GetRequestBody struct {
 	raw bool
 }
 
-type GetRequest struct {
-	body *GetRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
-}
-
 type GetObjectPart interface {
 	getObjectPart()
 }
@@ -99,14 +91,6 @@ type GetObjectPartChunk struct {
 
 type GetResponseBody struct {
 	objPart GetObjectPart
-}
-
-type GetResponse struct {
-	body *GetResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
 }
 
 type PutObjectPart interface {
@@ -131,60 +115,20 @@ type PutRequestBody struct {
 	objPart PutObjectPart
 }
 
-type PutRequest struct {
-	body *PutRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
-}
-
 type PutResponseBody struct {
 	id *refs.ObjectID
-}
-
-type PutResponse struct {
-	body *PutResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
 }
 
 type DeleteRequestBody struct {
 	addr *refs.Address
 }
 
-type DeleteRequest struct {
-	body *DeleteRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
-}
-
 type DeleteResponseBody struct{}
-
-type DeleteResponse struct {
-	body *DeleteResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
-}
 
 type HeadRequestBody struct {
 	addr *refs.Address
 
 	mainOnly, raw bool
-}
-
-type HeadRequest struct {
-	body *HeadRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
 }
 
 type GetHeaderPart interface {
@@ -203,14 +147,6 @@ type HeadResponseBody struct {
 	hdrPart GetHeaderPart
 }
 
-type HeadResponse struct {
-	body *HeadResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
-}
-
 type SearchFilter struct {
 	matchType MatchType
 
@@ -225,24 +161,8 @@ type SearchRequestBody struct {
 	filters []*SearchFilter
 }
 
-type SearchRequest struct {
-	body *SearchRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
-}
-
 type SearchResponseBody struct {
 	idList []*refs.ObjectID
-}
-
-type SearchResponse struct {
-	body *SearchResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
 }
 
 type Range struct {
@@ -255,24 +175,8 @@ type GetRangeRequestBody struct {
 	rng *Range
 }
 
-type GetRangeRequest struct {
-	body *GetRangeRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
-}
-
 type GetRangeResponseBody struct {
 	chunk []byte
-}
-
-type GetRangeResponse struct {
-	body *GetRangeResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
 }
 
 type GetRangeHashRequestBody struct {
@@ -285,26 +189,10 @@ type GetRangeHashRequestBody struct {
 	typ refs.ChecksumType
 }
 
-type GetRangeHashRequest struct {
-	body *GetRangeHashRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
-}
-
 type GetRangeHashResponseBody struct {
 	typ refs.ChecksumType
 
 	hashList [][]byte
-}
-
-type GetRangeHashResponse struct {
-	body *GetRangeHashResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
 }
 
 const (
