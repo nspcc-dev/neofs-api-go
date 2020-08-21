@@ -20,41 +20,41 @@ type (
 )
 
 type (
-	getObjectStream struct {
+	getObjectGRPCStream struct {
 		recv func() (*GetResponse, error)
 	}
 
-	putObjectStream struct {
+	putObjectGRPCStream struct {
 		send func(*PutRequest) error
 
 		closeAndRecv func() (*PutResponse, error)
 	}
 
-	searchObjectStream struct {
+	searchObjectGRPCStream struct {
 		recv func() (*SearchResponse, error)
 	}
 
-	getRangeObjectStream struct {
+	getRangeObjectGRPCStream struct {
 		recv func() (*GetRangeResponse, error)
 	}
 )
 
-func (s *getObjectStream) Recv() (*GetResponse, error) {
+func (s *getObjectGRPCStream) Recv() (*GetResponse, error) {
 	return s.recv()
 }
 
-func (p *putObjectStream) Send(request *PutRequest) error {
+func (p *putObjectGRPCStream) Send(request *PutRequest) error {
 	return p.send(request)
 }
 
-func (p *putObjectStream) CloseAndRecv() (*PutResponse, error) {
+func (p *putObjectGRPCStream) CloseAndRecv() (*PutResponse, error) {
 	return p.closeAndRecv()
 }
 
-func (s *searchObjectStream) Recv() (*SearchResponse, error) {
+func (s *searchObjectGRPCStream) Recv() (*SearchResponse, error) {
 	return s.recv()
 }
 
-func (r *getRangeObjectStream) Recv() (*GetRangeResponse, error) {
+func (r *getRangeObjectGRPCStream) Recv() (*GetRangeResponse, error) {
 	return r.recv()
 }

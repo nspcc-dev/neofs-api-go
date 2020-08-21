@@ -235,7 +235,7 @@ func newGRPCGetClient(c *object.Client) *getObjectClient {
 			if !ok {
 				return nil, errors.New("can't convert interface to grpc get getClient")
 			}
-			return &getObjectStream{
+			return &getObjectGRPCStream{
 				recv: func() (*GetResponse, error) {
 					resp, err := cli.Recv()
 					if err != nil {
@@ -262,7 +262,7 @@ func newGRPCPutClient(c *object.Client) *putObjectClient {
 				return nil, errors.New("can't convert interface to grpc get getClient")
 			}
 
-			return &putObjectStream{
+			return &putObjectGRPCStream{
 				send: func(request *PutRequest) error {
 					return cli.Send(PutRequestToGRPCMessage(request))
 				},
@@ -305,7 +305,7 @@ func newGRPCSearchClient(c *object.Client) *searchObjectClient {
 			if !ok {
 				return nil, errors.New("can't convert interface to grpc get getClient")
 			}
-			return &searchObjectStream{
+			return &searchObjectGRPCStream{
 				recv: func() (*SearchResponse, error) {
 					resp, err := cli.Recv()
 					if err != nil {
@@ -345,7 +345,7 @@ func newGRPCGetRangeClient(c *object.Client) *getRangeObjectClient {
 			if !ok {
 				return nil, errors.New("can't convert interface to grpc get getClient")
 			}
-			return &getRangeObjectStream{
+			return &getRangeObjectGRPCStream{
 				recv: func() (*GetRangeResponse, error) {
 					resp, err := cli.Recv()
 					if err != nil {
