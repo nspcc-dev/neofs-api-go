@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	sessionGRPC "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/signature"
@@ -57,7 +56,7 @@ func testRequest() *session.CreateRequest {
 	body := new(session.CreateRequestBody)
 	body.SetOwnerID(ownerID)
 
-	meta := new(service.RequestMetaHeader)
+	meta := new(session.RequestMetaHeader)
 	meta.SetTTL(1)
 
 	req := new(session.CreateRequest)
@@ -71,7 +70,7 @@ func testResponse() *session.CreateResponse {
 	body := new(session.CreateResponseBody)
 	body.SetID([]byte{1, 2, 3})
 
-	meta := new(service.ResponseMetaHeader)
+	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
 
 	resp := new(session.CreateResponse)
@@ -133,8 +132,8 @@ func TestGRPCClient(t *testing.T) {
 		resp := testResponse()
 
 		{ // w/o this require.Equal fails due to nil and []T{} difference
-			meta := new(service.ResponseMetaHeader)
-			meta.SetXHeaders([]*service.XHeader{})
+			meta := new(session.ResponseMetaHeader)
+			meta.SetXHeaders([]*session.XHeader{})
 			resp.SetMetaHeader(meta)
 		}
 

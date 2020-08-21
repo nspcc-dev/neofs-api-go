@@ -10,7 +10,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/container"
 	containerGRPC "github.com/nspcc-dev/neofs-api-go/v2/container/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/nspcc-dev/neofs-api-go/v2/signature"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
@@ -183,7 +183,7 @@ func testPutRequest() *container.PutRequest {
 	body := new(container.PutRequestBody)
 	body.SetContainer(cnr)
 
-	meta := new(service.RequestMetaHeader)
+	meta := new(session.RequestMetaHeader)
 	meta.SetTTL(1)
 
 	req := new(container.PutRequest)
@@ -200,9 +200,9 @@ func testPutResponse() *container.PutResponse {
 	body := new(container.PutResponseBody)
 	body.SetContainerID(cid)
 
-	meta := new(service.ResponseMetaHeader)
+	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
-	meta.SetXHeaders([]*service.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
+	meta.SetXHeaders([]*session.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
 
 	resp := new(container.PutResponse)
 	resp.SetBody(body)
@@ -218,7 +218,7 @@ func testGetRequest() *container.GetRequest {
 	body := new(container.GetRequestBody)
 	body.SetContainerID(cid)
 
-	meta := new(service.RequestMetaHeader)
+	meta := new(session.RequestMetaHeader)
 	meta.SetTTL(1)
 
 	req := new(container.GetRequest)
@@ -235,9 +235,9 @@ func testGetResponse() *container.GetResponse {
 	body := new(container.GetResponseBody)
 	body.SetContainer(cnr)
 
-	meta := new(service.ResponseMetaHeader)
+	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
-	meta.SetXHeaders([]*service.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
+	meta.SetXHeaders([]*session.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
 
 	resp := new(container.GetResponse)
 	resp.SetBody(body)
@@ -253,7 +253,7 @@ func testDelRequest() *container.DeleteRequest {
 	body := new(container.DeleteRequestBody)
 	body.SetContainerID(cid)
 
-	meta := new(service.RequestMetaHeader)
+	meta := new(session.RequestMetaHeader)
 	meta.SetTTL(1)
 
 	req := new(container.DeleteRequest)
@@ -266,9 +266,9 @@ func testDelRequest() *container.DeleteRequest {
 func testDelResponse() *container.DeleteResponse {
 	body := new(container.DeleteResponseBody)
 
-	meta := new(service.ResponseMetaHeader)
+	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
-	meta.SetXHeaders([]*service.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
+	meta.SetXHeaders([]*session.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
 
 	resp := new(container.DeleteResponse)
 	resp.SetBody(body)
@@ -284,7 +284,7 @@ func testListRequest() *container.ListRequest {
 	body := new(container.ListRequestBody)
 	body.SetOwnerID(ownerID)
 
-	meta := new(service.RequestMetaHeader)
+	meta := new(session.RequestMetaHeader)
 	meta.SetTTL(1)
 
 	req := new(container.ListRequest)
@@ -301,9 +301,9 @@ func testListResponse() *container.ListResponse {
 	body := new(container.ListResponseBody)
 	body.SetContainerIDs([]*refs.ContainerID{cid})
 
-	meta := new(service.ResponseMetaHeader)
+	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
-	meta.SetXHeaders([]*service.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
+	meta.SetXHeaders([]*session.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
 
 	resp := new(container.ListResponse)
 	resp.SetBody(body)
@@ -322,7 +322,7 @@ func testSetEACLRequest() *container.SetExtendedACLRequest {
 	body := new(container.SetExtendedACLRequestBody)
 	body.SetEACL(eacl)
 
-	meta := new(service.RequestMetaHeader)
+	meta := new(session.RequestMetaHeader)
 	meta.SetTTL(1)
 
 	req := new(container.SetExtendedACLRequest)
@@ -335,9 +335,9 @@ func testSetEACLRequest() *container.SetExtendedACLRequest {
 func testSetEACLResponse() *container.SetExtendedACLResponse {
 	body := new(container.SetExtendedACLResponseBody)
 
-	meta := new(service.ResponseMetaHeader)
+	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
-	meta.SetXHeaders([]*service.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
+	meta.SetXHeaders([]*session.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
 
 	resp := new(container.SetExtendedACLResponse)
 	resp.SetBody(body)
@@ -353,7 +353,7 @@ func testGetEACLRequest() *container.GetExtendedACLRequest {
 	body := new(container.GetExtendedACLRequestBody)
 	body.SetContainerID(cid)
 
-	meta := new(service.RequestMetaHeader)
+	meta := new(session.RequestMetaHeader)
 	meta.SetTTL(1)
 
 	req := new(container.GetExtendedACLRequest)
@@ -374,9 +374,9 @@ func testGetEACLResponse() *container.GetExtendedACLResponse {
 	body := new(container.GetExtendedACLResponseBody)
 	body.SetEACL(eacl)
 
-	meta := new(service.ResponseMetaHeader)
+	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
-	meta.SetXHeaders([]*service.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
+	meta.SetXHeaders([]*session.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
 
 	resp := new(container.GetExtendedACLResponse)
 	resp.SetBody(body)

@@ -9,7 +9,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/accounting"
 	accountingGRPC "github.com/nspcc-dev/neofs-api-go/v2/accounting/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/nspcc-dev/neofs-api-go/v2/signature"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
@@ -57,7 +57,7 @@ func testRequest() *accounting.BalanceRequest {
 	body := new(accounting.BalanceRequestBody)
 	body.SetOwnerID(ownerID)
 
-	meta := new(service.RequestMetaHeader)
+	meta := new(session.RequestMetaHeader)
 	meta.SetTTL(1)
 
 	req := new(accounting.BalanceRequest)
@@ -74,7 +74,7 @@ func testResponse() *accounting.BalanceResponse {
 	body := new(accounting.BalanceResponseBody)
 	body.SetBalance(dec)
 
-	meta := new(service.ResponseMetaHeader)
+	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
 
 	resp := new(accounting.BalanceResponse)
@@ -136,8 +136,8 @@ func TestGRPCClient(t *testing.T) {
 		resp := testResponse()
 
 		{ // w/o this require.Equal fails due to nil and []T{} difference
-			meta := new(service.ResponseMetaHeader)
-			meta.SetXHeaders([]*service.XHeader{})
+			meta := new(session.ResponseMetaHeader)
+			meta.SetXHeaders([]*session.XHeader{})
 			resp.SetMetaHeader(meta)
 		}
 
