@@ -9,7 +9,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	objectGRPC "github.com/nspcc-dev/neofs-api-go/v2/object/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/service"
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/nspcc-dev/neofs-api-go/v2/signature"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
@@ -146,9 +146,9 @@ func testHeadRequest() *object.HeadRequest {
 	body := new(object.HeadRequestBody)
 	body.SetAddress(addr)
 
-	meta := new(service.RequestMetaHeader)
+	meta := new(session.RequestMetaHeader)
 	meta.SetTTL(1)
-	meta.SetXHeaders([]*service.XHeader{})
+	meta.SetXHeaders([]*session.XHeader{})
 
 	req := new(object.HeadRequest)
 	req.SetBody(body)
@@ -167,9 +167,9 @@ func testHeadResponse() *object.HeadResponse {
 	body := new(object.HeadResponseBody)
 	body.SetHeaderPart(hdrPart)
 
-	meta := new(service.ResponseMetaHeader)
+	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
-	meta.SetXHeaders([]*service.XHeader{})
+	meta.SetXHeaders([]*session.XHeader{})
 
 	resp := new(object.HeadResponse)
 	resp.SetBody(body)
@@ -192,9 +192,9 @@ func testDeleteRequest() *object.DeleteRequest {
 	body := new(object.DeleteRequestBody)
 	body.SetAddress(addr)
 
-	meta := new(service.RequestMetaHeader)
+	meta := new(session.RequestMetaHeader)
 	meta.SetTTL(1)
-	meta.SetXHeaders([]*service.XHeader{})
+	meta.SetXHeaders([]*session.XHeader{})
 
 	req := new(object.DeleteRequest)
 	req.SetBody(body)
@@ -206,9 +206,9 @@ func testDeleteRequest() *object.DeleteRequest {
 func testDeleteResponse() *object.DeleteResponse {
 	body := new(object.DeleteResponseBody)
 
-	meta := new(service.ResponseMetaHeader)
+	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
-	meta.SetXHeaders([]*service.XHeader{})
+	meta.SetXHeaders([]*session.XHeader{})
 
 	resp := new(object.DeleteResponse)
 	resp.SetBody(body)
@@ -231,9 +231,9 @@ func testGetRangeHashRequest() *object.GetRangeHashRequest {
 	body := new(object.GetRangeHashRequestBody)
 	body.SetAddress(addr)
 
-	meta := new(service.RequestMetaHeader)
+	meta := new(session.RequestMetaHeader)
 	meta.SetTTL(1)
-	meta.SetXHeaders([]*service.XHeader{})
+	meta.SetXHeaders([]*session.XHeader{})
 
 	req := new(object.GetRangeHashRequest)
 	req.SetBody(body)
@@ -246,9 +246,9 @@ func testGetRangeHashResponse() *object.GetRangeHashResponse {
 	body := new(object.GetRangeHashResponseBody)
 	body.SetHashList([][]byte{{7, 8, 9}})
 
-	meta := new(service.ResponseMetaHeader)
+	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
-	meta.SetXHeaders([]*service.XHeader{})
+	meta.SetXHeaders([]*session.XHeader{})
 
 	resp := new(object.GetRangeHashResponse)
 	resp.SetBody(body)
