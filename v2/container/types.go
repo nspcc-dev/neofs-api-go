@@ -31,24 +31,8 @@ type PutRequestBody struct {
 	sig *refs.Signature
 }
 
-type PutRequest struct {
-	body *PutRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
-}
-
 type PutResponseBody struct {
 	cid *refs.ContainerID
-}
-
-type PutResponse struct {
-	body *PutResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
 }
 
 type GetRequestBody struct {
@@ -81,46 +65,14 @@ type DeleteRequestBody struct {
 	sig *refs.Signature
 }
 
-type DeleteRequest struct {
-	body *DeleteRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
-}
-
 type DeleteResponseBody struct{}
-
-type DeleteResponse struct {
-	body *DeleteResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
-}
 
 type ListRequestBody struct {
 	ownerID *refs.OwnerID
 }
 
-type ListRequest struct {
-	body *ListRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
-}
-
 type ListResponseBody struct {
 	cidList []*refs.ContainerID
-}
-
-type ListResponse struct {
-	body *ListResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
 }
 
 type SetExtendedACLRequestBody struct {
@@ -129,48 +81,16 @@ type SetExtendedACLRequestBody struct {
 	sig *refs.Signature
 }
 
-type SetExtendedACLRequest struct {
-	body *SetExtendedACLRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
-}
-
 type SetExtendedACLResponseBody struct{}
-
-type SetExtendedACLResponse struct {
-	body *SetExtendedACLResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
-}
 
 type GetExtendedACLRequestBody struct {
 	cid *refs.ContainerID
-}
-
-type GetExtendedACLRequest struct {
-	body *GetExtendedACLRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
 }
 
 type GetExtendedACLResponseBody struct {
 	eacl *acl.Table
 
 	sig *refs.Signature
-}
-
-type GetExtendedACLResponse struct {
-	body *GetExtendedACLResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
 }
 
 func (a *Attribute) GetKey() string {

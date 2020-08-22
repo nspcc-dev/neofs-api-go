@@ -11,26 +11,10 @@ type CreateRequestBody struct {
 	expiration uint64
 }
 
-type CreateRequest struct {
-	body *CreateRequestBody
-
-	metaHeader *RequestMetaHeader
-
-	verifyHeader *RequestVerificationHeader
-}
-
 type CreateResponseBody struct {
 	id []byte
 
 	sessionKey []byte
-}
-
-type CreateResponse struct {
-	body *CreateResponseBody
-
-	metaHeader *ResponseMetaHeader
-
-	verifyHeader *ResponseVerificationHeader
 }
 
 type XHeader struct {

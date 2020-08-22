@@ -9,24 +9,8 @@ type BalanceRequestBody struct {
 	ownerID *refs.OwnerID
 }
 
-type BalanceRequest struct {
-	body *BalanceRequestBody
-
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
-}
-
 type BalanceResponseBody struct {
 	bal *Decimal
-}
-
-type BalanceResponse struct {
-	body *BalanceResponseBody
-
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
 }
 
 type Decimal struct {
