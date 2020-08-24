@@ -402,7 +402,7 @@ func TestGRPCClient_Put(t *testing.T) {
 			server: srv,
 		}
 
-		c, err := container.New(container.WithGRPCServiceClient(cli))
+		c, err := container.NewClient(container.WithGRPCServiceClient(cli))
 		require.NoError(t, err)
 
 		resp, err := c.Put(ctx, new(container.PutRequest))
@@ -415,7 +415,7 @@ func TestGRPCClient_Put(t *testing.T) {
 
 		require.Error(t, signature.VerifyServiceMessage(req))
 
-		c, err := container.New(
+		c, err := container.NewClient(
 			container.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: new(testGRPCServer),
@@ -436,7 +436,7 @@ func TestGRPCClient_Put(t *testing.T) {
 
 		resp := testPutResponse()
 
-		c, err := container.New(
+		c, err := container.NewClient(
 			container.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: &testGRPCServer{
@@ -474,7 +474,7 @@ func TestGRPCClient_Get(t *testing.T) {
 			server: srv,
 		}
 
-		c, err := container.New(container.WithGRPCServiceClient(cli))
+		c, err := container.NewClient(container.WithGRPCServiceClient(cli))
 		require.NoError(t, err)
 
 		resp, err := c.Get(ctx, new(container.GetRequest))
@@ -487,7 +487,7 @@ func TestGRPCClient_Get(t *testing.T) {
 
 		require.Error(t, signature.VerifyServiceMessage(req))
 
-		c, err := container.New(
+		c, err := container.NewClient(
 			container.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: new(testGRPCServer),
@@ -508,7 +508,7 @@ func TestGRPCClient_Get(t *testing.T) {
 
 		resp := testGetResponse()
 
-		c, err := container.New(
+		c, err := container.NewClient(
 			container.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: &testGRPCServer{
@@ -546,7 +546,7 @@ func TestGRPCClient_Delete(t *testing.T) {
 			server: srv,
 		}
 
-		c, err := container.New(container.WithGRPCServiceClient(cli))
+		c, err := container.NewClient(container.WithGRPCServiceClient(cli))
 		require.NoError(t, err)
 
 		resp, err := c.Delete(ctx, new(container.DeleteRequest))
@@ -559,7 +559,7 @@ func TestGRPCClient_Delete(t *testing.T) {
 
 		require.Error(t, signature.VerifyServiceMessage(req))
 
-		c, err := container.New(
+		c, err := container.NewClient(
 			container.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: new(testGRPCServer),
@@ -580,7 +580,7 @@ func TestGRPCClient_Delete(t *testing.T) {
 
 		resp := testDelResponse()
 
-		c, err := container.New(
+		c, err := container.NewClient(
 			container.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: &testGRPCServer{
@@ -618,7 +618,7 @@ func TestGRPCClient_List(t *testing.T) {
 			server: srv,
 		}
 
-		c, err := container.New(container.WithGRPCServiceClient(cli))
+		c, err := container.NewClient(container.WithGRPCServiceClient(cli))
 		require.NoError(t, err)
 
 		resp, err := c.List(ctx, new(container.ListRequest))
@@ -631,7 +631,7 @@ func TestGRPCClient_List(t *testing.T) {
 
 		require.Error(t, signature.VerifyServiceMessage(req))
 
-		c, err := container.New(
+		c, err := container.NewClient(
 			container.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: new(testGRPCServer),
@@ -652,7 +652,7 @@ func TestGRPCClient_List(t *testing.T) {
 
 		resp := testListResponse()
 
-		c, err := container.New(
+		c, err := container.NewClient(
 			container.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: &testGRPCServer{
@@ -690,7 +690,7 @@ func TestGRPCClient_SetEACL(t *testing.T) {
 			server: srv,
 		}
 
-		c, err := container.New(container.WithGRPCServiceClient(cli))
+		c, err := container.NewClient(container.WithGRPCServiceClient(cli))
 		require.NoError(t, err)
 
 		resp, err := c.SetExtendedACL(ctx, new(container.SetExtendedACLRequest))
@@ -702,7 +702,7 @@ func TestGRPCClient_SetEACL(t *testing.T) {
 
 		require.Error(t, signature.VerifyServiceMessage(req))
 
-		c, err := container.New(
+		c, err := container.NewClient(
 			container.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: new(testGRPCServer),
@@ -723,7 +723,7 @@ func TestGRPCClient_SetEACL(t *testing.T) {
 
 		resp := testSetEACLResponse()
 
-		c, err := container.New(
+		c, err := container.NewClient(
 			container.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: &testGRPCServer{
@@ -761,7 +761,7 @@ func TestGRPCClient_GetEACL(t *testing.T) {
 			server: srv,
 		}
 
-		c, err := container.New(container.WithGRPCServiceClient(cli))
+		c, err := container.NewClient(container.WithGRPCServiceClient(cli))
 		require.NoError(t, err)
 
 		resp, err := c.GetExtendedACL(ctx, new(container.GetExtendedACLRequest))
@@ -773,7 +773,7 @@ func TestGRPCClient_GetEACL(t *testing.T) {
 
 		require.Error(t, signature.VerifyServiceMessage(req))
 
-		c, err := container.New(
+		c, err := container.NewClient(
 			container.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: new(testGRPCServer),
@@ -794,7 +794,7 @@ func TestGRPCClient_GetEACL(t *testing.T) {
 
 		resp := testGetEACLResponse()
 
-		c, err := container.New(
+		c, err := container.NewClient(
 			container.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: &testGRPCServer{

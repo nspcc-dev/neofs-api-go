@@ -97,7 +97,7 @@ func TestGRPCClient(t *testing.T) {
 			server: srv,
 		}
 
-		c, err := session.New(session.WithGRPCServiceClient(cli))
+		c, err := session.NewClient(session.WithGRPCServiceClient(cli))
 		require.NoError(t, err)
 
 		resp, err := c.Create(ctx, new(session.CreateRequest))
@@ -110,7 +110,7 @@ func TestGRPCClient(t *testing.T) {
 
 		require.Error(t, signature.VerifyServiceMessage(req))
 
-		c, err := session.New(
+		c, err := session.NewClient(
 			session.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: new(testGRPCServer),
@@ -137,7 +137,7 @@ func TestGRPCClient(t *testing.T) {
 			resp.SetMetaHeader(meta)
 		}
 
-		c, err := session.New(
+		c, err := session.NewClient(
 			session.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: &testGRPCServer{

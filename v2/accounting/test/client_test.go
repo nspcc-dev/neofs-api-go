@@ -101,7 +101,7 @@ func TestGRPCClient(t *testing.T) {
 			server: srv,
 		}
 
-		c, err := accounting.New(accounting.WithGRPCServiceClient(cli))
+		c, err := accounting.NewClient(accounting.WithGRPCServiceClient(cli))
 		require.NoError(t, err)
 
 		resp, err := c.Balance(ctx, new(accounting.BalanceRequest))
@@ -114,7 +114,7 @@ func TestGRPCClient(t *testing.T) {
 
 		require.Error(t, signature.VerifyServiceMessage(req))
 
-		c, err := accounting.New(
+		c, err := accounting.NewClient(
 			accounting.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: new(testGRPCServer),
@@ -141,7 +141,7 @@ func TestGRPCClient(t *testing.T) {
 			resp.SetMetaHeader(meta)
 		}
 
-		c, err := accounting.New(
+		c, err := accounting.NewClient(
 			accounting.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: &testGRPCServer{

@@ -62,7 +62,7 @@ func defaultCfg() *cfg {
 	}
 }
 
-func New(opts ...Option) (*Client, error) {
+func NewClient(opts ...Option) (*Client, error) {
 	cfg := defaultCfg()
 
 	for i := range opts {
