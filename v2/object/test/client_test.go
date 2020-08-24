@@ -274,7 +274,7 @@ func TestGRPCClient_Head(t *testing.T) {
 			server: srv,
 		}
 
-		c, err := object.New(object.WithGRPCServiceClient(cli))
+		c, err := object.NewClient(object.WithGRPCServiceClient(cli))
 		require.NoError(t, err)
 
 		resp, err := c.Head(ctx, new(object.HeadRequest))
@@ -287,7 +287,7 @@ func TestGRPCClient_Head(t *testing.T) {
 
 		require.Error(t, signature.VerifyServiceMessage(req))
 
-		c, err := object.New(
+		c, err := object.NewClient(
 			object.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: new(testGRPCServer),
@@ -308,7 +308,7 @@ func TestGRPCClient_Head(t *testing.T) {
 
 		resp := testHeadResponse()
 
-		c, err := object.New(
+		c, err := object.NewClient(
 			object.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: &testGRPCServer{
@@ -346,7 +346,7 @@ func TestGRPCClient_Delete(t *testing.T) {
 			server: srv,
 		}
 
-		c, err := object.New(object.WithGRPCServiceClient(cli))
+		c, err := object.NewClient(object.WithGRPCServiceClient(cli))
 		require.NoError(t, err)
 
 		resp, err := c.Delete(ctx, new(object.DeleteRequest))
@@ -359,7 +359,7 @@ func TestGRPCClient_Delete(t *testing.T) {
 
 		require.Error(t, signature.VerifyServiceMessage(req))
 
-		c, err := object.New(
+		c, err := object.NewClient(
 			object.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: new(testGRPCServer),
@@ -380,7 +380,7 @@ func TestGRPCClient_Delete(t *testing.T) {
 
 		resp := testDeleteResponse()
 
-		c, err := object.New(
+		c, err := object.NewClient(
 			object.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: &testGRPCServer{
@@ -418,7 +418,7 @@ func TestGRPCClient_GetRangeHash(t *testing.T) {
 			server: srv,
 		}
 
-		c, err := object.New(object.WithGRPCServiceClient(cli))
+		c, err := object.NewClient(object.WithGRPCServiceClient(cli))
 		require.NoError(t, err)
 
 		resp, err := c.GetRangeHash(ctx, new(object.GetRangeHashRequest))
@@ -431,7 +431,7 @@ func TestGRPCClient_GetRangeHash(t *testing.T) {
 
 		require.Error(t, signature.VerifyServiceMessage(req))
 
-		c, err := object.New(
+		c, err := object.NewClient(
 			object.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: new(testGRPCServer),
@@ -452,7 +452,7 @@ func TestGRPCClient_GetRangeHash(t *testing.T) {
 
 		resp := testGetRangeHashResponse()
 
-		c, err := object.New(
+		c, err := object.NewClient(
 			object.WithGRPCServiceClient(
 				&testGRPCClient{
 					server: &testGRPCServer{
