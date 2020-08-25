@@ -30,8 +30,8 @@ type stableMarshaler interface {
 	StableSize() int
 }
 
-type stableMarshalerWrapper struct {
-	sm stableMarshaler
+type StableMarshalerWrapper struct {
+	SM stableMarshaler
 }
 
 type metaHeader interface {
@@ -113,17 +113,17 @@ func (r *responseVerificationHeader) setOrigin(m stableMarshaler) {
 	}
 }
 
-func (s stableMarshalerWrapper) ReadSignedData(buf []byte) ([]byte, error) {
-	if s.sm != nil {
-		return s.sm.StableMarshal(buf)
+func (s StableMarshalerWrapper) ReadSignedData(buf []byte) ([]byte, error) {
+	if s.SM != nil {
+		return s.SM.StableMarshal(buf)
 	}
 
 	return nil, nil
 }
 
-func (s stableMarshalerWrapper) SignedDataSize() int {
-	if s.sm != nil {
-		return s.sm.StableSize()
+func (s StableMarshalerWrapper) SignedDataSize() int {
+	if s.SM != nil {
+		return s.SM.StableSize()
 	}
 
 	return 0
@@ -210,7 +210,7 @@ func signServiceMessagePart(key *ecdsa.PrivateKey, part stableMarshaler, sigWrit
 	// sign part
 	if err := signature.SignDataWithHandler(
 		key,
-		&stableMarshalerWrapper{part},
+		&StableMarshalerWrapper{part},
 		keySignatureHandler(sig),
 	); err != nil {
 		return err
@@ -282,7 +282,7 @@ func verifyMatryoshkaLevel(body stableMarshaler, meta metaHeader, verify verific
 
 func verifyServiceMessagePart(part stableMarshaler, sigRdr func() *refs.Signature) error {
 	return signature.VerifyDataWithSource(
-		&stableMarshalerWrapper{part},
+		&StableMarshalerWrapper{part},
 		keySignatureSource(sigRdr()),
 	)
 }
