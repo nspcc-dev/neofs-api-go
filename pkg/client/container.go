@@ -13,16 +13,16 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c Client) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (refs.ContainerID, error) {
+func (c Client) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
 	switch c.remoteNode.Version.Major {
 	case 2:
 		return c.putContainerV2(ctx, cnr, opts...)
 	default:
-		return refs.ContainerID{}, unsupportedProtocolErr
+		return nil, unsupportedProtocolErr
 	}
 }
 
-func (c Client) GetContainer(ctx context.Context, id refs.ContainerID, opts ...CallOption) (*container.Container, error) {
+func (c Client) GetContainer(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
 	switch c.remoteNode.Version.Major {
 	case 2:
 		return c.getContainerV2(ctx, id, opts...)
@@ -31,7 +31,7 @@ func (c Client) GetContainer(ctx context.Context, id refs.ContainerID, opts ...C
 	}
 }
 
-func (c Client) ListContainers(ctx context.Context, owner refs.NEO3Wallet, opts ...CallOption) ([]refs.ContainerID, error) {
+func (c Client) ListContainers(ctx context.Context, owner refs.NEO3Wallet, opts ...CallOption) ([]*container.ID, error) {
 	switch c.remoteNode.Version.Major {
 	case 2:
 		return c.listContainerV2(ctx, owner, opts...)
@@ -40,7 +40,7 @@ func (c Client) ListContainers(ctx context.Context, owner refs.NEO3Wallet, opts 
 	}
 }
 
-func (c Client) ListSelfContainers(ctx context.Context, opts ...CallOption) ([]refs.ContainerID, error) {
+func (c Client) ListSelfContainers(ctx context.Context, opts ...CallOption) ([]*container.ID, error) {
 	owner, err := refs.NEO3WalletFromPublicKey(&c.key.PublicKey)
 	if err != nil {
 		return nil, err
@@ -49,7 +49,7 @@ func (c Client) ListSelfContainers(ctx context.Context, opts ...CallOption) ([]r
 	return c.ListContainers(ctx, owner, opts...)
 }
 
-func (c Client) DeleteContainer(ctx context.Context, id refs.ContainerID, opts ...CallOption) error {
+func (c Client) DeleteContainer(ctx context.Context, id *container.ID, opts ...CallOption) error {
 	switch c.remoteNode.Version.Major {
 	case 2:
 		panic("not implemented")
@@ -61,14 +61,12 @@ func (c Client) DeleteContainer(ctx context.Context, id refs.ContainerID, opts .
 // todo: func (c Client) GetExtendedACL
 // todo: func (c Client) SetExtendedACL
 
-func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, opts ...CallOption) (refs.ContainerID, error) {
+func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
 	// apply all available options
 	callOptions := defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
-
-	cid := refs.ContainerID{}
 
 	// set transport version
 	cnr.SetVersion(c.remoteNode.Version.ToV2Version())
@@ -77,7 +75,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 	if cnr.GetOwnerID() == nil {
 		owner, err := refs.NEO3WalletFromPublicKey(&c.key.PublicKey)
 		if err != nil {
-			return cid, err
+			return nil, err
 		}
 
 		v2Owner := new(v2refs.OwnerID)
@@ -97,7 +95,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 		reqBody.SetSignature(containerSignature)
 	}, signature.SignWithRFC6979())
 	if err != nil {
-		return cid, err
+		return nil, err
 	}
 
 	req := new(v2container.PutRequest)
@@ -106,46 +104,48 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 
 	err = v2signature.SignServiceMessage(c.key, req)
 	if err != nil {
-		return cid, err
+		return nil, err
 	}
 
 	switch c.remoteNode.Protocol {
 	case GRPC:
 		cli, err := v2ContainerClientFromOptions(c.opts)
 		if err != nil {
-			return cid, errors.Wrap(err, "can't create grpc client")
+			return nil, errors.Wrap(err, "can't create grpc client")
 		}
 
 		resp, err := cli.Put(ctx, req)
 		if err != nil {
-			return cid, errors.Wrap(err, "transport error")
+			return nil, errors.Wrap(err, "transport error")
 		}
 
 		err = v2signature.VerifyServiceMessage(resp)
 		if err != nil {
-			return cid, errors.Wrap(err, "can't verify response message")
+			return nil, errors.Wrap(err, "can't verify response message")
 		}
 
-		copy(cid[:], resp.GetBody().GetContainerID().GetValue())
+		cidV2 := resp.GetBody().GetContainerID()
+
+		cid, err := container.IDFromV2(cidV2)
+		if err != nil {
+			return nil, errors.Wrapf(err, "could not convert %T to %T", cidV2, cid)
+		}
 
 		return cid, nil
 	default:
-		return cid, unsupportedProtocolErr
+		return nil, unsupportedProtocolErr
 	}
 }
 
-func (c Client) getContainerV2(ctx context.Context, id refs.ContainerID, opts ...CallOption) (*container.Container, error) {
+func (c Client) getContainerV2(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
 	// apply all available options
 	callOptions := defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
 
-	cid := new(v2refs.ContainerID)
-	cid.SetValue(id[:])
-
 	reqBody := new(v2container.GetRequestBody)
-	reqBody.SetContainerID(cid)
+	reqBody.SetContainerID(id.ToV2())
 
 	req := new(v2container.GetRequest)
 	req.SetBody(reqBody)
@@ -181,7 +181,7 @@ func (c Client) getContainerV2(ctx context.Context, id refs.ContainerID, opts ..
 	}
 }
 
-func (c Client) listContainerV2(ctx context.Context, owner refs.NEO3Wallet, opts ...CallOption) ([]refs.ContainerID, error) {
+func (c Client) listContainerV2(ctx context.Context, owner refs.NEO3Wallet, opts ...CallOption) ([]*container.ID, error) {
 	// apply all available options
 	callOptions := defaultCallOptions()
 	for i := range opts {
@@ -220,9 +220,14 @@ func (c Client) listContainerV2(ctx context.Context, owner refs.NEO3Wallet, opts
 			return nil, errors.Wrap(err, "can't verify response message")
 		}
 
-		result := make([]refs.ContainerID, len(resp.GetBody().GetContainerIDs()))
-		for i, cid := range resp.GetBody().GetContainerIDs() {
-			copy(result[i][:], cid.GetValue())
+		result := make([]*container.ID, 0, len(resp.GetBody().GetContainerIDs()))
+		for _, cidV2 := range resp.GetBody().GetContainerIDs() {
+			cid, err := container.IDFromV2(cidV2)
+			if err != nil {
+				return nil, errors.Wrapf(err, "could not convert %T to %T", cidV2, cid)
+			}
+
+			result = append(result, cid)
 		}
 
 		return result, nil
@@ -231,18 +236,15 @@ func (c Client) listContainerV2(ctx context.Context, owner refs.NEO3Wallet, opts
 	}
 }
 
-func (c Client) delContainerV2(ctx context.Context, id refs.ContainerID, opts ...CallOption) error {
+func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...CallOption) error {
 	// apply all available options
 	callOptions := defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
 
-	cid := new(v2refs.ContainerID)
-	cid.SetValue(id[:])
-
 	reqBody := new(v2container.DeleteRequestBody)
-	reqBody.SetContainerID(cid)
+	reqBody.SetContainerID(id.ToV2())
 
 	// sign container
 	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetContainerID()}
