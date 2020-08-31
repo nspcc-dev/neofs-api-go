@@ -35,3 +35,11 @@ func NEO3WalletFromPublicKey(key *ecdsa.PublicKey) (owner NEO3Wallet, err error)
 func (w NEO3Wallet) String() string {
 	return base58.Encode(w[:])
 }
+
+func (w *NEO3Wallet) Bytes() []byte {
+	if w != nil {
+		return w[:]
+	}
+
+	return nil
+}
