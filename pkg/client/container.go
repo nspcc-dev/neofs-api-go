@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
-	"github.com/nspcc-dev/neofs-api-go/pkg/refs"
+	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/util/signature"
 	"github.com/nspcc-dev/neofs-api-go/v2/client"
 	v2container "github.com/nspcc-dev/neofs-api-go/v2/container"
-	v2refs "github.com/nspcc-dev/neofs-api-go/v2/refs"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
 	"github.com/pkg/errors"
 )
@@ -31,7 +31,7 @@ func (c Client) GetContainer(ctx context.Context, id *container.ID, opts ...Call
 	}
 }
 
-func (c Client) ListContainers(ctx context.Context, owner refs.NEO3Wallet, opts ...CallOption) ([]*container.ID, error) {
+func (c Client) ListContainers(ctx context.Context, owner *owner.ID, opts ...CallOption) ([]*container.ID, error) {
 	switch c.remoteNode.Version.Major {
 	case 2:
 		return c.listContainerV2(ctx, owner, opts...)
@@ -41,12 +41,15 @@ func (c Client) ListContainers(ctx context.Context, owner refs.NEO3Wallet, opts 
 }
 
 func (c Client) ListSelfContainers(ctx context.Context, opts ...CallOption) ([]*container.ID, error) {
-	owner, err := refs.NEO3WalletFromPublicKey(&c.key.PublicKey)
+	w, err := owner.NEO3WalletFromPublicKey(&c.key.PublicKey)
 	if err != nil {
 		return nil, err
 	}
 
-	return c.ListContainers(ctx, owner, opts...)
+	ownerID := new(owner.ID)
+	ownerID.SetNeo3Wallet(w)
+
+	return c.ListContainers(ctx, ownerID, opts...)
 }
 
 func (c Client) DeleteContainer(ctx context.Context, id *container.ID, opts ...CallOption) error {
@@ -73,14 +76,15 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 
 	// if container owner is not set, then use client key as owner
 	if cnr.GetOwnerID() == nil {
-		owner, err := refs.NEO3WalletFromPublicKey(&c.key.PublicKey)
+		w, err := owner.NEO3WalletFromPublicKey(&c.key.PublicKey)
 		if err != nil {
 			return nil, err
 		}
 
-		v2Owner := new(v2refs.OwnerID)
-		v2Owner.SetValue(owner[:])
-		cnr.SetOwnerID(v2Owner)
+		ownerID := new(owner.ID)
+		ownerID.SetNeo3Wallet(w)
+
+		cnr.SetOwnerID(ownerID.ToV2())
 	}
 
 	reqBody := new(v2container.PutRequestBody)
@@ -89,7 +93,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 	// sign container
 	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetContainer()}
 	err := signature.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
-		containerSignature := new(v2refs.Signature)
+		containerSignature := new(refs.Signature)
 		containerSignature.SetKey(key)
 		containerSignature.SetSign(sig)
 		reqBody.SetSignature(containerSignature)
@@ -181,18 +185,15 @@ func (c Client) getContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 	}
 }
 
-func (c Client) listContainerV2(ctx context.Context, owner refs.NEO3Wallet, opts ...CallOption) ([]*container.ID, error) {
+func (c Client) listContainerV2(ctx context.Context, owner *owner.ID, opts ...CallOption) ([]*container.ID, error) {
 	// apply all available options
 	callOptions := defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
 
-	v2owner := new(v2refs.OwnerID)
-	v2owner.SetValue(owner[:])
-
 	reqBody := new(v2container.ListRequestBody)
-	reqBody.SetOwnerID(v2owner)
+	reqBody.SetOwnerID(owner.ToV2())
 
 	req := new(v2container.ListRequest)
 	req.SetBody(reqBody)
@@ -249,7 +250,7 @@ func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 	// sign container
 	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetContainerID()}
 	err := signature.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
-		containerSignature := new(v2refs.Signature)
+		containerSignature := new(refs.Signature)
 		containerSignature.SetKey(key)
 		containerSignature.SetSign(sig)
 		reqBody.SetSignature(containerSignature)

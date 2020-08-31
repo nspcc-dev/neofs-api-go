@@ -4,24 +4,26 @@ import (
 	"context"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/accounting"
-	"github.com/nspcc-dev/neofs-api-go/pkg/refs"
+	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	v2accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting"
 	"github.com/nspcc-dev/neofs-api-go/v2/client"
-	v2refs "github.com/nspcc-dev/neofs-api-go/v2/refs"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
 	"github.com/pkg/errors"
 )
 
 func (c Client) GetSelfBalance(ctx context.Context, opts ...CallOption) (*accounting.Decimal, error) {
-	owner, err := refs.NEO3WalletFromPublicKey(&c.key.PublicKey)
+	w, err := owner.NEO3WalletFromPublicKey(&c.key.PublicKey)
 	if err != nil {
 		return nil, err
 	}
 
-	return c.GetBalance(ctx, owner, opts...)
+	ownerID := new(owner.ID)
+	ownerID.SetNeo3Wallet(w)
+
+	return c.GetBalance(ctx, ownerID, opts...)
 }
 
-func (c Client) GetBalance(ctx context.Context, owner refs.NEO3Wallet, opts ...CallOption) (*accounting.Decimal, error) {
+func (c Client) GetBalance(ctx context.Context, owner *owner.ID, opts ...CallOption) (*accounting.Decimal, error) {
 	// check remote node version
 	switch c.remoteNode.Version.Major {
 	case 2:
@@ -31,19 +33,15 @@ func (c Client) GetBalance(ctx context.Context, owner refs.NEO3Wallet, opts ...C
 	}
 }
 
-func (c Client) getBalanceV2(ctx context.Context, owner refs.NEO3Wallet, opts ...CallOption) (*accounting.Decimal, error) {
+func (c Client) getBalanceV2(ctx context.Context, owner *owner.ID, opts ...CallOption) (*accounting.Decimal, error) {
 	// apply all available options
 	callOptions := defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
 
-	// create V2 unified structures
-	v2Owner := new(v2refs.OwnerID)
-	v2Owner.SetValue(owner[:])
-
 	reqBody := new(v2accounting.BalanceRequestBody)
-	reqBody.SetOwnerID(v2Owner)
+	reqBody.SetOwnerID(owner.ToV2())
 
 	req := new(v2accounting.BalanceRequest)
 	req.SetBody(reqBody)
