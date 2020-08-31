@@ -3,8 +3,7 @@ package owner
 import (
 	"crypto/sha256"
 
-	"github.com/nspcc-dev/neofs-api-go/pkg/refs"
-	refsV2 "github.com/nspcc-dev/neofs-api-go/v2/refs"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/pkg/errors"
 )
 
@@ -15,16 +14,16 @@ type ID struct {
 }
 
 // SetNeo3Wallet sets owner identifier value to NEO3 wallet address.
-func (id *ID) SetNeo3Wallet(v *refs.NEO3Wallet) {
+func (id *ID) SetNeo3Wallet(v *NEO3Wallet) {
 	if id != nil {
 		id.val = v.Bytes()
 	}
 }
 
 // ToV2 returns the v2 owner ID message.
-func (id *ID) ToV2() *refsV2.OwnerID {
+func (id *ID) ToV2() *refs.OwnerID {
 	if id != nil {
-		idV2 := new(refsV2.OwnerID)
+		idV2 := new(refs.OwnerID)
 		idV2.SetValue(id.val)
 
 		return idV2
@@ -33,7 +32,8 @@ func (id *ID) ToV2() *refsV2.OwnerID {
 	return nil
 }
 
-func IDFromV2(idV2 *refsV2.OwnerID) (*ID, error) {
+// IDFromV2 converts owner ID v2 structure to ID.
+func IDFromV2(idV2 *refs.OwnerID) (*ID, error) {
 	if idV2 == nil {
 		return nil, nil
 	}

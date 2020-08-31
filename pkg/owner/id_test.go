@@ -4,14 +4,13 @@ import (
 	"crypto/rand"
 	"testing"
 
-	"github.com/nspcc-dev/neofs-api-go/pkg/refs"
 	"github.com/stretchr/testify/require"
 )
 
 func TestIDV2(t *testing.T) {
 	id := new(ID)
 
-	wallet := new(refs.NEO3Wallet)
+	wallet := new(NEO3Wallet)
 
 	_, err := rand.Read(wallet.Bytes())
 	require.NoError(t, err)
