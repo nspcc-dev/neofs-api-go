@@ -3,7 +3,7 @@ package container
 import (
 	"github.com/google/uuid"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl"
-	"github.com/nspcc-dev/neofs-api-go/pkg/refs"
+	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 )
 
 type (
@@ -20,7 +20,7 @@ type (
 		acl        uint32
 		policy     string
 		attributes []attribute
-		owner      *refs.NEO3Wallet
+		owner      *owner.ID
 		nonce      uuid.UUID
 	}
 )
@@ -75,9 +75,19 @@ func WithNonce(nonce uuid.UUID) NewOption {
 	})
 }
 
-func WithOwner(owner refs.NEO3Wallet) NewOption {
+func WithOwnerID(id *owner.ID) NewOption {
 	return newFuncContainerOption(func(option *containerOptions) {
-		option.owner = &owner
+		option.owner = id
+	})
+}
+
+func WithNEO3Wallet(w *owner.NEO3Wallet) NewOption {
+	return newFuncContainerOption(func(option *containerOptions) {
+		if option.owner == nil {
+			option.owner = new(owner.ID)
+		}
+
+		option.owner.SetNeo3Wallet(w)
 	})
 }
 

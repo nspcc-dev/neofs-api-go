@@ -2,7 +2,6 @@ package container
 
 import (
 	"github.com/nspcc-dev/neofs-api-go/v2/container"
-	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 )
 
 type Container struct {
@@ -24,10 +23,7 @@ func New(opts ...NewOption) (*Container, error) {
 	}
 
 	if cnrOptions.owner != nil {
-		owner := new(refs.OwnerID)
-		owner.SetValue(cnrOptions.owner[:])
-
-		cnr.SetOwnerID(owner)
+		cnr.SetOwnerID(cnrOptions.owner.ToV2())
 	}
 
 	attributes := make([]*container.Attribute, len(cnrOptions.attributes))
