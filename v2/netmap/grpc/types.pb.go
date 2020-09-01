@@ -512,10 +512,10 @@ func (m *PlacementPolicy_FilterGroup_Selector) GetKey() string {
 
 // NeoFS node description
 type NodeInfo struct {
-	// Ways to connect to a node
-	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
 	// Public key of the NeoFS node in a binary format.
-	PublicKey []byte `protobuf:"bytes,2,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
+	PublicKey []byte `protobuf:"bytes,1,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
+	// Ways to connect to a node
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
 	// Carries list of the NeoFS node attributes in a string key-value format.
 	Attributes []*NodeInfo_Attribute `protobuf:"bytes,3,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	// Carries state of the NeoFS node.
@@ -558,18 +558,18 @@ func (m *NodeInfo) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_NodeInfo proto.InternalMessageInfo
 
-func (m *NodeInfo) GetAddress() string {
-	if m != nil {
-		return m.Address
-	}
-	return ""
-}
-
 func (m *NodeInfo) GetPublicKey() []byte {
 	if m != nil {
 		return m.PublicKey
 	}
 	return nil
+}
+
+func (m *NodeInfo) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
 }
 
 func (m *NodeInfo) GetAttributes() []*NodeInfo_Attribute {
@@ -690,8 +690,8 @@ var fileDescriptor_91a1332b2376641a = []byte{
 	0x85, 0x35, 0x35, 0x35, 0xb1, 0x36, 0xd6, 0x0a, 0xa8, 0x00, 0x4a, 0xc7, 0x3a, 0xd2, 0xb6, 0x0f,
 	0x55, 0xc8, 0x25, 0xeb, 0xab, 0xb4, 0x61, 0x3b, 0x53, 0x1b, 0xda, 0x83, 0xbc, 0x4b, 0xe7, 0x21,
 	0x5f, 0xdd, 0xc3, 0x14, 0x64, 0x9a, 0x92, 0x2f, 0x35, 0x55, 0xff, 0x20, 0xc3, 0xb6, 0x45, 0x27,
-	0xa4, 0x17, 0x7a, 0x34, 0xd1, 0xa5, 0x33, 0x99, 0xc4, 0x84, 0xb1, 0x95, 0xec, 0x32, 0x88, 0x1e,
-	0x02, 0x44, 0xf3, 0x71, 0xe0, 0xbb, 0xa3, 0xac, 0x7e, 0x07, 0x17, 0x53, 0xcf, 0x09, 0x59, 0xa2,
+	0xa4, 0x17, 0x7a, 0x14, 0x3d, 0x04, 0x88, 0xe6, 0xe3, 0xc0, 0x77, 0x47, 0x99, 0xf2, 0x76, 0x70,
+	0x31, 0xf5, 0x9c, 0x90, 0x65, 0x22, 0x5b, 0x67, 0x32, 0x89, 0x09, 0x63, 0x2b, 0x86, 0x0c, 0xa2,
 	0x23, 0x00, 0x87, 0xf3, 0xd8, 0x1f, 0xcf, 0x39, 0x61, 0x42, 0xd3, 0xa5, 0xf6, 0xe3, 0xdf, 0x57,
 	0x99, 0x35, 0x32, 0x3a, 0x59, 0x32, 0x5e, 0xab, 0x43, 0x07, 0x90, 0x67, 0xdc, 0xe1, 0x44, 0xcf,
 	0x09, 0x01, 0xd6, 0xfe, 0x42, 0x30, 0x48, 0xf2, 0x70, 0x9a, 0x5e, 0xd9, 0x87, 0xe2, 0x25, 0xe1,
@@ -701,8 +701,8 @@ var fileDescriptor_91a1332b2376641a = []byte{
 	0xfd, 0xcf, 0xea, 0xd6, 0x9b, 0x67, 0x53, 0x9f, 0x9f, 0xcf, 0xc7, 0x86, 0x4b, 0x67, 0xad, 0x90,
 	0x45, 0xae, 0xdb, 0x9c, 0x90, 0x45, 0x2b, 0x24, 0xd4, 0x63, 0x4d, 0x27, 0xf2, 0x9b, 0x53, 0xda,
 	0xda, 0x7c, 0x57, 0x9f, 0xa7, 0xe7, 0x8f, 0xf2, 0x5d, 0x8b, 0xd0, 0xee, 0xc0, 0xe8, 0xf4, 0x7b,
-	0xc9, 0x78, 0x96, 0xf0, 0x8e, 0x55, 0xf1, 0xde, 0xee, 0xff, 0x0a, 0x00, 0x00, 0xff, 0xff, 0x87,
-	0xfe, 0x8e, 0x55, 0x8d, 0x05, 0x00, 0x00,
+	0xc9, 0x78, 0x96, 0xf0, 0x8e, 0x55, 0xf1, 0xde, 0xee, 0xff, 0x0a, 0x00, 0x00, 0xff, 0xff, 0x1a,
+	0xeb, 0x5f, 0x7e, 0x8d, 0x05, 0x00, 0x00,
 }
 
 func (m *PlacementPolicy) Marshal() (dAtA []byte, err error) {
@@ -1069,17 +1069,17 @@ func (m *NodeInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0x1a
 		}
 	}
-	if len(m.PublicKey) > 0 {
-		i -= len(m.PublicKey)
-		copy(dAtA[i:], m.PublicKey)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.PublicKey)))
-		i--
-		dAtA[i] = 0x12
-	}
 	if len(m.Address) > 0 {
 		i -= len(m.Address)
 		copy(dAtA[i:], m.Address)
 		i = encodeVarintTypes(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.PublicKey) > 0 {
+		i -= len(m.PublicKey)
+		copy(dAtA[i:], m.PublicKey)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.PublicKey)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -1293,11 +1293,11 @@ func (m *NodeInfo) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Address)
+	l = len(m.PublicKey)
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
 	}
-	l = len(m.PublicKey)
+	l = len(m.Address)
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
 	}
@@ -2133,38 +2133,6 @@ func (m *NodeInfo) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Address = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PublicKey", wireType)
 			}
 			var byteLen int
@@ -2196,6 +2164,38 @@ func (m *NodeInfo) Unmarshal(dAtA []byte) error {
 			if m.PublicKey == nil {
 				m.PublicKey = []byte{}
 			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
