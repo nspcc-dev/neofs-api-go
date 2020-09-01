@@ -6,7 +6,7 @@ require (
 	github.com/golang/protobuf v1.4.2
 	github.com/google/uuid v1.1.1
 	github.com/mr-tron/base58 v1.1.2
-	github.com/nspcc-dev/neo-go v0.90.0
+	github.com/nspcc-dev/neo-go v0.91.0
 	github.com/nspcc-dev/neofs-crypto v0.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.6.1

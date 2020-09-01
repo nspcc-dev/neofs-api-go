@@ -3,6 +3,8 @@ package owner
 import (
 	"crypto/sha256"
 
+	"github.com/mr-tron/base58"
+	"github.com/nspcc-dev/neo-go/pkg/encoding/address"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/pkg/errors"
 )
@@ -49,4 +51,21 @@ func IDFromV2(idV2 *refs.OwnerID) (*ID, error) {
 	return &ID{
 		val: val,
 	}, nil
+}
+
+func (id *ID) String() string {
+	if id != nil {
+		return base58.Encode(id.val)
+	}
+
+	return ""
+}
+
+func ScriptHashBE(id *ID) ([]byte, error) {
+	addr, err := address.StringToUint160(id.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return addr.BytesBE(), nil
 }
