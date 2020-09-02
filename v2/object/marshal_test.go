@@ -688,3 +688,15 @@ func generateRangeHashResponseBody(n int) *object.GetRangeHashResponseBody {
 
 	return resp
 }
+
+func TestObject_StableUnmarshal(t *testing.T) {
+	obj := generateObject("some data")
+
+	data, err := obj.StableMarshal(nil)
+	require.NoError(t, err)
+
+	obj2 := new(object.Object)
+	require.NoError(t, obj2.StableUnmarshal(data))
+
+	require.Equal(t, obj, obj2)
+}
