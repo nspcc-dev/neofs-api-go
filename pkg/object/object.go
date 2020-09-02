@@ -39,6 +39,8 @@ type rwObject struct {
 
 	payloadChecksum *refs.Checksum
 
+	payload []byte
+
 	// TODO: add other fields
 }
 
@@ -70,6 +72,14 @@ func (o *Object) Verify() error {
 		},
 	); err != nil {
 		return errors.Wrap(err, "invalid object ID signature")
+	}
+
+	return nil
+}
+
+func (o *Object) GetPayload() []byte {
+	if o != nil {
+		return o.payload
 	}
 
 	return nil
@@ -147,6 +157,7 @@ func (o *rwObject) ToV2(key *ecdsa.PrivateKey) (*object.Object, error) {
 	obj := new(object.Object)
 	obj.SetObjectID(o.id.ToV2())
 	obj.SetHeader(hdr)
+	obj.SetPayload(o.payload)
 
 	sig := new(refs.Signature)
 	sig.SetKey(o.key)
@@ -195,6 +206,7 @@ func FromV2(oV2 *object.Object) (*Object, error) {
 			cid:             cid,
 			ownerID:         ownerID,
 			payloadChecksum: hdr.GetPayloadHash(),
+			payload:         oV2.GetPayload(),
 		},
 	}, nil
 }
