@@ -63,20 +63,14 @@ func TestObjectID_StableMarshal(t *testing.T) {
 }
 
 func TestAddress_StableMarshal(t *testing.T) {
-	addressFrom := new(refs.Address)
+	cid := []byte("Container ID")
+	oid := []byte("Object ID")
 
-	cnr := new(refs.ContainerID)
-	cnr.SetValue([]byte("Container ID"))
-
-	objectID := new(refs.ObjectID)
-	objectID.SetValue([]byte("Object ID"))
+	addressFrom := generateAddress(cid, oid)
 
 	addressTransport := new(grpc.Address)
 
 	t.Run("non empty", func(t *testing.T) {
-		addressFrom.SetContainerID(cnr)
-		addressFrom.SetObjectID(objectID)
-
 		wire, err := addressFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
@@ -153,4 +147,28 @@ func generateVersion(maj, min uint32) *refs.Version {
 	version.SetMinor(min)
 
 	return version
+}
+
+func generateAddress(bCid, bOid []byte) *refs.Address {
+	addr := new(refs.Address)
+
+	cid := new(refs.ContainerID)
+	cid.SetValue(bCid)
+
+	oid := new(refs.ObjectID)
+	oid.SetValue(bOid)
+
+	return addr
+}
+
+func TestAddress_StableUnmarshal(t *testing.T) {
+	addr := generateAddress([]byte("container id"), []byte("object id"))
+
+	data, err := addr.StableMarshal(nil)
+	require.NoError(t, err)
+
+	addr2 := new(refs.Address)
+	require.NoError(t, addr2.StableUnmarshal(data))
+
+	require.Equal(t, addr, addr2)
 }
