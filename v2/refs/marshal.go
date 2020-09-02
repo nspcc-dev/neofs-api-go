@@ -2,6 +2,7 @@ package refs
 
 import (
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
+	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
 const (
@@ -138,6 +139,21 @@ func (a *Address) StableSize() (size int) {
 	size += proto.NestedStructureSize(addressObjectField, a.oid)
 
 	return size
+}
+
+func (a *Address) StableUnmarshal(data []byte) error {
+	if a == nil {
+		return nil
+	}
+
+	addrGRPC := new(refs.Address)
+	if err := addrGRPC.Unmarshal(data); err != nil {
+		return err
+	}
+
+	*a = *AddressFromGRPCMessage(addrGRPC)
+
+	return nil
 }
 
 func (c *Checksum) StableMarshal(buf []byte) ([]byte, error) {
