@@ -13,6 +13,18 @@ import (
 	"github.com/pkg/errors"
 )
 
+type delContainerSignWrapper struct {
+	body *v2container.DeleteRequestBody
+}
+
+func (c delContainerSignWrapper) ReadSignedData(bytes []byte) ([]byte, error) {
+	return c.body.GetContainerID().GetValue(), nil
+}
+
+func (c delContainerSignWrapper) SignedDataSize() int {
+	return len(c.body.GetContainerID().GetValue())
+}
+
 func (c Client) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
 	switch c.remoteNode.Version.Major {
 	case 2:
@@ -55,7 +67,7 @@ func (c Client) ListSelfContainers(ctx context.Context, opts ...CallOption) ([]*
 func (c Client) DeleteContainer(ctx context.Context, id *container.ID, opts ...CallOption) error {
 	switch c.remoteNode.Version.Major {
 	case 2:
-		panic("not implemented")
+		return c.delContainerV2(ctx, id, opts...)
 	default:
 		return unsupportedProtocolErr
 	}
@@ -248,13 +260,17 @@ func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 	reqBody.SetContainerID(id.ToV2())
 
 	// sign container
-	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetContainerID()}
-	err := signature.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
-		containerSignature := new(refs.Signature)
-		containerSignature.SetKey(key)
-		containerSignature.SetSign(sig)
-		reqBody.SetSignature(containerSignature)
-	}, signature.SignWithRFC6979())
+	err := signature.SignDataWithHandler(c.key,
+		delContainerSignWrapper{
+			body: reqBody,
+		},
+		func(key []byte, sig []byte) {
+			containerSignature := new(refs.Signature)
+			containerSignature.SetKey(key)
+			containerSignature.SetSign(sig)
+			reqBody.SetSignature(containerSignature)
+		},
+		signature.SignWithRFC6979())
 	if err != nil {
 		return err
 	}
