@@ -2,6 +2,7 @@ package object
 
 import (
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
+	object "github.com/nspcc-dev/neofs-api-go/v2/object/grpc"
 )
 
 const (
@@ -438,6 +439,21 @@ func (o *Object) StableSize() (size int) {
 	size += proto.BytesSize(objPayloadField, o.payload)
 
 	return size
+}
+
+func (o *Object) StableUnmarshal(data []byte) error {
+	if o == nil {
+		return nil
+	}
+
+	objGRPC := new(object.Object)
+	if err := objGRPC.Unmarshal(data); err != nil {
+		return err
+	}
+
+	*o = *ObjectFromGRPCMessage(objGRPC)
+
+	return nil
 }
 
 func (r *GetRequestBody) StableMarshal(buf []byte) ([]byte, error) {
