@@ -77,9 +77,41 @@ func (o *Object) Verify() error {
 	return nil
 }
 
+// Address returns address of the object.
+func (o *Object) Address() *Address {
+	if o != nil {
+		return &Address{
+			cid: o.cid,
+			oid: o.id,
+		}
+	}
+
+	return nil
+}
+
+// GetPayload returns object payload bytes.
 func (o *Object) GetPayload() []byte {
 	if o != nil {
 		return o.payload
+	}
+
+	return nil
+}
+
+// CutPayload copies object fields w/o payload.
+func (o *Object) CutPayload() *Object {
+	if o != nil {
+		return &Object{
+			rwObject: rwObject{
+				fin:             o.fin,
+				id:              o.id,
+				key:             o.key,
+				sig:             o.sig,
+				cid:             o.cid,
+				ownerID:         o.ownerID,
+				payloadChecksum: o.payloadChecksum,
+			},
+		}
 	}
 
 	return nil
@@ -209,4 +241,14 @@ func FromV2(oV2 *object.Object) (*Object, error) {
 			payload:         oV2.GetPayload(),
 		},
 	}, nil
+}
+
+// FromBytes restores Object from a binary representation.
+func FromBytes(data []byte) (*Object, error) {
+	oV2 := new(object.Object)
+	if err := oV2.StableUnmarshal(data); err != nil {
+		return nil, errors.Wrap(err, "could not unmarshal object")
+	}
+
+	return FromV2(oV2)
 }
