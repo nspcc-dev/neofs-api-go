@@ -351,7 +351,7 @@ func generateListResponseBody(n int) *container.ListResponseBody {
 
 func generateEACL(n int, k, v string) *acl.Table {
 	target := new(acl.TargetInfo)
-	target.SetTarget(acl.TargetUser)
+	target.SetRole(acl.RoleUser)
 
 	keys := make([][]byte, n)
 

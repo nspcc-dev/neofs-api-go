@@ -18,8 +18,9 @@ const (
 	recordFiltersField   = 3
 	recordTargetsField   = 4
 
-	tableContainerIDField = 1
-	tableRecordsField     = 2
+	tableVersionField     = 1
+	tableContainerIDField = 2
+	tableRecordsField     = 3
 
 	lifetimeExpirationField     = 1
 	lifetimeNotValidBeforeField = 2
@@ -49,6 +50,13 @@ func (t *Table) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
+	n, err = proto.NestedStructureMarshal(tableVersionField, buf[offset:], t.version)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
 	n, err = proto.NestedStructureMarshal(tableContainerIDField, buf[offset:], t.cid)
 	if err != nil {
 		return nil, err
@@ -74,6 +82,7 @@ func (t *Table) StableSize() (size int) {
 		return 0
 	}
 
+	size += proto.NestedStructureSize(tableVersionField, t.version)
 	size += proto.NestedStructureSize(tableContainerIDField, t.cid)
 
 	for i := range t.records {
@@ -213,7 +222,7 @@ func (f *HeaderFilter) StableSize() (size int) {
 	return size
 }
 
-// StableMarshal marshals unified target info structure in a protobuf
+// StableMarshal marshals unified role info structure in a protobuf
 // compatible way without field order shuffle.
 func (t *TargetInfo) StableMarshal(buf []byte) ([]byte, error) {
 	if t == nil {
@@ -229,7 +238,7 @@ func (t *TargetInfo) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.EnumMarshal(targetTypeField, buf[offset:], int32(t.target))
+	n, err = proto.EnumMarshal(targetTypeField, buf[offset:], int32(t.role))
 	if err != nil {
 		return nil, err
 	}
@@ -244,13 +253,13 @@ func (t *TargetInfo) StableMarshal(buf []byte) ([]byte, error) {
 	return buf, nil
 }
 
-// StableSize of target info structure marshalled by StableMarshal function.
+// StableSize of role info structure marshalled by StableMarshal function.
 func (t *TargetInfo) StableSize() (size int) {
 	if t == nil {
 		return 0
 	}
 
-	size += proto.EnumSize(targetTypeField, int32(t.target))
+	size += proto.EnumSize(targetTypeField, int32(t.role))
 	size += proto.RepeatedBytesSize(targetKeysField, t.keys)
 
 	return size

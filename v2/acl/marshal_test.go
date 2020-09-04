@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func generateTarget(u acl.Target, k int) *acl.TargetInfo {
+func generateTarget(u acl.Role, k int) *acl.TargetInfo {
 	target := new(acl.TargetInfo)
-	target.SetTarget(u)
+	target.SetRole(u)
 
 	keys := make([][]byte, k)
 
@@ -39,7 +39,7 @@ func generateRecord(another bool) *acl.Record {
 
 	switch another {
 	case true:
-		t1 := generateTarget(acl.TargetUser, 2)
+		t1 := generateTarget(acl.RoleUser, 2)
 		f1 := generateFilter(acl.HeaderTypeObject, "OID", "ObjectID Value")
 
 		record.SetOperation(acl.OperationHead)
@@ -47,8 +47,8 @@ func generateRecord(another bool) *acl.Record {
 		record.SetTargets([]*acl.TargetInfo{t1})
 		record.SetFilters([]*acl.HeaderFilter{f1})
 	default:
-		t1 := generateTarget(acl.TargetUser, 2)
-		t2 := generateTarget(acl.TargetSystem, 0)
+		t1 := generateTarget(acl.RoleUser, 2)
+		t2 := generateTarget(acl.RoleSystem, 0)
 		f1 := generateFilter(acl.HeaderTypeObject, "CID", "Container ID Value")
 		f2 := generateFilter(acl.HeaderTypeRequest, "X-Header-Key", "X-Header-Value")
 
@@ -65,7 +65,12 @@ func generateEACL() *acl.Table {
 	cid := new(refs.ContainerID)
 	cid.SetValue([]byte("Container ID"))
 
+	ver := new(refs.Version)
+	ver.SetMajor(2)
+	ver.SetMinor(3)
+
 	table := new(acl.Table)
+	table.SetVersion(ver)
 	table.SetContainerID(cid)
 	table.SetRecords([]*acl.Record{generateRecord(true)})
 
@@ -111,7 +116,7 @@ func generateBearerToken(id string) *acl.BearerToken {
 
 func TestHeaderFilter_StableMarshal(t *testing.T) {
 	filterFrom := generateFilter(acl.HeaderTypeObject, "CID", "Container ID Value")
-	transport := new(grpc.EACLRecord_FilterInfo)
+	transport := new(grpc.EACLRecord_Filter)
 
 	t.Run("non empty", func(t *testing.T) {
 		filterFrom.SetHeaderType(acl.HeaderTypeObject)
@@ -131,11 +136,11 @@ func TestHeaderFilter_StableMarshal(t *testing.T) {
 }
 
 func TestTargetInfo_StableMarshal(t *testing.T) {
-	targetFrom := generateTarget(acl.TargetUser, 2)
-	transport := new(grpc.EACLRecord_TargetInfo)
+	targetFrom := generateTarget(acl.RoleUser, 2)
+	transport := new(grpc.EACLRecord_Target)
 
 	t.Run("non empty", func(t *testing.T) {
-		targetFrom.SetTarget(acl.TargetUser)
+		targetFrom.SetRole(acl.RoleUser)
 		targetFrom.SetKeyList([][]byte{
 			[]byte("Public Key 1"),
 			[]byte("Public Key 2"),
@@ -176,9 +181,14 @@ func TestTable_StableMarshal(t *testing.T) {
 		cid := new(refs.ContainerID)
 		cid.SetValue([]byte("Container ID"))
 
+		ver := new(refs.Version)
+		ver.SetMajor(2)
+		ver.SetMinor(3)
+
 		r1 := generateRecord(false)
 		r2 := generateRecord(true)
 
+		tableFrom.SetVersion(ver)
 		tableFrom.SetContainerID(cid)
 		tableFrom.SetRecords([]*acl.Record{r1, r2})
 
