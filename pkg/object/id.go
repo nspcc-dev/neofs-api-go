@@ -37,10 +37,6 @@ func (id *ID) ToV2() *refs.ObjectID {
 // Returns an error if the format of the identifier
 // in the message is broken.
 func IDFromV2(idV2 *refs.ObjectID) (*ID, error) {
-	if idV2 == nil {
-		return nil, nil
-	}
-
 	val := idV2.GetValue()
 	if ln := len(val); ln != sha256.Size {
 		return nil, errors.Errorf("could not convert %T to %T: invalid length %d",
