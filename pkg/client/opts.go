@@ -4,6 +4,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	v2accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting"
 	v2container "github.com/nspcc-dev/neofs-api-go/v2/container"
+	v2object "github.com/nspcc-dev/neofs-api-go/v2/object"
 	v2session "github.com/nspcc-dev/neofs-api-go/v2/session"
 	"google.golang.org/grpc"
 )
@@ -40,6 +41,8 @@ type (
 		conn               *grpc.ClientConn
 		v2ContainerClient  *v2container.Client
 		v2AccountingClient *v2accounting.Client
+
+		objectClientV2 *v2object.Client
 	}
 )
 
