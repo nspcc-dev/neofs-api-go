@@ -38,6 +38,17 @@ func (o *RawObject) SetOwnerID(v *owner.ID) {
 	}
 }
 
+// Release returns read-only Object instance.
+func (o *RawObject) Release() *Object {
+	if o != nil {
+		return &Object{
+			rwObject: o.rwObject,
+		}
+	}
+
+	return nil
+}
+
 // SetPayloadChecksumSHA256 sets payload checksum as a SHA256 checksum.
 func (o *RawObject) SetPayloadChecksumSHA256(v [sha256.Size]byte) {
 	if o != nil {
