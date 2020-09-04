@@ -4,6 +4,13 @@ import (
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
+// SetVersion sets version of EACL rules in table.
+func (m *EACLTable) SetVersion(v *refs.Version) {
+	if m != nil {
+		m.Version = v
+	}
+}
+
 // SetContainerId sets container identifier of the eACL table.
 func (m *EACLTable) SetContainerId(v *refs.ContainerID) {
 	if m != nil {
@@ -33,56 +40,56 @@ func (m *EACLRecord) SetAction(v Action) {
 }
 
 // SetFilters sets filter list of the eACL record.
-func (m *EACLRecord) SetFilters(v []*EACLRecord_FilterInfo) {
+func (m *EACLRecord) SetFilters(v []*EACLRecord_Filter) {
 	if m != nil {
 		m.Filters = v
 	}
 }
 
 // SetTargets sets target list of the eACL record.
-func (m *EACLRecord) SetTargets(v []*EACLRecord_TargetInfo) {
+func (m *EACLRecord) SetTargets(v []*EACLRecord_Target) {
 	if m != nil {
 		m.Targets = v
 	}
 }
 
 // SetHeader sets header type of the eACL filter.
-func (m *EACLRecord_FilterInfo) SetHeader(v HeaderType) {
+func (m *EACLRecord_Filter) SetHeader(v HeaderType) {
 	if m != nil {
-		m.Header = v
+		m.HeaderType = v
 	}
 }
 
 // SetMatchType sets match type of the eACL filter.
-func (m *EACLRecord_FilterInfo) SetMatchType(v MatchType) {
+func (m *EACLRecord_Filter) SetMatchType(v MatchType) {
 	if m != nil {
 		m.MatchType = v
 	}
 }
 
 // SetHeaderName sets header name of the eACL filter.
-func (m *EACLRecord_FilterInfo) SetHeaderName(v string) {
+func (m *EACLRecord_Filter) SetHeaderName(v string) {
 	if m != nil {
 		m.HeaderName = v
 	}
 }
 
 // SetHeaderVal sets header value of the eACL filter.
-func (m *EACLRecord_FilterInfo) SetHeaderVal(v string) {
+func (m *EACLRecord_Filter) SetHeaderVal(v string) {
 	if m != nil {
 		m.HeaderVal = v
 	}
 }
 
-// SetTarget sets target group of the eACL target.
-func (m *EACLRecord_TargetInfo) SetTarget(v Target) {
+// SetRole sets target group of the eACL target.
+func (m *EACLRecord_Target) SetRole(v Role) {
 	if m != nil {
-		m.Target = v
+		m.Role = v
 	}
 }
 
 // SetKeyList sets key list of the eACL target.
-func (m *EACLRecord_TargetInfo) SetKeyList(v [][]byte) {
+func (m *EACLRecord_Target) SetKeyList(v [][]byte) {
 	if m != nil {
 		m.KeyList = v
 	}
