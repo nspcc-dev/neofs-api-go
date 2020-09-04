@@ -22,31 +22,31 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// Filtering operation
-type PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation int32
+// Operations on filters
+type Operation int32
 
 const (
 	// No Operation defined
-	PlacementPolicy_FilterGroup_Filter_SimpleFilter_OPERATION_UNSPECIFIED PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation = 0
+	Operation_OPERATION_UNSPECIFIED Operation = 0
 	// Equal
-	PlacementPolicy_FilterGroup_Filter_SimpleFilter_EQ PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation = 1
+	Operation_EQ Operation = 1
 	// Not Equal
-	PlacementPolicy_FilterGroup_Filter_SimpleFilter_NE PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation = 2
+	Operation_NE Operation = 2
 	// Greater then
-	PlacementPolicy_FilterGroup_Filter_SimpleFilter_GT PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation = 3
+	Operation_GT Operation = 3
 	// Greater or equal
-	PlacementPolicy_FilterGroup_Filter_SimpleFilter_GE PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation = 4
+	Operation_GE Operation = 4
 	// Less then
-	PlacementPolicy_FilterGroup_Filter_SimpleFilter_LT PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation = 5
+	Operation_LT Operation = 5
 	// Less or equal
-	PlacementPolicy_FilterGroup_Filter_SimpleFilter_LE PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation = 6
+	Operation_LE Operation = 6
 	// Logical OR
-	PlacementPolicy_FilterGroup_Filter_SimpleFilter_OR PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation = 7
+	Operation_OR Operation = 7
 	// Logical AND
-	PlacementPolicy_FilterGroup_Filter_SimpleFilter_AND PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation = 8
+	Operation_AND Operation = 8
 )
 
-var PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation_name = map[int32]string{
+var Operation_name = map[int32]string{
 	0: "OPERATION_UNSPECIFIED",
 	1: "EQ",
 	2: "NE",
@@ -58,7 +58,7 @@ var PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation_name = map[int32]s
 	8: "AND",
 }
 
-var PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation_value = map[string]int32{
+var Operation_value = map[string]int32{
 	"OPERATION_UNSPECIFIED": 0,
 	"EQ":                    1,
 	"NE":                    2,
@@ -70,12 +70,12 @@ var PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation_value = map[string
 	"AND":                   8,
 }
 
-func (x PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation) String() string {
-	return proto.EnumName(PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation_name, int32(x))
+func (x Operation) String() string {
+	return proto.EnumName(Operation_name, int32(x))
 }
 
-func (PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_91a1332b2376641a, []int{0, 0, 0, 0, 0}
+func (Operation) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_91a1332b2376641a, []int{0}
 }
 
 // Represents the enumeration of various states of the NeoFS node.
@@ -107,25 +107,252 @@ func (x NodeInfo_State) String() string {
 }
 
 func (NodeInfo_State) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_91a1332b2376641a, []int{1, 0}
+	return fileDescriptor_91a1332b2376641a, []int{4, 0}
+}
+
+// Filter
+type Filter struct {
+	// Name of the filter or a reference to the named filter.
+	// '*' means application to the whole unfiltered NetworkMap
+	// At top level it's used as a filter name. At lower levels it's considered to
+	// be a reference to another named filter
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Key to filter
+	Key string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
+	// Filtering operation
+	Op Operation `protobuf:"varint,3,opt,name=op,proto3,enum=neo.fs.v2.netmap.Operation" json:"op,omitempty"`
+	// Value to match
+	Value string `protobuf:"bytes,4,opt,name=value,proto3" json:"value,omitempty"`
+	// List of inner filters. Top level operation will be applied to the whole list.
+	Filters              []*Filter `protobuf:"bytes,5,rep,name=filters,proto3" json:"filters,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
+}
+
+func (m *Filter) Reset()         { *m = Filter{} }
+func (m *Filter) String() string { return proto.CompactTextString(m) }
+func (*Filter) ProtoMessage()    {}
+func (*Filter) Descriptor() ([]byte, []int) {
+	return fileDescriptor_91a1332b2376641a, []int{0}
+}
+func (m *Filter) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Filter) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Filter.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Filter) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Filter.Merge(m, src)
+}
+func (m *Filter) XXX_Size() int {
+	return m.Size()
+}
+func (m *Filter) XXX_DiscardUnknown() {
+	xxx_messageInfo_Filter.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Filter proto.InternalMessageInfo
+
+func (m *Filter) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Filter) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+func (m *Filter) GetOp() Operation {
+	if m != nil {
+		return m.Op
+	}
+	return Operation_OPERATION_UNSPECIFIED
+}
+
+func (m *Filter) GetValue() string {
+	if m != nil {
+		return m.Value
+	}
+	return ""
+}
+
+func (m *Filter) GetFilters() []*Filter {
+	if m != nil {
+		return m.Filters
+	}
+	return nil
+}
+
+// Selector
+type Selector struct {
+	// Selector name to reference in object placement section
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// How many nodes to select from bucket
+	Count uint32 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	// Attribute bucket to select from
+	Attribute string `protobuf:"bytes,3,opt,name=attribute,proto3" json:"attribute,omitempty"`
+	// Filter reference to select from
+	Filter               string   `protobuf:"bytes,4,opt,name=filter,proto3" json:"filter,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Selector) Reset()         { *m = Selector{} }
+func (m *Selector) String() string { return proto.CompactTextString(m) }
+func (*Selector) ProtoMessage()    {}
+func (*Selector) Descriptor() ([]byte, []int) {
+	return fileDescriptor_91a1332b2376641a, []int{1}
+}
+func (m *Selector) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Selector) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Selector.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Selector) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Selector.Merge(m, src)
+}
+func (m *Selector) XXX_Size() int {
+	return m.Size()
+}
+func (m *Selector) XXX_DiscardUnknown() {
+	xxx_messageInfo_Selector.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Selector proto.InternalMessageInfo
+
+func (m *Selector) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Selector) GetCount() uint32 {
+	if m != nil {
+		return m.Count
+	}
+	return 0
+}
+
+func (m *Selector) GetAttribute() string {
+	if m != nil {
+		return m.Attribute
+	}
+	return ""
+}
+
+func (m *Selector) GetFilter() string {
+	if m != nil {
+		return m.Filter
+	}
+	return ""
+}
+
+// Exact bucket for each replica
+type Replica struct {
+	// How many object replicas to put
+	Count uint32 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
+	// Named selector bucket to put in
+	Selector             string   `protobuf:"bytes,2,opt,name=selector,proto3" json:"selector,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Replica) Reset()         { *m = Replica{} }
+func (m *Replica) String() string { return proto.CompactTextString(m) }
+func (*Replica) ProtoMessage()    {}
+func (*Replica) Descriptor() ([]byte, []int) {
+	return fileDescriptor_91a1332b2376641a, []int{2}
+}
+func (m *Replica) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Replica) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Replica.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Replica) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Replica.Merge(m, src)
+}
+func (m *Replica) XXX_Size() int {
+	return m.Size()
+}
+func (m *Replica) XXX_DiscardUnknown() {
+	xxx_messageInfo_Replica.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Replica proto.InternalMessageInfo
+
+func (m *Replica) GetCount() uint32 {
+	if m != nil {
+		return m.Count
+	}
+	return 0
+}
+
+func (m *Replica) GetSelector() string {
+	if m != nil {
+		return m.Selector
+	}
+	return ""
 }
 
 // Set of rules to select a subset of nodes able to store container's objects
 type PlacementPolicy struct {
-	// Replication factor
-	ReplFactor uint32 `protobuf:"varint,1,opt,name=repl_factor,json=replFactor,proto3" json:"repl_factor,omitempty"`
-	// List of filter groups
-	FilterGroups         []*PlacementPolicy_FilterGroup `protobuf:"bytes,2,rep,name=filter_groups,json=filterGroups,proto3" json:"filter_groups,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                       `json:"-"`
-	XXX_unrecognized     []byte                         `json:"-"`
-	XXX_sizecache        int32                          `json:"-"`
+	// Rules to set number of object replicas and place each one into a particular bucket
+	Replicas []*Replica `protobuf:"bytes,1,rep,name=replicas,proto3" json:"replicas,omitempty"`
+	// Container backup factor controls how deep NeoFS will search for nodes
+	// alternatives to include into container.
+	ContainerBackupFactor uint32 `protobuf:"varint,2,opt,name=container_backup_factor,json=containerBackupFactor,proto3" json:"container_backup_factor,omitempty"`
+	// Set of Selectors to form the container's nodes subset
+	Selectors []*Selector `protobuf:"bytes,3,rep,name=selectors,proto3" json:"selectors,omitempty"`
+	// List of named filters to reference in selectors
+	Filters              []*Filter `protobuf:"bytes,4,rep,name=filters,proto3" json:"filters,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
 func (m *PlacementPolicy) Reset()         { *m = PlacementPolicy{} }
 func (m *PlacementPolicy) String() string { return proto.CompactTextString(m) }
 func (*PlacementPolicy) ProtoMessage()    {}
 func (*PlacementPolicy) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91a1332b2376641a, []int{0}
+	return fileDescriptor_91a1332b2376641a, []int{3}
 }
 func (m *PlacementPolicy) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -154,360 +381,32 @@ func (m *PlacementPolicy) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_PlacementPolicy proto.InternalMessageInfo
 
-func (m *PlacementPolicy) GetReplFactor() uint32 {
+func (m *PlacementPolicy) GetReplicas() []*Replica {
 	if m != nil {
-		return m.ReplFactor
+		return m.Replicas
+	}
+	return nil
+}
+
+func (m *PlacementPolicy) GetContainerBackupFactor() uint32 {
+	if m != nil {
+		return m.ContainerBackupFactor
 	}
 	return 0
 }
 
-func (m *PlacementPolicy) GetFilterGroups() []*PlacementPolicy_FilterGroup {
-	if m != nil {
-		return m.FilterGroups
-	}
-	return nil
-}
-
-// Filters to apply to Network Map
-type PlacementPolicy_FilterGroup struct {
-	// Resulting filter list
-	Filters []*PlacementPolicy_FilterGroup_Filter `protobuf:"bytes,1,rep,name=filters,proto3" json:"filters,omitempty"`
-	// List of selectors
-	Selectors []*PlacementPolicy_FilterGroup_Selector `protobuf:"bytes,2,rep,name=selectors,proto3" json:"selectors,omitempty"`
-	// Parts of graph to exclude. Internal use.
-	Exclude              []uint32 `protobuf:"varint,3,rep,packed,name=exclude,proto3" json:"exclude,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *PlacementPolicy_FilterGroup) Reset()         { *m = PlacementPolicy_FilterGroup{} }
-func (m *PlacementPolicy_FilterGroup) String() string { return proto.CompactTextString(m) }
-func (*PlacementPolicy_FilterGroup) ProtoMessage()    {}
-func (*PlacementPolicy_FilterGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91a1332b2376641a, []int{0, 0}
-}
-func (m *PlacementPolicy_FilterGroup) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *PlacementPolicy_FilterGroup) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_PlacementPolicy_FilterGroup.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *PlacementPolicy_FilterGroup) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PlacementPolicy_FilterGroup.Merge(m, src)
-}
-func (m *PlacementPolicy_FilterGroup) XXX_Size() int {
-	return m.Size()
-}
-func (m *PlacementPolicy_FilterGroup) XXX_DiscardUnknown() {
-	xxx_messageInfo_PlacementPolicy_FilterGroup.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PlacementPolicy_FilterGroup proto.InternalMessageInfo
-
-func (m *PlacementPolicy_FilterGroup) GetFilters() []*PlacementPolicy_FilterGroup_Filter {
-	if m != nil {
-		return m.Filters
-	}
-	return nil
-}
-
-func (m *PlacementPolicy_FilterGroup) GetSelectors() []*PlacementPolicy_FilterGroup_Selector {
+func (m *PlacementPolicy) GetSelectors() []*Selector {
 	if m != nil {
 		return m.Selectors
 	}
 	return nil
 }
 
-func (m *PlacementPolicy_FilterGroup) GetExclude() []uint32 {
-	if m != nil {
-		return m.Exclude
-	}
-	return nil
-}
-
-// Filter definition
-type PlacementPolicy_FilterGroup_Filter struct {
-	// Filter identifier
-	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	// The rest of filter
-	F                    *PlacementPolicy_FilterGroup_Filter_SimpleFilter `protobuf:"bytes,2,opt,name=f,proto3" json:"f,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                                         `json:"-"`
-	XXX_unrecognized     []byte                                           `json:"-"`
-	XXX_sizecache        int32                                            `json:"-"`
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter) Reset()         { *m = PlacementPolicy_FilterGroup_Filter{} }
-func (m *PlacementPolicy_FilterGroup_Filter) String() string { return proto.CompactTextString(m) }
-func (*PlacementPolicy_FilterGroup_Filter) ProtoMessage()    {}
-func (*PlacementPolicy_FilterGroup_Filter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91a1332b2376641a, []int{0, 0, 0}
-}
-func (m *PlacementPolicy_FilterGroup_Filter) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *PlacementPolicy_FilterGroup_Filter) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_PlacementPolicy_FilterGroup_Filter.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *PlacementPolicy_FilterGroup_Filter) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PlacementPolicy_FilterGroup_Filter.Merge(m, src)
-}
-func (m *PlacementPolicy_FilterGroup_Filter) XXX_Size() int {
-	return m.Size()
-}
-func (m *PlacementPolicy_FilterGroup_Filter) XXX_DiscardUnknown() {
-	xxx_messageInfo_PlacementPolicy_FilterGroup_Filter.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PlacementPolicy_FilterGroup_Filter proto.InternalMessageInfo
-
-func (m *PlacementPolicy_FilterGroup_Filter) GetKey() string {
-	if m != nil {
-		return m.Key
-	}
-	return ""
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter) GetF() *PlacementPolicy_FilterGroup_Filter_SimpleFilter {
-	if m != nil {
-		return m.F
-	}
-	return nil
-}
-
-// Minimal simple filter
-type PlacementPolicy_FilterGroup_Filter_SimpleFilter struct {
-	// Filtering operation
-	Op PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation `protobuf:"varint,1,opt,name=op,proto3,enum=neo.fs.v2.netmap.PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation" json:"op,omitempty"`
-	// Filtering operation argument
-	//
-	// Types that are valid to be assigned to Args:
-	//	*PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value
-	//	*PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs
-	Args                 isPlacementPolicy_FilterGroup_Filter_SimpleFilter_Args `protobuf_oneof:"args"`
-	XXX_NoUnkeyedLiteral struct{}                                               `json:"-"`
-	XXX_unrecognized     []byte                                                 `json:"-"`
-	XXX_sizecache        int32                                                  `json:"-"`
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) Reset() {
-	*m = PlacementPolicy_FilterGroup_Filter_SimpleFilter{}
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) String() string {
-	return proto.CompactTextString(m)
-}
-func (*PlacementPolicy_FilterGroup_Filter_SimpleFilter) ProtoMessage() {}
-func (*PlacementPolicy_FilterGroup_Filter_SimpleFilter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91a1332b2376641a, []int{0, 0, 0, 0}
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_PlacementPolicy_FilterGroup_Filter_SimpleFilter.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PlacementPolicy_FilterGroup_Filter_SimpleFilter.Merge(m, src)
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) XXX_Size() int {
-	return m.Size()
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) XXX_DiscardUnknown() {
-	xxx_messageInfo_PlacementPolicy_FilterGroup_Filter_SimpleFilter.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PlacementPolicy_FilterGroup_Filter_SimpleFilter proto.InternalMessageInfo
-
-type isPlacementPolicy_FilterGroup_Filter_SimpleFilter_Args interface {
-	isPlacementPolicy_FilterGroup_Filter_SimpleFilter_Args()
-	MarshalTo([]byte) (int, error)
-	Size() int
-}
-
-type PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value struct {
-	Value string `protobuf:"bytes,2,opt,name=value,proto3,oneof" json:"value,omitempty"`
-}
-type PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs struct {
-	FArgs *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters `protobuf:"bytes,3,opt,name=f_args,json=fArgs,proto3,oneof" json:"f_args,omitempty"`
-}
-
-func (*PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value) isPlacementPolicy_FilterGroup_Filter_SimpleFilter_Args() {
-}
-func (*PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs) isPlacementPolicy_FilterGroup_Filter_SimpleFilter_Args() {
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) GetArgs() isPlacementPolicy_FilterGroup_Filter_SimpleFilter_Args {
-	if m != nil {
-		return m.Args
-	}
-	return nil
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) GetOp() PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation {
-	if m != nil {
-		return m.Op
-	}
-	return PlacementPolicy_FilterGroup_Filter_SimpleFilter_OPERATION_UNSPECIFIED
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) GetValue() string {
-	if x, ok := m.GetArgs().(*PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value); ok {
-		return x.Value
-	}
-	return ""
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) GetFArgs() *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters {
-	if x, ok := m.GetArgs().(*PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs); ok {
-		return x.FArgs
-	}
-	return nil
-}
-
-// XXX_OneofWrappers is for the internal use of the proto package.
-func (*PlacementPolicy_FilterGroup_Filter_SimpleFilter) XXX_OneofWrappers() []interface{} {
-	return []interface{}{
-		(*PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value)(nil),
-		(*PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs)(nil),
-	}
-}
-
-// List of filters
-type PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters struct {
-	// List of filters
-	Filters              []*PlacementPolicy_FilterGroup_Filter_SimpleFilter `protobuf:"bytes,1,rep,name=filters,proto3" json:"filters,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                                           `json:"-"`
-	XXX_unrecognized     []byte                                             `json:"-"`
-	XXX_sizecache        int32                                              `json:"-"`
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) Reset() {
-	*m = PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters{}
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) String() string {
-	return proto.CompactTextString(m)
-}
-func (*PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) ProtoMessage() {}
-func (*PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91a1332b2376641a, []int{0, 0, 0, 0, 0}
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters.Merge(m, src)
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) XXX_Size() int {
-	return m.Size()
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) XXX_DiscardUnknown() {
-	xxx_messageInfo_PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters proto.InternalMessageInfo
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) GetFilters() []*PlacementPolicy_FilterGroup_Filter_SimpleFilter {
+func (m *PlacementPolicy) GetFilters() []*Filter {
 	if m != nil {
 		return m.Filters
 	}
 	return nil
-}
-
-// Selector
-type PlacementPolicy_FilterGroup_Selector struct {
-	// How many to select
-	Count uint32 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
-	// Key to select
-	Key                  string   `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *PlacementPolicy_FilterGroup_Selector) Reset()         { *m = PlacementPolicy_FilterGroup_Selector{} }
-func (m *PlacementPolicy_FilterGroup_Selector) String() string { return proto.CompactTextString(m) }
-func (*PlacementPolicy_FilterGroup_Selector) ProtoMessage()    {}
-func (*PlacementPolicy_FilterGroup_Selector) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91a1332b2376641a, []int{0, 0, 1}
-}
-func (m *PlacementPolicy_FilterGroup_Selector) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *PlacementPolicy_FilterGroup_Selector) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_PlacementPolicy_FilterGroup_Selector.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *PlacementPolicy_FilterGroup_Selector) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PlacementPolicy_FilterGroup_Selector.Merge(m, src)
-}
-func (m *PlacementPolicy_FilterGroup_Selector) XXX_Size() int {
-	return m.Size()
-}
-func (m *PlacementPolicy_FilterGroup_Selector) XXX_DiscardUnknown() {
-	xxx_messageInfo_PlacementPolicy_FilterGroup_Selector.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PlacementPolicy_FilterGroup_Selector proto.InternalMessageInfo
-
-func (m *PlacementPolicy_FilterGroup_Selector) GetCount() uint32 {
-	if m != nil {
-		return m.Count
-	}
-	return 0
-}
-
-func (m *PlacementPolicy_FilterGroup_Selector) GetKey() string {
-	if m != nil {
-		return m.Key
-	}
-	return ""
 }
 
 // NeoFS node description
@@ -529,7 +428,7 @@ func (m *NodeInfo) Reset()         { *m = NodeInfo{} }
 func (m *NodeInfo) String() string { return proto.CompactTextString(m) }
 func (*NodeInfo) ProtoMessage()    {}
 func (*NodeInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91a1332b2376641a, []int{1}
+	return fileDescriptor_91a1332b2376641a, []int{4}
 }
 func (m *NodeInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -591,7 +490,10 @@ type NodeInfo_Attribute struct {
 	// Key of the node attribute.
 	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	// Value of the node attribute.
-	Value                string   `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	// Parent keys, if any
+	// Example: For City it can be Region or Country
+	Parents              []string `protobuf:"bytes,3,rep,name=parents,proto3" json:"parents,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -601,7 +503,7 @@ func (m *NodeInfo_Attribute) Reset()         { *m = NodeInfo_Attribute{} }
 func (m *NodeInfo_Attribute) String() string { return proto.CompactTextString(m) }
 func (*NodeInfo_Attribute) ProtoMessage()    {}
 func (*NodeInfo_Attribute) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91a1332b2376641a, []int{1, 0}
+	return fileDescriptor_91a1332b2376641a, []int{4, 0}
 }
 func (m *NodeInfo_Attribute) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -644,15 +546,20 @@ func (m *NodeInfo_Attribute) GetValue() string {
 	return ""
 }
 
+func (m *NodeInfo_Attribute) GetParents() []string {
+	if m != nil {
+		return m.Parents
+	}
+	return nil
+}
+
 func init() {
-	proto.RegisterEnum("neo.fs.v2.netmap.PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation", PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation_name, PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation_value)
+	proto.RegisterEnum("neo.fs.v2.netmap.Operation", Operation_name, Operation_value)
 	proto.RegisterEnum("neo.fs.v2.netmap.NodeInfo_State", NodeInfo_State_name, NodeInfo_State_value)
+	proto.RegisterType((*Filter)(nil), "neo.fs.v2.netmap.Filter")
+	proto.RegisterType((*Selector)(nil), "neo.fs.v2.netmap.Selector")
+	proto.RegisterType((*Replica)(nil), "neo.fs.v2.netmap.Replica")
 	proto.RegisterType((*PlacementPolicy)(nil), "neo.fs.v2.netmap.PlacementPolicy")
-	proto.RegisterType((*PlacementPolicy_FilterGroup)(nil), "neo.fs.v2.netmap.PlacementPolicy.FilterGroup")
-	proto.RegisterType((*PlacementPolicy_FilterGroup_Filter)(nil), "neo.fs.v2.netmap.PlacementPolicy.FilterGroup.Filter")
-	proto.RegisterType((*PlacementPolicy_FilterGroup_Filter_SimpleFilter)(nil), "neo.fs.v2.netmap.PlacementPolicy.FilterGroup.Filter.SimpleFilter")
-	proto.RegisterType((*PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters)(nil), "neo.fs.v2.netmap.PlacementPolicy.FilterGroup.Filter.SimpleFilter.SimpleFilters")
-	proto.RegisterType((*PlacementPolicy_FilterGroup_Selector)(nil), "neo.fs.v2.netmap.PlacementPolicy.FilterGroup.Selector")
 	proto.RegisterType((*NodeInfo)(nil), "neo.fs.v2.netmap.NodeInfo")
 	proto.RegisterType((*NodeInfo_Attribute)(nil), "neo.fs.v2.netmap.NodeInfo.Attribute")
 }
@@ -660,49 +567,206 @@ func init() {
 func init() { proto.RegisterFile("v2/netmap/grpc/types.proto", fileDescriptor_91a1332b2376641a) }
 
 var fileDescriptor_91a1332b2376641a = []byte{
-	// 663 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0xcd, 0x6e, 0xd3, 0x40,
-	0x10, 0xae, 0xed, 0xc4, 0x69, 0x26, 0x0d, 0xb5, 0x96, 0x82, 0x4c, 0x24, 0x42, 0x14, 0x71, 0xc8,
-	0x25, 0x8e, 0x48, 0x51, 0x39, 0x70, 0x4a, 0xa9, 0x53, 0xa2, 0x56, 0x76, 0xd8, 0x84, 0x0b, 0x3d,
-	0x44, 0x8e, 0xb3, 0x4e, 0x2d, 0x1c, 0xaf, 0xe5, 0xdd, 0x44, 0xe4, 0x4d, 0x78, 0x05, 0x78, 0x04,
-	0x0e, 0x5c, 0xe1, 0xc0, 0x81, 0x47, 0x40, 0xe5, 0x45, 0x90, 0xd7, 0x71, 0x9b, 0x14, 0x84, 0x54,
-	0xca, 0x69, 0xf6, 0x9b, 0x9f, 0x6f, 0x3c, 0xe3, 0x6f, 0x17, 0x2a, 0x8b, 0x76, 0x2b, 0x24, 0x7c,
-	0xe6, 0x44, 0xad, 0x69, 0x1c, 0xb9, 0x2d, 0xbe, 0x8c, 0x08, 0x33, 0xa2, 0x98, 0x72, 0x8a, 0xb4,
-	0x90, 0x50, 0xc3, 0x63, 0xc6, 0xa2, 0x6d, 0xa4, 0x29, 0xf5, 0x2f, 0x05, 0xd8, 0xed, 0x07, 0x8e,
-	0x4b, 0x66, 0x24, 0xe4, 0x7d, 0x1a, 0xf8, 0xee, 0x12, 0x3d, 0x82, 0x52, 0x4c, 0xa2, 0x60, 0xe4,
-	0x39, 0x2e, 0xa7, 0xb1, 0x2e, 0xd5, 0xa4, 0x46, 0x19, 0x43, 0xe2, 0xea, 0x0a, 0x0f, 0xc2, 0x50,
-	0xf6, 0xfc, 0x80, 0x93, 0x78, 0x34, 0x8d, 0xe9, 0x3c, 0x62, 0xba, 0x5c, 0x53, 0x1a, 0xa5, 0x76,
-	0xd3, 0xb8, 0x4e, 0x6f, 0x5c, 0xa3, 0x36, 0xba, 0xa2, 0xec, 0x38, 0xa9, 0xc2, 0x3b, 0xde, 0x15,
-	0x60, 0x95, 0xcf, 0x2a, 0x94, 0xd6, 0xa2, 0xc8, 0x82, 0x42, 0x1a, 0x67, 0xba, 0x24, 0xd8, 0x9f,
-	0xde, 0x88, 0x7d, 0x75, 0xc6, 0x19, 0x09, 0x1a, 0x42, 0x91, 0x91, 0x80, 0x24, 0xdf, 0x9f, 0x7d,
-	0xef, 0xc1, 0xcd, 0x18, 0x07, 0xab, 0x72, 0x7c, 0x45, 0x84, 0x74, 0x28, 0x90, 0x77, 0x6e, 0x30,
-	0x9f, 0x10, 0x5d, 0xa9, 0x29, 0x8d, 0x32, 0xce, 0x60, 0xe5, 0x53, 0x0e, 0xd4, 0xb4, 0x1a, 0x69,
-	0xa0, 0xbc, 0x25, 0x4b, 0xb1, 0xc7, 0x22, 0x4e, 0x8e, 0xc8, 0x06, 0xc9, 0xd3, 0xe5, 0x9a, 0xd4,
-	0x28, 0xb5, 0x3b, 0xff, 0x32, 0x96, 0x31, 0xf0, 0x67, 0x51, 0x40, 0x56, 0x33, 0x4a, 0x5e, 0xe5,
-	0x9b, 0x02, 0x3b, 0xeb, 0x3e, 0x74, 0x06, 0x32, 0x8d, 0x44, 0xcb, 0x3b, 0xed, 0x93, 0x5b, 0xb7,
-	0x30, 0xec, 0x88, 0xc4, 0x0e, 0xf7, 0x69, 0x88, 0x65, 0x1a, 0xa1, 0xfb, 0x90, 0x5f, 0x38, 0xc1,
-	0x9c, 0x88, 0x11, 0x8a, 0x2f, 0xb7, 0x70, 0x0a, 0xd1, 0x39, 0xa8, 0xde, 0xc8, 0x89, 0xa7, 0x4c,
-	0x57, 0xc4, 0x6c, 0xf6, 0xed, 0x1b, 0xaf, 0x03, 0x96, 0x74, 0xf2, 0x3a, 0xf1, 0x94, 0x55, 0x02,
-	0x28, 0x6f, 0x44, 0xd0, 0xd9, 0x75, 0xb9, 0xfc, 0x87, 0xbd, 0x66, 0x8c, 0xf5, 0x29, 0x14, 0x2f,
-	0x17, 0x80, 0x1e, 0xc0, 0x3d, 0xbb, 0x6f, 0xe2, 0xce, 0xb0, 0x67, 0x5b, 0xa3, 0xd7, 0xd6, 0xa0,
-	0x6f, 0xbe, 0xe8, 0x75, 0x7b, 0xe6, 0x91, 0xb6, 0x85, 0x54, 0x90, 0xcd, 0x57, 0x9a, 0x94, 0x58,
-	0xcb, 0xd4, 0xe4, 0xc4, 0x1e, 0x0f, 0x35, 0x45, 0x58, 0x53, 0xcb, 0x25, 0xf6, 0x74, 0xa8, 0xe5,
-	0x85, 0x35, 0x35, 0x35, 0xb1, 0x36, 0xd6, 0x0a, 0xa8, 0x00, 0x4a, 0xc7, 0x3a, 0xd2, 0xb6, 0x0f,
-	0x55, 0xc8, 0x25, 0xeb, 0xab, 0xb4, 0x61, 0x3b, 0x53, 0x1b, 0xda, 0x83, 0xbc, 0x4b, 0xe7, 0x21,
-	0x5f, 0xdd, 0xc3, 0x14, 0x64, 0x9a, 0x92, 0x2f, 0x35, 0x55, 0xff, 0x20, 0xc3, 0xb6, 0x45, 0x27,
-	0xa4, 0x17, 0x7a, 0x14, 0x3d, 0x04, 0x88, 0xe6, 0xe3, 0xc0, 0x77, 0x47, 0x99, 0xf2, 0x76, 0x70,
-	0x31, 0xf5, 0x9c, 0x90, 0x65, 0x22, 0x5b, 0x67, 0x32, 0x89, 0x09, 0x63, 0x2b, 0x86, 0x0c, 0xa2,
-	0x23, 0x00, 0x87, 0xf3, 0xd8, 0x1f, 0xcf, 0x39, 0x61, 0x42, 0xd3, 0xa5, 0xf6, 0xe3, 0xdf, 0x57,
-	0x99, 0x35, 0x32, 0x3a, 0x59, 0x32, 0x5e, 0xab, 0x43, 0x07, 0x90, 0x67, 0xdc, 0xe1, 0x44, 0xcf,
-	0x09, 0x01, 0xd6, 0xfe, 0x42, 0x30, 0x48, 0xf2, 0x70, 0x9a, 0x5e, 0xd9, 0x87, 0xe2, 0x25, 0xe1,
-	0x1f, 0xae, 0xcd, 0xde, 0x86, 0xee, 0x56, 0xaa, 0xab, 0x3f, 0x81, 0xbc, 0x20, 0x41, 0xbb, 0x50,
-	0xda, 0xfc, 0x1f, 0x00, 0xaa, 0x6d, 0x9d, 0xf6, 0x2c, 0x53, 0x93, 0x50, 0x09, 0x0a, 0x76, 0xb7,
-	0x2b, 0x80, 0x7c, 0x38, 0xfa, 0x7a, 0x51, 0x95, 0xbe, 0x5f, 0x54, 0xa5, 0x1f, 0x17, 0x55, 0xe9,
-	0xfd, 0xcf, 0xea, 0xd6, 0x9b, 0x67, 0x53, 0x9f, 0x9f, 0xcf, 0xc7, 0x86, 0x4b, 0x67, 0xad, 0x90,
-	0x45, 0xae, 0xdb, 0x9c, 0x90, 0x45, 0x2b, 0x24, 0xd4, 0x63, 0x4d, 0x27, 0xf2, 0x9b, 0x53, 0xda,
-	0xda, 0x7c, 0x57, 0x9f, 0xa7, 0xe7, 0x8f, 0xf2, 0x5d, 0x8b, 0xd0, 0xee, 0xc0, 0xe8, 0xf4, 0x7b,
-	0xc9, 0x78, 0x96, 0xf0, 0x8e, 0x55, 0xf1, 0xde, 0xee, 0xff, 0x0a, 0x00, 0x00, 0xff, 0xff, 0x1a,
-	0xeb, 0x5f, 0x7e, 0x8d, 0x05, 0x00, 0x00,
+	// 635 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0xcd, 0x6e, 0xd3, 0x40,
+	0x10, 0xee, 0x3a, 0xbf, 0x9e, 0xd2, 0xd6, 0x5a, 0x5a, 0x70, 0x03, 0x44, 0x51, 0xc4, 0xa1, 0x02,
+	0xd5, 0x11, 0x41, 0x14, 0xa4, 0x9e, 0x52, 0xea, 0xa0, 0x88, 0xe2, 0x84, 0x4d, 0xb9, 0x70, 0x89,
+	0x36, 0xce, 0x26, 0x98, 0x3a, 0xde, 0x95, 0xbd, 0x89, 0x94, 0x37, 0xe1, 0x05, 0xb8, 0xf0, 0x1a,
+	0x5c, 0x38, 0xf2, 0x08, 0xa8, 0xdc, 0x79, 0x06, 0xe4, 0x75, 0xec, 0xa4, 0x04, 0x21, 0x4e, 0xb3,
+	0x33, 0xfb, 0xf9, 0xfb, 0xbe, 0x9d, 0x1d, 0x2f, 0x54, 0xe6, 0xcd, 0x46, 0xc0, 0xe4, 0x94, 0x8a,
+	0xc6, 0x24, 0x14, 0x6e, 0x43, 0x2e, 0x04, 0x8b, 0x2c, 0x11, 0x72, 0xc9, 0xb1, 0x11, 0x30, 0x6e,
+	0x8d, 0x23, 0x6b, 0xde, 0xb4, 0x12, 0x48, 0xfd, 0x33, 0x82, 0x62, 0xdb, 0xf3, 0x25, 0x0b, 0x31,
+	0x86, 0x7c, 0x40, 0xa7, 0xcc, 0x44, 0x35, 0x74, 0xa4, 0x13, 0xb5, 0xc6, 0x06, 0xe4, 0xae, 0xd8,
+	0xc2, 0xd4, 0x54, 0x29, 0x5e, 0xe2, 0xc7, 0xa0, 0x71, 0x61, 0xe6, 0x6a, 0xe8, 0x68, 0xb7, 0x79,
+	0xcf, 0xfa, 0x93, 0xcf, 0xea, 0x0a, 0x16, 0x52, 0xe9, 0xf1, 0x80, 0x68, 0x5c, 0xe0, 0x7d, 0x28,
+	0xcc, 0xa9, 0x3f, 0x63, 0x66, 0x5e, 0x11, 0x24, 0x09, 0x6e, 0x42, 0x69, 0xac, 0x24, 0x23, 0xb3,
+	0x50, 0xcb, 0x1d, 0x6d, 0x37, 0xcd, 0x4d, 0x9e, 0xc4, 0x13, 0x49, 0x81, 0xf5, 0x8f, 0x50, 0xee,
+	0x33, 0x9f, 0xb9, 0x92, 0xff, 0xdd, 0xe8, 0x3e, 0x14, 0x5c, 0x3e, 0x0b, 0xa4, 0xb2, 0xba, 0x43,
+	0x92, 0x04, 0xdf, 0x07, 0x9d, 0x4a, 0x19, 0x7a, 0xc3, 0x99, 0x64, 0xca, 0xb3, 0x4e, 0x56, 0x05,
+	0x7c, 0x07, 0x8a, 0x09, 0xfd, 0xd2, 0xde, 0x32, 0xab, 0x9f, 0x42, 0x89, 0x30, 0xe1, 0x7b, 0x2e,
+	0x5d, 0xd1, 0xa2, 0x75, 0xda, 0x0a, 0x94, 0xa3, 0xa5, 0x99, 0x65, 0x6b, 0xb2, 0xbc, 0xfe, 0x0b,
+	0xc1, 0x5e, 0xcf, 0xa7, 0x2e, 0x9b, 0xb2, 0x40, 0xf6, 0xb8, 0xef, 0xb9, 0x0b, 0xfc, 0x0c, 0xca,
+	0x61, 0x42, 0x18, 0x99, 0x48, 0x9d, 0xf8, 0x70, 0xf3, 0xc4, 0x4b, 0x49, 0x92, 0x41, 0xf1, 0x09,
+	0xdc, 0x75, 0x79, 0x20, 0xa9, 0x17, 0xb0, 0x70, 0x30, 0xa4, 0xee, 0xd5, 0x4c, 0x0c, 0xc6, 0x34,
+	0x53, 0xdd, 0x21, 0x07, 0xd9, 0xf6, 0x99, 0xda, 0x6d, 0xab, 0x4d, 0xfc, 0x02, 0xf4, 0xd4, 0x4e,
+	0x64, 0xe6, 0x94, 0x5e, 0x65, 0x53, 0x2f, 0x6d, 0x27, 0x59, 0x81, 0xd7, 0x6f, 0x26, 0xff, 0xbf,
+	0x37, 0xf3, 0x55, 0x83, 0xb2, 0xc3, 0x47, 0xac, 0x13, 0x8c, 0x39, 0x7e, 0x00, 0x20, 0x66, 0x43,
+	0xdf, 0x73, 0x07, 0xf1, 0xd8, 0xc4, 0x4d, 0xbb, 0x45, 0xf4, 0xa4, 0xf2, 0x9a, 0x2d, 0xb0, 0x09,
+	0x25, 0x3a, 0x1a, 0x85, 0x2c, 0x8a, 0x96, 0x7d, 0x4b, 0x53, 0x7c, 0x0e, 0x90, 0x5d, 0x4c, 0x6a,
+	0xfa, 0xe1, 0xa6, 0x78, 0x2a, 0x64, 0xb5, 0x52, 0x30, 0x59, 0xfb, 0x0e, 0x9f, 0x40, 0x21, 0x92,
+	0x54, 0x26, 0xf3, 0xb6, 0xdb, 0xac, 0xfd, 0x83, 0xa0, 0x1f, 0xe3, 0x48, 0x02, 0xaf, 0xbc, 0x01,
+	0x3d, 0x23, 0x4c, 0x67, 0x1e, 0xad, 0x66, 0x3e, 0x1b, 0x63, 0x6d, 0x7d, 0x8c, 0x4d, 0x28, 0x09,
+	0x1a, 0xb2, 0x40, 0x26, 0x7e, 0x75, 0x92, 0xa6, 0xf5, 0x27, 0x50, 0x50, 0xf4, 0x78, 0x0f, 0xb6,
+	0xdf, 0x39, 0xfd, 0x9e, 0xfd, 0xb2, 0xd3, 0xee, 0xd8, 0xe7, 0xc6, 0x16, 0x06, 0x28, 0x76, 0x9d,
+	0x8b, 0x8e, 0x63, 0x1b, 0x08, 0x6f, 0x43, 0xa9, 0xdb, 0x6e, 0xab, 0x44, 0x7b, 0x34, 0x01, 0x3d,
+	0xfb, 0x75, 0xf0, 0x21, 0x1c, 0x74, 0x7b, 0x36, 0x69, 0x5d, 0x76, 0xba, 0xce, 0xe0, 0x26, 0x41,
+	0x11, 0x34, 0xfb, 0xad, 0x81, 0xe2, 0x18, 0x7f, 0x17, 0xc7, 0x57, 0x97, 0x46, 0x4e, 0x45, 0xdb,
+	0xc8, 0xc7, 0xf1, 0xe2, 0xd2, 0x28, 0xa8, 0x68, 0x1b, 0xc5, 0x38, 0x76, 0x89, 0x51, 0xc2, 0x25,
+	0xc8, 0xb5, 0x9c, 0x73, 0xa3, 0x7c, 0x36, 0xf8, 0x76, 0x5d, 0x45, 0xdf, 0xaf, 0xab, 0xe8, 0xc7,
+	0x75, 0x15, 0x7d, 0xfa, 0x59, 0xdd, 0x7a, 0xff, 0x7c, 0xe2, 0xc9, 0x0f, 0xb3, 0xa1, 0xe5, 0xf2,
+	0x69, 0x23, 0x88, 0x84, 0xeb, 0x1e, 0x8f, 0xd8, 0xbc, 0x11, 0x30, 0x3e, 0x8e, 0x8e, 0xa9, 0xf0,
+	0x8e, 0x27, 0xbc, 0x71, 0xf3, 0x49, 0x39, 0x4d, 0xd6, 0x5f, 0xb4, 0xdb, 0x0e, 0xe3, 0xed, 0xbe,
+	0xd5, 0xea, 0x75, 0xe2, 0x0e, 0x3b, 0xaa, 0x3a, 0x2c, 0xaa, 0xa7, 0xe6, 0xe9, 0xef, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0x04, 0x93, 0x38, 0x2a, 0x88, 0x04, 0x00, 0x00,
+}
+
+func (m *Filter) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Filter) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Filter) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Filters) > 0 {
+		for iNdEx := len(m.Filters) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Filters[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTypes(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if len(m.Value) > 0 {
+		i -= len(m.Value)
+		copy(dAtA[i:], m.Value)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.Value)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.Op != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.Op))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Key) > 0 {
+		i -= len(m.Key)
+		copy(dAtA[i:], m.Key)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.Key)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Selector) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Selector) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Selector) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Filter) > 0 {
+		i -= len(m.Filter)
+		copy(dAtA[i:], m.Filter)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.Filter)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Attribute) > 0 {
+		i -= len(m.Attribute)
+		copy(dAtA[i:], m.Attribute)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.Attribute)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Count != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.Count))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *Replica) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Replica) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Replica) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Selector) > 0 {
+		i -= len(m.Selector)
+		copy(dAtA[i:], m.Selector)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.Selector)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Count != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.Count))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *PlacementPolicy) Marshal() (dAtA []byte, err error) {
@@ -729,10 +793,10 @@ func (m *PlacementPolicy) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if len(m.FilterGroups) > 0 {
-		for iNdEx := len(m.FilterGroups) - 1; iNdEx >= 0; iNdEx-- {
+	if len(m.Filters) > 0 {
+		for iNdEx := len(m.Filters) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.FilterGroups[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.Filters[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -740,58 +804,8 @@ func (m *PlacementPolicy) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintTypes(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x12
+			dAtA[i] = 0x22
 		}
-	}
-	if m.ReplFactor != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.ReplFactor))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *PlacementPolicy_FilterGroup) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *PlacementPolicy_FilterGroup) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PlacementPolicy_FilterGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.Exclude) > 0 {
-		dAtA2 := make([]byte, len(m.Exclude)*10)
-		var j1 int
-		for _, num := range m.Exclude {
-			for num >= 1<<7 {
-				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j1++
-			}
-			dAtA2[j1] = uint8(num)
-			j1++
-		}
-		i -= j1
-		copy(dAtA[i:], dAtA2[:j1])
-		i = encodeVarintTypes(dAtA, i, uint64(j1))
-		i--
-		dAtA[i] = 0x1a
 	}
 	if len(m.Selectors) > 0 {
 		for iNdEx := len(m.Selectors) - 1; iNdEx >= 0; iNdEx-- {
@@ -804,13 +818,18 @@ func (m *PlacementPolicy_FilterGroup) MarshalToSizedBuffer(dAtA []byte) (int, er
 				i = encodeVarintTypes(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x12
+			dAtA[i] = 0x1a
 		}
 	}
-	if len(m.Filters) > 0 {
-		for iNdEx := len(m.Filters) - 1; iNdEx >= 0; iNdEx-- {
+	if m.ContainerBackupFactor != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.ContainerBackupFactor))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Replicas) > 0 {
+		for iNdEx := len(m.Replicas) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.Filters[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.Replicas[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -820,208 +839,6 @@ func (m *PlacementPolicy_FilterGroup) MarshalToSizedBuffer(dAtA []byte) (int, er
 			i--
 			dAtA[i] = 0xa
 		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.F != nil {
-		{
-			size, err := m.F.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintTypes(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Key) > 0 {
-		i -= len(m.Key)
-		copy(dAtA[i:], m.Key)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.Key)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Args != nil {
-		{
-			size := m.Args.Size()
-			i -= size
-			if _, err := m.Args.MarshalTo(dAtA[i:]); err != nil {
-				return 0, err
-			}
-		}
-	}
-	if m.Op != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.Op))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	i -= len(m.Value)
-	copy(dAtA[i:], m.Value)
-	i = encodeVarintTypes(dAtA, i, uint64(len(m.Value)))
-	i--
-	dAtA[i] = 0x12
-	return len(dAtA) - i, nil
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.FArgs != nil {
-		{
-			size, err := m.FArgs.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintTypes(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	return len(dAtA) - i, nil
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.Filters) > 0 {
-		for iNdEx := len(m.Filters) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Filters[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintTypes(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *PlacementPolicy_FilterGroup_Selector) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *PlacementPolicy_FilterGroup_Selector) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PlacementPolicy_FilterGroup_Selector) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.Key) > 0 {
-		i -= len(m.Key)
-		copy(dAtA[i:], m.Key)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.Key)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.Count != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.Count))
-		i--
-		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -1110,6 +927,15 @@ func (m *NodeInfo_Attribute) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
+	if len(m.Parents) > 0 {
+		for iNdEx := len(m.Parents) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Parents[iNdEx])
+			copy(dAtA[i:], m.Parents[iNdEx])
+			i = encodeVarintTypes(dAtA, i, uint64(len(m.Parents[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
 	if len(m.Value) > 0 {
 		i -= len(m.Value)
 		copy(dAtA[i:], m.Value)
@@ -1138,124 +964,27 @@ func encodeVarintTypes(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *PlacementPolicy) Size() (n int) {
+func (m *Filter) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.ReplFactor != 0 {
-		n += 1 + sovTypes(uint64(m.ReplFactor))
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
 	}
-	if len(m.FilterGroups) > 0 {
-		for _, e := range m.FilterGroups {
-			l = e.Size()
-			n += 1 + l + sovTypes(uint64(l))
-		}
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *PlacementPolicy_FilterGroup) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.Filters) > 0 {
-		for _, e := range m.Filters {
-			l = e.Size()
-			n += 1 + l + sovTypes(uint64(l))
-		}
-	}
-	if len(m.Selectors) > 0 {
-		for _, e := range m.Selectors {
-			l = e.Size()
-			n += 1 + l + sovTypes(uint64(l))
-		}
-	}
-	if len(m.Exclude) > 0 {
-		l = 0
-		for _, e := range m.Exclude {
-			l += sovTypes(uint64(e))
-		}
-		n += 1 + sovTypes(uint64(l)) + l
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
 	l = len(m.Key)
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
 	}
-	if m.F != nil {
-		l = m.F.Size()
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
 	if m.Op != 0 {
 		n += 1 + sovTypes(uint64(m.Op))
 	}
-	if m.Args != nil {
-		n += m.Args.Size()
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
 	l = len(m.Value)
-	n += 1 + l + sovTypes(uint64(l))
-	return n
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.FArgs != nil {
-		l = m.FArgs.Size()
+	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
 	}
-	return n
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
 	if len(m.Filters) > 0 {
 		for _, e := range m.Filters {
 			l = e.Size()
@@ -1268,7 +997,34 @@ func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) Size() (
 	return n
 }
 
-func (m *PlacementPolicy_FilterGroup_Selector) Size() (n int) {
+func (m *Selector) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	if m.Count != 0 {
+		n += 1 + sovTypes(uint64(m.Count))
+	}
+	l = len(m.Attribute)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	l = len(m.Filter)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *Replica) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1277,9 +1033,42 @@ func (m *PlacementPolicy_FilterGroup_Selector) Size() (n int) {
 	if m.Count != 0 {
 		n += 1 + sovTypes(uint64(m.Count))
 	}
-	l = len(m.Key)
+	l = len(m.Selector)
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *PlacementPolicy) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Replicas) > 0 {
+		for _, e := range m.Replicas {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
+	if m.ContainerBackupFactor != 0 {
+		n += 1 + sovTypes(uint64(m.ContainerBackupFactor))
+	}
+	if len(m.Selectors) > 0 {
+		for _, e := range m.Selectors {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
+	if len(m.Filters) > 0 {
+		for _, e := range m.Filters {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1330,6 +1119,12 @@ func (m *NodeInfo_Attribute) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
 	}
+	if len(m.Parents) > 0 {
+		for _, s := range m.Parents {
+			l = len(s)
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -1341,6 +1136,483 @@ func sovTypes(x uint64) (n int) {
 }
 func sozTypes(x uint64) (n int) {
 	return sovTypes(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *Filter) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Filter: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Filter: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Key", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Key = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Op", wireType)
+			}
+			m.Op = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Op |= Operation(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Value = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Filters", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Filters = append(m.Filters, &Filter{})
+			if err := m.Filters[len(m.Filters)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Selector) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Selector: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Selector: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Count", wireType)
+			}
+			m.Count = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Count |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Attribute", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Attribute = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Filter", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Filter = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Replica) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTypes
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Replica: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Replica: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Count", wireType)
+			}
+			m.Count = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Count |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Selector", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Selector = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTypes(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *PlacementPolicy) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -1372,10 +1644,44 @@ func (m *PlacementPolicy) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Replicas", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Replicas = append(m.Replicas, &Replica{})
+			if err := m.Replicas[len(m.Replicas)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ReplFactor", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ContainerBackupFactor", wireType)
 			}
-			m.ReplFactor = 0
+			m.ContainerBackupFactor = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypes
@@ -1385,134 +1691,12 @@ func (m *PlacementPolicy) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ReplFactor |= uint32(b&0x7F) << shift
+				m.ContainerBackupFactor |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FilterGroups", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.FilterGroups = append(m.FilterGroups, &PlacementPolicy_FilterGroup{})
-			if err := m.FilterGroups[len(m.FilterGroups)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypes(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *PlacementPolicy_FilterGroup) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: FilterGroup: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: FilterGroup: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Filters", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Filters = append(m.Filters, &PlacementPolicy_FilterGroup_Filter{})
-			if err := m.Filters[len(m.Filters)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Selectors", wireType)
 			}
@@ -1541,404 +1725,12 @@ func (m *PlacementPolicy_FilterGroup) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Selectors = append(m.Selectors, &PlacementPolicy_FilterGroup_Selector{})
+			m.Selectors = append(m.Selectors, &Selector{})
 			if err := m.Selectors[len(m.Selectors)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
-		case 3:
-			if wireType == 0 {
-				var v uint32
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowTypes
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= uint32(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.Exclude = append(m.Exclude, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowTypes
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthTypes
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthTypes
-				}
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
-				}
-				elementCount = count
-				if elementCount != 0 && len(m.Exclude) == 0 {
-					m.Exclude = make([]uint32, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v uint32
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowTypes
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= uint32(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.Exclude = append(m.Exclude, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Exclude", wireType)
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypes(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *PlacementPolicy_FilterGroup_Filter) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Filter: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Filter: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Key", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Key = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field F", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.F == nil {
-				m.F = &PlacementPolicy_FilterGroup_Filter_SimpleFilter{}
-			}
-			if err := m.F.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypes(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: SimpleFilter: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: SimpleFilter: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Op", wireType)
-			}
-			m.Op = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Op |= PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Args = &PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value{string(dAtA[iNdEx:postIndex])}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FArgs", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			v := &PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters{}
-			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			m.Args = &PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs{v}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypes(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: SimpleFilters: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: SimpleFilters: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Filters", wireType)
 			}
@@ -1967,115 +1759,10 @@ func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) Unmarsha
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Filters = append(m.Filters, &PlacementPolicy_FilterGroup_Filter_SimpleFilter{})
+			m.Filters = append(m.Filters, &Filter{})
 			if err := m.Filters[len(m.Filters)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypes(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *PlacementPolicy_FilterGroup_Selector) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Selector: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Selector: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Count", wireType)
-			}
-			m.Count = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Count |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Key", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Key = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -2367,6 +2054,38 @@ func (m *NodeInfo_Attribute) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Value = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Parents", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTypes
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTypes
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTypes
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Parents = append(m.Parents, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
