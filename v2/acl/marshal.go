@@ -150,7 +150,7 @@ func (r *Record) StableSize() (size int) {
 	}
 
 	size += proto.EnumSize(recordOperationField, int32(r.op))
-	size += proto.EnumSize(recordActionField, int32(r.op))
+	size += proto.EnumSize(recordActionField, int32(r.action))
 
 	for i := range r.filters {
 		size += proto.NestedStructureSize(recordFiltersField, r.filters[i])
