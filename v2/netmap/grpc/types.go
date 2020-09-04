@@ -1,97 +1,108 @@
 package netmap
 
-// SetOp sets operation of the simple filter.
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) SetOp(v PlacementPolicy_FilterGroup_Filter_SimpleFilter_Operation) {
+// SetReplicas of placement policy.
+func (m *PlacementPolicy) SetReplicas(v []*Replica) {
 	if m != nil {
-		m.Op = v
+		m.Replicas = v
 	}
 }
 
-// SetValue sets value of the simple filter.
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) SetValue(v string) {
+// SetContainerBackupFactor of placement policy.
+func (m *PlacementPolicy) SetContainerBackupFactor(v uint32) {
 	if m != nil {
-		m.Args = &PlacementPolicy_FilterGroup_Filter_SimpleFilter_Value{
-			Value: v,
-		}
+		m.ContainerBackupFactor = v
 	}
 }
 
-// SetFArgs sets filter args of the simple filter.
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter) SetFArgs(v *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) {
-	if m != nil {
-		m.Args = &PlacementPolicy_FilterGroup_Filter_SimpleFilter_FArgs{
-			FArgs: v,
-		}
-	}
-}
-
-// SetFilters sets list of the simple filters.
-func (m *PlacementPolicy_FilterGroup_Filter_SimpleFilter_SimpleFilters) SetFilters(v []*PlacementPolicy_FilterGroup_Filter_SimpleFilter) {
-	if m != nil {
-		m.Filters = v
-	}
-}
-
-// SeyKey sets key of the filter.
-func (m *PlacementPolicy_FilterGroup_Filter) SeyKey(v string) {
-	if m != nil {
-		m.Key = v
-	}
-}
-
-// SetF sets simple filter of the filter.
-func (m *PlacementPolicy_FilterGroup_Filter) SetF(v *PlacementPolicy_FilterGroup_Filter_SimpleFilter) {
-	if m != nil {
-		m.F = v
-	}
-}
-
-// SetCount sets count value of the selector.
-func (m *PlacementPolicy_FilterGroup_Selector) SetCount(v uint32) {
-	if m != nil {
-		m.Count = v
-	}
-}
-
-// SetKey sets key of the selector.
-func (m *PlacementPolicy_FilterGroup_Selector) SetKey(v string) {
-	if m != nil {
-		m.Key = v
-	}
-}
-
-// SetFilters sets list of the filters.
-func (m *PlacementPolicy_FilterGroup) SetFilters(v []*PlacementPolicy_FilterGroup_Filter) {
-	if m != nil {
-		m.Filters = v
-	}
-}
-
-// SetSelectors sets list of the selectors.
-func (m *PlacementPolicy_FilterGroup) SetSelectors(v []*PlacementPolicy_FilterGroup_Selector) {
+// SetSelectors of placement policy.
+func (m *PlacementPolicy) SetSelectors(v []*Selector) {
 	if m != nil {
 		m.Selectors = v
 	}
 }
 
-// SetExclude sets exclude list.
-func (m *PlacementPolicy_FilterGroup) SetExclude(v []uint32) {
+// SetFilters of placement policy.
+func (m *PlacementPolicy) SetFilters(v []*Filter) {
 	if m != nil {
-		m.Exclude = v
+		m.Filters = v
 	}
 }
 
-// SetReplFactor sets replication factor of the placement rule.
-func (m *PlacementPolicy) SetReplFactor(v uint32) {
+// SetName of placement filter.
+func (m *Filter) SetName(v string) {
 	if m != nil {
-		m.ReplFactor = v
+		m.Name = v
 	}
 }
 
-// SetSfGroups sets list of the selector-filter groups.
-func (m *PlacementPolicy) SetSfGroups(v []*PlacementPolicy_FilterGroup) {
+// SetKey of placement filter.
+func (m *Filter) SetKey(v string) {
 	if m != nil {
-		m.FilterGroups = v
+		m.Key = v
+	}
+}
+
+// SetOperation of placement filter.
+func (m *Filter) SetOp(v Operation) {
+	if m != nil {
+		m.Op = v
+
+	}
+}
+
+// SetValue of placement filter.
+func (m *Filter) SetValue(v string) {
+	if m != nil {
+		m.Value = v
+	}
+}
+
+// SetFilters sets sub-filters of placement filter.
+func (m *Filter) SetFilters(v []*Filter) {
+	if m != nil {
+		m.Filters = v
+	}
+}
+
+// SetName of placement selector.
+func (m *Selector) SetName(v string) {
+	if m != nil {
+		m.Name = v
+	}
+}
+
+// SetCount of nodes of placement selector.
+func (m *Selector) SetCount(v uint32) {
+	if m != nil {
+		m.Count = v
+	}
+}
+
+// SetAttribute of nodes of placement selector.
+func (m *Selector) SetAttribute(v string) {
+	if m != nil {
+		m.Attribute = v
+	}
+}
+
+// SetFilter of placement selector.
+func (m *Selector) SetFilter(v string) {
+	if m != nil {
+		m.Filter = v
+	}
+}
+
+// SetCount of object replica.
+func (m *Replica) SetCount(v uint32) {
+	if m != nil {
+		m.Count = v
+	}
+}
+
+// SetSelector of object replica.
+func (m *Replica) SetSelector(v string) {
+	if m != nil {
+		m.Selector = v
 	}
 }
 
@@ -106,6 +117,13 @@ func (m *NodeInfo_Attribute) SetKey(v string) {
 func (m *NodeInfo_Attribute) SetValue(v string) {
 	if m != nil {
 		m.Value = v
+	}
+}
+
+// SetParent sets value of the node parents.
+func (m *NodeInfo_Attribute) SetParents(v []string) {
+	if m != nil {
+		m.Parents = v
 	}
 }
 
