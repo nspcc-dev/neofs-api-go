@@ -117,13 +117,6 @@ func (o *Object) CutPayload() *Object {
 	return nil
 }
 
-// ToV2 converts object to v2 Object message.
-func (o *Object) ToV2() *object.Object {
-	obj, _ := o.rwObject.ToV2(nil)
-
-	return obj
-}
-
 func (o *rwObject) v2Header() *object.Header {
 	hV2 := new(object.Header)
 	hV2.SetContainerID(o.cid.ToV2())
