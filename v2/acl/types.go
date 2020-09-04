@@ -15,7 +15,7 @@ type HeaderFilter struct {
 // TargetInfo is a unified structure of TargetInfo
 // message from proto definition.
 type TargetInfo struct {
-	target Target
+	role Role
 
 	keys [][]byte
 }
@@ -35,6 +35,8 @@ type Record struct {
 // Table is a unified structure of EACLTable
 // message from proto definition.
 type Table struct {
+	version *refs.Version
+
 	cid *refs.ContainerID
 
 	records []*Record
@@ -70,8 +72,8 @@ type Action uint32
 // Operation is a unified enum of Operation enum from proto definition.
 type Operation uint32
 
-// Target is a unified enum of Target enum from proto definition.
-type Target uint32
+// Role is a unified enum of Role enum from proto definition.
+type Role uint32
 
 const (
 	MatchTypeUnknown MatchType = iota
@@ -103,10 +105,10 @@ const (
 )
 
 const (
-	TargetUnknown Target = iota
-	TargetUser
-	TargetSystem
-	TargetOthers
+	RoleUnknown Role = iota
+	RoleUser
+	RoleSystem
+	RoleOthers
 )
 
 func (f *HeaderFilter) GetHeaderType() HeaderType {
@@ -165,17 +167,17 @@ func (f *HeaderFilter) SetValue(v string) {
 	}
 }
 
-func (t *TargetInfo) GetTarget() Target {
+func (t *TargetInfo) GetRole() Role {
 	if t != nil {
-		return t.target
+		return t.role
 	}
 
-	return TargetUnknown
+	return RoleUnknown
 }
 
-func (t *TargetInfo) SetTarget(v Target) {
+func (t *TargetInfo) SetRole(v Role) {
 	if t != nil {
-		t.target = v
+		t.role = v
 	}
 }
 
@@ -246,6 +248,20 @@ func (r *Record) GetTargets() []*TargetInfo {
 func (r *Record) SetTargets(v []*TargetInfo) {
 	if r != nil {
 		r.targets = v
+	}
+}
+
+func (t *Table) GetVersion() *refs.Version {
+	if t != nil {
+		return t.version
+	}
+
+	return nil
+}
+
+func (t *Table) SetVersion(v *refs.Version) {
+	if t != nil {
+		t.version = v
 	}
 }
 

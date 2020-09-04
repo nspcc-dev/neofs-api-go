@@ -5,31 +5,31 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 )
 
-// TargetToGRPCField converts unified target enum into grpc enum.
-func TargetToGRPCField(t Target) acl.Target {
+// RoleToGRPCField converts unified role enum into grpc enum.
+func RoleToGRPCField(t Role) acl.Role {
 	switch t {
-	case TargetUser:
-		return acl.Target_USER
-	case TargetSystem:
-		return acl.Target_SYSTEM
-	case TargetOthers:
-		return acl.Target_OTHERS
+	case RoleUser:
+		return acl.Role_USER
+	case RoleSystem:
+		return acl.Role_SYSTEM
+	case RoleOthers:
+		return acl.Role_OTHERS
 	default:
-		return acl.Target_TARGET_UNSPECIFIED
+		return acl.Role_ROLE_UNSPECIFIED
 	}
 }
 
-// TargetFromGRPCField converts grpc enum into unified target enum.
-func TargetFromGRPCField(t acl.Target) Target {
+// RoleFromGRPCField converts grpc enum into unified role enum.
+func RoleFromGRPCField(t acl.Role) Role {
 	switch t {
-	case acl.Target_USER:
-		return TargetUser
-	case acl.Target_SYSTEM:
-		return TargetSystem
-	case acl.Target_OTHERS:
-		return TargetOthers
+	case acl.Role_USER:
+		return RoleUser
+	case acl.Role_SYSTEM:
+		return RoleSystem
+	case acl.Role_OTHERS:
+		return RoleOthers
 	default:
-		return TargetUnknown
+		return RoleUnknown
 	}
 }
 
@@ -150,12 +150,12 @@ func MatchTypeFromGRPCField(t acl.MatchType) MatchType {
 }
 
 // HeaderFilterToGRPCMessage converts unified header filter struct into grpc struct.
-func HeaderFilterToGRPCMessage(f *HeaderFilter) *acl.EACLRecord_FilterInfo {
+func HeaderFilterToGRPCMessage(f *HeaderFilter) *acl.EACLRecord_Filter {
 	if f == nil {
 		return nil
 	}
 
-	m := new(acl.EACLRecord_FilterInfo)
+	m := new(acl.EACLRecord_Filter)
 
 	m.SetHeader(
 		HeaderTypeToGRPCField(f.GetHeaderType()),
@@ -172,7 +172,7 @@ func HeaderFilterToGRPCMessage(f *HeaderFilter) *acl.EACLRecord_FilterInfo {
 }
 
 // HeaderFilterFromGRPCMessage converts grpc struct into unified header filter struct.
-func HeaderFilterFromGRPCMessage(m *acl.EACLRecord_FilterInfo) *HeaderFilter {
+func HeaderFilterFromGRPCMessage(m *acl.EACLRecord_Filter) *HeaderFilter {
 	if m == nil {
 		return nil
 	}
@@ -180,7 +180,7 @@ func HeaderFilterFromGRPCMessage(m *acl.EACLRecord_FilterInfo) *HeaderFilter {
 	f := new(HeaderFilter)
 
 	f.SetHeaderType(
-		HeaderTypeFromGRPCField(m.GetHeader()),
+		HeaderTypeFromGRPCField(m.GetHeaderType()),
 	)
 
 	f.SetMatchType(
@@ -193,16 +193,16 @@ func HeaderFilterFromGRPCMessage(m *acl.EACLRecord_FilterInfo) *HeaderFilter {
 	return f
 }
 
-// TargetInfoToGRPCMessage converts unified target info struct into grpc struct.
-func TargetInfoToGRPCMessage(t *TargetInfo) *acl.EACLRecord_TargetInfo {
+// TargetToGRPCMessage converts unified role info struct into grpc struct.
+func TargetToGRPCMessage(t *TargetInfo) *acl.EACLRecord_Target {
 	if t == nil {
 		return nil
 	}
 
-	m := new(acl.EACLRecord_TargetInfo)
+	m := new(acl.EACLRecord_Target)
 
-	m.SetTarget(
-		TargetToGRPCField(t.GetTarget()),
+	m.SetRole(
+		RoleToGRPCField(t.GetRole()),
 	)
 
 	m.SetKeyList(t.GetKeyList())
@@ -210,16 +210,16 @@ func TargetInfoToGRPCMessage(t *TargetInfo) *acl.EACLRecord_TargetInfo {
 	return m
 }
 
-// TargetInfoFromGRPCMessage converts grpc struct into unified target info struct.
-func TargetInfoFromGRPCMessage(m *acl.EACLRecord_TargetInfo) *TargetInfo {
+// TargetInfoFromGRPCMessage converts grpc struct into unified role info struct.
+func TargetInfoFromGRPCMessage(m *acl.EACLRecord_Target) *TargetInfo {
 	if m == nil {
 		return nil
 	}
 
 	t := new(TargetInfo)
 
-	t.SetTarget(
-		TargetFromGRPCField(m.GetTarget()),
+	t.SetRole(
+		RoleFromGRPCField(m.GetRole()),
 	)
 
 	t.SetKeyList(m.GetKeyList())
@@ -244,7 +244,7 @@ func RecordToGRPCMessage(r *Record) *acl.EACLRecord {
 	)
 
 	filters := r.GetFilters()
-	filterMsg := make([]*acl.EACLRecord_FilterInfo, 0, len(filters))
+	filterMsg := make([]*acl.EACLRecord_Filter, 0, len(filters))
 
 	for i := range filters {
 		filterMsg = append(filterMsg, HeaderFilterToGRPCMessage(filters[i]))
@@ -253,10 +253,10 @@ func RecordToGRPCMessage(r *Record) *acl.EACLRecord {
 	m.SetFilters(filterMsg)
 
 	targets := r.GetTargets()
-	targetMsg := make([]*acl.EACLRecord_TargetInfo, 0, len(targets))
+	targetMsg := make([]*acl.EACLRecord_Target, 0, len(targets))
 
 	for i := range targets {
-		targetMsg = append(targetMsg, TargetInfoToGRPCMessage(targets[i]))
+		targetMsg = append(targetMsg, TargetToGRPCMessage(targets[i]))
 	}
 
 	m.SetTargets(targetMsg)
@@ -309,6 +309,9 @@ func TableToGRPCMessage(t *Table) *acl.EACLTable {
 
 	m := new(acl.EACLTable)
 
+	m.SetVersion(
+		refs.VersionToGRPCMessage(t.GetVersion()),
+	)
 	m.SetContainerId(
 		refs.ContainerIDToGRPCMessage(t.GetContainerID()),
 	)
@@ -333,6 +336,9 @@ func TableFromGRPCMessage(m *acl.EACLTable) *Table {
 
 	t := new(Table)
 
+	t.SetVersion(
+		refs.VersionFromGRPCMessage(m.GetVersion()),
+	)
 	t.SetContainerID(
 		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
 	)
