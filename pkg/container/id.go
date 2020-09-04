@@ -33,10 +33,6 @@ func (id *ID) ToV2() *refs.ContainerID {
 }
 
 func IDFromV2(idV2 *refs.ContainerID) (*ID, error) {
-	if idV2 == nil {
-		return nil, nil
-	}
-
 	val := idV2.GetValue()
 	if ln := len(val); ln != sha256.Size {
 		return nil, errors.Errorf(
