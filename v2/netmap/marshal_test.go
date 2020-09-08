@@ -151,6 +151,7 @@ func generateSelector(name string) *netmap.Selector {
 	s := new(netmap.Selector)
 	s.SetName(name)
 	s.SetAttribute("attribute")
+	s.SetClause(netmap.Distinct)
 	s.SetCount(10)
 	s.SetFilter("filter")
 
