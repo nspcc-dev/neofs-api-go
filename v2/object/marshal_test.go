@@ -590,8 +590,12 @@ func generateHeadResponseBody(flag bool) *object.HeadResponseBody {
 		short.SetShortHeader(generateShortHeader("short id"))
 		part = short
 	} else {
+		hdrWithSig := new(object.HeaderWithSignature)
+		hdrWithSig.SetHeader(generateHeader(30))
+		hdrWithSig.SetSignature(generateSignature("sig", "key"))
+
 		full := new(object.GetHeaderPartFull)
-		full.SetHeader(generateHeader(30))
+		full.SetHeaderWithSignature(hdrWithSig)
 		part = full
 	}
 

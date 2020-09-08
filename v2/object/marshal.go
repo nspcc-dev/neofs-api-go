@@ -33,6 +33,9 @@ const (
 	hdrAttributesField      = 10
 	hdrSplitField           = 11
 
+	hdrWithSigHeaderField    = 1
+	hdrWithSigSignatureField = 2
+
 	objIDField        = 1
 	objSignatureField = 2
 	objHeaderField    = 3
@@ -381,6 +384,48 @@ func (h *Header) StableSize() (size int) {
 		size += proto.NestedStructureSize(hdrAttributesField, h.attr[i])
 	}
 	size += proto.NestedStructureSize(hdrSplitField, h.split)
+
+	return size
+}
+
+func (h *HeaderWithSignature) StableMarshal(buf []byte) ([]byte, error) {
+	if h == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, h.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = proto.NestedStructureMarshal(hdrWithSigHeaderField, buf[offset:], h.header)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = proto.NestedStructureMarshal(hdrWithSigSignatureField, buf[offset:], h.signature)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	return buf, nil
+}
+
+func (h *HeaderWithSignature) StableSize() (size int) {
+	if h == nil {
+		return 0
+	}
+
+	size += proto.NestedStructureSize(hdrVersionField, h.header)
+	size += proto.NestedStructureSize(hdrContainerIDField, h.signature)
 
 	return size
 }
