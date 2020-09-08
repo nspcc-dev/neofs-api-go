@@ -283,6 +283,42 @@ func HeaderFromGRPCMessage(m *object.Header) *Header {
 	return h
 }
 
+func HeaderWithSignatureToGRPCMessage(h *HeaderWithSignature) *object.HeaderWithSignature {
+	if h == nil {
+		return nil
+	}
+
+	m := new(object.HeaderWithSignature)
+
+	m.SetHeader(
+		HeaderToGRPCMessage(h.GetHeader()),
+	)
+
+	m.SetSignature(
+		refs.SignatureToGRPCMessage(h.GetSignature()),
+	)
+
+	return m
+}
+
+func HeaderWithSignatureFromGRPCMessage(m *object.HeaderWithSignature) *HeaderWithSignature {
+	if m == nil {
+		return nil
+	}
+
+	h := new(HeaderWithSignature)
+
+	h.SetHeader(
+		HeaderFromGRPCMessage(m.GetHeader()),
+	)
+
+	h.SetSignature(
+		refs.SignatureFromGRPCMessage(m.GetSignature()),
+	)
+
+	return h
+}
+
 func ObjectToGRPCMessage(o *Object) *object.Object {
 	if o == nil {
 		return nil
@@ -942,8 +978,8 @@ func GetHeaderPartFullToGRPCMessage(r *GetHeaderPartFull) *object.HeadResponse_B
 
 	m := new(object.HeadResponse_Body_Header)
 
-	m.SetHeader(
-		HeaderToGRPCMessage(r.GetHeader()),
+	m.SetHeaderWithSignature(
+		HeaderWithSignatureToGRPCMessage(r.GetHeaderWithSignature()),
 	)
 
 	return m
@@ -956,8 +992,8 @@ func GetHeaderPartFullFromGRPCMessage(m *object.HeadResponse_Body_Header) *GetHe
 
 	r := new(GetHeaderPartFull)
 
-	r.SetHeader(
-		HeaderFromGRPCMessage(m.GetHeader()),
+	r.SetHeaderWithSignature(
+		HeaderWithSignatureFromGRPCMessage(m.GetHeaderWithSignature()),
 	)
 
 	return r
