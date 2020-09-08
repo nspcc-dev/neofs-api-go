@@ -13,8 +13,9 @@ const (
 
 	nameSelectorField      = 1
 	countSelectorField     = 2
-	attributeSelectorField = 3
-	filterSelectorField    = 4
+	clauseSelectorField    = 3
+	attributeSelectorField = 4
+	filterSelectorField    = 5
 
 	countReplicaField    = 1
 	selectorReplicaField = 2
@@ -128,6 +129,13 @@ func (s *Selector) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
+	n, err = proto.EnumMarshal(clauseSelectorField, buf[offset:], int32(s.clause))
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
 	n, err = proto.StringMarshal(attributeSelectorField, buf[offset:], s.attribute)
 	if err != nil {
 		return nil, err
@@ -146,6 +154,7 @@ func (s *Selector) StableMarshal(buf []byte) ([]byte, error) {
 func (s *Selector) StableSize() (size int) {
 	size += proto.StringSize(nameSelectorField, s.name)
 	size += proto.UInt32Size(countSelectorField, s.count)
+	size += proto.EnumSize(countSelectorField, int32(s.clause))
 	size += proto.StringSize(attributeSelectorField, s.attribute)
 	size += proto.StringSize(filterSelectorField, s.filter)
 

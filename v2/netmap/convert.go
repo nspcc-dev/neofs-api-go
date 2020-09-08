@@ -54,6 +54,7 @@ func SelectorToGRPCMessage(s *Selector) *netmap.Selector {
 
 	m.SetName(s.GetName())
 	m.SetCount(s.GetCount())
+	m.SetClause(ClauseToGRPCMessage(s.GetClause()))
 	m.SetFilter(s.GetFilter())
 	m.SetAttribute(s.GetAttribute())
 
@@ -69,6 +70,7 @@ func SelectorFromGRPCMessage(m *netmap.Selector) *Selector {
 
 	s.SetName(m.GetName())
 	s.SetCount(m.GetCount())
+	s.SetClause(ClauseFromGRPCMessage(m.GetClause()))
 	s.SetFilter(m.GetFilter())
 	s.SetAttribute(m.GetAttribute())
 
@@ -158,6 +160,14 @@ func PlacementPolicyFromGRPCMessage(m *netmap.PlacementPolicy) *PlacementPolicy 
 	p.SetReplicas(replicas)
 
 	return p
+}
+
+func ClauseToGRPCMessage(n Clause) netmap.Clause {
+	return netmap.Clause(n)
+}
+
+func ClauseFromGRPCMessage(n netmap.Clause) Clause {
+	return Clause(n)
 }
 
 func OperationToGRPCMessage(n Operation) netmap.Operation {

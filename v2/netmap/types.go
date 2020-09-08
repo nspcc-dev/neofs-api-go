@@ -11,6 +11,7 @@ type Filter struct {
 type Selector struct {
 	name      string
 	count     uint32
+	clause    Clause
 	attribute string
 	filter    string
 }
@@ -47,6 +48,9 @@ type NodeInfo struct {
 // NodeState of storage node.
 type NodeState uint32
 
+// Clause of placement selector.
+type Clause uint32
+
 const (
 	UnspecifiedState NodeState = iota
 	Online
@@ -63,6 +67,12 @@ const (
 	LE
 	OR
 	AND
+)
+
+const (
+	UnspecifiedClause Clause = iota
+	Same
+	Distinct
 )
 
 func (f *Filter) GetFilters() []*Filter {
@@ -159,6 +169,20 @@ func (s *Selector) GetAttribute() string {
 func (s *Selector) SetAttribute(attribute string) {
 	if s != nil {
 		s.attribute = attribute
+	}
+}
+
+func (s *Selector) GetClause() Clause {
+	if s != nil {
+		return s.clause
+	}
+
+	return UnspecifiedClause
+}
+
+func (s *Selector) SetClause(clause Clause) {
+	if s != nil {
+		s.clause = clause
 	}
 }
 
