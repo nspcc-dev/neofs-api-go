@@ -57,6 +57,12 @@ type Header struct {
 	split *SplitHeader
 }
 
+type HeaderWithSignature struct {
+	header *Header
+
+	signature *refs.Signature
+}
+
 type Object struct {
 	objectID *refs.ObjectID
 
@@ -136,7 +142,7 @@ type GetHeaderPart interface {
 }
 
 type GetHeaderPartFull struct {
-	hdr *Header
+	hdr *HeaderWithSignature
 }
 
 type GetHeaderPartShort struct {
@@ -525,6 +531,34 @@ func (h *Header) GetSplit() *SplitHeader {
 func (h *Header) SetSplit(v *SplitHeader) {
 	if h != nil {
 		h.split = v
+	}
+}
+
+func (h *HeaderWithSignature) GetHeader() *Header {
+	if h != nil {
+		return h.header
+	}
+
+	return nil
+}
+
+func (h *HeaderWithSignature) SetHeader(v *Header) {
+	if h != nil {
+		h.header = v
+	}
+}
+
+func (h *HeaderWithSignature) GetSignature() *refs.Signature {
+	if h != nil {
+		return h.signature
+	}
+
+	return nil
+}
+
+func (h *HeaderWithSignature) SetSignature(v *refs.Signature) {
+	if h != nil {
+		h.signature = v
 	}
 }
 
@@ -1138,7 +1172,7 @@ func (r *HeadRequest) SetVerificationHeader(v *session.RequestVerificationHeader
 	}
 }
 
-func (h *GetHeaderPartFull) GetHeader() *Header {
+func (h *GetHeaderPartFull) GetHeaderWithSignature() *HeaderWithSignature {
 	if h != nil {
 		return h.hdr
 	}
@@ -1146,7 +1180,7 @@ func (h *GetHeaderPartFull) GetHeader() *Header {
 	return nil
 }
 
-func (h *GetHeaderPartFull) SetHeader(v *Header) {
+func (h *GetHeaderPartFull) SetHeaderWithSignature(v *HeaderWithSignature) {
 	if h != nil {
 		h.hdr = v
 	}

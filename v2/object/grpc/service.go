@@ -330,8 +330,8 @@ func (m *HeadResponse_Body_ShortHeader) SetShortHeader(v *ShortHeader) {
 	}
 }
 
-// GetHeader returns object header.
-func (m *HeadResponse_Body_Header) GetHeader() *Header {
+// GetHeaderWithSignature returns object header.
+func (m *HeadResponse_Body_Header) GetHeaderWithSignature() *HeaderWithSignature {
 	if m != nil {
 		return m.Header
 	}
@@ -339,10 +339,24 @@ func (m *HeadResponse_Body_Header) GetHeader() *Header {
 	return nil
 }
 
-// SetHeader sets object header.
-func (m *HeadResponse_Body_Header) SetHeader(v *Header) {
+// SetHeaderWithSignature sets object header.
+func (m *HeadResponse_Body_Header) SetHeaderWithSignature(v *HeaderWithSignature) {
 	if m != nil {
 		m.Header = v
+	}
+}
+
+// SetHeader sets object header.
+func (m *HeaderWithSignature) SetHeader(v *Header) {
+	if m != nil {
+		m.Header = v
+	}
+}
+
+// SetSignature of the header.
+func (m *HeaderWithSignature) SetSignature(v *refs.Signature) {
+	if m != nil {
+		m.Signature = v
 	}
 }
 
