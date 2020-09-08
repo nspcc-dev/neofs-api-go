@@ -564,7 +564,12 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 			)
 		}
 
-		hdr = v.GetHeader()
+		hdrWithSig := v.GetHeaderWithSignature()
+		if hdrWithSig == nil {
+			return nil, errors.New("got nil instead of header with signature")
+		}
+		hdr = hdrWithSig.GetHeader()
+		// todo: check signature there
 	default:
 		panic(fmt.Sprintf("unexpected Head object type %T", v))
 	}
