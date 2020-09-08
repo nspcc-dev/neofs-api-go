@@ -92,6 +92,13 @@ func (m *Selector) SetFilter(v string) {
 	}
 }
 
+// SetClause of placement selector.
+func (m *Selector) SetClause(v Clause) {
+	if m != nil {
+		m.Clause = v
+	}
+}
+
 // SetCount of object replica.
 func (m *Replica) SetCount(v uint32) {
 	if m != nil {
