@@ -1,45 +1,35 @@
 package object
 
 import (
-	"crypto/sha256"
-
+	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
-	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	"github.com/nspcc-dev/neofs-api-go/v2/object"
 )
 
-// RawObject represents NeoFS object that provides
+// RawObject represents v2-compatible NeoFS object that provides
 // a convenient interface to fill in the fields of
 // an object in isolation from its internal structure.
 type RawObject struct {
-	rwObject
+	*rwObject
 }
 
-func (o *RawObject) set(setter func()) {
-	o.fin = false
-	setter()
-}
-
-// SetContainerID sets object's container identifier.
-func (o *RawObject) SetContainerID(v *container.ID) {
-	if o != nil {
-		o.set(func() {
-			o.cid = v
-		})
+// NewRawFromV2 wraps v2 Object message to RawObject.
+func NewRawFromV2(oV2 *object.Object) *RawObject {
+	return &RawObject{
+		rwObject: (*rwObject)(oV2),
 	}
 }
 
-// SetOwnerID sets identifier of the object's owner.
-func (o *RawObject) SetOwnerID(v *owner.ID) {
-	if o != nil {
-		o.set(func() {
-			o.ownerID = v
-		})
-	}
+// NewRaw creates and initializes blank RawObject.
+//
+// Works similar as NewRawFromV2(new(Object)).
+func NewRaw() *RawObject {
+	return NewRawFromV2(initObjectRecursive())
 }
 
-// Release returns read-only Object instance.
-func (o *RawObject) Release() *Object {
+// Object returns read-only object instance.
+func (o *RawObject) Object() *Object {
 	if o != nil {
 		return &Object{
 			rwObject: o.rwObject,
@@ -49,16 +39,72 @@ func (o *RawObject) Release() *Object {
 	return nil
 }
 
-// SetPayloadChecksumSHA256 sets payload checksum as a SHA256 checksum.
-func (o *RawObject) SetPayloadChecksumSHA256(v [sha256.Size]byte) {
-	if o != nil {
-		o.set(func() {
-			if o.payloadChecksum == nil {
-				o.payloadChecksum = new(refs.Checksum)
-			}
+// SetID sets object identifier.
+func (o *RawObject) SetID(v *ID) {
+	o.setID(v)
+}
 
-			o.payloadChecksum.SetType(refs.SHA256)
-			o.payloadChecksum.SetSum(v[:])
-		})
-	}
+// SetSignature sets signature of the object identifier.
+func (o *RawObject) SetSignature(v *pkg.Signature) {
+	o.setSignature(v)
+}
+
+// SetPayload sets payload bytes.
+func (o *RawObject) SetPayload(v []byte) {
+	o.setPayload(v)
+}
+
+// SetVersion sets version of the object.
+func (o *RawObject) SetVersion(v *pkg.Version) {
+	o.setVersion(v)
+}
+
+// SetPayloadSize sets payload length of the object.
+func (o *RawObject) SetPayloadSize(v uint64) {
+	o.setPayloadSize(v)
+}
+
+// SetContainerID sets identifier of the related container.
+func (o *RawObject) SetContainerID(v *container.ID) {
+	o.setContainerID(v)
+}
+
+// SetOwnerID sets identifier of the object owner.
+func (o *RawObject) SetOwnerID(v *owner.ID) {
+	o.setOwnerID(v)
+}
+
+// SetCreationEpoch sets epoch number in which object was created.
+func (o *RawObject) SetCreationEpoch(v uint64) {
+	o.setCreationEpoch(v)
+}
+
+// SetPayloadChecksum sets checksum of the object payload.
+func (o *RawObject) SetPayloadChecksum(v *pkg.Checksum) {
+	o.setPayloadChecksum(v)
+}
+
+// SetPayloadHomomorphicHash sets homomorphic hash of the object payload.
+func (o *RawObject) SetPayloadHomomorphicHash(v *pkg.Checksum) {
+	o.setPayloadHomomorphicHash(v)
+}
+
+// SetAttributes sets object attributes.
+func (o *RawObject) SetAttributes(v ...*Attribute) {
+	o.setAttributes(v...)
+}
+
+// SetPreviousID sets identifier of the previous sibling object.
+func (o *RawObject) SetPreviousID(v *ID) {
+	o.setPreviousID(v)
+}
+
+// SetChildren sets list of the identifiers of the child objects.
+func (o *RawObject) SetChildren(v ...*ID) {
+	o.setChildren(v...)
+}
+
+// SetParent sets parent object w/o payload.
+func (o *RawObject) SetParent(v *Object) {
+	o.setParent(v)
 }
