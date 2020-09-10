@@ -281,7 +281,7 @@ func generateObjectCtx(id string) *session.ObjectSessionContext {
 }
 
 func generateEACL(n int, k, v string) *acl.Table {
-	target := new(acl.TargetInfo)
+	target := new(acl.Target)
 	target.SetRole(acl.RoleUser)
 
 	keys := make([][]byte, n)
@@ -300,7 +300,7 @@ func generateEACL(n int, k, v string) *acl.Table {
 	record := new(acl.Record)
 	record.SetOperation(acl.OperationHead)
 	record.SetAction(acl.ActionDeny)
-	record.SetTargets([]*acl.TargetInfo{target})
+	record.SetTargets([]*acl.Target{target})
 	record.SetFilters([]*acl.HeaderFilter{filter})
 
 	table := new(acl.Table)
