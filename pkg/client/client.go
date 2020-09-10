@@ -18,7 +18,7 @@ type (
 	TransportProtocol uint32
 
 	TransportInfo struct {
-		Version  pkg.Version
+		Version  *pkg.Version
 		Protocol TransportProtocol
 	}
 )
@@ -42,7 +42,7 @@ func New(key *ecdsa.PrivateKey, opts ...ClientOption) (*Client, error) {
 	return &Client{
 		key: key,
 		remoteNode: TransportInfo{
-			Version:  pkg.SDKVersion,
+			Version:  pkg.SDKVersion(),
 			Protocol: GRPC,
 		},
 		opts: clientOptions,

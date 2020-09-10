@@ -23,7 +23,7 @@ type (
 	}
 
 	callOptions struct {
-		version  pkg.Version
+		version  *pkg.Version
 		xHeaders []xHeader
 		ttl      uint32
 		epoch    uint64
@@ -49,7 +49,7 @@ type (
 func defaultCallOptions() callOptions {
 	return callOptions{
 		ttl:     2,
-		version: pkg.SDKVersion,
+		version: pkg.SDKVersion(),
 	}
 }
 
@@ -93,7 +93,7 @@ func WithEpoch(epoch uint64) CallOption {
 
 func v2MetaHeaderFromOpts(options callOptions) *v2session.RequestMetaHeader {
 	meta := new(v2session.RequestMetaHeader)
-	meta.SetVersion(options.version.ToV2Version())
+	meta.SetVersion(options.version.ToV2())
 	meta.SetTTL(options.ttl)
 	meta.SetEpoch(options.epoch)
 
