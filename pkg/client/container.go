@@ -26,7 +26,7 @@ func (c delContainerSignWrapper) SignedDataSize() int {
 }
 
 func (c Client) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
-	switch c.remoteNode.Version.Major {
+	switch c.remoteNode.Version.GetMajor() {
 	case 2:
 		return c.putContainerV2(ctx, cnr, opts...)
 	default:
@@ -35,7 +35,7 @@ func (c Client) PutContainer(ctx context.Context, cnr *container.Container, opts
 }
 
 func (c Client) GetContainer(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
-	switch c.remoteNode.Version.Major {
+	switch c.remoteNode.Version.GetMajor() {
 	case 2:
 		return c.getContainerV2(ctx, id, opts...)
 	default:
@@ -44,7 +44,7 @@ func (c Client) GetContainer(ctx context.Context, id *container.ID, opts ...Call
 }
 
 func (c Client) ListContainers(ctx context.Context, owner *owner.ID, opts ...CallOption) ([]*container.ID, error) {
-	switch c.remoteNode.Version.Major {
+	switch c.remoteNode.Version.GetMajor() {
 	case 2:
 		return c.listContainerV2(ctx, owner, opts...)
 	default:
@@ -65,7 +65,7 @@ func (c Client) ListSelfContainers(ctx context.Context, opts ...CallOption) ([]*
 }
 
 func (c Client) DeleteContainer(ctx context.Context, id *container.ID, opts ...CallOption) error {
-	switch c.remoteNode.Version.Major {
+	switch c.remoteNode.Version.GetMajor() {
 	case 2:
 		return c.delContainerV2(ctx, id, opts...)
 	default:
@@ -84,7 +84,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 	}
 
 	// set transport version
-	cnr.SetVersion(c.remoteNode.Version.ToV2Version())
+	cnr.SetVersion(c.remoteNode.Version.ToV2())
 
 	// if container owner is not set, then use client key as owner
 	if cnr.GetOwnerID() == nil {

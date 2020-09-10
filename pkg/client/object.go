@@ -165,7 +165,7 @@ func (p *PutObjectParams) WithPayloadReader(v io.Reader) *PutObjectParams {
 
 func (c *Client) PutObject(ctx context.Context, p *PutObjectParams, opts ...CallOption) (*object.ID, error) {
 	// check remote node version
-	switch c.remoteNode.Version.Major {
+	switch c.remoteNode.Version.GetMajor() {
 	case 2:
 		return c.putObjectV2(ctx, p, opts...)
 	default:
@@ -277,7 +277,7 @@ func (p *DeleteObjectParams) WithAddress(v *object.Address) *DeleteObjectParams 
 
 func (c *Client) DeleteObject(ctx context.Context, p *DeleteObjectParams, opts ...CallOption) error {
 	// check remote node version
-	switch c.remoteNode.Version.Major {
+	switch c.remoteNode.Version.GetMajor() {
 	case 2:
 		return c.deleteObjectV2(ctx, p, opts...)
 	default:
@@ -350,7 +350,7 @@ func (p *GetObjectParams) WithPayloadWriter(w io.Writer) *GetObjectParams {
 
 func (c *Client) GetObject(ctx context.Context, p *GetObjectParams, opts ...CallOption) (*object.Object, error) {
 	// check remote node version
-	switch c.remoteNode.Version.Major {
+	switch c.remoteNode.Version.GetMajor() {
 	case 2:
 		return c.getObjectV2(ctx, p, opts...)
 	default:
@@ -481,7 +481,7 @@ func (p *ObjectHeaderParams) WithMainFields() *ObjectHeaderParams {
 
 func (c *Client) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams, opts ...CallOption) (*object.Object, error) {
 	// check remote node version
-	switch c.remoteNode.Version.Major {
+	switch c.remoteNode.Version.GetMajor() {
 	case 2:
 		return c.getObjectHeaderV2(ctx, p, opts...)
 	default:
@@ -609,7 +609,7 @@ func (p *RangeDataParams) WithDataWriter(v io.Writer) *RangeDataParams {
 
 func (c *Client) ObjectPayloadRangeData(ctx context.Context, p *RangeDataParams, opts ...CallOption) ([]byte, error) {
 	// check remote node version
-	switch c.remoteNode.Version.Major {
+	switch c.remoteNode.Version.GetMajor() {
 	case 2:
 		return c.objectPayloadRangeV2(ctx, p, opts...)
 	default:
@@ -744,7 +744,7 @@ func (c *Client) ObjectPayloadRangeTZ(ctx context.Context, p *RangeChecksumParam
 
 func (c *Client) objectPayloadRangeHash(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) (interface{}, error) {
 	// check remote node version
-	switch c.remoteNode.Version.Major {
+	switch c.remoteNode.Version.GetMajor() {
 	case 2:
 		return c.objectPayloadRangeHashV2(ctx, p, opts...)
 	default:
