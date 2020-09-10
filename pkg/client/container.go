@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 
+	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/util/signature"
@@ -73,8 +74,23 @@ func (c Client) DeleteContainer(ctx context.Context, id *container.ID, opts ...C
 	}
 }
 
-// todo: func (c Client) GetExtendedACL
-// todo: func (c Client) SetExtendedACL
+func (c Client) GetEACL(ctx context.Context, id *container.ID, opts ...CallOption) (*eacl.Table, error) {
+	switch c.remoteNode.Version.GetMajor() {
+	case 2:
+		return c.getEACLV2(ctx, id, opts...)
+	default:
+		return nil, unsupportedProtocolErr
+	}
+}
+
+func (c Client) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
+	switch c.remoteNode.Version.GetMajor() {
+	case 2:
+		return c.setEACLV2(ctx, eacl, opts...)
+	default:
+		return unsupportedProtocolErr
+	}
+}
 
 func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
 	// apply all available options
@@ -278,6 +294,110 @@ func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 		}
 
 		resp, err := cli.Delete(ctx, req)
+		if err != nil {
+			return errors.Wrap(err, "transport error")
+		}
+
+		err = v2signature.VerifyServiceMessage(resp)
+		if err != nil {
+			return errors.Wrap(err, "can't verify response message")
+		}
+
+		return nil
+	default:
+		return unsupportedProtocolErr
+	}
+}
+
+func (c Client) getEACLV2(ctx context.Context, id *container.ID, opts ...CallOption) (*eacl.Table, error) {
+	// apply all available options
+	callOptions := defaultCallOptions()
+	for i := range opts {
+		opts[i].apply(&callOptions)
+	}
+
+	reqBody := new(v2container.GetExtendedACLRequestBody)
+	reqBody.SetContainerID(id.ToV2())
+
+	req := new(v2container.GetExtendedACLRequest)
+	req.SetBody(reqBody)
+	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
+
+	err := v2signature.SignServiceMessage(c.key, req)
+	if err != nil {
+		return nil, err
+	}
+
+	switch c.remoteNode.Protocol {
+	case GRPC:
+		cli, err := v2ContainerClientFromOptions(c.opts)
+		if err != nil {
+			return nil, errors.Wrap(err, "can't create grpc client")
+		}
+
+		resp, err := cli.GetExtendedACL(ctx, req)
+		if err != nil {
+			return nil, errors.Wrap(err, "transport error")
+		}
+
+		err = v2signature.VerifyServiceMessage(resp)
+		if err != nil {
+			return nil, errors.Wrap(err, "can't verify response message")
+		}
+
+		body := resp.GetBody()
+		if body == nil {
+			return nil, errors.New("response body is nil")
+		}
+
+		result := eacl.NewTableFromV2(body.GetEACL())
+
+		// todo: check signature
+
+		return result, nil
+	default:
+		return nil, unsupportedProtocolErr
+	}
+}
+
+func (c Client) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
+	// apply all available options
+	callOptions := defaultCallOptions()
+	for i := range opts {
+		opts[i].apply(&callOptions)
+	}
+
+	reqBody := new(v2container.SetExtendedACLRequestBody)
+	reqBody.SetEACL(eacl.ToV2())
+
+	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetEACL()}
+	err := signature.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
+		eaclSignature := new(refs.Signature)
+		eaclSignature.SetKey(key)
+		eaclSignature.SetSign(sig)
+		reqBody.SetSignature(eaclSignature)
+	}, signature.SignWithRFC6979())
+	if err != nil {
+		return err
+	}
+
+	req := new(v2container.SetExtendedACLRequest)
+	req.SetBody(reqBody)
+	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
+
+	err = v2signature.SignServiceMessage(c.key, req)
+	if err != nil {
+		return err
+	}
+
+	switch c.remoteNode.Protocol {
+	case GRPC:
+		cli, err := v2ContainerClientFromOptions(c.opts)
+		if err != nil {
+			return errors.Wrap(err, "can't create grpc client")
+		}
+
+		resp, err := cli.SetExtendedACL(ctx, req)
 		if err != nil {
 			return errors.Wrap(err, "transport error")
 		}
