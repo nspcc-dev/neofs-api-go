@@ -224,7 +224,7 @@ func (f *HeaderFilter) StableSize() (size int) {
 
 // StableMarshal marshals unified role info structure in a protobuf
 // compatible way without field order shuffle.
-func (t *TargetInfo) StableMarshal(buf []byte) ([]byte, error) {
+func (t *Target) StableMarshal(buf []byte) ([]byte, error) {
 	if t == nil {
 		return []byte{}, nil
 	}
@@ -254,7 +254,7 @@ func (t *TargetInfo) StableMarshal(buf []byte) ([]byte, error) {
 }
 
 // StableSize of role info structure marshalled by StableMarshal function.
-func (t *TargetInfo) StableSize() (size int) {
+func (t *Target) StableSize() (size int) {
 	if t == nil {
 		return 0
 	}
