@@ -12,9 +12,9 @@ type HeaderFilter struct {
 	name, value string
 }
 
-// TargetInfo is a unified structure of TargetInfo
+// Target is a unified structure of Target
 // message from proto definition.
-type TargetInfo struct {
+type Target struct {
 	role Role
 
 	keys [][]byte
@@ -29,7 +29,7 @@ type Record struct {
 
 	filters []*HeaderFilter
 
-	targets []*TargetInfo
+	targets []*Target
 }
 
 // Table is a unified structure of EACLTable
@@ -60,7 +60,7 @@ type BearerToken struct {
 	sig *refs.Signature
 }
 
-// TargetInfo is a unified enum of MatchType enum from proto definition.
+// Target is a unified enum of MatchType enum from proto definition.
 type MatchType uint32
 
 // HeaderType is a unified enum of HeaderType enum from proto definition.
@@ -167,7 +167,7 @@ func (f *HeaderFilter) SetValue(v string) {
 	}
 }
 
-func (t *TargetInfo) GetRole() Role {
+func (t *Target) GetRole() Role {
 	if t != nil {
 		return t.role
 	}
@@ -175,13 +175,13 @@ func (t *TargetInfo) GetRole() Role {
 	return RoleUnknown
 }
 
-func (t *TargetInfo) SetRole(v Role) {
+func (t *Target) SetRole(v Role) {
 	if t != nil {
 		t.role = v
 	}
 }
 
-func (t *TargetInfo) GetKeyList() [][]byte {
+func (t *Target) GetKeyList() [][]byte {
 	if t != nil {
 		return t.keys
 	}
@@ -189,7 +189,7 @@ func (t *TargetInfo) GetKeyList() [][]byte {
 	return nil
 }
 
-func (t *TargetInfo) SetKeyList(v [][]byte) {
+func (t *Target) SetKeyList(v [][]byte) {
 	if t != nil {
 		t.keys = v
 	}
@@ -237,7 +237,7 @@ func (r *Record) SetFilters(v []*HeaderFilter) {
 	}
 }
 
-func (r *Record) GetTargets() []*TargetInfo {
+func (r *Record) GetTargets() []*Target {
 	if r != nil {
 		return r.targets
 	}
@@ -245,7 +245,7 @@ func (r *Record) GetTargets() []*TargetInfo {
 	return nil
 }
 
-func (r *Record) SetTargets(v []*TargetInfo) {
+func (r *Record) SetTargets(v []*Target) {
 	if r != nil {
 		r.targets = v
 	}

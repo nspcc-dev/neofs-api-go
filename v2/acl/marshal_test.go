@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func generateTarget(u acl.Role, k int) *acl.TargetInfo {
-	target := new(acl.TargetInfo)
+func generateTarget(u acl.Role, k int) *acl.Target {
+	target := new(acl.Target)
 	target.SetRole(u)
 
 	keys := make([][]byte, k)
@@ -44,7 +44,7 @@ func generateRecord(another bool) *acl.Record {
 
 		record.SetOperation(acl.OperationHead)
 		record.SetAction(acl.ActionDeny)
-		record.SetTargets([]*acl.TargetInfo{t1})
+		record.SetTargets([]*acl.Target{t1})
 		record.SetFilters([]*acl.HeaderFilter{f1})
 	default:
 		t1 := generateTarget(acl.RoleUser, 2)
@@ -54,7 +54,7 @@ func generateRecord(another bool) *acl.Record {
 
 		record.SetOperation(acl.OperationPut)
 		record.SetAction(acl.ActionAllow)
-		record.SetTargets([]*acl.TargetInfo{t1, t2})
+		record.SetTargets([]*acl.Target{t1, t2})
 		record.SetFilters([]*acl.HeaderFilter{f1, f2})
 	}
 
