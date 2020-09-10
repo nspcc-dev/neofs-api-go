@@ -8,7 +8,7 @@ import (
 )
 
 func TestIDV2(t *testing.T) {
-	id := new(ID)
+	id := NewID()
 
 	wallet := new(NEO3Wallet)
 
@@ -19,8 +19,5 @@ func TestIDV2(t *testing.T) {
 
 	idV2 := id.ToV2()
 
-	id2, err := IDFromV2(idV2)
-	require.NoError(t, err)
-
-	require.Equal(t, id, id2)
+	require.Equal(t, wallet.Bytes(), idV2.GetValue())
 }

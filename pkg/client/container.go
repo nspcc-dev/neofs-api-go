@@ -140,14 +140,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 			return nil, errors.Wrap(err, "can't verify response message")
 		}
 
-		cidV2 := resp.GetBody().GetContainerID()
-
-		cid, err := container.IDFromV2(cidV2)
-		if err != nil {
-			return nil, errors.Wrapf(err, "could not convert %T to %T", cidV2, cid)
-		}
-
-		return cid, nil
+		return container.NewIDFromV2(resp.GetBody().GetContainerID()), nil
 	default:
 		return nil, unsupportedProtocolErr
 	}
@@ -235,12 +228,7 @@ func (c Client) listContainerV2(ctx context.Context, owner *owner.ID, opts ...Ca
 
 		result := make([]*container.ID, 0, len(resp.GetBody().GetContainerIDs()))
 		for _, cidV2 := range resp.GetBody().GetContainerIDs() {
-			cid, err := container.IDFromV2(cidV2)
-			if err != nil {
-				return nil, errors.Wrapf(err, "could not convert %T to %T", cidV2, cid)
-			}
-
-			result = append(result, cid)
+			result = append(result, container.NewIDFromV2(cidV2))
 		}
 
 		return result, nil

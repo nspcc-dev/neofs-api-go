@@ -1,64 +1,38 @@
 package owner
 
 import (
-	"crypto/sha256"
-
 	"github.com/mr-tron/base58"
 	"github.com/nspcc-dev/neo-go/pkg/encoding/address"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/pkg/errors"
 )
 
-// ID represents owner identifier that
-// supports different type of values.
-type ID struct {
-	val []byte
+// ID represents v2-compatible owner identifier.
+type ID refs.OwnerID
+
+// NewIDFromV2 wraps v2 OwnerID message to ID.
+func NewIDFromV2(idV2 *refs.OwnerID) *ID {
+	return (*ID)(idV2)
+}
+
+// NewID creates and initializes blank ID.
+//
+// Works similar as NewIDFromV2(new(OwnerID)).
+func NewID() *ID {
+	return NewIDFromV2(new(refs.OwnerID))
 }
 
 // SetNeo3Wallet sets owner identifier value to NEO3 wallet address.
 func (id *ID) SetNeo3Wallet(v *NEO3Wallet) {
-	if id != nil {
-		id.val = v.Bytes()
-	}
+	(*refs.OwnerID)(id).SetValue(v.Bytes())
 }
 
 // ToV2 returns the v2 owner ID message.
 func (id *ID) ToV2() *refs.OwnerID {
-	if id != nil {
-		idV2 := new(refs.OwnerID)
-		idV2.SetValue(id.val)
-
-		return idV2
-	}
-
-	return nil
-}
-
-// IDFromV2 converts owner ID v2 structure to ID.
-func IDFromV2(idV2 *refs.OwnerID) (*ID, error) {
-	if idV2 == nil {
-		return nil, nil
-	}
-
-	val := idV2.GetValue()
-	if ln := len(val); ln != 25 {
-		return nil, errors.Errorf(
-			"could not convert %T to %T: expected length %d, received %d",
-			idV2, (*ID)(nil), sha256.Size, ln,
-		)
-	}
-
-	return &ID{
-		val: val,
-	}, nil
+	return (*refs.OwnerID)(id)
 }
 
 func (id *ID) String() string {
-	if id != nil {
-		return base58.Encode(id.val)
-	}
-
-	return ""
+	return base58.Encode((*refs.OwnerID)(id).GetValue())
 }
 
 func ScriptHashBE(id *ID) ([]byte, error) {
