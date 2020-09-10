@@ -59,7 +59,7 @@ func (o *Object) Verify() error {
 
 	hdrChecksum := sha256.Sum256(data)
 
-	if !bytes.Equal(hdrChecksum[:], o.id.val) {
+	if !bytes.Equal(hdrChecksum[:], o.id.ToV2().GetValue()) {
 		return errors.New("invalid object identifier")
 	}
 
@@ -72,18 +72,6 @@ func (o *Object) Verify() error {
 		},
 	); err != nil {
 		return errors.Wrap(err, "invalid object ID signature")
-	}
-
-	return nil
-}
-
-// Address returns address of the object.
-func (o *Object) Address() *Address {
-	if o != nil {
-		return &Address{
-			cid: o.cid,
-			oid: o.id,
-		}
 	}
 
 	return nil
@@ -201,22 +189,7 @@ func FromV2(oV2 *object.Object) (*Object, error) {
 		return nil, nil
 	}
 
-	id, err := IDFromV2(oV2.GetObjectID())
-	if err != nil {
-		return nil, errors.Wrap(err, "could not convert object ID")
-	}
-
 	hdr := oV2.GetHeader()
-
-	ownerID, err := owner.IDFromV2(hdr.GetOwnerID())
-	if err != nil {
-		return nil, errors.Wrap(err, "could not convert owner ID")
-	}
-
-	cid, err := container.IDFromV2(hdr.GetContainerID())
-	if err != nil {
-		return nil, errors.Wrap(err, "could not convert container ID")
-	}
 
 	// TODO: convert other fields
 
@@ -225,11 +198,11 @@ func FromV2(oV2 *object.Object) (*Object, error) {
 	return &Object{
 		rwObject: rwObject{
 			fin:             true,
-			id:              id,
+			id:              NewIDFromV2(oV2.GetObjectID()),
 			key:             sig.GetKey(),
 			sig:             sig.GetSign(),
-			cid:             cid,
-			ownerID:         ownerID,
+			cid:             container.NewIDFromV2(hdr.GetContainerID()),
+			ownerID:         owner.NewIDFromV2(hdr.GetOwnerID()),
 			payloadChecksum: hdr.GetPayloadHash(),
 			payload:         oV2.GetPayload(),
 		},

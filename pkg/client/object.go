@@ -262,10 +262,7 @@ func (c *Client) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...Ca
 	}
 
 	// convert object identifier
-	id, err := object.IDFromV2(resp.GetBody().GetObjectID())
-	if err != nil {
-		return nil, errors.Wrap(err, "could not convert object identifier")
-	}
+	id := object.NewIDFromV2(resp.GetBody().GetObjectID())
 
 	return id, nil
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func TestIDV2_0(t *testing.T) {
-	cid := new(ID)
+	cid := NewID()
 
 	checksum := [sha256.Size]byte{}
 
@@ -20,8 +20,5 @@ func TestIDV2_0(t *testing.T) {
 
 	cidV2 := cid.ToV2()
 
-	cid2, err := IDFromV2(cidV2)
-	require.NoError(t, err)
-
-	require.Equal(t, cid, cid2)
+	require.Equal(t, checksum[:], cidV2.GetValue())
 }
