@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"bytes"
 	"crypto/sha256"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
@@ -71,4 +72,8 @@ func (c *Checksum) SetTillichZemor(v [64]byte) {
 
 func (c *Checksum) ToV2() *refs.Checksum {
 	return (*refs.Checksum)(c)
+}
+
+func EqualChecksums(cs1, cs2 *Checksum) bool {
+	return cs1.GetType() == cs2.GetType() && bytes.Equal(cs1.GetSum(), cs2.GetSum())
 }
