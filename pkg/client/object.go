@@ -174,12 +174,6 @@ func (c *Client) PutObject(ctx context.Context, p *PutObjectParams, opts ...Call
 }
 
 func (c *Client) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...CallOption) (*object.ID, error) {
-	// convert object to V2
-	obj, err := p.obj.ToV2(c.key)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not convert object to V2")
-	}
-
 	// create V2 Object client
 	cli, err := v2ObjectClient(c.remoteNode.Protocol, c.opts)
 	if err != nil {
@@ -212,6 +206,8 @@ func (c *Client) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...Ca
 	// initialize init part
 	initPart := new(v2object.PutObjectPartInit)
 	body.SetObjectPart(initPart)
+
+	obj := p.obj.ToV2()
 
 	// set init part fields
 	initPart.SetObjectID(obj.GetObjectID())
@@ -447,12 +443,7 @@ func (c *Client) getObjectV2(ctx context.Context, p *GetObjectParams, opts ...Ca
 	obj.SetPayload(payload)
 
 	// convert the object
-	res, err := object.FromV2(obj)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not convert V2 object")
-	}
-
-	return res, nil
+	return object.NewFromV2(obj), nil
 }
 
 func (p *ObjectHeaderParams) WithAddress(v *object.Address) *ObjectHeaderParams {
@@ -575,12 +566,7 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 	obj.SetHeader(hdr)
 
 	// convert the object
-	res, err := object.FromV2(obj)
-	if err != nil {
-		return nil, errors.Wrap(err, "could not convert object")
-	}
-
-	return res, nil
+	return object.NewFromV2(obj), nil
 }
 
 func (p *RangeDataParams) WithAddress(v *object.Address) *RangeDataParams {
