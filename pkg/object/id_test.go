@@ -22,3 +22,19 @@ func TestIDV2(t *testing.T) {
 
 	require.Equal(t, checksum[:], idV2.GetValue())
 }
+
+func TestID_Equal(t *testing.T) {
+	cs := randSHA256Checksum(t)
+
+	id1 := NewID()
+	id1.SetSHA256(cs)
+
+	id2 := NewID()
+	id2.SetSHA256(cs)
+
+	id3 := NewID()
+	id3.SetSHA256(randSHA256Checksum(t))
+
+	require.True(t, id1.Equal(id2))
+	require.False(t, id1.Equal(id3))
+}
