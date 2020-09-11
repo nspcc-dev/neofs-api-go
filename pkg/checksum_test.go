@@ -38,3 +38,23 @@ func TestChecksum(t *testing.T) {
 	require.Equal(t, refs.TillichZemor, cV2.GetType())
 	require.Equal(t, cTZ[:], cV2.GetSum())
 }
+
+func TestEqualChecksums(t *testing.T) {
+	require.True(t, EqualChecksums(nil, nil))
+
+	csSHA := [sha256.Size]byte{}
+	_, _ = rand.Read(csSHA[:])
+
+	cs1 := NewChecksum()
+	cs1.SetSHA256(csSHA)
+
+	cs2 := NewChecksum()
+	cs2.SetSHA256(csSHA)
+
+	require.True(t, EqualChecksums(cs1, cs2))
+
+	csSHA[0]++
+	cs2.SetSHA256(csSHA)
+
+	require.False(t, EqualChecksums(cs1, cs2))
+}
