@@ -2,6 +2,7 @@ package object_test
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
@@ -483,7 +484,7 @@ func generateHeader(ln uint64) *object.Header {
 	hdr.SetHomomorphicHash(generateChecksum("Homomorphic Hash"))
 	hdr.SetObjectType(object.TypeRegular)
 	hdr.SetPayloadHash(generateChecksum("Payload Hash"))
-	hdr.SetSessionToken(generateSessionToken(string(ln)))
+	hdr.SetSessionToken(generateSessionToken(strconv.Itoa(int(ln))))
 
 	return hdr
 }
@@ -684,7 +685,7 @@ func generateRangeHashResponseBody(n int) *object.GetRangeHashResponseBody {
 
 	list := make([][]byte, n)
 	for i := 0; i < n; i++ {
-		list[i] = []byte("Some homomorphic hash data" + string(n))
+		list[i] = []byte("Some homomorphic hash data" + strconv.Itoa(n))
 	}
 
 	resp.SetType(refs.TillichZemor)
