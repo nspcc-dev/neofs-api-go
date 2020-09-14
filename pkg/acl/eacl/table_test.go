@@ -1,17 +1,80 @@
 package eacl_test
 
 import (
+	"crypto/sha256"
 	"testing"
 
+	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
+	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-crypto/test"
+	"github.com/stretchr/testify/require"
 )
 
-func TextExample(t *testing.T) {
+// example how to create eACL tables in applications
+func example() {
 	record := eacl.CreateRecord(eacl.ActionDeny, eacl.OperationPut)
 	record.AddFilter(eacl.HeaderFromObject, eacl.MatchStringEqual, "filename", "cat.jpg")
 	record.AddTarget(eacl.RoleOthers, test.DecodeKey(1).PublicKey, test.DecodeKey(2).PublicKey)
 
-	table := eacl.NewTable()
+	var cid container.ID
+	cid.SetSHA256(sha256.Sum256([]byte("container id")))
+
+	table := eacl.CreateTable(cid)
 	table.AddRecord(record)
+}
+
+func TestTable(t *testing.T) {
+	var (
+		v   pkg.Version
+		cid container.ID
+	)
+
+	sha := sha256.Sum256([]byte("container id"))
+	cid.SetSHA256(sha)
+
+	v.SetMajor(3)
+	v.SetMinor(2)
+
+	table := eacl.NewTable()
+	table.SetVersion(v)
+	table.SetCID(&cid)
+	table.AddRecord(eacl.CreateRecord(eacl.ActionAllow, eacl.OperationPut))
+
+	v2 := table.ToV2()
+	require.NotNil(t, v2)
+	require.Equal(t, uint32(3), v2.GetVersion().GetMajor())
+	require.Equal(t, uint32(2), v2.GetVersion().GetMinor())
+	require.Equal(t, sha[:], v2.GetContainerID().GetValue())
+	require.Len(t, v2.GetRecords(), 1)
+
+	newTable := eacl.NewTableFromV2(v2)
+	require.Equal(t, table, newTable)
+
+	t.Run("new from nil v2 table", func(t *testing.T) {
+		require.Equal(t, new(eacl.Table), eacl.NewTableFromV2(nil))
+	})
+
+	t.Run("create table", func(t *testing.T) {
+		var cid = new(container.ID)
+		cid.SetSHA256(sha256.Sum256([]byte("container id")))
+
+		table := eacl.CreateTable(*cid)
+		require.Equal(t, cid, table.CID())
+		require.Equal(t, *pkg.SDKVersion(), table.Version())
+	})
+}
+
+func TestTable_AddRecord(t *testing.T) {
+	records := []eacl.Record{
+		*eacl.CreateRecord(eacl.ActionDeny, eacl.OperationDelete),
+		*eacl.CreateRecord(eacl.ActionAllow, eacl.OperationPut),
+	}
+
+	table := eacl.NewTable()
+	for _, record := range records {
+		table.AddRecord(&record)
+	}
+
+	require.Equal(t, records, table.Records())
 }
