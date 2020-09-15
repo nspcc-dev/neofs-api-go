@@ -9,9 +9,11 @@ import (
 	"io"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
+	signer "github.com/nspcc-dev/neofs-api-go/util/signature"
 	"github.com/nspcc-dev/neofs-api-go/v2/client"
 	v2object "github.com/nspcc-dev/neofs-api-go/v2/object"
 	v2refs "github.com/nspcc-dev/neofs-api-go/v2/refs"
+	v2session "github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/nspcc-dev/neofs-api-go/v2/signature"
 	"github.com/pkg/errors"
 )
@@ -200,8 +202,19 @@ func (c *Client) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...Ca
 	body := new(v2object.PutRequestBody)
 	req.SetBody(body)
 
+	v2Addr := new(v2refs.Address)
+	v2Addr.SetObjectID(p.obj.GetID().ToV2())
+	v2Addr.SetContainerID(p.obj.GetContainerID().ToV2())
+
 	// set meta header
-	req.SetMetaHeader(v2MetaHeaderFromOpts(callOpts))
+	meta := v2MetaHeaderFromOpts(callOpts)
+	if err = c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+		addr: v2Addr,
+		verb: v2session.ObjectVerbPut,
+	}); err != nil {
+		return nil, errors.Wrap(err, "could not sign session token")
+	}
+	req.SetMetaHeader(meta)
 
 	// initialize init part
 	initPart := new(v2object.PutObjectPartInit)
@@ -304,7 +317,14 @@ func (c *Client) deleteObjectV2(ctx context.Context, p *DeleteObjectParams, opts
 	req.SetBody(body)
 
 	// set meta header
-	req.SetMetaHeader(v2MetaHeaderFromOpts(callOpts))
+	meta := v2MetaHeaderFromOpts(callOpts)
+	if err = c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+		addr: p.addr.ToV2(),
+		verb: v2session.ObjectVerbDelete,
+	}); err != nil {
+		return errors.Wrap(err, "could not sign session token")
+	}
+	req.SetMetaHeader(meta)
 
 	// fill body fields
 	body.SetAddress(p.addr.ToV2())
@@ -377,7 +397,14 @@ func (c *Client) getObjectV2(ctx context.Context, p *GetObjectParams, opts ...Ca
 	req.SetBody(body)
 
 	// set meta header
-	req.SetMetaHeader(v2MetaHeaderFromOpts(callOpts))
+	meta := v2MetaHeaderFromOpts(callOpts)
+	if err = c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+		addr: p.addr.ToV2(),
+		verb: v2session.ObjectVerbGet,
+	}); err != nil {
+		return nil, errors.Wrap(err, "could not sign session token")
+	}
+	req.SetMetaHeader(meta)
 
 	// fill body fields
 	body.SetAddress(p.addr.ToV2())
@@ -503,7 +530,14 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 	req.SetBody(body)
 
 	// set meta header
-	req.SetMetaHeader(v2MetaHeaderFromOpts(callOpts))
+	meta := v2MetaHeaderFromOpts(callOpts)
+	if err = c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+		addr: p.addr.ToV2(),
+		verb: v2session.ObjectVerbHead,
+	}); err != nil {
+		return nil, errors.Wrap(err, "could not sign session token")
+	}
+	req.SetMetaHeader(meta)
 
 	// fill body fields
 	body.SetAddress(p.addr.ToV2())
@@ -626,7 +660,14 @@ func (c *Client) objectPayloadRangeV2(ctx context.Context, p *RangeDataParams, o
 	req.SetBody(body)
 
 	// set meta header
-	req.SetMetaHeader(v2MetaHeaderFromOpts(callOpts))
+	meta := v2MetaHeaderFromOpts(callOpts)
+	if err = c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+		addr: p.addr.ToV2(),
+		verb: v2session.ObjectVerbRange,
+	}); err != nil {
+		return nil, errors.Wrap(err, "could not sign session token")
+	}
+	req.SetMetaHeader(meta)
 
 	// fill body fields
 	body.SetAddress(p.addr.ToV2())
@@ -761,7 +802,14 @@ func (c *Client) objectPayloadRangeHashV2(ctx context.Context, p *RangeChecksumP
 	req.SetBody(body)
 
 	// set meta header
-	req.SetMetaHeader(v2MetaHeaderFromOpts(callOpts))
+	meta := v2MetaHeaderFromOpts(callOpts)
+	if err = c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+		addr: p.addr.ToV2(),
+		verb: v2session.ObjectVerbRangeHash,
+	}); err != nil {
+		return nil, errors.Wrap(err, "could not sign session token")
+	}
+	req.SetMetaHeader(meta)
 
 	// fill body fields
 	body.SetAddress(p.addr.ToV2())
@@ -866,4 +914,43 @@ func v2ObjectClient(proto TransportProtocol, opts *clientOptions) (*v2object.Cli
 	default:
 		return nil, unsupportedProtocolErr
 	}
+}
+
+func (c Client) attachV2SessionToken(opts callOptions, hdr *v2session.RequestMetaHeader, info v2SessionReqInfo) error {
+	if opts.session == nil {
+		return nil
+	}
+
+	opCtx := new(v2session.ObjectSessionContext)
+	opCtx.SetAddress(info.addr)
+	opCtx.SetVerb(info.verb)
+
+	lt := new(v2session.TokenLifetime)
+	lt.SetIat(info.iat)
+	lt.SetNbf(info.nbf)
+	lt.SetExp(info.exp)
+
+	body := new(v2session.SessionTokenBody)
+	body.SetID(opts.session.ID())
+	body.SetSessionKey(opts.session.SessionKey())
+	body.SetContext(opCtx)
+	body.SetLifetime(lt)
+
+	token := new(v2session.SessionToken)
+	token.SetBody(body)
+
+	signWrapper := signature.StableMarshalerWrapper{SM: token.GetBody()}
+	err := signer.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
+		sessionTokenSignature := new(v2refs.Signature)
+		sessionTokenSignature.SetKey(key)
+		sessionTokenSignature.SetSign(sig)
+		token.SetSignature(sessionTokenSignature)
+	})
+	if err != nil {
+		return err
+	}
+
+	hdr.SetSessionToken(token)
+
+	return nil
 }
