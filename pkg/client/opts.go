@@ -41,6 +41,7 @@ type (
 		conn               *grpc.ClientConn
 		v2ContainerClient  *v2container.Client
 		v2AccountingClient *v2accounting.Client
+		v2SessionClient    *v2session.Client
 
 		objectClientV2 *v2object.Client
 	}
