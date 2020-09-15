@@ -2,9 +2,11 @@ package client
 
 import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
+	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 	v2accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting"
 	v2container "github.com/nspcc-dev/neofs-api-go/v2/container"
 	v2object "github.com/nspcc-dev/neofs-api-go/v2/object"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	v2session "github.com/nspcc-dev/neofs-api-go/v2/session"
 	"google.golang.org/grpc"
 )
@@ -27,7 +29,7 @@ type (
 		xHeaders []xHeader
 		ttl      uint32
 		epoch    uint64
-		// add session token
+		session  *token.SessionToken
 		// add bearer token
 	}
 
@@ -44,6 +46,13 @@ type (
 		v2SessionClient    *v2session.Client
 
 		objectClientV2 *v2object.Client
+	}
+
+	v2SessionReqInfo struct {
+		addr *refs.Address
+		verb v2session.ObjectSessionVerb
+
+		exp, nbf, iat uint64
 	}
 )
 
@@ -89,6 +98,12 @@ func WithTTL(ttl uint32) CallOption {
 func WithEpoch(epoch uint64) CallOption {
 	return newFuncCallOption(func(option *callOptions) {
 		option.epoch = epoch
+	})
+}
+
+func WithSession(token *token.SessionToken) CallOption {
+	return newFuncCallOption(func(option *callOptions) {
+		option.session = token
 	})
 }
 
