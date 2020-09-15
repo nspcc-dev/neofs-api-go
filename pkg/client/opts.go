@@ -30,7 +30,7 @@ type (
 		ttl      uint32
 		epoch    uint64
 		session  *token.SessionToken
-		// add bearer token
+		bearer   *token.BearerToken
 	}
 
 	clientOptions struct {
@@ -107,6 +107,12 @@ func WithSession(token *token.SessionToken) CallOption {
 	})
 }
 
+func WithBearer(token *token.BearerToken) CallOption {
+	return newFuncCallOption(func(option *callOptions) {
+		option.bearer = token
+	})
+}
+
 func v2MetaHeaderFromOpts(options callOptions) *v2session.RequestMetaHeader {
 	meta := new(v2session.RequestMetaHeader)
 	meta.SetVersion(options.version.ToV2())
@@ -119,6 +125,10 @@ func v2MetaHeaderFromOpts(options callOptions) *v2session.RequestMetaHeader {
 	}
 
 	meta.SetXHeaders(xhdrs)
+
+	if options.bearer != nil {
+		meta.SetBearerToken(options.bearer.ToV2())
+	}
 
 	return meta
 }
