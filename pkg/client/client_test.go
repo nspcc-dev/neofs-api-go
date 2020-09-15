@@ -8,6 +8,7 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/client"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
@@ -35,10 +36,18 @@ func TestExample(t *testing.T) {
 	cli, err = client.New(key, client.WithGRPCConnection(conn))
 	require.NoError(t, err)
 
+	replica := new(netmap.Replica)
+	replica.SetCount(2)
+	replica.SetSelector("*")
+
+	policy := new(netmap.PlacementPolicy)
+	policy.SetContainerBackupFactor(2)
+	policy.SetReplicas([]*netmap.Replica{replica})
+
 	// this container has random nonce and it does not set owner id
-	cnr, err := container.New(
+	cnr := container.New(
 		container.WithAttribute("CreatedAt", time.Now().String()),
-		container.WithPolicy("PUT 3 In *"),
+		container.WithPolicy(policy),
 		container.WithReadOnlyBasicACL(),
 	)
 	require.NoError(t, err)

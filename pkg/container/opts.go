@@ -3,6 +3,7 @@ package container
 import (
 	"github.com/google/uuid"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl"
+	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 )
 
@@ -18,7 +19,7 @@ type (
 
 	containerOptions struct {
 		acl        uint32
-		policy     string
+		policy     *netmap.PlacementPolicy
 		attributes []attribute
 		owner      *owner.ID
 		nonce      uuid.UUID
@@ -91,9 +92,8 @@ func WithNEO3Wallet(w *owner.NEO3Wallet) NewOption {
 	})
 }
 
-func WithPolicy(policy string) NewOption {
+func WithPolicy(policy *netmap.PlacementPolicy) NewOption {
 	return newFuncContainerOption(func(option *containerOptions) {
-		// todo: make sanity check and store binary structure
 		option.policy = policy
 	})
 }
