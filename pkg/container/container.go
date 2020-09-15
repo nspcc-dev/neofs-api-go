@@ -8,7 +8,7 @@ type Container struct {
 	container.Container
 }
 
-func New(opts ...NewOption) (*Container, error) {
+func New(opts ...NewOption) *Container {
 	cnrOptions := defaultContainerOptions()
 	for i := range opts {
 		opts[i].apply(&cnrOptions)
@@ -18,12 +18,12 @@ func New(opts ...NewOption) (*Container, error) {
 	cnr.SetNonce(cnrOptions.nonce[:])
 	cnr.SetBasicACL(cnrOptions.acl)
 
-	if cnrOptions.policy != "" {
-		// todo: set placement policy
-	}
-
 	if cnrOptions.owner != nil {
 		cnr.SetOwnerID(cnrOptions.owner.ToV2())
+	}
+
+	if cnrOptions.policy != nil {
+		cnr.SetPlacementPolicy(cnrOptions.policy)
 	}
 
 	attributes := make([]*container.Attribute, len(cnrOptions.attributes))
@@ -37,5 +37,19 @@ func New(opts ...NewOption) (*Container, error) {
 		cnr.SetAttributes(attributes)
 	}
 
-	return cnr, nil
+	return cnr
+}
+
+func (c Container) ToV2() *container.Container {
+	return &c.Container
+}
+
+func NewContainerFromV2(c *container.Container) *Container {
+	cnr := new(Container)
+
+	if c != nil {
+		cnr.Container = *c
+	}
+
+	return cnr
 }

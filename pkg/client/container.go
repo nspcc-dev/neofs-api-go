@@ -100,7 +100,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 	}
 
 	reqBody := new(v2container.PutRequestBody)
-	reqBody.SetContainer(&cnr.Container)
+	reqBody.SetContainer(cnr.ToV2())
 
 	// sign container
 	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetContainer()}
@@ -182,9 +182,7 @@ func (c Client) getContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 			return nil, errors.Wrap(err, "can't verify response message")
 		}
 
-		return &container.Container{
-			Container: *resp.GetBody().GetContainer(),
-		}, nil
+		return container.NewContainerFromV2(resp.GetBody().GetContainer()), nil
 	default:
 		return nil, unsupportedProtocolErr
 	}
