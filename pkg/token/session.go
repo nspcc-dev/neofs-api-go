@@ -31,5 +31,10 @@ func (s SessionToken) SessionKey() []byte {
 }
 
 func (s SessionToken) ID() []byte {
-	return s.id[:]
+	data, err := s.id.MarshalBinary()
+	if err != nil {
+		panic(err) // must never panic
+	}
+
+	return data
 }
