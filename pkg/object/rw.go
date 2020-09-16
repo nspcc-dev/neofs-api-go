@@ -12,23 +12,35 @@ import (
 // public getter and private setters.
 type rwObject object.Object
 
-func initObjectRecursive() *object.Object {
-	obj := new(object.Object)
-
-	hdr := new(object.Header)
-
-	hdr.SetSplit(new(object.SplitHeader))
-
-	obj.SetHeader(hdr)
-
-	return obj
-}
-
 // TODO: add session token methods
 
 // ToV2 converts Object to v2 Object message.
 func (o *rwObject) ToV2() *object.Object {
 	return (*object.Object)(o)
+}
+
+func (o *rwObject) setHeaderField(setter func(*object.Header)) {
+	obj := (*object.Object)(o)
+	h := obj.GetHeader()
+
+	if h == nil {
+		h = new(object.Header)
+		obj.SetHeader(h)
+	}
+
+	setter(h)
+}
+
+func (o *rwObject) setSplitFields(setter func(*object.SplitHeader)) {
+	o.setHeaderField(func(h *object.Header) {
+		split := h.GetSplit()
+		if split == nil {
+			split = new(object.SplitHeader)
+			h.SetSplit(split)
+		}
+
+		setter(split)
+	})
 }
 
 // GetID returns object identifier.
@@ -78,9 +90,9 @@ func (o *rwObject) GetVersion() *pkg.Version {
 }
 
 func (o *rwObject) setVersion(v *pkg.Version) {
-	(*object.Object)(o).
-		GetHeader().
-		SetVersion(v.ToV2())
+	o.setHeaderField(func(h *object.Header) {
+		h.SetVersion(v.ToV2())
+	})
 }
 
 // GetPayloadSize returns payload length of the object.
@@ -91,9 +103,9 @@ func (o *rwObject) GetPayloadSize() uint64 {
 }
 
 func (o *rwObject) setPayloadSize(v uint64) {
-	(*object.Object)(o).
-		GetHeader().
-		SetPayloadLength(v)
+	o.setHeaderField(func(h *object.Header) {
+		h.SetPayloadLength(v)
+	})
 }
 
 // GetContainerID returns identifier of the related container.
@@ -106,9 +118,9 @@ func (o *rwObject) GetContainerID() *container.ID {
 }
 
 func (o *rwObject) setContainerID(v *container.ID) {
-	(*object.Object)(o).
-		GetHeader().
-		SetContainerID(v.ToV2())
+	o.setHeaderField(func(h *object.Header) {
+		h.SetContainerID(v.ToV2())
+	})
 }
 
 // GetOwnerID returns identifier of the object owner.
@@ -121,9 +133,9 @@ func (o *rwObject) GetOwnerID() *owner.ID {
 }
 
 func (o *rwObject) setOwnerID(v *owner.ID) {
-	(*object.Object)(o).
-		GetHeader().
-		SetOwnerID(v.ToV2())
+	o.setHeaderField(func(h *object.Header) {
+		h.SetOwnerID(v.ToV2())
+	})
 }
 
 // GetCreationEpoch returns epoch number in which object was created.
@@ -134,9 +146,9 @@ func (o *rwObject) GetCreationEpoch() uint64 {
 }
 
 func (o *rwObject) setCreationEpoch(v uint64) {
-	(*object.Object)(o).
-		GetHeader().
-		SetCreationEpoch(v)
+	o.setHeaderField(func(h *object.Header) {
+		h.SetCreationEpoch(v)
+	})
 }
 
 // GetPayloadChecksum returns checksum of the object payload.
@@ -149,9 +161,9 @@ func (o *rwObject) GetPayloadChecksum() *pkg.Checksum {
 }
 
 func (o *rwObject) setPayloadChecksum(v *pkg.Checksum) {
-	(*object.Object)(o).
-		GetHeader().
-		SetPayloadHash(v.ToV2())
+	o.setHeaderField(func(h *object.Header) {
+		h.SetPayloadHash(v.ToV2())
+	})
 }
 
 // GetPayloadHomomorphicHash returns homomorphic hash of the object payload.
@@ -164,9 +176,9 @@ func (o *rwObject) GetPayloadHomomorphicHash() *pkg.Checksum {
 }
 
 func (o *rwObject) setPayloadHomomorphicHash(v *pkg.Checksum) {
-	(*object.Object)(o).
-		GetHeader().
-		SetHomomorphicHash(v.ToV2())
+	o.setHeaderField(func(h *object.Header) {
+		h.SetHomomorphicHash(v.ToV2())
+	})
 }
 
 // GetAttributes returns object attributes.
@@ -185,16 +197,15 @@ func (o *rwObject) GetAttributes() []*Attribute {
 }
 
 func (o *rwObject) setAttributes(v ...*Attribute) {
-	h := (*object.Object)(o).
-		GetHeader()
-
 	attrs := make([]*object.Attribute, 0, len(v))
 
 	for i := range v {
 		attrs = append(attrs, v[i].ToV2())
 	}
 
-	h.SetAttributes(attrs)
+	o.setHeaderField(func(h *object.Header) {
+		h.SetAttributes(attrs)
+	})
 }
 
 // GetPreviousID returns identifier of the previous sibling object.
@@ -208,10 +219,9 @@ func (o *rwObject) GetPreviousID() *ID {
 }
 
 func (o *rwObject) setPreviousID(v *ID) {
-	(*object.Object)(o).
-		GetHeader().
-		GetSplit().
-		SetPrevious(v.ToV2())
+	o.setSplitFields(func(split *object.SplitHeader) {
+		split.SetPrevious(v.ToV2())
+	})
 }
 
 // GetChildren return list of the identifiers of the child objects.
@@ -231,17 +241,15 @@ func (o *rwObject) GetChildren() []*ID {
 }
 
 func (o *rwObject) setChildren(v ...*ID) {
-	h := (*object.Object)(o).
-		GetHeader().
-		GetSplit()
-
 	ids := make([]*refs.ObjectID, 0, len(v))
 
 	for i := range v {
 		ids = append(ids, v[i].ToV2())
 	}
 
-	h.SetChildren(ids)
+	o.setSplitFields(func(split *object.SplitHeader) {
+		split.SetChildren(ids)
+	})
 }
 
 // GetParent returns parent object w/o payload.
@@ -259,11 +267,9 @@ func (o *rwObject) GetParent() *Object {
 }
 
 func (o *rwObject) setParent(v *Object) {
-	h := (*object.Object)(o).
-		GetHeader().
-		GetSplit()
-
-	h.SetParent((*object.Object)(v.rwObject).GetObjectID())
-	h.SetParentSignature((*object.Object)(v.rwObject).GetSignature())
-	h.SetParentHeader((*object.Object)(v.rwObject).GetHeader())
+	o.setSplitFields(func(split *object.SplitHeader) {
+		split.SetParent((*object.Object)(v.rwObject).GetObjectID())
+		split.SetParentSignature((*object.Object)(v.rwObject).GetSignature())
+		split.SetParentHeader((*object.Object)(v.rwObject).GetHeader())
+	})
 }
