@@ -26,7 +26,7 @@ func NewFromV2(oV2 *object.Object) *Object {
 //
 // Works similar as NewFromV2(new(Object)).
 func New() *Object {
-	return NewFromV2(initObjectRecursive())
+	return NewFromV2(new(object.Object))
 }
 
 // ToV2 converts Object to v2 Object message.

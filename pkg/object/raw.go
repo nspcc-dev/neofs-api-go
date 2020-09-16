@@ -25,7 +25,7 @@ func NewRawFromV2(oV2 *object.Object) *RawObject {
 //
 // Works similar as NewRawFromV2(new(Object)).
 func NewRaw() *RawObject {
-	return NewRawFromV2(initObjectRecursive())
+	return NewRawFromV2(new(object.Object))
 }
 
 // Object returns read-only object instance.
