@@ -3,6 +3,7 @@ package eacl
 import (
 	"testing"
 
+	"github.com/nspcc-dev/neofs-api-go/pkg/object"
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 	"github.com/stretchr/testify/require"
 )
@@ -10,7 +11,7 @@ import (
 func TestFilter(t *testing.T) {
 	filter := &Filter{
 		from:    HeaderFromObject,
-		name:    HdrObjSysNamePayloadLength,
+		name:    object.HdrSysNamePayloadLength,
 		matcher: MatchStringEqual,
 		value:   "200",
 	}
