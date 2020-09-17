@@ -1,6 +1,8 @@
 package container
 
 import (
+	"crypto/sha256"
+
 	"github.com/nspcc-dev/neofs-api-go/v2/container"
 )
 
@@ -52,4 +54,18 @@ func NewContainerFromV2(c *container.Container) *Container {
 	}
 
 	return cnr
+}
+
+// CalculateID calculates container identifier
+// based on its structure.
+func CalculateID(c *Container) *ID {
+	data, err := c.ToV2().StableMarshal(nil)
+	if err != nil {
+		panic(err)
+	}
+
+	id := NewID()
+	id.SetSHA256(sha256.Sum256(data))
+
+	return id
 }
