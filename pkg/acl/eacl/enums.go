@@ -59,32 +59,6 @@ const (
 	HeaderFromObject
 )
 
-const (
-	// ReservedHeaderNamePrefix used in filter names to specify well known
-	// headers such as container id, object id, owner id, etc.
-	// All names without this prefix used to lookup through user defined headers
-	// in object or x-headers in request.
-	ReservedHeaderNamePrefix = "_"
-
-	// HdrObjSysNameID is a name of ID field in system header of object.
-	HdrObjSysNameID = ReservedHeaderNamePrefix + "ID"
-
-	// HdrObjSysNameCID is a name of cid field in system header of object.
-	HdrObjSysNameCID = ReservedHeaderNamePrefix + "CID"
-
-	// HdrObjSysNameOwnerID is a name of OwnerID field in system header of object.
-	HdrObjSysNameOwnerID = ReservedHeaderNamePrefix + "OWNER_ID"
-
-	// HdrObjSysNameVersion is a name of version field in system header of object.
-	HdrObjSysNameVersion = ReservedHeaderNamePrefix + "VERSION"
-
-	// HdrObjSysNamePayloadLength is a name of PayloadLength field in system header of object.
-	HdrObjSysNamePayloadLength = ReservedHeaderNamePrefix + "PAYLOAD_LENGTH"
-
-	// HdrObjSysNameCreatedEpoch is a name of CreatedAt.Epoch field in system header of object.
-	HdrObjSysNameCreatedEpoch = ReservedHeaderNamePrefix + "CREATED_EPOCH"
-)
-
 func (a Action) ToV2() v2acl.Action {
 	switch a {
 	case ActionAllow:
