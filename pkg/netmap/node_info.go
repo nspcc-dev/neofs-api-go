@@ -38,6 +38,12 @@ func (n Node) Hash() uint64 {
 	return n.ID
 }
 
+// NetworkAddress returns network address
+// of the node in a string format.
+func (n Node) NetworkAddress() string {
+	return n.InfoV2.GetAddress()
+}
+
 // NodesFromV2 converts slice of v2 netmap.NodeInfo to a generic node slice.
 func NodesFromV2(infos []netmap.NodeInfo) Nodes {
 	nodes := make(Nodes, len(infos))
