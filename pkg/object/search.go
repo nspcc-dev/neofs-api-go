@@ -56,9 +56,13 @@ func NewSearchFilters() SearchFilters {
 	return SearchFilters{}
 }
 
-func NewSearchFiltersFromV2(v2 []v2object.SearchFilter) SearchFilters {
+func NewSearchFiltersFromV2(v2 []*v2object.SearchFilter) SearchFilters {
 	filters := make(SearchFilters, 0, len(v2))
 	for i := range v2 {
+		if v2[i] == nil {
+			continue
+		}
+
 		filters = append(filters, SearchFilter{
 			header: v2[i].GetName(),
 			value:  v2[i].GetValue(),
@@ -81,10 +85,10 @@ func (f *SearchFilters) AddFilter(header, value string, op SearchMatchType) {
 	})
 }
 
-func (f SearchFilters) ToV2() []v2object.SearchFilter {
-	result := make([]v2object.SearchFilter, 0, len(f))
+func (f SearchFilters) ToV2() []*v2object.SearchFilter {
+	result := make([]*v2object.SearchFilter, 0, len(f))
 	for i := range f {
-		v2 := v2object.SearchFilter{}
+		v2 := new(v2object.SearchFilter)
 		v2.SetName(f[i].header)
 		v2.SetValue(f[i].value)
 		v2.SetMatchType(f[i].op.ToV2())
