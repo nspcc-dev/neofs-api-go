@@ -70,10 +70,10 @@ func (c Client) createSessionV2(ctx context.Context, expiration uint64, opts ...
 			return nil, errors.New("malformed response body")
 		}
 
-		sessionToken, err := token.CreateSessionToken(body.GetID(), body.GetSessionKey())
-		if err != nil {
-			return nil, errors.Wrap(err, "malformed response body")
-		}
+		sessionToken := token.NewSessionToken()
+		sessionToken.SetID(body.GetID())
+		sessionToken.SetSessionKey(body.GetSessionKey())
+		sessionToken.SetOwnerID(ownerID)
 
 		return sessionToken, nil
 	default:

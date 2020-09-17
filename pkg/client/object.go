@@ -1034,6 +1034,8 @@ func (c Client) attachV2SessionToken(opts callOptions, hdr *v2session.RequestMet
 		return nil
 	}
 
+	token := opts.session.ToV2()
+
 	opCtx := new(v2session.ObjectSessionContext)
 	opCtx.SetAddress(info.addr)
 	opCtx.SetVerb(info.verb)
@@ -1043,14 +1045,10 @@ func (c Client) attachV2SessionToken(opts callOptions, hdr *v2session.RequestMet
 	lt.SetNbf(info.nbf)
 	lt.SetExp(info.exp)
 
-	body := new(v2session.SessionTokenBody)
-	body.SetID(opts.session.ID())
+	body := token.GetBody()
 	body.SetSessionKey(opts.session.SessionKey())
 	body.SetContext(opCtx)
 	body.SetLifetime(lt)
-
-	token := new(v2session.SessionToken)
-	token.SetBody(body)
 
 	signWrapper := signature.StableMarshalerWrapper{SM: token.GetBody()}
 	err := signer.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
