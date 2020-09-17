@@ -1,6 +1,7 @@
 package object
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/pkg/errors"
 )
@@ -33,4 +34,28 @@ func AddressFromBytes(data []byte) (*Address, error) {
 	}
 
 	return NewAddressFromV2(addrV2), nil
+}
+
+// GetContainerID returns container identifier.
+func (a *Address) GetContainerID() *container.ID {
+	return container.NewIDFromV2(
+		(*refs.Address)(a).GetContainerID(),
+	)
+}
+
+// SetContainerID sets container identifier.
+func (a *Address) SetContainerID(id *container.ID) {
+	(*refs.Address)(a).SetContainerID(id.ToV2())
+}
+
+// GetObjectID returns object identifier.
+func (a *Address) GetObjectID() *ID {
+	return NewIDFromV2(
+		(*refs.Address)(a).GetObjectID(),
+	)
+}
+
+// SetObjectID sets object identifier.
+func (a *Address) SetObjectID(id *ID) {
+	(*refs.Address)(a).SetObjectID(id.ToV2())
 }
