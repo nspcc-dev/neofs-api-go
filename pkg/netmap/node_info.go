@@ -44,6 +44,11 @@ func (n Node) NetworkAddress() string {
 	return n.InfoV2.GetAddress()
 }
 
+// PublicKey returns public key of the node in bytes.
+func (n Node) PublicKey() []byte {
+	return n.InfoV2.GetPublicKey()
+}
+
 // NodesFromV2 converts slice of v2 netmap.NodeInfo to a generic node slice.
 func NodesFromV2(infos []netmap.NodeInfo) Nodes {
 	nodes := make(Nodes, len(infos))
