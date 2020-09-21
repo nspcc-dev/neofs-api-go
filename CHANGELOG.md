@@ -1,5 +1,11 @@
 # Changelog
-This is the changelog for NeoFS-API-Go
+
+## [2.0.0] - 2020-XX-XX - Jindo (진도, 珍島)
+
+Major API refactoring and simplification.
+
+### Removed
+- v0 and v1 NeoFS API is not supported anymore
 
 ## [1.3.0] - 2020-07-23
 
@@ -174,7 +180,7 @@ This is the changelog for NeoFS-API-Go
 
 ## [0.4.0] - 2020-02-18
 
-### Added 
+### Added
 - Meta header for all gRPC responses. It contains epoch stamp and version number.
 ### Changed
 - Endianness in accounting cheque. Now it uses little endian for cheaper
@@ -182,7 +188,7 @@ decoding in neofs smart-contract.
 
 ## [0.3.2] - 2020-02-10
 
-### Added 
+### Added
 - gRPC method DumpVars to State service
 - add method `EncodeVariables` to encode debug variables to JSON (slice of bytes)
 - increase test coverage for state package
@@ -265,7 +271,7 @@ decoding in neofs smart-contract.
 ### Changed
 - Routine to verify correct object checks if integrity header is last and
 may use public key header if verification header is not present
-- Routine to verify correct session token checks if keys in the token 
+- Routine to verify correct session token checks if keys in the token
 associated with owner id
 - Updated neofs-crypto to v0.2.3
 
@@ -308,9 +314,9 @@ associated with owner id
 ## [0.2.3] - 2019-11-28
 
 ### Removed
-- service: SignRequest / VerifyRequest and accompanying code 
+- service: SignRequest / VerifyRequest and accompanying code
 - proto: Signature field from requests
-- object: bytefmt package not used anymore   
+- object: bytefmt package not used anymore
 
 ### Changed
 - service: rename EpochRequest to EpochHeader and merge with MetaHeader
@@ -324,19 +330,19 @@ associated with owner id
 ## [0.2.2] - 2019-11-22
 
 ### Changed
-- ProcessRequestTTL don't changes status errors from TTLCondition 
+- ProcessRequestTTL don't changes status errors from TTLCondition
 
 ## [0.2.1] - 2019-11-22
 
 ### Changed
 - Removed SendPutRequest
-- MakePutRequestHeader sets only object and token 
+- MakePutRequestHeader sets only object and token
 
 ## [0.2.0] - 2019-11-21
 
 ### Added
-- Container not found error 
-- GitHub Actions as CI and Codecov 
+- Container not found error
+- GitHub Actions as CI and Codecov
 - Auto-generated proto documentation
 - RequestMetaHeader to all RPC requests
 - RequestVerificationHeader to all RPC requests
@@ -344,7 +350,7 @@ associated with owner id
 ### Changed
 - Moved TTL and Epoch fields to RequestMetaHeader
 - Renamed Version in object.SearchRequest to QueryVersion
-- Removed SetTTL, GetTTL, SetEpoch, GetEpoch from all RPC requests  
+- Removed SetTTL, GetTTL, SetEpoch, GetEpoch from all RPC requests
 
 ## 0.1.0 - 2019-11-18
 
