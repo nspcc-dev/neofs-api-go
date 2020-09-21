@@ -1,7 +1,9 @@
 #!/usr/bin/make -f
 SHELL = bash
 
-.PHONY: dep fmts fmt imports protoc
+VERSION ?= $(shell git describe --tags --dirty --always)
+
+.PHONY: dep fmts fmt imports protoc test lint version help
 
 # Pull go dependencies
 dep:
@@ -35,7 +37,7 @@ imports:
 		GO111MODULE=on goimports -w $$f; \
 	done
 
-# Regenerate proto files:
+# Regenerate code for proto files
 protoc:
 	@GOPRIVATE=github.com/nspcc-dev go mod vendor
 	# Install specific version for protobuf lib
@@ -48,3 +50,26 @@ protoc:
 			--gofast_out=plugins=grpc,paths=source_relative:. $$f; \
 	done
 	rm -rf vendor
+
+# Run Unit Test with go test
+test:
+	@echo "⇒ Runnning go test"
+	@GO111MODULE=on go test ./...
+
+# Run linters
+lint:
+	@golangci-lint run
+
+# Print version
+version:
+	@echo $(VERSION)
+
+# Show this help prompt
+help:
+	@echo '  Usage:'
+	@echo ''
+	@echo '    make <target>'
+	@echo ''
+	@echo '  Targets:'
+	@echo ''
+	@awk '/^#/{ comment = substr($$0,3) } comment && /^[a-zA-Z][a-zA-Z0-9_-]+ ?:/{ print "   ", $$1, comment }' $(MAKEFILE_LIST) | column -t -s ':' | grep -v 'IGNORE' | sort -u
