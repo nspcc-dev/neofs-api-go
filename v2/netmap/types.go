@@ -252,9 +252,8 @@ func (p *PlacementPolicy) GetFilters() []*Filter {
 
 func (p *PlacementPolicy) SetFilters(filters []*Filter) {
 	if p != nil {
-
+		p.filters = filters
 	}
-	p.filters = filters
 }
 
 func (p *PlacementPolicy) GetSelectors() []*Selector {
