@@ -288,3 +288,18 @@ func (o *rwObject) setSessionToken(v *token.SessionToken) {
 		h.SetSessionToken(v.ToV2())
 	})
 }
+
+// GetType returns type of the object.
+func (o *rwObject) GetType() Type {
+	return TypeFromV2(
+		(*object.Object)(o).
+			GetHeader().
+			GetObjectType(),
+	)
+}
+
+func (o *rwObject) setType(t Type) {
+	o.setHeaderField(func(h *object.Header) {
+		h.SetObjectType(t.ToV2())
+	})
+}
