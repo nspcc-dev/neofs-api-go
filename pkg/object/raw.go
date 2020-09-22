@@ -120,3 +120,16 @@ func (o *RawObject) SetSessionToken(v *token.SessionToken) {
 func (o *RawObject) SetType(v Type) {
 	o.setType(v)
 }
+
+// CutPayload returns RawObject w/ empty payload.
+//
+// Changes of non-payload fields affect source object.
+func (o *RawObject) CutPayload() *RawObject {
+	if o != nil {
+		return &RawObject{
+			rwObject: o.rwObject.cutPayload(),
+		}
+	}
+
+	return nil
+}

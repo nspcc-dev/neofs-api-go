@@ -224,3 +224,30 @@ func TestRawObject_SetType(t *testing.T) {
 
 	require.Equal(t, typ, obj.GetType())
 }
+
+func TestRawObject_CutPayload(t *testing.T) {
+	o1 := NewRaw()
+
+	p1 := []byte{12, 3}
+	o1.SetPayload(p1)
+
+	sz := uint64(13)
+	o1.SetPayloadSize(sz)
+
+	o2 := o1.CutPayload()
+
+	require.Equal(t, sz, o2.GetPayloadSize())
+	require.Empty(t, o2.GetPayload())
+
+	sz++
+	o1.SetPayloadSize(sz)
+
+	require.Equal(t, sz, o1.GetPayloadSize())
+	require.Equal(t, sz, o2.GetPayloadSize())
+
+	p2 := []byte{4, 5, 6}
+	o2.SetPayload(p2)
+
+	require.Equal(t, p2, o2.GetPayload())
+	require.Equal(t, p1, o1.GetPayload())
+}

@@ -303,3 +303,11 @@ func (o *rwObject) setType(t Type) {
 		h.SetObjectType(t.ToV2())
 	})
 }
+
+func (o *rwObject) cutPayload() *rwObject {
+	ov2 := new(object.Object)
+	*ov2 = *(*object.Object)(o)
+	ov2.SetPayload(nil)
+
+	return (*rwObject)(ov2)
+}
