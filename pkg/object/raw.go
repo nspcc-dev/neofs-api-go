@@ -4,6 +4,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
+	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 )
 
@@ -107,4 +108,10 @@ func (o *RawObject) SetChildren(v ...*ID) {
 // SetParent sets parent object w/o payload.
 func (o *RawObject) SetParent(v *Object) {
 	o.setParent(v)
+}
+
+// SetSessionToken sets token of the session
+// within which object was created.
+func (o *RawObject) SetSessionToken(v *token.SessionToken) {
+	o.setSessionToken(v)
 }

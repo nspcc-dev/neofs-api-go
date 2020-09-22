@@ -4,6 +4,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
+	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 )
@@ -11,8 +12,6 @@ import (
 // wrapper over v2 Object that provides
 // public getter and private setters.
 type rwObject object.Object
-
-// TODO: add session token methods
 
 // ToV2 converts Object to v2 Object message.
 func (o *rwObject) ToV2() *object.Object {
@@ -271,5 +270,21 @@ func (o *rwObject) setParent(v *Object) {
 		split.SetParent((*object.Object)(v.rwObject).GetObjectID())
 		split.SetParentSignature((*object.Object)(v.rwObject).GetSignature())
 		split.SetParentHeader((*object.Object)(v.rwObject).GetHeader())
+	})
+}
+
+// GetSessionToken returns token of the session
+// within which object was created.
+func (o *rwObject) GetSessionToken() *token.SessionToken {
+	return token.NewSessionTokenFromV2(
+		(*object.Object)(o).
+			GetHeader().
+			GetSessionToken(),
+	)
+}
+
+func (o *rwObject) setSessionToken(v *token.SessionToken) {
+	o.setHeaderField(func(h *object.Header) {
+		h.SetSessionToken(v.ToV2())
 	})
 }
