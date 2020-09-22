@@ -8,6 +8,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
+	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/stretchr/testify/require"
 )
@@ -201,4 +202,15 @@ func TestRawObject_ToV2(t *testing.T) {
 	obj := NewRawFromV2(objV2)
 
 	require.Equal(t, objV2, obj.ToV2())
+}
+
+func TestRawObject_SetSessionToken(t *testing.T) {
+	obj := NewRaw()
+
+	tok := token.NewSessionToken()
+	tok.SetID([]byte{1, 2, 3})
+
+	obj.SetSessionToken(tok)
+
+	require.Equal(t, tok, obj.GetSessionToken())
 }
