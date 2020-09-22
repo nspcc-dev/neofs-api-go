@@ -4,7 +4,6 @@ import (
 	"crypto/ecdsa"
 	"testing"
 
-	"github.com/nspcc-dev/neofs-api-go/pkg/object"
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
@@ -63,7 +62,7 @@ func TestRecord_AddFilter(t *testing.T) {
 	filters := []Filter{
 		{
 			from:    HeaderFromObject,
-			name:    object.HdrSysNameCID,
+			name:    "some name",
 			matcher: MatchStringEqual,
 			value:   "ContainerID",
 		},
