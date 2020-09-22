@@ -22,6 +22,11 @@ func NewRawFromV2(oV2 *object.Object) *RawObject {
 	}
 }
 
+// NewRawFrom wraps Object instance to RawObject.
+func NewRawFrom(obj *Object) *RawObject {
+	return NewRawFromV2(obj.ToV2())
+}
+
 // NewRaw creates and initializes blank RawObject.
 //
 // Works similar as NewRawFromV2(new(Object)).
