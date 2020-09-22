@@ -214,3 +214,13 @@ func TestRawObject_SetSessionToken(t *testing.T) {
 
 	require.Equal(t, tok, obj.GetSessionToken())
 }
+
+func TestRawObject_SetType(t *testing.T) {
+	obj := NewRaw()
+
+	typ := TypeStorageGroup
+
+	obj.SetType(typ)
+
+	require.Equal(t, typ, obj.GetType())
+}

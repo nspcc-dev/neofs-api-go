@@ -115,3 +115,8 @@ func (o *RawObject) SetParent(v *Object) {
 func (o *RawObject) SetSessionToken(v *token.SessionToken) {
 	o.setSessionToken(v)
 }
+
+// SetType sets type of the object.
+func (o *RawObject) SetType(v Type) {
+	o.setType(v)
+}
