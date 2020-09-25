@@ -577,8 +577,11 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 	obj := new(v2object.Object)
 	obj.SetHeader(hdr)
 
+	raw := object.NewRawFromV2(obj)
+	raw.SetID(p.addr.GetObjectID())
+
 	// convert the object
-	return object.NewFromV2(obj), nil
+	return raw.Object(), nil
 }
 
 func (p *RangeDataParams) WithAddress(v *object.Address) *RangeDataParams {
