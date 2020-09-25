@@ -19,10 +19,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Range struct {
-	ln, off uint64
-}
-
 type PutObjectParams struct {
 	obj *object.Object
 
@@ -48,7 +44,7 @@ type ObjectHeaderParams struct {
 type RangeDataParams struct {
 	addr *object.Address
 
-	r *Range
+	r *object.Range
 
 	w io.Writer
 }
@@ -58,7 +54,7 @@ type RangeChecksumParams struct {
 
 	addr *object.Address
 
-	rs []*Range
+	rs []*object.Range
 
 	salt []byte
 }
@@ -93,11 +89,11 @@ const TZSize = 64
 
 const searchQueryVersion uint32 = 1
 
-func rangesToV2(rs []*Range) []*v2object.Range {
+func rangesToV2(rs []*object.Range) []*v2object.Range {
 	r2 := make([]*v2object.Range, 0, len(rs))
 
 	for i := range rs {
-		r2 = append(r2, rs[i].toV2())
+		r2 = append(r2, rs[i].ToV2())
 	}
 
 	return r2
@@ -112,34 +108,6 @@ func (t checksumType) toV2() v2refs.ChecksumType {
 	default:
 		panic(fmt.Sprintf("invalid checksum type %d", t))
 	}
-}
-
-func (r *Range) WithLength(v uint64) *Range {
-	if r != nil {
-		r.ln = v
-	}
-
-	return r
-}
-
-func (r *Range) WithOffset(v uint64) *Range {
-	if r != nil {
-		r.off = v
-	}
-
-	return r
-}
-
-func (r *Range) toV2() *v2object.Range {
-	if r != nil {
-		r2 := new(v2object.Range)
-		r2.SetOffset(r.off)
-		r2.SetLength(r.ln)
-
-		return r2
-	}
-
-	return nil
 }
 
 func (w *putObjectV2Writer) Write(p []byte) (int, error) {
@@ -620,7 +588,7 @@ func (p *RangeDataParams) WithAddress(v *object.Address) *RangeDataParams {
 	return p
 }
 
-func (p *RangeDataParams) WithRange(v *Range) *RangeDataParams {
+func (p *RangeDataParams) WithRange(v *object.Range) *RangeDataParams {
 	if p != nil {
 		p.r = v
 	}
@@ -680,7 +648,7 @@ func (c *Client) objectPayloadRangeV2(ctx context.Context, p *RangeDataParams, o
 
 	// fill body fields
 	body.SetAddress(p.addr.ToV2())
-	body.SetRange(p.r.toV2())
+	body.SetRange(p.r.ToV2())
 
 	// sign the request
 	if err := signature.SignServiceMessage(c.key, req); err != nil {
@@ -695,7 +663,7 @@ func (c *Client) objectPayloadRangeV2(ctx context.Context, p *RangeDataParams, o
 
 	var payload []byte
 	if p.w != nil {
-		payload = make([]byte, p.r.ln)
+		payload = make([]byte, p.r.GetLength())
 	}
 
 	for {
@@ -736,7 +704,7 @@ func (p *RangeChecksumParams) WithAddress(v *object.Address) *RangeChecksumParam
 	return p
 }
 
-func (p *RangeChecksumParams) WithRangeList(rs ...*Range) *RangeChecksumParams {
+func (p *RangeChecksumParams) WithRangeList(rs ...*object.Range) *RangeChecksumParams {
 	if p != nil {
 		p.rs = rs
 	}
