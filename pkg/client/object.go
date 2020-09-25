@@ -264,7 +264,8 @@ func (c *Client) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...Ca
 	}
 
 	// copy payload from reader to stream writer
-	if _, err := io.CopyBuffer(w, rPayload, make([]byte, chunkSize)); err != nil {
+	_, err = io.CopyBuffer(w, rPayload, make([]byte, chunkSize))
+	if err != nil && !errors.Is(errors.Cause(err), io.EOF) {
 		return nil, errors.Wrap(err, "could not send payload bytes to Put object stream")
 	}
 
