@@ -124,10 +124,8 @@ func VerifyIDSignature(obj *Object) error {
 	)
 }
 
-// SetVerificationFields calculates and sets all verification fields of the object.
-func SetVerificationFields(key *ecdsa.PrivateKey, obj *RawObject) error {
-	CalculateAndSetPayloadChecksum(obj)
-
+// SetIDWithSignature sets object identifier and signature.
+func SetIDWithSignature(key *ecdsa.PrivateKey, obj *RawObject) error {
 	if err := CalculateAndSetID(obj); err != nil {
 		return errors.Wrap(err, "could not set identifier")
 	}
@@ -139,18 +137,34 @@ func SetVerificationFields(key *ecdsa.PrivateKey, obj *RawObject) error {
 	return nil
 }
 
+// SetVerificationFields calculates and sets all verification fields of the object.
+func SetVerificationFields(key *ecdsa.PrivateKey, obj *RawObject) error {
+	CalculateAndSetPayloadChecksum(obj)
+
+	return SetIDWithSignature(key, obj)
+}
+
 // CheckVerificationFields checks all verification fields of the object.
 func CheckVerificationFields(obj *Object) error {
+	if err := CheckHeaderVerificationFields(obj); err != nil {
+		return errors.Wrap(err, "invalid header structure")
+	}
+
+	if err := VerifyPayloadChecksum(obj); err != nil {
+		return errors.Wrap(err, "invalid payload checksum")
+	}
+
+	return nil
+}
+
+// CheckHeaderVerificationFields checks all verification fields except payload.
+func CheckHeaderVerificationFields(obj *Object) error {
 	if err := VerifyIDSignature(obj); err != nil {
 		return errors.Wrap(err, "invalid signature")
 	}
 
 	if err := VerifyID(obj); err != nil {
 		return errors.Wrap(err, "invalid identifier")
-	}
-
-	if err := VerifyPayloadChecksum(obj); err != nil {
-		return errors.Wrap(err, "invalid payload checksum")
 	}
 
 	return nil
