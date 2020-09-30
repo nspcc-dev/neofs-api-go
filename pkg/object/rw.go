@@ -273,10 +273,17 @@ func (o *rwObject) GetParent() *Object {
 		GetHeader().
 		GetSplit()
 
+	parSig := h.GetParentSignature()
+	parHdr := h.GetParentHeader()
+
+	if parSig == nil && parHdr == nil {
+		return nil
+	}
+
 	oV2 := new(object.Object)
 	oV2.SetObjectID(h.GetParent())
-	oV2.SetSignature(h.GetParentSignature())
-	oV2.SetHeader(h.GetParentHeader())
+	oV2.SetSignature(parSig)
+	oV2.SetHeader(parHdr)
 
 	return NewFromV2(oV2)
 }

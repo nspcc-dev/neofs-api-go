@@ -186,8 +186,13 @@ func TestRawObject_SetChildren(t *testing.T) {
 func TestRawObject_SetParent(t *testing.T) {
 	obj := NewRaw()
 
+	require.Nil(t, obj.GetParent())
+
 	par := NewRaw()
 	par.SetID(randID(t))
+	par.SetContainerID(container.NewID())
+	par.SetSignature(pkg.NewSignature())
+
 	parObj := par.Object()
 
 	obj.SetParent(parObj)
