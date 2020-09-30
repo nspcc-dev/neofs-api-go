@@ -143,3 +143,8 @@ func (o *RawObject) CutPayload() *RawObject {
 
 	return nil
 }
+
+// ResetRelations removes all fields of links with other objects.
+func (o *RawObject) ResetRelations() {
+	o.resetRelations()
+}

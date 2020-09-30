@@ -296,6 +296,12 @@ func (o *rwObject) setParent(v *Object) {
 	})
 }
 
+func (o *rwObject) resetRelations() {
+	o.setHeaderField(func(h *object.Header) {
+		h.SetSplit(nil)
+	})
+}
+
 // GetSessionToken returns token of the session
 // within which object was created.
 func (o *rwObject) GetSessionToken() *token.SessionToken {
