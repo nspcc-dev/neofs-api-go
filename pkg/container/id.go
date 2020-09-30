@@ -1,6 +1,7 @@
 package container
 
 import (
+	"bytes"
 	"crypto/sha256"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
@@ -29,4 +30,12 @@ func (id *ID) SetSHA256(v [sha256.Size]byte) {
 // ToV2 returns the v2 container ID message.
 func (id *ID) ToV2() *refs.ContainerID {
 	return (*refs.ContainerID)(id)
+}
+
+// Equal returns true if identifiers are identical.
+func (id *ID) Equal(id2 *ID) bool {
+	return bytes.Equal(
+		(*refs.ContainerID)(id).GetValue(),
+		(*refs.ContainerID)(id2).GetValue(),
+	)
 }
