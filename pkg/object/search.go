@@ -110,3 +110,15 @@ func (f *SearchFilters) AddRootFilter() {
 func (f *SearchFilters) AddNonRootFilter() {
 	f.addRootFilter(ValNonRoot)
 }
+
+func (f *SearchFilters) addLeafFilter(val string) {
+	f.AddFilter(KeyLeaf, val, MatchStringEqual)
+}
+
+func (f *SearchFilters) AddLeafFilter() {
+	f.addLeafFilter(ValLeaf)
+}
+
+func (f *SearchFilters) AddNonLeafFilter() {
+	f.addLeafFilter(ValNonLeaf)
+}
