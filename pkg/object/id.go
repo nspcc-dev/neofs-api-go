@@ -30,8 +30,8 @@ func (id *ID) SetSHA256(v [sha256.Size]byte) {
 // Equal returns true if identifiers are identical.
 func (id *ID) Equal(id2 *ID) bool {
 	return bytes.Equal(
-		(*ID)(id).ToV2().GetValue(),
-		(*ID)(id2).ToV2().GetValue(),
+		(*refs.ObjectID)(id).GetValue(),
+		(*refs.ObjectID)(id2).GetValue(),
 	)
 }
 
