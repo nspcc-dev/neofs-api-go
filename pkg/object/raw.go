@@ -148,3 +148,8 @@ func (o *RawObject) CutPayload() *RawObject {
 func (o *RawObject) ResetRelations() {
 	o.resetRelations()
 }
+
+// InitRelations initializes relation field.
+func (o *RawObject) InitRelations() {
+	o.initRelations()
+}

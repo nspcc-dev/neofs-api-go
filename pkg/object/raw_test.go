@@ -275,3 +275,15 @@ func TestRawObject_ResetRelations(t *testing.T) {
 
 	require.Nil(t, obj.GetPreviousID())
 }
+
+func TestRwObject_HasParent(t *testing.T) {
+	obj := NewRaw()
+
+	obj.InitRelations()
+
+	require.True(t, obj.HasParent())
+
+	obj.ResetRelations()
+
+	require.False(t, obj.HasParent())
+}
