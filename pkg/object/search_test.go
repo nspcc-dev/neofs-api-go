@@ -79,3 +79,31 @@ func TestSearchFilters_AddNonRootFilter(t *testing.T) {
 	require.Equal(t, object.KeyRoot, f.Header())
 	require.Equal(t, object.ValNonRoot, f.Value())
 }
+
+func TestSearchFilters_AddLeafFilter(t *testing.T) {
+	fs := new(object.SearchFilters)
+
+	fs.AddLeafFilter()
+
+	require.Len(t, *fs, 1)
+
+	f := (*fs)[0]
+
+	require.Equal(t, object.MatchStringEqual, f.Operation())
+	require.Equal(t, object.KeyLeaf, f.Header())
+	require.Equal(t, object.ValLeaf, f.Value())
+}
+
+func TestSearchFilters_AddNonLeafFilter(t *testing.T) {
+	fs := new(object.SearchFilters)
+
+	fs.AddNonLeafFilter()
+
+	require.Len(t, *fs, 1)
+
+	f := (*fs)[0]
+
+	require.Equal(t, object.MatchStringEqual, f.Operation())
+	require.Equal(t, object.KeyLeaf, f.Header())
+	require.Equal(t, object.ValNonLeaf, f.Value())
+}

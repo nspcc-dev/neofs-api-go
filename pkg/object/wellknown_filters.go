@@ -18,3 +18,14 @@ const (
 	// ValNonRoot is a value of non-root object filter.
 	ValNonRoot = valFalse
 )
+
+const (
+	// KeyLeaf is a reserved search filter key to physically stored objects.
+	KeyLeaf = ReservedFilterPrefix + "LEAF"
+
+	// ValLeaf is a value of physically stored object filter.
+	ValLeaf = valTrue
+
+	// ValNonLeaf is a value of virtual object filter.
+	ValNonLeaf = valFalse
+)
