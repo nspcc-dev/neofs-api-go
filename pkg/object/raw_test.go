@@ -265,3 +265,13 @@ func TestRawObject_SetParentID(t *testing.T) {
 
 	require.Equal(t, id, obj.GetParentID())
 }
+
+func TestRawObject_ResetRelations(t *testing.T) {
+	obj := NewRaw()
+
+	obj.SetPreviousID(randID(t))
+
+	obj.ResetRelations()
+
+	require.Nil(t, obj.GetPreviousID())
+}
