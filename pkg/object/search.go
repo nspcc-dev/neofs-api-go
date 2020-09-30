@@ -98,3 +98,15 @@ func (f SearchFilters) ToV2() []*v2object.SearchFilter {
 
 	return result
 }
+
+func (f *SearchFilters) addRootFilter(val string) {
+	f.AddFilter(KeyRoot, val, MatchStringEqual)
+}
+
+func (f *SearchFilters) AddRootFilter() {
+	f.addRootFilter(ValRoot)
+}
+
+func (f *SearchFilters) AddNonRootFilter() {
+	f.addRootFilter(ValNonRoot)
+}

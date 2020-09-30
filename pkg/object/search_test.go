@@ -51,3 +51,31 @@ func TestFilter(t *testing.T) {
 	newFilters := object.NewSearchFiltersFromV2(v2)
 	require.Equal(t, filters, newFilters)
 }
+
+func TestSearchFilters_AddRootFilter(t *testing.T) {
+	fs := new(object.SearchFilters)
+
+	fs.AddRootFilter()
+
+	require.Len(t, *fs, 1)
+
+	f := (*fs)[0]
+
+	require.Equal(t, object.MatchStringEqual, f.Operation())
+	require.Equal(t, object.KeyRoot, f.Header())
+	require.Equal(t, object.ValRoot, f.Value())
+}
+
+func TestSearchFilters_AddNonRootFilter(t *testing.T) {
+	fs := new(object.SearchFilters)
+
+	fs.AddNonRootFilter()
+
+	require.Len(t, *fs, 1)
+
+	f := (*fs)[0]
+
+	require.Equal(t, object.MatchStringEqual, f.Operation())
+	require.Equal(t, object.KeyRoot, f.Header())
+	require.Equal(t, object.ValNonRoot, f.Value())
+}
