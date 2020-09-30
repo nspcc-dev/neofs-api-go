@@ -296,6 +296,12 @@ func (o *rwObject) setParent(v *Object) {
 	})
 }
 
+func (o *rwObject) initRelations() {
+	o.setHeaderField(func(h *object.Header) {
+		h.SetSplit(new(object.SplitHeader))
+	})
+}
+
 func (o *rwObject) resetRelations() {
 	o.setHeaderField(func(h *object.Header) {
 		h.SetSplit(nil)
@@ -339,4 +345,10 @@ func (o *rwObject) cutPayload() *rwObject {
 	ov2.SetPayload(nil)
 
 	return (*rwObject)(ov2)
+}
+
+func (o *rwObject) HasParent() bool {
+	return (*object.Object)(o).
+		GetHeader().
+		GetSplit() != nil
 }
