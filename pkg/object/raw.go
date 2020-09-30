@@ -110,6 +110,11 @@ func (o *RawObject) SetChildren(v ...*ID) {
 	o.setChildren(v...)
 }
 
+// SetParentID sets identifier of the parent object.
+func (o *RawObject) SetParentID(v *ID) {
+	o.setParentID(v)
+}
+
 // SetParent sets parent object w/o payload.
 func (o *RawObject) SetParent(v *Object) {
 	o.setParent(v)

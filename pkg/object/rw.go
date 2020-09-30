@@ -251,6 +251,22 @@ func (o *rwObject) setChildren(v ...*ID) {
 	})
 }
 
+// GetParentID returns identifier of the parent object.
+func (o *rwObject) GetParentID() *ID {
+	return NewIDFromV2(
+		(*object.Object)(o).
+			GetHeader().
+			GetSplit().
+			GetParent(),
+	)
+}
+
+func (o *rwObject) setParentID(v *ID) {
+	o.setSplitFields(func(split *object.SplitHeader) {
+		split.SetParent(v.ToV2())
+	})
+}
+
 // GetParent returns parent object w/o payload.
 func (o *rwObject) GetParent() *Object {
 	h := (*object.Object)(o).

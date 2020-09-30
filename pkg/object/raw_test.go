@@ -251,3 +251,12 @@ func TestRawObject_CutPayload(t *testing.T) {
 	require.Equal(t, p2, o2.GetPayload())
 	require.Equal(t, p1, o1.GetPayload())
 }
+
+func TestRawObject_SetParentID(t *testing.T) {
+	obj := NewRaw()
+
+	id := randID(t)
+	obj.setParentID(id)
+
+	require.Equal(t, id, obj.GetParentID())
+}
