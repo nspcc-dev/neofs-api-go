@@ -43,3 +43,11 @@ func ScriptHashBE(id *ID) ([]byte, error) {
 
 	return addr.BytesBE(), nil
 }
+
+// NewIDFromNeo3Wallet creates new owner identity from 25-byte neo wallet.
+func NewIDFromNeo3Wallet(v *NEO3Wallet) *ID {
+	id := NewID()
+	id.SetNeo3Wallet(v)
+
+	return id
+}
