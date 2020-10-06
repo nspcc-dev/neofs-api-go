@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"testing"
 
+	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,4 +21,12 @@ func TestIDV2(t *testing.T) {
 	idV2 := id.ToV2()
 
 	require.Equal(t, wallet.Bytes(), idV2.GetValue())
+}
+
+func TestNewIDFromNeo3Wallet(t *testing.T) {
+	wallet, err := NEO3WalletFromPublicKey(&test.DecodeKey(1).PublicKey)
+	require.NoError(t, err)
+
+	id := NewIDFromNeo3Wallet(wallet)
+	require.Equal(t, id.ToV2().GetValue(), wallet.Bytes())
 }
