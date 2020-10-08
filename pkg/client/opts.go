@@ -5,6 +5,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 	v2accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting"
 	v2container "github.com/nspcc-dev/neofs-api-go/v2/container"
+	v2netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap"
 	v2object "github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	v2session "github.com/nspcc-dev/neofs-api-go/v2/session"
@@ -44,6 +45,7 @@ type (
 		v2ContainerClient  *v2container.Client
 		v2AccountingClient *v2accounting.Client
 		v2SessionClient    *v2session.Client
+		v2NetmapClient     *v2netmap.Client
 
 		objectClientV2 *v2object.Client
 	}
