@@ -2,6 +2,8 @@ package netmap
 
 import (
 	netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
 )
 
 func FilterToGRPCMessage(f *Filter) *netmap.Filter {
@@ -258,4 +260,97 @@ func NodeInfoFromGRPCMessage(m *netmap.NodeInfo) *NodeInfo {
 	a.SetAttributes(attr)
 
 	return a
+}
+
+func LocalNodeInfoRequestBodyToGRPCMessage(r *LocalNodeInfoRequestBody) *netmap.LocalNodeInfoRequest_Body {
+	if r == nil {
+		return nil
+	}
+
+	return new(netmap.LocalNodeInfoRequest_Body)
+}
+
+func LocalNodeInfoRequestBodyFromGRPCMessage(m *netmap.LocalNodeInfoRequest_Body) *LocalNodeInfoRequestBody {
+	if m == nil {
+		return nil
+	}
+
+	return new(LocalNodeInfoRequestBody)
+}
+
+func LocalNodeInfoResponseBodyToGRPCMessage(r *LocalNodeInfoResponseBody) *netmap.LocalNodeInfoResponse_Body {
+	if r == nil {
+		return nil
+	}
+
+	m := new(netmap.LocalNodeInfoResponse_Body)
+
+	m.SetVersion(refs.VersionToGRPCMessage(r.GetVersion()))
+	m.SetNodeInfo(NodeInfoToGRPCMessage(r.GetNodeInfo()))
+
+	return m
+}
+
+func LocalNodeInfoResponseBodyFromGRPCMessage(m *netmap.LocalNodeInfoResponse_Body) *LocalNodeInfoResponseBody {
+	if m == nil {
+		return nil
+	}
+
+	r := new(LocalNodeInfoResponseBody)
+	r.SetVersion(refs.VersionFromGRPCMessage(m.GetVersion()))
+	r.SetNodeInfo(NodeInfoFromGRPCMessage(m.GetNodeInfo()))
+
+	return r
+}
+
+func LocalNodeInfoRequestToGRPCMessage(r *LocalNodeInfoRequest) *netmap.LocalNodeInfoRequest {
+	if r == nil {
+		return nil
+	}
+
+	m := new(netmap.LocalNodeInfoRequest)
+	m.SetBody(LocalNodeInfoRequestBodyToGRPCMessage(r.GetBody()))
+
+	session.RequestHeadersToGRPC(r, m)
+
+	return m
+}
+
+func LocalNodeInfoRequestFromGRPCMessage(m *netmap.LocalNodeInfoRequest) *LocalNodeInfoRequest {
+	if m == nil {
+		return nil
+	}
+
+	r := new(LocalNodeInfoRequest)
+	r.SetBody(LocalNodeInfoRequestBodyFromGRPCMessage(m.GetBody()))
+
+	session.RequestHeadersFromGRPC(m, r)
+
+	return r
+}
+
+func LocalNodeInfoResponseToGRPCMessage(r *LocalNodeInfoResponse) *netmap.LocalNodeInfoResponse {
+	if r == nil {
+		return nil
+	}
+
+	m := new(netmap.LocalNodeInfoResponse)
+	m.SetBody(LocalNodeInfoResponseBodyToGRPCMessage(r.GetBody()))
+
+	session.ResponseHeadersToGRPC(r, m)
+
+	return m
+}
+
+func LocalNodeInfoResponseFromGRPCMessage(m *netmap.LocalNodeInfoResponse) *LocalNodeInfoResponse {
+	if m == nil {
+		return nil
+	}
+
+	r := new(LocalNodeInfoResponse)
+	r.SetBody(LocalNodeInfoResponseBodyFromGRPCMessage(m.GetBody()))
+
+	session.ResponseHeadersFromGRPC(m, r)
+
+	return r
 }
