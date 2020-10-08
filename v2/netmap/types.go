@@ -1,5 +1,10 @@
 package netmap
 
+import (
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
+)
+
 type Filter struct {
 	name    string
 	key     string
@@ -50,6 +55,13 @@ type NodeState uint32
 
 // Clause of placement selector.
 type Clause uint32
+
+type LocalNodeInfoRequestBody struct{}
+
+type LocalNodeInfoResponseBody struct {
+	version  *refs.Version
+	nodeInfo *NodeInfo
+}
 
 const (
 	UnspecifiedState NodeState = iota
@@ -387,5 +399,111 @@ func (ni *NodeInfo) GetState() NodeState {
 func (ni *NodeInfo) SetState(state NodeState) {
 	if ni != nil {
 		ni.state = state
+	}
+}
+
+func (l *LocalNodeInfoResponseBody) GetVersion() *refs.Version {
+	if l != nil {
+		return l.version
+	}
+
+	return nil
+}
+
+func (l *LocalNodeInfoResponseBody) SetVersion(version *refs.Version) {
+	if l != nil {
+		l.version = version
+	}
+}
+
+func (l *LocalNodeInfoResponseBody) GetNodeInfo() *NodeInfo {
+	if l != nil {
+		return l.nodeInfo
+	}
+
+	return nil
+}
+
+func (l *LocalNodeInfoResponseBody) SetNodeInfo(nodeInfo *NodeInfo) {
+	if l != nil {
+		l.nodeInfo = nodeInfo
+	}
+}
+
+func (l *LocalNodeInfoRequest) GetBody() *LocalNodeInfoRequestBody {
+	if l != nil {
+		return l.body
+	}
+	return nil
+}
+
+func (l *LocalNodeInfoRequest) SetBody(body *LocalNodeInfoRequestBody) {
+	if l != nil {
+		l.body = body
+	}
+}
+
+func (l *LocalNodeInfoRequest) GetMetaHeader() *session.RequestMetaHeader {
+	if l != nil {
+		return l.metaHeader
+	}
+	return nil
+}
+
+func (l *LocalNodeInfoRequest) SetMetaHeader(metaHeader *session.RequestMetaHeader) {
+	if l != nil {
+		l.metaHeader = metaHeader
+	}
+}
+
+func (l *LocalNodeInfoRequest) GetVerificationHeader() *session.RequestVerificationHeader {
+	if l != nil {
+		return l.verifyHeader
+	}
+	return nil
+}
+
+func (l *LocalNodeInfoRequest) SetVerificationHeader(verifyHeader *session.RequestVerificationHeader) {
+	if l != nil {
+		l.verifyHeader = verifyHeader
+	}
+}
+
+func (l *LocalNodeInfoResponse) GetBody() *LocalNodeInfoResponseBody {
+	if l != nil {
+		return l.body
+	}
+	return nil
+}
+
+func (l *LocalNodeInfoResponse) SetBody(body *LocalNodeInfoResponseBody) {
+	if l != nil {
+		l.body = body
+	}
+}
+
+func (l *LocalNodeInfoResponse) GetMetaHeader() *session.ResponseMetaHeader {
+	if l != nil {
+		return l.metaHeader
+	}
+	return nil
+}
+
+func (l *LocalNodeInfoResponse) SetMetaHeader(metaHeader *session.ResponseMetaHeader) {
+	if l != nil {
+		l.metaHeader = metaHeader
+	}
+}
+
+func (l *LocalNodeInfoResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
+	if l != nil {
+		return l.verifyHeader
+	}
+	return nil
+}
+
+func (l *LocalNodeInfoResponse) SetVerificationHeader(verifyHeader *session.ResponseVerificationHeader) {
+	if l != nil {
+		l.verifyHeader = verifyHeader
 	}
 }

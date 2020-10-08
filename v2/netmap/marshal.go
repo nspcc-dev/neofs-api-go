@@ -33,6 +33,9 @@ const (
 	addressNodeInfoField    = 2
 	attributesNodeInfoField = 3
 	stateNodeInfoField      = 4
+
+	versionInfoResponseBodyField = 1
+	nodeInfoResponseBodyField    = 2
 )
 
 func (f *Filter) StableMarshal(buf []byte) ([]byte, error) {
@@ -378,6 +381,54 @@ func (ni *NodeInfo) StableSize() (size int) {
 	}
 
 	size += proto.EnumSize(stateNodeInfoField, int32(ni.state))
+
+	return size
+}
+
+func (l *LocalNodeInfoRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+	return nil, nil
+}
+
+func (l *LocalNodeInfoRequestBody) StableSize() (size int) {
+	return 0
+}
+
+func (l *LocalNodeInfoResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+	if l == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, l.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = proto.NestedStructureMarshal(versionInfoResponseBodyField, buf[offset:], l.version)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.NestedStructureMarshal(nodeInfoResponseBodyField, buf[offset:], l.nodeInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (l *LocalNodeInfoResponseBody) StableSize() (size int) {
+	if l == nil {
+		return 0
+	}
+
+	size += proto.NestedStructureSize(versionInfoResponseBodyField, l.version)
+	size += proto.NestedStructureSize(nodeInfoResponseBodyField, l.nodeInfo)
 
 	return size
 }

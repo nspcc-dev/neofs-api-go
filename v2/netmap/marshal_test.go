@@ -6,6 +6,7 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
 	grpc "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
 )
 
@@ -89,7 +90,7 @@ func TestReplica_StableMarshal(t *testing.T) {
 	})
 }
 
-func TestPlacementPolicy_StableSize(t *testing.T) {
+func TestPlacementPolicy_StableMarshal(t *testing.T) {
 	from := generatePolicy(3)
 	transport := new(grpc.PlacementPolicy)
 
@@ -101,6 +102,22 @@ func TestPlacementPolicy_StableSize(t *testing.T) {
 		require.NoError(t, err)
 
 		to := netmap.PlacementPolicyFromGRPCMessage(transport)
+		require.Equal(t, from, to)
+	})
+}
+
+func TestLocalNodeInfoResponseBody_StableMarshal(t *testing.T) {
+	from := generateNodeInfoResponseBody()
+	transport := new(grpc.LocalNodeInfoResponse_Body)
+
+	t.Run("non empty", func(t *testing.T) {
+		wire, err := from.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = transport.Unmarshal(wire)
+		require.NoError(t, err)
+
+		to := netmap.LocalNodeInfoResponseBodyFromGRPCMessage(transport)
 		require.Equal(t, from, to)
 	})
 }
@@ -188,4 +205,22 @@ func generatePolicy(n int) *netmap.PlacementPolicy {
 	p.SetContainerBackupFactor(10)
 
 	return p
+}
+
+func generateNodeInfoResponseBody() *netmap.LocalNodeInfoResponseBody {
+	ni := generateNodeInfo("key", "/multi/addr", 2)
+
+	r := new(netmap.LocalNodeInfoResponseBody)
+	r.SetVersion(generateVersion(2, 1))
+	r.SetNodeInfo(ni)
+
+	return r
+}
+
+func generateVersion(maj, min uint32) *refs.Version {
+	version := new(refs.Version)
+	version.SetMajor(maj)
+	version.SetMinor(min)
+
+	return version
 }

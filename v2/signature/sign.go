@@ -7,6 +7,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/util/signature"
 	"github.com/nspcc-dev/neofs-api-go/v2/accounting"
 	"github.com/nspcc-dev/neofs-api-go/v2/container"
+	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
@@ -358,6 +359,12 @@ func serviceMessageBody(req interface{}) stableMarshaler {
 	case *object.GetRangeHashRequest:
 		return v.GetBody()
 	case *object.GetRangeHashResponse:
+		return v.GetBody()
+
+		/* Netmap */
+	case *netmap.LocalNodeInfoRequest:
+		return v.GetBody()
+	case *netmap.LocalNodeInfoResponse:
 		return v.GetBody()
 	}
 }
