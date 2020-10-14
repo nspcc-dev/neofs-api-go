@@ -3,8 +3,10 @@ package container
 import (
 	"crypto/rand"
 	"crypto/sha256"
+	"strconv"
 	"testing"
 
+	"github.com/mr-tron/base58"
 	"github.com/stretchr/testify/require"
 )
 
@@ -44,4 +46,47 @@ func TestID_Equal(t *testing.T) {
 
 	require.True(t, id1.Equal(id2))
 	require.False(t, id1.Equal(id3))
+}
+
+func TestID_Parse(t *testing.T) {
+	t.Run("should parse successful", func(t *testing.T) {
+		for i := 0; i < 10; i++ {
+			t.Run(strconv.Itoa(i), func(t *testing.T) {
+				cs := randSHA256Checksum(t)
+				str := base58.Encode(cs[:])
+				cid := NewID()
+
+				require.NoError(t, cid.Parse(str))
+				require.Equal(t, cs[:], cid.ToV2().GetValue())
+			})
+		}
+	})
+
+	t.Run("should failure on parse", func(t *testing.T) {
+		for i := 0; i < 10; i++ {
+			j := i
+			t.Run(strconv.Itoa(j), func(t *testing.T) {
+				cs := []byte{1, 2, 3, 4, 5, byte(j)}
+				str := base58.Encode(cs)
+				cid := NewID()
+
+				require.EqualError(t, cid.Parse(str), ErrBadID.Error())
+			})
+		}
+	})
+}
+
+func TestID_String(t *testing.T) {
+	t.Run("should be equal", func(t *testing.T) {
+		for i := 0; i < 10; i++ {
+			t.Run(strconv.Itoa(i), func(t *testing.T) {
+				cs := randSHA256Checksum(t)
+				str := base58.Encode(cs[:])
+				cid := NewID()
+
+				require.NoError(t, cid.Parse(str))
+				require.Equal(t, str, cid.String())
+			})
+		}
+	})
 }
