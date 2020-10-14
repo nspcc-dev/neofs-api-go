@@ -1,6 +1,9 @@
 package object
 
 import (
+	"strings"
+
+	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/pkg/errors"
@@ -8,6 +11,15 @@ import (
 
 // Address represents v2-compatible object address.
 type Address refs.Address
+
+// ErrBadAddress returns when string representation doesn't
+// contains Container.ID and Object.ID separated by `/`.
+const ErrBadAddress = internal.Error("address should contains container.ID and object.ID separated with `/`")
+
+const (
+	addressParts     = 2
+	addressSeparator = "/"
+)
 
 // NewAddressFromV2 converts v2 Address message to Address.
 func NewAddressFromV2(aV2 *refs.Address) *Address {
@@ -58,4 +70,35 @@ func (a *Address) GetObjectID() *ID {
 // SetObjectID sets object identifier.
 func (a *Address) SetObjectID(id *ID) {
 	(*refs.Address)(a).SetObjectID(id.ToV2())
+}
+
+// Parse converts base58 string representation into Address.
+func (a *Address) Parse(s string) error {
+	var (
+		err   error
+		oid   = NewID()
+		cid   = container.NewID()
+		parts = strings.Split(s, addressSeparator)
+	)
+
+	if len(parts) != addressParts {
+		return ErrBadAddress
+	} else if err = cid.Parse(parts[0]); err != nil {
+		return err
+	} else if err = oid.Parse(parts[1]); err != nil {
+		return err
+	}
+
+	a.SetObjectID(oid)
+	a.SetContainerID(cid)
+
+	return nil
+}
+
+// String returns string representation of Object.Address.
+func (a *Address) String() string {
+	return strings.Join([]string{
+		a.GetContainerID().String(),
+		a.GetObjectID().String(),
+	}, addressSeparator)
 }
