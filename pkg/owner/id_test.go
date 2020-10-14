@@ -2,8 +2,10 @@ package owner
 
 import (
 	"crypto/rand"
+	"strconv"
 	"testing"
 
+	"github.com/mr-tron/base58"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
@@ -29,4 +31,35 @@ func TestNewIDFromNeo3Wallet(t *testing.T) {
 
 	id := NewIDFromNeo3Wallet(wallet)
 	require.Equal(t, id.ToV2().GetValue(), wallet.Bytes())
+}
+
+func TestID_Parse(t *testing.T) {
+	t.Run("should parse successful", func(t *testing.T) {
+		for i := 0; i < 10; i++ {
+			j := i
+			t.Run(strconv.Itoa(j), func(t *testing.T) {
+				wallet, err := NEO3WalletFromPublicKey(&test.DecodeKey(j).PublicKey)
+				require.NoError(t, err)
+
+				eid := NewIDFromNeo3Wallet(wallet)
+				aid := NewID()
+
+				require.NoError(t, aid.Parse(eid.String()))
+				require.Equal(t, eid, aid)
+			})
+		}
+	})
+
+	t.Run("should failure on parse", func(t *testing.T) {
+		for i := 0; i < 10; i++ {
+			j := i
+			t.Run(strconv.Itoa(j), func(t *testing.T) {
+				cs := []byte{1, 2, 3, 4, 5, byte(j)}
+				str := base58.Encode(cs)
+				cid := NewID()
+
+				require.EqualError(t, cid.Parse(str), ErrBadID.Error())
+			})
+		}
+	})
 }
