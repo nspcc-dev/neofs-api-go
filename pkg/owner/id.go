@@ -3,11 +3,17 @@ package owner
 import (
 	"github.com/mr-tron/base58"
 	"github.com/nspcc-dev/neo-go/pkg/encoding/address"
+	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	"github.com/pkg/errors"
 )
 
 // ID represents v2-compatible owner identifier.
 type ID refs.OwnerID
+
+// ErrBadID should be returned when bytes slice isn't Owner.ID size (NEO3WalletSize).
+// Notice: if byte slice changed, please, replace error message.
+const ErrBadID = internal.Error("owner.ID should be 25 bytes length")
 
 // NewIDFromV2 wraps v2 OwnerID message to ID.
 func NewIDFromV2(idV2 *refs.OwnerID) *ID {
@@ -50,4 +56,18 @@ func NewIDFromNeo3Wallet(v *NEO3Wallet) *ID {
 	id.SetNeo3Wallet(v)
 
 	return id
+}
+
+// Parse converts base58 string representation into ID.
+func (id *ID) Parse(s string) error {
+	data, err := base58.Decode(s)
+	if err != nil {
+		return errors.Wrap(err, "could not parse owner.ID from string")
+	} else if len(data) != NEO3WalletSize {
+		return ErrBadID
+	}
+
+	(*refs.OwnerID)(id).SetValue(data)
+
+	return nil
 }
