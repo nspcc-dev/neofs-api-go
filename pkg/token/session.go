@@ -1,6 +1,7 @@
 package token
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
 )
@@ -67,4 +68,11 @@ func (t *SessionToken) SetSessionKey(v []byte) {
 	t.setBodyField(func(body *session.SessionTokenBody) {
 		body.SetSessionKey(v)
 	})
+}
+
+func (t *SessionToken) Signature() *pkg.Signature {
+	return pkg.NewSignatureFromV2(
+		(*session.SessionToken)(t).
+			GetSignature(),
+	)
 }

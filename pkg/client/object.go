@@ -1006,7 +1006,14 @@ func (c Client) attachV2SessionToken(opts callOptions, hdr *v2session.RequestMet
 		return nil
 	}
 
-	token := opts.session.ToV2()
+	// Do not resign already prepared session token
+	if opts.session.Signature() != nil {
+		hdr.SetSessionToken(opts.session.ToV2())
+		return nil
+	}
+
+	token := new(v2session.SessionToken)
+	token.SetBody(opts.session.ToV2().GetBody())
 
 	opCtx := new(v2session.ObjectSessionContext)
 	opCtx.SetAddress(info.addr)
