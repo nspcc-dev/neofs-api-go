@@ -24,8 +24,8 @@ func TestTarget(t *testing.T) {
 	v2 := target.ToV2()
 	require.NotNil(t, v2)
 	require.Equal(t, v2acl.RoleSystem, v2.GetRole())
-	require.Len(t, v2.GetKeyList(), len(keys))
-	for i, key := range v2.GetKeyList() {
+	require.Len(t, v2.GetKeys(), len(keys))
+	for i, key := range v2.GetKeys() {
 		require.Equal(t, key, crypto.MarshalPublicKey(&keys[i]))
 	}
 

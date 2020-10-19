@@ -141,7 +141,7 @@ func TestTargetInfo_StableMarshal(t *testing.T) {
 
 	t.Run("non empty", func(t *testing.T) {
 		targetFrom.SetRole(acl.RoleUser)
-		targetFrom.SetKeyList([][]byte{
+		targetFrom.SetKeys([][]byte{
 			[]byte("Public Key 1"),
 			[]byte("Public Key 2"),
 		})

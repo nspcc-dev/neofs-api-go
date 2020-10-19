@@ -205,7 +205,7 @@ func TargetToGRPCMessage(t *Target) *acl.EACLRecord_Target {
 		RoleToGRPCField(t.GetRole()),
 	)
 
-	m.SetKeyList(t.GetKeyList())
+	m.SetKeys(t.GetKeys())
 
 	return m
 }
@@ -222,7 +222,7 @@ func TargetInfoFromGRPCMessage(m *acl.EACLRecord_Target) *Target {
 		RoleFromGRPCField(m.GetRole()),
 	)
 
-	t.SetKeyList(m.GetKeyList())
+	t.SetKeys(m.GetKeys())
 
 	return t
 }

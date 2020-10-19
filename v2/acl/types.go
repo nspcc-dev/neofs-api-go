@@ -181,7 +181,7 @@ func (t *Target) SetRole(v Role) {
 	}
 }
 
-func (t *Target) GetKeyList() [][]byte {
+func (t *Target) GetKeys() [][]byte {
 	if t != nil {
 		return t.keys
 	}
@@ -189,7 +189,7 @@ func (t *Target) GetKeyList() [][]byte {
 	return nil
 }
 
-func (t *Target) SetKeyList(v [][]byte) {
+func (t *Target) SetKeys(v [][]byte) {
 	if t != nil {
 		t.keys = v
 	}
