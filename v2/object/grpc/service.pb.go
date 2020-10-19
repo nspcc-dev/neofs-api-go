@@ -28,15 +28,16 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// Get object request
+// GET object request
 type GetRequest struct {
 	// Body of get object request message.
 	Body *GetRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
-	// Carries request meta information. Header data is used only to regulate message
-	// transport and does not affect request execution.
+	// Carries request meta information. Header data is used only to regulate
+	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
-	// Carries request verification information. This header is used to authenticate
-	// the nodes of the message route and check the correctness of transmission.
+	// Carries request verification information. This header is used to
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -97,13 +98,12 @@ func (m *GetRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
-// Request body
+// GET Object request body
 type GetRequest_Body struct {
-	// Address of the requested object.
+	// Address of the requested object
 	Address *grpc1.Address `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
-	// Carries the raw option flag of the request.
-	// Raw request is sent to receive only the objects
-	// that are physically stored on the server.
+	// If `raw` flag is set, request will work only with objects that are
+	// physically stored on the peer node
 	Raw                  bool     `protobuf:"varint,2,opt,name=raw,proto3" json:"raw,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -157,7 +157,7 @@ func (m *GetRequest_Body) GetRaw() bool {
 	return false
 }
 
-// get object response
+// GET object response
 type GetResponse struct {
 	// Body of get object response message.
 	Body *GetResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -165,8 +165,8 @@ type GetResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -227,9 +227,9 @@ func (m *GetResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
 	return nil
 }
 
-// Response body
+// GET Object Response body
 type GetResponse_Body struct {
-	// Carries the single message of the response stream.
+	// Single message in the response stream.
 	//
 	// Types that are valid to be assigned to ObjectPart:
 	//	*GetResponse_Body_Init_
@@ -318,13 +318,14 @@ func (*GetResponse_Body) XXX_OneofWrappers() []interface{} {
 	}
 }
 
-// Initialization parameters of the object got from NeoFS.
+// Initial part of the `Object` structure stream. Technically it's a
+// set of all `Object` structure's fields except `payload`.
 type GetResponse_Body_Init struct {
-	// Object ID
+	// Object's unique identifier.
 	ObjectId *grpc1.ObjectID `protobuf:"bytes,1,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
-	// Object signature
+	// Signed `ObjectID`
 	Signature *grpc1.Signature `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
-	// Object header.
+	// Object metadata headers
 	Header               *Header  `protobuf:"bytes,3,opt,name=header,proto3" json:"header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -385,15 +386,16 @@ func (m *GetResponse_Body_Init) GetHeader() *Header {
 	return nil
 }
 
-// Put object request
+// PUT object request
 type PutRequest struct {
 	// Body of put object request message.
 	Body *PutRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
-	// Carries request meta information. Header data is used only to regulate message
-	// transport and does not affect request execution.
+	// Carries request meta information. Header data is used only to regulate
+	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
-	// Carries request verification information. This header is used to authenticate
-	// the nodes of the message route and check the correctness of transmission.
+	// Carries request verification information. This header is used to
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -454,9 +456,9 @@ func (m *PutRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
-// Request body
+// PUT request body
 type PutRequest_Body struct {
-	// Carries the single part of the query stream.
+	// Single message in the request stream.
 	//
 	// Types that are valid to be assigned to ObjectPart:
 	//	*PutRequest_Body_Init_
@@ -545,17 +547,17 @@ func (*PutRequest_Body) XXX_OneofWrappers() []interface{} {
 	}
 }
 
-// Groups initialization parameters of object placement in NeoFS.
+// Newly created object structure parameters. If some optional parameters
+// are not set, they will be calculated by a peer node.
 type PutRequest_Body_Init struct {
-	// Object ID, where available
+	// ObjectID if available.
 	ObjectId *grpc1.ObjectID `protobuf:"bytes,1,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
-	// Object signature, were available
+	// Object signature if available
 	Signature *grpc1.Signature `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
-	// Header of the object to save in the system.
+	// Object's Header
 	Header *Header `protobuf:"bytes,3,opt,name=header,proto3" json:"header,omitempty"`
-	// Number of the object copies to store within the RPC call.
-	// Default zero value is processed according to the
-	// container placement rules.
+	// Number of the object copies to store within the RPC call. By default
+	// object is processed according to the container's placement policy.
 	CopiesNumber         uint32   `protobuf:"varint,4,opt,name=copies_number,json=copiesNumber,proto3" json:"copies_number,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -623,7 +625,7 @@ func (m *PutRequest_Body_Init) GetCopiesNumber() uint32 {
 	return 0
 }
 
-// Put object response
+// PUT Object response
 type PutResponse struct {
 	// Body of put object response message.
 	Body *PutResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -631,8 +633,8 @@ type PutResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -693,10 +695,9 @@ func (m *PutResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
 	return nil
 }
 
-// Response body
+// PUT Object response body
 type PutResponse_Body struct {
-	// Carries identifier of the saved object.
-	// It is used to access an object in the container.
+	// Identifier of the saved object
 	ObjectId             *grpc1.ObjectID `protobuf:"bytes,1,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
 	XXX_unrecognized     []byte          `json:"-"`
@@ -743,15 +744,16 @@ func (m *PutResponse_Body) GetObjectId() *grpc1.ObjectID {
 	return nil
 }
 
-// Object Delete request
+// Object DELETE request
 type DeleteRequest struct {
 	// Body of delete object request message.
 	Body *DeleteRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
-	// Carries request meta information. Header data is used only to regulate message
-	// transport and does not affect request execution.
+	// Carries request meta information. Header data is used only to regulate
+	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
-	// Carries request verification information. This header is used to authenticate
-	// the nodes of the message route and check the correctness of transmission.
+	// Carries request verification information. This header is used to
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -812,9 +814,9 @@ func (m *DeleteRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
-// Request body
+// Object DELETE request body
 type DeleteRequest_Body struct {
-	// Carries the address of the object to be deleted.
+	// Address of the object to be deleted
 	Address              *grpc1.Address `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
@@ -861,8 +863,8 @@ func (m *DeleteRequest_Body) GetAddress() *grpc1.Address {
 	return nil
 }
 
-// DeleteResponse is empty because we cannot guarantee permanent object removal
-// in distributed system.
+// DeleteResponse body is empty because we cannot guarantee permanent object
+// removal in distributed system.
 type DeleteResponse struct {
 	// Body of delete object response message.
 	Body *DeleteResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -870,8 +872,8 @@ type DeleteResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -932,7 +934,7 @@ func (m *DeleteResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
 	return nil
 }
 
-// Response body
+// Object DELETE Response has an empty body.
 type DeleteResponse_Body struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -972,15 +974,16 @@ func (m *DeleteResponse_Body) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DeleteResponse_Body proto.InternalMessageInfo
 
-// Object head request
+// Object HEAD request
 type HeadRequest struct {
 	// Body of head object request message.
 	Body *HeadRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
-	// Carries request meta information. Header data is used only to regulate message
-	// transport and does not affect request execution.
+	// Carries request meta information. Header data is used only to regulate
+	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
-	// Carries request verification information. This header is used to authenticate
-	// the nodes of the message route and check the correctness of transmission.
+	// Carries request verification information. This header is used to
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -1041,15 +1044,14 @@ func (m *HeadRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
-// Request body
+// Object HEAD request body
 type HeadRequest_Body struct {
-	// Address of the object with the requested header.
+	// Address of the object with the requested Header
 	Address *grpc1.Address `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
 	// Return only minimal header subset
 	MainOnly bool `protobuf:"varint,2,opt,name=main_only,json=mainOnly,proto3" json:"main_only,omitempty"`
-	// Carries the raw option flag of the request.
-	// Raw request is sent to receive only the headers of the objects
-	// that are physically stored on the server.
+	// If `raw` flag is set, request will work only with objects that are
+	// physically stored on the peer node
 	Raw                  bool     `protobuf:"varint,3,opt,name=raw,proto3" json:"raw,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -1110,14 +1112,17 @@ func (m *HeadRequest_Body) GetRaw() bool {
 	return false
 }
 
-// Tuple of full object header and signature of object ID.
+// Tuple of full object header and signature of `ObjectID`. \
+// Signed `ObjectID` is present to verify full header's authenticity through the
+// following steps:
+//
+// 1. Calculate `SHA-256` of marshalled `Header` structure
+// 2. Check if the resulting hash matched `ObjectID`
+// 3. Check if `ObjectID` signature in `signature` field is correct
 type HeaderWithSignature struct {
 	// Full object header
 	Header *Header `protobuf:"bytes,1,opt,name=header,proto3" json:"header,omitempty"`
-	// Signed object_id to verify full header's authenticity through following steps:
-	// 1. Calculate SHA-256 of marshalled Headers structure.
-	// 2. Check if the resulting hash matched ObjectID
-	// 3. Check if ObjectID's signature in signature field is correct.
+	// Signed `ObjectID` to verify full header's authenticity
 	Signature            *grpc1.Signature `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
@@ -1171,7 +1176,7 @@ func (m *HeaderWithSignature) GetSignature() *grpc1.Signature {
 	return nil
 }
 
-// Head response
+// Object HEAD response
 type HeadResponse struct {
 	// Body of head object response message.
 	Body *HeadResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -1179,8 +1184,8 @@ type HeadResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -1241,9 +1246,9 @@ func (m *HeadResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
 	return nil
 }
 
-// Response body
+// Object HEAD response body
 type HeadResponse_Body struct {
-	// Carries the requested object header or it's part
+	// Requested object header or it's part.
 	//
 	// Types that are valid to be assigned to Head:
 	//	*HeadResponse_Body_Header
@@ -1332,15 +1337,16 @@ func (*HeadResponse_Body) XXX_OneofWrappers() []interface{} {
 	}
 }
 
-// Search objects request
+// Object Search request
 type SearchRequest struct {
 	// Body of search object request message.
 	Body *SearchRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
-	// Carries request meta information. Header data is used only to regulate message
-	// transport and does not affect request execution.
+	// Carries request meta information. Header data is used only to regulate
+	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
-	// Carries request verification information. This header is used to authenticate
-	// the nodes of the message route and check the correctness of transmission.
+	// Carries request verification information. This header is used to
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -1401,9 +1407,9 @@ func (m *SearchRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
-// Request body
+// Object Search request body
 type SearchRequest_Body struct {
-	// Carries search container identifier.
+	// Container identifier were to search
 	ContainerId *grpc1.ContainerID `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
 	// Version of the Query Language used
 	Version uint32 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
@@ -1543,8 +1549,8 @@ type SearchResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -1605,9 +1611,9 @@ func (m *SearchResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
 	return nil
 }
 
-// Response body
+// Object Search response body
 type SearchResponse_Body struct {
-	// Carries list of object identifiers that match the search query
+	// List of `ObjectID`s that match the search query
 	IdList               []*grpc1.ObjectID `protobuf:"bytes,1,rep,name=id_list,json=idList,proto3" json:"id_list,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
@@ -1654,11 +1660,11 @@ func (m *SearchResponse_Body) GetIdList() []*grpc1.ObjectID {
 	return nil
 }
 
-// Range groups the parameters of object payload range.
+// Object payload range.Ranges of zero length SHOULD be considered as invalid.
 type Range struct {
-	// Carries the offset of the range from the object payload start.
+	// Offset of the range from the object payload start
 	Offset uint64 `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
-	// Carries the length of the object payload range.
+	// Length in bytes of the object payload range
 	Length               uint64   `protobuf:"varint,2,opt,name=length,proto3" json:"length,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -1712,15 +1718,16 @@ func (m *Range) GetLength() uint64 {
 	return 0
 }
 
-// Request to get part of object's payload
+// Request part of object's payload
 type GetRangeRequest struct {
 	// Body of get range object request message.
 	Body *GetRangeRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
-	// Carries request meta information. Header data is used only to regulate message
-	// transport and does not affect request execution.
+	// Carries request meta information. Header data is used only to regulate
+	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
-	// Carries request verification information. This header is used to authenticate
-	// the nodes of the message route and check the correctness of transmission.
+	// Carries request verification information. This header is used to
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -1781,11 +1788,11 @@ func (m *GetRangeRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
-// Request Body
+// Byte range of object's payload request body
 type GetRangeRequest_Body struct {
-	// Address carries address of the object that contains the requested payload range.
+	// Address of the object containing the requested payload range
 	Address *grpc1.Address `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
-	// Range carries the parameters of the requested payload range.
+	// Requested payload range
 	Range                *Range   `protobuf:"bytes,2,opt,name=range,proto3" json:"range,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -1847,8 +1854,8 @@ type GetRangeResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -1909,9 +1916,12 @@ func (m *GetRangeResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
 	return nil
 }
 
-// Response body
+// Get Range response body uses streams to transfer the response. Because
+// object payload considered a byte sequence, there is no need to have some
+// initial preamble message. The requested byte range is sent as a series
+// chunks.
 type GetRangeResponse_Body struct {
-	// Carries part of the object payload.
+	// Chunked object payload's range
 	Chunk                []byte   `protobuf:"bytes,1,opt,name=chunk,proto3" json:"chunk,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -1962,11 +1972,12 @@ func (m *GetRangeResponse_Body) GetChunk() []byte {
 type GetRangeHashRequest struct {
 	// Body of get range hash object request message.
 	Body *GetRangeHashRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
-	// Carries request meta information. Header data is used only to regulate message
-	// transport and does not affect request execution.
+	// Carries request meta information. Header data is used only to regulate
+	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
-	// Carries request verification information. This header is used to authenticate
-	// the nodes of the message route and check the correctness of transmission.
+	// Carries request verification information. This header is used to
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -2027,13 +2038,13 @@ func (m *GetRangeHashRequest) GetVerifyHeader() *grpc.RequestVerificationHeader 
 	return nil
 }
 
-// Request body
+// Get hash of object's payload part request body.
 type GetRangeHashRequest_Body struct {
-	// Carries address of the object that contains the requested payload range.
+	// Address of the object that containing the requested payload range
 	Address *grpc1.Address `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
-	// Carries the list of object payload range to calculate homomorphic hash.
+	// List of object's payload ranges to calculate homomorphic hash
 	Ranges []*Range `protobuf:"bytes,2,rep,name=ranges,proto3" json:"ranges,omitempty"`
-	// Carries binary salt to XOR object payload ranges before hash calculation.
+	// Binary salt to XOR object's payload ranges before hash calculation
 	Salt []byte `protobuf:"bytes,3,opt,name=salt,proto3" json:"salt,omitempty"`
 	// Checksum algorithm type
 	Type                 grpc1.ChecksumType `protobuf:"varint,4,opt,name=type,proto3,enum=neo.fs.v2.refs.ChecksumType" json:"type,omitempty"`
@@ -2111,8 +2122,8 @@ type GetRangeHashResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -2173,11 +2184,11 @@ func (m *GetRangeHashResponse) GetVerifyHeader() *grpc.ResponseVerificationHeade
 	return nil
 }
 
-// Response body
+// Get hash of object's payload part response body.
 type GetRangeHashResponse_Body struct {
 	// Checksum algorithm type
 	Type grpc1.ChecksumType `protobuf:"varint,1,opt,name=type,proto3,enum=neo.fs.v2.refs.ChecksumType" json:"type,omitempty"`
-	// List of range hashes in a binary format.
+	// List of range hashes in a binary format
 	HashList             [][]byte `protobuf:"bytes,2,rep,name=hash_list,json=hashList,proto3" json:"hash_list,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -2366,37 +2377,40 @@ const _ = grpc2.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ObjectServiceClient interface {
-	// Get the object from container. Response uses gRPC stream. First response
-	// message carry object of requested address. Chunk messages are parts of
-	// the object's payload if it is needed. All messages except first carry
-	// chunks. Requested object can be restored by concatenation of object
-	// message payload and all chunks keeping receiving order.
+	// Receive full object structure, including Headers and payload. Response uses
+	// gRPC stream. First response message carries object with requested address.
+	// Chunk messages are parts of the object's payload if it is needed. All
+	// messages, except the first one, carry payload chunks. Requested object can
+	// be restored by concatenation of object message payload and all chunks
+	// keeping receiving order.
 	Get(ctx context.Context, in *GetRequest, opts ...grpc2.CallOption) (ObjectService_GetClient, error)
 	// Put the object into container. Request uses gRPC stream. First message
-	// SHOULD BE type of PutHeader. Container id and Owner id of object SHOULD
-	// BE set. Session token SHOULD BE obtained before put operation (see
-	// session package). Chunk messages considered by server as part of object
-	// payload. All messages except first SHOULD BE chunks. Chunk messages
-	// SHOULD BE sent in direct order of fragmentation.
+	// SHOULD be of PutHeader type. `ContainerID` and `OwnerID` of an object
+	// SHOULD be set. Session token SHOULD be obtained before `PUT` operation (see
+	// session package). Chunk messages are considered by server as a part of an
+	// object payload. All messages, except first one, SHOULD be payload chunks.
+	// Chunk messages SHOULD be sent in direct order of fragmentation.
 	Put(ctx context.Context, opts ...grpc2.CallOption) (ObjectService_PutClient, error)
-	// Delete the object from a container
+	// Delete the object from a container. There is no immediate removal
+	// guarantee. Object will be marked for removal and deleted eventually.
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc2.CallOption) (*DeleteResponse, error)
-	// Head returns the object without data payload. Object in the
-	// response has system header only. If full headers flag is set, extended
-	// headers are also present.
+	// Returns the object Headers without data payload. By default full header is
+	// returned. If `main_only` request field is set, the short header with only
+	// the very minimal information would be returned instead.
 	Head(ctx context.Context, in *HeadRequest, opts ...grpc2.CallOption) (*HeadResponse, error)
-	// Search objects in container. Version of query language format SHOULD BE
-	// set to 1. Search query represented in serialized format (see query
-	// package).
+	// Search objects in container. Search query allows to match by Object
+	// Header's filed values. Please see the corresponding NeoFS Technical
+	// Specification section for more details.
 	Search(ctx context.Context, in *SearchRequest, opts ...grpc2.CallOption) (ObjectService_SearchClient, error)
-	// GetRange of data payload. Range is a pair (offset, length).
-	// Requested range can be restored by concatenation of all chunks
-	// keeping receiving order.
+	// Get byte range of data payload. Range is set as an (offset, length) tuple.
+	// Like in `Get` method, the response uses gRPC stream. Requested range can be
+	// restored by concatenation of all received payload chunks keeping receiving
+	// order.
 	GetRange(ctx context.Context, in *GetRangeRequest, opts ...grpc2.CallOption) (ObjectService_GetRangeClient, error)
-	// GetRangeHash returns homomorphic hash of object payload range after XOR
-	// operation. Ranges are set of pairs (offset, length). Hashes order in
-	// response corresponds to ranges order in request. Homomorphic hash is
-	// calculated for XORed data.
+	// Returns homomorphic or regular hash of object's payload range after
+	// applying XOR operation with the provided `salt`. Ranges are set of (offset,
+	// length) tuples. Hashes order in response corresponds to ranges order in
+	// request. Note that hash is calculated for XORed data.
 	GetRangeHash(ctx context.Context, in *GetRangeHashRequest, opts ...grpc2.CallOption) (*GetRangeHashResponse, error)
 }
 
@@ -2567,37 +2581,40 @@ func (c *objectServiceClient) GetRangeHash(ctx context.Context, in *GetRangeHash
 
 // ObjectServiceServer is the server API for ObjectService service.
 type ObjectServiceServer interface {
-	// Get the object from container. Response uses gRPC stream. First response
-	// message carry object of requested address. Chunk messages are parts of
-	// the object's payload if it is needed. All messages except first carry
-	// chunks. Requested object can be restored by concatenation of object
-	// message payload and all chunks keeping receiving order.
+	// Receive full object structure, including Headers and payload. Response uses
+	// gRPC stream. First response message carries object with requested address.
+	// Chunk messages are parts of the object's payload if it is needed. All
+	// messages, except the first one, carry payload chunks. Requested object can
+	// be restored by concatenation of object message payload and all chunks
+	// keeping receiving order.
 	Get(*GetRequest, ObjectService_GetServer) error
 	// Put the object into container. Request uses gRPC stream. First message
-	// SHOULD BE type of PutHeader. Container id and Owner id of object SHOULD
-	// BE set. Session token SHOULD BE obtained before put operation (see
-	// session package). Chunk messages considered by server as part of object
-	// payload. All messages except first SHOULD BE chunks. Chunk messages
-	// SHOULD BE sent in direct order of fragmentation.
+	// SHOULD be of PutHeader type. `ContainerID` and `OwnerID` of an object
+	// SHOULD be set. Session token SHOULD be obtained before `PUT` operation (see
+	// session package). Chunk messages are considered by server as a part of an
+	// object payload. All messages, except first one, SHOULD be payload chunks.
+	// Chunk messages SHOULD be sent in direct order of fragmentation.
 	Put(ObjectService_PutServer) error
-	// Delete the object from a container
+	// Delete the object from a container. There is no immediate removal
+	// guarantee. Object will be marked for removal and deleted eventually.
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
-	// Head returns the object without data payload. Object in the
-	// response has system header only. If full headers flag is set, extended
-	// headers are also present.
+	// Returns the object Headers without data payload. By default full header is
+	// returned. If `main_only` request field is set, the short header with only
+	// the very minimal information would be returned instead.
 	Head(context.Context, *HeadRequest) (*HeadResponse, error)
-	// Search objects in container. Version of query language format SHOULD BE
-	// set to 1. Search query represented in serialized format (see query
-	// package).
+	// Search objects in container. Search query allows to match by Object
+	// Header's filed values. Please see the corresponding NeoFS Technical
+	// Specification section for more details.
 	Search(*SearchRequest, ObjectService_SearchServer) error
-	// GetRange of data payload. Range is a pair (offset, length).
-	// Requested range can be restored by concatenation of all chunks
-	// keeping receiving order.
+	// Get byte range of data payload. Range is set as an (offset, length) tuple.
+	// Like in `Get` method, the response uses gRPC stream. Requested range can be
+	// restored by concatenation of all received payload chunks keeping receiving
+	// order.
 	GetRange(*GetRangeRequest, ObjectService_GetRangeServer) error
-	// GetRangeHash returns homomorphic hash of object payload range after XOR
-	// operation. Ranges are set of pairs (offset, length). Hashes order in
-	// response corresponds to ranges order in request. Homomorphic hash is
-	// calculated for XORed data.
+	// Returns homomorphic or regular hash of object's payload range after
+	// applying XOR operation with the provided `salt`. Ranges are set of (offset,
+	// length) tuples. Hashes order in response corresponds to ranges order in
+	// request. Note that hash is calculated for XORed data.
 	GetRangeHash(context.Context, *GetRangeHashRequest) (*GetRangeHashResponse, error)
 }
 

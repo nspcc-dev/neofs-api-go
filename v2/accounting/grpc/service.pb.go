@@ -28,13 +28,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// Message defines the request body of Balance method.
-//
-// To indicate the account for which the balance is requested, it's identifier
-// is used.
-//
-// To gain access to the requested information, the request body must be formed
-// according to the requirements from the system specification.
+// BalanceRequest message
 type BalanceRequest struct {
 	// Body of the balance request message.
 	Body *BalanceRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -42,8 +36,8 @@ type BalanceRequest struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries request verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -104,10 +98,13 @@ func (m *BalanceRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
-//Request body
+// To indicate the account for which the balance is requested, it's identifier
+// is used. It can be any existing account in NeoFS sidechain `Balance` smart
+// contract. If omitted, client implementation MUST set it to the request's
+// signer `OwnerID`.
 type BalanceRequest_Body struct {
-	// Carries user identifier in NeoFS system for which the balance
-	// is requested.
+	// Valid user identifier in `OwnerID` format for which the balance is
+	// requested. Required field.
 	OwnerId              *grpc1.OwnerID `protobuf:"bytes,1,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
@@ -154,9 +151,7 @@ func (m *BalanceRequest_Body) GetOwnerId() *grpc1.OwnerID {
 	return nil
 }
 
-// Message defines the response body of Balance method.
-//
-// The amount of funds is calculated in decimal numbers.
+// BalanceResponse message
 type BalanceResponse struct {
 	// Body of the balance response message.
 	Body *BalanceResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -164,8 +159,8 @@ type BalanceResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -226,9 +221,10 @@ func (m *BalanceResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
 	return nil
 }
 
-//Request body
+// The amount of funds in GAS token for the `OwnerID`'s account requested.
+// Balance is `Decimal` format to avoid precision issues with rounding.
 type BalanceResponse_Body struct {
-	// Carries the amount of funds on the account.
+	// Amount of funds in GAS token for the requested account.
 	Balance              *Decimal `protobuf:"bytes,1,opt,name=balance,proto3" json:"balance,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -328,7 +324,7 @@ const _ = grpc2.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AccountingServiceClient interface {
-	// Returns the amount of funds for the requested NeoFS account.
+	// Returns the amount of funds in GAS token for the requested NeoFS account.
 	Balance(ctx context.Context, in *BalanceRequest, opts ...grpc2.CallOption) (*BalanceResponse, error)
 }
 
@@ -351,7 +347,7 @@ func (c *accountingServiceClient) Balance(ctx context.Context, in *BalanceReques
 
 // AccountingServiceServer is the server API for AccountingService service.
 type AccountingServiceServer interface {
-	// Returns the amount of funds for the requested NeoFS account.
+	// Returns the amount of funds in GAS token for the requested NeoFS account.
 	Balance(context.Context, *BalanceRequest) (*BalanceResponse, error)
 }
 

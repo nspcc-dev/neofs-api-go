@@ -23,22 +23,20 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// StorageGroup groups the information about the NeoFS storage group.
-// The storage group consists of objects from single container.
+// StorageGroup keeps verification information for Data Audit sessions. Objects
+// that require payed storage guaranties are gathered in `StorageGroups` with
+// additional information used for proof of storage. `StorageGroup` only
+// contains objects from the same container.
 type StorageGroup struct {
-	// validation_data_size carries the total size of the payloads of the storage
-	// group members.
+	// Total size of the payloads of objects in the storage group
 	ValidationDataSize uint64 `protobuf:"varint,1,opt,name=validation_data_size,json=validationDataSize,proto3" json:"validation_data_size,omitempty"`
-	// validation_hash carries homomorphic hash from the concatenation of the
-	// payloads of the storage group members
-	// The order of concatenation is the same as the order of the members in the
-	// Members field.
+	// Homomorphic hash from the concatenation of the payloads of the storage
+	// group members. The order of concatenation is the same as the order of the
+	// members in the `members` field.
 	ValidationHash *grpc.Checksum `protobuf:"bytes,2,opt,name=validation_hash,json=validationHash,proto3" json:"validation_hash,omitempty"`
-	// expiration_epoch carries last NeoFS epoch number of the storage group
-	// lifetime.
+	// Last NeoFS epoch number of the storage group lifetime
 	ExpirationEpoch uint64 `protobuf:"varint,3,opt,name=expiration_epoch,json=expirationEpoch,proto3" json:"expiration_epoch,omitempty"`
-	// Members carries the list of identifiers of the object storage group members.
-	// The list is strictly ordered.
+	// Strictly ordered list of storage group member objects
 	Members              []*grpc.ObjectID `protobuf:"bytes,4,rep,name=members,proto3" json:"members,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`

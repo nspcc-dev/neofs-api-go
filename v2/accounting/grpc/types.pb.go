@@ -22,11 +22,18 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// Decimal represents the decimal numbers.
+// Standard floating point data type can't be used in NeoFS due to inexactness
+// of the result when doing lots of small number operations. To solve the lost
+// precision issue, special `Decimal` format is used for monetary computations.
+//
+// Please see [The General Decimal Arithmetic
+// Specification](http://speleotrove.com/decimal/) for detailed problem
+// description.
 type Decimal struct {
-	// value carries number value.
+	// Number in smallest Token fractions.
 	Value int64 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
-	// precision carries value precision.
+	// Precision value indicating how many smallest fractions can be in one
+	// integer.
 	Precision            uint32   `protobuf:"varint,2,opt,name=precision,proto3" json:"precision,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
