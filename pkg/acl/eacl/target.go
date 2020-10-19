@@ -32,7 +32,7 @@ func (t *Target) ToV2() *v2acl.Target {
 	target := new(v2acl.Target)
 
 	target.SetRole(t.role.ToV2())
-	target.SetKeyList(keys)
+	target.SetKeys(keys)
 
 	return target
 }
@@ -45,7 +45,7 @@ func NewTargetFromV2(target *v2acl.Target) *Target {
 	}
 
 	t.role = RoleFromV2(target.GetRole())
-	v2keys := target.GetKeyList()
+	v2keys := target.GetKeys()
 	t.keys = make([]ecdsa.PublicKey, 0, len(v2keys))
 	for i := range v2keys {
 		key := crypto.UnmarshalPublicKey(v2keys[i])

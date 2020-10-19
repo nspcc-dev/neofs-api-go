@@ -88,10 +88,10 @@ func (m *EACLRecord_Target) SetRole(v Role) {
 	}
 }
 
-// SetKeyList sets key list of the eACL target.
-func (m *EACLRecord_Target) SetKeyList(v [][]byte) {
+// SetKeys of the eACL target.
+func (m *EACLRecord_Target) SetKeys(v [][]byte) {
 	if m != nil {
-		m.KeyList = v
+		m.Keys = v
 	}
 }
 
