@@ -27,15 +27,16 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// CreateRequest carries an information necessary for opening a session.
+// Information necessary for opening a session.
 type CreateRequest struct {
 	// Body of create session token request message.
 	Body *CreateRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
-	// Carries request meta information. Header data is used only to regulate message
-	// transport and does not affect request execution.
+	// Carries request meta information. Header data is used only to regulate
+	// message transport and does not affect request execution.
 	MetaHeader *RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
-	// Carries request verification information. This header is used to authenticate
-	// the nodes of the message route and check the correctness of transmission.
+	// Carries request verification information. This header is used to
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                   `json:"-"`
 	XXX_unrecognized     []byte                     `json:"-"`
@@ -96,11 +97,11 @@ func (m *CreateRequest) GetVerifyHeader() *RequestVerificationHeader {
 	return nil
 }
 
-// Request body
+// Session creation request body
 type CreateRequest_Body struct {
-	// Carries an identifier of a session initiator.
+	// Dession initiating user's or node's key derived `OwnerID`.
 	OwnerId *grpc.OwnerID `protobuf:"bytes,1,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
-	// Expiration Epoch
+	// Session expiration `Epoch`
 	Expiration           uint64   `protobuf:"varint,2,opt,name=expiration,proto3" json:"expiration,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -154,7 +155,7 @@ func (m *CreateRequest_Body) GetExpiration() uint64 {
 	return 0
 }
 
-// CreateResponse carries an information about the opened session.
+// Information about the opened session.
 type CreateResponse struct {
 	// Body of create session token response message.
 	Body *CreateResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -162,8 +163,8 @@ type CreateResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                    `json:"-"`
 	XXX_unrecognized     []byte                      `json:"-"`
@@ -224,11 +225,11 @@ func (m *CreateResponse) GetVerifyHeader() *ResponseVerificationHeader {
 	return nil
 }
 
-// Response body
+// Session creation response body
 type CreateResponse_Body struct {
-	// id carries an identifier of session token.
+	// Identifier of a newly created session
 	Id []byte `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// session_key carries a session public key.
+	// Public key used for session
 	SessionKey           []byte   `protobuf:"bytes,2,opt,name=session_key,json=sessionKey,proto3" json:"session_key,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -335,7 +336,7 @@ const _ = grpc1.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SessionServiceClient interface {
-	// Create opens new session between the client and the server.
+	// Opens a new session between two peers.
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc1.CallOption) (*CreateResponse, error)
 }
 
@@ -358,7 +359,7 @@ func (c *sessionServiceClient) Create(ctx context.Context, in *CreateRequest, op
 
 // SessionServiceServer is the server API for SessionService service.
 type SessionServiceServer interface {
-	// Create opens new session between the client and the server.
+	// Opens a new session between two peers.
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
 }
 

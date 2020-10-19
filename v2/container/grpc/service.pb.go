@@ -37,8 +37,8 @@ type PutRequest struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries request verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -99,11 +99,15 @@ func (m *PutRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
-// Request body
+// Container creation request has container structure's signature as a
+// separate field. It's not stored in sidechain, just verified on container
+// creation by `Container` smart contract. `ContainerID` is a SHA256 hash of
+// the stable-marshalled container strucutre, hence there is no need for
+// additional signature checks.
 type PutRequest_Body struct {
-	// Container to create in NeoFS.
+	// Container structure to register in NeoFS
 	Container *Container `protobuf:"bytes,1,opt,name=container,proto3" json:"container,omitempty"`
-	//Signature of stable-marshalled container according to RFC-6979.
+	// Signature of a stable-marshalled container according to RFC-6979
 	Signature            *grpc1.Signature `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
@@ -165,8 +169,8 @@ type PutResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -227,9 +231,12 @@ func (m *PutResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
 	return nil
 }
 
-// Response body
+// Container put response body contains information about the newly registered
+// container as seen by `Container` smart contract. `ContainerID` can be
+// calculated beforehand from the container structure and compared to the one
+// returned here to make sure everything was done as expected.
 type PutResponse_Body struct {
-	// container_id carries identifier of the new container.
+	// Unique identifier of the newly created container
 	ContainerId          *grpc1.ContainerID `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
 	XXX_unrecognized     []byte             `json:"-"`
@@ -284,8 +291,8 @@ type DeleteRequest struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries request verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -346,12 +353,13 @@ func (m *DeleteRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
-// Request body
+// Container removal request body has a signed `ContainerID` as a proof of
+// container owner's intent. The signature will be verified by `Container`
+// smart contract, so signing algorithm must be supported by NeoVM.
 type DeleteRequest_Body struct {
-	// container_id carries identifier of the container to delete
-	// from NeoFS.
+	// Identifier of the container to delete from NeoFS
 	ContainerId *grpc1.ContainerID `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
-	// Signature of container id according to RFC-6979.
+	// `ContainerID` signed with the container owner's key according to RFC-6979
 	Signature            *grpc1.Signature `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
@@ -405,8 +413,8 @@ func (m *DeleteRequest_Body) GetSignature() *grpc1.Signature {
 	return nil
 }
 
-// DeleteResponse is empty because delete operation is asynchronous and done
-// via consensus in inner ring nodes
+// `DeleteResponse` has an empty body because delete operation is asynchronous
+// and done via consensus in Inner Ring nodes.
 type DeleteResponse struct {
 	// Body of container delete response message.
 	Body *DeleteResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -414,8 +422,8 @@ type DeleteResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -476,7 +484,8 @@ func (m *DeleteResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
 	return nil
 }
 
-// Response body
+// `DeleteResponse` has an empty body because delete operation is asynchronous
+// and done via consensus in Inner Ring nodes.
 type DeleteResponse_Body struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -524,8 +533,8 @@ type GetRequest struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries request verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -586,9 +595,9 @@ func (m *GetRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
-// Request body
+// Get container structure request body.
 type GetRequest_Body struct {
-	// container_id carries identifier of the container to get.
+	// Identifier of the container to get
 	ContainerId          *grpc1.ContainerID `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
 	XXX_unrecognized     []byte             `json:"-"`
@@ -643,8 +652,8 @@ type GetResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -705,9 +714,10 @@ func (m *GetResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
 	return nil
 }
 
-// Response body
+// Get container response body does not have container structure signature. It
+// was already verified on container creation.
 type GetResponse_Body struct {
-	// Container that has been requested.
+	// Requested container structure
 	Container            *Container `protobuf:"bytes,1,opt,name=container,proto3" json:"container,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
 	XXX_unrecognized     []byte     `json:"-"`
@@ -756,14 +766,14 @@ func (m *GetResponse_Body) GetContainer() *Container {
 
 // List containers
 type ListRequest struct {
-	// Body of list containers request message.
+	// Body of list containers request message
 	Body *ListRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
 	// Carries request meta information. Header data is used only to regulate
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries request verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -824,9 +834,9 @@ func (m *ListRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
-// Request body
+// List containers request body.
 type ListRequest_Body struct {
-	// owner_id carries identifier of the container owner.
+	// Identifier of the container owner
 	OwnerId              *grpc1.OwnerID `protobuf:"bytes,1,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
@@ -881,8 +891,8 @@ type ListResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -943,9 +953,9 @@ func (m *ListResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
 	return nil
 }
 
-// Response body
+// List containers response body.
 type ListResponse_Body struct {
-	// ContainerIDs carries list of identifiers of the containers that belong to the owner.
+	// List of `ContainerID`s belonging to the requested `OwnerID`
 	ContainerIds         []*grpc1.ContainerID `protobuf:"bytes,1,rep,name=container_ids,json=containerIds,proto3" json:"container_ids,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
@@ -1000,8 +1010,8 @@ type SetExtendedACLRequest struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries request verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -1062,11 +1072,12 @@ func (m *SetExtendedACLRequest) GetVerifyHeader() *grpc.RequestVerificationHeade
 	return nil
 }
 
-// Request body
+// Set Extended ACL request body does not have separate `ContainerID`
+// reference. It will be taken from `EACLTable.container_id` field.
 type SetExtendedACLRequest_Body struct {
-	// Extended ACL to set for the container.
+	// Extended ACL table to set for container
 	Eacl *grpc2.EACLTable `protobuf:"bytes,1,opt,name=eacl,proto3" json:"eacl,omitempty"`
-	// Signature of stable-marshalled Extended ACL according to RFC-6979.
+	// Signature of stable-marshalled Extended ACL table according to RFC-6979
 	Signature            *grpc1.Signature `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
@@ -1128,8 +1139,8 @@ type SetExtendedACLResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -1190,7 +1201,9 @@ func (m *SetExtendedACLResponse) GetVerifyHeader() *grpc.ResponseVerificationHea
 	return nil
 }
 
-// Response body
+// `SetExtendedACLResponse` has an empty body because the operation is
+// asynchronous and update should be reflected in `Container` smart contract's
+// storage after next block is issued in sidechain.
 type SetExtendedACLResponse_Body struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -1238,8 +1251,8 @@ type GetExtendedACLRequest struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries request verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -1300,9 +1313,9 @@ func (m *GetExtendedACLRequest) GetVerifyHeader() *grpc.RequestVerificationHeade
 	return nil
 }
 
-// Request body
+// Get Extended ACL request body
 type GetExtendedACLRequest_Body struct {
-	// container_id carries identifier of the container that has Extended ACL.
+	// Identifier of the container having Extended ACL
 	ContainerId          *grpc1.ContainerID `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
 	XXX_unrecognized     []byte             `json:"-"`
@@ -1357,8 +1370,8 @@ type GetExtendedACLResponse struct {
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -1419,11 +1432,13 @@ func (m *GetExtendedACLResponse) GetVerifyHeader() *grpc.ResponseVerificationHea
 	return nil
 }
 
-// Response body
+// Get Extended ACL Response body can be empty if the requested container did
+// not have Extended ACL Table attached or Extended ACL was not allowed at
+// container creation.
 type GetExtendedACLResponse_Body struct {
-	// Extended ACL that has been requested if it was set up.
+	// Extended ACL requested, if available
 	Eacl *grpc2.EACLTable `protobuf:"bytes,1,opt,name=eacl,proto3" json:"eacl,omitempty"`
-	// Signature of stable-marshalled Extended ACL according to RFC-6979.
+	// Signature of stable-marshalled Extended ACL according to RFC-6979
 	Signature            *grpc1.Signature `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
@@ -1574,27 +1589,26 @@ const _ = grpc3.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ContainerServiceClient interface {
-	// Put invokes 'Put' method in container smart-contract and returns
-	// response immediately. After new block in morph chain, request is verified
-	// by inner ring nodes. After one more block in morph chain, container
-	// added into smart-contract storage.
+	// `Put` invokes `Container` smart contract's `Put` method and returns
+	// response immediately. After a new block is issued in sidechain, request is
+	// verified by Inner Ring nodes. After one more block in sidechain, container
+	// is added into smart contract storage.
 	Put(ctx context.Context, in *PutRequest, opts ...grpc3.CallOption) (*PutResponse, error)
-	// Delete invokes 'Delete' method in container smart-contract and returns
-	// response immediately. After new block in morph chain, request is verified
-	// by inner ring nodes. After one more block in morph chain, container
-	// removed from smart-contract storage.
+	// `Delete` invokes `Container` smart contract's `Delete` method and returns
+	// response immediately. After a new block is issued in sidechain, request is
+	// verified by Inner Ring nodes. After one more block in sidechain, container
+	// is added into smart contract storage.
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc3.CallOption) (*DeleteResponse, error)
-	// Get returns container from container smart-contract storage.
+	// Returns container structure from `Container` smart contract storage.
 	Get(ctx context.Context, in *GetRequest, opts ...grpc3.CallOption) (*GetResponse, error)
-	// List returns all owner's containers from container smart-contract
-	// storage.
+	// Returns all owner's containers from 'Container` smart contract' storage.
 	List(ctx context.Context, in *ListRequest, opts ...grpc3.CallOption) (*ListResponse, error)
-	// SetExtendedACL invokes 'SetEACL' method in container smart-contract and
-	// returns response immediately. After new block in morph chain,
-	// Extended ACL added into smart-contract storage.
+	// Invokes 'SetEACL' method of 'Container` smart contract and returns response
+	// immediately. After one more block in sidechain, Extended ACL changes are
+	// added into smart contract storage.
 	SetExtendedACL(ctx context.Context, in *SetExtendedACLRequest, opts ...grpc3.CallOption) (*SetExtendedACLResponse, error)
-	// GetExtendedACL returns Extended ACL table and signature from container
-	// smart-contract storage.
+	// Returns Extended ACL table and signature from `Container` smart contract
+	// storage.
 	GetExtendedACL(ctx context.Context, in *GetExtendedACLRequest, opts ...grpc3.CallOption) (*GetExtendedACLResponse, error)
 }
 
@@ -1662,27 +1676,26 @@ func (c *containerServiceClient) GetExtendedACL(ctx context.Context, in *GetExte
 
 // ContainerServiceServer is the server API for ContainerService service.
 type ContainerServiceServer interface {
-	// Put invokes 'Put' method in container smart-contract and returns
-	// response immediately. After new block in morph chain, request is verified
-	// by inner ring nodes. After one more block in morph chain, container
-	// added into smart-contract storage.
+	// `Put` invokes `Container` smart contract's `Put` method and returns
+	// response immediately. After a new block is issued in sidechain, request is
+	// verified by Inner Ring nodes. After one more block in sidechain, container
+	// is added into smart contract storage.
 	Put(context.Context, *PutRequest) (*PutResponse, error)
-	// Delete invokes 'Delete' method in container smart-contract and returns
-	// response immediately. After new block in morph chain, request is verified
-	// by inner ring nodes. After one more block in morph chain, container
-	// removed from smart-contract storage.
+	// `Delete` invokes `Container` smart contract's `Delete` method and returns
+	// response immediately. After a new block is issued in sidechain, request is
+	// verified by Inner Ring nodes. After one more block in sidechain, container
+	// is added into smart contract storage.
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
-	// Get returns container from container smart-contract storage.
+	// Returns container structure from `Container` smart contract storage.
 	Get(context.Context, *GetRequest) (*GetResponse, error)
-	// List returns all owner's containers from container smart-contract
-	// storage.
+	// Returns all owner's containers from 'Container` smart contract' storage.
 	List(context.Context, *ListRequest) (*ListResponse, error)
-	// SetExtendedACL invokes 'SetEACL' method in container smart-contract and
-	// returns response immediately. After new block in morph chain,
-	// Extended ACL added into smart-contract storage.
+	// Invokes 'SetEACL' method of 'Container` smart contract and returns response
+	// immediately. After one more block in sidechain, Extended ACL changes are
+	// added into smart contract storage.
 	SetExtendedACL(context.Context, *SetExtendedACLRequest) (*SetExtendedACLResponse, error)
-	// GetExtendedACL returns Extended ACL table and signature from container
-	// smart-contract storage.
+	// Returns Extended ACL table and signature from `Container` smart contract
+	// storage.
 	GetExtendedACL(context.Context, *GetExtendedACLRequest) (*GetExtendedACLResponse, error)
 }
 

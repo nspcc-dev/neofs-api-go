@@ -78,9 +78,9 @@ func (Operation) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_91a1332b2376641a, []int{0}
 }
 
-// Selector modifier showing how the node set will be formed
-// By default selector just groups by attribute into a bucket selecting nodes
-// only by their hash distance.
+// Selector modifier shows how the node set will be formed. By default selector
+// just groups nodes into a bucket by attribute, selecting nodes only by their
+// hash distance.
 type Clause int32
 
 const (
@@ -144,12 +144,13 @@ func (NodeInfo_State) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_91a1332b2376641a, []int{4, 0}
 }
 
-// Filter
+// Filter will return the subset of nodes from `NetworkMap` or another filter's
+// results, that will satisfy filter's conditions.
 type Filter struct {
-	// Name of the filter or a reference to the named filter.
-	// '*' means application to the whole unfiltered NetworkMap
-	// At top level it's used as a filter name. At lower levels it's considered to
-	// be a reference to another named filter
+	// Name of the filter or a reference to the named filter. '*' means
+	// application to the whole unfiltered NetworkMap. At top level it's used as a
+	// filter name. At lower levels it's considered to be a reference to another
+	// named filter
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Key to filter
 	Key string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
@@ -157,7 +158,8 @@ type Filter struct {
 	Op Operation `protobuf:"varint,3,opt,name=op,proto3,enum=neo.fs.v2.netmap.Operation" json:"op,omitempty"`
 	// Value to match
 	Value string `protobuf:"bytes,4,opt,name=value,proto3" json:"value,omitempty"`
-	// List of inner filters. Top level operation will be applied to the whole list.
+	// List of inner filters. Top level operation will be applied to the whole
+	// list.
 	Filters              []*Filter `protobuf:"bytes,5,rep,name=filters,proto3" json:"filters,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
@@ -232,11 +234,12 @@ func (m *Filter) GetFilters() []*Filter {
 	return nil
 }
 
-// Selector
+// Selector chooses a number of nodes from the bucket taking the nearest nodes
+// to the provided `ContainerID` by hash distance.
 type Selector struct {
 	// Selector name to reference in object placement section
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// How many nodes to select from bucket
+	// How many nodes to select from the bucket
 	Count uint32 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
 	// Selector modifier showing how to form a bucket
 	Clause Clause `protobuf:"varint,3,opt,name=clause,proto3,enum=neo.fs.v2.netmap.Clause" json:"clause,omitempty"`
@@ -317,11 +320,13 @@ func (m *Selector) GetFilter() string {
 	return ""
 }
 
-// Exact bucket for each replica
+// Number of object replicas in a set of nodes from the defined selector. If no
+// selector set the root bucket containing all possible nodes will be used by
+// default.
 type Replica struct {
 	// How many object replicas to put
 	Count uint32 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
-	// Named selector bucket to put in
+	// Named selector bucket to put replicas
 	Selector             string   `protobuf:"bytes,2,opt,name=selector,proto3" json:"selector,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -375,12 +380,15 @@ func (m *Replica) GetSelector() string {
 	return ""
 }
 
-// Set of rules to select a subset of nodes able to store container's objects
+// Set of rules to select a subset of nodes from `NetworkMap` able to store
+// container's objects. The format is simple enough to transpile from different
+// storage policy definition languages.
 type PlacementPolicy struct {
-	// Rules to set number of object replicas and place each one into a particular bucket
+	// Rules to set number of object replicas and place each one into a named
+	// bucket
 	Replicas []*Replica `protobuf:"bytes,1,rep,name=replicas,proto3" json:"replicas,omitempty"`
 	// Container backup factor controls how deep NeoFS will search for nodes
-	// alternatives to include into container.
+	// alternatives to include into container's nodes subset
 	ContainerBackupFactor uint32 `protobuf:"varint,2,opt,name=container_backup_factor,json=containerBackupFactor,proto3" json:"container_backup_factor,omitempty"`
 	// Set of Selectors to form the container's nodes subset
 	Selectors []*Selector `protobuf:"bytes,3,rep,name=selectors,proto3" json:"selectors,omitempty"`
@@ -528,14 +536,49 @@ func (m *NodeInfo) GetState() NodeInfo_State {
 	return NodeInfo_UNSPECIFIED
 }
 
-// Attributes of the NeoFS node.
+// Administrator-defined Attributes of the NeoFS Storage Node.
+//
+// Node's attributes are mostly used during Storage Policy evaluation to
+// calculate object's placement and find a set of nodes satisfying policy
+// requirements. There are some "well-known" node attributes common to all the
+// Storage Nodes in the network and used implicitly with default values if not
+// explicitly set:
+//
+// * Capacity \
+//   Total available disk space in Gigabytes.
+// * Price \
+//   Price in GAS tokens for storing one GB of data during one Epoch. In node
+//   attributes it's a string presenting floating point number with comma or
+//   point delimiter for decimal part. In the Network Map it will be saved as
+//   64-bit unsigned integer representing number of minimal token fractions.
+// * Subnet \
+//   String ID of Node's storage subnet. There can be only one subnet served
+//   by the Storage Node.
+// * Locode \
+//   Node's geographic location in
+//   [UN/LOCODE](https://www.unece.org/cefact/codesfortrade/codes_index.html)
+//   format approximated to the nearest point defined in standard.
+// * Country \
+//   Country code in
+//   [ISO 3166-1_alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+//   format. Calculated automatically from `Locode` attribute
+// * Region \
+//   Country's administative subdivision where node is located. Calculated
+//   automatically from `Locode` attribute based on `SubDiv` field. Presented
+//   in [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) format.
+// * City \
+//   City, town, village or rural area name where node is located written
+//   without diacritics . Calculated automatically from `Locode` attribute.
+//
+// For detailed description of each well-known attribute please see the
+// corresponding section in NeoFS Technical specification.
 type NodeInfo_Attribute struct {
 	// Key of the node attribute.
 	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	// Value of the node attribute.
 	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
-	// Parent keys, if any
-	// Example: For City it can be Region or Country
+	// Parent keys, if any. For example for `City` it could be `Region` and
+	// `Country`.
 	Parents              []string `protobuf:"bytes,3,rep,name=parents,proto3" json:"parents,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

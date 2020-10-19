@@ -28,16 +28,16 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// Get NodeInfo from the particular node directly
+// Get NodeInfo structure from the particular node directly
 type LocalNodeInfoRequest struct {
-	// Body of the balance request message.
+	// Body of the LocalNodeInfo request message
 	Body *LocalNodeInfoRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
 	// Carries request meta information. Header data is used only to regulate
 	// message transport and does not affect request execution.
 	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries request verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
 	XXX_unrecognized     []byte                          `json:"-"`
@@ -98,7 +98,7 @@ func (m *LocalNodeInfoRequest) GetVerifyHeader() *grpc.RequestVerificationHeader
 	return nil
 }
 
-//Request body
+// LocalNodeInfo request body is empty.
 type LocalNodeInfoRequest_Body struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -138,7 +138,7 @@ func (m *LocalNodeInfoRequest_Body) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_LocalNodeInfoRequest_Body proto.InternalMessageInfo
 
-// Local nod Info, including API Version in use
+// Local Node Info, including API Version in use
 type LocalNodeInfoResponse struct {
 	// Body of the balance response message.
 	Body *LocalNodeInfoResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
@@ -146,8 +146,8 @@ type LocalNodeInfoResponse struct {
 	// message transport and does not affect response execution.
 	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
 	// Carries response verification information. This header is used to
-	// authenticate the nodes of the message route and check the correctness
-	// of transmission.
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
 	VerifyHeader         *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
@@ -208,11 +208,11 @@ func (m *LocalNodeInfoResponse) GetVerifyHeader() *grpc.ResponseVerificationHead
 	return nil
 }
 
-//Response body
+// Local Node Info, including API Version in use.
 type LocalNodeInfoResponse_Body struct {
-	// API version in use
+	// Latest NeoFS API version in use
 	Version *grpc1.Version `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
-	// NodeInfo from node itself
+	// NodeInfo structure with recent information from node itself
 	NodeInfo             *NodeInfo `protobuf:"bytes,2,opt,name=node_info,json=nodeInfo,proto3" json:"node_info,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
@@ -319,7 +319,11 @@ const _ = grpc2.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type NetmapServiceClient interface {
-	// Return information about Node
+	// Get NodeInfo structure from the particular node directly. Node information
+	// can be taken from `Netmap` smart contract, but in some cases the one may
+	// want to get recent information directly, or to talk to the node not yet
+	// present in `Network Map` to find out what API version can be used for
+	// further communication. Can also be used to check if node is up and running.
 	LocalNodeInfo(ctx context.Context, in *LocalNodeInfoRequest, opts ...grpc2.CallOption) (*LocalNodeInfoResponse, error)
 }
 
@@ -342,7 +346,11 @@ func (c *netmapServiceClient) LocalNodeInfo(ctx context.Context, in *LocalNodeIn
 
 // NetmapServiceServer is the server API for NetmapService service.
 type NetmapServiceServer interface {
-	// Return information about Node
+	// Get NodeInfo structure from the particular node directly. Node information
+	// can be taken from `Netmap` smart contract, but in some cases the one may
+	// want to get recent information directly, or to talk to the node not yet
+	// present in `Network Map` to find out what API version can be used for
+	// further communication. Can also be used to check if node is up and running.
 	LocalNodeInfo(context.Context, *LocalNodeInfoRequest) (*LocalNodeInfoResponse, error)
 }
 
