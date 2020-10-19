@@ -6,6 +6,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	grpc "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 	"github.com/stretchr/testify/require"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 func TestOwnerID_StableMarshal(t *testing.T) {
@@ -18,7 +19,7 @@ func TestOwnerID_StableMarshal(t *testing.T) {
 		wire, err := ownerFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = ownerTransport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, ownerTransport)
 		require.NoError(t, err)
 
 		ownerTo := refs.OwnerIDFromGRPCMessage(ownerTransport)
@@ -36,7 +37,7 @@ func TestContainerID_StableMarshal(t *testing.T) {
 		wire, err := cnrFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = cnrTransport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, cnrTransport)
 		require.NoError(t, err)
 
 		cnrTo := refs.ContainerIDFromGRPCMessage(cnrTransport)
@@ -54,7 +55,7 @@ func TestObjectID_StableMarshal(t *testing.T) {
 		wire, err := objectIDFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = objectIDTransport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, objectIDTransport)
 		require.NoError(t, err)
 
 		objectIDTo := refs.ObjectIDFromGRPCMessage(objectIDTransport)
@@ -74,7 +75,7 @@ func TestAddress_StableMarshal(t *testing.T) {
 		wire, err := addressFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = addressTransport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, addressTransport)
 		require.NoError(t, err)
 
 		addressTo := refs.AddressFromGRPCMessage(addressTransport)
@@ -93,7 +94,7 @@ func TestChecksum_StableMarshal(t *testing.T) {
 		wire, err := checksumFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		checksumTo := refs.ChecksumFromGRPCMessage(transport)
@@ -109,7 +110,7 @@ func TestSignature_StableMarshal(t *testing.T) {
 		wire, err := signatureFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		signatureTo := refs.SignatureFromGRPCMessage(transport)
@@ -125,7 +126,7 @@ func TestVersion_StableMarshal(t *testing.T) {
 		wire, err := versionFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		versionTo := refs.VersionFromGRPCMessage(transport)

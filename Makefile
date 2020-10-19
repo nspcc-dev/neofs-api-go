@@ -47,7 +47,7 @@ protoc:
 		echo "⇒ Processing $$f "; \
 		protoc \
 			--proto_path=.:./vendor:./vendor/github.com/nspcc-dev/neofs-api:/usr/local/include \
-			--gofast_out=plugins=grpc,paths=source_relative:. $$f; \
+			--go_out=plugins=grpc,paths=source_relative:. $$f; \
 	done
 	rm -rf vendor
 

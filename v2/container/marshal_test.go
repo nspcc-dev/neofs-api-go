@@ -9,6 +9,7 @@ import (
 	grpc "github.com/nspcc-dev/neofs-api-go/v2/container/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 func TestAttribute_StableMarshal(t *testing.T) {
@@ -19,7 +20,7 @@ func TestAttribute_StableMarshal(t *testing.T) {
 		wire, err := attributeFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		attributeTo := container.AttributeFromGRPCMessage(transport)
@@ -35,7 +36,7 @@ func TestContainer_StableMarshal(t *testing.T) {
 		wire, err := cnrFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		cnrTo := container.ContainerFromGRPCMessage(transport)
@@ -51,7 +52,7 @@ func TestPutRequestBody_StableMarshal(t *testing.T) {
 		wire, err := requestFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		requestTo := container.PutRequestBodyFromGRPCMessage(transport)
@@ -67,7 +68,7 @@ func TestPutResponseBody_StableMarshal(t *testing.T) {
 		wire, err := responseFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		responseTo := container.PutResponseBodyFromGRPCMessage(transport)
@@ -83,7 +84,7 @@ func TestDeleteRequestBody_StableMarshal(t *testing.T) {
 		wire, err := requestFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		requestTo := container.DeleteRequestBodyFromGRPCMessage(transport)
@@ -99,7 +100,7 @@ func TestDeleteResponseBody_StableMarshal(t *testing.T) {
 		wire, err := responseFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		responseTo := container.DeleteResponseBodyFromGRPCMessage(transport)
@@ -115,7 +116,7 @@ func TestGetRequestBody_StableMarshal(t *testing.T) {
 		wire, err := requestFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		requestTo := container.GetRequestBodyFromGRPCMessage(transport)
@@ -131,7 +132,7 @@ func TestGetResponseBody_StableMarshal(t *testing.T) {
 		wire, err := responseFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		responseTo := container.GetResponseBodyFromGRPCMessage(transport)
@@ -147,7 +148,7 @@ func TestListRequestBody_StableMarshal(t *testing.T) {
 		wire, err := requestFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		requestTo := container.ListRequestBodyFromGRPCMessage(transport)
@@ -163,7 +164,7 @@ func TestListResponseBody_StableMarshal(t *testing.T) {
 		wire, err := responseFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		responseTo := container.ListResponseBodyFromGRPCMessage(transport)
@@ -179,7 +180,7 @@ func TestSetEACLRequestBody_StableMarshal(t *testing.T) {
 		wire, err := requestFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		requestTo := container.SetExtendedACLRequestBodyFromGRPCMessage(transport)
@@ -195,7 +196,7 @@ func TestSetEACLResponseBody_StableMarshal(t *testing.T) {
 		wire, err := responseFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		responseTo := container.SetExtendedACLResponseBodyFromGRPCMessage(transport)
@@ -211,7 +212,7 @@ func TestGetEACLRequestBody_StableMarshal(t *testing.T) {
 		wire, err := requestFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		requestTo := container.GetExtendedACLRequestBodyFromGRPCMessage(transport)
@@ -227,7 +228,7 @@ func TestGetEACLResponseBody_StableMarshal(t *testing.T) {
 		wire, err := responseFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		responseTo := container.GetExtendedACLResponseBodyFromGRPCMessage(transport)
