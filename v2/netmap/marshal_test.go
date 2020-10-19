@@ -8,6 +8,7 @@ import (
 	grpc "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 func TestAttribute_StableMarshal(t *testing.T) {
@@ -18,7 +19,7 @@ func TestAttribute_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := netmap.AttributeFromGRPCMessage(transport)
@@ -34,7 +35,7 @@ func TestNodeInfo_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := netmap.NodeInfoFromGRPCMessage(transport)
@@ -50,7 +51,7 @@ func TestFilter_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := netmap.FilterFromGRPCMessage(transport)
@@ -66,7 +67,7 @@ func TestSelector_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := netmap.SelectorFromGRPCMessage(transport)
@@ -82,7 +83,7 @@ func TestReplica_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := netmap.ReplicaFromGRPCMessage(transport)
@@ -98,7 +99,7 @@ func TestPlacementPolicy_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := netmap.PlacementPolicyFromGRPCMessage(transport)
@@ -114,7 +115,7 @@ func TestLocalNodeInfoResponseBody_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := netmap.LocalNodeInfoResponseBodyFromGRPCMessage(transport)

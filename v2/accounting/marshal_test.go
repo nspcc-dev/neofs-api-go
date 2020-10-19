@@ -7,6 +7,7 @@ import (
 	grpc "github.com/nspcc-dev/neofs-api-go/v2/accounting/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 func TestDecimal_StableMarshal(t *testing.T) {
@@ -17,7 +18,7 @@ func TestDecimal_StableMarshal(t *testing.T) {
 		wire, err := decimalFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		decimalTo := accounting.DecimalFromGRPCMessage(transport)
@@ -33,7 +34,7 @@ func TestBalanceRequestBody_StableMarshal(t *testing.T) {
 		wire, err := requestBodyFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		requestBodyTo := accounting.BalanceRequestBodyFromGRPCMessage(transport)
@@ -49,7 +50,7 @@ func TestBalanceResponseBody_StableMarshal(t *testing.T) {
 		wire, err := responseBodyFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		responseBodyTo := accounting.BalanceResponseBodyFromGRPCMessage(transport)

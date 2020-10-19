@@ -3,6 +3,7 @@ package object
 import (
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 	object "github.com/nspcc-dev/neofs-api-go/v2/object/grpc"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 const (
@@ -492,7 +493,7 @@ func (o *Object) StableUnmarshal(data []byte) error {
 	}
 
 	objGRPC := new(object.Object)
-	if err := objGRPC.Unmarshal(data); err != nil {
+	if err := goproto.Unmarshal(data, objGRPC); err != nil {
 		return err
 	}
 

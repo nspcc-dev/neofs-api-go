@@ -9,6 +9,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	grpc "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
 	"github.com/stretchr/testify/require"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 func TestCreateRequestBody_StableMarshal(t *testing.T) {
@@ -19,7 +20,7 @@ func TestCreateRequestBody_StableMarshal(t *testing.T) {
 		wire, err := requestFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		requestTo := session.CreateRequestBodyFromGRPCMessage(transport)
@@ -35,7 +36,7 @@ func TestCreateResponseBody_StableMarshal(t *testing.T) {
 		wire, err := responseFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		responseTo := session.CreateResponseBodyFromGRPCMessage(transport)
@@ -51,7 +52,7 @@ func TestXHeader_StableMarshal(t *testing.T) {
 		wire, err := xheaderFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		xheaderTo := session.XHeaderFromGRPCMessage(transport)
@@ -67,7 +68,7 @@ func TestTokenLifetime_StableMarshal(t *testing.T) {
 		wire, err := lifetimeFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		lifetimeTo := session.TokenLifetimeFromGRPCMessage(transport)
@@ -83,7 +84,7 @@ func TestObjectSessionContext_StableMarshal(t *testing.T) {
 		wire, err := objectCtxFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		objectCtxTo := session.ObjectSessionContextFromGRPCMessage(transport)
@@ -99,7 +100,7 @@ func TestSessionTokenBody_StableMarshal(t *testing.T) {
 		wire, err := sessionTokenBodyFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		sessionTokenBodyTo := session.SessionTokenBodyFromGRPCMessage(transport)
@@ -115,7 +116,7 @@ func TestSessionToken_StableMarshal(t *testing.T) {
 		wire, err := sessionTokenFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		sessionTokenTo := session.SessionTokenFromGRPCMessage(transport)
@@ -133,7 +134,7 @@ func TestRequestMetaHeader_StableMarshal(t *testing.T) {
 		wire, err := metaHeaderFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		metaHeaderTo := session.RequestMetaHeaderFromGRPCMessage(transport)
@@ -151,7 +152,7 @@ func TestRequestVerificationHeader_StableMarshal(t *testing.T) {
 		wire, err := verifHeaderFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		verifHeaderTo := session.RequestVerificationHeaderFromGRPCMessage(transport)
@@ -169,7 +170,7 @@ func TestResponseMetaHeader_StableMarshal(t *testing.T) {
 		wire, err := metaHeaderFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		metaHeaderTo := session.ResponseMetaHeaderFromGRPCMessage(transport)
@@ -187,7 +188,7 @@ func TestResponseVerificationHeader_StableMarshal(t *testing.T) {
 		wire, err := verifHeaderFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		verifHeaderTo := session.ResponseVerificationHeaderFromGRPCMessage(transport)

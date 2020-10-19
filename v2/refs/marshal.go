@@ -3,6 +3,7 @@ package refs
 import (
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 const (
@@ -147,7 +148,7 @@ func (a *Address) StableUnmarshal(data []byte) error {
 	}
 
 	addrGRPC := new(refs.Address)
-	if err := addrGRPC.Unmarshal(data); err != nil {
+	if err := goproto.Unmarshal(data, addrGRPC); err != nil {
 		return err
 	}
 

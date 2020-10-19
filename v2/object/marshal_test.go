@@ -10,6 +10,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/stretchr/testify/require"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 func TestShortHeader_StableMarshal(t *testing.T) {
@@ -20,7 +21,7 @@ func TestShortHeader_StableMarshal(t *testing.T) {
 		wire, err := hdrFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		hdrTo := object.ShortHeaderFromGRPCMessage(transport)
@@ -36,7 +37,7 @@ func TestAttribute_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.AttributeFromGRPCMessage(transport)
@@ -55,7 +56,7 @@ func TestSplitHeader_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.SplitHeaderFromGRPCMessage(transport)
@@ -77,7 +78,7 @@ func TestHeader_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.HeaderFromGRPCMessage(transport)
@@ -93,7 +94,7 @@ func TestObject_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.ObjectFromGRPCMessage(transport)
@@ -109,7 +110,7 @@ func TestGetRequestBody_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.GetRequestBodyFromGRPCMessage(transport)
@@ -126,7 +127,7 @@ func TestGetResponseBody_StableMarshal(t *testing.T) {
 		wire, err := initFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.GetResponseBodyFromGRPCMessage(transport)
@@ -137,7 +138,7 @@ func TestGetResponseBody_StableMarshal(t *testing.T) {
 		wire, err := chunkFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.GetResponseBodyFromGRPCMessage(transport)
@@ -154,7 +155,7 @@ func TestPutRequestBody_StableMarshal(t *testing.T) {
 		wire, err := initFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.PutRequestBodyFromGRPCMessage(transport)
@@ -165,7 +166,7 @@ func TestPutRequestBody_StableMarshal(t *testing.T) {
 		wire, err := chunkFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.PutRequestBodyFromGRPCMessage(transport)
@@ -181,7 +182,7 @@ func TestPutRequestBody_StableSize(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.PutResponseBodyFromGRPCMessage(transport)
@@ -197,7 +198,7 @@ func TestDeleteRequestBody_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.DeleteRequestBodyFromGRPCMessage(transport)
@@ -213,7 +214,7 @@ func TestDeleteResponseBody_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.DeleteResponseBodyFromGRPCMessage(transport)
@@ -229,7 +230,7 @@ func TestSplitHeaderFromGRPCMessage(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.HeadRequestBodyFromGRPCMessage(transport)
@@ -246,7 +247,7 @@ func TestHeadResponseBody_StableMarshal(t *testing.T) {
 		wire, err := shortFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.HeadResponseBodyFromGRPCMessage(transport)
@@ -257,7 +258,7 @@ func TestHeadResponseBody_StableMarshal(t *testing.T) {
 		wire, err := fullFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.HeadResponseBodyFromGRPCMessage(transport)
@@ -273,7 +274,7 @@ func TestSearchRequestBody_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.SearchRequestBodyFromGRPCMessage(transport)
@@ -289,7 +290,7 @@ func TestSearchResponseBody_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.SearchResponseBodyFromGRPCMessage(transport)
@@ -305,7 +306,7 @@ func TestGetRangeRequestBody_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.GetRangeRequestBodyFromGRPCMessage(transport)
@@ -321,7 +322,7 @@ func TestGetRangeResponseBody_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.GetRangeResponseBodyFromGRPCMessage(transport)
@@ -337,7 +338,7 @@ func TestGetRangeHashRequestBody_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.GetRangeHashRequestBodyFromGRPCMessage(transport)
@@ -353,7 +354,7 @@ func TestGetRangeHashResponseBody_StableMarshal(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.GetRangeHashResponseBodyFromGRPCMessage(transport)

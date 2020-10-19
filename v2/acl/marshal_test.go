@@ -8,6 +8,7 @@ import (
 	grpc "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 func generateTarget(u acl.Role, k int) *acl.Target {
@@ -127,7 +128,7 @@ func TestHeaderFilter_StableMarshal(t *testing.T) {
 		wire, err := filterFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		filterTo := acl.HeaderFilterFromGRPCMessage(transport)
@@ -149,7 +150,7 @@ func TestTargetInfo_StableMarshal(t *testing.T) {
 		wire, err := targetFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		targetTo := acl.TargetInfoFromGRPCMessage(transport)
@@ -165,7 +166,7 @@ func TestRecord_StableMarshal(t *testing.T) {
 		wire, err := recordFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		recordTo := acl.RecordFromGRPCMessage(transport)
@@ -195,7 +196,7 @@ func TestTable_StableMarshal(t *testing.T) {
 		wire, err := tableFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		tableTo := acl.TableFromGRPCMessage(transport)
@@ -211,7 +212,7 @@ func TestTokenLifetime_StableMarshal(t *testing.T) {
 		wire, err := lifetimeFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		lifetimeTo := acl.TokenLifetimeFromGRPCMessage(transport)
@@ -227,7 +228,7 @@ func TestBearerTokenBody_StableMarshal(t *testing.T) {
 		wire, err := bearerTokenBodyFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		bearerTokenBodyTo := acl.BearerTokenBodyFromGRPCMessage(transport)
@@ -243,7 +244,7 @@ func TestBearerToken_StableMarshal(t *testing.T) {
 		wire, err := bearerTokenFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = transport.Unmarshal(wire)
+		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		bearerTokenTo := acl.BearerTokenFromGRPCMessage(transport)
