@@ -1,24 +1,23 @@
 package netmap
 
 import (
-	"github.com/golang/protobuf/jsonpb"
 	netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
-func NodeInfoToJSON(n *NodeInfo) []byte {
+func NodeInfoToJSON(n *NodeInfo) (data []byte) {
 	if n == nil {
 		return nil
 	}
 
 	msg := NodeInfoToGRPCMessage(n)
-	m := jsonpb.Marshaler{}
 
-	s, err := m.MarshalToString(msg)
+	data, err := protojson.Marshal(msg)
 	if err != nil {
 		return nil
 	}
 
-	return []byte(s)
+	return
 }
 
 func NodeInfoFromJSON(data []byte) *NodeInfo {
@@ -28,7 +27,7 @@ func NodeInfoFromJSON(data []byte) *NodeInfo {
 
 	msg := new(netmap.NodeInfo)
 
-	if err := jsonpb.UnmarshalString(string(data), msg); err != nil {
+	if err := protojson.Unmarshal(data, msg); err != nil {
 		return nil
 	}
 

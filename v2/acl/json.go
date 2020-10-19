@@ -1,24 +1,23 @@
 package acl
 
 import (
-	"github.com/golang/protobuf/jsonpb"
 	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
-func RecordToJSON(r *Record) []byte {
+func RecordToJSON(r *Record) (data []byte) {
 	if r == nil {
 		return nil
 	}
 
 	msg := RecordToGRPCMessage(r)
-	m := jsonpb.Marshaler{}
 
-	s, err := m.MarshalToString(msg)
+	data, err := protojson.Marshal(msg)
 	if err != nil {
 		return nil
 	}
 
-	return []byte(s)
+	return
 }
 
 func RecordFromJSON(data []byte) *Record {
@@ -28,7 +27,7 @@ func RecordFromJSON(data []byte) *Record {
 
 	msg := new(acl.EACLRecord)
 
-	if err := jsonpb.UnmarshalString(string(data), msg); err != nil {
+	if err := protojson.Unmarshal(data, msg); err != nil {
 		return nil
 	}
 
@@ -41,14 +40,13 @@ func TableToJSON(t *Table) (data []byte) {
 	}
 
 	msg := TableToGRPCMessage(t)
-	m := jsonpb.Marshaler{}
 
-	s, err := m.MarshalToString(msg)
+	data, err := protojson.Marshal(msg)
 	if err != nil {
 		return nil
 	}
 
-	return []byte(s)
+	return
 }
 
 func TableFromJSON(data []byte) *Table {
@@ -58,7 +56,7 @@ func TableFromJSON(data []byte) *Table {
 
 	msg := new(acl.EACLTable)
 
-	if jsonpb.UnmarshalString(string(data), msg) != nil {
+	if err := protojson.Unmarshal(data, msg); err != nil {
 		return nil
 	}
 
@@ -71,14 +69,13 @@ func BearerTokenToJSON(t *BearerToken) (data []byte) {
 	}
 
 	msg := BearerTokenToGRPCMessage(t)
-	m := jsonpb.Marshaler{}
 
-	s, err := m.MarshalToString(msg)
+	data, err := protojson.Marshal(msg)
 	if err != nil {
 		return nil
 	}
 
-	return []byte(s)
+	return
 }
 
 func BearerTokenFromJSON(data []byte) *BearerToken {
@@ -88,7 +85,7 @@ func BearerTokenFromJSON(data []byte) *BearerToken {
 
 	msg := new(acl.BearerToken)
 
-	if jsonpb.UnmarshalString(string(data), msg) != nil {
+	if err := protojson.Unmarshal(data, msg); err != nil {
 		return nil
 	}
 
