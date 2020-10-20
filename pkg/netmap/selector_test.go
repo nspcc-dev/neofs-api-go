@@ -9,6 +9,28 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestPlacementPolicy_UnspecifiedClause(t *testing.T) {
+	p := newPlacementPolicy(1,
+		[]*netmap.Replica{newReplica(1, "X")},
+		[]*netmap.Selector{
+			newSelector("X", "", netmap.Distinct, 4, "*"),
+		},
+		nil,
+	)
+	nodes := []netmap.NodeInfo{
+		nodeInfoFromAttributes("ID", "1", "Country", "RU", "City", "St.Petersburg", "SSD", "0"),
+		nodeInfoFromAttributes("ID", "2", "Country", "RU", "City", "St.Petersburg", "SSD", "1"),
+		nodeInfoFromAttributes("ID", "3", "Country", "RU", "City", "Moscow", "SSD", "1"),
+		nodeInfoFromAttributes("ID", "4", "Country", "RU", "City", "Moscow", "SSD", "1"),
+	}
+
+	nm, err := NewNetmap(NodesFromV2(nodes))
+	require.NoError(t, err)
+	v, err := nm.GetContainerNodes(p, nil)
+	require.NoError(t, err)
+	require.Equal(t, 4, len(v.Flatten()))
+}
+
 func TestPlacementPolicy_GetPlacementVectors(t *testing.T) {
 	p := newPlacementPolicy(2,
 		[]*netmap.Replica{
