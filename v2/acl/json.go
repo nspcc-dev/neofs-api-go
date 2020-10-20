@@ -12,7 +12,7 @@ func RecordToJSON(r *Record) (data []byte) {
 
 	msg := RecordToGRPCMessage(r)
 
-	data, err := protojson.Marshal(msg)
+	data, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
 	if err != nil {
 		return nil
 	}
@@ -41,7 +41,7 @@ func TableToJSON(t *Table) (data []byte) {
 
 	msg := TableToGRPCMessage(t)
 
-	data, err := protojson.Marshal(msg)
+	data, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
 	if err != nil {
 		return nil
 	}
@@ -70,7 +70,7 @@ func BearerTokenToJSON(t *BearerToken) (data []byte) {
 
 	msg := BearerTokenToGRPCMessage(t)
 
-	data, err := protojson.Marshal(msg)
+	data, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
 	if err != nil {
 		return nil
 	}

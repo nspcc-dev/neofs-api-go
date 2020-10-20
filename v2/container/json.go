@@ -12,7 +12,7 @@ func ContainerToJSON(c *Container) (data []byte) {
 
 	msg := ContainerToGRPCMessage(c)
 
-	data, err := protojson.Marshal(msg)
+	data, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
 	if err != nil {
 		return nil
 	}

@@ -12,7 +12,7 @@ func NodeInfoToJSON(n *NodeInfo) (data []byte) {
 
 	msg := NodeInfoToGRPCMessage(n)
 
-	data, err := protojson.Marshal(msg)
+	data, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
 	if err != nil {
 		return nil
 	}
