@@ -43,23 +43,27 @@ func GetNodesCount(p *netmap.PlacementPolicy, s *netmap.Selector) (int, int) {
 // getSelection returns nodes grouped by s.attribute.
 func (c *Context) getSelection(p *netmap.PlacementPolicy, s *netmap.Selector) ([]Nodes, error) {
 	bucketCount, nodesInBucket := GetNodesCount(p, s)
-	m := c.getSelectionBase(s)
-	if len(m) < bucketCount {
+	buckets := c.getSelectionBase(s)
+	if len(buckets) < bucketCount {
 		return nil, fmt.Errorf("%w: '%s'", ErrNotEnoughNodes, s.GetName())
 	}
 
-	keys := make(sort.StringSlice, 0, len(m))
-	for k := range m {
-		keys = append(keys, k)
-	}
 	if len(c.pivot) == 0 {
-		// deterministic order in case of zero seed
-		keys.Sort()
+		// Deterministic order in case of zero seed.
+		if s.GetAttribute() == "" {
+			sort.Slice(buckets, func(i, j int) bool {
+				return buckets[i].nodes[0].ID < buckets[j].nodes[0].ID
+			})
+		} else {
+			sort.Slice(buckets, func(i, j int) bool {
+				return buckets[i].attr < buckets[j].attr
+			})
+		}
 	}
 
-	nodes := make([]Nodes, 0, len(m))
-	for i := range keys {
-		ns := m[keys[i]]
+	nodes := make([]Nodes, 0, len(buckets))
+	for i := range buckets {
+		ns := buckets[i].nodes
 		if len(ns) >= nodesInBucket {
 			nodes = append(nodes, ns[:nodesInBucket])
 		}
@@ -77,21 +81,39 @@ func (c *Context) getSelection(p *netmap.PlacementPolicy, s *netmap.Selector) ([
 	return nodes[:bucketCount], nil
 }
 
+type nodeAttrPair struct {
+	attr  string
+	nodes Nodes
+}
+
 // getSelectionBase returns nodes grouped by selector attribute.
-func (c *Context) getSelectionBase(s *netmap.Selector) map[string]Nodes {
+// It it guaranteed that each pair will contain at least one node.
+func (c *Context) getSelectionBase(s *netmap.Selector) []nodeAttrPair {
 	f := c.Filters[s.GetFilter()]
 	isMain := s.GetFilter() == MainFilterName
-	result := map[string]Nodes{}
+	result := []nodeAttrPair{}
+	nodeMap := map[string]Nodes{}
+	attr := s.GetAttribute()
 	for i := range c.Netmap.Nodes {
 		if isMain || c.match(f, c.Netmap.Nodes[i]) {
-			v := c.Netmap.Nodes[i].Attribute(s.GetAttribute())
-			result[v] = append(result[v], c.Netmap.Nodes[i])
+			if attr == "" {
+				// Default attribute is transparent identifier which is different for every node.
+				result = append(result, nodeAttrPair{attr: "", nodes: Nodes{c.Netmap.Nodes[i]}})
+			} else {
+				v := c.Netmap.Nodes[i].Attribute(attr)
+				nodeMap[v] = append(nodeMap[v], c.Netmap.Nodes[i])
+			}
+		}
+	}
+	if attr != "" {
+		for k, ns := range nodeMap {
+			result = append(result, nodeAttrPair{attr: k, nodes: ns})
 		}
 	}
 
 	if len(c.pivot) != 0 {
-		for _, ns := range result {
-			hrw.SortSliceByWeightValue(ns, ns.Weights(c.weightFunc), c.pivotHash)
+		for i := range result {
+			hrw.SortSliceByWeightValue(result[i].nodes, result[i].nodes.Weights(c.weightFunc), c.pivotHash)
 		}
 	}
 	return result
