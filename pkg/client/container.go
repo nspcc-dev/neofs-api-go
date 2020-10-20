@@ -369,6 +369,7 @@ func (c Client) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOpt
 
 	reqBody := new(v2container.SetExtendedACLRequestBody)
 	reqBody.SetEACL(eacl.ToV2())
+	reqBody.GetEACL().SetVersion(c.remoteNode.Version.ToV2())
 
 	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetEACL()}
 	err := signature.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
