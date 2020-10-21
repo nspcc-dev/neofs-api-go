@@ -95,12 +95,8 @@ func sanityCheck(b *BearerToken) error {
 		return errors.New("bearer token is not set")
 	case b.token.GetBody() == nil:
 		return errors.New("bearer token body is not set")
-	case b.token.GetBody().GetLifetime() == nil:
-		return errors.New("bearer token lifetime is not set")
 	case b.token.GetBody().GetEACL() == nil:
 		return errors.New("bearer token EACL table is not set")
-	case b.token.GetBody().GetOwnerID() == nil:
-		return errors.New("bearer token owner is not set")
 	}
 
 	// consider checking EACL sanity there, lifetime correctness, etc.
