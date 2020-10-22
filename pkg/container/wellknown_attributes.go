@@ -1,11 +1,11 @@
 package container
 
 const (
-	// AttrName is an attribute key that is commonly used to denote
+	// AttributeName is an attribute key that is commonly used to denote
 	// human-friendly name.
-	AttrName = "Name"
+	AttributeName = "Name"
 
-	// AttrTimestamp is an attribute key that is commonly used to denote
+	// AttributeTimestamp is an attribute key that is commonly used to denote
 	// user-defined local time of container creation in Unix Timestamp format.
-	AttrTimestamp = "Timestamp"
+	AttributeTimestamp = "Timestamp"
 )
