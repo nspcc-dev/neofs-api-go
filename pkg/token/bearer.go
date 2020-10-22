@@ -10,6 +10,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
+	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
 type BearerToken struct {
@@ -68,6 +69,20 @@ func (b *BearerToken) SignToken(key *ecdsa.PrivateKey) error {
 		bearerSignature.SetSign(sig)
 		b.token.SetSignature(bearerSignature)
 	})
+}
+
+// Issuer returns owner.ID associated with the key that signed bearer token.
+// To pass node validation it should be owner of requested container. Returns
+// nil if token is not signed.
+func (b *BearerToken) Issuer() *owner.ID {
+	pubKey := crypto.UnmarshalPublicKey(b.token.GetSignature().GetKey())
+
+	wallet, err := owner.NEO3WalletFromPublicKey(pubKey)
+	if err != nil {
+		return nil
+	}
+
+	return owner.NewIDFromNeo3Wallet(wallet)
 }
 
 func NewBearerToken() *BearerToken {
