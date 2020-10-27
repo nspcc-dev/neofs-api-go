@@ -2,7 +2,11 @@ package eacl
 
 import (
 	"crypto/ecdsa"
+	"fmt"
 
+	"github.com/nspcc-dev/neofs-api-go/pkg"
+	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 )
 
@@ -54,16 +58,49 @@ func (r *Record) AddTarget(role Role, keys ...ecdsa.PublicKey) {
 	r.targets = append(r.targets, t)
 }
 
-func (r *Record) AddFilter(from FilterHeaderType, matcher Match, name, value string) {
+func (r *Record) addFilter(from FilterHeaderType, m Match, keyTyp filterKeyType, key string, val fmt.Stringer) {
 	filter := Filter{
-		from:    from,
-		key:     name,
-		matcher: matcher,
-		value:   value,
+		from: from,
+		key: filterKey{
+			typ: keyTyp,
+			str: key,
+		},
+		matcher: m,
+		value:   val,
 	}
 
 	r.filters = append(r.filters, filter)
 }
+
+func (r *Record) addObjectFilter(m Match, keyTyp filterKeyType, key string, val fmt.Stringer) {
+	r.addFilter(HeaderFromObject, m, keyTyp, key, val)
+}
+
+func (r *Record) addObjectReservedFilter(m Match, typ filterKeyType, val fmt.Stringer) {
+	r.addObjectFilter(m, typ, "", val)
+}
+
+func (r *Record) AddFilter(from FilterHeaderType, matcher Match, name, value string) {
+	r.addFilter(from, matcher, 0, name, staticStringer(value))
+}
+
+func (r *Record) AddObjectAttributeFilter(m Match, key, value string) {
+	r.addObjectFilter(m, 0, key, staticStringer(value))
+}
+
+func (r *Record) AddObjectVersionFilter(m Match, v *pkg.Version) {
+	r.addObjectReservedFilter(m, fKeyObjVersion, v)
+}
+
+func (r *Record) AddObjectContainerIDFilter(m Match, id *container.ID) {
+	r.addObjectReservedFilter(m, fKeyObjContainerID, id)
+}
+
+func (r *Record) AddObjectOwnerIDFilter(m Match, id *owner.ID) {
+	r.addObjectReservedFilter(m, fKeyObjOwnerID, id)
+}
+
+// TODO: add remaining filters after neofs-api#72
 
 func (r *Record) ToV2() *v2acl.Record {
 	targets := make([]*v2acl.Target, 0, len(r.targets))

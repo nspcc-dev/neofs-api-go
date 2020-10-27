@@ -1,6 +1,8 @@
 package eacl
 
 import (
+	"fmt"
+
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 )
 
@@ -8,13 +10,40 @@ import (
 // header means that request should be processed according to EACL action.
 type Filter struct {
 	from    FilterHeaderType
-	key     string
+	key     filterKey
 	matcher Match
-	value   string
+	value   fmt.Stringer
+}
+
+type staticStringer string
+
+type filterKey struct {
+	typ filterKeyType
+
+	str string
+}
+
+// enumeration of reserved filter keys.
+type filterKeyType int
+
+const (
+	_ filterKeyType = iota
+	fKeyObjVersion
+	fKeyObjContainerID
+	fKeyObjOwnerID
+	fKeyObjCreationEpoch
+	fKeyObjPayloadLength
+	fKeyObjPayloadHash
+	fKeyObjType
+	fKeyObjHomomorphicHash
+)
+
+func (s staticStringer) String() string {
+	return string(s)
 }
 
 func (a Filter) Value() string {
-	return a.value
+	return a.value.String()
 }
 
 func (a Filter) Matcher() Match {
@@ -22,7 +51,7 @@ func (a Filter) Matcher() Match {
 }
 
 func (a Filter) Key() string {
-	return a.key
+	return a.key.String()
 }
 
 func (a Filter) From() FilterHeaderType {
@@ -31,12 +60,35 @@ func (a Filter) From() FilterHeaderType {
 
 func (a *Filter) ToV2() *v2acl.HeaderFilter {
 	filter := new(v2acl.HeaderFilter)
-	filter.SetValue(a.value)
-	filter.SetKey(a.key)
+	filter.SetValue(a.value.String())
+	filter.SetKey(a.key.String())
 	filter.SetMatchType(a.matcher.ToV2())
 	filter.SetHeaderType(a.from.ToV2())
 
 	return filter
+}
+
+func (k filterKey) String() string {
+	switch k.typ {
+	default:
+		return k.str
+	case fKeyObjVersion:
+		return v2acl.FilterObjectVersion
+	case fKeyObjContainerID:
+		return v2acl.FilterObjectContainerID
+	case fKeyObjOwnerID:
+		return v2acl.FilterObjectOwnerID
+	case fKeyObjCreationEpoch:
+		return v2acl.FilterObjectCreationEpoch
+	case fKeyObjPayloadLength:
+		return v2acl.FilterObjectPayloadLength
+	case fKeyObjPayloadHash:
+		return v2acl.FilterObjectPayloadHash
+	case fKeyObjType:
+		return v2acl.FilterObjectType
+	case fKeyObjHomomorphicHash:
+		return v2acl.FilterObjectHomomorphicHash
+	}
 }
 
 func NewFilterFromV2(filter *v2acl.HeaderFilter) *Filter {
@@ -48,8 +100,8 @@ func NewFilterFromV2(filter *v2acl.HeaderFilter) *Filter {
 
 	f.from = FilterHeaderTypeFromV2(filter.GetHeaderType())
 	f.matcher = MatchFromV2(filter.GetMatchType())
-	f.key = filter.GetKey()
-	f.value = filter.GetValue()
+	f.key.str = filter.GetKey()
+	f.value = staticStringer(filter.GetValue())
 
 	return f
 }
