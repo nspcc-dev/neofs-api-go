@@ -58,7 +58,7 @@ type (
 	}
 )
 
-func defaultCallOptions() callOptions {
+func (c Client) defaultCallOptions() callOptions {
 	return callOptions{
 		ttl:     2,
 		version: pkg.SDKVersion(),

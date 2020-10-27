@@ -164,7 +164,7 @@ func (c *Client) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...Ca
 		return nil, errors.Wrap(err, "could not open Put object stream")
 	}
 
-	callOpts := defaultCallOptions()
+	callOpts := c.defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -279,7 +279,7 @@ func (c *Client) deleteObjectV2(ctx context.Context, p *DeleteObjectParams, opts
 		return errors.Wrap(err, "could not create Object V2 client")
 	}
 
-	callOpts := defaultCallOptions()
+	callOpts := c.defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -359,7 +359,7 @@ func (c *Client) getObjectV2(ctx context.Context, p *GetObjectParams, opts ...Ca
 		return nil, errors.Wrap(err, "could not create Object V2 client")
 	}
 
-	callOpts := defaultCallOptions()
+	callOpts := c.defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -492,7 +492,7 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 		return nil, errors.Wrap(err, "could not create Object V2 client")
 	}
 
-	callOpts := defaultCallOptions()
+	callOpts := c.defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -625,7 +625,7 @@ func (c *Client) objectPayloadRangeV2(ctx context.Context, p *RangeDataParams, o
 		return nil, errors.Wrap(err, "could not create Object V2 client")
 	}
 
-	callOpts := defaultCallOptions()
+	callOpts := c.defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -767,7 +767,7 @@ func (c *Client) objectPayloadRangeHashV2(ctx context.Context, p *RangeChecksumP
 		return nil, errors.Wrap(err, "could not create Object V2 client")
 	}
 
-	callOpts := defaultCallOptions()
+	callOpts := c.defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -899,7 +899,7 @@ func (c *Client) searchObjectV2(ctx context.Context, p *SearchObjectParams, opts
 		return nil, errors.Wrap(err, "could not create Object V2 client")
 	}
 
-	callOpts := defaultCallOptions()
+	callOpts := c.defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {

@@ -35,7 +35,7 @@ func (c Client) GetBalance(ctx context.Context, owner *owner.ID, opts ...CallOpt
 
 func (c Client) getBalanceV2(ctx context.Context, owner *owner.ID, opts ...CallOption) (*accounting.Decimal, error) {
 	// apply all available options
-	callOptions := defaultCallOptions()
+	callOptions := c.defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
