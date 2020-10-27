@@ -42,3 +42,11 @@ const (
 	// FilterPropertyChildfree is a filter key to check if an object has empty children list in `Split` header.
 	FilterPropertyChildfree = ReservedFilterPrefix + "CHILDFREE"
 )
+
+const (
+	// BooleanPropertyValueTrue is a true value for boolean property filters.
+	BooleanPropertyValueTrue = "true"
+
+	// BooleanPropertyValueFalse is a false value for boolean property filters.
+	BooleanPropertyValueFalse = ""
+)
