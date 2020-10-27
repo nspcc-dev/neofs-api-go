@@ -1,6 +1,11 @@
 package object
 
 import (
+	"fmt"
+
+	"github.com/nspcc-dev/neofs-api-go/pkg"
+	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	v2object "github.com/nspcc-dev/neofs-api-go/v2/object"
 )
 
@@ -33,19 +38,72 @@ func SearchMatchFromV2(t v2object.MatchType) (m SearchMatchType) {
 }
 
 type SearchFilter struct {
-	header string
-	value  string
+	header filterKey
+	value  fmt.Stringer
 	op     SearchMatchType
 }
 
+type staticStringer string
+
+type filterKey struct {
+	typ filterKeyType
+
+	str string
+}
+
+// enumeration of reserved filter keys.
+type filterKeyType int
+
 type SearchFilters []SearchFilter
 
+const (
+	_ filterKeyType = iota
+	fKeyVersion
+	fKeyContainerID
+	fKeyOwnerID
+	fKeyCreationEpoch
+	fKeyPayloadLength
+	fKeyPayloadHash
+	fKeyType
+	fKeyHomomorphicHash
+	fKeyParent
+)
+
+func (k filterKey) String() string {
+	switch k.typ {
+	default:
+		return k.str
+	case fKeyVersion:
+		return v2object.FilterHeaderVersion
+	case fKeyContainerID:
+		return v2object.FilterHeaderContainerID
+	case fKeyOwnerID:
+		return v2object.FilterHeaderOwnerID
+	case fKeyCreationEpoch:
+		return v2object.FilterHeaderCreationEpoch
+	case fKeyPayloadLength:
+		return v2object.FilterHeaderPayloadLength
+	case fKeyPayloadHash:
+		return v2object.FilterHeaderPayloadHash
+	case fKeyType:
+		return v2object.FilterHeaderObjectType
+	case fKeyHomomorphicHash:
+		return v2object.FilterHeaderHomomorphicHash
+	case fKeyParent:
+		return v2object.FilterHeaderParent
+	}
+}
+
+func (s staticStringer) String() string {
+	return string(s)
+}
+
 func (f *SearchFilter) Header() string {
-	return f.header
+	return f.header.String()
 }
 
 func (f *SearchFilter) Value() string {
-	return f.value
+	return f.value.String()
 }
 
 func (f *SearchFilter) Operation() SearchMatchType {
@@ -63,34 +121,57 @@ func NewSearchFiltersFromV2(v2 []*v2object.SearchFilter) SearchFilters {
 			continue
 		}
 
-		filters = append(filters, SearchFilter{
-			header: v2[i].GetKey(),
-			value:  v2[i].GetValue(),
-			op:     SearchMatchFromV2(v2[i].GetMatchType()),
-		})
+		filters.AddFilter(
+			v2[i].GetKey(),
+			v2[i].GetValue(),
+			SearchMatchFromV2(v2[i].GetMatchType()),
+		)
 	}
 
 	return filters
 }
 
-func (f *SearchFilters) AddFilter(header, value string, op SearchMatchType) {
+func (f *SearchFilters) addFilter(op SearchMatchType, keyTyp filterKeyType, key string, val fmt.Stringer) {
 	if *f == nil {
 		*f = make(SearchFilters, 0, 1)
 	}
 
 	*f = append(*f, SearchFilter{
-		header: header,
-		value:  value,
-		op:     op,
+		header: filterKey{
+			typ: keyTyp,
+			str: key,
+		},
+		value: val,
+		op:    op,
 	})
+}
+
+func (f *SearchFilters) AddFilter(header, value string, op SearchMatchType) {
+	f.addFilter(op, 0, header, staticStringer(value))
+}
+
+func (f *SearchFilters) addReservedFilter(op SearchMatchType, keyTyp filterKeyType, val fmt.Stringer) {
+	f.addFilter(op, keyTyp, "", val)
+}
+
+func (f *SearchFilters) AddObjectVersionFilter(op SearchMatchType, v *pkg.Version) {
+	f.addReservedFilter(op, fKeyVersion, v)
+}
+
+func (f *SearchFilters) AddObjectContainerIDFilter(m SearchMatchType, id *container.ID) {
+	f.addReservedFilter(m, fKeyContainerID, id)
+}
+
+func (f *SearchFilters) AddObjectOwnerIDFilter(m SearchMatchType, id *owner.ID) {
+	f.addReservedFilter(m, fKeyOwnerID, id)
 }
 
 func (f SearchFilters) ToV2() []*v2object.SearchFilter {
 	result := make([]*v2object.SearchFilter, 0, len(f))
 	for i := range f {
 		v2 := new(v2object.SearchFilter)
-		v2.SetKey(f[i].header)
-		v2.SetValue(f[i].value)
+		v2.SetKey(f[i].header.String())
+		v2.SetValue(f[i].value.String())
 		v2.SetMatchType(f[i].op.ToV2())
 
 		result = append(result, v2)
