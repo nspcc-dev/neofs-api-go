@@ -32,7 +32,6 @@ func TestMatch(t *testing.T) {
 func TestFilter(t *testing.T) {
 	inputs := [][]string{
 		{"user-header", "user-value"},
-		{object.HdrSysNameID, "objectID"},
 	}
 
 	filters := object.NewSearchFilters()
@@ -62,8 +61,8 @@ func TestSearchFilters_AddRootFilter(t *testing.T) {
 	f := (*fs)[0]
 
 	require.Equal(t, object.MatchStringEqual, f.Operation())
-	require.Equal(t, object.KeyRoot, f.Header())
-	require.Equal(t, object.ValRoot, f.Value())
+	require.Equal(t, v2object.FilterPropertyRoot, f.Header())
+	require.Equal(t, v2object.BooleanPropertyValueTrue, f.Value())
 }
 
 func TestSearchFilters_AddNonRootFilter(t *testing.T) {
@@ -76,8 +75,8 @@ func TestSearchFilters_AddNonRootFilter(t *testing.T) {
 	f := (*fs)[0]
 
 	require.Equal(t, object.MatchStringEqual, f.Operation())
-	require.Equal(t, object.KeyRoot, f.Header())
-	require.Equal(t, object.ValNonRoot, f.Value())
+	require.Equal(t, v2object.FilterPropertyRoot, f.Header())
+	require.Equal(t, v2object.BooleanPropertyValueFalse, f.Value())
 }
 
 func TestSearchFilters_AddLeafFilter(t *testing.T) {
@@ -90,8 +89,8 @@ func TestSearchFilters_AddLeafFilter(t *testing.T) {
 	f := (*fs)[0]
 
 	require.Equal(t, object.MatchStringEqual, f.Operation())
-	require.Equal(t, object.KeyLeaf, f.Header())
-	require.Equal(t, object.ValLeaf, f.Value())
+	require.Equal(t, v2object.FilterPropertyLeaf, f.Header())
+	require.Equal(t, v2object.BooleanPropertyValueTrue, f.Value())
 }
 
 func TestSearchFilters_AddNonLeafFilter(t *testing.T) {
@@ -104,6 +103,6 @@ func TestSearchFilters_AddNonLeafFilter(t *testing.T) {
 	f := (*fs)[0]
 
 	require.Equal(t, object.MatchStringEqual, f.Operation())
-	require.Equal(t, object.KeyLeaf, f.Header())
-	require.Equal(t, object.ValNonLeaf, f.Value())
+	require.Equal(t, v2object.FilterPropertyLeaf, f.Header())
+	require.Equal(t, v2object.BooleanPropertyValueFalse, f.Value())
 }
