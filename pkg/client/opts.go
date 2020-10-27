@@ -134,6 +134,8 @@ func v2MetaHeaderFromOpts(options callOptions) *v2session.RequestMetaHeader {
 		meta.SetBearerToken(options.bearer.ToV2())
 	}
 
+	meta.SetSessionToken(options.session.ToV2())
+
 	return meta
 }
 
