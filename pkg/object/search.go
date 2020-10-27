@@ -54,6 +54,8 @@ type filterKey struct {
 // enumeration of reserved filter keys.
 type filterKeyType int
 
+type boolStringer bool
+
 type SearchFilters []SearchFilter
 
 const (
@@ -67,6 +69,9 @@ const (
 	fKeyType
 	fKeyHomomorphicHash
 	fKeyParent
+	fKeyPropRoot
+	fKeyPropLeaf
+	fKeyPropChildfree
 )
 
 func (k filterKey) String() string {
@@ -91,11 +96,25 @@ func (k filterKey) String() string {
 		return v2object.FilterHeaderHomomorphicHash
 	case fKeyParent:
 		return v2object.FilterHeaderParent
+	case fKeyPropRoot:
+		return v2object.FilterPropertyRoot
+	case fKeyPropLeaf:
+		return v2object.FilterPropertyLeaf
+	case fKeyPropChildfree:
+		return v2object.FilterPropertyChildfree
 	}
 }
 
 func (s staticStringer) String() string {
 	return string(s)
+}
+
+func (s boolStringer) String() string {
+	if s {
+		return v2object.BooleanPropertyValueTrue
+	}
+
+	return v2object.BooleanPropertyValueFalse
 }
 
 func (f *SearchFilter) Header() string {
@@ -180,26 +199,38 @@ func (f SearchFilters) ToV2() []*v2object.SearchFilter {
 	return result
 }
 
-func (f *SearchFilters) addRootFilter(val string) {
-	f.AddFilter(KeyRoot, val, MatchStringEqual)
+func (f *SearchFilters) addRootFilter(val bool) {
+	f.addReservedFilter(MatchStringEqual, fKeyPropRoot, boolStringer(val))
 }
 
 func (f *SearchFilters) AddRootFilter() {
-	f.addRootFilter(ValRoot)
+	f.addRootFilter(true)
 }
 
 func (f *SearchFilters) AddNonRootFilter() {
-	f.addRootFilter(ValNonRoot)
+	f.addRootFilter(false)
 }
 
-func (f *SearchFilters) addLeafFilter(val string) {
-	f.AddFilter(KeyLeaf, val, MatchStringEqual)
+func (f *SearchFilters) addLeafFilter(val bool) {
+	f.addReservedFilter(MatchStringEqual, fKeyPropLeaf, boolStringer(val))
 }
 
 func (f *SearchFilters) AddLeafFilter() {
-	f.addLeafFilter(ValLeaf)
+	f.addLeafFilter(true)
 }
 
 func (f *SearchFilters) AddNonLeafFilter() {
-	f.addLeafFilter(ValNonLeaf)
+	f.addLeafFilter(false)
+}
+
+func (f *SearchFilters) addChildFreeFilter(val bool) {
+	f.addReservedFilter(MatchStringEqual, fKeyPropChildfree, boolStringer(val))
+}
+
+func (f *SearchFilters) AddChildfreeFilter() {
+	f.addChildFreeFilter(true)
+}
+
+func (f *SearchFilters) AddNonChildfreeFilter() {
+	f.addChildFreeFilter(false)
 }
