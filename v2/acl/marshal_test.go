@@ -29,7 +29,7 @@ func generateFilter(t acl.HeaderType, k, v string) *acl.HeaderFilter {
 	filter := new(acl.HeaderFilter)
 	filter.SetHeaderType(t)
 	filter.SetMatchType(acl.MatchTypeStringEqual)
-	filter.SetName(k)
+	filter.SetKey(k)
 	filter.SetValue(v)
 
 	return filter
@@ -122,7 +122,7 @@ func TestHeaderFilter_StableMarshal(t *testing.T) {
 	t.Run("non empty", func(t *testing.T) {
 		filterFrom.SetHeaderType(acl.HeaderTypeObject)
 		filterFrom.SetMatchType(acl.MatchTypeStringEqual)
-		filterFrom.SetName("Hello")
+		filterFrom.SetKey("Hello")
 		filterFrom.SetValue("World")
 
 		wire, err := filterFrom.StableMarshal(nil)

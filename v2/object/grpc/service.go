@@ -402,10 +402,10 @@ func (m *SearchRequest_Body_Filter) SetMatchType(v MatchType) {
 	}
 }
 
-// SetName sets name of the filtering header.
-func (m *SearchRequest_Body_Filter) SetName(v string) {
+// SetKey sets key to the filtering header.
+func (m *SearchRequest_Body_Filter) SetKey(v string) {
 	if m != nil {
-		m.Name = v
+		m.Key = v
 	}
 }
 

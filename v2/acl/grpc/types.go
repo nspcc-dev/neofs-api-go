@@ -67,17 +67,17 @@ func (m *EACLRecord_Filter) SetMatchType(v MatchType) {
 	}
 }
 
-// SetHeaderName sets header name of the eACL filter.
-func (m *EACLRecord_Filter) SetHeaderName(v string) {
+// SetKey sets key of the eACL filter.
+func (m *EACLRecord_Filter) SetKey(v string) {
 	if m != nil {
-		m.HeaderName = v
+		m.Key = v
 	}
 }
 
-// SetHeaderVal sets header value of the eACL filter.
-func (m *EACLRecord_Filter) SetHeaderVal(v string) {
+// SetValue sets value of the eACL filter.
+func (m *EACLRecord_Filter) SetValue(v string) {
 	if m != nil {
-		m.HeaderVal = v
+		m.Value = v
 	}
 }
 

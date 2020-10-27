@@ -9,7 +9,7 @@ type HeaderFilter struct {
 
 	matchType MatchType
 
-	name, value string
+	key, value string
 }
 
 // Target is a unified structure of Target
@@ -139,17 +139,17 @@ func (f *HeaderFilter) SetMatchType(v MatchType) {
 	}
 }
 
-func (f *HeaderFilter) GetName() string {
+func (f *HeaderFilter) GetKey() string {
 	if f != nil {
-		return f.name
+		return f.key
 	}
 
 	return ""
 }
 
-func (f *HeaderFilter) SetName(v string) {
+func (f *HeaderFilter) SetKey(v string) {
 	if f != nil {
-		f.name = v
+		f.key = v
 	}
 }
 

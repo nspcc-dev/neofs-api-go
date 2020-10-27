@@ -62,13 +62,13 @@ func TestRecord_AddFilter(t *testing.T) {
 	filters := []Filter{
 		{
 			from:    HeaderFromObject,
-			name:    "some name",
+			key:     "some name",
 			matcher: MatchStringEqual,
 			value:   "ContainerID",
 		},
 		{
 			from:    HeaderFromRequest,
-			name:    "X-Header-Name",
+			key:     "X-Header-Name",
 			matcher: MatchStringNotEqual,
 			value:   "X-Header-Value",
 		},
@@ -76,7 +76,7 @@ func TestRecord_AddFilter(t *testing.T) {
 
 	r := NewRecord()
 	for _, filter := range filters {
-		r.AddFilter(filter.From(), filter.Matcher(), filter.Name(), filter.Value())
+		r.AddFilter(filter.From(), filter.Matcher(), filter.Key(), filter.Value())
 	}
 
 	require.Equal(t, filters, r.Filters())

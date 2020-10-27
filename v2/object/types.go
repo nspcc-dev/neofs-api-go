@@ -156,7 +156,7 @@ type HeadResponseBody struct {
 type SearchFilter struct {
 	matchType MatchType
 
-	name, val string
+	key, val string
 }
 
 type SearchRequestBody struct {
@@ -1274,17 +1274,17 @@ func (f *SearchFilter) SetMatchType(v MatchType) {
 	}
 }
 
-func (f *SearchFilter) GetName() string {
+func (f *SearchFilter) GetKey() string {
 	if f != nil {
-		return f.name
+		return f.key
 	}
 
 	return ""
 }
 
-func (f *SearchFilter) SetName(v string) {
+func (f *SearchFilter) SetKey(v string) {
 	if f != nil {
-		f.name = v
+		f.key = v
 	}
 }
 
