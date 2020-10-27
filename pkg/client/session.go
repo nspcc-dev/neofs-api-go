@@ -22,7 +22,7 @@ func (c Client) CreateSession(ctx context.Context, expiration uint64, opts ...Ca
 
 func (c Client) createSessionV2(ctx context.Context, expiration uint64, opts ...CallOption) (*token.SessionToken, error) {
 	// apply all available options
-	callOptions := defaultCallOptions()
+	callOptions := c.defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}

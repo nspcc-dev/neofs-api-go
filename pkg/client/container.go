@@ -94,7 +94,7 @@ func (c Client) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...CallOptio
 
 func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
 	// apply all available options
-	callOptions := defaultCallOptions()
+	callOptions := c.defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -164,7 +164,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 
 func (c Client) getContainerV2(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
 	// apply all available options
-	callOptions := defaultCallOptions()
+	callOptions := c.defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -206,7 +206,7 @@ func (c Client) getContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 
 func (c Client) listContainerV2(ctx context.Context, owner *owner.ID, opts ...CallOption) ([]*container.ID, error) {
 	// apply all available options
-	callOptions := defaultCallOptions()
+	callOptions := c.defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -253,7 +253,7 @@ func (c Client) listContainerV2(ctx context.Context, owner *owner.ID, opts ...Ca
 
 func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...CallOption) error {
 	// apply all available options
-	callOptions := defaultCallOptions()
+	callOptions := c.defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -311,7 +311,7 @@ func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 
 func (c Client) getEACLV2(ctx context.Context, id *container.ID, opts ...CallOption) (*eacl.Table, error) {
 	// apply all available options
-	callOptions := defaultCallOptions()
+	callOptions := c.defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -362,7 +362,7 @@ func (c Client) getEACLV2(ctx context.Context, id *container.ID, opts ...CallOpt
 
 func (c Client) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
 	// apply all available options
-	callOptions := defaultCallOptions()
+	callOptions := c.defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}

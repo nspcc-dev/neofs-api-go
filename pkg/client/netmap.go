@@ -23,7 +23,7 @@ func (c Client) EndpointInfo(ctx context.Context, opts ...CallOption) (*netmap.N
 
 func (c Client) endpointInfoV2(ctx context.Context, opts ...CallOption) (*netmap.NodeInfo, error) {
 	// apply all available options
-	callOptions := defaultCallOptions()
+	callOptions := c.defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
