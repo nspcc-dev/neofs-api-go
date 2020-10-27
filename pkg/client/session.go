@@ -110,3 +110,19 @@ func v2SessionClientFromOptions(opts *clientOptions) (cli *v2session.Client, err
 
 	return cli, nil
 }
+
+// AttachSessionToken attaches session token to client.
+//
+// Provided token is attached to all requests without WithSession option.
+// Use WithSession(nil) option in order to send request without session token.
+func (c *Client) AttachSessionToken(token *token.SessionToken) {
+	c.sessionToken = token
+}
+
+// AttachBearerToken attaches bearer token to client.
+//
+// Provided bearer is attached to all requests without WithBearer option.
+// Use WithBearer(nil) option in order to send request without bearer token.
+func (c *Client) AttachBearerToken(token *token.BearerToken) {
+	c.bearerToken = token
+}

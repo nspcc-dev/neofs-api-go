@@ -62,6 +62,8 @@ func (c Client) defaultCallOptions() callOptions {
 	return callOptions{
 		ttl:     2,
 		version: pkg.SDKVersion(),
+		session: c.sessionToken,
+		bearer:  c.bearerToken,
 	}
 }
 

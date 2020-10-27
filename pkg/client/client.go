@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
+	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 )
 
 type (
@@ -13,6 +14,10 @@ type (
 		remoteNode TransportInfo
 
 		opts *clientOptions
+
+		sessionToken *token.SessionToken
+
+		bearerToken *token.BearerToken
 	}
 
 	TransportProtocol uint32
