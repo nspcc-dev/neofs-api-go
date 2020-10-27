@@ -165,8 +165,8 @@ func HeaderFilterToGRPCMessage(f *HeaderFilter) *acl.EACLRecord_Filter {
 		MatchTypeToGRPCField(f.GetMatchType()),
 	)
 
-	m.SetHeaderName(f.GetName())
-	m.SetHeaderVal(f.GetValue())
+	m.SetKey(f.GetKey())
+	m.SetValue(f.GetValue())
 
 	return m
 }
@@ -187,8 +187,8 @@ func HeaderFilterFromGRPCMessage(m *acl.EACLRecord_Filter) *HeaderFilter {
 		MatchTypeFromGRPCField(m.GetMatchType()),
 	)
 
-	f.SetName(m.GetHeaderName())
-	f.SetValue(m.GetHeaderVal())
+	f.SetKey(m.GetKey())
+	f.SetValue(m.GetValue())
 
 	return f
 }

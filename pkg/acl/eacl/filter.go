@@ -8,7 +8,7 @@ import (
 // header means that request should be processed according to EACL action.
 type Filter struct {
 	from    FilterHeaderType
-	name    string
+	key     string
 	matcher Match
 	value   string
 }
@@ -21,8 +21,8 @@ func (a Filter) Matcher() Match {
 	return a.matcher
 }
 
-func (a Filter) Name() string {
-	return a.name
+func (a Filter) Key() string {
+	return a.key
 }
 
 func (a Filter) From() FilterHeaderType {
@@ -32,7 +32,7 @@ func (a Filter) From() FilterHeaderType {
 func (a *Filter) ToV2() *v2acl.HeaderFilter {
 	filter := new(v2acl.HeaderFilter)
 	filter.SetValue(a.value)
-	filter.SetName(a.name)
+	filter.SetKey(a.key)
 	filter.SetMatchType(a.matcher.ToV2())
 	filter.SetHeaderType(a.from.ToV2())
 
@@ -48,7 +48,7 @@ func NewFilterFromV2(filter *v2acl.HeaderFilter) *Filter {
 
 	f.from = FilterHeaderTypeFromV2(filter.GetHeaderType())
 	f.matcher = MatchFromV2(filter.GetMatchType())
-	f.name = filter.GetName()
+	f.key = filter.GetKey()
 	f.value = filter.GetValue()
 
 	return f

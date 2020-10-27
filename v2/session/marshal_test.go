@@ -295,7 +295,7 @@ func generateEACL(n int, k, v string) *acl.Table {
 	filter := new(acl.HeaderFilter)
 	filter.SetHeaderType(acl.HeaderTypeObject)
 	filter.SetMatchType(acl.MatchTypeStringEqual)
-	filter.SetName(k)
+	filter.SetKey(k)
 	filter.SetValue(v)
 
 	record := new(acl.Record)

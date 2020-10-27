@@ -57,7 +57,7 @@ func (r *Record) AddTarget(role Role, keys ...ecdsa.PublicKey) {
 func (r *Record) AddFilter(from FilterHeaderType, matcher Match, name, value string) {
 	filter := Filter{
 		from:    from,
-		name:    name,
+		key:     name,
 		matcher: matcher,
 		value:   value,
 	}

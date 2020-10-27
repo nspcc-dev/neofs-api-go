@@ -937,7 +937,7 @@ func (f *SearchFilter) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.StringMarshal(searchFilterNameField, buf[offset:], f.name)
+	n, err = proto.StringMarshal(searchFilterNameField, buf[offset:], f.key)
 	if err != nil {
 		return nil, err
 	}
@@ -958,7 +958,7 @@ func (f *SearchFilter) StableSize() (size int) {
 	}
 
 	size += proto.EnumSize(searchFilterMatchField, int32(f.matchType))
-	size += proto.StringSize(searchFilterNameField, f.name)
+	size += proto.StringSize(searchFilterNameField, f.key)
 	size += proto.StringSize(searchFilterValueField, f.val)
 
 	return size

@@ -10,7 +10,7 @@ import (
 func TestFilter(t *testing.T) {
 	filter := &Filter{
 		from:    HeaderFromObject,
-		name:    "some name",
+		key:     "some name",
 		matcher: MatchStringEqual,
 		value:   "200",
 	}
@@ -19,7 +19,7 @@ func TestFilter(t *testing.T) {
 	require.NotNil(t, v2)
 	require.Equal(t, v2acl.HeaderTypeObject, v2.GetHeaderType())
 	require.EqualValues(t, v2acl.MatchTypeStringEqual, v2.GetMatchType())
-	require.Equal(t, filter.Name(), v2.GetName())
+	require.Equal(t, filter.Key(), v2.GetKey())
 	require.Equal(t, filter.Value(), v2.GetValue())
 
 	newFilter := NewFilterFromV2(v2)

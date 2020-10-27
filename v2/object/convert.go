@@ -1118,7 +1118,7 @@ func SearchFilterToGRPCMessage(f *SearchFilter) *object.SearchRequest_Body_Filte
 		MatchTypeToGRPCField(f.GetMatchType()),
 	)
 
-	m.SetName(f.GetName())
+	m.SetKey(f.GetKey())
 
 	m.SetValue(f.GetValue())
 
@@ -1136,7 +1136,7 @@ func SearchFilterFromGRPCMessage(m *object.SearchRequest_Body_Filter) *SearchFil
 		MatchTypeFromGRPCField(m.GetMatchType()),
 	)
 
-	f.SetName(m.GetName())
+	f.SetKey(m.GetKey())
 
 	f.SetValue(m.GetValue())
 

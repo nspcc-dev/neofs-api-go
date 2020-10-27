@@ -193,7 +193,7 @@ func (f *HeaderFilter) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.StringMarshal(filterNameField, buf[offset:], f.name)
+	n, err = proto.StringMarshal(filterNameField, buf[offset:], f.key)
 	if err != nil {
 		return nil, err
 	}
@@ -216,7 +216,7 @@ func (f *HeaderFilter) StableSize() (size int) {
 
 	size += proto.EnumSize(filterHeaderTypeField, int32(f.hdrType))
 	size += proto.EnumSize(filterMatchTypeField, int32(f.matchType))
-	size += proto.StringSize(filterNameField, f.name)
+	size += proto.StringSize(filterNameField, f.key)
 	size += proto.StringSize(filterValueField, f.value)
 
 	return size

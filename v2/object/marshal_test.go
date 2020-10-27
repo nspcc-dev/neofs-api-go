@@ -608,7 +608,7 @@ func generateHeadResponseBody(flag bool) *object.HeadResponseBody {
 
 func generateFilter(k, v string) *object.SearchFilter {
 	f := new(object.SearchFilter)
-	f.SetName(k)
+	f.SetKey(k)
 	f.SetValue(v)
 	f.SetMatchType(object.MatchStringEqual)
 
