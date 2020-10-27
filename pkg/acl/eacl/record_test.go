@@ -60,18 +60,8 @@ func TestRecord_AddTarget(t *testing.T) {
 
 func TestRecord_AddFilter(t *testing.T) {
 	filters := []Filter{
-		{
-			from:    HeaderFromObject,
-			key:     "some name",
-			matcher: MatchStringEqual,
-			value:   "ContainerID",
-		},
-		{
-			from:    HeaderFromRequest,
-			key:     "X-Header-Name",
-			matcher: MatchStringNotEqual,
-			value:   "X-Header-Value",
-		},
+		*newObjectFilter(MatchStringEqual, "some name", "ContainerID"),
+		*newObjectFilter(MatchStringNotEqual, "X-Header-Name", "X-Header-Value"),
 	}
 
 	r := NewRecord()

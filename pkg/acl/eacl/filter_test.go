@@ -7,13 +7,19 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestFilter(t *testing.T) {
-	filter := &Filter{
-		from:    HeaderFromObject,
-		key:     "some name",
-		matcher: MatchStringEqual,
-		value:   "200",
+func newObjectFilter(match Match, key, val string) *Filter {
+	return &Filter{
+		from: HeaderFromObject,
+		key: filterKey{
+			str: key,
+		},
+		matcher: match,
+		value:   staticStringer(val),
 	}
+}
+
+func TestFilter(t *testing.T) {
+	filter := newObjectFilter(MatchStringEqual, "some name", "200")
 
 	v2 := filter.ToV2()
 	require.NotNil(t, v2)
