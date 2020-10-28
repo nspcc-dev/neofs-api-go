@@ -11,13 +11,21 @@ func TestRecordJSON(t *testing.T) {
 	exp := generateRecord(false)
 
 	t.Run("non empty", func(t *testing.T) {
-		data := acl.RecordToJSON(exp)
-		require.NotNil(t, data)
+		data, err := acl.RecordToJSON(exp)
+		require.NoError(t, err)
 
-		got := acl.RecordFromJSON(data)
-		require.NotNil(t, got)
+		got, err := acl.RecordFromJSON(data)
+		require.NoError(t, err)
 
 		require.Equal(t, exp, got)
+	})
+
+	t.Run("empty", func(t *testing.T) {
+		_, err := acl.RecordToJSON(nil)
+		require.Error(t, err)
+
+		_, err = acl.RecordFromJSON(nil)
+		require.Error(t, err)
 	})
 }
 
@@ -25,13 +33,21 @@ func TestEACLTableJSON(t *testing.T) {
 	exp := generateEACL()
 
 	t.Run("non empty", func(t *testing.T) {
-		data := acl.TableToJSON(exp)
-		require.NotNil(t, data)
+		data, err := acl.TableToJSON(exp)
+		require.NoError(t, err)
 
-		got := acl.TableFromJSON(data)
-		require.NotNil(t, got)
+		got, err := acl.TableFromJSON(data)
+		require.NoError(t, err)
 
 		require.Equal(t, exp, got)
+	})
+
+	t.Run("empty", func(t *testing.T) {
+		_, err := acl.TableToJSON(nil)
+		require.Error(t, err)
+
+		_, err = acl.TableFromJSON(nil)
+		require.Error(t, err)
 	})
 }
 
@@ -39,11 +55,11 @@ func TestBearerTokenJSON(t *testing.T) {
 	exp := generateBearerToken("token")
 
 	t.Run("non empty", func(t *testing.T) {
-		data := acl.BearerTokenToJSON(exp)
-		require.NotNil(t, data)
+		data, err := acl.BearerTokenToJSON(exp)
+		require.NoError(t, err)
 
-		got := acl.BearerTokenFromJSON(data)
-		require.NotNil(t, got)
+		got, err := acl.BearerTokenFromJSON(data)
+		require.NoError(t, err)
 
 		require.Equal(t, exp, got)
 	})

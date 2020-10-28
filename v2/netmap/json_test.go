@@ -11,12 +11,20 @@ func TestNodeInfoJSON(t *testing.T) {
 	exp := generateNodeInfo("public key", "/multi/addr", 2)
 
 	t.Run("non empty", func(t *testing.T) {
-		data := netmap.NodeInfoToJSON(exp)
-		require.NotNil(t, data)
+		data, err := netmap.NodeInfoToJSON(exp)
+		require.NoError(t, err)
 
-		got := netmap.NodeInfoFromJSON(data)
-		require.NotNil(t, got)
+		got, err := netmap.NodeInfoFromJSON(data)
+		require.NoError(t, err)
 
 		require.Equal(t, exp, got)
+	})
+
+	t.Run("empty", func(t *testing.T) {
+		_, err := netmap.NodeInfoToJSON(nil)
+		require.Error(t, err)
+
+		_, err = netmap.NodeInfoFromJSON(nil)
+		require.Error(t, err)
 	})
 }

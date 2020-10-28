@@ -1,93 +1,84 @@
 package acl
 
 import (
+	"errors"
+
 	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-func RecordToJSON(r *Record) (data []byte) {
+var (
+	errEmptyInput = errors.New("empty input")
+)
+
+func RecordToJSON(r *Record) ([]byte, error) {
 	if r == nil {
-		return nil
+		return nil, errEmptyInput
 	}
 
 	msg := RecordToGRPCMessage(r)
 
-	data, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
-	if err != nil {
-		return nil
-	}
-
-	return
+	return protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
 }
 
-func RecordFromJSON(data []byte) *Record {
+func RecordFromJSON(data []byte) (*Record, error) {
 	if len(data) == 0 {
-		return nil
+		return nil, errEmptyInput
 	}
 
 	msg := new(acl.EACLRecord)
 
 	if err := protojson.Unmarshal(data, msg); err != nil {
-		return nil
+		return nil, err
 	}
 
-	return RecordFromGRPCMessage(msg)
+	return RecordFromGRPCMessage(msg), nil
 }
 
-func TableToJSON(t *Table) (data []byte) {
+func TableToJSON(t *Table) ([]byte, error) {
 	if t == nil {
-		return nil
+		return nil, errEmptyInput
 	}
 
 	msg := TableToGRPCMessage(t)
 
-	data, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
-	if err != nil {
-		return nil
-	}
-
-	return
+	return protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
 }
 
-func TableFromJSON(data []byte) *Table {
+func TableFromJSON(data []byte) (*Table, error) {
 	if len(data) == 0 {
-		return nil
+		return nil, errEmptyInput
 	}
 
 	msg := new(acl.EACLTable)
 
 	if err := protojson.Unmarshal(data, msg); err != nil {
-		return nil
+		return nil, err
 	}
 
-	return TableFromGRPCMessage(msg)
+	return TableFromGRPCMessage(msg), nil
 }
 
-func BearerTokenToJSON(t *BearerToken) (data []byte) {
+func BearerTokenToJSON(t *BearerToken) ([]byte, error) {
 	if t == nil {
-		return nil
+		return nil, errEmptyInput
 	}
 
 	msg := BearerTokenToGRPCMessage(t)
 
-	data, err := protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
-	if err != nil {
-		return nil
-	}
-
-	return
+	return protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
 }
 
-func BearerTokenFromJSON(data []byte) *BearerToken {
+func BearerTokenFromJSON(data []byte) (*BearerToken, error) {
 	if len(data) == 0 {
-		return nil
+		return nil, errEmptyInput
 	}
 
 	msg := new(acl.BearerToken)
 
 	if err := protojson.Unmarshal(data, msg); err != nil {
-		return nil
+		return nil, err
 	}
 
-	return BearerTokenFromGRPCMessage(msg)
+	return BearerTokenFromGRPCMessage(msg), nil
 }
