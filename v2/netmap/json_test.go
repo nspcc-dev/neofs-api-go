@@ -28,3 +28,25 @@ func TestNodeInfoJSON(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestPlacementPolicyJSON(t *testing.T) {
+	exp := generatePolicy(3)
+
+	t.Run("non empty", func(t *testing.T) {
+		data, err := netmap.PlacementPolicyToJSON(exp)
+		require.NoError(t, err)
+
+		got, err := netmap.PlacementPolicyFromJSON(data)
+		require.NoError(t, err)
+
+		require.Equal(t, exp, got)
+	})
+
+	t.Run("empty", func(t *testing.T) {
+		_, err := netmap.PlacementPolicyToJSON(nil)
+		require.Error(t, err)
+
+		_, err = netmap.PlacementPolicyFromJSON(nil)
+		require.Error(t, err)
+	})
+}
