@@ -34,3 +34,27 @@ func NodeInfoFromJSON(data []byte) (*NodeInfo, error) {
 
 	return NodeInfoFromGRPCMessage(msg), nil
 }
+
+func PlacementPolicyToJSON(n *PlacementPolicy) ([]byte, error) {
+	if n == nil {
+		return nil, errEmptyInput
+	}
+
+	msg := PlacementPolicyToGRPCMessage(n)
+
+	return protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
+}
+
+func PlacementPolicyFromJSON(data []byte) (*PlacementPolicy, error) {
+	if len(data) == 0 {
+		return nil, errEmptyInput
+	}
+
+	msg := new(netmap.PlacementPolicy)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return nil, err
+	}
+
+	return PlacementPolicyFromGRPCMessage(msg), nil
+}
