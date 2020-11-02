@@ -11,3 +11,11 @@ type Filter = netmap.Filter
 type Replica = netmap.Replica
 type Clause = netmap.Clause
 type Operation = netmap.Operation
+
+func PlacementPolicyToJSON(p *PlacementPolicy) ([]byte, error) {
+	return netmap.PlacementPolicyToJSON(p)
+}
+
+func PlacementPolicyFromJSON(data []byte) (*PlacementPolicy, error) {
+	return netmap.PlacementPolicyFromJSON(data)
+}
