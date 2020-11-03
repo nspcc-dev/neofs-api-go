@@ -15,13 +15,33 @@ import (
 func (c Client) EndpointInfo(ctx context.Context, opts ...CallOption) (*netmap.NodeInfo, error) {
 	switch c.remoteNode.Version.GetMajor() {
 	case 2:
-		return c.endpointInfoV2(ctx, opts...)
+		resp, err := c.endpointInfoV2(ctx, opts...)
+		if err != nil {
+			return nil, err
+		}
+
+		return resp.GetBody().GetNodeInfo(), nil
 	default:
 		return nil, unsupportedProtocolErr
 	}
 }
 
-func (c Client) endpointInfoV2(ctx context.Context, opts ...CallOption) (*netmap.NodeInfo, error) {
+// Epoch returns the epoch number from the local state of the remote host.
+func (c Client) Epoch(ctx context.Context, opts ...CallOption) (uint64, error) {
+	switch c.remoteNode.Version.GetMajor() {
+	case 2:
+		resp, err := c.endpointInfoV2(ctx, opts...)
+		if err != nil {
+			return 0, err
+		}
+
+		return resp.GetMetaHeader().GetEpoch(), nil
+	default:
+		return 0, unsupportedProtocolErr
+	}
+}
+
+func (c Client) endpointInfoV2(ctx context.Context, opts ...CallOption) (*netmap.LocalNodeInfoResponse, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 	for i := range opts {
@@ -56,7 +76,7 @@ func (c Client) endpointInfoV2(ctx context.Context, opts ...CallOption) (*netmap
 			return nil, errors.Wrap(err, "can't verify response message")
 		}
 
-		return resp.GetBody().GetNodeInfo(), nil
+		return resp, nil
 	default:
 		return nil, unsupportedProtocolErr
 	}
