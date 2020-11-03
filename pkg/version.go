@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	"github.com/pkg/errors"
 )
 
 // Version represents v2-compatible version.
@@ -64,4 +65,20 @@ func (v *Version) ToV2() *refs.Version {
 
 func (v *Version) String() string {
 	return fmt.Sprintf("v%d.%d", v.GetMajor(), v.GetMinor())
+}
+
+// IsSupportedVersion returns error if v is not supported by current SDK.
+func IsSupportedVersion(v *Version) error {
+	switch mjr := v.GetMajor(); mjr {
+	case 2:
+		switch mnr := v.GetMinor(); mnr {
+		case 0:
+			return nil
+		}
+	}
+
+	return errors.Errorf("unsupported version %d.%d",
+		v.GetMajor(),
+		v.GetMinor(),
+	)
 }
