@@ -20,8 +20,8 @@ func (c *Context) applyFilter(name string, b *Node) bool {
 }
 
 // processFilters processes filters and returns error is any of them is invalid.
-func (c *Context) processFilters(p *netmap.PlacementPolicy) error {
-	for _, f := range p.GetFilters() {
+func (c *Context) processFilters(p *PlacementPolicy) error {
+	for _, f := range p.Filters() {
 		if err := c.processFilter(f, true); err != nil {
 			return err
 		}
@@ -29,46 +29,46 @@ func (c *Context) processFilters(p *netmap.PlacementPolicy) error {
 	return nil
 }
 
-func (c *Context) processFilter(f *netmap.Filter, top bool) error {
+func (c *Context) processFilter(f *Filter, top bool) error {
 	if f == nil {
 		return fmt.Errorf("%w: FILTER", ErrMissingField)
 	}
-	if f.GetName() == MainFilterName {
+	if f.Name() == MainFilterName {
 		return fmt.Errorf("%w: '*' is reserved", ErrInvalidFilterName)
 	}
-	if top && f.GetName() == "" {
+	if top && f.Name() == "" {
 		return ErrUnnamedTopFilter
 	}
-	if !top && f.GetName() != "" && c.Filters[f.GetName()] == nil {
-		return fmt.Errorf("%w: '%s'", ErrFilterNotFound, f.GetName())
+	if !top && f.Name() != "" && c.Filters[f.Name()] == nil {
+		return fmt.Errorf("%w: '%s'", ErrFilterNotFound, f.Name())
 	}
-	switch f.GetOp() {
-	case netmap.AND, netmap.OR:
-		for _, flt := range f.GetFilters() {
+	switch f.Operation() {
+	case OpAND, OpOR:
+		for _, flt := range f.InnerFilters() {
 			if err := c.processFilter(flt, false); err != nil {
 				return err
 			}
 		}
 	default:
-		if len(f.GetFilters()) != 0 {
+		if len(f.InnerFilters()) != 0 {
 			return ErrNonEmptyFilters
-		} else if !top && f.GetName() != "" { // named reference
+		} else if !top && f.Name() != "" { // named reference
 			return nil
 		}
-		switch f.GetOp() {
-		case netmap.EQ, netmap.NE:
-		case netmap.GT, netmap.GE, netmap.LT, netmap.LE:
-			n, err := strconv.ParseUint(f.GetValue(), 10, 64)
+		switch f.Operation() {
+		case OpEQ, OpNE:
+		case OpGT, OpGE, OpLT, OpLE:
+			n, err := strconv.ParseUint(f.Value(), 10, 64)
 			if err != nil {
-				return fmt.Errorf("%w: '%s'", ErrInvalidNumber, f.GetValue())
+				return fmt.Errorf("%w: '%s'", ErrInvalidNumber, f.Value())
 			}
 			c.numCache[f] = n
 		default:
-			return fmt.Errorf("%w: %d", ErrInvalidFilterOp, f.GetOp())
+			return fmt.Errorf("%w: %s", ErrInvalidFilterOp, f.Operation())
 		}
 	}
 	if top {
-		c.Filters[f.GetName()] = f
+		c.Filters[f.Name()] = f
 	}
 	return nil
 }
@@ -76,54 +76,54 @@ func (c *Context) processFilter(f *netmap.Filter, top bool) error {
 // match matches f against b. It returns no errors because
 // filter should have been parsed during context creation
 // and missing node properties are considered as a regular fail.
-func (c *Context) match(f *netmap.Filter, b *Node) bool {
-	switch f.GetOp() {
-	case netmap.AND, netmap.OR:
-		for _, lf := range f.GetFilters() {
-			if lf.GetName() != "" {
-				lf = c.Filters[lf.GetName()]
+func (c *Context) match(f *Filter, b *Node) bool {
+	switch f.Operation() {
+	case OpAND, OpOR:
+		for _, lf := range f.InnerFilters() {
+			if lf.Name() != "" {
+				lf = c.Filters[lf.Name()]
 			}
 			ok := c.match(lf, b)
-			if ok == (f.GetOp() == netmap.OR) {
+			if ok == (f.Operation() == OpOR) {
 				return ok
 			}
 		}
-		return f.GetOp() == netmap.AND
+		return f.Operation() == OpAND
 	default:
 		return c.matchKeyValue(f, b)
 	}
 }
 
-func (c *Context) matchKeyValue(f *netmap.Filter, b *Node) bool {
-	switch f.GetOp() {
-	case netmap.EQ:
-		return b.Attribute(f.GetKey()) == f.GetValue()
-	case netmap.NE:
-		return b.Attribute(f.GetKey()) != f.GetValue()
+func (c *Context) matchKeyValue(f *Filter, b *Node) bool {
+	switch f.Operation() {
+	case OpEQ:
+		return b.Attribute(f.Key()) == f.Value()
+	case OpNE:
+		return b.Attribute(f.Key()) != f.Value()
 	default:
 		var attr uint64
-		switch f.GetKey() {
+		switch f.Key() {
 		case PriceAttr:
 			attr = b.Price
 		case CapacityAttr:
 			attr = b.Capacity
 		default:
 			var err error
-			attr, err = strconv.ParseUint(b.Attribute(f.GetKey()), 10, 64)
+			attr, err = strconv.ParseUint(b.Attribute(f.Key()), 10, 64)
 			if err != nil {
 				// Note: because filters are somewhat independent from nodes attributes,
 				// We don't report an error here, and fail filter instead.
 				return false
 			}
 		}
-		switch f.GetOp() {
-		case netmap.GT:
+		switch f.Operation() {
+		case OpGT:
 			return attr > c.numCache[f]
-		case netmap.GE:
+		case OpGE:
 			return attr >= c.numCache[f]
-		case netmap.LT:
+		case OpLT:
 			return attr < c.numCache[f]
-		case netmap.LE:
+		case OpLE:
 			return attr <= c.numCache[f]
 		}
 	}

@@ -11,20 +11,20 @@ import (
 
 func TestPlacementPolicy_UnspecifiedClause(t *testing.T) {
 	p := newPlacementPolicy(1,
-		[]*netmap.Replica{newReplica(1, "X")},
-		[]*netmap.Selector{
-			newSelector("X", "", netmap.Distinct, 4, "*"),
+		[]*Replica{newReplica(1, "X")},
+		[]*Selector{
+			newSelector("X", "", ClauseDistinct, 4, "*"),
 		},
 		nil,
 	)
-	nodes := []netmap.NodeInfo{
+	nodes := []NodeInfo{
 		nodeInfoFromAttributes("ID", "1", "Country", "RU", "City", "St.Petersburg", "SSD", "0"),
 		nodeInfoFromAttributes("ID", "2", "Country", "RU", "City", "St.Petersburg", "SSD", "1"),
 		nodeInfoFromAttributes("ID", "3", "Country", "RU", "City", "Moscow", "SSD", "1"),
 		nodeInfoFromAttributes("ID", "4", "Country", "RU", "City", "Moscow", "SSD", "1"),
 	}
 
-	nm, err := NewNetmap(NodesFromV2(nodes))
+	nm, err := NewNetmap(NodesFromInfo(nodes))
 	require.NoError(t, err)
 	v, err := nm.GetContainerNodes(p, nil)
 	require.NoError(t, err)
@@ -33,24 +33,24 @@ func TestPlacementPolicy_UnspecifiedClause(t *testing.T) {
 
 func TestPlacementPolicy_GetPlacementVectors(t *testing.T) {
 	p := newPlacementPolicy(2,
-		[]*netmap.Replica{
+		[]*Replica{
 			newReplica(1, "SPB"),
 			newReplica(2, "Americas"),
 		},
-		[]*netmap.Selector{
-			newSelector("SPB", "City", netmap.Same, 1, "SPBSSD"),
-			newSelector("Americas", "City", netmap.Distinct, 2, "Americas"),
+		[]*Selector{
+			newSelector("SPB", "City", ClauseSame, 1, "SPBSSD"),
+			newSelector("Americas", "City", ClauseDistinct, 2, "Americas"),
 		},
-		[]*netmap.Filter{
-			newFilter("SPBSSD", "", "", netmap.AND,
-				newFilter("", "Country", "RU", netmap.EQ),
-				newFilter("", "City", "St.Petersburg", netmap.EQ),
-				newFilter("", "SSD", "1", netmap.EQ)),
-			newFilter("Americas", "", "", netmap.OR,
-				newFilter("", "Continent", "NA", netmap.EQ),
-				newFilter("", "Continent", "SA", netmap.EQ)),
+		[]*Filter{
+			newFilter("SPBSSD", "", "", OpAND,
+				newFilter("", "Country", "RU", OpEQ),
+				newFilter("", "City", "St.Petersburg", OpEQ),
+				newFilter("", "SSD", "1", OpEQ)),
+			newFilter("Americas", "", "", OpOR,
+				newFilter("", "Continent", "NA", OpEQ),
+				newFilter("", "Continent", "SA", OpEQ)),
 		})
-	nodes := []netmap.NodeInfo{
+	nodes := []NodeInfo{
 		nodeInfoFromAttributes("ID", "1", "Country", "RU", "City", "St.Petersburg", "SSD", "0"),
 		nodeInfoFromAttributes("ID", "2", "Country", "RU", "City", "St.Petersburg", "SSD", "1"),
 		nodeInfoFromAttributes("ID", "3", "Country", "RU", "City", "Moscow", "SSD", "1"),
@@ -66,7 +66,7 @@ func TestPlacementPolicy_GetPlacementVectors(t *testing.T) {
 		nodeInfoFromAttributes("ID", "13", "Continent", "SA", "City", "Lima"),
 	}
 
-	nm, err := NewNetmap(NodesFromV2(nodes))
+	nm, err := NewNetmap(NodesFromInfo(nodes))
 	require.NoError(t, err)
 	v, err := nm.GetContainerNodes(p, nil)
 	require.NoError(t, err)
@@ -94,17 +94,17 @@ func TestPlacementPolicy_GetPlacementVectors(t *testing.T) {
 
 func TestPlacementPolicy_ProcessSelectors(t *testing.T) {
 	p := newPlacementPolicy(2, nil,
-		[]*netmap.Selector{
-			newSelector("SameRU", "City", netmap.Same, 2, "FromRU"),
-			newSelector("DistinctRU", "City", netmap.Distinct, 2, "FromRU"),
-			newSelector("Good", "Country", netmap.Distinct, 2, "Good"),
-			newSelector("Main", "Country", netmap.Distinct, 3, "*"),
+		[]*Selector{
+			newSelector("SameRU", "City", ClauseSame, 2, "FromRU"),
+			newSelector("DistinctRU", "City", ClauseDistinct, 2, "FromRU"),
+			newSelector("Good", "Country", ClauseDistinct, 2, "Good"),
+			newSelector("Main", "Country", ClauseDistinct, 3, "*"),
 		},
-		[]*netmap.Filter{
-			newFilter("FromRU", "Country", "Russia", netmap.EQ),
-			newFilter("Good", "Rating", "4", netmap.GE),
+		[]*Filter{
+			newFilter("FromRU", "Country", "Russia", OpEQ),
+			newFilter("Good", "Rating", "4", OpGE),
 		})
-	nodes := []netmap.NodeInfo{
+	nodes := []NodeInfo{
 		nodeInfoFromAttributes("Country", "Russia", "Rating", "1", "City", "SPB"),
 		nodeInfoFromAttributes("Country", "Germany", "Rating", "5", "City", "Berlin"),
 		nodeInfoFromAttributes("Country", "Russia", "Rating", "6", "City", "Moscow"),
@@ -118,22 +118,22 @@ func TestPlacementPolicy_ProcessSelectors(t *testing.T) {
 		nodeInfoFromAttributes("Country", "Russia", "Rating", "9", "City", "SPB"),
 	}
 
-	nm, err := NewNetmap(NodesFromV2(nodes))
+	nm, err := NewNetmap(NodesFromInfo(nodes))
 	require.NoError(t, err)
 	c := NewContext(nm)
 	require.NoError(t, c.processFilters(p))
 	require.NoError(t, c.processSelectors(p))
 
-	for _, s := range p.GetSelectors() {
-		sel := c.Selections[s.GetName()]
-		s := c.Selectors[s.GetName()]
+	for _, s := range p.Selectors() {
+		sel := c.Selections[s.Name()]
+		s := c.Selectors[s.Name()]
 		bucketCount, nodesInBucket := GetNodesCount(p, s)
-		targ := fmt.Sprintf("selector '%s'", s.GetName())
+		targ := fmt.Sprintf("selector '%s'", s.Name())
 		require.Equal(t, bucketCount, len(sel), targ)
 		for _, res := range sel {
 			require.Equal(t, nodesInBucket, len(res), targ)
 			for j := range res {
-				require.True(t, c.applyFilter(s.GetFilter(), res[j]), targ)
+				require.True(t, c.applyFilter(s.Filter(), res[j]), targ)
 			}
 		}
 	}
@@ -142,12 +142,12 @@ func TestPlacementPolicy_ProcessSelectors(t *testing.T) {
 
 func TestPlacementPolicy_ProcessSelectorsHRW(t *testing.T) {
 	p := newPlacementPolicy(1, nil,
-		[]*netmap.Selector{
-			newSelector("Main", "Country", netmap.Distinct, 3, "*"),
+		[]*Selector{
+			newSelector("Main", "Country", ClauseDistinct, 3, "*"),
 		}, nil)
 
 	// bucket weight order: RU > DE > FR
-	nodes := []netmap.NodeInfo{
+	nodes := []NodeInfo{
 		nodeInfoFromAttributes("Country", "Germany", PriceAttr, "2", CapacityAttr, "10000"),
 		nodeInfoFromAttributes("Country", "Germany", PriceAttr, "4", CapacityAttr, "1"),
 		nodeInfoFromAttributes("Country", "France", PriceAttr, "3", CapacityAttr, "10"),
@@ -158,7 +158,7 @@ func TestPlacementPolicy_ProcessSelectorsHRW(t *testing.T) {
 		nodeInfoFromAttributes("Country", "France", PriceAttr, "7", CapacityAttr, "10000"),
 		nodeInfoFromAttributes("Country", "Russia", PriceAttr, "2", CapacityAttr, "1"),
 	}
-	nm, err := NewNetmap(NodesFromV2(nodes))
+	nm, err := NewNetmap(NodesFromInfo(nodes))
 	require.NoError(t, err)
 	c := NewContext(nm)
 	c.setPivot([]byte("containerID"))
@@ -189,46 +189,46 @@ func TestPlacementPolicy_ProcessSelectorsHRW(t *testing.T) {
 func TestPlacementPolicy_ProcessSelectorsInvalid(t *testing.T) {
 	testCases := []struct {
 		name string
-		p    *netmap.PlacementPolicy
+		p    *PlacementPolicy
 		err  error
 	}{
 		{
 			"MissingSelector",
 			newPlacementPolicy(2, nil,
-				[]*netmap.Selector{nil},
-				[]*netmap.Filter{}),
+				[]*Selector{nil},
+				[]*Filter{}),
 			ErrMissingField,
 		},
 		{
 			"InvalidFilterReference",
 			newPlacementPolicy(1, nil,
-				[]*netmap.Selector{newSelector("MyStore", "Country", netmap.Distinct, 1, "FromNL")},
-				[]*netmap.Filter{newFilter("FromRU", "Country", "Russia", netmap.EQ)}),
+				[]*Selector{newSelector("MyStore", "Country", ClauseDistinct, 1, "FromNL")},
+				[]*Filter{newFilter("FromRU", "Country", "Russia", OpEQ)}),
 			ErrFilterNotFound,
 		},
 		{
 			"NotEnoughNodes (backup factor)",
 			newPlacementPolicy(2, nil,
-				[]*netmap.Selector{newSelector("MyStore", "Country", netmap.Distinct, 1, "FromRU")},
-				[]*netmap.Filter{newFilter("FromRU", "Country", "Russia", netmap.EQ)}),
+				[]*Selector{newSelector("MyStore", "Country", ClauseDistinct, 1, "FromRU")},
+				[]*Filter{newFilter("FromRU", "Country", "Russia", OpEQ)}),
 			ErrNotEnoughNodes,
 		},
 		{
 			"NotEnoughNodes (buckets)",
 			newPlacementPolicy(1, nil,
-				[]*netmap.Selector{newSelector("MyStore", "Country", netmap.Distinct, 2, "FromRU")},
-				[]*netmap.Filter{newFilter("FromRU", "Country", "Russia", netmap.EQ)}),
+				[]*Selector{newSelector("MyStore", "Country", ClauseDistinct, 2, "FromRU")},
+				[]*Filter{newFilter("FromRU", "Country", "Russia", OpEQ)}),
 			ErrNotEnoughNodes,
 		},
 	}
-	nodes := []netmap.NodeInfo{
+	nodes := []NodeInfo{
 		nodeInfoFromAttributes("Country", "Russia"),
 		nodeInfoFromAttributes("Country", "Germany"),
 		nodeInfoFromAttributes(),
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			nm, err := NewNetmap(NodesFromV2(nodes))
+			nm, err := NewNetmap(NodesFromInfo(nodes))
 			require.NoError(t, err)
 			c := NewContext(nm)
 			require.NoError(t, c.processFilters(tc.p))

@@ -9,12 +9,12 @@ import (
 )
 
 func TestContext_ProcessFilters(t *testing.T) {
-	fs := []*netmap.Filter{
-		newFilter("StorageSSD", "Storage", "SSD", netmap.EQ),
-		newFilter("GoodRating", "Rating", "4", netmap.GE),
-		newFilter("Main", "", "", netmap.AND,
+	fs := []*Filter{
+		newFilter("StorageSSD", "Storage", "SSD", OpEQ),
+		newFilter("GoodRating", "Rating", "4", OpGE),
+		newFilter("Main", "", "", OpAND,
 			newFilter("StorageSSD", "", "", 0),
-			newFilter("", "IntField", "123", netmap.LT),
+			newFilter("", "IntField", "123", OpLT),
 			newFilter("GoodRating", "", "", 0)),
 	}
 	nm, err := NewNetmap(nil)
@@ -24,49 +24,49 @@ func TestContext_ProcessFilters(t *testing.T) {
 	require.NoError(t, c.processFilters(p))
 	require.Equal(t, 3, len(c.Filters))
 	for _, f := range fs {
-		require.Equal(t, f, c.Filters[f.GetName()])
+		require.Equal(t, f, c.Filters[f.Name()])
 	}
 
 	require.Equal(t, uint64(4), c.numCache[fs[1]])
-	require.Equal(t, uint64(123), c.numCache[fs[2].GetFilters()[1]])
+	require.Equal(t, uint64(123), c.numCache[fs[2].InnerFilters()[1]])
 }
 
 func TestContext_ProcessFiltersInvalid(t *testing.T) {
 	errTestCases := []struct {
 		name   string
-		filter *netmap.Filter
+		filter *Filter
 		err    error
 	}{
 		{
 			"UnnamedTop",
-			newFilter("", "Storage", "SSD", netmap.EQ),
+			newFilter("", "Storage", "SSD", OpEQ),
 			ErrUnnamedTopFilter,
 		},
 		{
 			"InvalidReference",
-			newFilter("Main", "", "", netmap.AND,
+			newFilter("Main", "", "", OpAND,
 				newFilter("StorageSSD", "", "", 0)),
 			ErrFilterNotFound,
 		},
 		{
 			"NonEmptyKeyed",
-			newFilter("Main", "Storage", "SSD", netmap.EQ,
+			newFilter("Main", "Storage", "SSD", OpEQ,
 				newFilter("StorageSSD", "", "", 0)),
 			ErrNonEmptyFilters,
 		},
 		{
 			"InvalidNumber",
-			newFilter("Main", "Rating", "three", netmap.GE),
+			newFilter("Main", "Rating", "three", OpGE),
 			ErrInvalidNumber,
 		},
 		{
 			"InvalidOp",
-			newFilter("Main", "Rating", "3", netmap.UnspecifiedOperation),
+			newFilter("Main", "Rating", "3", 0),
 			ErrInvalidFilterOp,
 		},
 		{
 			"InvalidName",
-			newFilter("*", "Rating", "3", netmap.GE),
+			newFilter("*", "Rating", "3", OpGE),
 			ErrInvalidFilterName,
 		},
 		{
@@ -78,7 +78,7 @@ func TestContext_ProcessFiltersInvalid(t *testing.T) {
 	for _, tc := range errTestCases {
 		t.Run(tc.name, func(t *testing.T) {
 			c := NewContext(new(Netmap))
-			p := newPlacementPolicy(1, nil, nil, []*netmap.Filter{tc.filter})
+			p := newPlacementPolicy(1, nil, nil, []*Filter{tc.filter})
 			err := c.processFilters(p)
 			require.True(t, errors.Is(err, tc.err), "got: %v", err)
 		})
@@ -93,87 +93,87 @@ func TestFilter_MatchSimple(t *testing.T) {
 	testCases := []struct {
 		name string
 		ok   bool
-		f    *netmap.Filter
+		f    *Filter
 	}{
 		{
 			"GE_true", true,
-			newFilter("Main", "Rating", "4", netmap.GE),
+			newFilter("Main", "Rating", "4", OpGE),
 		},
 		{
 			"GE_false", false,
-			newFilter("Main", "Rating", "5", netmap.GE),
+			newFilter("Main", "Rating", "5", OpGE),
 		},
 		{
 			"GT_true", true,
-			newFilter("Main", "Rating", "3", netmap.GT),
+			newFilter("Main", "Rating", "3", OpGT),
 		},
 		{
 			"GT_false", false,
-			newFilter("Main", "Rating", "4", netmap.GT),
+			newFilter("Main", "Rating", "4", OpGT),
 		},
 		{
 			"LE_true", true,
-			newFilter("Main", "Rating", "4", netmap.LE),
+			newFilter("Main", "Rating", "4", OpLE),
 		},
 		{
 			"LE_false", false,
-			newFilter("Main", "Rating", "3", netmap.LE),
+			newFilter("Main", "Rating", "3", OpLE),
 		},
 		{
 			"LT_true", true,
-			newFilter("Main", "Rating", "5", netmap.LT),
+			newFilter("Main", "Rating", "5", OpLT),
 		},
 		{
 			"LT_false", false,
-			newFilter("Main", "Rating", "4", netmap.LT),
+			newFilter("Main", "Rating", "4", OpLT),
 		},
 		{
 			"EQ_true", true,
-			newFilter("Main", "Country", "Germany", netmap.EQ),
+			newFilter("Main", "Country", "Germany", OpEQ),
 		},
 		{
 			"EQ_false", false,
-			newFilter("Main", "Country", "China", netmap.EQ),
+			newFilter("Main", "Country", "China", OpEQ),
 		},
 		{
 			"NE_true", true,
-			newFilter("Main", "Country", "France", netmap.NE),
+			newFilter("Main", "Country", "France", OpNE),
 		},
 		{
 			"NE_false", false,
-			newFilter("Main", "Country", "Germany", netmap.NE),
+			newFilter("Main", "Country", "Germany", OpNE),
 		},
 	}
 	for _, tc := range testCases {
 		c := NewContext(new(Netmap))
-		p := newPlacementPolicy(1, nil, nil, []*netmap.Filter{tc.f})
+		p := newPlacementPolicy(1, nil, nil, []*Filter{tc.f})
 		require.NoError(t, c.processFilters(p))
 		require.Equal(t, tc.ok, c.match(tc.f, b))
 	}
 
 	t.Run("InvalidOp", func(t *testing.T) {
-		f := newFilter("Main", "Rating", "5", netmap.EQ)
+		f := newFilter("Main", "Rating", "5", OpEQ)
 		c := NewContext(new(Netmap))
-		p := newPlacementPolicy(1, nil, nil, []*netmap.Filter{f})
+		p := newPlacementPolicy(1, nil, nil, []*Filter{f})
 		require.NoError(t, c.processFilters(p))
 
 		// just for the coverage
-		f.SetOp(netmap.UnspecifiedOperation)
+		f.SetOperation(0)
 		require.False(t, c.match(f, b))
 	})
 }
 
 func TestFilter_Match(t *testing.T) {
-	fs := []*netmap.Filter{
-		newFilter("StorageSSD", "Storage", "SSD", netmap.EQ),
-		newFilter("GoodRating", "Rating", "4", netmap.GE),
-		newFilter("Main", "", "", netmap.AND,
+	fs := []*Filter{
+		newFilter("StorageSSD", "Storage", "SSD", OpEQ),
+		newFilter("GoodRating", "Rating", "4", OpGE),
+		newFilter("Main", "", "", OpAND,
 			newFilter("StorageSSD", "", "", 0),
-			newFilter("", "IntField", "123", netmap.LT),
+			newFilter("", "IntField", "123", OpLT),
 			newFilter("GoodRating", "", "", 0),
-			newFilter("", "", "", netmap.OR,
-				newFilter("", "Param", "Value1", netmap.EQ),
-				newFilter("", "Param", "Value2", netmap.EQ),
+			newFilter("", "", "", OpOR,
+				newFilter("", "Param", "Value1", OpEQ),
+				newFilter("", "Param", "Value2", OpEQ),
 			)),
 	}
 	c := NewContext(new(Netmap))
