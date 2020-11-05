@@ -140,3 +140,19 @@ func TestNodeInfo_Attributes(t *testing.T) {
 
 	require.Equal(t, as, i.Attributes())
 }
+
+func TestNodeInfoJSON(t *testing.T) {
+	i := NewNodeInfo()
+	i.SetPublicKey([]byte{1, 2, 3})
+	i.SetAddress("some node address")
+	i.SetState(NodeStateOnline)
+	i.SetAttributes(testNodeAttribute(), testNodeAttribute())
+
+	j, err := NodeInfoToJSON(i)
+	require.NoError(t, err)
+
+	i2, err := NodeInfoFromJSON(j)
+	require.NoError(t, err)
+
+	require.Equal(t, i, i2)
+}
