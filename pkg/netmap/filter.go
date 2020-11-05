@@ -7,6 +7,9 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
 )
 
+// Filter represents v2-compatible netmap filter.
+type Filter netmap.Filter
+
 // MainFilterName is a name of the filter
 // which points to the whole netmap.
 const MainFilterName = "*"
@@ -126,4 +129,95 @@ func (c *Context) matchKeyValue(f *netmap.Filter, b *Node) bool {
 	}
 	// will not happen if context was created from f (maybe panic?)
 	return false
+}
+
+// NewFilter creates and returns new Filter instance.
+func NewFilter() *Filter {
+	return NewFilterFromV2(new(netmap.Filter))
+}
+
+// NewFilterFromV2 converts v2 Filter to Filter.
+func NewFilterFromV2(f *netmap.Filter) *Filter {
+	return (*Filter)(f)
+}
+
+// ToV2 converts Filter to v2 Filter.
+func (f *Filter) ToV2() *netmap.Filter {
+	return (*netmap.Filter)(f)
+}
+
+// Key returns key to filter.
+func (f *Filter) Key() string {
+	return (*netmap.Filter)(f).
+		GetKey()
+}
+
+// SetKey sets key to filter.
+func (f *Filter) SetKey(key string) {
+	(*netmap.Filter)(f).
+		SetKey(key)
+}
+
+// Value returns value to match.
+func (f *Filter) Value() string {
+	return (*netmap.Filter)(f).
+		GetValue()
+}
+
+// SetValue sets value to match.
+func (f *Filter) SetValue(val string) {
+	(*netmap.Filter)(f).
+		SetValue(val)
+}
+
+// Name returns filter name.
+func (f *Filter) Name() string {
+	return (*netmap.Filter)(f).
+		GetName()
+}
+
+// SetName sets filter name.
+func (f *Filter) SetName(name string) {
+	(*netmap.Filter)(f).
+		SetName(name)
+}
+
+// Operation returns filtering operation.
+func (f *Filter) Operation() Operation {
+	return OperationFromV2(
+		(*netmap.Filter)(f).
+			GetOp(),
+	)
+}
+
+// SetOperation sets filtering operation.
+func (f *Filter) SetOperation(op Operation) {
+	(*netmap.Filter)(f).
+		SetOp(op.ToV2())
+}
+
+// InnerFilters returns list of inner filters.
+func (f *Filter) InnerFilters() []*Filter {
+	fs := (*netmap.Filter)(f).
+		GetFilters()
+
+	res := make([]*Filter, 0, len(fs))
+
+	for i := range fs {
+		res = append(res, NewFilterFromV2(fs[i]))
+	}
+
+	return res
+}
+
+// SetInnerFilters sets list of inner filters.
+func (f *Filter) SetInnerFilters(fs ...*Filter) {
+	fsV2 := make([]*netmap.Filter, 0, len(fs))
+
+	for i := range fs {
+		fsV2 = append(fsV2, fs[i].ToV2())
+	}
+
+	(*netmap.Filter)(f).
+		SetFilters(fsV2)
 }
