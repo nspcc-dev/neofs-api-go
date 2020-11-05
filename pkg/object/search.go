@@ -234,3 +234,7 @@ func (f *SearchFilters) AddChildfreeFilter() {
 func (f *SearchFilters) AddNonChildfreeFilter() {
 	f.addChildFreeFilter(false)
 }
+
+func (f *SearchFilters) AddParentIDFilter(m SearchMatchType, id *ID) {
+	f.addReservedFilter(m, fKeyParent, id)
+}

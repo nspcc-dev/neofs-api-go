@@ -1,6 +1,8 @@
 package object_test
 
 import (
+	"crypto/rand"
+	"crypto/sha256"
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
@@ -105,4 +107,30 @@ func TestSearchFilters_AddNonLeafFilter(t *testing.T) {
 	require.Equal(t, object.MatchStringEqual, f.Operation())
 	require.Equal(t, v2object.FilterPropertyLeaf, f.Header())
 	require.Equal(t, v2object.BooleanPropertyValueFalse, f.Value())
+}
+
+func testOID() *object.ID {
+	cs := [sha256.Size]byte{}
+
+	rand.Read(cs[:])
+
+	id := object.NewID()
+	id.SetSHA256(cs)
+
+	return id
+}
+
+func TestSearchFilters_AddParentIDFilter(t *testing.T) {
+	par := testOID()
+
+	fs := object.SearchFilters{}
+	fs.AddParentIDFilter(object.MatchStringEqual, par)
+
+	fsV2 := fs.ToV2()
+
+	require.Len(t, fsV2, 1)
+
+	require.Equal(t, v2object.FilterHeaderParent, fsV2[0].GetKey())
+	require.Equal(t, par.String(), fsV2[0].GetValue())
+	require.Equal(t, v2object.MatchStringEqual, fsV2[0].GetMatchType())
 }
