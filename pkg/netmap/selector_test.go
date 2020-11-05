@@ -239,6 +239,17 @@ func TestPlacementPolicy_ProcessSelectorsInvalid(t *testing.T) {
 	}
 }
 
+func testSelector() *Selector {
+	s := new(Selector)
+	s.SetName("name")
+	s.SetCount(3)
+	s.SetFilter("filter")
+	s.SetAttribute("attribute")
+	s.SetClause(ClauseDistinct)
+
+	return s
+}
+
 func TestSelectorFromV2(t *testing.T) {
 	sV2 := new(netmap.Selector)
 	sV2.SetName("name")

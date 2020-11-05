@@ -7,6 +7,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func testReplica() *Replica {
+	r := new(Replica)
+	r.SetCount(3)
+	r.SetSelector("selector")
+
+	return r
+}
+
 func TestReplicaFromV2(t *testing.T) {
 	rV2 := new(netmap.Replica)
 	rV2.SetCount(3)

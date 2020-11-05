@@ -196,11 +196,7 @@ func (f *Filter) SetOperation(op Operation) {
 		SetOp(op.ToV2())
 }
 
-// InnerFilters returns list of inner filters.
-func (f *Filter) InnerFilters() []*Filter {
-	fs := (*netmap.Filter)(f).
-		GetFilters()
-
+func filtersFromV2(fs []*netmap.Filter) []*Filter {
 	res := make([]*Filter, 0, len(fs))
 
 	for i := range fs {
@@ -210,14 +206,26 @@ func (f *Filter) InnerFilters() []*Filter {
 	return res
 }
 
-// SetInnerFilters sets list of inner filters.
-func (f *Filter) SetInnerFilters(fs ...*Filter) {
+// InnerFilters returns list of inner filters.
+func (f *Filter) InnerFilters() []*Filter {
+	return filtersFromV2(
+		(*netmap.Filter)(f).
+			GetFilters(),
+	)
+}
+
+func filtersToV2(fs []*Filter) []*netmap.Filter {
 	fsV2 := make([]*netmap.Filter, 0, len(fs))
 
 	for i := range fs {
 		fsV2 = append(fsV2, fs[i].ToV2())
 	}
 
+	return fsV2
+}
+
+// SetInnerFilters sets list of inner filters.
+func (f *Filter) SetInnerFilters(fs ...*Filter) {
 	(*netmap.Filter)(f).
-		SetFilters(fsV2)
+		SetFilters(filtersToV2(fs))
 }
