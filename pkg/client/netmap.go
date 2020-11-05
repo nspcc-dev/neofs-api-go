@@ -3,8 +3,9 @@ package client
 import (
 	"context"
 
+	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
 	"github.com/nspcc-dev/neofs-api-go/v2/client"
-	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
+	v2netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
 	"github.com/pkg/errors"
 )
@@ -20,7 +21,7 @@ func (c Client) EndpointInfo(ctx context.Context, opts ...CallOption) (*netmap.N
 			return nil, err
 		}
 
-		return resp.GetBody().GetNodeInfo(), nil
+		return netmap.NewNodeInfoFromV2(resp.GetBody().GetNodeInfo()), nil
 	default:
 		return nil, unsupportedProtocolErr
 	}
@@ -41,16 +42,16 @@ func (c Client) Epoch(ctx context.Context, opts ...CallOption) (uint64, error) {
 	}
 }
 
-func (c Client) endpointInfoV2(ctx context.Context, opts ...CallOption) (*netmap.LocalNodeInfoResponse, error) {
+func (c Client) endpointInfoV2(ctx context.Context, opts ...CallOption) (*v2netmap.LocalNodeInfoResponse, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
 
-	reqBody := new(netmap.LocalNodeInfoRequestBody)
+	reqBody := new(v2netmap.LocalNodeInfoRequestBody)
 
-	req := new(netmap.LocalNodeInfoRequest)
+	req := new(v2netmap.LocalNodeInfoRequest)
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
@@ -82,19 +83,19 @@ func (c Client) endpointInfoV2(ctx context.Context, opts ...CallOption) (*netmap
 	}
 }
 
-func v2NetmapClientFromOptions(opts *clientOptions) (cli *netmap.Client, err error) {
+func v2NetmapClientFromOptions(opts *clientOptions) (cli *v2netmap.Client, err error) {
 	switch {
 	case opts.grpcOpts.v2NetmapClient != nil:
 		// return value from client cache
 		return opts.grpcOpts.v2NetmapClient, nil
 
 	case opts.grpcOpts.conn != nil:
-		cli, err = netmap.NewClient(netmap.WithGlobalOpts(
+		cli, err = v2netmap.NewClient(v2netmap.WithGlobalOpts(
 			client.WithGRPCConn(opts.grpcOpts.conn)),
 		)
 
 	case opts.addr != "":
-		cli, err = netmap.NewClient(netmap.WithGlobalOpts(
+		cli, err = v2netmap.NewClient(v2netmap.WithGlobalOpts(
 			client.WithNetworkAddress(opts.addr)),
 		)
 
