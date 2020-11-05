@@ -23,6 +23,19 @@ type (
 	Nodes []*Node
 )
 
+// NodeState is an enumeration of various states of the NeoFS node.
+type NodeState uint32
+
+const (
+	_ NodeState = iota
+
+	// NodeStateOffline is network unavailable state.
+	NodeStateOffline
+
+	// NodeStateOnline is an active state in the network.
+	NodeStateOnline
+)
+
 // Enumeration of well-known attributes.
 const (
 	CapacityAttr = "Capacity"
@@ -97,4 +110,39 @@ func GetBucketWeight(ns Nodes, a aggregator, wf weightFunc) float64 {
 		a.Add(wf(ns[i]))
 	}
 	return a.Compute()
+}
+
+// NodeStateFromV2 converts v2 NodeState to NodeState.
+func NodeStateFromV2(s netmap.NodeState) NodeState {
+	switch s {
+	default:
+		return 0
+	case netmap.Online:
+		return NodeStateOnline
+	case netmap.Offline:
+		return NodeStateOffline
+	}
+}
+
+// ToV2 converts NodeState to v2 NodeState.
+func (s NodeState) ToV2() netmap.NodeState {
+	switch s {
+	default:
+		return netmap.UnspecifiedState
+	case NodeStateOffline:
+		return netmap.Offline
+	case NodeStateOnline:
+		return netmap.Online
+	}
+}
+
+func (s NodeState) String() string {
+	switch s {
+	default:
+		return "UNSPECIFIED"
+	case NodeStateOffline:
+		return "OFFLINE"
+	case NodeStateOnline:
+		return "ONLINE"
+	}
 }

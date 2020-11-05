@@ -19,3 +19,26 @@ func TestNode_NetworkAddress(t *testing.T) {
 
 	require.Equal(t, addr, n.NetworkAddress())
 }
+
+func TestNodeStateFromV2(t *testing.T) {
+	for _, item := range []struct {
+		s   NodeState
+		sV2 netmap.NodeState
+	}{
+		{
+			s:   0,
+			sV2: netmap.UnspecifiedState,
+		},
+		{
+			s:   NodeStateOnline,
+			sV2: netmap.Online,
+		},
+		{
+			s:   NodeStateOffline,
+			sV2: netmap.Offline,
+		},
+	} {
+		require.Equal(t, item.s, NodeStateFromV2(item.sV2))
+		require.Equal(t, item.sV2, item.s.ToV2())
+	}
+}
