@@ -42,7 +42,7 @@ func TestExample(t *testing.T) {
 
 	policy := new(netmap.PlacementPolicy)
 	policy.SetContainerBackupFactor(2)
-	policy.SetReplicas([]*netmap.Replica{replica})
+	policy.SetReplicas(replica)
 
 	// this container has random nonce and it does not set owner id
 	cnr := container.New(
