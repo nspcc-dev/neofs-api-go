@@ -9,7 +9,7 @@ import (
 type Clause uint32
 
 const (
-	_ Clause = iota
+	ClauseUnspecified Clause = iota
 
 	// ClauseSame is a selector modifier to select only nodes having the same value of bucket attribute.
 	ClauseSame
@@ -22,7 +22,7 @@ const (
 func ClauseFromV2(c netmap.Clause) Clause {
 	switch c {
 	default:
-		return 0
+		return ClauseUnspecified
 	case netmap.Same:
 		return ClauseSame
 	case netmap.Distinct:

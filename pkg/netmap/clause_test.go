@@ -13,7 +13,7 @@ func TestClauseFromV2(t *testing.T) {
 		cV2 netmap.Clause
 	}{
 		{
-			c:   0,
+			c:   ClauseUnspecified,
 			cV2: netmap.UnspecifiedClause,
 		},
 		{
