@@ -238,3 +238,61 @@ func TestPlacementPolicy_ProcessSelectorsInvalid(t *testing.T) {
 		})
 	}
 }
+
+func TestSelectorFromV2(t *testing.T) {
+	sV2 := new(netmap.Selector)
+	sV2.SetName("name")
+	sV2.SetCount(3)
+	sV2.SetClause(netmap.Distinct)
+	sV2.SetAttribute("attribute")
+	sV2.SetFilter("filter")
+
+	s := NewSelectorFromV2(sV2)
+
+	require.Equal(t, sV2, s.ToV2())
+}
+
+func TestSelector_Name(t *testing.T) {
+	s := NewSelector()
+	name := "some name"
+
+	s.SetName(name)
+
+	require.Equal(t, name, s.Name())
+}
+
+func TestSelector_Count(t *testing.T) {
+	s := NewSelector()
+	c := uint32(3)
+
+	s.SetCount(c)
+
+	require.Equal(t, c, s.Count())
+}
+
+func TestSelector_Clause(t *testing.T) {
+	s := NewSelector()
+	c := ClauseSame
+
+	s.SetClause(c)
+
+	require.Equal(t, c, s.Clause())
+}
+
+func TestSelector_Attribute(t *testing.T) {
+	s := NewSelector()
+	a := "some attribute"
+
+	s.SetAttribute(a)
+
+	require.Equal(t, a, s.Attribute())
+}
+
+func TestSelector_Filter(t *testing.T) {
+	s := NewSelector()
+	f := "some filter"
+
+	s.SetFilter(f)
+
+	require.Equal(t, f, s.Filter())
+}
