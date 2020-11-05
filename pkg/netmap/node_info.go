@@ -29,6 +29,9 @@ type NodeState uint32
 // NodeAttribute represents v2 compatible attribute of the NeoFS Storage Node.
 type NodeAttribute netmap.Attribute
 
+// NodeInfo represents v2 compatible descriptor of the NeoFS node.
+type NodeInfo netmap.NodeInfo
+
 const (
 	_ NodeState = iota
 
@@ -199,4 +202,83 @@ func (a *NodeAttribute) ParentKeys() []string {
 func (a *NodeAttribute) SetParentKeys(keys ...string) {
 	(*netmap.Attribute)(a).
 		SetParents(keys)
+}
+
+// NewNodeInfo creates and returns new NodeInfo instance.
+func NewNodeInfo() *NodeInfo {
+	return NewNodeInfoFromV2(new(netmap.NodeInfo))
+}
+
+// NewNodeInfoFromV2 converts v2 NodeInfo to NodeInfo.
+func NewNodeInfoFromV2(i *netmap.NodeInfo) *NodeInfo {
+	return (*NodeInfo)(i)
+}
+
+// ToV2 converts NodeInfo to v2 NodeInfo.
+func (i *NodeInfo) ToV2() *netmap.NodeInfo {
+	return (*netmap.NodeInfo)(i)
+}
+
+// PublicKey returns public key of the node in a binary format.
+func (i *NodeInfo) PublicKey() []byte {
+	return (*netmap.NodeInfo)(i).
+		GetPublicKey()
+}
+
+// SetPublicKey sets public key of the node in a binary format.
+func (i *NodeInfo) SetPublicKey(key []byte) {
+	(*netmap.NodeInfo)(i).
+		SetPublicKey(key)
+}
+
+// Address returns network endpoint address of the node.
+func (i *NodeInfo) Address() string {
+	return (*netmap.NodeInfo)(i).
+		GetAddress()
+}
+
+// SetAddress sets network endpoint address of the node.
+func (i *NodeInfo) SetAddress(addr string) {
+	(*netmap.NodeInfo)(i).
+		SetAddress(addr)
+}
+
+// Attributes returns list of the node attributes.
+func (i *NodeInfo) Attributes() []*NodeAttribute {
+	as := (*netmap.NodeInfo)(i).
+		GetAttributes()
+
+	res := make([]*NodeAttribute, 0, len(as))
+
+	for i := range as {
+		res = append(res, NewNodeAttributeFromV2(as[i]))
+	}
+
+	return res
+}
+
+// SetAttributes sets list of the node attributes.
+func (i *NodeInfo) SetAttributes(as ...*NodeAttribute) {
+	asV2 := make([]*netmap.Attribute, 0, len(as))
+
+	for i := range as {
+		asV2 = append(asV2, as[i].ToV2())
+	}
+
+	(*netmap.NodeInfo)(i).
+		SetAttributes(asV2)
+}
+
+// State returns node state.
+func (i *NodeInfo) State() NodeState {
+	return NodeStateFromV2(
+		(*netmap.NodeInfo)(i).
+			GetState(),
+	)
+}
+
+// SetState sets node state.
+func (i *NodeInfo) SetState(s NodeState) {
+	(*netmap.NodeInfo)(i).
+		SetState(s.ToV2())
 }

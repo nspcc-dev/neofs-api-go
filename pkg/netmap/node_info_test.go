@@ -80,3 +80,63 @@ func TestNodeAttribute_ParentKeys(t *testing.T) {
 
 	require.Equal(t, keys, a.ParentKeys())
 }
+
+func testNodeAttribute() *NodeAttribute {
+	a := new(NodeAttribute)
+	a.SetKey("key")
+	a.SetValue("value")
+	a.SetParentKeys("par1", "par2")
+
+	return a
+}
+
+func TestNodeInfoFromV2(t *testing.T) {
+	iV2 := new(netmap.NodeInfo)
+	iV2.SetPublicKey([]byte{1, 2, 3})
+	iV2.SetAddress("456")
+	iV2.SetState(netmap.Online)
+	iV2.SetAttributes([]*netmap.Attribute{
+		testNodeAttribute().ToV2(),
+		testNodeAttribute().ToV2(),
+	})
+
+	i := NewNodeInfoFromV2(iV2)
+
+	require.Equal(t, iV2, i.ToV2())
+}
+
+func TestNodeInfo_PublicKey(t *testing.T) {
+	i := new(NodeInfo)
+	key := []byte{1, 2, 3}
+
+	i.SetPublicKey(key)
+
+	require.Equal(t, key, i.PublicKey())
+}
+
+func TestNodeInfo_Address(t *testing.T) {
+	i := new(NodeInfo)
+	a := "127.0.0.1:8080"
+
+	i.SetAddress(a)
+
+	require.Equal(t, a, i.Address())
+}
+
+func TestNodeInfo_State(t *testing.T) {
+	i := new(NodeInfo)
+	s := NodeStateOnline
+
+	i.SetState(s)
+
+	require.Equal(t, s, i.State())
+}
+
+func TestNodeInfo_Attributes(t *testing.T) {
+	i := new(NodeInfo)
+	as := []*NodeAttribute{testNodeAttribute(), testNodeAttribute()}
+
+	i.SetAttributes(as...)
+
+	require.Equal(t, as, i.Attributes())
+}
