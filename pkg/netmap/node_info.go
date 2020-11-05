@@ -214,6 +214,21 @@ func NewNodeInfoFromV2(i *netmap.NodeInfo) *NodeInfo {
 	return (*NodeInfo)(i)
 }
 
+// NodeInfoToJSON encodes NodeInfo to JSON format.
+func NodeInfoToJSON(i *NodeInfo) ([]byte, error) {
+	return netmap.NodeInfoToJSON(i.ToV2())
+}
+
+// NodeInfoFromJSON decodes NodeInfo from JSON-encoded data.
+func NodeInfoFromJSON(data []byte) (*NodeInfo, error) {
+	i, err := netmap.NodeInfoFromJSON(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewNodeInfoFromV2(i), nil
+}
+
 // ToV2 converts NodeInfo to v2 NodeInfo.
 func (i *NodeInfo) ToV2() *netmap.NodeInfo {
 	return (*netmap.NodeInfo)(i)
