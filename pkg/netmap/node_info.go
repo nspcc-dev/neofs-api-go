@@ -26,6 +26,9 @@ type (
 // NodeState is an enumeration of various states of the NeoFS node.
 type NodeState uint32
 
+// NodeAttribute represents v2 compatible attribute of the NeoFS Storage Node.
+type NodeAttribute netmap.Attribute
+
 const (
 	_ NodeState = iota
 
@@ -145,4 +148,55 @@ func (s NodeState) String() string {
 	case NodeStateOnline:
 		return "ONLINE"
 	}
+}
+
+// NewNodeAttribute creates and returns new NodeAttribute instance.
+func NewNodeAttribute() *NodeAttribute {
+	return NewNodeAttributeFromV2(new(netmap.Attribute))
+}
+
+// NodeAttributeFromV2 converts v2 node Attribute to NodeAttribute.
+func NewNodeAttributeFromV2(a *netmap.Attribute) *NodeAttribute {
+	return (*NodeAttribute)(a)
+}
+
+// ToV2 converts NodeAttribute to v2 node Attribute.
+func (a *NodeAttribute) ToV2() *netmap.Attribute {
+	return (*netmap.Attribute)(a)
+}
+
+// Key returns key to the node attribute.
+func (a *NodeAttribute) Key() string {
+	return (*netmap.Attribute)(a).
+		GetKey()
+}
+
+// SetKey sets key to the node attribute.
+func (a *NodeAttribute) SetKey(key string) {
+	(*netmap.Attribute)(a).
+		SetKey(key)
+}
+
+// Value returns value of the node attribute.
+func (a *NodeAttribute) Value() string {
+	return (*netmap.Attribute)(a).
+		GetValue()
+}
+
+// SetValue sets value of the node attribute.
+func (a *NodeAttribute) SetValue(val string) {
+	(*netmap.Attribute)(a).
+		SetValue(val)
+}
+
+// ParentKeys returns list of parent keys.
+func (a *NodeAttribute) ParentKeys() []string {
+	return (*netmap.Attribute)(a).
+		GetParents()
+}
+
+// SetParentKeys sets list of parent keys.
+func (a *NodeAttribute) SetParentKeys(keys ...string) {
+	(*netmap.Attribute)(a).
+		SetParents(keys)
 }
