@@ -7,7 +7,6 @@ import (
 // fixme: make types instead of aliases to v2 structures
 type PlacementPolicy = netmap.PlacementPolicy
 type Selector = netmap.Selector
-type Filter = netmap.Filter
 type Replica = netmap.Replica
 
 func PlacementPolicyToJSON(p *PlacementPolicy) ([]byte, error) {

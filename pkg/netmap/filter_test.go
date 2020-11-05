@@ -201,3 +201,71 @@ func TestFilter_Match(t *testing.T) {
 		require.False(t, c.applyFilter("Main", n))
 	})
 }
+
+func testFilter() *Filter {
+	f := NewFilter()
+	f.SetOperation(OpGE)
+	f.SetName("name")
+	f.SetKey("key")
+	f.SetValue("value")
+
+	return f
+}
+
+func TestFilterFromV2(t *testing.T) {
+	fV2 := new(netmap.Filter)
+	fV2.SetOp(netmap.GE)
+	fV2.SetName("name")
+	fV2.SetKey("key")
+	fV2.SetValue("value")
+
+	f := NewFilterFromV2(fV2)
+
+	require.Equal(t, fV2, f.ToV2())
+}
+
+func TestFilter_Key(t *testing.T) {
+	f := NewFilter()
+	key := "some key"
+
+	f.SetKey(key)
+
+	require.Equal(t, key, f.Key())
+}
+
+func TestFilter_Value(t *testing.T) {
+	f := NewFilter()
+	val := "some value"
+
+	f.SetValue(val)
+
+	require.Equal(t, val, f.Value())
+}
+
+func TestFilter_Name(t *testing.T) {
+	f := NewFilter()
+	name := "some name"
+
+	f.SetName(name)
+
+	require.Equal(t, name, f.Name())
+}
+
+func TestFilter_Operation(t *testing.T) {
+	f := NewFilter()
+	op := OpGE
+
+	f.SetOperation(op)
+
+	require.Equal(t, op, f.Operation())
+}
+
+func TestFilter_InnerFilters(t *testing.T) {
+	f := NewFilter()
+
+	f1, f2 := testFilter(), testFilter()
+
+	f.SetInnerFilters(f1, f2)
+
+	require.Equal(t, []*Filter{f1, f2}, f.InnerFilters())
+}
