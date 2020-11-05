@@ -25,7 +25,7 @@ func New(opts ...NewOption) *Container {
 	}
 
 	if cnrOptions.policy != nil {
-		cnr.SetPlacementPolicy(cnrOptions.policy)
+		cnr.SetPlacementPolicy(cnrOptions.policy.ToV2())
 	}
 
 	attributes := make([]*container.Attribute, len(cnrOptions.attributes))
