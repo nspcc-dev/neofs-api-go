@@ -9,7 +9,6 @@ type PlacementPolicy = netmap.PlacementPolicy
 type Selector = netmap.Selector
 type Filter = netmap.Filter
 type Replica = netmap.Replica
-type Clause = netmap.Clause
 
 func PlacementPolicyToJSON(p *PlacementPolicy) ([]byte, error) {
 	return netmap.PlacementPolicyToJSON(p)
