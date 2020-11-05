@@ -16,7 +16,7 @@ type (
 		Price    uint64
 		AttrMap  map[string]string
 
-		InfoV2 *netmap.NodeInfo
+		*NodeInfo
 	}
 
 	// Nodes represents slice of graph leafs.
@@ -57,19 +57,8 @@ func (n Node) Hash() uint64 {
 	return n.ID
 }
 
-// NetworkAddress returns network address
-// of the node in a string format.
-func (n Node) NetworkAddress() string {
-	return n.InfoV2.GetAddress()
-}
-
-// PublicKey returns public key of the node in bytes.
-func (n Node) PublicKey() []byte {
-	return n.InfoV2.GetPublicKey()
-}
-
-// NodesFromV2 converts slice of v2 netmap.NodeInfo to a generic node slice.
-func NodesFromV2(infos []netmap.NodeInfo) Nodes {
+// NodesFromInfo converts slice of NodeInfo to a generic node slice.
+func NodesFromInfo(infos []NodeInfo) Nodes {
 	nodes := make(Nodes, len(infos))
 	for i := range infos {
 		nodes[i] = newNodeV2(i, &infos[i])
@@ -77,21 +66,21 @@ func NodesFromV2(infos []netmap.NodeInfo) Nodes {
 	return nodes
 }
 
-func newNodeV2(index int, ni *netmap.NodeInfo) *Node {
+func newNodeV2(index int, ni *NodeInfo) *Node {
 	n := &Node{
-		ID:      hrw.Hash(ni.GetPublicKey()),
-		Index:   index,
-		AttrMap: make(map[string]string, len(ni.GetAttributes())),
-		InfoV2:  ni,
+		ID:       hrw.Hash(ni.PublicKey()),
+		Index:    index,
+		AttrMap:  make(map[string]string, len(ni.Attributes())),
+		NodeInfo: ni,
 	}
-	for _, attr := range ni.GetAttributes() {
-		switch attr.GetKey() {
+	for _, attr := range ni.Attributes() {
+		switch attr.Key() {
 		case CapacityAttr:
-			n.Capacity, _ = strconv.ParseUint(attr.GetValue(), 10, 64)
+			n.Capacity, _ = strconv.ParseUint(attr.Value(), 10, 64)
 		case PriceAttr:
-			n.Price, _ = strconv.ParseUint(attr.GetValue(), 10, 64)
+			n.Price, _ = strconv.ParseUint(attr.Value(), 10, 64)
 		}
-		n.AttrMap[attr.GetKey()] = attr.GetValue()
+		n.AttrMap[attr.Key()] = attr.Value()
 	}
 	return n
 }

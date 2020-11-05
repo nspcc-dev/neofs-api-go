@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/nspcc-dev/hrw"
-	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
 )
 
 // Netmap represents netmap which contains preprocessed nodes.
@@ -43,7 +42,7 @@ func (m *Netmap) GetPlacementVectors(cnt ContainerNodes, pivot []byte) ([]Nodes,
 // GetContainerNodes returns nodes corresponding to each replica.
 // Order of returned nodes corresponds to order of replicas in p.
 // pivot is a seed for HRW sorting.
-func (m *Netmap) GetContainerNodes(p *netmap.PlacementPolicy, pivot []byte) (ContainerNodes, error) {
+func (m *Netmap) GetContainerNodes(p *PlacementPolicy, pivot []byte) (ContainerNodes, error) {
 	c := NewContext(m)
 	c.setPivot(pivot)
 	if err := c.processFilters(p); err != nil {
@@ -52,19 +51,19 @@ func (m *Netmap) GetContainerNodes(p *netmap.PlacementPolicy, pivot []byte) (Con
 	if err := c.processSelectors(p); err != nil {
 		return nil, err
 	}
-	result := make([]Nodes, len(p.GetReplicas()))
-	for i, r := range p.GetReplicas() {
+	result := make([]Nodes, len(p.Replicas()))
+	for i, r := range p.Replicas() {
 		if r == nil {
 			return nil, fmt.Errorf("%w: REPLICA", ErrMissingField)
 		}
-		if r.GetSelector() == "" {
-			for _, s := range p.GetSelectors() {
-				result[i] = append(result[i], flattenNodes(c.Selections[s.GetName()])...)
+		if r.Selector() == "" {
+			for _, s := range p.Selectors() {
+				result[i] = append(result[i], flattenNodes(c.Selections[s.Name()])...)
 			}
 		}
-		nodes, ok := c.Selections[r.GetSelector()]
+		nodes, ok := c.Selections[r.Selector()]
 		if !ok {
-			return nil, fmt.Errorf("%w: REPLICA '%s'", ErrSelectorNotFound, r.GetSelector())
+			return nil, fmt.Errorf("%w: REPLICA '%s'", ErrSelectorNotFound, r.Selector())
 		}
 		result[i] = append(result[i], flattenNodes(nodes)...)
 

@@ -12,48 +12,48 @@ import (
 type Selector netmap.Selector
 
 // processSelectors processes selectors and returns error is any of them is invalid.
-func (c *Context) processSelectors(p *netmap.PlacementPolicy) error {
-	for _, s := range p.GetSelectors() {
+func (c *Context) processSelectors(p *PlacementPolicy) error {
+	for _, s := range p.Selectors() {
 		if s == nil {
 			return fmt.Errorf("%w: SELECT", ErrMissingField)
-		} else if s.GetFilter() != MainFilterName {
-			_, ok := c.Filters[s.GetFilter()]
+		} else if s.Filter() != MainFilterName {
+			_, ok := c.Filters[s.Filter()]
 			if !ok {
-				return fmt.Errorf("%w: SELECT FROM '%s'", ErrFilterNotFound, s.GetFilter())
+				return fmt.Errorf("%w: SELECT FROM '%s'", ErrFilterNotFound, s.Filter())
 			}
 		}
-		c.Selectors[s.GetName()] = s
+		c.Selectors[s.Name()] = s
 		result, err := c.getSelection(p, s)
 		if err != nil {
 			return err
 		}
-		c.Selections[s.GetName()] = result
+		c.Selections[s.Name()] = result
 	}
 	return nil
 }
 
 // GetNodesCount returns amount of buckets and nodes in every bucket
 // for a given placement policy.
-func GetNodesCount(p *netmap.PlacementPolicy, s *netmap.Selector) (int, int) {
-	switch s.GetClause() {
-	case netmap.Same:
-		return 1, int(p.GetContainerBackupFactor() * s.GetCount())
+func GetNodesCount(p *PlacementPolicy, s *Selector) (int, int) {
+	switch s.Clause() {
+	case ClauseSame:
+		return 1, int(p.ContainerBackupFactor() * s.Count())
 	default:
-		return int(s.GetCount()), int(p.GetContainerBackupFactor())
+		return int(s.Count()), int(p.ContainerBackupFactor())
 	}
 }
 
 // getSelection returns nodes grouped by s.attribute.
-func (c *Context) getSelection(p *netmap.PlacementPolicy, s *netmap.Selector) ([]Nodes, error) {
+func (c *Context) getSelection(p *PlacementPolicy, s *Selector) ([]Nodes, error) {
 	bucketCount, nodesInBucket := GetNodesCount(p, s)
 	buckets := c.getSelectionBase(s)
 	if len(buckets) < bucketCount {
-		return nil, fmt.Errorf("%w: '%s'", ErrNotEnoughNodes, s.GetName())
+		return nil, fmt.Errorf("%w: '%s'", ErrNotEnoughNodes, s.Name())
 	}
 
 	if len(c.pivot) == 0 {
 		// Deterministic order in case of zero seed.
-		if s.GetAttribute() == "" {
+		if s.Attribute() == "" {
 			sort.Slice(buckets, func(i, j int) bool {
 				return buckets[i].nodes[0].ID < buckets[j].nodes[0].ID
 			})
@@ -72,7 +72,7 @@ func (c *Context) getSelection(p *netmap.PlacementPolicy, s *netmap.Selector) ([
 		}
 	}
 	if len(nodes) < bucketCount {
-		return nil, fmt.Errorf("%w: '%s'", ErrNotEnoughNodes, s.GetName())
+		return nil, fmt.Errorf("%w: '%s'", ErrNotEnoughNodes, s.Name())
 	}
 	if len(c.pivot) != 0 {
 		weights := make([]float64, len(nodes))
@@ -91,12 +91,12 @@ type nodeAttrPair struct {
 
 // getSelectionBase returns nodes grouped by selector attribute.
 // It it guaranteed that each pair will contain at least one node.
-func (c *Context) getSelectionBase(s *netmap.Selector) []nodeAttrPair {
-	f := c.Filters[s.GetFilter()]
-	isMain := s.GetFilter() == MainFilterName
+func (c *Context) getSelectionBase(s *Selector) []nodeAttrPair {
+	f := c.Filters[s.Filter()]
+	isMain := s.Filter() == MainFilterName
 	result := []nodeAttrPair{}
 	nodeMap := map[string]Nodes{}
-	attr := s.GetAttribute()
+	attr := s.Attribute()
 	for i := range c.Netmap.Nodes {
 		if isMain || c.match(f, c.Netmap.Nodes[i]) {
 			if attr == "" {

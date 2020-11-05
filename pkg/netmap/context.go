@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/nspcc-dev/hrw"
-	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
 )
 
 // Context contains references to named filters and cached numeric values.
@@ -12,14 +11,14 @@ type Context struct {
 	// Netmap is a netmap structure to operate on.
 	Netmap *Netmap
 	// Filters stores processed filters.
-	Filters map[string]*netmap.Filter
+	Filters map[string]*Filter
 	// Selectors stores processed selectors.
-	Selectors map[string]*netmap.Selector
+	Selectors map[string]*Selector
 	// Selections stores result of selector processing.
 	Selections map[string][]Nodes
 
 	// numCache stores parsed numeric values.
-	numCache map[*netmap.Filter]uint64
+	numCache map[*Filter]uint64
 	// pivot is a seed for HRW.
 	pivot []byte
 	// pivotHash is a saved HRW hash of pivot
@@ -50,11 +49,11 @@ var (
 func NewContext(nm *Netmap) *Context {
 	return &Context{
 		Netmap:     nm,
-		Filters:    make(map[string]*netmap.Filter),
-		Selectors:  make(map[string]*netmap.Selector),
+		Filters:    make(map[string]*Filter),
+		Selectors:  make(map[string]*Selector),
 		Selections: make(map[string][]Nodes),
 
-		numCache:   make(map[*netmap.Filter]uint64),
+		numCache:   make(map[*Filter]uint64),
 		aggregator: newMeanIQRAgg,
 		weightFunc: GetDefaultWeightFunc(nm.Nodes),
 	}
