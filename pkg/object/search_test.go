@@ -62,23 +62,9 @@ func TestSearchFilters_AddRootFilter(t *testing.T) {
 
 	f := (*fs)[0]
 
-	require.Equal(t, object.MatchStringEqual, f.Operation())
+	require.Equal(t, object.MatchUnknown, f.Operation())
 	require.Equal(t, v2object.FilterPropertyRoot, f.Header())
-	require.Equal(t, v2object.BooleanPropertyValueTrue, f.Value())
-}
-
-func TestSearchFilters_AddNonRootFilter(t *testing.T) {
-	fs := new(object.SearchFilters)
-
-	fs.AddNonRootFilter()
-
-	require.Len(t, *fs, 1)
-
-	f := (*fs)[0]
-
-	require.Equal(t, object.MatchStringEqual, f.Operation())
-	require.Equal(t, v2object.FilterPropertyRoot, f.Header())
-	require.Equal(t, v2object.BooleanPropertyValueFalse, f.Value())
+	require.Equal(t, "", f.Value())
 }
 
 func TestSearchFilters_AddPhyFilter(t *testing.T) {
@@ -90,23 +76,9 @@ func TestSearchFilters_AddPhyFilter(t *testing.T) {
 
 	f := (*fs)[0]
 
-	require.Equal(t, object.MatchStringEqual, f.Operation())
+	require.Equal(t, object.MatchUnknown, f.Operation())
 	require.Equal(t, v2object.FilterPropertyPhy, f.Header())
-	require.Equal(t, v2object.BooleanPropertyValueTrue, f.Value())
-}
-
-func TestSearchFilters_AddNonPhyFilter(t *testing.T) {
-	fs := new(object.SearchFilters)
-
-	fs.AddNonPhyFilter()
-
-	require.Len(t, *fs, 1)
-
-	f := (*fs)[0]
-
-	require.Equal(t, object.MatchStringEqual, f.Operation())
-	require.Equal(t, v2object.FilterPropertyPhy, f.Header())
-	require.Equal(t, v2object.BooleanPropertyValueFalse, f.Value())
+	require.Equal(t, "", f.Value())
 }
 
 func testOID() *object.ID {
