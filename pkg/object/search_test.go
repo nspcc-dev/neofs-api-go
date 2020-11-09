@@ -81,31 +81,31 @@ func TestSearchFilters_AddNonRootFilter(t *testing.T) {
 	require.Equal(t, v2object.BooleanPropertyValueFalse, f.Value())
 }
 
-func TestSearchFilters_AddLeafFilter(t *testing.T) {
+func TestSearchFilters_AddPhyFilter(t *testing.T) {
 	fs := new(object.SearchFilters)
 
-	fs.AddLeafFilter()
+	fs.AddPhyFilter()
 
 	require.Len(t, *fs, 1)
 
 	f := (*fs)[0]
 
 	require.Equal(t, object.MatchStringEqual, f.Operation())
-	require.Equal(t, v2object.FilterPropertyLeaf, f.Header())
+	require.Equal(t, v2object.FilterPropertyPhy, f.Header())
 	require.Equal(t, v2object.BooleanPropertyValueTrue, f.Value())
 }
 
-func TestSearchFilters_AddNonLeafFilter(t *testing.T) {
+func TestSearchFilters_AddNonPhyFilter(t *testing.T) {
 	fs := new(object.SearchFilters)
 
-	fs.AddNonLeafFilter()
+	fs.AddNonPhyFilter()
 
 	require.Len(t, *fs, 1)
 
 	f := (*fs)[0]
 
 	require.Equal(t, object.MatchStringEqual, f.Operation())
-	require.Equal(t, v2object.FilterPropertyLeaf, f.Header())
+	require.Equal(t, v2object.FilterPropertyPhy, f.Header())
 	require.Equal(t, v2object.BooleanPropertyValueFalse, f.Value())
 }
 

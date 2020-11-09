@@ -33,11 +33,11 @@ const (
 )
 
 const (
-	// FilterPropertyRoot is a filter key to check if an object is a top object in a split hierarchy.
+	// FilterPropertyRoot is a filter key to check if regular object is on top of split hierarchy.
 	FilterPropertyRoot = ReservedFilterPrefix + "ROOT"
 
-	// FilterPropertyLeaf is a filter key to check if an object is a leaf in a split hierarchy.
-	FilterPropertyLeaf = ReservedFilterPrefix + "LEAF"
+	// FilterPropertyPhy is a filter key to check if an object physically stored on a node.
+	FilterPropertyPhy = ReservedFilterPrefix + "PHY"
 
 	// FilterPropertyChildfree is a filter key to check if an object has empty children list in `Split` header.
 	FilterPropertyChildfree = ReservedFilterPrefix + "CHILDFREE"
