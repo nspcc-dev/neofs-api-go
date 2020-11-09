@@ -173,6 +173,13 @@ func (f *SearchFilters) addReservedFilter(op SearchMatchType, keyTyp filterKeyTy
 	f.addFilter(op, keyTyp, "", val)
 }
 
+// addFlagFilters adds filters that works like flags: they don't need to have
+// specific match type or value. They processed by NeoFS nodes by the fact
+// of presence in search query. E.g.: PHY, ROOT.
+func (f *SearchFilters) addFlagFilter(keyTyp filterKeyType) {
+	f.addFilter(MatchUnknown, keyTyp, "", staticStringer(""))
+}
+
 func (f *SearchFilters) AddObjectVersionFilter(op SearchMatchType, v *pkg.Version) {
 	f.addReservedFilter(op, fKeyVersion, v)
 }
@@ -199,28 +206,20 @@ func (f SearchFilters) ToV2() []*v2object.SearchFilter {
 	return result
 }
 
-func (f *SearchFilters) addRootFilter(val bool) {
-	f.addReservedFilter(MatchStringEqual, fKeyPropRoot, boolStringer(val))
+func (f *SearchFilters) addRootFilter() {
+	f.addFlagFilter(fKeyPropRoot)
 }
 
 func (f *SearchFilters) AddRootFilter() {
-	f.addRootFilter(true)
+	f.addRootFilter()
 }
 
-func (f *SearchFilters) AddNonRootFilter() {
-	f.addRootFilter(false)
-}
-
-func (f *SearchFilters) addPhyFilter(val bool) {
-	f.addReservedFilter(MatchStringEqual, fKeyPropPhy, boolStringer(val))
+func (f *SearchFilters) addPhyFilter() {
+	f.addFlagFilter(fKeyPropPhy)
 }
 
 func (f *SearchFilters) AddPhyFilter() {
-	f.addPhyFilter(true)
-}
-
-func (f *SearchFilters) AddNonPhyFilter() {
-	f.addPhyFilter(false)
+	f.addPhyFilter()
 }
 
 func (f *SearchFilters) addChildFreeFilter(val bool) {
