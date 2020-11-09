@@ -70,7 +70,7 @@ const (
 	fKeyHomomorphicHash
 	fKeyParent
 	fKeyPropRoot
-	fKeyPropLeaf
+	fKeyPropPhy
 	fKeyPropChildfree
 )
 
@@ -98,8 +98,8 @@ func (k filterKey) String() string {
 		return v2object.FilterHeaderParent
 	case fKeyPropRoot:
 		return v2object.FilterPropertyRoot
-	case fKeyPropLeaf:
-		return v2object.FilterPropertyLeaf
+	case fKeyPropPhy:
+		return v2object.FilterPropertyPhy
 	case fKeyPropChildfree:
 		return v2object.FilterPropertyChildfree
 	}
@@ -211,16 +211,16 @@ func (f *SearchFilters) AddNonRootFilter() {
 	f.addRootFilter(false)
 }
 
-func (f *SearchFilters) addLeafFilter(val bool) {
-	f.addReservedFilter(MatchStringEqual, fKeyPropLeaf, boolStringer(val))
+func (f *SearchFilters) addPhyFilter(val bool) {
+	f.addReservedFilter(MatchStringEqual, fKeyPropPhy, boolStringer(val))
 }
 
-func (f *SearchFilters) AddLeafFilter() {
-	f.addLeafFilter(true)
+func (f *SearchFilters) AddPhyFilter() {
+	f.addPhyFilter(true)
 }
 
-func (f *SearchFilters) AddNonLeafFilter() {
-	f.addLeafFilter(false)
+func (f *SearchFilters) AddNonPhyFilter() {
+	f.addPhyFilter(false)
 }
 
 func (f *SearchFilters) addChildFreeFilter(val bool) {
