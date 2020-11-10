@@ -7,6 +7,9 @@ const (
 	// FilterHeaderVersion is a filter key to "version" field of the object header.
 	FilterHeaderVersion = ReservedFilterPrefix + "version"
 
+	// FilterHeaderObjectID is a filter key to "object_id" field of the object.
+	FilterHeaderObjectID = ReservedFilterPrefix + "objectID"
+
 	// FilterHeaderContainerID is a filter key to "container_id" field of the object header.
 	FilterHeaderContainerID = ReservedFilterPrefix + "containerID"
 

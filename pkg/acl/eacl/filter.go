@@ -29,6 +29,7 @@ type filterKeyType int
 const (
 	_ filterKeyType = iota
 	fKeyObjVersion
+	fKeyObjID
 	fKeyObjContainerID
 	fKeyObjOwnerID
 	fKeyObjCreationEpoch
@@ -74,6 +75,8 @@ func (k filterKey) String() string {
 		return k.str
 	case fKeyObjVersion:
 		return v2acl.FilterObjectVersion
+	case fKeyObjID:
+		return v2acl.FilterObjectID
 	case fKeyObjContainerID:
 		return v2acl.FilterObjectContainerID
 	case fKeyObjOwnerID:

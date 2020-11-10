@@ -61,6 +61,7 @@ type SearchFilters []SearchFilter
 const (
 	_ filterKeyType = iota
 	fKeyVersion
+	fKeyObjectID
 	fKeyContainerID
 	fKeyOwnerID
 	fKeyCreationEpoch
@@ -80,6 +81,8 @@ func (k filterKey) String() string {
 		return k.str
 	case fKeyVersion:
 		return v2object.FilterHeaderVersion
+	case fKeyObjectID:
+		return v2object.FilterHeaderObjectID
 	case fKeyContainerID:
 		return v2object.FilterHeaderContainerID
 	case fKeyOwnerID:
