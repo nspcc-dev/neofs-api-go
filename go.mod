@@ -3,7 +3,6 @@ module github.com/nspcc-dev/neofs-api-go
 go 1.14
 
 require (
-	github.com/alecthomas/participle v0.6.0
 	github.com/golang/protobuf v1.4.3
 	github.com/google/uuid v1.1.1
 	github.com/mr-tron/base58 v1.1.2
