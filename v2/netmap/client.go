@@ -47,7 +47,7 @@ type localNodeInfoClient struct {
 func (c *Client) LocalNodeInfo(ctx context.Context, req *LocalNodeInfoRequest) (*LocalNodeInfoResponse, error) {
 	resp, err := c.cLocalNodeInfo.caller(ctx, c.cLocalNodeInfo.requestConverter(req))
 	if err != nil {
-		return nil, errors.Wrap(err, "could not send container put request")
+		return nil, errors.Wrap(err, "could not send local node info request")
 	}
 
 	return c.cLocalNodeInfo.responseConverter(resp), nil
@@ -93,7 +93,7 @@ func NewClient(opts ...Option) (*Client, error) {
 		err = client.ErrProtoUnsupported
 	}
 
-	return nil, errors.Wrapf(err, "could not create %s Session client", cfg.proto)
+	return nil, errors.Wrapf(err, "could not create %s Netmap client", cfg.proto)
 }
 
 func newGRPCClient(cfg *cfg) (*netmap.Client, error) {
