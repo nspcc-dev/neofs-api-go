@@ -100,10 +100,10 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 	}
 
 	// set transport version
-	cnr.SetVersion(c.remoteNode.Version.ToV2())
+	cnr.SetVersion(c.remoteNode.Version)
 
 	// if container owner is not set, then use client key as owner
-	if cnr.GetOwnerID() == nil {
+	if cnr.OwnerID() == nil {
 		w, err := owner.NEO3WalletFromPublicKey(&c.key.PublicKey)
 		if err != nil {
 			return nil, err
@@ -112,7 +112,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 		ownerID := new(owner.ID)
 		ownerID.SetNeo3Wallet(w)
 
-		cnr.SetOwnerID(ownerID.ToV2())
+		cnr.SetOwnerID(ownerID)
 	}
 
 	reqBody := new(v2container.PutRequestBody)
