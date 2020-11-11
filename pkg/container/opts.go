@@ -20,7 +20,7 @@ type (
 	containerOptions struct {
 		acl        uint32
 		policy     *netmap.PlacementPolicy
-		attributes []attribute
+		attributes Attributes
 		owner      *owner.ID
 		nonce      uuid.UUID
 	}
@@ -100,10 +100,10 @@ func WithPolicy(policy *netmap.PlacementPolicy) NewOption {
 
 func WithAttribute(key, value string) NewOption {
 	return newFuncContainerOption(func(option *containerOptions) {
-		attr := attribute{
-			key:   key,
-			value: value,
-		}
+		attr := NewAttribute()
+		attr.SetKey(key)
+		attr.SetValue(value)
+
 		option.attributes = append(option.attributes, attr)
 	})
 }
