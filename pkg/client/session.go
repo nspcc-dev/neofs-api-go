@@ -98,7 +98,7 @@ func v2SessionClientFromOptions(opts *clientOptions) (cli *v2session.Client, err
 		)
 
 	default:
-		return nil, errors.New("lack of sdk client options to create accounting client")
+		return nil, errors.New("lack of sdk client options to create session client")
 	}
 
 	// check if client correct and save in cache
