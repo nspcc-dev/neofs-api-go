@@ -431,7 +431,7 @@ func v2ContainerClientFromOptions(opts *clientOptions) (cli *v2container.Client,
 		)
 
 	default:
-		return nil, errors.New("lack of sdk client options to create accounting client")
+		return nil, errors.New("lack of sdk client options to create container client")
 	}
 
 	// check if client correct and save in cache

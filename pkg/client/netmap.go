@@ -100,7 +100,7 @@ func v2NetmapClientFromOptions(opts *clientOptions) (cli *v2netmap.Client, err e
 		)
 
 	default:
-		return nil, errors.New("lack of sdk client options to create accounting client")
+		return nil, errors.New("lack of sdk client options to create netmap client")
 	}
 
 	// check if client correct and save in cache
