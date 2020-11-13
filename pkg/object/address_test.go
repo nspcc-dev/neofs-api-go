@@ -60,3 +60,29 @@ func TestAddress_Parse(t *testing.T) {
 		require.EqualError(t, NewAddress().Parse(s), ErrBadID.Error())
 	})
 }
+
+func TestAddressEncoding(t *testing.T) {
+	a := NewAddress()
+	a.SetObjectID(randID(t))
+	a.SetContainerID(randCID(t))
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := a.Marshal()
+		require.NoError(t, err)
+
+		a2 := NewAddress()
+		require.NoError(t, a2.Unmarshal(data))
+
+		require.Equal(t, a, a2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := a.MarshalJSON()
+		require.NoError(t, err)
+
+		a2 := NewAddress()
+		require.NoError(t, a2.UnmarshalJSON(data))
+
+		require.Equal(t, a, a2)
+	})
+}

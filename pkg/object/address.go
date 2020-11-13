@@ -6,7 +6,6 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/pkg/errors"
 )
 
 // Address represents v2-compatible object address.
@@ -36,16 +35,6 @@ func NewAddress() *Address {
 // ToV2 converts Address to v2 Address message.
 func (a *Address) ToV2() *refs.Address {
 	return (*refs.Address)(a)
-}
-
-// AddressFromBytes restores Address from a binary representation.
-func AddressFromBytes(data []byte) (*Address, error) {
-	addrV2 := new(refs.Address)
-	if err := addrV2.StableUnmarshal(data); err != nil {
-		return nil, errors.Wrap(err, "could not unmarshal object address")
-	}
-
-	return NewAddressFromV2(addrV2), nil
 }
 
 // GetContainerID returns container identifier.
@@ -101,4 +90,36 @@ func (a *Address) String() string {
 		a.GetContainerID().String(),
 		a.GetObjectID().String(),
 	}, addressSeparator)
+}
+
+// Marshal marshals Address into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (a *Address) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*refs.Address)(a).
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Address.
+func (a *Address) Unmarshal(data []byte) error {
+	return (*refs.Address)(a).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes Address to protobuf JSON format.
+func (a *Address) MarshalJSON() ([]byte, error) {
+	return (*refs.Address)(a).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Address from protobuf JSON format.
+func (a *Address) UnmarshalJSON(data []byte) error {
+	return (*refs.Address)(a).
+		UnmarshalJSON(data)
 }
