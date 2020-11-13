@@ -42,3 +42,15 @@ func TestSplitHeaderJSON(t *testing.T) {
 
 	require.Equal(t, h, h2)
 }
+
+func TestHeaderJSON(t *testing.T) {
+	h := generateHeader(10)
+
+	data, err := h.MarshalJSON()
+	require.NoError(t, err)
+
+	h2 := new(object.Header)
+	require.NoError(t, h2.UnmarshalJSON(data))
+
+	require.Equal(t, h, h2)
+}

@@ -64,3 +64,23 @@ func (h *SplitHeader) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (h *Header) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		HeaderToGRPCMessage(h),
+	)
+}
+
+func (h *Header) UnmarshalJSON(data []byte) error {
+	msg := new(object.Header)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*h = *HeaderFromGRPCMessage(msg)
+
+	return nil
+}
