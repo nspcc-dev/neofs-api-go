@@ -10,22 +10,6 @@ import (
 	goproto "google.golang.org/protobuf/proto"
 )
 
-func TestDecimal_StableMarshal(t *testing.T) {
-	decimalFrom := generateDecimal(888)
-	transport := new(grpc.Decimal)
-
-	t.Run("non empty", func(t *testing.T) {
-		wire, err := decimalFrom.StableMarshal(nil)
-		require.NoError(t, err)
-
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
-
-		decimalTo := accounting.DecimalFromGRPCMessage(transport)
-		require.Equal(t, decimalFrom, decimalTo)
-	})
-}
-
 func TestBalanceRequestBody_StableMarshal(t *testing.T) {
 	requestBodyFrom := generateBalanceRequestBody("Owner ID")
 	transport := new(grpc.BalanceRequest_Body)
@@ -81,4 +65,17 @@ func generateBalanceResponseBody(val int64) *accounting.BalanceResponseBody {
 	response.SetBalance(generateDecimal(val))
 
 	return response
+}
+
+func TestDecimalMarshal(t *testing.T) {
+	d := generateDecimal(3)
+
+	data, err := d.StableMarshal(nil)
+	require.NoError(t, err)
+
+	d2 := new(accounting.Decimal)
+
+	require.NoError(t, d2.Unmarshal(data))
+
+	require.Equal(t, d, d2)
 }
