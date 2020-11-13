@@ -475,6 +475,17 @@ func (h *HeaderWithSignature) StableSize() (size int) {
 	return size
 }
 
+func (h *HeaderWithSignature) Unmarshal(data []byte) error {
+	m := new(object.HeaderWithSignature)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*h = *HeaderWithSignatureFromGRPCMessage(m)
+
+	return nil
+}
+
 func (o *Object) StableMarshal(buf []byte) ([]byte, error) {
 	if o == nil {
 		return []byte{}, nil
