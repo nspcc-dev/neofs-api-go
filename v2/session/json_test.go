@@ -66,3 +66,15 @@ func TestXHeaderJSON(t *testing.T) {
 
 	require.Equal(t, x, x2)
 }
+
+func TestRequestMetaHeaderJSON(t *testing.T) {
+	r := generateRequestMetaHeader(1, "bearer", "session")
+
+	data, err := r.MarshalJSON()
+	require.NoError(t, err)
+
+	r2 := new(session.RequestMetaHeader)
+	require.NoError(t, r2.UnmarshalJSON(data))
+
+	require.Equal(t, r, r2)
+}
