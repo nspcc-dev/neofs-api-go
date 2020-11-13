@@ -165,6 +165,17 @@ func (r *Record) StableSize() (size int) {
 	return size
 }
 
+func (r *Record) Unmarshal(data []byte) error {
+	m := new(acl.EACLRecord)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*r = *RecordFromGRPCMessage(m)
+
+	return nil
+}
+
 // StableMarshal marshals unified header filter structure in a protobuf
 // compatible way without field order shuffle.
 func (f *HeaderFilter) StableMarshal(buf []byte) ([]byte, error) {

@@ -122,3 +122,23 @@ func (t *Target) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (r *Record) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		RecordToGRPCMessage(r),
+	)
+}
+
+func (r *Record) UnmarshalJSON(data []byte) error {
+	msg := new(acl.EACLRecord)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*r = *RecordFromGRPCMessage(msg)
+
+	return nil
+}

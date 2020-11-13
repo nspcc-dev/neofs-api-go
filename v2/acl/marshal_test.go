@@ -156,17 +156,15 @@ func TestTargetInfo_StableMarshal(t *testing.T) {
 
 func TestRecord_StableMarshal(t *testing.T) {
 	recordFrom := generateRecord(false)
-	transport := new(grpc.EACLRecord)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := recordFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		to := new(acl.Record)
+		require.NoError(t, to.Unmarshal(wire))
 
-		recordTo := acl.RecordFromGRPCMessage(transport)
-		require.Equal(t, recordFrom, recordTo)
+		require.Equal(t, recordFrom, to)
 	})
 }
 

@@ -162,3 +162,47 @@ func NewRecordFromV2(record *v2acl.Record) *Record {
 
 	return r
 }
+
+// Marshal marshals Record into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (r *Record) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return r.ToV2().
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Record.
+func (r *Record) Unmarshal(data []byte) error {
+	fV2 := new(v2acl.Record)
+	if err := fV2.Unmarshal(data); err != nil {
+		return err
+	}
+
+	*r = *NewRecordFromV2(fV2)
+
+	return nil
+}
+
+// MarshalJSON encodes Record to protobuf JSON format.
+func (r *Record) MarshalJSON() ([]byte, error) {
+	return r.ToV2().
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Record from protobuf JSON format.
+func (r *Record) UnmarshalJSON(data []byte) error {
+	tV2 := new(v2acl.Record)
+	if err := tV2.UnmarshalJSON(data); err != nil {
+		return err
+	}
+
+	*r = *NewRecordFromV2(tV2)
+
+	return nil
+}

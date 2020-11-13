@@ -71,3 +71,31 @@ func TestRecord_AddFilter(t *testing.T) {
 
 	require.Equal(t, filters, r.Filters())
 }
+
+func TestRecordEncoding(t *testing.T) {
+	r := NewRecord()
+	r.SetOperation(OperationHead)
+	r.SetAction(ActionDeny)
+	r.AddObjectAttributeFilter(MatchStringEqual, "key", "value")
+	r.AddTarget(RoleSystem, test.DecodeKey(-1).PublicKey)
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := r.Marshal()
+		require.NoError(t, err)
+
+		r2 := NewRecord()
+		require.NoError(t, r2.Unmarshal(data))
+
+		require.Equal(t, r, r2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := r.MarshalJSON()
+		require.NoError(t, err)
+
+		r2 := NewRecord()
+		require.NoError(t, r2.UnmarshalJSON(data))
+
+		require.Equal(t, r, r2)
+	})
+}
