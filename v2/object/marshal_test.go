@@ -65,16 +65,13 @@ func TestHeader_StableMarshal(t *testing.T) {
 	from := generateHeader(500)
 	from.SetSplit(split)
 
-	transport := new(grpc.Header)
-
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		to := new(object.Header)
+		require.NoError(t, to.Unmarshal(wire))
 
-		to := object.HeaderFromGRPCMessage(transport)
 		require.Equal(t, from, to)
 	})
 }
