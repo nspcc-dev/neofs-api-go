@@ -117,7 +117,6 @@ func generateBearerToken(id string) *acl.BearerToken {
 
 func TestHeaderFilter_StableMarshal(t *testing.T) {
 	filterFrom := generateFilter(acl.HeaderTypeObject, "CID", "Container ID Value")
-	transport := new(grpc.EACLRecord_Filter)
 
 	t.Run("non empty", func(t *testing.T) {
 		filterFrom.SetHeaderType(acl.HeaderTypeObject)
@@ -128,10 +127,9 @@ func TestHeaderFilter_StableMarshal(t *testing.T) {
 		wire, err := filterFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		filterTo := new(acl.HeaderFilter)
+		require.NoError(t, filterTo.Unmarshal(wire))
 
-		filterTo := acl.HeaderFilterFromGRPCMessage(transport)
 		require.Equal(t, filterFrom, filterTo)
 	})
 }

@@ -35,3 +35,27 @@ func TestFilter(t *testing.T) {
 		require.Equal(t, new(Filter), NewFilterFromV2(nil))
 	})
 }
+
+func TestFilterEncoding(t *testing.T) {
+	f := newObjectFilter(MatchStringEqual, "key", "value")
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := f.Marshal()
+		require.NoError(t, err)
+
+		f2 := NewFilter()
+		require.NoError(t, f2.Unmarshal(data))
+
+		require.Equal(t, f, f2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := f.MarshalJSON()
+		require.NoError(t, err)
+
+		d2 := NewFilter()
+		require.NoError(t, d2.UnmarshalJSON(data))
+
+		require.Equal(t, f, d2)
+	})
+}

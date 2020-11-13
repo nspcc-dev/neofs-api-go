@@ -1,7 +1,9 @@
 package acl
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/util/proto"
+	protoutil "github.com/nspcc-dev/neofs-api-go/util/proto"
+	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -50,14 +52,14 @@ func (t *Table) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.NestedStructureMarshal(tableVersionField, buf[offset:], t.version)
+	n, err = protoutil.NestedStructureMarshal(tableVersionField, buf[offset:], t.version)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.NestedStructureMarshal(tableContainerIDField, buf[offset:], t.cid)
+	n, err = protoutil.NestedStructureMarshal(tableContainerIDField, buf[offset:], t.cid)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +67,7 @@ func (t *Table) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range t.records {
-		n, err = proto.NestedStructureMarshal(tableRecordsField, buf[offset:], t.records[i])
+		n, err = protoutil.NestedStructureMarshal(tableRecordsField, buf[offset:], t.records[i])
 		if err != nil {
 			return nil, err
 		}
@@ -82,11 +84,11 @@ func (t *Table) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(tableVersionField, t.version)
-	size += proto.NestedStructureSize(tableContainerIDField, t.cid)
+	size += protoutil.NestedStructureSize(tableVersionField, t.version)
+	size += protoutil.NestedStructureSize(tableContainerIDField, t.cid)
 
 	for i := range t.records {
-		size += proto.NestedStructureSize(tableRecordsField, t.records[i])
+		size += protoutil.NestedStructureSize(tableRecordsField, t.records[i])
 	}
 
 	return size
@@ -108,14 +110,14 @@ func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.EnumMarshal(recordOperationField, buf[offset:], int32(r.op))
+	n, err = protoutil.EnumMarshal(recordOperationField, buf[offset:], int32(r.op))
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.EnumMarshal(recordActionField, buf[offset:], int32(r.action))
+	n, err = protoutil.EnumMarshal(recordActionField, buf[offset:], int32(r.action))
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +125,7 @@ func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range r.filters {
-		n, err = proto.NestedStructureMarshal(recordFiltersField, buf[offset:], r.filters[i])
+		n, err = protoutil.NestedStructureMarshal(recordFiltersField, buf[offset:], r.filters[i])
 		if err != nil {
 			return nil, err
 		}
@@ -132,7 +134,7 @@ func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
 	}
 
 	for i := range r.targets {
-		n, err = proto.NestedStructureMarshal(recordTargetsField, buf[offset:], r.targets[i])
+		n, err = protoutil.NestedStructureMarshal(recordTargetsField, buf[offset:], r.targets[i])
 		if err != nil {
 			return nil, err
 		}
@@ -149,15 +151,15 @@ func (r *Record) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.EnumSize(recordOperationField, int32(r.op))
-	size += proto.EnumSize(recordActionField, int32(r.action))
+	size += protoutil.EnumSize(recordOperationField, int32(r.op))
+	size += protoutil.EnumSize(recordActionField, int32(r.action))
 
 	for i := range r.filters {
-		size += proto.NestedStructureSize(recordFiltersField, r.filters[i])
+		size += protoutil.NestedStructureSize(recordFiltersField, r.filters[i])
 	}
 
 	for i := range r.targets {
-		size += proto.NestedStructureSize(recordTargetsField, r.targets[i])
+		size += protoutil.NestedStructureSize(recordTargetsField, r.targets[i])
 	}
 
 	return size
@@ -179,28 +181,28 @@ func (f *HeaderFilter) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.EnumMarshal(filterHeaderTypeField, buf[offset:], int32(f.hdrType))
+	n, err = protoutil.EnumMarshal(filterHeaderTypeField, buf[offset:], int32(f.hdrType))
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.EnumMarshal(filterMatchTypeField, buf[offset:], int32(f.matchType))
+	n, err = protoutil.EnumMarshal(filterMatchTypeField, buf[offset:], int32(f.matchType))
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.StringMarshal(filterNameField, buf[offset:], f.key)
+	n, err = protoutil.StringMarshal(filterNameField, buf[offset:], f.key)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	_, err = proto.StringMarshal(filterValueField, buf[offset:], f.value)
+	_, err = protoutil.StringMarshal(filterValueField, buf[offset:], f.value)
 	if err != nil {
 		return nil, err
 	}
@@ -214,12 +216,23 @@ func (f *HeaderFilter) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.EnumSize(filterHeaderTypeField, int32(f.hdrType))
-	size += proto.EnumSize(filterMatchTypeField, int32(f.matchType))
-	size += proto.StringSize(filterNameField, f.key)
-	size += proto.StringSize(filterValueField, f.value)
+	size += protoutil.EnumSize(filterHeaderTypeField, int32(f.hdrType))
+	size += protoutil.EnumSize(filterMatchTypeField, int32(f.matchType))
+	size += protoutil.StringSize(filterNameField, f.key)
+	size += protoutil.StringSize(filterValueField, f.value)
 
 	return size
+}
+
+func (f *HeaderFilter) Unmarshal(data []byte) error {
+	m := new(acl.EACLRecord_Filter)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*f = *HeaderFilterFromGRPCMessage(m)
+
+	return nil
 }
 
 // StableMarshal marshals unified role info structure in a protobuf
@@ -238,14 +251,14 @@ func (t *Target) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.EnumMarshal(targetTypeField, buf[offset:], int32(t.role))
+	n, err = protoutil.EnumMarshal(targetTypeField, buf[offset:], int32(t.role))
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	_, err = proto.RepeatedBytesMarshal(targetKeysField, buf[offset:], t.keys)
+	_, err = protoutil.RepeatedBytesMarshal(targetKeysField, buf[offset:], t.keys)
 	if err != nil {
 		return nil, err
 	}
@@ -259,8 +272,8 @@ func (t *Target) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.EnumSize(targetTypeField, int32(t.role))
-	size += proto.RepeatedBytesSize(targetKeysField, t.keys)
+	size += protoutil.EnumSize(targetTypeField, int32(t.role))
+	size += protoutil.RepeatedBytesSize(targetKeysField, t.keys)
 
 	return size
 }
@@ -279,21 +292,21 @@ func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.UInt64Marshal(lifetimeExpirationField, buf[offset:], l.exp)
+	n, err = protoutil.UInt64Marshal(lifetimeExpirationField, buf[offset:], l.exp)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.UInt64Marshal(lifetimeNotValidBeforeField, buf[offset:], l.nbf)
+	n, err = protoutil.UInt64Marshal(lifetimeNotValidBeforeField, buf[offset:], l.nbf)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	_, err = proto.UInt64Marshal(lifetimeIssuedAtField, buf[offset:], l.iat)
+	_, err = protoutil.UInt64Marshal(lifetimeIssuedAtField, buf[offset:], l.iat)
 	if err != nil {
 		return nil, err
 	}
@@ -306,9 +319,9 @@ func (l *TokenLifetime) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.UInt64Size(lifetimeExpirationField, l.exp)
-	size += proto.UInt64Size(lifetimeNotValidBeforeField, l.nbf)
-	size += proto.UInt64Size(lifetimeIssuedAtField, l.iat)
+	size += protoutil.UInt64Size(lifetimeExpirationField, l.exp)
+	size += protoutil.UInt64Size(lifetimeNotValidBeforeField, l.nbf)
+	size += protoutil.UInt64Size(lifetimeIssuedAtField, l.iat)
 
 	return size
 }
@@ -327,21 +340,21 @@ func (bt *BearerTokenBody) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.NestedStructureMarshal(bearerTokenBodyACLField, buf[offset:], bt.eacl)
+	n, err = protoutil.NestedStructureMarshal(bearerTokenBodyACLField, buf[offset:], bt.eacl)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.NestedStructureMarshal(bearerTokenBodyOwnerField, buf[offset:], bt.ownerID)
+	n, err = protoutil.NestedStructureMarshal(bearerTokenBodyOwnerField, buf[offset:], bt.ownerID)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	_, err = proto.NestedStructureMarshal(bearerTokenBodyLifetimeField, buf[offset:], bt.lifetime)
+	_, err = protoutil.NestedStructureMarshal(bearerTokenBodyLifetimeField, buf[offset:], bt.lifetime)
 	if err != nil {
 		return nil, err
 	}
@@ -354,9 +367,9 @@ func (bt *BearerTokenBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(bearerTokenBodyACLField, bt.eacl)
-	size += proto.NestedStructureSize(bearerTokenBodyOwnerField, bt.ownerID)
-	size += proto.NestedStructureSize(bearerTokenBodyLifetimeField, bt.lifetime)
+	size += protoutil.NestedStructureSize(bearerTokenBodyACLField, bt.eacl)
+	size += protoutil.NestedStructureSize(bearerTokenBodyOwnerField, bt.ownerID)
+	size += protoutil.NestedStructureSize(bearerTokenBodyLifetimeField, bt.lifetime)
 
 	return size
 }
@@ -375,14 +388,14 @@ func (bt *BearerToken) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.NestedStructureMarshal(bearerTokenBodyField, buf[offset:], bt.body)
+	n, err = protoutil.NestedStructureMarshal(bearerTokenBodyField, buf[offset:], bt.body)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	_, err = proto.NestedStructureMarshal(bearerTokenSignatureField, buf[offset:], bt.sig)
+	_, err = protoutil.NestedStructureMarshal(bearerTokenSignatureField, buf[offset:], bt.sig)
 	if err != nil {
 		return nil, err
 	}
@@ -395,8 +408,8 @@ func (bt *BearerToken) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(bearerTokenBodyField, bt.body)
-	size += proto.NestedStructureSize(bearerTokenSignatureField, bt.sig)
+	size += protoutil.NestedStructureSize(bearerTokenBodyField, bt.body)
+	size += protoutil.NestedStructureSize(bearerTokenSignatureField, bt.sig)
 
 	return size
 }

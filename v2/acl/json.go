@@ -82,3 +82,23 @@ func BearerTokenFromJSON(data []byte) (*BearerToken, error) {
 
 	return BearerTokenFromGRPCMessage(msg), nil
 }
+
+func (f *HeaderFilter) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		HeaderFilterToGRPCMessage(f),
+	)
+}
+
+func (f *HeaderFilter) UnmarshalJSON(data []byte) error {
+	msg := new(acl.EACLRecord_Filter)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*f = *HeaderFilterFromGRPCMessage(msg)
+
+	return nil
+}
