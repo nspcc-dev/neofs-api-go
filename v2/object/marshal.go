@@ -295,6 +295,17 @@ func (h *SplitHeader) StableSize() (size int) {
 	return size
 }
 
+func (h *SplitHeader) Unmarshal(data []byte) error {
+	m := new(object.Header_Split)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*h = *SplitHeaderFromGRPCMessage(m)
+
+	return nil
+}
+
 func (h *Header) StableMarshal(buf []byte) ([]byte, error) {
 	if h == nil {
 		return []byte{}, nil

@@ -30,3 +30,15 @@ func TestAttributeJSON(t *testing.T) {
 
 	require.Equal(t, a, a2)
 }
+
+func TestSplitHeaderJSON(t *testing.T) {
+	h := generateSplit("sig")
+
+	data, err := h.MarshalJSON()
+	require.NoError(t, err)
+
+	h2 := new(object.SplitHeader)
+	require.NoError(t, h2.UnmarshalJSON(data))
+
+	require.Equal(t, h, h2)
+}
