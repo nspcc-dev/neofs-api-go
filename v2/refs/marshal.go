@@ -305,3 +305,14 @@ func (v *Version) StableSize() (size int) {
 
 	return size
 }
+
+func (v *Version) Unmarshal(data []byte) error {
+	m := new(refs.Version)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*v = *VersionFromGRPCMessage(m)
+
+	return nil
+}

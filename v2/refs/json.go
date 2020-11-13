@@ -84,3 +84,23 @@ func (o *OwnerID) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (v *Version) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		VersionToGRPCMessage(v),
+	)
+}
+
+func (v *Version) UnmarshalJSON(data []byte) error {
+	msg := new(refs.Version)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*v = *VersionFromGRPCMessage(msg)
+
+	return nil
+}

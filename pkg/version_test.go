@@ -62,3 +62,29 @@ func TestIsSupportedVersion(t *testing.T) {
 		require.Error(t, IsSupportedVersion(v))
 	}
 }
+
+func TestVersionEncoding(t *testing.T) {
+	v := NewVersion()
+	v.SetMajor(1)
+	v.SetMinor(2)
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := v.Marshal()
+		require.NoError(t, err)
+
+		v2 := NewVersion()
+		require.NoError(t, v2.Unmarshal(data))
+
+		require.Equal(t, v, v2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := v.MarshalJSON()
+		require.NoError(t, err)
+
+		v2 := NewVersion()
+		require.NoError(t, v2.UnmarshalJSON(data))
+
+		require.Equal(t, v, v2)
+	})
+}

@@ -111,16 +111,14 @@ func TestSignature_StableMarshal(t *testing.T) {
 
 func TestVersion_StableMarshal(t *testing.T) {
 	versionFrom := generateVersion(2, 0)
-	transport := new(grpc.Version)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := versionFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		versionTo := new(refs.Version)
+		require.NoError(t, versionTo.Unmarshal(wire))
 
-		versionTo := refs.VersionFromGRPCMessage(transport)
 		require.Equal(t, versionFrom, versionTo)
 	})
 }

@@ -57,3 +57,15 @@ func TestOwnerIDJSON(t *testing.T) {
 
 	require.Equal(t, o, o2)
 }
+
+func TestVersionSON(t *testing.T) {
+	v := generateVersion(1, 2)
+
+	data, err := v.MarshalJSON()
+	require.NoError(t, err)
+
+	v2 := new(refs.Version)
+	require.NoError(t, v2.UnmarshalJSON(data))
+
+	require.Equal(t, v, v2)
+}

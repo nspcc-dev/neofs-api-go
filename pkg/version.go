@@ -82,3 +82,35 @@ func IsSupportedVersion(v *Version) error {
 		v.GetMinor(),
 	)
 }
+
+// Marshal marshals Version into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (v *Version) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*refs.Version)(v).
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Version.
+func (v *Version) Unmarshal(data []byte) error {
+	return (*refs.Version)(v).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes Version to protobuf JSON format.
+func (v *Version) MarshalJSON() ([]byte, error) {
+	return (*refs.Version)(v).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Version from protobuf JSON format.
+func (v *Version) UnmarshalJSON(data []byte) error {
+	return (*refs.Version)(v).
+		UnmarshalJSON(data)
+}
