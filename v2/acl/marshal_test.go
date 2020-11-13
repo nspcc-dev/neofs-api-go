@@ -212,16 +212,14 @@ func TestTokenLifetime_StableMarshal(t *testing.T) {
 
 func TestBearerTokenBody_StableMarshal(t *testing.T) {
 	bearerTokenBodyFrom := generateBearerTokenBody("Bearer Token Body")
-	transport := new(grpc.BearerToken_Body)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := bearerTokenBodyFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		bearerTokenBodyTo := new(acl.BearerTokenBody)
+		require.NoError(t, bearerTokenBodyTo.Unmarshal(wire))
 
-		bearerTokenBodyTo := acl.BearerTokenBodyFromGRPCMessage(transport)
 		require.Equal(t, bearerTokenBodyFrom, bearerTokenBodyTo)
 	})
 }

@@ -69,3 +69,15 @@ func TestTokenLifetimeJSON(t *testing.T) {
 
 	require.Equal(t, l, l2)
 }
+
+func TestBearerTokenBodyJSON(t *testing.T) {
+	b := generateBearerTokenBody("id")
+
+	data, err := b.MarshalJSON()
+	require.NoError(t, err)
+
+	b2 := new(acl.BearerTokenBody)
+	require.NoError(t, b2.UnmarshalJSON(data))
+
+	require.Equal(t, b, b2)
+}

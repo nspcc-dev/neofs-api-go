@@ -134,3 +134,23 @@ func (l *TokenLifetime) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (bt *BearerTokenBody) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		BearerTokenBodyToGRPCMessage(bt),
+	)
+}
+
+func (bt *BearerTokenBody) UnmarshalJSON(data []byte) error {
+	msg := new(acl.BearerToken_Body)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*bt = *BearerTokenBodyFromGRPCMessage(msg)
+
+	return nil
+}

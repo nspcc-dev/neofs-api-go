@@ -418,6 +418,17 @@ func (bt *BearerTokenBody) StableSize() (size int) {
 	return size
 }
 
+func (bt *BearerTokenBody) Unmarshal(data []byte) error {
+	m := new(acl.BearerToken_Body)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*bt = *BearerTokenBodyFromGRPCMessage(m)
+
+	return nil
+}
+
 func (bt *BearerToken) StableMarshal(buf []byte) ([]byte, error) {
 	if bt == nil {
 		return []byte{}, nil
