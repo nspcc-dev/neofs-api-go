@@ -104,3 +104,23 @@ func (h *HeaderWithSignature) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (o *Object) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		ObjectToGRPCMessage(o),
+	)
+}
+
+func (o *Object) UnmarshalJSON(data []byte) error {
+	msg := new(object.Object)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*o = *ObjectFromGRPCMessage(msg)
+
+	return nil
+}

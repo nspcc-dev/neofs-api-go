@@ -287,3 +287,28 @@ func TestRwObject_HasParent(t *testing.T) {
 
 	require.False(t, obj.HasParent())
 }
+
+func TestRWObjectEncoding(t *testing.T) {
+	o := NewRaw()
+	o.SetID(randID(t))
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := o.Marshal()
+		require.NoError(t, err)
+
+		o2 := NewRaw()
+		require.NoError(t, o2.Unmarshal(data))
+
+		require.Equal(t, o, o2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := o.MarshalJSON()
+		require.NoError(t, err)
+
+		o2 := NewRaw()
+		require.NoError(t, o2.UnmarshalJSON(data))
+
+		require.Equal(t, o, o2)
+	})
+}
