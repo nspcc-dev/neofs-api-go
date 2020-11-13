@@ -34,3 +34,23 @@ func ContainerFromJSON(data []byte) (*Container, error) {
 
 	return ContainerFromGRPCMessage(msg), nil
 }
+
+func (a *Attribute) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		AttributeToGRPCMessage(a),
+	)
+}
+
+func (a *Attribute) UnmarshalJSON(data []byte) error {
+	msg := new(container.Container_Attribute)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*a = *AttributeFromGRPCMessage(msg)
+
+	return nil
+}
