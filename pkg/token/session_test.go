@@ -40,3 +40,28 @@ func TestSessionToken_SetSessionKey(t *testing.T) {
 
 	require.Equal(t, key, token.SessionKey())
 }
+
+func TestSessionTokenEncoding(t *testing.T) {
+	tok := NewSessionToken()
+	tok.SetID([]byte("id"))
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := tok.Marshal()
+		require.NoError(t, err)
+
+		tok2 := NewSessionToken()
+		require.NoError(t, tok2.Unmarshal(data))
+
+		require.Equal(t, tok, tok2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := tok.MarshalJSON()
+		require.NoError(t, err)
+
+		tok2 := NewSessionToken()
+		require.NoError(t, tok2.UnmarshalJSON(data))
+
+		require.Equal(t, tok, tok2)
+	})
+}
