@@ -1,7 +1,9 @@
 package accounting
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/util/proto"
+	protoutil "github.com/nspcc-dev/neofs-api-go/util/proto"
+	accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting/grpc"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -27,14 +29,14 @@ func (d *Decimal) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.Int64Marshal(decimalValueField, buf[offset:], d.val)
+	n, err = protoutil.Int64Marshal(decimalValueField, buf[offset:], d.val)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.UInt32Marshal(decimalPrecisionField, buf[offset:], d.prec)
+	n, err = protoutil.UInt32Marshal(decimalPrecisionField, buf[offset:], d.prec)
 	if err != nil {
 		return nil, err
 	}
@@ -47,10 +49,21 @@ func (d *Decimal) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.Int64Size(decimalValueField, d.val)
-	size += proto.UInt32Size(decimalPrecisionField, d.prec)
+	size += protoutil.Int64Size(decimalValueField, d.val)
+	size += protoutil.UInt32Size(decimalPrecisionField, d.prec)
 
 	return size
+}
+
+func (d *Decimal) Unmarshal(data []byte) error {
+	m := new(accounting.Decimal)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*d = *DecimalFromGRPCMessage(m)
+
+	return nil
 }
 
 func (b *BalanceRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -62,7 +75,7 @@ func (b *BalanceRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, b.StableSize())
 	}
 
-	_, err := proto.NestedStructureMarshal(balanceReqBodyOwnerField, buf, b.ownerID)
+	_, err := protoutil.NestedStructureMarshal(balanceReqBodyOwnerField, buf, b.ownerID)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +88,7 @@ func (b *BalanceRequestBody) StableSize() (size int) {
 		return 0
 	}
 
-	size = proto.NestedStructureSize(balanceReqBodyOwnerField, b.ownerID)
+	size = protoutil.NestedStructureSize(balanceReqBodyOwnerField, b.ownerID)
 
 	return size
 }
@@ -89,7 +102,7 @@ func (br *BalanceResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, br.StableSize())
 	}
 
-	_, err := proto.NestedStructureMarshal(balanceRespBodyDecimalField, buf, br.bal)
+	_, err := protoutil.NestedStructureMarshal(balanceRespBodyDecimalField, buf, br.bal)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +115,7 @@ func (br *BalanceResponseBody) StableSize() (size int) {
 		return 0
 	}
 
-	size = proto.NestedStructureSize(balanceRespBodyDecimalField, br.bal)
+	size = protoutil.NestedStructureSize(balanceRespBodyDecimalField, br.bal)
 
 	return size
 }
