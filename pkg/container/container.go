@@ -111,3 +111,35 @@ func (c *Container) PlacementPolicy() *netmap.PlacementPolicy {
 func (c *Container) SetPlacementPolicy(v *netmap.PlacementPolicy) {
 	c.v2.SetPlacementPolicy(v.ToV2())
 }
+
+// Marshal marshals Container into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (c *Container) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return c.v2.
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Container.
+func (c *Container) Unmarshal(data []byte) error {
+	return c.v2.
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes Container to protobuf JSON format.
+func (c *Container) MarshalJSON() ([]byte, error) {
+	return c.v2.
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Container from protobuf JSON format.
+func (c *Container) UnmarshalJSON(data []byte) error {
+	return c.v2.
+		UnmarshalJSON(data)
+}

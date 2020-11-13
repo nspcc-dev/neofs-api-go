@@ -171,6 +171,17 @@ func (c *Container) StableSize() (size int) {
 	return size
 }
 
+func (c *Container) Unmarshal(data []byte) error {
+	m := new(container.Container)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*c = *ContainerFromGRPCMessage(m)
+
+	return nil
+}
+
 func (r *PutRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
