@@ -225,6 +225,17 @@ func (l *TokenLifetime) StableSize() (size int) {
 	return size
 }
 
+func (l *TokenLifetime) Unmarshal(data []byte) error {
+	m := new(session.SessionToken_Body_TokenLifetime)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*l = *TokenLifetimeFromGRPCMessage(m)
+
+	return nil
+}
+
 func (c *ObjectSessionContext) StableMarshal(buf []byte) ([]byte, error) {
 	if c == nil {
 		return []byte{}, nil
