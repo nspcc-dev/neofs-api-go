@@ -9,6 +9,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func randSHA256(t *testing.T) [sha256.Size]byte {
+	cSHA256 := [sha256.Size]byte{}
+	_, err := rand.Read(cSHA256[:])
+	require.NoError(t, err)
+
+	return cSHA256
+}
+
 func TestChecksum(t *testing.T) {
 	c := NewChecksum()
 
@@ -57,4 +65,29 @@ func TestEqualChecksums(t *testing.T) {
 	cs2.SetSHA256(csSHA)
 
 	require.False(t, EqualChecksums(cs1, cs2))
+}
+
+func TestChecksumEncoding(t *testing.T) {
+	cs := NewChecksum()
+	cs.SetSHA256(randSHA256(t))
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := cs.Marshal()
+		require.NoError(t, err)
+
+		c2 := NewChecksum()
+		require.NoError(t, c2.Unmarshal(data))
+
+		require.Equal(t, cs, c2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := cs.MarshalJSON()
+		require.NoError(t, err)
+
+		cs2 := NewChecksum()
+		require.NoError(t, cs2.UnmarshalJSON(data))
+
+		require.Equal(t, cs, cs2)
+	})
 }

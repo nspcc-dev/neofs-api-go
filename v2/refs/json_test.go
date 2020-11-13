@@ -81,3 +81,17 @@ func TestSignatureSON(t *testing.T) {
 
 	require.Equal(t, s, s2)
 }
+
+func TestChecksumJSON(t *testing.T) {
+	cs := new(refs.Checksum)
+	cs.SetType(refs.SHA256)
+	cs.SetSum([]byte{1, 2, 3})
+
+	data, err := cs.MarshalJSON()
+	require.NoError(t, err)
+
+	cs2 := new(refs.Checksum)
+	require.NoError(t, cs2.UnmarshalJSON(data))
+
+	require.Equal(t, cs, cs2)
+}

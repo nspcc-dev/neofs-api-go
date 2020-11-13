@@ -77,3 +77,35 @@ func (c *Checksum) ToV2() *refs.Checksum {
 func EqualChecksums(cs1, cs2 *Checksum) bool {
 	return cs1.GetType() == cs2.GetType() && bytes.Equal(cs1.GetSum(), cs2.GetSum())
 }
+
+// Marshal marshals Checksum into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (c *Checksum) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*refs.Checksum)(c).
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Checksum.
+func (c *Checksum) Unmarshal(data []byte) error {
+	return (*refs.Checksum)(c).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes Checksum to protobuf JSON format.
+func (c *Checksum) MarshalJSON() ([]byte, error) {
+	return (*refs.Checksum)(c).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Checksum from protobuf JSON format.
+func (c *Checksum) UnmarshalJSON(data []byte) error {
+	return (*refs.Checksum)(c).
+		UnmarshalJSON(data)
+}
