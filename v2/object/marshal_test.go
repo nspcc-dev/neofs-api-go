@@ -15,16 +15,14 @@ import (
 
 func TestShortHeader_StableMarshal(t *testing.T) {
 	hdrFrom := generateShortHeader("Owner ID")
-	transport := new(grpc.ShortHeader)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := hdrFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		hdrTo := new(object.ShortHeader)
+		require.NoError(t, hdrTo.Unmarshal(wire))
 
-		hdrTo := object.ShortHeaderFromGRPCMessage(transport)
 		require.Equal(t, hdrFrom, hdrTo)
 	})
 }
