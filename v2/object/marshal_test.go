@@ -352,6 +352,20 @@ func TestGetRangeHashResponseBody_StableMarshal(t *testing.T) {
 	})
 }
 
+func TestHeaderWithSignature_StableMarshal(t *testing.T) {
+	from := generateHeaderWithSignature()
+
+	t.Run("non empty", func(t *testing.T) {
+		wire, err := from.StableMarshal(nil)
+		require.NoError(t, err)
+
+		to := new(object.HeaderWithSignature)
+		require.NoError(t, to.Unmarshal(wire))
+
+		require.Equal(t, from, to)
+	})
+}
+
 func generateOwner(id string) *refs.OwnerID {
 	owner := new(refs.OwnerID)
 	owner.SetValue([]byte(id))
@@ -582,18 +596,22 @@ func generateHeadResponseBody(flag bool) *object.HeadResponseBody {
 		short.SetShortHeader(generateShortHeader("short id"))
 		part = short
 	} else {
-		hdrWithSig := new(object.HeaderWithSignature)
-		hdrWithSig.SetHeader(generateHeader(30))
-		hdrWithSig.SetSignature(generateSignature("sig", "key"))
-
 		full := new(object.GetHeaderPartFull)
-		full.SetHeaderWithSignature(hdrWithSig)
+		full.SetHeaderWithSignature(generateHeaderWithSignature())
 		part = full
 	}
 
 	req.SetHeaderPart(part)
 
 	return req
+}
+
+func generateHeaderWithSignature() *object.HeaderWithSignature {
+	hdrWithSig := new(object.HeaderWithSignature)
+	hdrWithSig.SetHeader(generateHeader(30))
+	hdrWithSig.SetSignature(generateSignature("sig", "key"))
+
+	return hdrWithSig
 }
 
 func generateFilter(k, v string) *object.SearchFilter {

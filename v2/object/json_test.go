@@ -54,3 +54,15 @@ func TestHeaderJSON(t *testing.T) {
 
 	require.Equal(t, h, h2)
 }
+
+func TestHeaderWithSignatureJSON(t *testing.T) {
+	h := generateHeaderWithSignature()
+
+	data, err := h.MarshalJSON()
+	require.NoError(t, err)
+
+	h2 := new(object.HeaderWithSignature)
+	require.NoError(t, h2.UnmarshalJSON(data))
+
+	require.Equal(t, h, h2)
+}
