@@ -45,3 +45,35 @@ func (r *Replica) SetSelector(s string) {
 	(*netmap.Replica)(r).
 		SetSelector(s)
 }
+
+// Marshal marshals Replica into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (r *Replica) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*netmap.Replica)(r).
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Replica.
+func (r *Replica) Unmarshal(data []byte) error {
+	return (*netmap.Replica)(r).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes Replica to protobuf JSON format.
+func (r *Replica) MarshalJSON() ([]byte, error) {
+	return (*netmap.Replica)(r).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Replica from protobuf JSON format.
+func (r *Replica) UnmarshalJSON(data []byte) error {
+	return (*netmap.Replica)(r).
+		UnmarshalJSON(data)
+}

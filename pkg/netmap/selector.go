@@ -198,3 +198,34 @@ func (s *Selector) SetFilter(f string) {
 	(*netmap.Selector)(s).
 		SetFilter(f)
 }
+
+// Marshal marshals Selector into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (s *Selector) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*netmap.Selector)(s).StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Selector.
+func (s *Selector) Unmarshal(data []byte) error {
+	return (*netmap.Selector)(s).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes Selector to protobuf JSON format.
+func (s *Selector) MarshalJSON() ([]byte, error) {
+	return (*netmap.Selector)(s).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Selector from protobuf JSON format.
+func (s *Selector) UnmarshalJSON(data []byte) error {
+	return (*netmap.Selector)(s).
+		UnmarshalJSON(data)
+}

@@ -13,96 +13,84 @@ import (
 
 func TestAttribute_StableMarshal(t *testing.T) {
 	from := generateAttribute("key", "value")
-	transport := new(grpc.NodeInfo_Attribute)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		to := new(netmap.Attribute)
+		require.NoError(t, to.Unmarshal(wire))
 
-		to := netmap.AttributeFromGRPCMessage(transport)
 		require.Equal(t, from, to)
 	})
 }
 
 func TestNodeInfo_StableMarshal(t *testing.T) {
 	from := generateNodeInfo("publicKey", "/multi/addr", 10)
-	transport := new(grpc.NodeInfo)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		to := new(netmap.NodeInfo)
+		require.NoError(t, to.Unmarshal(wire))
 
-		to := netmap.NodeInfoFromGRPCMessage(transport)
 		require.Equal(t, from, to)
 	})
 }
 
 func TestFilter_StableMarshal(t *testing.T) {
 	from := generateFilter("key", "value", false)
-	transport := new(grpc.Filter)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		to := new(netmap.Filter)
+		require.NoError(t, to.Unmarshal(wire))
 
-		to := netmap.FilterFromGRPCMessage(transport)
 		require.Equal(t, from, to)
 	})
 }
 
 func TestSelector_StableMarshal(t *testing.T) {
 	from := generateSelector("name")
-	transport := new(grpc.Selector)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		to := new(netmap.Selector)
+		require.NoError(t, to.Unmarshal(wire))
 
-		to := netmap.SelectorFromGRPCMessage(transport)
 		require.Equal(t, from, to)
 	})
 }
 
 func TestReplica_StableMarshal(t *testing.T) {
 	from := generateReplica("selector")
-	transport := new(grpc.Replica)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		to := new(netmap.Replica)
+		require.NoError(t, to.Unmarshal(wire))
 
-		to := netmap.ReplicaFromGRPCMessage(transport)
 		require.Equal(t, from, to)
 	})
 }
 
 func TestPlacementPolicy_StableMarshal(t *testing.T) {
 	from := generatePolicy(3)
-	transport := new(grpc.PlacementPolicy)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		to := new(netmap.PlacementPolicy)
+		require.NoError(t, to.Unmarshal(wire))
 
-		to := netmap.PlacementPolicyFromGRPCMessage(transport)
 		require.Equal(t, from, to)
 	})
 }

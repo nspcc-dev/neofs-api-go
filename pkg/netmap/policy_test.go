@@ -67,3 +67,27 @@ func TestPlacementPolicy_Filters(t *testing.T) {
 
 	require.Equal(t, fs, p.Filters())
 }
+
+func TestPlacementPolicyEncoding(t *testing.T) {
+	p := newPlacementPolicy(3, nil, nil, nil)
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := p.Marshal()
+		require.NoError(t, err)
+
+		p2 := NewPlacementPolicy()
+		require.NoError(t, p2.Unmarshal(data))
+
+		require.Equal(t, p, p2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := p.MarshalJSON()
+		require.NoError(t, err)
+
+		p2 := NewPlacementPolicy()
+		require.NoError(t, p2.UnmarshalJSON(data))
+
+		require.Equal(t, p, p2)
+	})
+}

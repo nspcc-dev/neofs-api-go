@@ -42,3 +42,27 @@ func TestReplica_Selector(t *testing.T) {
 
 	require.Equal(t, s, r.Selector())
 }
+
+func TestReplicaEncoding(t *testing.T) {
+	r := newReplica(3, "selector")
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := r.Marshal()
+		require.NoError(t, err)
+
+		r2 := NewReplica()
+		require.NoError(t, r2.Unmarshal(data))
+
+		require.Equal(t, r, r2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := r.MarshalJSON()
+		require.NoError(t, err)
+
+		r2 := NewReplica()
+		require.NoError(t, r2.UnmarshalJSON(data))
+
+		require.Equal(t, r, r2)
+	})
+}

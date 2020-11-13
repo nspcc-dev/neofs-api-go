@@ -1,7 +1,9 @@
 package netmap
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/util/proto"
+	protoutil "github.com/nspcc-dev/neofs-api-go/util/proto"
+	netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -52,28 +54,28 @@ func (f *Filter) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.StringMarshal(nameFilterField, buf[offset:], f.name)
+	n, err = protoutil.StringMarshal(nameFilterField, buf[offset:], f.name)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.StringMarshal(keyFilterField, buf[offset:], f.key)
+	n, err = protoutil.StringMarshal(keyFilterField, buf[offset:], f.key)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.EnumMarshal(opFilterField, buf[offset:], int32(f.op))
+	n, err = protoutil.EnumMarshal(opFilterField, buf[offset:], int32(f.op))
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.StringMarshal(valueFilterField, buf[offset:], f.value)
+	n, err = protoutil.StringMarshal(valueFilterField, buf[offset:], f.value)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +83,7 @@ func (f *Filter) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range f.filters {
-		n, err = proto.NestedStructureMarshal(filtersFilterField, buf[offset:], f.filters[i])
+		n, err = protoutil.NestedStructureMarshal(filtersFilterField, buf[offset:], f.filters[i])
 		if err != nil {
 			return nil, err
 		}
@@ -93,15 +95,26 @@ func (f *Filter) StableMarshal(buf []byte) ([]byte, error) {
 }
 
 func (f *Filter) StableSize() (size int) {
-	size += proto.StringSize(nameFilterField, f.name)
-	size += proto.StringSize(keyFilterField, f.key)
-	size += proto.EnumSize(opFilterField, int32(f.op))
-	size += proto.StringSize(valueFilterField, f.value)
+	size += protoutil.StringSize(nameFilterField, f.name)
+	size += protoutil.StringSize(keyFilterField, f.key)
+	size += protoutil.EnumSize(opFilterField, int32(f.op))
+	size += protoutil.StringSize(valueFilterField, f.value)
 	for i := range f.filters {
-		size += proto.NestedStructureSize(filtersFilterField, f.filters[i])
+		size += protoutil.NestedStructureSize(filtersFilterField, f.filters[i])
 	}
 
 	return size
+}
+
+func (f *Filter) Unmarshal(data []byte) error {
+	m := new(netmap.Filter)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*f = *FilterFromGRPCMessage(m)
+
+	return nil
 }
 
 func (s *Selector) StableMarshal(buf []byte) ([]byte, error) {
@@ -118,35 +131,35 @@ func (s *Selector) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.StringMarshal(nameSelectorField, buf[offset:], s.name)
+	n, err = protoutil.StringMarshal(nameSelectorField, buf[offset:], s.name)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.UInt32Marshal(countSelectorField, buf[offset:], s.count)
+	n, err = protoutil.UInt32Marshal(countSelectorField, buf[offset:], s.count)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.EnumMarshal(clauseSelectorField, buf[offset:], int32(s.clause))
+	n, err = protoutil.EnumMarshal(clauseSelectorField, buf[offset:], int32(s.clause))
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.StringMarshal(attributeSelectorField, buf[offset:], s.attribute)
+	n, err = protoutil.StringMarshal(attributeSelectorField, buf[offset:], s.attribute)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.StringMarshal(filterSelectorField, buf[offset:], s.filter)
+	n, err = protoutil.StringMarshal(filterSelectorField, buf[offset:], s.filter)
 	if err != nil {
 		return nil, err
 	}
@@ -155,13 +168,24 @@ func (s *Selector) StableMarshal(buf []byte) ([]byte, error) {
 }
 
 func (s *Selector) StableSize() (size int) {
-	size += proto.StringSize(nameSelectorField, s.name)
-	size += proto.UInt32Size(countSelectorField, s.count)
-	size += proto.EnumSize(countSelectorField, int32(s.clause))
-	size += proto.StringSize(attributeSelectorField, s.attribute)
-	size += proto.StringSize(filterSelectorField, s.filter)
+	size += protoutil.StringSize(nameSelectorField, s.name)
+	size += protoutil.UInt32Size(countSelectorField, s.count)
+	size += protoutil.EnumSize(countSelectorField, int32(s.clause))
+	size += protoutil.StringSize(attributeSelectorField, s.attribute)
+	size += protoutil.StringSize(filterSelectorField, s.filter)
 
 	return size
+}
+
+func (s *Selector) Unmarshal(data []byte) error {
+	m := new(netmap.Selector)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*s = *SelectorFromGRPCMessage(m)
+
+	return nil
 }
 
 func (r *Replica) StableMarshal(buf []byte) ([]byte, error) {
@@ -178,14 +202,14 @@ func (r *Replica) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.UInt32Marshal(countReplicaField, buf[offset:], r.count)
+	n, err = protoutil.UInt32Marshal(countReplicaField, buf[offset:], r.count)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.StringMarshal(selectorReplicaField, buf[offset:], r.selector)
+	n, err = protoutil.StringMarshal(selectorReplicaField, buf[offset:], r.selector)
 	if err != nil {
 		return nil, err
 	}
@@ -194,10 +218,21 @@ func (r *Replica) StableMarshal(buf []byte) ([]byte, error) {
 }
 
 func (r *Replica) StableSize() (size int) {
-	size += proto.UInt32Size(countReplicaField, r.count)
-	size += proto.StringSize(selectorReplicaField, r.selector)
+	size += protoutil.UInt32Size(countReplicaField, r.count)
+	size += protoutil.StringSize(selectorReplicaField, r.selector)
 
 	return size
+}
+
+func (r *Replica) Unmarshal(data []byte) error {
+	m := new(netmap.Replica)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*r = *ReplicaFromGRPCMessage(m)
+
+	return nil
 }
 
 func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
@@ -215,7 +250,7 @@ func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
 	)
 
 	for i := range p.replicas {
-		n, err = proto.NestedStructureMarshal(replicasPolicyField, buf[offset:], p.replicas[i])
+		n, err = protoutil.NestedStructureMarshal(replicasPolicyField, buf[offset:], p.replicas[i])
 		if err != nil {
 			return nil, err
 		}
@@ -223,7 +258,7 @@ func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
 		offset += n
 	}
 
-	n, err = proto.UInt32Marshal(backupPolicyField, buf[offset:], p.backupFactor)
+	n, err = protoutil.UInt32Marshal(backupPolicyField, buf[offset:], p.backupFactor)
 	if err != nil {
 		return nil, err
 	}
@@ -231,7 +266,7 @@ func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range p.selectors {
-		n, err = proto.NestedStructureMarshal(selectorsPolicyField, buf[offset:], p.selectors[i])
+		n, err = protoutil.NestedStructureMarshal(selectorsPolicyField, buf[offset:], p.selectors[i])
 		if err != nil {
 			return nil, err
 		}
@@ -240,7 +275,7 @@ func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
 	}
 
 	for i := range p.filters {
-		n, err = proto.NestedStructureMarshal(filtersPolicyField, buf[offset:], p.filters[i])
+		n, err = protoutil.NestedStructureMarshal(filtersPolicyField, buf[offset:], p.filters[i])
 		if err != nil {
 			return nil, err
 		}
@@ -253,20 +288,31 @@ func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
 
 func (p *PlacementPolicy) StableSize() (size int) {
 	for i := range p.replicas {
-		size += proto.NestedStructureSize(replicasPolicyField, p.replicas[i])
+		size += protoutil.NestedStructureSize(replicasPolicyField, p.replicas[i])
 	}
 
-	size += proto.UInt32Size(backupPolicyField, p.backupFactor)
+	size += protoutil.UInt32Size(backupPolicyField, p.backupFactor)
 
 	for i := range p.selectors {
-		size += proto.NestedStructureSize(selectorsPolicyField, p.selectors[i])
+		size += protoutil.NestedStructureSize(selectorsPolicyField, p.selectors[i])
 	}
 
 	for i := range p.filters {
-		size += proto.NestedStructureSize(filtersPolicyField, p.filters[i])
+		size += protoutil.NestedStructureSize(filtersPolicyField, p.filters[i])
 	}
 
 	return size
+}
+
+func (p *PlacementPolicy) Unmarshal(data []byte) error {
+	m := new(netmap.PlacementPolicy)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*p = *PlacementPolicyFromGRPCMessage(m)
+
+	return nil
 }
 
 func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
@@ -283,14 +329,14 @@ func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.StringMarshal(keyAttributeField, buf[offset:], a.key)
+	n, err = protoutil.StringMarshal(keyAttributeField, buf[offset:], a.key)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.StringMarshal(valueAttributeField, buf[offset:], a.value)
+	n, err = protoutil.StringMarshal(valueAttributeField, buf[offset:], a.value)
 	if err != nil {
 		return nil, err
 	}
@@ -298,7 +344,7 @@ func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range a.parents {
-		n, err = proto.StringMarshal(parentsAttributeField, buf[offset:], a.parents[i])
+		n, err = protoutil.StringMarshal(parentsAttributeField, buf[offset:], a.parents[i])
 		if err != nil {
 			return nil, err
 		}
@@ -314,14 +360,25 @@ func (a *Attribute) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.StringSize(keyAttributeField, a.key)
-	size += proto.StringSize(valueAttributeField, a.value)
+	size += protoutil.StringSize(keyAttributeField, a.key)
+	size += protoutil.StringSize(valueAttributeField, a.value)
 
 	for i := range a.parents {
-		size += proto.StringSize(parentsAttributeField, a.parents[i])
+		size += protoutil.StringSize(parentsAttributeField, a.parents[i])
 	}
 
 	return size
+}
+
+func (a *Attribute) Unmarshal(data []byte) error {
+	m := new(netmap.NodeInfo_Attribute)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*a = *AttributeFromGRPCMessage(m)
+
+	return nil
 }
 
 func (ni *NodeInfo) StableMarshal(buf []byte) ([]byte, error) {
@@ -338,14 +395,14 @@ func (ni *NodeInfo) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.BytesMarshal(keyNodeInfoField, buf[offset:], ni.publicKey)
+	n, err = protoutil.BytesMarshal(keyNodeInfoField, buf[offset:], ni.publicKey)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.StringMarshal(addressNodeInfoField, buf[offset:], ni.address)
+	n, err = protoutil.StringMarshal(addressNodeInfoField, buf[offset:], ni.address)
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +410,7 @@ func (ni *NodeInfo) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range ni.attributes {
-		n, err = proto.NestedStructureMarshal(attributesNodeInfoField, buf[offset:], ni.attributes[i])
+		n, err = protoutil.NestedStructureMarshal(attributesNodeInfoField, buf[offset:], ni.attributes[i])
 		if err != nil {
 			return nil, err
 		}
@@ -361,7 +418,7 @@ func (ni *NodeInfo) StableMarshal(buf []byte) ([]byte, error) {
 		offset += n
 	}
 
-	n, err = proto.EnumMarshal(stateNodeInfoField, buf[offset:], int32(ni.state))
+	n, err = protoutil.EnumMarshal(stateNodeInfoField, buf[offset:], int32(ni.state))
 	if err != nil {
 		return nil, err
 	}
@@ -374,15 +431,26 @@ func (ni *NodeInfo) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.BytesSize(keyNodeInfoField, ni.publicKey)
-	size += proto.StringSize(addressNodeInfoField, ni.address)
+	size += protoutil.BytesSize(keyNodeInfoField, ni.publicKey)
+	size += protoutil.StringSize(addressNodeInfoField, ni.address)
 	for i := range ni.attributes {
-		size += proto.NestedStructureSize(attributesNodeInfoField, ni.attributes[i])
+		size += protoutil.NestedStructureSize(attributesNodeInfoField, ni.attributes[i])
 	}
 
-	size += proto.EnumSize(stateNodeInfoField, int32(ni.state))
+	size += protoutil.EnumSize(stateNodeInfoField, int32(ni.state))
 
 	return size
+}
+
+func (ni *NodeInfo) Unmarshal(data []byte) error {
+	m := new(netmap.NodeInfo)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*ni = *NodeInfoFromGRPCMessage(m)
+
+	return nil
 }
 
 func (l *LocalNodeInfoRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -407,14 +475,14 @@ func (l *LocalNodeInfoResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.NestedStructureMarshal(versionInfoResponseBodyField, buf[offset:], l.version)
+	n, err = protoutil.NestedStructureMarshal(versionInfoResponseBodyField, buf[offset:], l.version)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	_, err = proto.NestedStructureMarshal(nodeInfoResponseBodyField, buf[offset:], l.nodeInfo)
+	_, err = protoutil.NestedStructureMarshal(nodeInfoResponseBodyField, buf[offset:], l.nodeInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -427,8 +495,8 @@ func (l *LocalNodeInfoResponseBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(versionInfoResponseBodyField, l.version)
-	size += proto.NestedStructureSize(nodeInfoResponseBodyField, l.nodeInfo)
+	size += protoutil.NestedStructureSize(versionInfoResponseBodyField, l.version)
+	size += protoutil.NestedStructureSize(nodeInfoResponseBodyField, l.nodeInfo)
 
 	return size
 }

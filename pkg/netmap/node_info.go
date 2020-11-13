@@ -193,6 +193,38 @@ func (a *NodeAttribute) SetParentKeys(keys ...string) {
 		SetParents(keys)
 }
 
+// Marshal marshals NodeAttribute into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (a *NodeAttribute) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*netmap.Attribute)(a).
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of NodeAttribute.
+func (a *NodeAttribute) Unmarshal(data []byte) error {
+	return (*netmap.Attribute)(a).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes NodeAttribute to protobuf JSON format.
+func (a *NodeAttribute) MarshalJSON() ([]byte, error) {
+	return (*netmap.Attribute)(a).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes NodeAttribute from protobuf JSON format.
+func (a *NodeAttribute) UnmarshalJSON(data []byte) error {
+	return (*netmap.Attribute)(a).
+		UnmarshalJSON(data)
+}
+
 // NewNodeInfo creates and returns new NodeInfo instance.
 func NewNodeInfo() *NodeInfo {
 	return NewNodeInfoFromV2(new(netmap.NodeInfo))
@@ -201,21 +233,6 @@ func NewNodeInfo() *NodeInfo {
 // NewNodeInfoFromV2 converts v2 NodeInfo to NodeInfo.
 func NewNodeInfoFromV2(i *netmap.NodeInfo) *NodeInfo {
 	return (*NodeInfo)(i)
-}
-
-// NodeInfoToJSON encodes NodeInfo to JSON format.
-func NodeInfoToJSON(i *NodeInfo) ([]byte, error) {
-	return netmap.NodeInfoToJSON(i.ToV2())
-}
-
-// NodeInfoFromJSON decodes NodeInfo from JSON-encoded data.
-func NodeInfoFromJSON(data []byte) (*NodeInfo, error) {
-	i, err := netmap.NodeInfoFromJSON(data)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewNodeInfoFromV2(i), nil
 }
 
 // ToV2 converts NodeInfo to v2 NodeInfo.
@@ -285,4 +302,36 @@ func (i *NodeInfo) State() NodeState {
 func (i *NodeInfo) SetState(s NodeState) {
 	(*netmap.NodeInfo)(i).
 		SetState(s.ToV2())
+}
+
+// Marshal marshals NodeInfo into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (i *NodeInfo) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*netmap.NodeInfo)(i).
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of NodeInfo.
+func (i *NodeInfo) Unmarshal(data []byte) error {
+	return (*netmap.NodeInfo)(i).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes NodeInfo to protobuf JSON format.
+func (i *NodeInfo) MarshalJSON() ([]byte, error) {
+	return (*netmap.NodeInfo)(i).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes NodeInfo from protobuf JSON format.
+func (i *NodeInfo) UnmarshalJSON(data []byte) error {
+	return (*netmap.NodeInfo)(i).
+		UnmarshalJSON(data)
 }
