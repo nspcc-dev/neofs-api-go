@@ -42,3 +42,35 @@ func (s *Signature) SetSign(v []byte) {
 func (s *Signature) ToV2() *refs.Signature {
 	return (*refs.Signature)(s)
 }
+
+// Marshal marshals Signature into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (s *Signature) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*refs.Signature)(s).
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Signature.
+func (s *Signature) Unmarshal(data []byte) error {
+	return (*refs.Signature)(s).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes Signature to protobuf JSON format.
+func (s *Signature) MarshalJSON() ([]byte, error) {
+	return (*refs.Signature)(s).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Signature from protobuf JSON format.
+func (s *Signature) UnmarshalJSON(data []byte) error {
+	return (*refs.Signature)(s).
+		UnmarshalJSON(data)
+}

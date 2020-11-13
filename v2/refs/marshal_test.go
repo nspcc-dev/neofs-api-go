@@ -95,16 +95,14 @@ func TestChecksum_StableMarshal(t *testing.T) {
 
 func TestSignature_StableMarshal(t *testing.T) {
 	signatureFrom := generateSignature("Public Key", "Signature")
-	transport := new(grpc.Signature)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := signatureFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		signatureTo := new(refs.Signature)
+		require.NoError(t, signatureTo.Unmarshal(wire))
 
-		signatureTo := refs.SignatureFromGRPCMessage(transport)
 		require.Equal(t, signatureFrom, signatureTo)
 	})
 }

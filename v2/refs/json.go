@@ -104,3 +104,23 @@ func (v *Version) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (s *Signature) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		SignatureToGRPCMessage(s),
+	)
+}
+
+func (s *Signature) UnmarshalJSON(data []byte) error {
+	msg := new(refs.Signature)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*s = *SignatureFromGRPCMessage(msg)
+
+	return nil
+}

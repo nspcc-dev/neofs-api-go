@@ -266,6 +266,17 @@ func (s *Signature) StableSize() (size int) {
 	return size
 }
 
+func (s *Signature) Unmarshal(data []byte) error {
+	m := new(refs.Signature)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*s = *SignatureFromGRPCMessage(m)
+
+	return nil
+}
+
 func (v *Version) StableMarshal(buf []byte) ([]byte, error) {
 	if v == nil {
 		return []byte{}, nil
