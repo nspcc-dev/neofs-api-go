@@ -166,16 +166,14 @@ func TestResponseVerificationHeader_StableMarshal(t *testing.T) {
 	verifHeaderOrigin := generateResponseVerificationHeader("Key", "Inside")
 	verifHeaderFrom := generateResponseVerificationHeader("Value", "Outside")
 	verifHeaderFrom.SetOrigin(verifHeaderOrigin)
-	transport := new(grpc.ResponseVerificationHeader)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := verifHeaderFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		verifHeaderTo := new(session.ResponseVerificationHeader)
+		require.NoError(t, verifHeaderTo.Unmarshal(wire))
 
-		verifHeaderTo := session.ResponseVerificationHeaderFromGRPCMessage(transport)
 		require.Equal(t, verifHeaderFrom, verifHeaderTo)
 	})
 }
