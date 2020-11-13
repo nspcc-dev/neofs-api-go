@@ -118,3 +118,47 @@ func sanityCheck(b *BearerToken) error {
 
 	return nil
 }
+
+// Marshal marshals BearerToken into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (b *BearerToken) Marshal(bs ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(bs) > 0 {
+		buf = bs[0]
+	}
+
+	return b.ToV2().
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of BearerToken.
+func (b *BearerToken) Unmarshal(data []byte) error {
+	fV2 := new(acl.BearerToken)
+	if err := fV2.Unmarshal(data); err != nil {
+		return err
+	}
+
+	*b = *NewBearerTokenFromV2(fV2)
+
+	return nil
+}
+
+// MarshalJSON encodes BearerToken to protobuf JSON format.
+func (b *BearerToken) MarshalJSON() ([]byte, error) {
+	return b.ToV2().
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes BearerToken from protobuf JSON format.
+func (b *BearerToken) UnmarshalJSON(data []byte) error {
+	fV2 := new(acl.BearerToken)
+	if err := fV2.UnmarshalJSON(data); err != nil {
+		return err
+	}
+
+	*b = *NewBearerTokenFromV2(fV2)
+
+	return nil
+}

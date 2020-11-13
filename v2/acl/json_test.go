@@ -8,17 +8,15 @@ import (
 )
 
 func TestBearerTokenJSON(t *testing.T) {
-	exp := generateBearerToken("token")
+	b := generateBearerToken("id")
 
-	t.Run("non empty", func(t *testing.T) {
-		data, err := acl.BearerTokenToJSON(exp)
-		require.NoError(t, err)
+	data, err := b.MarshalJSON()
+	require.NoError(t, err)
 
-		got, err := acl.BearerTokenFromJSON(data)
-		require.NoError(t, err)
+	b2 := new(acl.BearerToken)
+	require.NoError(t, b2.UnmarshalJSON(data))
 
-		require.Equal(t, exp, got)
-	})
+	require.Equal(t, b, b2)
 }
 
 func TestFilterJSON(t *testing.T) {
