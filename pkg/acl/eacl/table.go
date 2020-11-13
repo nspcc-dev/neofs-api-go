@@ -111,3 +111,47 @@ func NewTableFromV2(table *v2acl.Table) *Table {
 
 	return t
 }
+
+// Marshal marshals Table into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (t *Table) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return t.ToV2().
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Table.
+func (t *Table) Unmarshal(data []byte) error {
+	fV2 := new(v2acl.Table)
+	if err := fV2.Unmarshal(data); err != nil {
+		return err
+	}
+
+	*t = *NewTableFromV2(fV2)
+
+	return nil
+}
+
+// MarshalJSON encodes Table to protobuf JSON format.
+func (t *Table) MarshalJSON() ([]byte, error) {
+	return t.ToV2().
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Table from protobuf JSON format.
+func (t *Table) UnmarshalJSON(data []byte) error {
+	tV2 := new(v2acl.Table)
+	if err := tV2.UnmarshalJSON(data); err != nil {
+		return err
+	}
+
+	*t = *NewTableFromV2(tV2)
+
+	return nil
+}
