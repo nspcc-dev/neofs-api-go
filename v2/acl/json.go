@@ -102,3 +102,23 @@ func (f *HeaderFilter) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (t *Target) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		TargetToGRPCMessage(t),
+	)
+}
+
+func (t *Target) UnmarshalJSON(data []byte) error {
+	msg := new(acl.EACLRecord_Target)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*t = *TargetInfoFromGRPCMessage(msg)
+
+	return nil
+}

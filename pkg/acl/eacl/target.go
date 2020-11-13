@@ -14,8 +14,16 @@ type Target struct {
 	keys []ecdsa.PublicKey
 }
 
+func (t *Target) SetKeys(keys ...ecdsa.PublicKey) {
+	t.keys = keys
+}
+
 func (t Target) Keys() []ecdsa.PublicKey {
 	return t.keys
+}
+
+func (t *Target) SetRole(r Role) {
+	t.role = r
 }
 
 func (t Target) Role() Role {
@@ -37,6 +45,10 @@ func (t *Target) ToV2() *v2acl.Target {
 	return target
 }
 
+func NewTarget() *Target {
+	return NewTargetFromV2(new(v2acl.Target))
+}
+
 func NewTargetFromV2(target *v2acl.Target) *Target {
 	t := new(Target)
 
@@ -53,4 +65,48 @@ func NewTargetFromV2(target *v2acl.Target) *Target {
 	}
 
 	return t
+}
+
+// Marshal marshals Target into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (t *Target) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return t.ToV2().
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Target.
+func (t *Target) Unmarshal(data []byte) error {
+	fV2 := new(v2acl.Target)
+	if err := fV2.Unmarshal(data); err != nil {
+		return err
+	}
+
+	*t = *NewTargetFromV2(fV2)
+
+	return nil
+}
+
+// MarshalJSON encodes Target to protobuf JSON format.
+func (t *Target) MarshalJSON() ([]byte, error) {
+	return t.ToV2().
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Target from protobuf JSON format.
+func (t *Target) UnmarshalJSON(data []byte) error {
+	tV2 := new(v2acl.Target)
+	if err := tV2.UnmarshalJSON(data); err != nil {
+		return err
+	}
+
+	*t = *NewTargetFromV2(tV2)
+
+	return nil
 }

@@ -36,3 +36,29 @@ func TestTarget(t *testing.T) {
 		require.Equal(t, new(Target), NewTargetFromV2(nil))
 	})
 }
+
+func TestTargetEncoding(t *testing.T) {
+	tar := NewTarget()
+	tar.SetRole(RoleSystem)
+	tar.SetKeys(test.DecodeKey(-1).PublicKey)
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := tar.Marshal()
+		require.NoError(t, err)
+
+		tar2 := NewTarget()
+		require.NoError(t, tar2.Unmarshal(data))
+
+		require.Equal(t, tar, tar2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := tar.MarshalJSON()
+		require.NoError(t, err)
+
+		tar2 := NewTarget()
+		require.NoError(t, tar2.UnmarshalJSON(data))
+
+		require.Equal(t, tar, tar2)
+	})
+}
