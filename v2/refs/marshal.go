@@ -51,6 +51,17 @@ func (o *OwnerID) StableSize() int {
 	return proto.BytesSize(ownerIDValField, o.val)
 }
 
+func (o *OwnerID) Unmarshal(data []byte) error {
+	m := new(refs.OwnerID)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*o = *OwnerIDFromGRPCMessage(m)
+
+	return nil
+}
+
 func (c *ContainerID) StableMarshal(buf []byte) ([]byte, error) {
 	if c == nil {
 		return []byte{}, nil
