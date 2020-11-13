@@ -76,3 +76,47 @@ func (t *SessionToken) Signature() *pkg.Signature {
 			GetSignature(),
 	)
 }
+
+// Marshal marshals SessionToken into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (t *SessionToken) Marshal(bs ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(bs) > 0 {
+		buf = bs[0]
+	}
+
+	return (*session.SessionToken)(t).
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of SessionToken.
+func (t *SessionToken) Unmarshal(data []byte) error {
+	tV2 := new(session.SessionToken)
+	if err := tV2.Unmarshal(data); err != nil {
+		return err
+	}
+
+	*t = *NewSessionTokenFromV2(tV2)
+
+	return nil
+}
+
+// MarshalJSON encodes SessionToken to protobuf JSON format.
+func (t *SessionToken) MarshalJSON() ([]byte, error) {
+	return (*session.SessionToken)(t).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes SessionToken from protobuf JSON format.
+func (t *SessionToken) UnmarshalJSON(data []byte) error {
+	tV2 := new(session.SessionToken)
+	if err := tV2.UnmarshalJSON(data); err != nil {
+		return err
+	}
+
+	*t = *NewSessionTokenFromV2(tV2)
+
+	return nil
+}

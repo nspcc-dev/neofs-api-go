@@ -64,3 +64,23 @@ func (t *SessionTokenBody) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (t *SessionToken) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		SessionTokenToGRPCMessage(t),
+	)
+}
+
+func (t *SessionToken) UnmarshalJSON(data []byte) error {
+	msg := new(session.SessionToken)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*t = *SessionTokenFromGRPCMessage(msg)
+
+	return nil
+}
