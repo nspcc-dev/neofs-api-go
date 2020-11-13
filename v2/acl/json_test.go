@@ -57,3 +57,15 @@ func TestTable_MarshalJSON(t *testing.T) {
 
 	require.Equal(t, tab, tab2)
 }
+
+func TestTokenLifetimeJSON(t *testing.T) {
+	l := generateLifetime(1, 2, 3)
+
+	data, err := l.MarshalJSON()
+	require.NoError(t, err)
+
+	l2 := new(acl.TokenLifetime)
+	require.NoError(t, l2.UnmarshalJSON(data))
+
+	require.Equal(t, l, l2)
+}
