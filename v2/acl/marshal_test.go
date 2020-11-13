@@ -170,7 +170,6 @@ func TestRecord_StableMarshal(t *testing.T) {
 
 func TestTable_StableMarshal(t *testing.T) {
 	tableFrom := new(acl.Table)
-	transport := new(grpc.EACLTable)
 
 	t.Run("non empty", func(t *testing.T) {
 		cid := new(refs.ContainerID)
@@ -190,10 +189,9 @@ func TestTable_StableMarshal(t *testing.T) {
 		wire, err := tableFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		tableTo := new(acl.Table)
+		require.NoError(t, tableTo.Unmarshal(wire))
 
-		tableTo := acl.TableFromGRPCMessage(transport)
 		require.Equal(t, tableFrom, tableTo)
 	})
 }

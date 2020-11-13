@@ -94,6 +94,17 @@ func (t *Table) StableSize() (size int) {
 	return size
 }
 
+func (t *Table) Unmarshal(data []byte) error {
+	m := new(acl.EACLTable)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*t = *TableFromGRPCMessage(m)
+
+	return nil
+}
+
 // StableMarshal marshals unified acl record structure in a protobuf
 // compatible way without field order shuffle.
 func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
