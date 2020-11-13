@@ -69,3 +69,15 @@ func TestVersionSON(t *testing.T) {
 
 	require.Equal(t, v, v2)
 }
+
+func TestSignatureSON(t *testing.T) {
+	s := generateSignature("key", "sig")
+
+	data, err := s.MarshalJSON()
+	require.NoError(t, err)
+
+	s2 := new(refs.Signature)
+	require.NoError(t, s2.UnmarshalJSON(data))
+
+	require.Equal(t, s, s2)
+}
