@@ -28,16 +28,14 @@ func TestAttribute_StableMarshal(t *testing.T) {
 
 func TestContainer_StableMarshal(t *testing.T) {
 	cnrFrom := generateContainer("nonce")
-	transport := new(grpc.Container)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := cnrFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		cnrTo := new(container.Container)
+		require.NoError(t, cnrTo.Unmarshal(wire))
 
-		cnrTo := container.ContainerFromGRPCMessage(transport)
 		require.Equal(t, cnrFrom, cnrTo)
 	})
 }

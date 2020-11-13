@@ -66,3 +66,29 @@ func generatePlacementPolicy() *netmap.PlacementPolicy {
 
 	return p
 }
+
+func TestContainerEncoding(t *testing.T) {
+	c := container.New(
+		container.WithAttribute("key", "value"),
+	)
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := c.Marshal()
+		require.NoError(t, err)
+
+		c2 := container.New()
+		require.NoError(t, c2.Unmarshal(data))
+
+		require.Equal(t, c, c2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := c.MarshalJSON()
+		require.NoError(t, err)
+
+		c2 := container.New()
+		require.NoError(t, c2.UnmarshalJSON(data))
+
+		require.Equal(t, c, c2)
+	})
+}
