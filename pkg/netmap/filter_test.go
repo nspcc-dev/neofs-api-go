@@ -269,3 +269,29 @@ func TestFilter_InnerFilters(t *testing.T) {
 
 	require.Equal(t, []*Filter{f1, f2}, f.InnerFilters())
 }
+
+func TestFilterEncoding(t *testing.T) {
+	f := newFilter("name", "key", "value", OpEQ,
+		newFilter("name2", "key2", "value", OpOR),
+	)
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := f.Marshal()
+		require.NoError(t, err)
+
+		f2 := NewFilter()
+		require.NoError(t, f2.Unmarshal(data))
+
+		require.Equal(t, f, f2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := f.MarshalJSON()
+		require.NoError(t, err)
+
+		f2 := NewFilter()
+		require.NoError(t, f2.UnmarshalJSON(data))
+
+		require.Equal(t, f, f2)
+	})
+}

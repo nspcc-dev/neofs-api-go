@@ -128,18 +128,54 @@ func TestNodeInfo_Attributes(t *testing.T) {
 	require.Equal(t, as, i.Attributes())
 }
 
-func TestNodeInfoJSON(t *testing.T) {
+func TestNodeAttributeEncoding(t *testing.T) {
+	a := testNodeAttribute()
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := a.Marshal()
+		require.NoError(t, err)
+
+		a2 := NewNodeAttribute()
+		require.NoError(t, a2.Unmarshal(data))
+
+		require.Equal(t, a, a2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := a.MarshalJSON()
+		require.NoError(t, err)
+
+		a2 := NewNodeAttribute()
+		require.NoError(t, a2.UnmarshalJSON(data))
+
+		require.Equal(t, a, a2)
+	})
+}
+
+func TestNodeInfoEncoding(t *testing.T) {
 	i := NewNodeInfo()
 	i.SetPublicKey([]byte{1, 2, 3})
-	i.SetAddress("some node address")
+	i.SetAddress("192.168.0.1")
 	i.SetState(NodeStateOnline)
-	i.SetAttributes(testNodeAttribute(), testNodeAttribute())
+	i.SetAttributes(testNodeAttribute())
 
-	j, err := NodeInfoToJSON(i)
-	require.NoError(t, err)
+	t.Run("binary", func(t *testing.T) {
+		data, err := i.Marshal()
+		require.NoError(t, err)
 
-	i2, err := NodeInfoFromJSON(j)
-	require.NoError(t, err)
+		i2 := NewNodeInfo()
+		require.NoError(t, i2.Unmarshal(data))
 
-	require.Equal(t, i, i2)
+		require.Equal(t, i, i2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := i.MarshalJSON()
+		require.NoError(t, err)
+
+		i2 := NewNodeInfo()
+		require.NoError(t, i2.UnmarshalJSON(data))
+
+		require.Equal(t, i, i2)
+	})
 }

@@ -7,46 +7,62 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNodeInfoJSON(t *testing.T) {
-	exp := generateNodeInfo("public key", "/multi/addr", 2)
+func TestFilterJSON(t *testing.T) {
+	f := generateFilter("key", "value", false)
 
-	t.Run("non empty", func(t *testing.T) {
-		data, err := netmap.NodeInfoToJSON(exp)
-		require.NoError(t, err)
+	d, err := f.MarshalJSON()
+	require.NoError(t, err)
 
-		got, err := netmap.NodeInfoFromJSON(data)
-		require.NoError(t, err)
+	f2 := new(netmap.Filter)
+	require.NoError(t, f2.UnmarshalJSON(d))
 
-		require.Equal(t, exp, got)
-	})
-
-	t.Run("empty", func(t *testing.T) {
-		_, err := netmap.NodeInfoToJSON(nil)
-		require.Error(t, err)
-
-		_, err = netmap.NodeInfoFromJSON(nil)
-		require.Error(t, err)
-	})
+	require.Equal(t, f, f2)
 }
 
-func TestPlacementPolicyJSON(t *testing.T) {
-	exp := generatePolicy(3)
+func TestSelectorJSON(t *testing.T) {
+	s := generateSelector("name")
 
-	t.Run("non empty", func(t *testing.T) {
-		data, err := netmap.PlacementPolicyToJSON(exp)
-		require.NoError(t, err)
+	data, err := s.MarshalJSON()
+	require.NoError(t, err)
 
-		got, err := netmap.PlacementPolicyFromJSON(data)
-		require.NoError(t, err)
+	s2 := new(netmap.Selector)
+	require.NoError(t, s2.UnmarshalJSON(data))
 
-		require.Equal(t, exp, got)
-	})
+	require.Equal(t, s, s2)
+}
 
-	t.Run("empty", func(t *testing.T) {
-		_, err := netmap.PlacementPolicyToJSON(nil)
-		require.Error(t, err)
+func TestReplicaJSON(t *testing.T) {
+	s := generateReplica("selector")
 
-		_, err = netmap.PlacementPolicyFromJSON(nil)
-		require.Error(t, err)
-	})
+	data, err := s.MarshalJSON()
+	require.NoError(t, err)
+
+	s2 := new(netmap.Replica)
+	require.NoError(t, s2.UnmarshalJSON(data))
+
+	require.Equal(t, s, s2)
+}
+
+func TestAttributeJSON(t *testing.T) {
+	a := generateAttribute("key", "value")
+
+	data, err := a.MarshalJSON()
+	require.NoError(t, err)
+
+	a2 := new(netmap.Attribute)
+	require.NoError(t, a2.UnmarshalJSON(data))
+
+	require.Equal(t, a, a2)
+}
+
+func TestNodeInfoJSON(t *testing.T) {
+	i := generateNodeInfo("key", "value", 3)
+
+	data, err := i.MarshalJSON()
+	require.NoError(t, err)
+
+	i2 := new(netmap.NodeInfo)
+	require.NoError(t, i2.UnmarshalJSON(data))
+
+	require.Equal(t, i, i2)
 }

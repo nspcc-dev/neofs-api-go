@@ -229,3 +229,34 @@ func (f *Filter) SetInnerFilters(fs ...*Filter) {
 	(*netmap.Filter)(f).
 		SetFilters(filtersToV2(fs))
 }
+
+// Marshal marshals Filter into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (f *Filter) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*netmap.Filter)(f).StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Filter.
+func (f *Filter) Unmarshal(data []byte) error {
+	return (*netmap.Filter)(f).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes Filter to protobuf JSON format.
+func (f *Filter) MarshalJSON() ([]byte, error) {
+	return (*netmap.Filter)(f).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Filter from protobuf JSON format.
+func (f *Filter) UnmarshalJSON(data []byte) error {
+	return (*netmap.Filter)(f).
+		UnmarshalJSON(data)
+}

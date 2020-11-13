@@ -7,21 +7,6 @@ import (
 // PlacementPolicy represents v2-compatible placement policy.
 type PlacementPolicy netmap.PlacementPolicy
 
-// PlacementPolicyToJSON encodes PlacementPolicy to JSON format.
-func PlacementPolicyToJSON(p *PlacementPolicy) ([]byte, error) {
-	return netmap.PlacementPolicyToJSON(p.ToV2())
-}
-
-// PlacementPolicyFromJSON decodes PlacementPolicy from JSON format.
-func PlacementPolicyFromJSON(data []byte) (*PlacementPolicy, error) {
-	p, err := netmap.PlacementPolicyFromJSON(data)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewPlacementPolicyFromV2(p), nil
-}
-
 // NewPlacementPolicy creates and returns new PlacementPolicy instance.
 func NewPlacementPolicy() *PlacementPolicy {
 	return NewPlacementPolicyFromV2(new(netmap.PlacementPolicy))
@@ -113,4 +98,36 @@ func (p *PlacementPolicy) Filters() []*Filter {
 func (p *PlacementPolicy) SetFilters(fs ...*Filter) {
 	(*netmap.PlacementPolicy)(p).
 		SetFilters(filtersToV2(fs))
+}
+
+// Marshal marshals PlacementPolicy into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (p *PlacementPolicy) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*netmap.PlacementPolicy)(p).
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of PlacementPolicy.
+func (p *PlacementPolicy) Unmarshal(data []byte) error {
+	return (*netmap.PlacementPolicy)(p).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes PlacementPolicy to protobuf JSON format.
+func (p *PlacementPolicy) MarshalJSON() ([]byte, error) {
+	return (*netmap.PlacementPolicy)(p).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes PlacementPolicy from protobuf JSON format.
+func (p *PlacementPolicy) UnmarshalJSON(data []byte) error {
+	return (*netmap.PlacementPolicy)(p).
+		UnmarshalJSON(data)
 }
