@@ -359,6 +359,17 @@ func (l *TokenLifetime) StableSize() (size int) {
 	return size
 }
 
+func (l *TokenLifetime) Unmarshal(data []byte) error {
+	m := new(acl.BearerToken_Body_TokenLifetime)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*l = *TokenLifetimeFromGRPCMessage(m)
+
+	return nil
+}
+
 func (bt *BearerTokenBody) StableMarshal(buf []byte) ([]byte, error) {
 	if bt == nil {
 		return []byte{}, nil

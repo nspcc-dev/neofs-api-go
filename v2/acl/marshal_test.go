@@ -198,16 +198,14 @@ func TestTable_StableMarshal(t *testing.T) {
 
 func TestTokenLifetime_StableMarshal(t *testing.T) {
 	lifetimeFrom := generateLifetime(10, 20, 30)
-	transport := new(grpc.BearerToken_Body_TokenLifetime)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := lifetimeFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		lifetimeTo := new(acl.TokenLifetime)
+		require.NoError(t, lifetimeTo.Unmarshal(wire))
 
-		lifetimeTo := acl.TokenLifetimeFromGRPCMessage(transport)
 		require.Equal(t, lifetimeFrom, lifetimeTo)
 	})
 }
