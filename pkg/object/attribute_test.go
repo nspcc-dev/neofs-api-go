@@ -21,3 +21,29 @@ func TestAttribute(t *testing.T) {
 	require.Equal(t, key, aV2.GetKey())
 	require.Equal(t, val, aV2.GetValue())
 }
+
+func TestAttributeEncoding(t *testing.T) {
+	a := NewAttribute()
+	a.SetKey("key")
+	a.SetValue("value")
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := a.Marshal()
+		require.NoError(t, err)
+
+		a2 := NewAttribute()
+		require.NoError(t, a2.Unmarshal(data))
+
+		require.Equal(t, a, a2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := a.MarshalJSON()
+		require.NoError(t, err)
+
+		a2 := NewAttribute()
+		require.NoError(t, a2.UnmarshalJSON(data))
+
+		require.Equal(t, a, a2)
+	})
+}

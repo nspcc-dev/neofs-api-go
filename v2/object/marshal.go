@@ -213,6 +213,17 @@ func (a *Attribute) StableSize() (size int) {
 	return size
 }
 
+func (a *Attribute) Unmarshal(data []byte) error {
+	m := new(object.Header_Attribute)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*a = *AttributeFromGRPCMessage(m)
+
+	return nil
+}
+
 func (h *SplitHeader) StableMarshal(buf []byte) ([]byte, error) {
 	if h == nil {
 		return []byte{}, nil

@@ -18,3 +18,15 @@ func TestShortHeaderJSON(t *testing.T) {
 
 	require.Equal(t, h, h2)
 }
+
+func TestAttributeJSON(t *testing.T) {
+	a := generateAttribute("key", "value")
+
+	data, err := a.MarshalJSON()
+	require.NoError(t, err)
+
+	a2 := new(object.Attribute)
+	require.NoError(t, a2.UnmarshalJSON(data))
+
+	require.Equal(t, a, a2)
+}
