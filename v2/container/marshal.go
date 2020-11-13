@@ -1,7 +1,9 @@
 package container
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/util/proto"
+	protoutil "github.com/nspcc-dev/neofs-api-go/util/proto"
+	container "github.com/nspcc-dev/neofs-api-go/v2/container/grpc"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -54,14 +56,14 @@ func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.StringMarshal(attributeKeyField, buf[offset:], a.key)
+	n, err = protoutil.StringMarshal(attributeKeyField, buf[offset:], a.key)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	_, err = proto.StringMarshal(attributeValueField, buf[offset:], a.val)
+	_, err = protoutil.StringMarshal(attributeValueField, buf[offset:], a.val)
 	if err != nil {
 		return nil, err
 	}
@@ -74,10 +76,21 @@ func (a *Attribute) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.StringSize(attributeKeyField, a.key)
-	size += proto.StringSize(attributeValueField, a.val)
+	size += protoutil.StringSize(attributeKeyField, a.key)
+	size += protoutil.StringSize(attributeValueField, a.val)
 
 	return size
+}
+
+func (a *Attribute) Unmarshal(data []byte) error {
+	m := new(container.Container_Attribute)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*a = *AttributeFromGRPCMessage(m)
+
+	return nil
 }
 
 func (c *Container) StableMarshal(buf []byte) ([]byte, error) {
@@ -94,28 +107,28 @@ func (c *Container) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.NestedStructureMarshal(containerVersionField, buf[offset:], c.version)
+	n, err = protoutil.NestedStructureMarshal(containerVersionField, buf[offset:], c.version)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.NestedStructureMarshal(containerOwnerField, buf[offset:], c.ownerID)
+	n, err = protoutil.NestedStructureMarshal(containerOwnerField, buf[offset:], c.ownerID)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.BytesMarshal(containerNonceField, buf[offset:], c.nonce)
+	n, err = protoutil.BytesMarshal(containerNonceField, buf[offset:], c.nonce)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = proto.UInt32Marshal(containerBasicACLField, buf[offset:], c.basicACL)
+	n, err = protoutil.UInt32Marshal(containerBasicACLField, buf[offset:], c.basicACL)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +136,7 @@ func (c *Container) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range c.attr {
-		n, err = proto.NestedStructureMarshal(containerAttributesField, buf[offset:], c.attr[i])
+		n, err = protoutil.NestedStructureMarshal(containerAttributesField, buf[offset:], c.attr[i])
 		if err != nil {
 			return nil, err
 		}
@@ -131,7 +144,7 @@ func (c *Container) StableMarshal(buf []byte) ([]byte, error) {
 		offset += n
 	}
 
-	_, err = proto.NestedStructureMarshal(containerPlacementField, buf[offset:], c.policy)
+	_, err = protoutil.NestedStructureMarshal(containerPlacementField, buf[offset:], c.policy)
 	if err != nil {
 		return nil, err
 	}
@@ -144,16 +157,16 @@ func (c *Container) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(containerVersionField, c.version)
-	size += proto.NestedStructureSize(containerOwnerField, c.ownerID)
-	size += proto.BytesSize(containerNonceField, c.nonce)
-	size += proto.UInt32Size(containerBasicACLField, c.basicACL)
+	size += protoutil.NestedStructureSize(containerVersionField, c.version)
+	size += protoutil.NestedStructureSize(containerOwnerField, c.ownerID)
+	size += protoutil.BytesSize(containerNonceField, c.nonce)
+	size += protoutil.UInt32Size(containerBasicACLField, c.basicACL)
 
 	for i := range c.attr {
-		size += proto.NestedStructureSize(containerAttributesField, c.attr[i])
+		size += protoutil.NestedStructureSize(containerAttributesField, c.attr[i])
 	}
 
-	size += proto.NestedStructureSize(containerPlacementField, c.policy)
+	size += protoutil.NestedStructureSize(containerPlacementField, c.policy)
 
 	return size
 }
@@ -172,14 +185,14 @@ func (r *PutRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.NestedStructureMarshal(putReqBodyContainerField, buf[offset:], r.cnr)
+	n, err = protoutil.NestedStructureMarshal(putReqBodyContainerField, buf[offset:], r.cnr)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	_, err = proto.NestedStructureMarshal(putReqBodySignatureField, buf[offset:], r.sig)
+	_, err = protoutil.NestedStructureMarshal(putReqBodySignatureField, buf[offset:], r.sig)
 	if err != nil {
 		return nil, err
 	}
@@ -192,8 +205,8 @@ func (r *PutRequestBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(putReqBodyContainerField, r.cnr)
-	size += proto.NestedStructureSize(putReqBodySignatureField, r.sig)
+	size += protoutil.NestedStructureSize(putReqBodyContainerField, r.cnr)
+	size += protoutil.NestedStructureSize(putReqBodySignatureField, r.sig)
 
 	return size
 }
@@ -211,7 +224,7 @@ func (r *PutResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		err error
 	)
 
-	_, err = proto.NestedStructureMarshal(putRespBodyIDField, buf, r.cid)
+	_, err = protoutil.NestedStructureMarshal(putRespBodyIDField, buf, r.cid)
 	if err != nil {
 		return nil, err
 	}
@@ -224,7 +237,7 @@ func (r *PutResponseBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(putRespBodyIDField, r.cid)
+	size += protoutil.NestedStructureSize(putRespBodyIDField, r.cid)
 
 	return size
 }
@@ -243,14 +256,14 @@ func (r *DeleteRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.NestedStructureMarshal(deleteReqBodyIDField, buf[offset:], r.cid)
+	n, err = protoutil.NestedStructureMarshal(deleteReqBodyIDField, buf[offset:], r.cid)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	_, err = proto.NestedStructureMarshal(deleteReqBodySignatureField, buf[offset:], r.sig)
+	_, err = protoutil.NestedStructureMarshal(deleteReqBodySignatureField, buf[offset:], r.sig)
 	if err != nil {
 		return nil, err
 	}
@@ -263,8 +276,8 @@ func (r *DeleteRequestBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(deleteReqBodyIDField, r.cid)
-	size += proto.NestedStructureSize(deleteReqBodySignatureField, r.sig)
+	size += protoutil.NestedStructureSize(deleteReqBodyIDField, r.cid)
+	size += protoutil.NestedStructureSize(deleteReqBodySignatureField, r.sig)
 
 	return size
 }
@@ -286,7 +299,7 @@ func (r *GetRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	_, err := proto.NestedStructureMarshal(getReqBodyIDField, buf, r.cid)
+	_, err := protoutil.NestedStructureMarshal(getReqBodyIDField, buf, r.cid)
 	if err != nil {
 		return nil, err
 	}
@@ -299,7 +312,7 @@ func (r *GetRequestBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(getReqBodyIDField, r.cid)
+	size += protoutil.NestedStructureSize(getReqBodyIDField, r.cid)
 
 	return size
 }
@@ -313,7 +326,7 @@ func (r *GetResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	_, err := proto.NestedStructureMarshal(getRespBodyContainerField, buf, r.cnr)
+	_, err := protoutil.NestedStructureMarshal(getRespBodyContainerField, buf, r.cnr)
 	if err != nil {
 		return nil, err
 	}
@@ -326,7 +339,7 @@ func (r *GetResponseBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(getRespBodyContainerField, r.cnr)
+	size += protoutil.NestedStructureSize(getRespBodyContainerField, r.cnr)
 
 	return size
 }
@@ -340,7 +353,7 @@ func (r *ListRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	_, err := proto.NestedStructureMarshal(listReqBodyOwnerField, buf, r.ownerID)
+	_, err := protoutil.NestedStructureMarshal(listReqBodyOwnerField, buf, r.ownerID)
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +366,7 @@ func (r *ListRequestBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(listReqBodyOwnerField, r.ownerID)
+	size += protoutil.NestedStructureSize(listReqBodyOwnerField, r.ownerID)
 
 	return size
 }
@@ -373,7 +386,7 @@ func (r *ListResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	)
 
 	for i := range r.cidList {
-		n, err = proto.NestedStructureMarshal(listRespBodyIDsField, buf[offset:], r.cidList[i])
+		n, err = protoutil.NestedStructureMarshal(listRespBodyIDsField, buf[offset:], r.cidList[i])
 		if err != nil {
 			return nil, err
 		}
@@ -390,7 +403,7 @@ func (r *ListResponseBody) StableSize() (size int) {
 	}
 
 	for i := range r.cidList {
-		size += proto.NestedStructureSize(listRespBodyIDsField, r.cidList[i])
+		size += protoutil.NestedStructureSize(listRespBodyIDsField, r.cidList[i])
 	}
 
 	return size
@@ -410,14 +423,14 @@ func (r *SetExtendedACLRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.NestedStructureMarshal(setEACLReqBodyTableField, buf[offset:], r.eacl)
+	n, err = protoutil.NestedStructureMarshal(setEACLReqBodyTableField, buf[offset:], r.eacl)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	_, err = proto.NestedStructureMarshal(setEACLReqBodySignatureField, buf[offset:], r.sig)
+	_, err = protoutil.NestedStructureMarshal(setEACLReqBodySignatureField, buf[offset:], r.sig)
 	if err != nil {
 		return nil, err
 	}
@@ -430,8 +443,8 @@ func (r *SetExtendedACLRequestBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(setEACLReqBodyTableField, r.eacl)
-	size += proto.NestedStructureSize(setEACLReqBodySignatureField, r.sig)
+	size += protoutil.NestedStructureSize(setEACLReqBodyTableField, r.eacl)
+	size += protoutil.NestedStructureSize(setEACLReqBodySignatureField, r.sig)
 
 	return size
 }
@@ -453,7 +466,7 @@ func (r *GetExtendedACLRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	_, err := proto.NestedStructureMarshal(getEACLReqBodyIDField, buf, r.cid)
+	_, err := protoutil.NestedStructureMarshal(getEACLReqBodyIDField, buf, r.cid)
 	if err != nil {
 		return nil, err
 	}
@@ -466,7 +479,7 @@ func (r *GetExtendedACLRequestBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(getEACLReqBodyIDField, r.cid)
+	size += protoutil.NestedStructureSize(getEACLReqBodyIDField, r.cid)
 
 	return size
 }
@@ -485,14 +498,14 @@ func (r *GetExtendedACLResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.NestedStructureMarshal(getEACLRespBodyTableField, buf[offset:], r.eacl)
+	n, err = protoutil.NestedStructureMarshal(getEACLRespBodyTableField, buf[offset:], r.eacl)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	_, err = proto.NestedStructureMarshal(getEACLRespBodySignatureField, buf[offset:], r.sig)
+	_, err = protoutil.NestedStructureMarshal(getEACLRespBodySignatureField, buf[offset:], r.sig)
 	if err != nil {
 		return nil, err
 	}
@@ -505,8 +518,8 @@ func (r *GetExtendedACLResponseBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(getEACLRespBodyTableField, r.eacl)
-	size += proto.NestedStructureSize(getEACLRespBodySignatureField, r.sig)
+	size += protoutil.NestedStructureSize(getEACLRespBodyTableField, r.eacl)
+	size += protoutil.NestedStructureSize(getEACLRespBodySignatureField, r.sig)
 
 	return size
 }

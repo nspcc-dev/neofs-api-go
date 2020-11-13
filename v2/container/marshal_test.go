@@ -14,16 +14,14 @@ import (
 
 func TestAttribute_StableMarshal(t *testing.T) {
 	attributeFrom := generateAttribute("key", "value")
-	transport := new(grpc.Container_Attribute)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := attributeFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		attributeTo := new(container.Attribute)
+		require.NoError(t, attributeTo.Unmarshal(wire))
 
-		attributeTo := container.AttributeFromGRPCMessage(transport)
 		require.Equal(t, attributeFrom, attributeTo)
 	})
 }

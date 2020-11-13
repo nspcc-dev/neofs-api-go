@@ -28,3 +28,15 @@ func TestContainerJSON(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+func TestAttributeJSON(t *testing.T) {
+	b := generateAttribute("key", "value")
+
+	data, err := b.MarshalJSON()
+	require.NoError(t, err)
+
+	b2 := new(container.Attribute)
+	require.NoError(t, b2.UnmarshalJSON(data))
+
+	require.Equal(t, b, b2)
+}
