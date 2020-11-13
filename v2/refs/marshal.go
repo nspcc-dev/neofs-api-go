@@ -142,11 +142,7 @@ func (a *Address) StableSize() (size int) {
 	return size
 }
 
-func (a *Address) StableUnmarshal(data []byte) error {
-	if a == nil {
-		return nil
-	}
-
+func (a *Address) Unmarshal(data []byte) error {
 	addrGRPC := new(refs.Address)
 	if err := goproto.Unmarshal(data, addrGRPC); err != nil {
 		return err

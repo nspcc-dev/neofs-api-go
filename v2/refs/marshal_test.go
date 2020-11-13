@@ -69,16 +69,13 @@ func TestAddress_StableMarshal(t *testing.T) {
 
 	addressFrom := generateAddress(cid, oid)
 
-	addressTransport := new(grpc.Address)
-
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := addressFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, addressTransport)
-		require.NoError(t, err)
+		addressTo := new(refs.Address)
+		require.NoError(t, addressTo.Unmarshal(wire))
 
-		addressTo := refs.AddressFromGRPCMessage(addressTransport)
 		require.Equal(t, addressFrom, addressTo)
 	})
 }
@@ -160,16 +157,4 @@ func generateAddress(bCid, bOid []byte) *refs.Address {
 	oid.SetValue(bOid)
 
 	return addr
-}
-
-func TestAddress_StableUnmarshal(t *testing.T) {
-	addr := generateAddress([]byte("container id"), []byte("object id"))
-
-	data, err := addr.StableMarshal(nil)
-	require.NoError(t, err)
-
-	addr2 := new(refs.Address)
-	require.NoError(t, addr2.StableUnmarshal(data))
-
-	require.Equal(t, addr, addr2)
 }

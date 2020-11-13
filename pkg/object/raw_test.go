@@ -20,6 +20,13 @@ func randID(t *testing.T) *ID {
 	return id
 }
 
+func randCID(t *testing.T) *container.ID {
+	id := container.NewID()
+	id.SetSHA256(randSHA256Checksum(t))
+
+	return id
+}
+
 func randSHA256Checksum(t *testing.T) (cs [sha256.Size]byte) {
 	_, err := rand.Read(cs[:])
 	require.NoError(t, err)
