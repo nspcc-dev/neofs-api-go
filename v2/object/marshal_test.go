@@ -29,16 +29,14 @@ func TestShortHeader_StableMarshal(t *testing.T) {
 
 func TestAttribute_StableMarshal(t *testing.T) {
 	from := generateAttribute("Key", "Value")
-	transport := new(grpc.Header_Attribute)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := from.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		to := new(object.Attribute)
+		require.NoError(t, to.Unmarshal(wire))
 
-		to := object.AttributeFromGRPCMessage(transport)
 		require.Equal(t, from, to)
 	})
 }

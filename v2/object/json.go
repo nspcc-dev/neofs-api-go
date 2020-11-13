@@ -24,3 +24,23 @@ func (h *ShortHeader) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (a *Attribute) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		AttributeToGRPCMessage(a),
+	)
+}
+
+func (a *Attribute) UnmarshalJSON(data []byte) error {
+	msg := new(object.Header_Attribute)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*a = *AttributeFromGRPCMessage(msg)
+
+	return nil
+}

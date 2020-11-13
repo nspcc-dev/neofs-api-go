@@ -43,3 +43,35 @@ func (a *Attribute) SetValue(v string) {
 func (a *Attribute) ToV2() *object.Attribute {
 	return (*object.Attribute)(a)
 }
+
+// Marshal marshals Attribute into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (d *Attribute) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*object.Attribute)(d).
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Attribute.
+func (d *Attribute) Unmarshal(data []byte) error {
+	return (*object.Attribute)(d).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes Attribute to protobuf JSON format.
+func (d *Attribute) MarshalJSON() ([]byte, error) {
+	return (*object.Attribute)(d).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Attribute from protobuf JSON format.
+func (d *Attribute) UnmarshalJSON(data []byte) error {
+	return (*object.Attribute)(d).
+		UnmarshalJSON(data)
+}
