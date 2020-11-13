@@ -679,6 +679,17 @@ func (r *ResponseMetaHeader) StableSize() (size int) {
 	return size
 }
 
+func (r *ResponseMetaHeader) Unmarshal(data []byte) error {
+	m := new(session.ResponseMetaHeader)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*r = *ResponseMetaHeaderFromGRPCMessage(m)
+
+	return nil
+}
+
 func (r *ResponseVerificationHeader) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil

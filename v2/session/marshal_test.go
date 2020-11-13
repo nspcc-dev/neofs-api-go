@@ -150,16 +150,14 @@ func TestResponseMetaHeader_StableMarshal(t *testing.T) {
 	metaHeaderOrigin := generateResponseMetaHeader(10)
 	metaHeaderFrom := generateResponseMetaHeader(20)
 	metaHeaderFrom.SetOrigin(metaHeaderOrigin)
-	transport := new(grpc.ResponseMetaHeader)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := metaHeaderFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		metaHeaderTo := new(session.ResponseMetaHeader)
+		require.NoError(t, metaHeaderTo.Unmarshal(wire))
 
-		metaHeaderTo := session.ResponseMetaHeaderFromGRPCMessage(transport)
 		require.Equal(t, metaHeaderFrom, metaHeaderTo)
 	})
 }

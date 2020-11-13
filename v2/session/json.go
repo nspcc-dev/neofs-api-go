@@ -144,3 +144,23 @@ func (r *RequestVerificationHeader) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (r *ResponseMetaHeader) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		ResponseMetaHeaderToGRPCMessage(r),
+	)
+}
+
+func (r *ResponseMetaHeader) UnmarshalJSON(data []byte) error {
+	msg := new(session.ResponseMetaHeader)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*r = *ResponseMetaHeaderFromGRPCMessage(msg)
+
+	return nil
+}
