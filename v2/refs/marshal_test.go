@@ -4,9 +4,7 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	grpc "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 	"github.com/stretchr/testify/require"
-	goproto "google.golang.org/protobuf/proto"
 )
 
 func TestOwnerID_StableMarshal(t *testing.T) {
@@ -76,7 +74,6 @@ func TestAddress_StableMarshal(t *testing.T) {
 
 func TestChecksum_StableMarshal(t *testing.T) {
 	checksumFrom := new(refs.Checksum)
-	transport := new(grpc.Checksum)
 
 	t.Run("non empty", func(t *testing.T) {
 		checksumFrom.SetType(refs.TillichZemor)
@@ -85,10 +82,9 @@ func TestChecksum_StableMarshal(t *testing.T) {
 		wire, err := checksumFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		checksumTo := new(refs.Checksum)
+		require.NoError(t, checksumTo.Unmarshal(wire))
 
-		checksumTo := refs.ChecksumFromGRPCMessage(transport)
 		require.Equal(t, checksumFrom, checksumTo)
 	})
 }

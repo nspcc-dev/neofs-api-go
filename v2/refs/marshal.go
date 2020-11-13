@@ -226,6 +226,17 @@ func (c *Checksum) StableSize() (size int) {
 	return size
 }
 
+func (c *Checksum) Unmarshal(data []byte) error {
+	m := new(refs.Checksum)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*c = *ChecksumFromGRPCMessage(m)
+
+	return nil
+}
+
 func (s *Signature) StableMarshal(buf []byte) ([]byte, error) {
 	if s == nil {
 		return []byte{}, nil

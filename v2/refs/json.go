@@ -124,3 +124,23 @@ func (s *Signature) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (c *Checksum) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		ChecksumToGRPCMessage(c),
+	)
+}
+
+func (c *Checksum) UnmarshalJSON(data []byte) error {
+	msg := new(refs.Checksum)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*c = *ChecksumFromGRPCMessage(msg)
+
+	return nil
+}
