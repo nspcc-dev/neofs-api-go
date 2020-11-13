@@ -90,16 +90,14 @@ func TestObjectSessionContext_StableMarshal(t *testing.T) {
 
 func TestSessionTokenBody_StableMarshal(t *testing.T) {
 	sessionTokenBodyFrom := generateSessionTokenBody("Session Token Body")
-	transport := new(grpc.SessionToken_Body)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := sessionTokenBodyFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		sessionTokenBodyTo := new(session.SessionTokenBody)
+		require.NoError(t, sessionTokenBodyTo.Unmarshal(wire))
 
-		sessionTokenBodyTo := session.SessionTokenBodyFromGRPCMessage(transport)
 		require.Equal(t, sessionTokenBodyFrom, sessionTokenBodyTo)
 	})
 }
