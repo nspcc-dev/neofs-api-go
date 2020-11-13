@@ -5,34 +5,19 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-api-go/v2/storagegroup"
-	grpc "github.com/nspcc-dev/neofs-api-go/v2/storagegroup/grpc"
 	"github.com/stretchr/testify/require"
-	goproto "google.golang.org/protobuf/proto"
 )
 
 func TestStorageGroup_StableMarshal(t *testing.T) {
-	ownerID1 := new(refs.ObjectID)
-	ownerID1.SetValue([]byte("Object ID 1"))
-
-	ownerID2 := new(refs.ObjectID)
-	ownerID2.SetValue([]byte("Object ID 2"))
-
-	storageGroupFrom := new(storagegroup.StorageGroup)
-	transport := new(grpc.StorageGroup)
+	storageGroupFrom := generateSG()
 
 	t.Run("non empty", func(t *testing.T) {
-		storageGroupFrom.SetValidationDataSize(300)
-		storageGroupFrom.SetValidationHash(generateChecksum("Homomorphic hash"))
-		storageGroupFrom.SetExpirationEpoch(100)
-		storageGroupFrom.SetMembers([]*refs.ObjectID{ownerID1, ownerID2})
-
 		wire, err := storageGroupFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		storageGroupTo := new(storagegroup.StorageGroup)
+		require.NoError(t, storageGroupTo.Unmarshal(wire))
 
-		storageGroupTo := storagegroup.StorageGroupFromGRPCMessage(transport)
 		require.Equal(t, storageGroupFrom, storageGroupTo)
 	})
 }
@@ -43,4 +28,21 @@ func generateChecksum(data string) *refs.Checksum {
 	checksum.SetSum([]byte(data))
 
 	return checksum
+}
+
+func generateSG() *storagegroup.StorageGroup {
+	sg := new(storagegroup.StorageGroup)
+
+	oid1 := new(refs.ObjectID)
+	oid1.SetValue([]byte("Object ID 1"))
+
+	oid2 := new(refs.ObjectID)
+	oid2.SetValue([]byte("Object ID 2"))
+
+	sg.SetValidationDataSize(300)
+	sg.SetValidationHash(generateChecksum("Homomorphic hash"))
+	sg.SetExpirationEpoch(100)
+	sg.SetMembers([]*refs.ObjectID{oid1, oid2})
+
+	return sg
 }
