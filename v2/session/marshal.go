@@ -366,6 +366,17 @@ func (t *SessionTokenBody) StableSize() (size int) {
 	return size
 }
 
+func (t *SessionTokenBody) Unmarshal(data []byte) error {
+	m := new(session.SessionToken_Body)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*t = *SessionTokenBodyFromGRPCMessage(m)
+
+	return nil
+}
+
 func (t *SessionToken) StableMarshal(buf []byte) ([]byte, error) {
 	if t == nil {
 		return []byte{}, nil

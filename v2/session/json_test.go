@@ -30,3 +30,15 @@ func TestTokenLifetimeJSON(t *testing.T) {
 
 	require.Equal(t, l, l2)
 }
+
+func TestSessionTokenBodyJSON(t *testing.T) {
+	b := generateSessionTokenBody("id")
+
+	data, err := b.MarshalJSON()
+	require.NoError(t, err)
+
+	b2 := new(session.SessionTokenBody)
+	require.NoError(t, b2.UnmarshalJSON(data))
+
+	require.Equal(t, b, b2)
+}
