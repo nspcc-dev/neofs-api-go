@@ -76,3 +76,15 @@ func TestFilterJSON(t *testing.T) {
 
 	require.Equal(t, f, f2)
 }
+
+func TestTargetJSON(t *testing.T) {
+	tar := generateTarget(acl.RoleSystem, 3)
+
+	data, err := tar.MarshalJSON()
+	require.NoError(t, err)
+
+	tar2 := new(acl.Target)
+	require.NoError(t, tar2.UnmarshalJSON(data))
+
+	require.Equal(t, tar, tar2)
+}

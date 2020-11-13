@@ -136,7 +136,6 @@ func TestHeaderFilter_StableMarshal(t *testing.T) {
 
 func TestTargetInfo_StableMarshal(t *testing.T) {
 	targetFrom := generateTarget(acl.RoleUser, 2)
-	transport := new(grpc.EACLRecord_Target)
 
 	t.Run("non empty", func(t *testing.T) {
 		targetFrom.SetRole(acl.RoleUser)
@@ -148,10 +147,9 @@ func TestTargetInfo_StableMarshal(t *testing.T) {
 		wire, err := targetFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		targetTo := new(acl.Target)
+		require.NoError(t, targetTo.Unmarshal(wire))
 
-		targetTo := acl.TargetInfoFromGRPCMessage(transport)
 		require.Equal(t, targetFrom, targetTo)
 	})
 }

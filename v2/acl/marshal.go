@@ -278,6 +278,17 @@ func (t *Target) StableSize() (size int) {
 	return size
 }
 
+func (t *Target) Unmarshal(data []byte) error {
+	m := new(acl.EACLRecord_Target)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*t = *TargetInfoFromGRPCMessage(m)
+
+	return nil
+}
+
 func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
 	if l == nil {
 		return []byte{}, nil
