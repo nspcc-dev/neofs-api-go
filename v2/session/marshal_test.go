@@ -46,16 +46,14 @@ func TestCreateResponseBody_StableMarshal(t *testing.T) {
 
 func TestXHeader_StableMarshal(t *testing.T) {
 	xheaderFrom := generateXHeader("X-Header-Key", "X-Header-Value")
-	transport := new(grpc.XHeader)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := xheaderFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		xheaderTo := new(session.XHeader)
+		require.NoError(t, xheaderTo.Unmarshal(wire))
 
-		xheaderTo := session.XHeaderFromGRPCMessage(transport)
 		require.Equal(t, xheaderFrom, xheaderTo)
 	})
 }

@@ -84,3 +84,23 @@ func (t *SessionToken) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (x *XHeader) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		XHeaderToGRPCMessage(x),
+	)
+}
+
+func (x *XHeader) UnmarshalJSON(data []byte) error {
+	msg := new(session.XHeader)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*x = *XHeaderFromGRPCMessage(msg)
+
+	return nil
+}

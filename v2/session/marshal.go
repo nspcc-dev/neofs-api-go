@@ -177,6 +177,17 @@ func (x *XHeader) StableSize() (size int) {
 	return size
 }
 
+func (x *XHeader) Unmarshal(data []byte) error {
+	m := new(session.XHeader)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*x = *XHeaderFromGRPCMessage(m)
+
+	return nil
+}
+
 func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
 	if l == nil {
 		return []byte{}, nil
