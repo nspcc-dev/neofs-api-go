@@ -90,3 +90,15 @@ func TestRequestVerificationHeaderJSON(t *testing.T) {
 
 	require.Equal(t, r, r2)
 }
+
+func TestResponseMetaHeaderJSON(t *testing.T) {
+	r := generateResponseMetaHeader(1)
+
+	data, err := r.MarshalJSON()
+	require.NoError(t, err)
+
+	r2 := new(session.ResponseMetaHeader)
+	require.NoError(t, r2.UnmarshalJSON(data))
+
+	require.Equal(t, r, r2)
+}
