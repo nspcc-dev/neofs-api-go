@@ -2,6 +2,8 @@ package session
 
 import (
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
+	session "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 const (
@@ -261,6 +263,17 @@ func (c *ObjectSessionContext) StableSize() (size int) {
 	size += proto.NestedStructureSize(objectCtxAddressField, c.addr)
 
 	return size
+}
+
+func (c *ObjectSessionContext) Unmarshal(data []byte) error {
+	m := new(session.ObjectSessionContext)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*c = *ObjectSessionContextFromGRPCMessage(m)
+
+	return nil
 }
 
 func (t *SessionTokenBody) StableMarshal(buf []byte) ([]byte, error) {

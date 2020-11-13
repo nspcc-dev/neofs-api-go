@@ -78,16 +78,14 @@ func TestTokenLifetime_StableMarshal(t *testing.T) {
 
 func TestObjectSessionContext_StableMarshal(t *testing.T) {
 	objectCtxFrom := generateObjectCtx("Object ID")
-	transport := new(grpc.ObjectSessionContext)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := objectCtxFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		objectCtxTo := new(session.ObjectSessionContext)
+		require.NoError(t, objectCtxTo.Unmarshal(wire))
 
-		objectCtxTo := session.ObjectSessionContextFromGRPCMessage(transport)
 		require.Equal(t, objectCtxFrom, objectCtxTo)
 	})
 }
