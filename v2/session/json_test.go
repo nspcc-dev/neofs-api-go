@@ -18,3 +18,15 @@ func TestChecksumJSON(t *testing.T) {
 
 	require.Equal(t, ctx, ctx2)
 }
+
+func TestTokenLifetimeJSON(t *testing.T) {
+	l := generateLifetime(1, 2, 3)
+
+	data, err := l.MarshalJSON()
+	require.NoError(t, err)
+
+	l2 := new(session.TokenLifetime)
+	require.NoError(t, l2.UnmarshalJSON(data))
+
+	require.Equal(t, l, l2)
+}
