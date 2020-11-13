@@ -352,3 +352,35 @@ func (o *rwObject) HasParent() bool {
 		GetHeader().
 		GetSplit() != nil
 }
+
+// Marshal marshals object into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (o *rwObject) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*object.Object)(o).
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of object.
+func (o *rwObject) Unmarshal(data []byte) error {
+	return (*object.Object)(o).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes object to protobuf JSON format.
+func (o *rwObject) MarshalJSON() ([]byte, error) {
+	return (*object.Object)(o).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes object from protobuf JSON format.
+func (o *rwObject) UnmarshalJSON(data []byte) error {
+	return (*object.Object)(o).
+		UnmarshalJSON(data)
+}

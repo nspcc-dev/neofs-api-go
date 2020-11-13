@@ -37,14 +37,3 @@ func (o *Object) ToV2() *object.Object {
 
 	return nil
 }
-
-// FromBytes restores Object instance from a binary representation.
-func FromBytes(data []byte) (*Object, error) {
-	oV2 := new(object.Object)
-
-	if err := oV2.StableUnmarshal(data); err != nil {
-		return nil, err
-	}
-
-	return NewFromV2(oV2), nil
-}

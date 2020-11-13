@@ -557,6 +557,17 @@ func (o *Object) StableUnmarshal(data []byte) error {
 	return nil
 }
 
+func (o *Object) Unmarshal(data []byte) error {
+	m := new(object.Object)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*o = *ObjectFromGRPCMessage(m)
+
+	return nil
+}
+
 func (r *GetRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
