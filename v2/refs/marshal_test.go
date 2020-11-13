@@ -29,7 +29,6 @@ func TestOwnerID_StableMarshal(t *testing.T) {
 
 func TestContainerID_StableMarshal(t *testing.T) {
 	cnrFrom := new(refs.ContainerID)
-	cnrTransport := new(grpc.ContainerID)
 
 	t.Run("non empty", func(t *testing.T) {
 		cnrFrom.SetValue([]byte("Container ID"))
@@ -37,10 +36,9 @@ func TestContainerID_StableMarshal(t *testing.T) {
 		wire, err := cnrFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, cnrTransport)
-		require.NoError(t, err)
+		cnrTo := new(refs.ContainerID)
+		require.NoError(t, cnrTo.Unmarshal(wire))
 
-		cnrTo := refs.ContainerIDFromGRPCMessage(cnrTransport)
 		require.Equal(t, cnrFrom, cnrTo)
 	})
 }

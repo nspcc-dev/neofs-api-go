@@ -90,3 +90,28 @@ func TestID_String(t *testing.T) {
 		}
 	})
 }
+
+func TestContainerIDEncoding(t *testing.T) {
+	id := NewID()
+	id.SetSHA256(randSHA256Checksum(t))
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := id.Marshal()
+		require.NoError(t, err)
+
+		id2 := NewID()
+		require.NoError(t, id2.Unmarshal(data))
+
+		require.Equal(t, id, id2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := id.MarshalJSON()
+		require.NoError(t, err)
+
+		a2 := NewID()
+		require.NoError(t, a2.UnmarshalJSON(data))
+
+		require.Equal(t, id, a2)
+	})
+}
