@@ -54,3 +54,15 @@ func TestSessionTokenJSON(t *testing.T) {
 
 	require.Equal(t, tok, tok2)
 }
+
+func TestXHeaderJSON(t *testing.T) {
+	x := generateXHeader("key", "value")
+
+	data, err := x.MarshalJSON()
+	require.NoError(t, err)
+
+	x2 := new(session.XHeader)
+	require.NoError(t, x2.UnmarshalJSON(data))
+
+	require.Equal(t, x, x2)
+}
