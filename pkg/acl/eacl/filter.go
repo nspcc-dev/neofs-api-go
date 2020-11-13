@@ -43,28 +43,28 @@ func (s staticStringer) String() string {
 	return string(s)
 }
 
-func (a Filter) Value() string {
-	return a.value.String()
+func (f Filter) Value() string {
+	return f.value.String()
 }
 
-func (a Filter) Matcher() Match {
-	return a.matcher
+func (f Filter) Matcher() Match {
+	return f.matcher
 }
 
-func (a Filter) Key() string {
-	return a.key.String()
+func (f Filter) Key() string {
+	return f.key.String()
 }
 
-func (a Filter) From() FilterHeaderType {
-	return a.from
+func (f Filter) From() FilterHeaderType {
+	return f.from
 }
 
-func (a *Filter) ToV2() *v2acl.HeaderFilter {
+func (f *Filter) ToV2() *v2acl.HeaderFilter {
 	filter := new(v2acl.HeaderFilter)
-	filter.SetValue(a.value.String())
-	filter.SetKey(a.key.String())
-	filter.SetMatchType(a.matcher.ToV2())
-	filter.SetHeaderType(a.from.ToV2())
+	filter.SetValue(f.value.String())
+	filter.SetKey(f.key.String())
+	filter.SetMatchType(f.matcher.ToV2())
+	filter.SetHeaderType(f.from.ToV2())
 
 	return filter
 }
@@ -94,6 +94,10 @@ func (k filterKey) String() string {
 	}
 }
 
+func NewFilter() *Filter {
+	return NewFilterFromV2(new(v2acl.HeaderFilter))
+}
+
 func NewFilterFromV2(filter *v2acl.HeaderFilter) *Filter {
 	f := new(Filter)
 
@@ -107,4 +111,48 @@ func NewFilterFromV2(filter *v2acl.HeaderFilter) *Filter {
 	f.value = staticStringer(filter.GetValue())
 
 	return f
+}
+
+// Marshal marshals Filter into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (f *Filter) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return f.ToV2().
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of Filter.
+func (f *Filter) Unmarshal(data []byte) error {
+	fV2 := new(v2acl.HeaderFilter)
+	if err := fV2.Unmarshal(data); err != nil {
+		return err
+	}
+
+	*f = *NewFilterFromV2(fV2)
+
+	return nil
+}
+
+// MarshalJSON encodes Filter to protobuf JSON format.
+func (f *Filter) MarshalJSON() ([]byte, error) {
+	return f.ToV2().
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes Filter from protobuf JSON format.
+func (f *Filter) UnmarshalJSON(data []byte) error {
+	fV2 := new(v2acl.HeaderFilter)
+	if err := fV2.UnmarshalJSON(data); err != nil {
+		return err
+	}
+
+	*f = *NewFilterFromV2(fV2)
+
+	return nil
 }

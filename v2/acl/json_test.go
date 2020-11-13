@@ -64,3 +64,15 @@ func TestBearerTokenJSON(t *testing.T) {
 		require.Equal(t, exp, got)
 	})
 }
+
+func TestFilterJSON(t *testing.T) {
+	f := generateFilter(acl.HeaderTypeObject, "key", "value")
+
+	data, err := f.MarshalJSON()
+	require.NoError(t, err)
+
+	f2 := new(acl.HeaderFilter)
+	require.NoError(t, f2.UnmarshalJSON(data))
+
+	require.Equal(t, f, f2)
+}
