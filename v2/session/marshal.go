@@ -745,3 +745,14 @@ func (r *ResponseVerificationHeader) StableSize() (size int) {
 
 	return size
 }
+
+func (r *ResponseVerificationHeader) Unmarshal(data []byte) error {
+	m := new(session.ResponseVerificationHeader)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*r = *ResponseVerificationHeaderFromGRPCMessage(m)
+
+	return nil
+}
