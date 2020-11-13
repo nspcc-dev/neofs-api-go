@@ -101,6 +101,17 @@ func (o *ObjectID) StableSize() int {
 	return proto.BytesSize(objectIDValField, o.val)
 }
 
+func (o *ObjectID) Unmarshal(data []byte) error {
+	m := new(refs.ObjectID)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*o = *ObjectIDFromGRPCMessage(m)
+
+	return nil
+}
+
 func (a *Address) StableMarshal(buf []byte) ([]byte, error) {
 	if a == nil {
 		return []byte{}, nil

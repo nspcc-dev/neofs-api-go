@@ -18,3 +18,16 @@ func TestAddressJSON(t *testing.T) {
 
 	require.Equal(t, a, a2)
 }
+
+func TestObjectIDJSON(t *testing.T) {
+	o := new(refs.ObjectID)
+	o.SetValue([]byte{1})
+
+	data, err := o.MarshalJSON()
+	require.NoError(t, err)
+
+	o2 := new(refs.ObjectID)
+	require.NoError(t, o2.UnmarshalJSON(data))
+
+	require.Equal(t, o, o2)
+}

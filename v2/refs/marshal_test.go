@@ -47,7 +47,6 @@ func TestContainerID_StableMarshal(t *testing.T) {
 
 func TestObjectID_StableMarshal(t *testing.T) {
 	objectIDFrom := new(refs.ObjectID)
-	objectIDTransport := new(grpc.ObjectID)
 
 	t.Run("non empty", func(t *testing.T) {
 		objectIDFrom.SetValue([]byte("Object ID"))
@@ -55,10 +54,9 @@ func TestObjectID_StableMarshal(t *testing.T) {
 		wire, err := objectIDFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, objectIDTransport)
-		require.NoError(t, err)
+		objectIDTo := new(refs.ObjectID)
+		require.NoError(t, objectIDTo.Unmarshal(wire))
 
-		objectIDTo := refs.ObjectIDFromGRPCMessage(objectIDTransport)
 		require.Equal(t, objectIDFrom, objectIDTo)
 	})
 }
