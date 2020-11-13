@@ -30,3 +30,28 @@ func TestBearerToken_Issuer(t *testing.T) {
 		require.Equal(t, bearerToken.Issuer().String(), ownerID.String())
 	})
 }
+
+func TestFilterEncoding(t *testing.T) {
+	f := token.NewBearerToken()
+	f.SetLifetime(1, 2, 3)
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := f.Marshal()
+		require.NoError(t, err)
+
+		f2 := token.NewBearerToken()
+		require.NoError(t, f2.Unmarshal(data))
+
+		require.Equal(t, f, f2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := f.MarshalJSON()
+		require.NoError(t, err)
+
+		d2 := token.NewBearerToken()
+		require.NoError(t, d2.UnmarshalJSON(data))
+
+		require.Equal(t, f, d2)
+	})
+}

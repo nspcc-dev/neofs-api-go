@@ -5,10 +5,8 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
-	grpc "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
-	goproto "google.golang.org/protobuf/proto"
 )
 
 func generateTarget(u acl.Role, k int) *acl.Target {
@@ -226,16 +224,14 @@ func TestBearerTokenBody_StableMarshal(t *testing.T) {
 
 func TestBearerToken_StableMarshal(t *testing.T) {
 	bearerTokenFrom := generateBearerToken("Bearer Token")
-	transport := new(grpc.BearerToken)
 
 	t.Run("non empty", func(t *testing.T) {
 		wire, err := bearerTokenFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, transport)
-		require.NoError(t, err)
+		bearerTokenTo := new(acl.BearerToken)
+		require.NoError(t, bearerTokenTo.Unmarshal(wire))
 
-		bearerTokenTo := acl.BearerTokenFromGRPCMessage(transport)
 		require.Equal(t, bearerTokenFrom, bearerTokenTo)
 	})
 }

@@ -1,39 +1,9 @@
 package acl
 
 import (
-	"errors"
-
 	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
 )
-
-var (
-	errEmptyInput = errors.New("empty input")
-)
-
-func BearerTokenToJSON(t *BearerToken) ([]byte, error) {
-	if t == nil {
-		return nil, errEmptyInput
-	}
-
-	msg := BearerTokenToGRPCMessage(t)
-
-	return protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(msg)
-}
-
-func BearerTokenFromJSON(data []byte) (*BearerToken, error) {
-	if len(data) == 0 {
-		return nil, errEmptyInput
-	}
-
-	msg := new(acl.BearerToken)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return nil, err
-	}
-
-	return BearerTokenFromGRPCMessage(msg), nil
-}
 
 func (f *HeaderFilter) MarshalJSON() ([]byte, error) {
 	return protojson.MarshalOptions{
@@ -151,6 +121,26 @@ func (bt *BearerTokenBody) UnmarshalJSON(data []byte) error {
 	}
 
 	*bt = *BearerTokenBodyFromGRPCMessage(msg)
+
+	return nil
+}
+
+func (bt *BearerToken) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		BearerTokenToGRPCMessage(bt),
+	)
+}
+
+func (bt *BearerToken) UnmarshalJSON(data []byte) error {
+	msg := new(acl.BearerToken)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*bt = *BearerTokenFromGRPCMessage(msg)
 
 	return nil
 }
