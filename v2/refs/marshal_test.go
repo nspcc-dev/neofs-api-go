@@ -11,7 +11,6 @@ import (
 
 func TestOwnerID_StableMarshal(t *testing.T) {
 	ownerFrom := new(refs.OwnerID)
-	ownerTransport := new(grpc.OwnerID)
 
 	t.Run("non empty", func(t *testing.T) {
 		ownerFrom.SetValue([]byte("Owner ID"))
@@ -19,10 +18,9 @@ func TestOwnerID_StableMarshal(t *testing.T) {
 		wire, err := ownerFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
-		err = goproto.Unmarshal(wire, ownerTransport)
-		require.NoError(t, err)
+		ownerTo := new(refs.OwnerID)
+		require.NoError(t, ownerTo.Unmarshal(wire))
 
-		ownerTo := refs.OwnerIDFromGRPCMessage(ownerTransport)
 		require.Equal(t, ownerFrom, ownerTo)
 	})
 }

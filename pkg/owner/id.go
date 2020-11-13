@@ -71,3 +71,35 @@ func (id *ID) Parse(s string) error {
 
 	return nil
 }
+
+// Marshal marshals ID into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (id *ID) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*refs.OwnerID)(id).
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of ID.
+func (id *ID) Unmarshal(data []byte) error {
+	return (*refs.OwnerID)(id).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes ID to protobuf JSON format.
+func (id *ID) MarshalJSON() ([]byte, error) {
+	return (*refs.OwnerID)(id).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes ID from protobuf JSON format.
+func (id *ID) UnmarshalJSON(data []byte) error {
+	return (*refs.OwnerID)(id).
+		UnmarshalJSON(data)
+}

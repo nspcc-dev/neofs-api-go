@@ -64,3 +64,23 @@ func (c *ContainerID) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (o *OwnerID) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		OwnerIDToGRPCMessage(o),
+	)
+}
+
+func (o *OwnerID) UnmarshalJSON(data []byte) error {
+	msg := new(refs.OwnerID)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*o = *OwnerIDFromGRPCMessage(msg)
+
+	return nil
+}

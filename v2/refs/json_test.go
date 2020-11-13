@@ -44,3 +44,16 @@ func TestContainerIDJSON(t *testing.T) {
 
 	require.Equal(t, cid, cid2)
 }
+
+func TestOwnerIDJSON(t *testing.T) {
+	o := new(refs.OwnerID)
+	o.SetValue([]byte{1})
+
+	data, err := o.MarshalJSON()
+	require.NoError(t, err)
+
+	o2 := new(refs.OwnerID)
+	require.NoError(t, o2.UnmarshalJSON(data))
+
+	require.Equal(t, o, o2)
+}

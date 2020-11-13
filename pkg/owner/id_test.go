@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestIDV2(t *testing.T) {
+func randID(t *testing.T) *ID {
 	id := NewID()
 
 	wallet := new(NEO3Wallet)
@@ -20,9 +20,15 @@ func TestIDV2(t *testing.T) {
 
 	id.SetNeo3Wallet(wallet)
 
+	return id
+}
+
+func TestIDV2(t *testing.T) {
+	id := randID(t)
+
 	idV2 := id.ToV2()
 
-	require.Equal(t, wallet.Bytes(), idV2.GetValue())
+	require.Equal(t, id, NewIDFromV2(idV2))
 }
 
 func TestNewIDFromNeo3Wallet(t *testing.T) {
@@ -61,5 +67,29 @@ func TestID_Parse(t *testing.T) {
 				require.EqualError(t, cid.Parse(str), ErrBadID.Error())
 			})
 		}
+	})
+}
+
+func TestIDEncoding(t *testing.T) {
+	id := randID(t)
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := id.Marshal()
+		require.NoError(t, err)
+
+		id2 := NewID()
+		require.NoError(t, id2.Unmarshal(data))
+
+		require.Equal(t, id, id2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := id.MarshalJSON()
+		require.NoError(t, err)
+
+		a2 := NewID()
+		require.NoError(t, a2.UnmarshalJSON(data))
+
+		require.Equal(t, id, a2)
 	})
 }
