@@ -69,9 +69,7 @@ func (c Client) getBalanceV2(ctx context.Context, owner *owner.ID, opts ...CallO
 			return nil, errors.Wrap(err, "can't verify response message")
 		}
 
-		return &accounting.Decimal{
-			Decimal: *resp.GetBody().GetBalance(),
-		}, nil
+		return accounting.NewDecimalFromV2(resp.GetBody().GetBalance()), nil
 	default:
 		return nil, unsupportedProtocolErr
 	}

@@ -27,7 +27,7 @@ func TestExample(t *testing.T) {
 	resp, err := cli.GetSelfBalance(context.Background())
 	require.NoError(t, err)
 
-	fmt.Println(resp.GetValue(), resp.GetPrecision())
+	fmt.Println(resp.Value(), resp.Precision())
 
 	// create client from grpc connection
 	conn, err := grpc.DialContext(context.Background(), target, grpc.WithBlock(), grpc.WithInsecure())
