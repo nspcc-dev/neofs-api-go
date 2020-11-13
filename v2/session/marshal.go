@@ -528,6 +528,17 @@ func (r *RequestMetaHeader) StableSize() (size int) {
 	return size
 }
 
+func (r *RequestMetaHeader) Unmarshal(data []byte) error {
+	m := new(session.RequestMetaHeader)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*r = *RequestMetaHeaderFromGRPCMessage(m)
+
+	return nil
+}
+
 func (r *RequestVerificationHeader) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
