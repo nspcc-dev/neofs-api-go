@@ -162,6 +162,17 @@ func (h *ShortHeader) StableSize() (size int) {
 	return size
 }
 
+func (h *ShortHeader) Unmarshal(data []byte) error {
+	m := new(object.ShortHeader)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*h = *ShortHeaderFromGRPCMessage(m)
+
+	return nil
+}
+
 func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
 	if a == nil {
 		return []byte{}, nil
