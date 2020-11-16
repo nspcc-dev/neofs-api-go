@@ -19,8 +19,8 @@ func NewSignature() *Signature {
 	return NewSignatureFromV2(new(refs.Signature))
 }
 
-// GetKey sets binary public key.
-func (s *Signature) GetKey() []byte {
+// Key sets binary public key.
+func (s *Signature) Key() []byte {
 	return (*refs.Signature)(s).GetKey()
 }
 
@@ -29,8 +29,8 @@ func (s *Signature) SetKey(v []byte) {
 	(*refs.Signature)(s).SetKey(v)
 }
 
-// GetSign return signature value.
-func (s *Signature) GetSign() []byte {
+// Sign return signature value.
+func (s *Signature) Sign() []byte {
 	return (*refs.Signature)(s).GetSign()
 }
 
