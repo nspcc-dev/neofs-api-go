@@ -1,9 +1,9 @@
 package object
 
 import (
+	"errors"
 	"strings"
 
-	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 )
@@ -11,9 +11,7 @@ import (
 // Address represents v2-compatible object address.
 type Address refs.Address
 
-// ErrBadAddress returns when string representation doesn't
-// contains Container.ID and Object.ID separated by `/`.
-const ErrBadAddress = internal.Error("address should contains container.ID and object.ID separated with `/`")
+var errInvalidAddressString = errors.New("incorrect format of the string object address")
 
 const (
 	addressParts     = 2
@@ -71,7 +69,7 @@ func (a *Address) Parse(s string) error {
 	)
 
 	if len(parts) != addressParts {
-		return ErrBadAddress
+		return errInvalidAddressString
 	} else if err = cid.Parse(parts[0]); err != nil {
 		return err
 	} else if err = oid.Parse(parts[1]); err != nil {

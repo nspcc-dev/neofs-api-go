@@ -64,7 +64,7 @@ func TestID_Parse(t *testing.T) {
 				str := base58.Encode(cs)
 				cid := NewID()
 
-				require.EqualError(t, cid.Parse(str), ErrBadID.Error())
+				require.Error(t, cid.Parse(str))
 			})
 		}
 	})

@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 
 	"github.com/mr-tron/base58"
-	"github.com/nspcc-dev/neofs-api-go/internal"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/pkg/errors"
 )
@@ -13,9 +12,7 @@ import (
 // ID represents v2-compatible container identifier.
 type ID refs.ContainerID
 
-// ErrBadID should be returned when bytes slice isn't Container.ID size (sha256.Size).
-// Notice: if byte slice changed, please, replace error message.
-const ErrBadID = internal.Error("object.ID should be 32 bytes length")
+var errInvalidIDString = errors.New("incorrect format of the string container ID")
 
 // NewIDFromV2 wraps v2 ContainerID message to ID.
 func NewIDFromV2(idV2 *refs.ContainerID) *ID {
@@ -53,7 +50,7 @@ func (id *ID) Parse(s string) error {
 	if err != nil {
 		return errors.Wrap(err, "could not parse container.ID from string")
 	} else if len(data) != sha256.Size {
-		return ErrBadID
+		return errInvalidIDString
 	}
 
 	(*refs.ContainerID)(id).SetValue(data)
