@@ -138,6 +138,7 @@ func NewSearchFilters() SearchFilters {
 
 func NewSearchFiltersFromV2(v2 []*v2object.SearchFilter) SearchFilters {
 	filters := make(SearchFilters, 0, len(v2))
+
 	for i := range v2 {
 		if v2[i] == nil {
 			continue
@@ -197,6 +198,7 @@ func (f *SearchFilters) AddObjectOwnerIDFilter(m SearchMatchType, id *owner.ID) 
 
 func (f SearchFilters) ToV2() []*v2object.SearchFilter {
 	result := make([]*v2object.SearchFilter, 0, len(f))
+
 	for i := range f {
 		v2 := new(v2object.SearchFilter)
 		v2.SetKey(f[i].header.String())
