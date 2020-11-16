@@ -10,6 +10,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+var errCheckSumMismatch = errors.New("payload checksum mismatch")
+
+var errIncorrectID = errors.New("incorrect object identifier")
+
 // CalculatePayloadChecksum calculates and returns checksum of
 // object payload bytes.
 func CalculatePayloadChecksum(payload []byte) *pkg.Checksum {
@@ -34,7 +38,7 @@ func VerifyPayloadChecksum(obj *Object) error {
 		obj.PayloadChecksum(),
 		CalculatePayloadChecksum(obj.Payload()),
 	) {
-		return errors.New("payload checksum mismatch")
+		return errCheckSumMismatch
 	}
 
 	return nil
@@ -75,7 +79,7 @@ func VerifyID(obj *Object) error {
 	}
 
 	if !id.Equal(obj.ID()) {
-		return errors.New("incorrect object identifier")
+		return errIncorrectID
 	}
 
 	return nil
