@@ -48,7 +48,7 @@ func TestRawObject_SetID(t *testing.T) {
 
 	obj.SetID(id)
 
-	require.Equal(t, id, obj.GetID())
+	require.Equal(t, id, obj.ID())
 }
 
 func TestRawObject_SetSignature(t *testing.T) {
@@ -60,7 +60,7 @@ func TestRawObject_SetSignature(t *testing.T) {
 
 	obj.SetSignature(sig)
 
-	require.Equal(t, sig, obj.GetSignature())
+	require.Equal(t, sig, obj.Signature())
 }
 
 func TestRawObject_SetPayload(t *testing.T) {
@@ -71,7 +71,7 @@ func TestRawObject_SetPayload(t *testing.T) {
 
 	obj.SetPayload(payload)
 
-	require.Equal(t, payload, obj.GetPayload())
+	require.Equal(t, payload, obj.Payload())
 }
 
 func TestRawObject_SetVersion(t *testing.T) {
@@ -83,7 +83,7 @@ func TestRawObject_SetVersion(t *testing.T) {
 
 	obj.SetVersion(ver)
 
-	require.Equal(t, ver, obj.GetVersion())
+	require.Equal(t, ver, obj.Version())
 }
 
 func TestRawObject_SetPayloadSize(t *testing.T) {
@@ -92,7 +92,7 @@ func TestRawObject_SetPayloadSize(t *testing.T) {
 	sz := uint64(133)
 	obj.SetPayloadSize(sz)
 
-	require.Equal(t, sz, obj.GetPayloadSize())
+	require.Equal(t, sz, obj.PayloadSize())
 }
 
 func TestRawObject_SetContainerID(t *testing.T) {
@@ -105,7 +105,7 @@ func TestRawObject_SetContainerID(t *testing.T) {
 
 	obj.SetContainerID(cid)
 
-	require.Equal(t, cid, obj.GetContainerID())
+	require.Equal(t, cid, obj.ContainerID())
 }
 
 func TestRawObject_SetOwnerID(t *testing.T) {
@@ -119,7 +119,7 @@ func TestRawObject_SetOwnerID(t *testing.T) {
 
 	obj.SetOwnerID(ownerID)
 
-	require.Equal(t, ownerID, obj.GetOwnerID())
+	require.Equal(t, ownerID, obj.OwnerID())
 }
 
 func TestRawObject_SetCreationEpoch(t *testing.T) {
@@ -128,7 +128,7 @@ func TestRawObject_SetCreationEpoch(t *testing.T) {
 	creat := uint64(228)
 	obj.setCreationEpoch(creat)
 
-	require.Equal(t, creat, obj.GetCreationEpoch())
+	require.Equal(t, creat, obj.CreationEpoch())
 }
 
 func TestRawObject_SetPayloadChecksum(t *testing.T) {
@@ -139,7 +139,7 @@ func TestRawObject_SetPayloadChecksum(t *testing.T) {
 
 	obj.SetPayloadChecksum(cs)
 
-	require.Equal(t, cs, obj.GetPayloadChecksum())
+	require.Equal(t, cs, obj.PayloadChecksum())
 }
 
 func TestRawObject_SetPayloadHomomorphicHash(t *testing.T) {
@@ -150,7 +150,7 @@ func TestRawObject_SetPayloadHomomorphicHash(t *testing.T) {
 
 	obj.SetPayloadHomomorphicHash(cs)
 
-	require.Equal(t, cs, obj.GetPayloadHomomorphicHash())
+	require.Equal(t, cs, obj.PayloadHomomorphicHash())
 }
 
 func TestRawObject_SetAttributes(t *testing.T) {
@@ -166,7 +166,7 @@ func TestRawObject_SetAttributes(t *testing.T) {
 
 	obj.SetAttributes(a1, a2)
 
-	require.Equal(t, []*Attribute{a1, a2}, obj.GetAttributes())
+	require.Equal(t, []*Attribute{a1, a2}, obj.Attributes())
 }
 
 func TestRawObject_SetPreviousID(t *testing.T) {
@@ -176,7 +176,7 @@ func TestRawObject_SetPreviousID(t *testing.T) {
 
 	obj.SetPreviousID(prev)
 
-	require.Equal(t, prev, obj.GetPreviousID())
+	require.Equal(t, prev, obj.PreviousID())
 }
 
 func TestRawObject_SetChildren(t *testing.T) {
@@ -187,13 +187,13 @@ func TestRawObject_SetChildren(t *testing.T) {
 
 	obj.SetChildren(id1, id2)
 
-	require.Equal(t, []*ID{id1, id2}, obj.GetChildren())
+	require.Equal(t, []*ID{id1, id2}, obj.Children())
 }
 
 func TestRawObject_SetParent(t *testing.T) {
 	obj := NewRaw()
 
-	require.Nil(t, obj.GetParent())
+	require.Nil(t, obj.Parent())
 
 	par := NewRaw()
 	par.SetID(randID(t))
@@ -204,7 +204,7 @@ func TestRawObject_SetParent(t *testing.T) {
 
 	obj.SetParent(parObj)
 
-	require.Equal(t, parObj, obj.GetParent())
+	require.Equal(t, parObj, obj.Parent())
 }
 
 func TestRawObject_ToV2(t *testing.T) {
@@ -224,7 +224,7 @@ func TestRawObject_SetSessionToken(t *testing.T) {
 
 	obj.SetSessionToken(tok)
 
-	require.Equal(t, tok, obj.GetSessionToken())
+	require.Equal(t, tok, obj.SessionToken())
 }
 
 func TestRawObject_SetType(t *testing.T) {
@@ -234,7 +234,7 @@ func TestRawObject_SetType(t *testing.T) {
 
 	obj.SetType(typ)
 
-	require.Equal(t, typ, obj.GetType())
+	require.Equal(t, typ, obj.Type())
 }
 
 func TestRawObject_CutPayload(t *testing.T) {
@@ -248,20 +248,20 @@ func TestRawObject_CutPayload(t *testing.T) {
 
 	o2 := o1.CutPayload()
 
-	require.Equal(t, sz, o2.GetPayloadSize())
-	require.Empty(t, o2.GetPayload())
+	require.Equal(t, sz, o2.PayloadSize())
+	require.Empty(t, o2.Payload())
 
 	sz++
 	o1.SetPayloadSize(sz)
 
-	require.Equal(t, sz, o1.GetPayloadSize())
-	require.Equal(t, sz, o2.GetPayloadSize())
+	require.Equal(t, sz, o1.PayloadSize())
+	require.Equal(t, sz, o2.PayloadSize())
 
 	p2 := []byte{4, 5, 6}
 	o2.SetPayload(p2)
 
-	require.Equal(t, p2, o2.GetPayload())
-	require.Equal(t, p1, o1.GetPayload())
+	require.Equal(t, p2, o2.Payload())
+	require.Equal(t, p1, o1.Payload())
 }
 
 func TestRawObject_SetParentID(t *testing.T) {
@@ -270,7 +270,7 @@ func TestRawObject_SetParentID(t *testing.T) {
 	id := randID(t)
 	obj.setParentID(id)
 
-	require.Equal(t, id, obj.GetParentID())
+	require.Equal(t, id, obj.ParentID())
 }
 
 func TestRawObject_ResetRelations(t *testing.T) {
@@ -280,7 +280,7 @@ func TestRawObject_ResetRelations(t *testing.T) {
 
 	obj.ResetRelations()
 
-	require.Nil(t, obj.GetPreviousID())
+	require.Nil(t, obj.PreviousID())
 }
 
 func TestRwObject_HasParent(t *testing.T) {

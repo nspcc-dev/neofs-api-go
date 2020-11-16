@@ -13,8 +13,8 @@ func TestAttribute(t *testing.T) {
 	a.SetKey(key)
 	a.SetValue(val)
 
-	require.Equal(t, key, a.GetKey())
-	require.Equal(t, val, a.GetValue())
+	require.Equal(t, key, a.Key())
+	require.Equal(t, val, a.Value())
 
 	aV2 := a.ToV2()
 

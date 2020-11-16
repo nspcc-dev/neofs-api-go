@@ -180,8 +180,8 @@ func (c *Client) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...Ca
 	req.SetBody(body)
 
 	v2Addr := new(v2refs.Address)
-	v2Addr.SetObjectID(p.obj.GetID().ToV2())
-	v2Addr.SetContainerID(p.obj.GetContainerID().ToV2())
+	v2Addr.SetObjectID(p.obj.ID().ToV2())
+	v2Addr.SetContainerID(p.obj.ContainerID().ToV2())
 
 	// set meta header
 	meta := v2MetaHeaderFromOpts(callOpts)

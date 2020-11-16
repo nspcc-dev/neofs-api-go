@@ -23,7 +23,7 @@ func CalculatePayloadChecksum(payload []byte) *pkg.Checksum {
 // object payload and writes it to the object.
 func CalculateAndSetPayloadChecksum(obj *RawObject) {
 	obj.SetPayloadChecksum(
-		CalculatePayloadChecksum(obj.GetPayload()),
+		CalculatePayloadChecksum(obj.Payload()),
 	)
 }
 
@@ -31,8 +31,8 @@ func CalculateAndSetPayloadChecksum(obj *RawObject) {
 // corresponds to its payload.
 func VerifyPayloadChecksum(obj *Object) error {
 	if !pkg.EqualChecksums(
-		obj.GetPayloadChecksum(),
-		CalculatePayloadChecksum(obj.GetPayload()),
+		obj.PayloadChecksum(),
+		CalculatePayloadChecksum(obj.Payload()),
 	) {
 		return errors.New("payload checksum mismatch")
 	}
@@ -74,7 +74,7 @@ func VerifyID(obj *Object) error {
 		return err
 	}
 
-	if !id.Equal(obj.GetID()) {
+	if !id.Equal(obj.ID()) {
 		return errors.New("incorrect object identifier")
 	}
 
@@ -101,7 +101,7 @@ func CalculateIDSignature(key *ecdsa.PrivateKey, id *ID) (*pkg.Signature, error)
 }
 
 func CalculateAndSetSignature(key *ecdsa.PrivateKey, obj *RawObject) error {
-	sig, err := CalculateIDSignature(key, obj.GetID())
+	sig, err := CalculateIDSignature(key, obj.ID())
 	if err != nil {
 		return err
 	}
@@ -114,10 +114,10 @@ func CalculateAndSetSignature(key *ecdsa.PrivateKey, obj *RawObject) error {
 func VerifyIDSignature(obj *Object) error {
 	return signature.VerifyDataWithSource(
 		signatureV2.StableMarshalerWrapper{
-			SM: obj.GetID().ToV2(),
+			SM: obj.ID().ToV2(),
 		},
 		func() ([]byte, []byte) {
-			sig := obj.GetSignature()
+			sig := obj.Signature()
 
 			return sig.Key(), sig.Sign()
 		},
