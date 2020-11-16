@@ -51,18 +51,18 @@ func TestVerificationFields(t *testing.T) {
 		},
 		{
 			corrupt: func() {
-				obj.GetSignature().GetKey()[0]++
+				obj.GetSignature().Key()[0]++
 			},
 			restore: func() {
-				obj.GetSignature().GetKey()[0]--
+				obj.GetSignature().Key()[0]--
 			},
 		},
 		{
 			corrupt: func() {
-				obj.GetSignature().GetSign()[0]++
+				obj.GetSignature().Sign()[0]++
 			},
 			restore: func() {
-				obj.GetSignature().GetSign()[0]--
+				obj.GetSignature().Sign()[0]--
 			},
 		},
 	}

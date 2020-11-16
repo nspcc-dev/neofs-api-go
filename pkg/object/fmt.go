@@ -119,7 +119,7 @@ func VerifyIDSignature(obj *Object) error {
 		func() ([]byte, []byte) {
 			sig := obj.GetSignature()
 
-			return sig.GetKey(), sig.GetSign()
+			return sig.Key(), sig.Sign()
 		},
 	)
 }
