@@ -45,7 +45,7 @@ func (c Clause) ToV2() netmap.Clause {
 func (c Clause) String() string {
 	switch c {
 	default:
-		return "UNSPECIFIED"
+		return "CLAUSE_UNSPECIFIED"
 	case ClauseDistinct:
 		return "DISTINCT"
 	case ClauseSame:

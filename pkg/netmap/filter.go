@@ -26,6 +26,7 @@ func (c *Context) processFilters(p *PlacementPolicy) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -33,15 +34,19 @@ func (c *Context) processFilter(f *Filter, top bool) error {
 	if f == nil {
 		return fmt.Errorf("%w: FILTER", ErrMissingField)
 	}
+
 	if f.Name() == MainFilterName {
 		return fmt.Errorf("%w: '*' is reserved", ErrInvalidFilterName)
 	}
+
 	if top && f.Name() == "" {
 		return ErrUnnamedTopFilter
 	}
+
 	if !top && f.Name() != "" && c.Filters[f.Name()] == nil {
 		return fmt.Errorf("%w: '%s'", ErrFilterNotFound, f.Name())
 	}
+
 	switch f.Operation() {
 	case OpAND, OpOR:
 		for _, flt := range f.InnerFilters() {
@@ -55,6 +60,7 @@ func (c *Context) processFilter(f *Filter, top bool) error {
 		} else if !top && f.Name() != "" { // named reference
 			return nil
 		}
+
 		switch f.Operation() {
 		case OpEQ, OpNE:
 		case OpGT, OpGE, OpLT, OpLE:
@@ -62,14 +68,17 @@ func (c *Context) processFilter(f *Filter, top bool) error {
 			if err != nil {
 				return fmt.Errorf("%w: '%s'", ErrInvalidNumber, f.Value())
 			}
+
 			c.numCache[f] = n
 		default:
 			return fmt.Errorf("%w: %s", ErrInvalidFilterOp, f.Operation())
 		}
 	}
+
 	if top {
 		c.Filters[f.Name()] = f
 	}
+
 	return nil
 }
 
@@ -83,11 +92,13 @@ func (c *Context) match(f *Filter, b *Node) bool {
 			if lf.Name() != "" {
 				lf = c.Filters[lf.Name()]
 			}
+
 			ok := c.match(lf, b)
 			if ok == (f.Operation() == OpOR) {
 				return ok
 			}
 		}
+
 		return f.Operation() == OpAND
 	default:
 		return c.matchKeyValue(f, b)
@@ -102,6 +113,7 @@ func (c *Context) matchKeyValue(f *Filter, b *Node) bool {
 		return b.Attribute(f.Key()) != f.Value()
 	default:
 		var attr uint64
+
 		switch f.Key() {
 		case PriceAttr:
 			attr = b.Price
@@ -109,6 +121,7 @@ func (c *Context) matchKeyValue(f *Filter, b *Node) bool {
 			attr = b.Capacity
 		default:
 			var err error
+
 			attr, err = strconv.ParseUint(b.Attribute(f.Key()), 10, 64)
 			if err != nil {
 				// Note: because filters are somewhat independent from nodes attributes,
@@ -116,6 +129,7 @@ func (c *Context) matchKeyValue(f *Filter, b *Node) bool {
 				return false
 			}
 		}
+
 		switch f.Operation() {
 		case OpGT:
 			return attr > c.numCache[f]

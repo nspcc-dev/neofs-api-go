@@ -86,7 +86,7 @@ func (op Operation) ToV2() netmap.Operation {
 func (op Operation) String() string {
 	switch op {
 	default:
-		return "UNSPECIFIED"
+		return "OPERATION_UNSPECIFIED"
 	case OpNE:
 		return "NE"
 	case OpEQ:

@@ -22,13 +22,17 @@ func (c *Context) processSelectors(p *PlacementPolicy) error {
 				return fmt.Errorf("%w: SELECT FROM '%s'", ErrFilterNotFound, s.Filter())
 			}
 		}
+
 		c.Selectors[s.Name()] = s
+
 		result, err := c.getSelection(p, s)
 		if err != nil {
 			return err
 		}
+
 		c.Selections[s.Name()] = result
 	}
+
 	return nil
 }
 
@@ -47,6 +51,7 @@ func GetNodesCount(p *PlacementPolicy, s *Selector) (int, int) {
 func (c *Context) getSelection(p *PlacementPolicy, s *Selector) ([]Nodes, error) {
 	bucketCount, nodesInBucket := GetNodesCount(p, s)
 	buckets := c.getSelectionBase(s)
+
 	if len(buckets) < bucketCount {
 		return nil, fmt.Errorf("%w: '%s'", ErrNotEnoughNodes, s.Name())
 	}
@@ -65,22 +70,27 @@ func (c *Context) getSelection(p *PlacementPolicy, s *Selector) ([]Nodes, error)
 	}
 
 	nodes := make([]Nodes, 0, len(buckets))
+
 	for i := range buckets {
 		ns := buckets[i].nodes
 		if len(ns) >= nodesInBucket {
 			nodes = append(nodes, ns[:nodesInBucket])
 		}
 	}
+
 	if len(nodes) < bucketCount {
 		return nil, fmt.Errorf("%w: '%s'", ErrNotEnoughNodes, s.Name())
 	}
+
 	if len(c.pivot) != 0 {
 		weights := make([]float64, len(nodes))
 		for i := range nodes {
 			weights[i] = GetBucketWeight(nodes[i], c.aggregator(), c.weightFunc)
 		}
+
 		hrw.SortSliceByWeightIndex(nodes, weights, c.pivotHash)
 	}
+
 	return nodes[:bucketCount], nil
 }
 
@@ -97,6 +107,7 @@ func (c *Context) getSelectionBase(s *Selector) []nodeAttrPair {
 	result := []nodeAttrPair{}
 	nodeMap := map[string]Nodes{}
 	attr := s.Attribute()
+
 	for i := range c.Netmap.Nodes {
 		if isMain || c.match(f, c.Netmap.Nodes[i]) {
 			if attr == "" {
@@ -108,6 +119,7 @@ func (c *Context) getSelectionBase(s *Selector) []nodeAttrPair {
 			}
 		}
 	}
+
 	if attr != "" {
 		for k, ns := range nodeMap {
 			result = append(result, nodeAttrPair{attr: k, nodes: ns})
@@ -119,6 +131,7 @@ func (c *Context) getSelectionBase(s *Selector) []nodeAttrPair {
 			hrw.SortSliceByWeightValue(result[i].nodes, result[i].nodes.Weights(c.weightFunc), c.pivotHash)
 		}
 	}
+
 	return result
 }
 

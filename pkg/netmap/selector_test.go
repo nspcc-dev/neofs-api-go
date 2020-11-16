@@ -163,7 +163,10 @@ func TestPlacementPolicy_ProcessSelectorsHRW(t *testing.T) {
 	c := NewContext(nm)
 	c.setPivot([]byte("containerID"))
 	c.weightFunc = newWeightFunc(newMaxNorm(10000), newReverseMinNorm(1))
-	c.aggregator = newMaxAgg
+	c.aggregator = func() aggregator {
+		return new(maxAgg)
+	}
+
 	require.NoError(t, c.processFilters(p))
 	require.NoError(t, c.processSelectors(p))
 
@@ -184,6 +187,10 @@ func TestPlacementPolicy_ProcessSelectorsHRW(t *testing.T) {
 	res, err := nm.GetPlacementVectors(containerNodes(cnt), []byte("objectID"))
 	require.NoError(t, err)
 	require.Equal(t, res, cnt)
+}
+
+func newMaxNorm(max float64) normalizer {
+	return &maxNorm{max: max}
 }
 
 func TestPlacementPolicy_ProcessSelectorsInvalid(t *testing.T) {
