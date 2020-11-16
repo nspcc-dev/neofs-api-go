@@ -37,8 +37,8 @@ func (a *Address) ToV2() *refs.Address {
 	return (*refs.Address)(a)
 }
 
-// GetContainerID returns container identifier.
-func (a *Address) GetContainerID() *container.ID {
+// ContainerID returns container identifier.
+func (a *Address) ContainerID() *container.ID {
 	return container.NewIDFromV2(
 		(*refs.Address)(a).GetContainerID(),
 	)
@@ -49,8 +49,8 @@ func (a *Address) SetContainerID(id *container.ID) {
 	(*refs.Address)(a).SetContainerID(id.ToV2())
 }
 
-// GetObjectID returns object identifier.
-func (a *Address) GetObjectID() *ID {
+// ObjectID returns object identifier.
+func (a *Address) ObjectID() *ID {
 	return NewIDFromV2(
 		(*refs.Address)(a).GetObjectID(),
 	)
@@ -87,8 +87,8 @@ func (a *Address) Parse(s string) error {
 // String returns string representation of Object.Address.
 func (a *Address) String() string {
 	return strings.Join([]string{
-		a.GetContainerID().String(),
-		a.GetObjectID().String(),
+		a.ContainerID().String(),
+		a.ObjectID().String(),
 	}, addressSeparator)
 }
 
