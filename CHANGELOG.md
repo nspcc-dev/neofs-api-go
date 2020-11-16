@@ -1,8 +1,14 @@
 # Changelog
 
-## [2.0.0] - 2020-XX-XX - Jindo (진도, 珍島)
+## [2.0.0] - 2020-11-16 - Jindo (진도, 珍島)
 
 Major API refactoring and simplification.
+
+### Added
+- cross-protocol ```v2``` message types
+- utility functions for message signing/verification
+- ```v2```/ ```gRPC``` back and forth conversions
+- primary SDK
 
 ### Removed
 - v0 and v1 NeoFS API is not supported anymore
@@ -390,3 +396,4 @@ Initial public release
 [1.1.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.0.0...v1.1.0
 [1.2.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.1.0...v1.2.0
 [1.3.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.2.0...v1.3.0
+[2.0.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.3.0...v2.0.0
