@@ -13,6 +13,12 @@ import (
 	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
+var (
+	errNilBearerToken     = errors.New("bearer token is not set")
+	errNilBearerTokenBody = errors.New("bearer token body is not set")
+	errNilBearerTokenEACL = errors.New("bearer token EACL table is not set")
+)
+
 type BearerToken struct {
 	token acl.BearerToken
 }
@@ -63,6 +69,7 @@ func (b *BearerToken) SignToken(key *ecdsa.PrivateKey) error {
 	}
 
 	signWrapper := v2signature.StableMarshalerWrapper{SM: b.token.GetBody()}
+
 	return signature.SignDataWithHandler(key, signWrapper, func(key []byte, sig []byte) {
 		bearerSignature := new(refs.Signature)
 		bearerSignature.SetKey(key)
@@ -103,15 +110,15 @@ func NewBearerTokenFromV2(v2 *acl.BearerToken) *BearerToken {
 	}
 }
 
-// sanityCheck if bearer token is ready to be issued
+// sanityCheck if bearer token is ready to be issued.
 func sanityCheck(b *BearerToken) error {
 	switch {
 	case b == nil:
-		return errors.New("bearer token is not set")
+		return errNilBearerToken
 	case b.token.GetBody() == nil:
-		return errors.New("bearer token body is not set")
+		return errNilBearerTokenBody
 	case b.token.GetBody().GetEACL() == nil:
-		return errors.New("bearer token EACL table is not set")
+		return errNilBearerTokenEACL
 	}
 
 	// consider checking EACL sanity there, lifetime correctness, etc.
