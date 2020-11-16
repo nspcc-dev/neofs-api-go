@@ -21,13 +21,9 @@ type (
 		apply(*clientOptions)
 	}
 
-	xHeader struct {
-		v2session.XHeader
-	}
-
 	callOptions struct {
 		version  *pkg.Version
-		xHeaders []xHeader
+		xHeaders []*pkg.XHeader
 		ttl      uint32
 		epoch    uint64
 		session  *token.SessionToken
@@ -81,15 +77,9 @@ func newFuncCallOption(f func(option *callOptions)) *funcCallOption {
 	}
 }
 
-func WithXHeader(key, value string) CallOption {
+func WithXHeader(x *pkg.XHeader) CallOption {
 	return newFuncCallOption(func(option *callOptions) {
-		xhdr := new(v2session.XHeader)
-		xhdr.SetKey(key)
-		xhdr.SetValue(value)
-
-		option.xHeaders = append(option.xHeaders, xHeader{
-			XHeader: *xhdr,
-		})
+		option.xHeaders = append(option.xHeaders, x)
 	})
 }
 
@@ -125,7 +115,7 @@ func v2MetaHeaderFromOpts(options callOptions) *v2session.RequestMetaHeader {
 
 	xhdrs := make([]*v2session.XHeader, len(options.xHeaders))
 	for i := range options.xHeaders {
-		xhdrs[i] = &options.xHeaders[i].XHeader
+		xhdrs[i] = options.xHeaders[i].ToV2()
 	}
 
 	meta.SetXHeaders(xhdrs)
