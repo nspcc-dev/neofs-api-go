@@ -12,11 +12,6 @@ type (
 		apply(*containerOptions)
 	}
 
-	attribute struct {
-		key   string
-		value string
-	}
-
 	containerOptions struct {
 		acl        uint32
 		policy     *netmap.PlacementPolicy
