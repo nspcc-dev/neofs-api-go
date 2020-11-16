@@ -569,7 +569,19 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 			return nil, errors.New("got nil instead of header with signature")
 		}
 		hdr = hdrWithSig.GetHeader()
-		// todo: check signature there
+
+		if err := signer.VerifyDataWithSource(
+			signature.StableMarshalerWrapper{
+				SM: hdrWithSig.GetHeader(),
+			},
+			func() (key, sig []byte) {
+				s := hdrWithSig.GetSignature()
+
+				return s.GetKey(), s.GetSign()
+			},
+		); err != nil {
+			return nil, errors.Wrap(err, "incorrect object header signature")
+		}
 	default:
 		panic(fmt.Sprintf("unexpected Head object type %T", v))
 	}
