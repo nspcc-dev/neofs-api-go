@@ -578,7 +578,7 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 	obj.SetHeader(hdr)
 
 	raw := object.NewRawFromV2(obj)
-	raw.SetID(p.addr.GetObjectID())
+	raw.SetID(p.addr.ObjectID())
 
 	// convert the object
 	return raw.Object(), nil

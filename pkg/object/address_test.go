@@ -16,7 +16,7 @@ func TestAddress_SetContainerID(t *testing.T) {
 
 	a.SetContainerID(cid)
 
-	require.Equal(t, cid, a.GetContainerID())
+	require.Equal(t, cid, a.ContainerID())
 }
 
 func TestAddress_SetObjectID(t *testing.T) {
@@ -26,7 +26,7 @@ func TestAddress_SetObjectID(t *testing.T) {
 
 	a.SetObjectID(oid)
 
-	require.Equal(t, oid, a.GetObjectID())
+	require.Equal(t, oid, a.ObjectID())
 }
 
 func TestAddress_Parse(t *testing.T) {
@@ -41,8 +41,8 @@ func TestAddress_Parse(t *testing.T) {
 		a := NewAddress()
 
 		require.NoError(t, a.Parse(s))
-		require.Equal(t, oid, a.GetObjectID())
-		require.Equal(t, cid, a.GetContainerID())
+		require.Equal(t, oid, a.ObjectID())
+		require.Equal(t, cid, a.ContainerID())
 	})
 
 	t.Run("should fail for bad address", func(t *testing.T) {
