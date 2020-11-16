@@ -47,17 +47,17 @@ func TestAddress_Parse(t *testing.T) {
 
 	t.Run("should fail for bad address", func(t *testing.T) {
 		s := strings.Join([]string{cid.String()}, addressSeparator)
-		require.EqualError(t, NewAddress().Parse(s), ErrBadAddress.Error())
+		require.EqualError(t, NewAddress().Parse(s), errInvalidAddressString.Error())
 	})
 
 	t.Run("should fail on container.ID", func(t *testing.T) {
 		s := strings.Join([]string{"1", "2"}, addressSeparator)
-		require.EqualError(t, NewAddress().Parse(s), container.ErrBadID.Error())
+		require.Error(t, NewAddress().Parse(s))
 	})
 
 	t.Run("should fail on object.ID", func(t *testing.T) {
 		s := strings.Join([]string{cid.String(), "2"}, addressSeparator)
-		require.EqualError(t, NewAddress().Parse(s), ErrBadID.Error())
+		require.Error(t, NewAddress().Parse(s))
 	})
 }
 
