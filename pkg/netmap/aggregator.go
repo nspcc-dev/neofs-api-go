@@ -73,24 +73,12 @@ var (
 	_ normalizer = (*constNorm)(nil)
 )
 
-// capWeightFunc calculates weight which is equal to capacity.
-func capWeightFunc(n *Node) float64 { return float64(n.Capacity) }
-
-// priceWeightFunc calculates weight which is equal to price.
-func priceWeightFunc(n *Node) float64 { return float64(n.Price) }
-
 // newWeightFunc returns weightFunc which multiplies normalized
 // capacity and price.
 func newWeightFunc(capNorm, priceNorm normalizer) weightFunc {
 	return func(n *Node) float64 {
 		return capNorm.Normalize(float64(n.Capacity)) * priceNorm.Normalize(float64(n.Price))
 	}
-}
-
-// newMeanSumAgg returns an aggregator which
-// computes mean value by keeping total sum.
-func newMeanSumAgg() aggregator {
-	return new(meanSumAgg)
 }
 
 // newMeanAgg returns an aggregator which
@@ -106,12 +94,6 @@ func newMinAgg() aggregator {
 	return new(minAgg)
 }
 
-// newMaxAgg returns an aggregator which
-// computes max value.
-func newMaxAgg() aggregator {
-	return new(maxAgg)
-}
-
 // newMeanIQRAgg returns an aggregator which
 // computes mean value of values from IQR interval.
 func newMeanIQRAgg() aggregator {
@@ -124,22 +106,10 @@ func newReverseMinNorm(min float64) normalizer {
 	return &reverseMinNorm{min: min}
 }
 
-// newMaxNorm returns a normalizer which
-// normalize values in range of 0.0 to 1.0 to a maximum value.
-func newMaxNorm(max float64) normalizer {
-	return &maxNorm{max: max}
-}
-
 // newSigmoidNorm returns a normalizer which
 // normalize values in range of 0.0 to 1.0 to a scaled sigmoid.
 func newSigmoidNorm(scale float64) normalizer {
 	return &sigmoidNorm{scale: scale}
-}
-
-// newConstNorm returns a normalizer which
-// returns a constant values
-func newConstNorm(value float64) normalizer {
-	return &constNorm{value: value}
 }
 
 func (a *meanSumAgg) Add(n float64) {
@@ -151,6 +121,7 @@ func (a *meanSumAgg) Compute() float64 {
 	if a.count == 0 {
 		return 0
 	}
+
 	return a.sum / float64(a.count)
 }
 
@@ -197,22 +168,27 @@ func (a *meanIQRAgg) Compute() float64 {
 	sort.Slice(a.arr, func(i, j int) bool { return a.arr[i] < a.arr[j] })
 
 	var min, max float64
-	if l < 4 {
+
+	const minLn = 4
+
+	if l < minLn {
 		min, max = a.arr[0], a.arr[l-1]
 	} else {
-		start, end := l/4, l*3/4-1
+		start, end := l/minLn, l*3/minLn-1
 		iqr := a.k * (a.arr[end] - a.arr[start])
 		min, max = a.arr[start]-iqr, a.arr[end]+iqr
 	}
 
 	count := 0
 	sum := float64(0)
+
 	for _, e := range a.arr {
 		if e >= min && e <= max {
 			sum += e
 			count++
 		}
 	}
+
 	return sum / float64(count)
 }
 
@@ -220,6 +196,7 @@ func (r *reverseMinNorm) Normalize(w float64) float64 {
 	if w == 0 {
 		return 0
 	}
+
 	return r.min / w
 }
 
@@ -227,6 +204,7 @@ func (r *maxNorm) Normalize(w float64) float64 {
 	if r.max == 0 {
 		return 0
 	}
+
 	return w / r.max
 }
 
@@ -234,7 +212,9 @@ func (r *sigmoidNorm) Normalize(w float64) float64 {
 	if r.scale == 0 {
 		return 0
 	}
+
 	x := w / r.scale
+
 	return x / (1 + x)
 }
 

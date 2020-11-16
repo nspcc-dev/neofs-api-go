@@ -63,6 +63,7 @@ func NodesFromInfo(infos []NodeInfo) Nodes {
 	for i := range infos {
 		nodes[i] = newNodeV2(i, &infos[i])
 	}
+
 	return nodes
 }
 
@@ -73,6 +74,7 @@ func newNodeV2(index int, ni *NodeInfo) *Node {
 		AttrMap:  make(map[string]string, len(ni.Attributes())),
 		NodeInfo: ni,
 	}
+
 	for _, attr := range ni.Attributes() {
 		switch attr.Key() {
 		case CapacityAttr:
@@ -80,8 +82,10 @@ func newNodeV2(index int, ni *NodeInfo) *Node {
 		case PriceAttr:
 			n.Price, _ = strconv.ParseUint(attr.Value(), 10, 64)
 		}
+
 		n.AttrMap[attr.Key()] = attr.Value()
 	}
+
 	return n
 }
 
@@ -91,6 +95,7 @@ func (n Nodes) Weights(wf weightFunc) []float64 {
 	for i := range n {
 		w = append(w, wf(n[i]))
 	}
+
 	return w
 }
 
@@ -104,6 +109,7 @@ func GetBucketWeight(ns Nodes, a aggregator, wf weightFunc) float64 {
 	for i := range ns {
 		a.Add(wf(ns[i]))
 	}
+
 	return a.Compute()
 }
 
@@ -134,7 +140,7 @@ func (s NodeState) ToV2() netmap.NodeState {
 func (s NodeState) String() string {
 	switch s {
 	default:
-		return "UNSPECIFIED"
+		return "STATE_UNSPECIFIED"
 	case NodeStateOffline:
 		return "OFFLINE"
 	case NodeStateOnline:

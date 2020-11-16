@@ -23,6 +23,7 @@ func flattenNodes(ns []Nodes) Nodes {
 	for i := range ns {
 		result = append(result, ns[i]...)
 	}
+
 	return result
 }
 
@@ -31,11 +32,13 @@ func (m *Netmap) GetPlacementVectors(cnt ContainerNodes, pivot []byte) ([]Nodes,
 	h := hrw.Hash(pivot)
 	wf := GetDefaultWeightFunc(m.Nodes)
 	result := make([]Nodes, len(cnt.Replicas()))
+
 	for i, rep := range cnt.Replicas() {
 		result[i] = make(Nodes, len(rep))
 		copy(result[i], rep)
 		hrw.SortSliceByWeightValue(result[i], result[i].Weights(wf), h)
 	}
+
 	return result, nil
 }
 
@@ -45,28 +48,35 @@ func (m *Netmap) GetPlacementVectors(cnt ContainerNodes, pivot []byte) ([]Nodes,
 func (m *Netmap) GetContainerNodes(p *PlacementPolicy, pivot []byte) (ContainerNodes, error) {
 	c := NewContext(m)
 	c.setPivot(pivot)
+
 	if err := c.processFilters(p); err != nil {
 		return nil, err
 	}
+
 	if err := c.processSelectors(p); err != nil {
 		return nil, err
 	}
+
 	result := make([]Nodes, len(p.Replicas()))
+
 	for i, r := range p.Replicas() {
 		if r == nil {
 			return nil, fmt.Errorf("%w: REPLICA", ErrMissingField)
 		}
+
 		if r.Selector() == "" {
 			for _, s := range p.Selectors() {
 				result[i] = append(result[i], flattenNodes(c.Selections[s.Name()])...)
 			}
 		}
+
 		nodes, ok := c.Selections[r.Selector()]
 		if !ok {
 			return nil, fmt.Errorf("%w: REPLICA '%s'", ErrSelectorNotFound, r.Selector())
 		}
-		result[i] = append(result[i], flattenNodes(nodes)...)
 
+		result[i] = append(result[i], flattenNodes(nodes)...)
 	}
+
 	return containerNodes(result), nil
 }

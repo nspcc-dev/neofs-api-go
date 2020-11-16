@@ -70,10 +70,12 @@ func (c *Context) setPivot(pivot []byte) {
 func GetDefaultWeightFunc(ns Nodes) weightFunc {
 	mean := newMeanAgg()
 	min := newMinAgg()
+
 	for i := range ns {
 		mean.Add(float64(ns[i].Capacity))
 		min.Add(float64(ns[i].Price))
 	}
+
 	return newWeightFunc(
 		newSigmoidNorm(mean.Compute()),
 		newReverseMinNorm(min.Compute()))
