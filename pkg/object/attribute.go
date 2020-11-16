@@ -19,8 +19,8 @@ func NewAttribute() *Attribute {
 	return NewAttributeFromV2(new(object.Attribute))
 }
 
-// GetKey returns key to the object attribute.
-func (a *Attribute) GetKey() string {
+// Key returns key to the object attribute.
+func (a *Attribute) Key() string {
 	return (*object.Attribute)(a).GetKey()
 }
 
@@ -29,8 +29,8 @@ func (a *Attribute) SetKey(v string) {
 	(*object.Attribute)(a).SetKey(v)
 }
 
-// GetValue return value of the object attribute.
-func (a *Attribute) GetValue() string {
+// Value return value of the object attribute.
+func (a *Attribute) Value() string {
 	return (*object.Attribute)(a).GetValue()
 }
 

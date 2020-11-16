@@ -35,34 +35,34 @@ func TestVerificationFields(t *testing.T) {
 		},
 		{
 			corrupt: func() {
-				obj.SetPayloadSize(obj.GetPayloadSize() + 1)
+				obj.SetPayloadSize(obj.PayloadSize() + 1)
 			},
 			restore: func() {
-				obj.SetPayloadSize(obj.GetPayloadSize() - 1)
+				obj.SetPayloadSize(obj.PayloadSize() - 1)
 			},
 		},
 		{
 			corrupt: func() {
-				obj.GetID().ToV2().GetValue()[0]++
+				obj.ID().ToV2().GetValue()[0]++
 			},
 			restore: func() {
-				obj.GetID().ToV2().GetValue()[0]--
+				obj.ID().ToV2().GetValue()[0]--
 			},
 		},
 		{
 			corrupt: func() {
-				obj.GetSignature().Key()[0]++
+				obj.Signature().Key()[0]++
 			},
 			restore: func() {
-				obj.GetSignature().Key()[0]--
+				obj.Signature().Key()[0]--
 			},
 		},
 		{
 			corrupt: func() {
-				obj.GetSignature().Sign()[0]++
+				obj.Signature().Sign()[0]++
 			},
 			restore: func() {
-				obj.GetSignature().Sign()[0]--
+				obj.Signature().Sign()[0]--
 			},
 		},
 	}

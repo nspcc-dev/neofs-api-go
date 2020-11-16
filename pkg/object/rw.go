@@ -42,8 +42,8 @@ func (o *rwObject) setSplitFields(setter func(*object.SplitHeader)) {
 	})
 }
 
-// GetID returns object identifier.
-func (o *rwObject) GetID() *ID {
+// ID returns object identifier.
+func (o *rwObject) ID() *ID {
 	return NewIDFromV2(
 		(*object.Object)(o).
 			GetObjectID(),
@@ -55,8 +55,8 @@ func (o *rwObject) setID(v *ID) {
 		SetObjectID(v.ToV2())
 }
 
-// GetSignature returns signature of the object identifier.
-func (o *rwObject) GetSignature() *pkg.Signature {
+// Signature returns signature of the object identifier.
+func (o *rwObject) Signature() *pkg.Signature {
 	return pkg.NewSignatureFromV2(
 		(*object.Object)(o).
 			GetSignature(),
@@ -68,8 +68,8 @@ func (o *rwObject) setSignature(v *pkg.Signature) {
 		SetSignature(v.ToV2())
 }
 
-// GetPayload returns payload bytes.
-func (o *rwObject) GetPayload() []byte {
+// Payload returns payload bytes.
+func (o *rwObject) Payload() []byte {
 	return (*object.Object)(o).
 		GetPayload()
 }
@@ -79,8 +79,8 @@ func (o *rwObject) setPayload(v []byte) {
 		SetPayload(v)
 }
 
-// GetVersion returns version of the object.
-func (o *rwObject) GetVersion() *pkg.Version {
+// Version returns version of the object.
+func (o *rwObject) Version() *pkg.Version {
 	return pkg.NewVersionFromV2(
 		(*object.Object)(o).
 			GetHeader().
@@ -94,8 +94,8 @@ func (o *rwObject) setVersion(v *pkg.Version) {
 	})
 }
 
-// GetPayloadSize returns payload length of the object.
-func (o *rwObject) GetPayloadSize() uint64 {
+// PayloadSize returns payload length of the object.
+func (o *rwObject) PayloadSize() uint64 {
 	return (*object.Object)(o).
 		GetHeader().
 		GetPayloadLength()
@@ -107,8 +107,8 @@ func (o *rwObject) setPayloadSize(v uint64) {
 	})
 }
 
-// GetContainerID returns identifier of the related container.
-func (o *rwObject) GetContainerID() *container.ID {
+// ContainerID returns identifier of the related container.
+func (o *rwObject) ContainerID() *container.ID {
 	return container.NewIDFromV2(
 		(*object.Object)(o).
 			GetHeader().
@@ -122,8 +122,8 @@ func (o *rwObject) setContainerID(v *container.ID) {
 	})
 }
 
-// GetOwnerID returns identifier of the object owner.
-func (o *rwObject) GetOwnerID() *owner.ID {
+// OwnerID returns identifier of the object owner.
+func (o *rwObject) OwnerID() *owner.ID {
 	return owner.NewIDFromV2(
 		(*object.Object)(o).
 			GetHeader().
@@ -137,8 +137,8 @@ func (o *rwObject) setOwnerID(v *owner.ID) {
 	})
 }
 
-// GetCreationEpoch returns epoch number in which object was created.
-func (o *rwObject) GetCreationEpoch() uint64 {
+// CreationEpoch returns epoch number in which object was created.
+func (o *rwObject) CreationEpoch() uint64 {
 	return (*object.Object)(o).
 		GetHeader().
 		GetCreationEpoch()
@@ -150,8 +150,8 @@ func (o *rwObject) setCreationEpoch(v uint64) {
 	})
 }
 
-// GetPayloadChecksum returns checksum of the object payload.
-func (o *rwObject) GetPayloadChecksum() *pkg.Checksum {
+// PayloadChecksum returns checksum of the object payload.
+func (o *rwObject) PayloadChecksum() *pkg.Checksum {
 	return pkg.NewChecksumFromV2(
 		(*object.Object)(o).
 			GetHeader().
@@ -165,8 +165,8 @@ func (o *rwObject) setPayloadChecksum(v *pkg.Checksum) {
 	})
 }
 
-// GetPayloadHomomorphicHash returns homomorphic hash of the object payload.
-func (o *rwObject) GetPayloadHomomorphicHash() *pkg.Checksum {
+// PayloadHomomorphicHash returns homomorphic hash of the object payload.
+func (o *rwObject) PayloadHomomorphicHash() *pkg.Checksum {
 	return pkg.NewChecksumFromV2(
 		(*object.Object)(o).
 			GetHeader().
@@ -180,8 +180,8 @@ func (o *rwObject) setPayloadHomomorphicHash(v *pkg.Checksum) {
 	})
 }
 
-// GetAttributes returns object attributes.
-func (o *rwObject) GetAttributes() []*Attribute {
+// Attributes returns object attributes.
+func (o *rwObject) Attributes() []*Attribute {
 	attrs := (*object.Object)(o).
 		GetHeader().
 		GetAttributes()
@@ -207,8 +207,8 @@ func (o *rwObject) setAttributes(v ...*Attribute) {
 	})
 }
 
-// GetPreviousID returns identifier of the previous sibling object.
-func (o *rwObject) GetPreviousID() *ID {
+// PreviousID returns identifier of the previous sibling object.
+func (o *rwObject) PreviousID() *ID {
 	return NewIDFromV2(
 		(*object.Object)(o).
 			GetHeader().
@@ -223,8 +223,8 @@ func (o *rwObject) setPreviousID(v *ID) {
 	})
 }
 
-// GetChildren return list of the identifiers of the child objects.
-func (o *rwObject) GetChildren() []*ID {
+// Children return list of the identifiers of the child objects.
+func (o *rwObject) Children() []*ID {
 	ids := (*object.Object)(o).
 		GetHeader().
 		GetSplit().
@@ -251,8 +251,8 @@ func (o *rwObject) setChildren(v ...*ID) {
 	})
 }
 
-// GetParentID returns identifier of the parent object.
-func (o *rwObject) GetParentID() *ID {
+// ParentID returns identifier of the parent object.
+func (o *rwObject) ParentID() *ID {
 	return NewIDFromV2(
 		(*object.Object)(o).
 			GetHeader().
@@ -267,8 +267,8 @@ func (o *rwObject) setParentID(v *ID) {
 	})
 }
 
-// GetParent returns parent object w/o payload.
-func (o *rwObject) GetParent() *Object {
+// Parent returns parent object w/o payload.
+func (o *rwObject) Parent() *Object {
 	h := (*object.Object)(o).
 		GetHeader().
 		GetSplit()
@@ -308,9 +308,9 @@ func (o *rwObject) resetRelations() {
 	})
 }
 
-// GetSessionToken returns token of the session
+// SessionToken returns token of the session
 // within which object was created.
-func (o *rwObject) GetSessionToken() *token.SessionToken {
+func (o *rwObject) SessionToken() *token.SessionToken {
 	return token.NewSessionTokenFromV2(
 		(*object.Object)(o).
 			GetHeader().
@@ -324,8 +324,8 @@ func (o *rwObject) setSessionToken(v *token.SessionToken) {
 	})
 }
 
-// GetType returns type of the object.
-func (o *rwObject) GetType() Type {
+// Type returns type of the object.
+func (o *rwObject) Type() Type {
 	return TypeFromV2(
 		(*object.Object)(o).
 			GetHeader().
