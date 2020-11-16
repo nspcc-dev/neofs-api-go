@@ -25,8 +25,8 @@ func TestChecksum(t *testing.T) {
 
 	c.SetSHA256(cSHA256)
 
-	require.Equal(t, ChecksumSHA256, c.GetType())
-	require.Equal(t, cSHA256[:], c.GetSum())
+	require.Equal(t, ChecksumSHA256, c.Type())
+	require.Equal(t, cSHA256[:], c.Sum())
 
 	cV2 := c.ToV2()
 
@@ -38,8 +38,8 @@ func TestChecksum(t *testing.T) {
 
 	c.SetTillichZemor(cTZ)
 
-	require.Equal(t, ChecksumTZ, c.GetType())
-	require.Equal(t, cTZ[:], c.GetSum())
+	require.Equal(t, ChecksumTZ, c.Type())
+	require.Equal(t, cTZ[:], c.Sum())
 
 	cV2 = c.ToV2()
 
