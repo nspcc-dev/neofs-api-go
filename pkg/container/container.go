@@ -15,6 +15,7 @@ type Container struct {
 
 func New(opts ...NewOption) *Container {
 	cnrOptions := defaultContainerOptions()
+
 	for i := range opts {
 		opts[i].apply(&cnrOptions)
 	}
@@ -36,7 +37,7 @@ func New(opts ...NewOption) *Container {
 	return cnr
 }
 
-func (c Container) ToV2() *container.Container {
+func (c *Container) ToV2() *container.Container {
 	return &c.v2
 }
 
