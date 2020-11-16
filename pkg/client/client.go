@@ -33,12 +33,11 @@ const (
 	GRPC
 )
 
-var (
-	unsupportedProtocolErr = errors.New("unsupported transport protocol")
-)
+var errUnsupportedProtocol = errors.New("unsupported transport protocol")
 
-func New(key *ecdsa.PrivateKey, opts ...ClientOption) (*Client, error) {
+func New(key *ecdsa.PrivateKey, opts ...Option) (*Client, error) {
 	clientOptions := defaultClientOptions()
+
 	for i := range opts {
 		opts[i].apply(clientOptions)
 	}

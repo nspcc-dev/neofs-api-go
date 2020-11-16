@@ -29,13 +29,14 @@ func (c Client) GetBalance(ctx context.Context, owner *owner.ID, opts ...CallOpt
 	case 2:
 		return c.getBalanceV2(ctx, owner, opts...)
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
 func (c Client) getBalanceV2(ctx context.Context, owner *owner.ID, opts ...CallOption) (*accounting.Decimal, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
+
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -71,7 +72,7 @@ func (c Client) getBalanceV2(ctx context.Context, owner *owner.ID, opts ...CallO
 
 		return accounting.NewDecimalFromV2(resp.GetBody().GetBalance()), nil
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -92,7 +93,7 @@ func v2AccountingClientFromOptions(opts *clientOptions) (cli *v2accounting.Clien
 		)
 
 	default:
-		return nil, errors.New("lack of sdk client options to create accounting client")
+		return nil, errOptionsLack("Accounting")
 	}
 
 	// check if client correct and save in cache

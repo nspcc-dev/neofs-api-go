@@ -23,7 +23,7 @@ func (c Client) EndpointInfo(ctx context.Context, opts ...CallOption) (*netmap.N
 
 		return netmap.NewNodeInfoFromV2(resp.GetBody().GetNodeInfo()), nil
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -38,13 +38,14 @@ func (c Client) Epoch(ctx context.Context, opts ...CallOption) (uint64, error) {
 
 		return resp.GetMetaHeader().GetEpoch(), nil
 	default:
-		return 0, unsupportedProtocolErr
+		return 0, errUnsupportedProtocol
 	}
 }
 
 func (c Client) endpointInfoV2(ctx context.Context, opts ...CallOption) (*v2netmap.LocalNodeInfoResponse, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
+
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -79,7 +80,7 @@ func (c Client) endpointInfoV2(ctx context.Context, opts ...CallOption) (*v2netm
 
 		return resp, nil
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -100,7 +101,7 @@ func v2NetmapClientFromOptions(opts *clientOptions) (cli *v2netmap.Client, err e
 		)
 
 	default:
-		return nil, errors.New("lack of sdk client options to create netmap client")
+		return nil, errOptionsLack("Netmap")
 	}
 
 	// check if client correct and save in cache

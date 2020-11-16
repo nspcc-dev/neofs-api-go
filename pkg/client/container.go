@@ -18,6 +18,8 @@ type delContainerSignWrapper struct {
 	body *v2container.DeleteRequestBody
 }
 
+var errNilReponseBody = errors.New("response body is nil")
+
 func (c delContainerSignWrapper) ReadSignedData(bytes []byte) ([]byte, error) {
 	return c.body.GetContainerID().GetValue(), nil
 }
@@ -31,7 +33,7 @@ func (c Client) PutContainer(ctx context.Context, cnr *container.Container, opts
 	case 2:
 		return c.putContainerV2(ctx, cnr, opts...)
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -40,7 +42,7 @@ func (c Client) GetContainer(ctx context.Context, id *container.ID, opts ...Call
 	case 2:
 		return c.getContainerV2(ctx, id, opts...)
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -49,7 +51,7 @@ func (c Client) ListContainers(ctx context.Context, owner *owner.ID, opts ...Cal
 	case 2:
 		return c.listContainerV2(ctx, owner, opts...)
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -70,7 +72,7 @@ func (c Client) DeleteContainer(ctx context.Context, id *container.ID, opts ...C
 	case 2:
 		return c.delContainerV2(ctx, id, opts...)
 	default:
-		return unsupportedProtocolErr
+		return errUnsupportedProtocol
 	}
 }
 
@@ -79,7 +81,7 @@ func (c Client) GetEACL(ctx context.Context, id *container.ID, opts ...CallOptio
 	case 2:
 		return c.getEACLV2(ctx, id, opts...)
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -88,13 +90,14 @@ func (c Client) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...CallOptio
 	case 2:
 		return c.setEACLV2(ctx, eacl, opts...)
 	default:
-		return unsupportedProtocolErr
+		return errUnsupportedProtocol
 	}
 }
 
 func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
+
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -120,6 +123,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 
 	// sign container
 	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetContainer()}
+
 	err := signature.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
 		containerSignature := new(refs.Signature)
 		containerSignature.SetKey(key)
@@ -158,13 +162,14 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 
 		return container.NewIDFromV2(resp.GetBody().GetContainerID()), nil
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
 func (c Client) getContainerV2(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
+
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -200,13 +205,14 @@ func (c Client) getContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 
 		return container.NewContainerFromV2(resp.GetBody().GetContainer()), nil
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
 func (c Client) listContainerV2(ctx context.Context, owner *owner.ID, opts ...CallOption) ([]*container.ID, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
+
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -247,13 +253,14 @@ func (c Client) listContainerV2(ctx context.Context, owner *owner.ID, opts ...Ca
 
 		return result, nil
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
 func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...CallOption) error {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
+
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -305,13 +312,14 @@ func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 
 		return nil
 	default:
-		return unsupportedProtocolErr
+		return errUnsupportedProtocol
 	}
 }
 
 func (c Client) getEACLV2(ctx context.Context, id *container.ID, opts ...CallOption) (*eacl.Table, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
+
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -347,7 +355,7 @@ func (c Client) getEACLV2(ctx context.Context, id *container.ID, opts ...CallOpt
 
 		body := resp.GetBody()
 		if body == nil {
-			return nil, errors.New("response body is nil")
+			return nil, errNilReponseBody
 		}
 
 		if err := signature.VerifyDataWithSource(
@@ -367,13 +375,14 @@ func (c Client) getEACLV2(ctx context.Context, id *container.ID, opts ...CallOpt
 
 		return result, nil
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
 func (c Client) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
+
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -383,6 +392,7 @@ func (c Client) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOpt
 	reqBody.GetEACL().SetVersion(c.remoteNode.Version.ToV2())
 
 	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetEACL()}
+
 	err := signature.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
 		eaclSignature := new(refs.Signature)
 		eaclSignature.SetKey(key)
@@ -421,7 +431,7 @@ func (c Client) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOpt
 
 		return nil
 	default:
-		return unsupportedProtocolErr
+		return errUnsupportedProtocol
 	}
 }
 
@@ -442,7 +452,7 @@ func v2ContainerClientFromOptions(opts *clientOptions) (cli *v2container.Client,
 		)
 
 	default:
-		return nil, errors.New("lack of sdk client options to create container client")
+		return nil, errOptionsLack("Container")
 	}
 
 	// check if client correct and save in cache
