@@ -14,8 +14,8 @@ func TestNewVersionFromV2(t *testing.T) {
 	v.SetMajor(mjr)
 	v.SetMinor(mnr)
 
-	require.Equal(t, mjr, v.GetMajor())
-	require.Equal(t, mnr, v.GetMinor())
+	require.Equal(t, mjr, v.Major())
+	require.Equal(t, mnr, v.Minor())
 
 	ver := v.ToV2()
 
@@ -26,8 +26,8 @@ func TestNewVersionFromV2(t *testing.T) {
 func TestSDKVersion(t *testing.T) {
 	v := SDKVersion()
 
-	require.Equal(t, uint32(sdkMjr), v.GetMajor())
-	require.Equal(t, uint32(sdkMnr), v.GetMinor())
+	require.Equal(t, uint32(sdkMjr), v.Major())
+	require.Equal(t, uint32(sdkMnr), v.Minor())
 }
 
 func TestIsSupportedVersion(t *testing.T) {

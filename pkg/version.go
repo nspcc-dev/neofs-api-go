@@ -34,8 +34,8 @@ func SDKVersion() *Version {
 	return v
 }
 
-// GetMajor returns major number of the revision.
-func (v *Version) GetMajor() uint32 {
+// Major returns major number of the revision.
+func (v *Version) Major() uint32 {
 	return (*refs.Version)(v).
 		GetMajor()
 }
@@ -46,8 +46,8 @@ func (v *Version) SetMajor(val uint32) {
 		SetMajor(val)
 }
 
-// GetMinor returns minor number of the revision.
-func (v *Version) GetMinor() uint32 {
+// Minor returns minor number of the revision.
+func (v *Version) Minor() uint32 {
 	return (*refs.Version)(v).
 		GetMinor()
 }
@@ -64,22 +64,22 @@ func (v *Version) ToV2() *refs.Version {
 }
 
 func (v *Version) String() string {
-	return fmt.Sprintf("v%d.%d", v.GetMajor(), v.GetMinor())
+	return fmt.Sprintf("v%d.%d", v.Major(), v.Minor())
 }
 
 // IsSupportedVersion returns error if v is not supported by current SDK.
 func IsSupportedVersion(v *Version) error {
-	switch mjr := v.GetMajor(); mjr {
+	switch mjr := v.Major(); mjr {
 	case 2:
-		switch mnr := v.GetMinor(); mnr {
+		switch mnr := v.Minor(); mnr {
 		case 0:
 			return nil
 		}
 	}
 
 	return errors.Errorf("unsupported version %d.%d",
-		v.GetMajor(),
-		v.GetMinor(),
+		v.Major(),
+		v.Minor(),
 	)
 }
 
