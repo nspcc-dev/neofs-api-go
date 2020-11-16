@@ -1,13 +1,14 @@
-package accounting
+package accounting_test
 
 import (
 	"testing"
 
+	"github.com/nspcc-dev/neofs-api-go/pkg/accounting"
 	"github.com/stretchr/testify/require"
 )
 
 func TestDecimal_Value(t *testing.T) {
-	d := NewDecimal()
+	d := accounting.NewDecimal()
 
 	v := int64(3)
 	d.SetValue(v)
@@ -16,7 +17,7 @@ func TestDecimal_Value(t *testing.T) {
 }
 
 func TestDecimal_Precision(t *testing.T) {
-	d := NewDecimal()
+	d := accounting.NewDecimal()
 
 	p := uint32(3)
 	d.SetPrecision(p)
@@ -25,7 +26,7 @@ func TestDecimal_Precision(t *testing.T) {
 }
 
 func TestDecimalEncoding(t *testing.T) {
-	d := NewDecimal()
+	d := accounting.NewDecimal()
 	d.SetValue(1)
 	d.SetPrecision(2)
 
@@ -33,7 +34,7 @@ func TestDecimalEncoding(t *testing.T) {
 		data, err := d.Marshal()
 		require.NoError(t, err)
 
-		d2 := NewDecimal()
+		d2 := accounting.NewDecimal()
 		require.NoError(t, d2.Unmarshal(data))
 
 		require.Equal(t, d, d2)
@@ -43,7 +44,7 @@ func TestDecimalEncoding(t *testing.T) {
 		data, err := d.MarshalJSON()
 		require.NoError(t, err)
 
-		d2 := NewDecimal()
+		d2 := accounting.NewDecimal()
 		require.NoError(t, d2.UnmarshalJSON(data))
 
 		require.Equal(t, d, d2)
