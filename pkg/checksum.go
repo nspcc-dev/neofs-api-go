@@ -37,8 +37,8 @@ func NewChecksum() *Checksum {
 	return NewChecksumFromV2(new(refs.Checksum))
 }
 
-// GetType returns checksum type.
-func (c *Checksum) GetType() ChecksumType {
+// Type returns checksum type.
+func (c *Checksum) Type() ChecksumType {
 	switch (*refs.Checksum)(c).GetType() {
 	case refs.SHA256:
 		return ChecksumSHA256
@@ -49,8 +49,8 @@ func (c *Checksum) GetType() ChecksumType {
 	}
 }
 
-// GetSum returns checksum bytes.
-func (c *Checksum) GetSum() []byte {
+// Sum returns checksum bytes.
+func (c *Checksum) Sum() []byte {
 	return (*refs.Checksum)(c).GetSum()
 }
 
@@ -75,7 +75,7 @@ func (c *Checksum) ToV2() *refs.Checksum {
 }
 
 func EqualChecksums(cs1, cs2 *Checksum) bool {
-	return cs1.GetType() == cs2.GetType() && bytes.Equal(cs1.GetSum(), cs2.GetSum())
+	return cs1.Type() == cs2.Type() && bytes.Equal(cs1.Sum(), cs2.Sum())
 }
 
 // Marshal marshals Checksum into a protobuf binary form.
