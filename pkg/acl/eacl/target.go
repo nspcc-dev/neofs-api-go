@@ -9,27 +9,34 @@ import (
 
 // Target is a group of request senders to match EACL. Defined by role enum
 // and set of public keys.
+//
+// Target is compatible with v2 acl.EACLRecord.Target message.
 type Target struct {
 	role Role
 	keys []ecdsa.PublicKey
 }
 
+// SetKeys sets list of public keys to identify target subject.
 func (t *Target) SetKeys(keys ...ecdsa.PublicKey) {
 	t.keys = keys
 }
 
+// Keys returns list of public keys to identify target subject.
 func (t Target) Keys() []ecdsa.PublicKey {
 	return t.keys
 }
 
+// SetRole sets target subject's role class.
 func (t *Target) SetRole(r Role) {
 	t.role = r
 }
 
+// Role returns target subject's role class.
 func (t Target) Role() Role {
 	return t.role
 }
 
+// ToV2 converts Target to v2 acl.EACLRecord.Target message.
 func (t *Target) ToV2() *v2acl.Target {
 	keys := make([][]byte, 0, len(t.keys))
 	for i := range t.keys {
@@ -45,10 +52,12 @@ func (t *Target) ToV2() *v2acl.Target {
 	return target
 }
 
+// NewTarget creates, initializes and returns blank Target instance.
 func NewTarget() *Target {
 	return NewTargetFromV2(new(v2acl.Target))
 }
 
+// NewTargetFromV2 converts v2 acl.EACLRecord.Target message to Target.
 func NewTargetFromV2(target *v2acl.Target) *Target {
 	t := new(Target)
 
@@ -59,6 +68,7 @@ func NewTargetFromV2(target *v2acl.Target) *Target {
 	t.role = RoleFromV2(target.GetRole())
 	v2keys := target.GetKeys()
 	t.keys = make([]ecdsa.PublicKey, 0, len(v2keys))
+
 	for i := range v2keys {
 		key := crypto.UnmarshalPublicKey(v2keys[i])
 		t.keys = append(t.keys, *key)

@@ -7,22 +7,8 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
-	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
-
-// example how to create eACL tables in applications
-func example() {
-	record := eacl.CreateRecord(eacl.ActionDeny, eacl.OperationPut)
-	record.AddFilter(eacl.HeaderFromObject, eacl.MatchStringEqual, "filename", "cat.jpg")
-	record.AddTarget(eacl.RoleOthers, test.DecodeKey(1).PublicKey, test.DecodeKey(2).PublicKey)
-
-	var cid container.ID
-	cid.SetSHA256(sha256.Sum256([]byte("container id")))
-
-	table := eacl.CreateTable(cid)
-	table.AddRecord(record)
-}
 
 func TestTable(t *testing.T) {
 	var (
@@ -66,14 +52,14 @@ func TestTable(t *testing.T) {
 }
 
 func TestTable_AddRecord(t *testing.T) {
-	records := []eacl.Record{
-		*eacl.CreateRecord(eacl.ActionDeny, eacl.OperationDelete),
-		*eacl.CreateRecord(eacl.ActionAllow, eacl.OperationPut),
+	records := []*eacl.Record{
+		eacl.CreateRecord(eacl.ActionDeny, eacl.OperationDelete),
+		eacl.CreateRecord(eacl.ActionAllow, eacl.OperationPut),
 	}
 
 	table := eacl.NewTable()
 	for _, record := range records {
-		table.AddRecord(&record)
+		table.AddRecord(record)
 	}
 
 	require.Equal(t, records, table.Records())

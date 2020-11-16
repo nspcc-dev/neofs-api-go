@@ -39,7 +39,7 @@ func TestRecord(t *testing.T) {
 }
 
 func TestRecord_AddTarget(t *testing.T) {
-	targets := []Target{
+	targets := []*Target{
 		{
 			role: RoleUnknown,
 			keys: []ecdsa.PublicKey{test.DecodeKey(1).PublicKey},
@@ -59,9 +59,9 @@ func TestRecord_AddTarget(t *testing.T) {
 }
 
 func TestRecord_AddFilter(t *testing.T) {
-	filters := []Filter{
-		*newObjectFilter(MatchStringEqual, "some name", "ContainerID"),
-		*newObjectFilter(MatchStringNotEqual, "X-Header-Name", "X-Header-Value"),
+	filters := []*Filter{
+		newObjectFilter(MatchStringEqual, "some name", "ContainerID"),
+		newObjectFilter(MatchStringNotEqual, "X-Header-Name", "X-Header-Value"),
 	}
 
 	r := NewRecord()
