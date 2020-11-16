@@ -1,6 +1,8 @@
 package owner
 
 import (
+	"fmt"
+
 	"github.com/mr-tron/base58"
 	"github.com/nspcc-dev/neo-go/pkg/encoding/address"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
@@ -38,7 +40,7 @@ func (id *ID) String() string {
 	return base58.Encode((*refs.OwnerID)(id).GetValue())
 }
 
-func ScriptHashBE(id *ID) ([]byte, error) {
+func ScriptHashBE(id fmt.Stringer) ([]byte, error) {
 	addr, err := address.StringToUint160(id.String())
 	if err != nil {
 		return nil, err
