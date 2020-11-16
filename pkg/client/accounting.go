@@ -25,7 +25,7 @@ func (c Client) GetSelfBalance(ctx context.Context, opts ...CallOption) (*accoun
 
 func (c Client) GetBalance(ctx context.Context, owner *owner.ID, opts ...CallOption) (*accounting.Decimal, error) {
 	// check remote node version
-	switch c.remoteNode.Version.GetMajor() {
+	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.getBalanceV2(ctx, owner, opts...)
 	default:

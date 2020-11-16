@@ -14,7 +14,7 @@ import (
 // in client constructor via address or open connection. This can be used as a
 // health check to see if node is alive and responses to requests.
 func (c Client) EndpointInfo(ctx context.Context, opts ...CallOption) (*netmap.NodeInfo, error) {
-	switch c.remoteNode.Version.GetMajor() {
+	switch c.remoteNode.Version.Major() {
 	case 2:
 		resp, err := c.endpointInfoV2(ctx, opts...)
 		if err != nil {
@@ -29,7 +29,7 @@ func (c Client) EndpointInfo(ctx context.Context, opts ...CallOption) (*netmap.N
 
 // Epoch returns the epoch number from the local state of the remote host.
 func (c Client) Epoch(ctx context.Context, opts ...CallOption) (uint64, error) {
-	switch c.remoteNode.Version.GetMajor() {
+	switch c.remoteNode.Version.Major() {
 	case 2:
 		resp, err := c.endpointInfoV2(ctx, opts...)
 		if err != nil {

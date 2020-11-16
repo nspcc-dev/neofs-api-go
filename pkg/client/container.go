@@ -27,7 +27,7 @@ func (c delContainerSignWrapper) SignedDataSize() int {
 }
 
 func (c Client) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
-	switch c.remoteNode.Version.GetMajor() {
+	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.putContainerV2(ctx, cnr, opts...)
 	default:
@@ -36,7 +36,7 @@ func (c Client) PutContainer(ctx context.Context, cnr *container.Container, opts
 }
 
 func (c Client) GetContainer(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
-	switch c.remoteNode.Version.GetMajor() {
+	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.getContainerV2(ctx, id, opts...)
 	default:
@@ -45,7 +45,7 @@ func (c Client) GetContainer(ctx context.Context, id *container.ID, opts ...Call
 }
 
 func (c Client) ListContainers(ctx context.Context, owner *owner.ID, opts ...CallOption) ([]*container.ID, error) {
-	switch c.remoteNode.Version.GetMajor() {
+	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.listContainerV2(ctx, owner, opts...)
 	default:
@@ -66,7 +66,7 @@ func (c Client) ListSelfContainers(ctx context.Context, opts ...CallOption) ([]*
 }
 
 func (c Client) DeleteContainer(ctx context.Context, id *container.ID, opts ...CallOption) error {
-	switch c.remoteNode.Version.GetMajor() {
+	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.delContainerV2(ctx, id, opts...)
 	default:
@@ -75,7 +75,7 @@ func (c Client) DeleteContainer(ctx context.Context, id *container.ID, opts ...C
 }
 
 func (c Client) GetEACL(ctx context.Context, id *container.ID, opts ...CallOption) (*eacl.Table, error) {
-	switch c.remoteNode.Version.GetMajor() {
+	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.getEACLV2(ctx, id, opts...)
 	default:
@@ -84,7 +84,7 @@ func (c Client) GetEACL(ctx context.Context, id *container.ID, opts ...CallOptio
 }
 
 func (c Client) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
-	switch c.remoteNode.Version.GetMajor() {
+	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.setEACLV2(ctx, eacl, opts...)
 	default:

@@ -12,7 +12,7 @@ import (
 )
 
 func (c Client) CreateSession(ctx context.Context, expiration uint64, opts ...CallOption) (*token.SessionToken, error) {
-	switch c.remoteNode.Version.GetMajor() {
+	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.createSessionV2(ctx, expiration, opts...)
 	default:
