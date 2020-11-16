@@ -89,6 +89,8 @@ const TZSize = 64
 
 const searchQueryVersion uint32 = 1
 
+var errNilObjectPart = errors.New("received nil object part")
+
 func rangesToV2(rs []*object.Range) []*v2object.Range {
 	r2 := make([]*v2object.Range, 0, len(rs))
 
@@ -148,7 +150,7 @@ func (c *Client) PutObject(ctx context.Context, p *PutObjectParams, opts ...Call
 	case 2:
 		return c.putObjectV2(ctx, p, opts...)
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -191,6 +193,7 @@ func (c *Client) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...Ca
 	}); err != nil {
 		return nil, errors.Wrap(err, "could not sign session token")
 	}
+
 	req.SetMetaHeader(meta)
 
 	// initialize init part
@@ -268,7 +271,7 @@ func (c *Client) DeleteObject(ctx context.Context, p *DeleteObjectParams, opts .
 	case 2:
 		return c.deleteObjectV2(ctx, p, opts...)
 	default:
-		return unsupportedProtocolErr
+		return errUnsupportedProtocol
 	}
 }
 
@@ -302,6 +305,7 @@ func (c *Client) deleteObjectV2(ctx context.Context, p *DeleteObjectParams, opts
 	}); err != nil {
 		return errors.Wrap(err, "could not sign session token")
 	}
+
 	req.SetMetaHeader(meta)
 
 	// fill body fields
@@ -348,7 +352,7 @@ func (c *Client) GetObject(ctx context.Context, p *GetObjectParams, opts ...Call
 	case 2:
 		return c.getObjectV2(ctx, p, opts...)
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -382,6 +386,7 @@ func (c *Client) getObjectV2(ctx context.Context, p *GetObjectParams, opts ...Ca
 	}); err != nil {
 		return nil, errors.Wrap(err, "could not sign session token")
 	}
+
 	req.SetMetaHeader(meta)
 
 	// fill body fields
@@ -421,7 +426,7 @@ func (c *Client) getObjectV2(ctx context.Context, p *GetObjectParams, opts ...Ca
 
 		switch v := resp.GetBody().GetObjectPart().(type) {
 		case nil:
-			return nil, errors.New("received nil object part")
+			return nil, errNilObjectPart
 		case *v2object.GetObjectPartInit:
 			obj.SetObjectID(v.GetObjectID())
 			obj.SetSignature(v.GetSignature())
@@ -481,7 +486,7 @@ func (c *Client) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams, opt
 	case 2:
 		return c.getObjectHeaderV2(ctx, p, opts...)
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -515,6 +520,7 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 	}); err != nil {
 		return nil, errors.Wrap(err, "could not sign session token")
 	}
+
 	req.SetMetaHeader(meta)
 
 	// fill body fields
@@ -541,7 +547,7 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 
 	switch v := resp.GetBody().GetHeaderPart().(type) {
 	case nil:
-		return nil, errors.New("received nil object header part")
+		return nil, errNilObjectPart
 	case *v2object.GetHeaderPartShort:
 		if !p.short {
 			return nil, errors.Errorf("wrong header part type: expected %T, received %T",
@@ -566,8 +572,9 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 
 		hdrWithSig := v.GetHeaderWithSignature()
 		if hdrWithSig == nil {
-			return nil, errors.New("got nil instead of header with signature")
+			return nil, errNilObjectPart
 		}
+
 		hdr = hdrWithSig.GetHeader()
 
 		if err := signer.VerifyDataWithSource(
@@ -626,7 +633,7 @@ func (c *Client) ObjectPayloadRangeData(ctx context.Context, p *RangeDataParams,
 	case 2:
 		return c.objectPayloadRangeV2(ctx, p, opts...)
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -660,6 +667,7 @@ func (c *Client) objectPayloadRangeV2(ctx context.Context, p *RangeDataParams, o
 	}); err != nil {
 		return nil, errors.Wrap(err, "could not sign session token")
 	}
+
 	req.SetMetaHeader(meta)
 
 	// fill body fields
@@ -768,7 +776,7 @@ func (c *Client) objectPayloadRangeHash(ctx context.Context, p *RangeChecksumPar
 	case 2:
 		return c.objectPayloadRangeHashV2(ctx, p, opts...)
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -802,6 +810,7 @@ func (c *Client) objectPayloadRangeHashV2(ctx context.Context, p *RangeChecksumP
 	}); err != nil {
 		return nil, errors.Wrap(err, "could not sign session token")
 	}
+
 	req.SetMetaHeader(meta)
 
 	// fill body fields
@@ -900,7 +909,7 @@ func (c *Client) SearchObject(ctx context.Context, p *SearchObjectParams, opts .
 	case 2:
 		return c.searchObjectV2(ctx, p, opts...)
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -937,6 +946,7 @@ func (c *Client) searchObjectV2(ctx context.Context, p *SearchObjectParams, opts
 	}); err != nil {
 		return nil, errors.Wrap(err, "could not sign session token")
 	}
+
 	req.SetMetaHeader(meta)
 
 	// fill body fields
@@ -1009,7 +1019,7 @@ func v2ObjectClient(proto TransportProtocol, opts *clientOptions) (*v2object.Cli
 
 		return opts.grpcOpts.objectClientV2, err
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -1042,6 +1052,7 @@ func (c Client) attachV2SessionToken(opts callOptions, hdr *v2session.RequestMet
 	body.SetLifetime(lt)
 
 	signWrapper := signature.StableMarshalerWrapper{SM: token.GetBody()}
+
 	err := signer.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
 		sessionTokenSignature := new(v2refs.Signature)
 		sessionTokenSignature.SetKey(key)

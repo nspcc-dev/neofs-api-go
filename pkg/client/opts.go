@@ -1,6 +1,8 @@
 package client
 
 import (
+	"fmt"
+
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 	v2accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting"
@@ -17,7 +19,7 @@ type (
 		apply(*callOptions)
 	}
 
-	ClientOption interface {
+	Option interface {
 		apply(*clientOptions)
 	}
 
@@ -53,6 +55,12 @@ type (
 		exp, nbf, iat uint64
 	}
 )
+
+type errOptionsLack string
+
+func (e errOptionsLack) Error() string {
+	return fmt.Sprintf("lack of sdk client options to create %s client", string(e))
+}
 
 func (c Client) defaultCallOptions() callOptions {
 	return callOptions{
@@ -149,13 +157,13 @@ func newFuncClientOption(f func(option *clientOptions)) *funcClientOption {
 	}
 }
 
-func WithAddress(addr string) ClientOption {
+func WithAddress(addr string) Option {
 	return newFuncClientOption(func(option *clientOptions) {
 		option.addr = addr
 	})
 }
 
-func WithGRPCConnection(grpcConn *grpc.ClientConn) ClientOption {
+func WithGRPCConnection(grpcConn *grpc.ClientConn) Option {
 	return newFuncClientOption(func(option *clientOptions) {
 		option.grpcOpts.conn = grpcConn
 	})

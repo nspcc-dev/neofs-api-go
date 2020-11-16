@@ -11,18 +11,21 @@ import (
 	"github.com/pkg/errors"
 )
 
+var errMalformedResponseBody = errors.New("malformed response body")
+
 func (c Client) CreateSession(ctx context.Context, expiration uint64, opts ...CallOption) (*token.SessionToken, error) {
 	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.createSessionV2(ctx, expiration, opts...)
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
 func (c Client) createSessionV2(ctx context.Context, expiration uint64, opts ...CallOption) (*token.SessionToken, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
+
 	for i := range opts {
 		opts[i].apply(&callOptions)
 	}
@@ -67,7 +70,7 @@ func (c Client) createSessionV2(ctx context.Context, expiration uint64, opts ...
 
 		body := resp.GetBody()
 		if body == nil {
-			return nil, errors.New("malformed response body")
+			return nil, errMalformedResponseBody
 		}
 
 		sessionToken := token.NewSessionToken()
@@ -77,7 +80,7 @@ func (c Client) createSessionV2(ctx context.Context, expiration uint64, opts ...
 
 		return sessionToken, nil
 	default:
-		return nil, unsupportedProtocolErr
+		return nil, errUnsupportedProtocol
 	}
 }
 
@@ -98,7 +101,7 @@ func v2SessionClientFromOptions(opts *clientOptions) (cli *v2session.Client, err
 		)
 
 	default:
-		return nil, errors.New("lack of sdk client options to create session client")
+		return nil, errOptionsLack("Session")
 	}
 
 	// check if client correct and save in cache
