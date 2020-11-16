@@ -8,10 +8,12 @@ import (
 
 // Filter defines check conditions if request header is matched or not. Matched
 // header means that request should be processed according to EACL action.
+//
+// Filter is compatible with v2 acl.EACLRecord.Filter message.
 type Filter struct {
 	from    FilterHeaderType
-	key     filterKey
 	matcher Match
+	key     filterKey
 	value   fmt.Stringer
 }
 
@@ -43,22 +45,27 @@ func (s staticStringer) String() string {
 	return string(s)
 }
 
+// Value returns filtered string value.
 func (f Filter) Value() string {
 	return f.value.String()
 }
 
+// Matcher returns filter Match type.
 func (f Filter) Matcher() Match {
 	return f.matcher
 }
 
+// Key returns key to the filtered header.
 func (f Filter) Key() string {
 	return f.key.String()
 }
 
+// From returns FilterHeaderType that defined which header will be filtered.
 func (f Filter) From() FilterHeaderType {
 	return f.from
 }
 
+// ToV2 converts Filter to v2 acl.EACLRecord.Filter message.
 func (f *Filter) ToV2() *v2acl.HeaderFilter {
 	filter := new(v2acl.HeaderFilter)
 	filter.SetValue(f.value.String())
@@ -94,10 +101,12 @@ func (k filterKey) String() string {
 	}
 }
 
+// NewFilter creates, initializes and returns blank Filter instance.
 func NewFilter() *Filter {
 	return NewFilterFromV2(new(v2acl.HeaderFilter))
 }
 
+// NewFilterFromV2 converts v2 acl.EACLRecord.Filter message to Filter.
 func NewFilterFromV2(filter *v2acl.HeaderFilter) *Filter {
 	f := new(Filter)
 

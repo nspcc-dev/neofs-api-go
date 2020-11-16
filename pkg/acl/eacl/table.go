@@ -8,41 +8,48 @@ import (
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 )
 
-type (
-	// Table is a group of EACL records for single container.
-	Table struct {
-		version pkg.Version
-		cid     *container.ID
-		records []Record
-	}
-)
+// Table is a group of EACL records for single container.
+//
+// Table is compatible with v2 acl.EACLTable message.
+type Table struct {
+	version pkg.Version
+	cid     *container.ID
+	records []*Record
+}
 
+// CID returns identifier of the container that should use given access control rules.
 func (t Table) CID() *container.ID {
 	return t.cid
 }
 
+// SetCID sets identifier of the container that should use given access control rules.
 func (t *Table) SetCID(cid *container.ID) {
 	t.cid = cid
 }
 
+// Version returns version of eACL format.
 func (t Table) Version() pkg.Version {
 	return t.version
 }
 
+// SetVersion sets version of eACL format.
 func (t *Table) SetVersion(version pkg.Version) {
 	t.version = version
 }
 
-func (t Table) Records() []Record {
+// Records returns list of extended ACL rules.
+func (t Table) Records() []*Record {
 	return t.records
 }
 
+// AddRecord adds single eACL rule.
 func (t *Table) AddRecord(r *Record) {
 	if r != nil {
-		t.records = append(t.records, *r)
+		t.records = append(t.records, r)
 	}
 }
 
+// ToV2 converts Table to v2 acl.EACLTable message.
 func (t *Table) ToV2() *v2acl.Table {
 	v2 := new(v2acl.Table)
 
@@ -61,6 +68,7 @@ func (t *Table) ToV2() *v2acl.Table {
 	return v2
 }
 
+// NewTable creates, initializes and returns blank Table instance.
 func NewTable() *Table {
 	t := new(Table)
 	t.SetVersion(*pkg.SDKVersion())
@@ -68,6 +76,7 @@ func NewTable() *Table {
 	return t
 }
 
+// CreateTable creates, initializes with parameters and returns Table instance.
 func CreateTable(cid container.ID) *Table {
 	t := NewTable()
 	t.SetCID(&cid)
@@ -75,6 +84,7 @@ func CreateTable(cid container.ID) *Table {
 	return t
 }
 
+// NewTableFromV2 converts v2 acl.EACLTable message to Table.
 func NewTableFromV2(table *v2acl.Table) *Table {
 	t := new(Table)
 
@@ -98,15 +108,17 @@ func NewTableFromV2(table *v2acl.Table) *Table {
 		}
 
 		var h [sha256.Size]byte
+
 		copy(h[:], table.GetContainerID().GetValue())
 		t.cid.SetSHA256(h)
 	}
 
 	// set eacl records
 	v2records := table.GetRecords()
-	t.records = make([]Record, 0, len(v2records))
+	t.records = make([]*Record, 0, len(v2records))
+
 	for i := range v2records {
-		t.records = append(t.records, *NewRecordFromV2(v2records[i]))
+		t.records = append(t.records, NewRecordFromV2(v2records[i]))
 	}
 
 	return t

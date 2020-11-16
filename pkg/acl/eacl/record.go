@@ -10,43 +10,50 @@ import (
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 )
 
-type (
-	// Record of the EACL rule, that defines EACL action, targets for this action,
-	// object service operation and filters for request headers.
-	Record struct {
-		action    Action
-		operation Operation
-		filters   []Filter
-		targets   []Target
-	}
-)
+// Record of the EACL rule, that defines EACL action, targets for this action,
+// object service operation and filters for request headers.
+//
+// Record is compatible with v2 acl.EACLRecord message.
+type Record struct {
+	action    Action
+	operation Operation
+	filters   []*Filter
+	targets   []*Target
+}
 
-func (r Record) Targets() []Target {
+// Targets returns list of target subjects to apply ACL rule to.
+func (r Record) Targets() []*Target {
 	return r.targets
 }
 
-func (r Record) Filters() []Filter {
+// Filters returns list of filters to match and see if rule is applicable.
+func (r Record) Filters() []*Filter {
 	return r.filters
 }
 
+// Operation returns NeoFS request verb to match.
 func (r Record) Operation() Operation {
 	return r.operation
 }
 
+// SetOperation sets NeoFS request verb to match.
 func (r *Record) SetOperation(operation Operation) {
 	r.operation = operation
 }
 
+// Action returns rule execution result.
 func (r Record) Action() Action {
 	return r.action
 }
 
+// SetAction sets rule execution result.
 func (r *Record) SetAction(action Action) {
 	r.action = action
 }
 
+// AddTarget adds target subject with specified Role and key list.
 func (r *Record) AddTarget(role Role, keys ...ecdsa.PublicKey) {
-	t := Target{
+	t := &Target{
 		role: role,
 		keys: make([]ecdsa.PublicKey, 0, len(keys)),
 	}
@@ -59,7 +66,7 @@ func (r *Record) AddTarget(role Role, keys ...ecdsa.PublicKey) {
 }
 
 func (r *Record) addFilter(from FilterHeaderType, m Match, keyTyp filterKeyType, key string, val fmt.Stringer) {
-	filter := Filter{
+	filter := &Filter{
 		from: from,
 		key: filterKey{
 			typ: keyTyp,
@@ -80,28 +87,34 @@ func (r *Record) addObjectReservedFilter(m Match, typ filterKeyType, val fmt.Str
 	r.addObjectFilter(m, typ, "", val)
 }
 
+// AddFilter adds generic filter.
 func (r *Record) AddFilter(from FilterHeaderType, matcher Match, name, value string) {
 	r.addFilter(from, matcher, 0, name, staticStringer(value))
 }
 
+// AddObjectAttributeFilter adds filter by object attribute.
 func (r *Record) AddObjectAttributeFilter(m Match, key, value string) {
 	r.addObjectFilter(m, 0, key, staticStringer(value))
 }
 
+// AddObjectVersionFilter adds filter by object version.
 func (r *Record) AddObjectVersionFilter(m Match, v *pkg.Version) {
 	r.addObjectReservedFilter(m, fKeyObjVersion, v)
 }
 
+// AddObjectContainerIDFilter adds filter by object container ID.
 func (r *Record) AddObjectContainerIDFilter(m Match, id *container.ID) {
 	r.addObjectReservedFilter(m, fKeyObjContainerID, id)
 }
 
+// AddObjectOwnerIDFilter adds filter by object owner ID.
 func (r *Record) AddObjectOwnerIDFilter(m Match, id *owner.ID) {
 	r.addObjectReservedFilter(m, fKeyObjOwnerID, id)
 }
 
 // TODO: add remaining filters after neofs-api#72
 
+// ToV2 converts Record to v2 acl.EACLRecord message.
 func (r *Record) ToV2() *v2acl.Record {
 	targets := make([]*v2acl.Target, 0, len(r.targets))
 	for _, target := range r.targets {
@@ -123,20 +136,23 @@ func (r *Record) ToV2() *v2acl.Record {
 	return v2
 }
 
+// NewRecord creates and returns blank Record instance.
 func NewRecord() *Record {
 	return new(Record)
 }
 
+// CreateRecord creates, initializes with parameters and returns Record instance.
 func CreateRecord(action Action, operation Operation) *Record {
 	r := NewRecord()
 	r.action = action
 	r.operation = operation
-	r.targets = []Target{}
-	r.filters = []Filter{}
+	r.targets = []*Target{}
+	r.filters = []*Filter{}
 
 	return r
 }
 
+// NewRecordFromV2 converts v2 acl.EACLRecord message to Record.
 func NewRecordFromV2(record *v2acl.Record) *Record {
 	r := NewRecord()
 
@@ -150,14 +166,14 @@ func NewRecordFromV2(record *v2acl.Record) *Record {
 	v2targets := record.GetTargets()
 	v2filters := record.GetFilters()
 
-	r.targets = make([]Target, 0, len(v2targets))
+	r.targets = make([]*Target, 0, len(v2targets))
 	for i := range v2targets {
-		r.targets = append(r.targets, *NewTargetFromV2(v2targets[i]))
+		r.targets = append(r.targets, NewTargetFromV2(v2targets[i]))
 	}
 
-	r.filters = make([]Filter, 0, len(v2filters))
+	r.filters = make([]*Filter, 0, len(v2filters))
 	for i := range v2filters {
-		r.filters = append(r.filters, *NewFilterFromV2(v2filters[i]))
+		r.filters = append(r.filters, NewFilterFromV2(v2filters[i]))
 	}
 
 	return r
