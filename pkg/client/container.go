@@ -350,9 +350,20 @@ func (c Client) getEACLV2(ctx context.Context, id *container.ID, opts ...CallOpt
 			return nil, errors.New("response body is nil")
 		}
 
-		result := eacl.NewTableFromV2(body.GetEACL())
+		if err := signature.VerifyDataWithSource(
+			v2signature.StableMarshalerWrapper{
+				SM: body.GetEACL(),
+			},
+			func() (key, sig []byte) {
+				s := body.GetSignature()
 
-		// todo: check signature
+				return s.GetKey(), s.GetSign()
+			},
+		); err != nil {
+			return nil, errors.Wrap(err, "incorrect signature")
+		}
+
+		result := eacl.NewTableFromV2(body.GetEACL())
 
 		return result, nil
 	default:
