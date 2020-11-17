@@ -9,8 +9,8 @@
 ![Go](https://github.com/nspcc-dev/neofs-api-go/workflows/Go/badge.svg)
 [![codecov](https://codecov.io/gh/nspcc-dev/neofs-api-go/branch/master/graph/badge.svg)](https://codecov.io/gh/nspcc-dev/neofs-api-go)
 [![Report](https://goreportcard.com/badge/github.com/nspcc-dev/neofs-api-go)](https://goreportcard.com/report/github.com/nspcc-dev/neofs-api-go)
-[![GitHub release](https://img.shields.io/github/release/nspcc-dev/neofs-api.svg)](https://github.com/nspcc-dev/neofs-api-go)
-![GitHub license](https://img.shields.io/github/license/nspcc-dev/neofs-api.svg?style=popout)
+[![GitHub release](https://img.shields.io/github/release/nspcc-dev/neofs-api-go.svg)](https://github.com/nspcc-dev/neofs-api-go)
+![GitHub license](https://img.shields.io/github/license/nspcc-dev/neofs-api-go.svg?style=popout)
 
 # Overview
 
