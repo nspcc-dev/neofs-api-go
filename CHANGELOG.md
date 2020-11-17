@@ -1,8 +1,12 @@
 # Changelog
 
-## [2.0.0] - 2020-11-16 - Jindo (진도, 珍島)
+## [1.20.0] - 2020-11-16 - Jindo (진도, 珍島)
 
-Major API refactoring and simplification.
+Major API refactoring and simplification. From now on this library will have 
+backward compatibility and support of major versions of NeoFS-API by having 
+**version specific** files in `vN` dirs and **version independent** SDK 
+structures and client in `pkg`. This version supports NeoFS-API v2.0.X
+
 
 ### Added
 - cross-protocol ```v2``` message types
@@ -396,4 +400,4 @@ Initial public release
 [1.1.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.0.0...v1.1.0
 [1.2.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.1.0...v1.2.0
 [1.3.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.2.0...v1.3.0
-[2.0.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.3.0...v2.0.0
+[1.20.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.3.0...v1.20.0
