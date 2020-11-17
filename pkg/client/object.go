@@ -579,7 +579,7 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 
 		if err := signer.VerifyDataWithSource(
 			signature.StableMarshalerWrapper{
-				SM: hdrWithSig.GetHeader(),
+				SM: p.addr.ObjectID().ToV2(),
 			},
 			func() (key, sig []byte) {
 				s := hdrWithSig.GetSignature()
