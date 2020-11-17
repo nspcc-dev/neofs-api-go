@@ -543,7 +543,10 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 		return nil, errors.Wrapf(err, "could not verify %T", resp)
 	}
 
-	var hdr *v2object.Header
+	var (
+		hdr   *v2object.Header
+		idSig *v2refs.Signature
+	)
 
 	switch v := resp.GetBody().GetHeaderPart().(type) {
 	case nil:
@@ -576,15 +579,14 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 		}
 
 		hdr = hdrWithSig.GetHeader()
+		idSig = hdrWithSig.GetSignature()
 
 		if err := signer.VerifyDataWithSource(
 			signature.StableMarshalerWrapper{
-				SM: hdrWithSig.GetHeader(),
+				SM: p.addr.ObjectID().ToV2(),
 			},
 			func() (key, sig []byte) {
-				s := hdrWithSig.GetSignature()
-
-				return s.GetKey(), s.GetSign()
+				return idSig.GetKey(), idSig.GetSign()
 			},
 		); err != nil {
 			return nil, errors.Wrap(err, "incorrect object header signature")
@@ -595,6 +597,7 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 
 	obj := new(v2object.Object)
 	obj.SetHeader(hdr)
+	obj.SetSignature(idSig)
 
 	raw := object.NewRawFromV2(obj)
 	raw.SetID(p.addr.ObjectID())
