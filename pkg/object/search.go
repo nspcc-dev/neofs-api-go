@@ -242,3 +242,8 @@ func (f *SearchFilters) AddNonChildfreeFilter() {
 func (f *SearchFilters) AddParentIDFilter(m SearchMatchType, id *ID) {
 	f.addReservedFilter(m, fKeyParent, id)
 }
+
+// AddObjectIDFilter adds filter by object identifier.
+func (f *SearchFilters) AddObjectIDFilter(m SearchMatchType, id *ID) {
+	f.addReservedFilter(m, fKeyObjectID, id)
+}
