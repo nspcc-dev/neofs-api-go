@@ -1013,6 +1013,7 @@ func v2ObjectClient(proto TransportProtocol, opts *clientOptions) (*v2object.Cli
 				optsV2 = []v2object.Option{
 					v2object.WithGlobalOpts(
 						client.WithNetworkAddress(opts.addr),
+						client.WithDialTimeout(opts.dialTimeout),
 					),
 				}
 			}

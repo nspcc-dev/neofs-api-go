@@ -448,8 +448,9 @@ func v2ContainerClientFromOptions(opts *clientOptions) (cli *v2container.Client,
 
 	case opts.addr != "":
 		cli, err = v2container.NewClient(v2container.WithGlobalOpts(
-			client.WithNetworkAddress(opts.addr)),
-		)
+			client.WithNetworkAddress(opts.addr),
+			client.WithDialTimeout(opts.dialTimeout),
+		))
 
 	default:
 		return nil, errOptionsLack("Container")

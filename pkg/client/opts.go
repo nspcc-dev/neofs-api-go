@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/token"
@@ -34,6 +35,8 @@ type (
 
 	clientOptions struct {
 		addr string
+
+		dialTimeout time.Duration
 
 		grpcOpts *grpcOptions
 	}
@@ -166,5 +169,12 @@ func WithAddress(addr string) Option {
 func WithGRPCConnection(grpcConn *grpc.ClientConn) Option {
 	return newFuncClientOption(func(option *clientOptions) {
 		option.grpcOpts.conn = grpcConn
+	})
+}
+
+// WithDialTimeout returns option to set connection timeout to the remote node.
+func WithDialTimeout(dur time.Duration) Option {
+	return newFuncClientOption(func(option *clientOptions) {
+		option.dialTimeout = dur
 	})
 }
