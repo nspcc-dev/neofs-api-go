@@ -97,8 +97,9 @@ func v2NetmapClientFromOptions(opts *clientOptions) (cli *v2netmap.Client, err e
 
 	case opts.addr != "":
 		cli, err = v2netmap.NewClient(v2netmap.WithGlobalOpts(
-			client.WithNetworkAddress(opts.addr)),
-		)
+			client.WithNetworkAddress(opts.addr),
+			client.WithDialTimeout(opts.dialTimeout),
+		))
 
 	default:
 		return nil, errOptionsLack("Netmap")

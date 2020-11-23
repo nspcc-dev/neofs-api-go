@@ -97,8 +97,9 @@ func v2SessionClientFromOptions(opts *clientOptions) (cli *v2session.Client, err
 
 	case opts.addr != "":
 		cli, err = v2session.NewClient(v2session.WithGlobalOpts(
-			client.WithNetworkAddress(opts.addr)),
-		)
+			client.WithNetworkAddress(opts.addr),
+			client.WithDialTimeout(opts.dialTimeout),
+		))
 
 	default:
 		return nil, errOptionsLack("Session")

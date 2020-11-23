@@ -89,8 +89,9 @@ func v2AccountingClientFromOptions(opts *clientOptions) (cli *v2accounting.Clien
 
 	case opts.addr != "":
 		cli, err = v2accounting.NewClient(v2accounting.WithGlobalOpts(
-			client.WithNetworkAddress(opts.addr)),
-		)
+			client.WithNetworkAddress(opts.addr),
+			client.WithDialTimeout(opts.dialTimeout),
+		))
 
 	default:
 		return nil, errOptionsLack("Accounting")
