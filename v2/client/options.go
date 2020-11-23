@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 )
@@ -15,24 +16,26 @@ type cfg struct {
 	conn net.Conn
 
 	gRPC cfgGRPC
+
+	dialTimeout time.Duration
 }
 
 type cfgGRPC struct {
-	dialCtx context.Context
-
 	dialOpts []grpc.DialOption
 
 	conn *grpc.ClientConn
 }
 
+const defaultDialTimeout = 5 * time.Second
+
 func defaultCfg() *cfg {
 	return &cfg{
 		gRPC: cfgGRPC{
-			dialCtx: context.Background(),
 			dialOpts: []grpc.DialOption{
 				grpc.WithInsecure(),
 			},
 		},
+		dialTimeout: defaultDialTimeout,
 	}
 }
 
@@ -58,7 +61,11 @@ func NewGRPCClientConn(opts ...Option) (*grpc.ClientConn, error) {
 			)
 		}
 
-		cfg.gRPC.conn, err = grpc.DialContext(cfg.gRPC.dialCtx, cfg.addr, cfg.gRPC.dialOpts...)
+		dialCtx, cancel := context.WithTimeout(context.Background(), cfg.dialTimeout)
+
+		cfg.gRPC.conn, err = grpc.DialContext(dialCtx, cfg.addr, cfg.gRPC.dialOpts...)
+
+		cancel()
 		if err != nil {
 			return nil, err
 		}
@@ -83,10 +90,10 @@ func WithNetConn(v net.Conn) Option {
 	}
 }
 
-func WithGRPCDialContext(v context.Context) Option {
+func WithDialTimeout(v time.Duration) Option {
 	return func(c *cfg) {
-		if v != nil {
-			c.gRPC.dialCtx = v
+		if v > 0 {
+			c.dialTimeout = v
 		}
 	}
 }
