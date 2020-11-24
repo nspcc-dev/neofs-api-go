@@ -135,6 +135,8 @@ func SplitHeaderToGRPCMessage(h *SplitHeader) *object.Header_Split {
 
 	m.SetChildren(childMsg)
 
+	m.SetSplitId(h.GetSplitID())
+
 	return m
 }
 
@@ -169,6 +171,8 @@ func SplitHeaderFromGRPCMessage(m *object.Header_Split) *SplitHeader {
 	}
 
 	h.SetChildren(children)
+
+	h.SetSplitID(m.GetSplitId())
 
 	return h
 }

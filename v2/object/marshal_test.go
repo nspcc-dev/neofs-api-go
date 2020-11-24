@@ -461,6 +461,7 @@ func generateSplit(sig string) *object.SplitHeader {
 	split.SetParent(generateObjectID("Parent"))
 	split.SetParentSignature(generateSignature("Key", sig))
 	split.SetPrevious(generateObjectID("Previous"))
+	split.SetSplitID([]byte("UUIDv4"))
 
 	return split
 }
