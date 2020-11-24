@@ -760,7 +760,7 @@ func (x *BearerToken_Body) GetLifetime() *BearerToken_Body_TokenLifetime {
 	return nil
 }
 
-// Lifetime parameters of the token. Filed names taken from
+// Lifetime parameters of the token. Field names taken from
 // [rfc7519](https://tools.ietf.org/html/rfc7519).
 type BearerToken_Body_TokenLifetime struct {
 	state         protoimpl.MessageState

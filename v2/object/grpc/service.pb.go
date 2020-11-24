@@ -1875,7 +1875,7 @@ func (x *SearchRequest_Body) GetFilters() []*SearchRequest_Body_Filter {
 //
 // * $Object:version \
 //   version
-// * $Object:objectID                       \
+// * $Object:objectID \
 //   object_id
 // * $Object:containerID \
 //   container_id
@@ -1893,6 +1893,8 @@ func (x *SearchRequest_Body) GetFilters() []*SearchRequest_Body_Filter {
 //   homomorphic_hash
 // * $Object:split.parent \
 //   object_id of parent
+// * $Object:split.splitID \
+//   16 byte UUID used to identify the split object hierarchy parts
 //
 // There are some well-known filter aliases to match objects by certain
 // properties:
@@ -1909,10 +1911,6 @@ func (x *SearchRequest_Body) GetFilters() []*SearchRequest_Body_Filter {
 // * $Object:PHY \
 //   Returns only objects physically stored in the system. This filter is
 //   activated if the `key` exists, disregarding the value and matcher type.
-// * $Object:CHILDFREE \
-//   With the `value` set to `true` checks if an object has empty
-//   children list in `Split` header. With other values returns
-//   non-childfree objects.
 type SearchRequest_Body_Filter struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

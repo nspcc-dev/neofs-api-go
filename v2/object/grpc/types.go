@@ -54,6 +54,13 @@ func (m *Header_Split) SetChildren(v []*refs.ObjectID) {
 	}
 }
 
+// SetSplitID sets split ID of the object.
+func (m *Header_Split) SetSplitId(v []byte) {
+	if m != nil {
+		m.SplitId = v
+	}
+}
+
 // SetContainerId sets identifier of the container.
 func (m *Header) SetContainerId(v *refs.ContainerID) {
 	if m != nil {

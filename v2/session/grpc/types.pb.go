@@ -723,7 +723,7 @@ type SessionToken_Body_Object struct {
 
 func (*SessionToken_Body_Object) isSessionToken_Body_Context() {}
 
-// Lifetime parameters of the token. Filed names taken from rfc7519.
+// Lifetime parameters of the token. Field names taken from rfc7519.
 type SessionToken_Body_TokenLifetime struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
