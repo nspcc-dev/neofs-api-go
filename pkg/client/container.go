@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 
+	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
@@ -18,6 +19,13 @@ type delContainerSignWrapper struct {
 	body *v2container.DeleteRequestBody
 }
 
+// EACLWithSignature represents eACL table/signature pair.
+type EACLWithSignature struct {
+	table *eacl.Table
+
+	sig *pkg.Signature
+}
+
 var errNilReponseBody = errors.New("response body is nil")
 
 func (c delContainerSignWrapper) ReadSignedData(bytes []byte) ([]byte, error) {
@@ -26,6 +34,16 @@ func (c delContainerSignWrapper) ReadSignedData(bytes []byte) ([]byte, error) {
 
 func (c delContainerSignWrapper) SignedDataSize() int {
 	return len(c.body.GetContainerID().GetValue())
+}
+
+// EACL returns eACL table.
+func (e EACLWithSignature) EACL() *eacl.Table {
+	return e.table
+}
+
+// Signature returns table signature.
+func (e EACLWithSignature) Signature() *pkg.Signature {
+	return e.sig
 }
 
 func (c Client) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
@@ -77,9 +95,30 @@ func (c Client) DeleteContainer(ctx context.Context, id *container.ID, opts ...C
 }
 
 func (c Client) GetEACL(ctx context.Context, id *container.ID, opts ...CallOption) (*eacl.Table, error) {
+	v, err := c.getEACL(ctx, id, true, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	return v.table, nil
+}
+
+func (c Client) GetEACLWithSignature(ctx context.Context, id *container.ID, opts ...CallOption) (*EACLWithSignature, error) {
+	return c.getEACL(ctx, id, false, opts...)
+}
+
+func (c Client) getEACL(ctx context.Context, id *container.ID, verify bool, opts ...CallOption) (*EACLWithSignature, error) {
 	switch c.remoteNode.Version.Major() {
 	case 2:
-		return c.getEACLV2(ctx, id, opts...)
+		resp, err := c.getEACLV2(ctx, id, verify, opts...)
+		if err != nil {
+			return nil, err
+		}
+
+		return &EACLWithSignature{
+			table: eacl.NewTableFromV2(resp.GetEACL()),
+			sig:   pkg.NewSignatureFromV2(resp.GetSignature()),
+		}, nil
 	default:
 		return nil, errUnsupportedProtocol
 	}
@@ -316,7 +355,7 @@ func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 	}
 }
 
-func (c Client) getEACLV2(ctx context.Context, id *container.ID, opts ...CallOption) (*eacl.Table, error) {
+func (c Client) getEACLV2(ctx context.Context, id *container.ID, verify bool, opts ...CallOption) (*v2container.GetExtendedACLResponseBody, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -358,23 +397,23 @@ func (c Client) getEACLV2(ctx context.Context, id *container.ID, opts ...CallOpt
 			return nil, errNilReponseBody
 		}
 
-		if err := signature.VerifyDataWithSource(
-			v2signature.StableMarshalerWrapper{
-				SM: body.GetEACL(),
-			},
-			func() (key, sig []byte) {
-				s := body.GetSignature()
+		if verify {
+			if err := signature.VerifyDataWithSource(
+				v2signature.StableMarshalerWrapper{
+					SM: body.GetEACL(),
+				},
+				func() (key, sig []byte) {
+					s := body.GetSignature()
 
-				return s.GetKey(), s.GetSign()
-			},
-			signature.SignWithRFC6979(),
-		); err != nil {
-			return nil, errors.Wrap(err, "incorrect signature")
+					return s.GetKey(), s.GetSign()
+				},
+				signature.SignWithRFC6979(),
+			); err != nil {
+				return nil, errors.Wrap(err, "incorrect signature")
+			}
 		}
 
-		result := eacl.NewTableFromV2(body.GetEACL())
-
-		return result, nil
+		return body, nil
 	default:
 		return nil, errUnsupportedProtocol
 	}
