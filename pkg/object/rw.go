@@ -251,6 +251,21 @@ func (o *rwObject) setChildren(v ...*ID) {
 	})
 }
 
+// SplitID return split identity of split object. If object is not split
+// returns nil.
+func (o *rwObject) SplitID() []byte {
+	return (*object.Object)(o).
+		GetHeader().
+		GetSplit().
+		GetSplitID()
+}
+
+func (o *rwObject) setSplitID(id []byte) {
+	o.setSplitFields(func(split *object.SplitHeader) {
+		split.SetSplitID(id)
+	})
+}
+
 // ParentID returns identifier of the parent object.
 func (o *rwObject) ParentID() *ID {
 	return NewIDFromV2(
