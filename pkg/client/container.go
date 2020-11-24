@@ -367,6 +367,7 @@ func (c Client) getEACLV2(ctx context.Context, id *container.ID, opts ...CallOpt
 
 				return s.GetKey(), s.GetSign()
 			},
+			signature.SignWithRFC6979(),
 		); err != nil {
 			return nil, errors.Wrap(err, "incorrect signature")
 		}
