@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
@@ -188,6 +189,19 @@ func TestRawObject_SetChildren(t *testing.T) {
 	obj.SetChildren(id1, id2)
 
 	require.Equal(t, []*ID{id1, id2}, obj.Children())
+}
+
+func TestRawObject_SetSplitID(t *testing.T) {
+	obj := NewRaw()
+
+	require.Nil(t, obj.SplitID())
+
+	splitID, err := uuid.New().MarshalBinary()
+	require.NoError(t, err)
+
+	obj.SetSplitID(splitID)
+
+	require.Equal(t, obj.SplitID(), splitID)
 }
 
 func TestRawObject_SetParent(t *testing.T) {
