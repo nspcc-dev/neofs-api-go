@@ -21,6 +21,7 @@ const (
 	splitHdrParentSignatureField = 3
 	splitHdrParentHeaderField    = 4
 	splitHdrChildrenField        = 5
+	splitHdrSplitIDField         = 6
 
 	hdrVersionField         = 1
 	hdrContainerIDField     = 2
@@ -275,6 +276,11 @@ func (h *SplitHeader) StableMarshal(buf []byte) ([]byte, error) {
 		offset += n
 	}
 
+	_, err = proto.BytesMarshal(splitHdrSplitIDField, buf[offset:], h.splitID)
+	if err != nil {
+		return nil, err
+	}
+
 	return buf, nil
 }
 
@@ -291,6 +297,8 @@ func (h *SplitHeader) StableSize() (size int) {
 	for i := range h.children {
 		size += proto.NestedStructureSize(splitHdrChildrenField, h.children[i])
 	}
+
+	size += proto.BytesSize(splitHdrSplitIDField, h.splitID)
 
 	return size
 }

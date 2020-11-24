@@ -33,6 +33,8 @@ type SplitHeader struct {
 	parHdr *Header
 
 	children []*refs.ObjectID
+
+	splitID []byte
 }
 
 type Header struct {
@@ -377,6 +379,20 @@ func (h *SplitHeader) GetChildren() []*refs.ObjectID {
 func (h *SplitHeader) SetChildren(v []*refs.ObjectID) {
 	if h != nil {
 		h.children = v
+	}
+}
+
+func (h *SplitHeader) GetSplitID() []byte {
+	if h != nil {
+		return h.splitID
+	}
+
+	return nil
+}
+
+func (h *SplitHeader) SetSplitID(v []byte) {
+	if h != nil {
+		h.splitID = v
 	}
 }
 
