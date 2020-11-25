@@ -33,6 +33,9 @@ const (
 
 	// FilterHeaderParent is a filter key to "split.parent" field of the object header.
 	FilterHeaderParent = ReservedFilterPrefix + "split.parent"
+
+	// FilterHeaderParent is a filter key to "split.splitID" field of the object header.
+	FilterHeaderSplitID = ReservedFilterPrefix + "split.splitID"
 )
 
 const (

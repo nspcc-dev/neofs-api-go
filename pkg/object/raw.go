@@ -111,8 +111,8 @@ func (o *RawObject) SetChildren(v ...*ID) {
 }
 
 // SetSplitID sets split identifier for the split object.
-func (o *RawObject) SetSplitID(v []byte) {
-	o.setSplitID(v)
+func (o *RawObject) SetSplitID(id *SplitID) {
+	o.setSplitID(id)
 }
 
 // SetParentID sets identifier of the parent object.

@@ -123,3 +123,20 @@ func TestSearchFilters_AddObjectIDFilter(t *testing.T) {
 		require.Equal(t, v2object.MatchStringEqual, fsV2[0].GetMatchType())
 	})
 }
+
+func TestSearchFilters_AddSplitIDFilter(t *testing.T) {
+	id := object.NewSplitID()
+
+	fs := new(object.SearchFilters)
+	fs.AddSplitIDFilter(object.MatchStringEqual, id)
+
+	t.Run("v2", func(t *testing.T) {
+		fsV2 := fs.ToV2()
+
+		require.Len(t, fsV2, 1)
+
+		require.Equal(t, v2object.FilterHeaderSplitID, fsV2[0].GetKey())
+		require.Equal(t, id.String(), fsV2[0].GetValue())
+		require.Equal(t, v2object.MatchStringEqual, fsV2[0].GetMatchType())
+	})
+}
