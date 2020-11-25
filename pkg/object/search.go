@@ -70,6 +70,7 @@ const (
 	fKeyType
 	fKeyHomomorphicHash
 	fKeyParent
+	fKeySplitID
 	fKeyPropRoot
 	fKeyPropPhy
 )
@@ -98,6 +99,8 @@ func (k filterKey) String() string {
 		return v2object.FilterHeaderHomomorphicHash
 	case fKeyParent:
 		return v2object.FilterHeaderParent
+	case fKeySplitID:
+		return v2object.FilterHeaderSplitID
 	case fKeyPropRoot:
 		return v2object.FilterPropertyRoot
 	case fKeyPropPhy:
@@ -224,6 +227,7 @@ func (f *SearchFilters) AddPhyFilter() {
 	f.addPhyFilter()
 }
 
+// AddParentIDFilter adds filter by parent identifier.
 func (f *SearchFilters) AddParentIDFilter(m SearchMatchType, id *ID) {
 	f.addReservedFilter(m, fKeyParent, id)
 }
@@ -231,4 +235,8 @@ func (f *SearchFilters) AddParentIDFilter(m SearchMatchType, id *ID) {
 // AddObjectIDFilter adds filter by object identifier.
 func (f *SearchFilters) AddObjectIDFilter(m SearchMatchType, id *ID) {
 	f.addReservedFilter(m, fKeyObjectID, id)
+}
+
+func (f *SearchFilters) AddSplitIDFilter(m SearchMatchType, id *SplitID) {
+	f.addReservedFilter(m, fKeySplitID, id)
 }
