@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.20.3] - 2020-11-25
+
+### Added
+
+- `AddObjectIDFilter` method of `SearchFilters` type
+- `WithDialTimeout` option of v2 and SDK `Client`'s
+- `GetEACLWithSignature` method of SDK `Client` type
+
+### Fixed
+
+- incorrect signature verification algorithm in `GetEACL` method of SDK `Client`
+
 ## [1.20.2] - 2020-11-17
 
 ### Fixed
@@ -415,3 +427,4 @@ Initial public release
 [1.20.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.3.0...v1.20.0
 [1.20.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.0...v1.20.1
 [1.20.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.1...v1.20.2
+[1.20.3]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.2...v1.20.3
