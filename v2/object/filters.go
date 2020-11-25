@@ -41,9 +41,6 @@ const (
 
 	// FilterPropertyPhy is a filter key to check if an object physically stored on a node.
 	FilterPropertyPhy = ReservedFilterPrefix + "PHY"
-
-	// FilterPropertyChildfree is a filter key to check if an object has empty children list in `Split` header.
-	FilterPropertyChildfree = ReservedFilterPrefix + "CHILDFREE"
 )
 
 const (

@@ -72,7 +72,6 @@ const (
 	fKeyParent
 	fKeyPropRoot
 	fKeyPropPhy
-	fKeyPropChildfree
 )
 
 func (k filterKey) String() string {
@@ -103,8 +102,6 @@ func (k filterKey) String() string {
 		return v2object.FilterPropertyRoot
 	case fKeyPropPhy:
 		return v2object.FilterPropertyPhy
-	case fKeyPropChildfree:
-		return v2object.FilterPropertyChildfree
 	}
 }
 
@@ -225,18 +222,6 @@ func (f *SearchFilters) addPhyFilter() {
 
 func (f *SearchFilters) AddPhyFilter() {
 	f.addPhyFilter()
-}
-
-func (f *SearchFilters) addChildFreeFilter(val bool) {
-	f.addReservedFilter(MatchStringEqual, fKeyPropChildfree, boolStringer(val))
-}
-
-func (f *SearchFilters) AddChildfreeFilter() {
-	f.addChildFreeFilter(true)
-}
-
-func (f *SearchFilters) AddNonChildfreeFilter() {
-	f.addChildFreeFilter(false)
 }
 
 func (f *SearchFilters) AddParentIDFilter(m SearchMatchType, id *ID) {
