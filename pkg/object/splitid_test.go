@@ -35,4 +35,13 @@ func TestSplitID(t *testing.T) {
 
 		require.Equal(t, newUUID.String(), id.String())
 	})
+
+	t.Run("nil value", func(t *testing.T) {
+		var newID *object.SplitID
+
+		require.NotPanics(t, func() {
+			require.Nil(t, newID.ToV2())
+			require.Equal(t, "", newID.String())
+		})
+	})
 }

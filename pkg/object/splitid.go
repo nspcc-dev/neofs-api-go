@@ -42,17 +42,27 @@ func (id *SplitID) Parse(s string) (err error) {
 }
 
 // String returns UUIDv4 string representation of SplitID.
-func (id SplitID) String() string {
+func (id *SplitID) String() string {
+	if id == nil {
+		return ""
+	}
+
 	return id.uuid.String()
 }
 
 // SetUUID sets pre created UUID structure as SplitID.
 func (id *SplitID) SetUUID(v uuid.UUID) {
-	id.uuid = v
+	if id != nil {
+		id.uuid = v
+	}
 }
 
 // ToV2 converts SplitID to a representation of SplitID in neofs-api v2.
-func (id SplitID) ToV2() []byte {
+func (id *SplitID) ToV2() []byte {
+	if id == nil {
+		return nil
+	}
+
 	data, _ := id.uuid.MarshalBinary() // err is always nil
 
 	return data
