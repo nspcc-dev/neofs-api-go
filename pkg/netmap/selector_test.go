@@ -92,6 +92,33 @@ func TestPlacementPolicy_GetPlacementVectors(t *testing.T) {
 	require.Equal(t, len(v.Replicas()[1]), len(ids), "not all nodes we distinct")
 }
 
+func TestPlacementPolicy_LowerBound(t *testing.T) {
+	p := newPlacementPolicy(
+		2, // backup factor
+		[]*Replica{
+			newReplica(1, "X"),
+		},
+		[]*Selector{
+			newSelector("X", "Country", ClauseSame, 2, "*"),
+		},
+		nil, // filters
+	)
+
+	nodes := []NodeInfo{
+		nodeInfoFromAttributes("ID", "1", "Country", "DE"),
+		nodeInfoFromAttributes("ID", "2", "Country", "DE"),
+		nodeInfoFromAttributes("ID", "3", "Country", "DE"),
+	}
+
+	nm, err := NewNetmap(NodesFromInfo(nodes))
+	require.NoError(t, err)
+
+	v, err := nm.GetContainerNodes(p, nil)
+	require.NoError(t, err)
+
+	require.Equal(t, 3, len(v.Flatten()))
+}
+
 func TestPlacementPolicy_ProcessSelectors(t *testing.T) {
 	p := newPlacementPolicy(2, nil,
 		[]*Selector{
@@ -128,6 +155,7 @@ func TestPlacementPolicy_ProcessSelectors(t *testing.T) {
 		sel := c.Selections[s.Name()]
 		s := c.Selectors[s.Name()]
 		bucketCount, nodesInBucket := GetNodesCount(p, s)
+		nodesInBucket *= int(p.ContainerBackupFactor())
 		targ := fmt.Sprintf("selector '%s'", s.Name())
 		require.Equal(t, bucketCount, len(sel), targ)
 		for _, res := range sel {
@@ -216,7 +244,7 @@ func TestPlacementPolicy_ProcessSelectorsInvalid(t *testing.T) {
 		{
 			"NotEnoughNodes (backup factor)",
 			newPlacementPolicy(2, nil,
-				[]*Selector{newSelector("MyStore", "Country", ClauseDistinct, 1, "FromRU")},
+				[]*Selector{newSelector("MyStore", "Country", ClauseDistinct, 2, "FromRU")},
 				[]*Filter{newFilter("FromRU", "Country", "Russia", OpEQ)}),
 			ErrNotEnoughNodes,
 		},
