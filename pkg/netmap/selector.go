@@ -36,14 +36,14 @@ func (c *Context) processSelectors(p *PlacementPolicy) error {
 	return nil
 }
 
-// GetNodesCount returns amount of buckets and nodes in every bucket
-// for a given placement policy.
-func GetNodesCount(p *PlacementPolicy, s *Selector) (int, int) {
+// GetNodesCount returns amount of buckets and minimum number of nodes in every bucket
+// for the given selector.
+func GetNodesCount(_ *PlacementPolicy, s *Selector) (int, int) {
 	switch s.Clause() {
 	case ClauseSame:
-		return 1, int(p.ContainerBackupFactor() * s.Count())
+		return 1, int(s.Count())
 	default:
-		return int(s.Count()), int(p.ContainerBackupFactor())
+		return int(s.Count()), 1
 	}
 }
 
@@ -69,17 +69,25 @@ func (c *Context) getSelection(p *PlacementPolicy, s *Selector) ([]Nodes, error)
 		}
 	}
 
+	maxNodesInBucket := nodesInBucket * int(p.ContainerBackupFactor())
 	nodes := make([]Nodes, 0, len(buckets))
+	fallback := make([]Nodes, 0, len(buckets))
 
 	for i := range buckets {
 		ns := buckets[i].nodes
-		if len(ns) >= nodesInBucket {
-			nodes = append(nodes, ns[:nodesInBucket])
+		if len(ns) >= maxNodesInBucket {
+			nodes = append(nodes, ns[:maxNodesInBucket])
+		} else if len(ns) >= nodesInBucket {
+			fallback = append(fallback, ns)
 		}
 	}
 
 	if len(nodes) < bucketCount {
-		return nil, fmt.Errorf("%w: '%s'", ErrNotEnoughNodes, s.Name())
+		// Fallback to using minimum allowed backup factor (1).
+		nodes = append(nodes, fallback...)
+		if len(nodes) < bucketCount {
+			return nil, fmt.Errorf("%w: '%s'", ErrNotEnoughNodes, s.Name())
+		}
 	}
 
 	if len(c.pivot) != 0 {
