@@ -6,6 +6,8 @@ import (
 	"github.com/nspcc-dev/hrw"
 )
 
+const defaultCBF = 3
+
 // Netmap represents netmap which contains preprocessed nodes.
 type Netmap struct {
 	Nodes Nodes
@@ -48,6 +50,10 @@ func (m *Netmap) GetPlacementVectors(cnt ContainerNodes, pivot []byte) ([]Nodes,
 func (m *Netmap) GetContainerNodes(p *PlacementPolicy, pivot []byte) (ContainerNodes, error) {
 	c := NewContext(m)
 	c.setPivot(pivot)
+
+	if p.ContainerBackupFactor() == 0 {
+		p.SetContainerBackupFactor(defaultCBF)
+	}
 
 	if err := c.processFilters(p); err != nil {
 		return nil, err

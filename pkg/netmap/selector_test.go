@@ -31,6 +31,29 @@ func TestPlacementPolicy_UnspecifiedClause(t *testing.T) {
 	require.Equal(t, 4, len(v.Flatten()))
 }
 
+func TestPlacementPolicy_DefaultCBF(t *testing.T) {
+	p := newPlacementPolicy(0,
+		[]*Replica{
+			newReplica(1, "EU"),
+		},
+		[]*Selector{
+			newSelector("EU", "Location", ClauseSame, 1, "*"),
+		},
+		nil)
+	nodes := []NodeInfo{
+		nodeInfoFromAttributes("Location", "Europe", "Country", "RU", "City", "St.Petersburg"),
+		nodeInfoFromAttributes("Location", "Europe", "Country", "RU", "City", "Moscow"),
+		nodeInfoFromAttributes("Location", "Europe", "Country", "DE", "City", "Berlin"),
+		nodeInfoFromAttributes("Location", "Europe", "Country", "FR", "City", "Paris"),
+	}
+
+	nm, err := NewNetmap(NodesFromInfo(nodes))
+	require.NoError(t, err)
+	v, err := nm.GetContainerNodes(p, nil)
+	require.NoError(t, err)
+	require.Equal(t, defaultCBF, len(v.Flatten()))
+}
+
 func TestPlacementPolicy_GetPlacementVectors(t *testing.T) {
 	p := newPlacementPolicy(2,
 		[]*Replica{
