@@ -68,6 +68,8 @@ func (m *Netmap) GetContainerNodes(p *PlacementPolicy, pivot []byte) (ContainerN
 			for _, s := range p.Selectors() {
 				result[i] = append(result[i], flattenNodes(c.Selections[s.Name()])...)
 			}
+
+			continue
 		}
 
 		nodes, ok := c.Selections[r.Selector()]
