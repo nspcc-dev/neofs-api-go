@@ -119,6 +119,32 @@ func TestPlacementPolicy_LowerBound(t *testing.T) {
 	require.Equal(t, 3, len(v.Flatten()))
 }
 
+func TestIssue213(t *testing.T) {
+	p := newPlacementPolicy(1,
+		[]*Replica{
+			newReplica(4, ""),
+		},
+		[]*Selector{
+			newSelector("", "", ClauseDistinct, 4, "LOC_EU"),
+		},
+		[]*Filter{
+			newFilter("LOC_EU", "Location", "Europe", OpEQ),
+		})
+	nodes := []NodeInfo{
+		nodeInfoFromAttributes("Location", "Europe", "Country", "Russia", "City", "Moscow"),
+		nodeInfoFromAttributes("Location", "Europe", "Country", "Russia", "City", "Saint-Petersburg"),
+		nodeInfoFromAttributes("Location", "Europe", "Country", "Sweden", "City", "Stockholm"),
+		nodeInfoFromAttributes("Location", "Europe", "Country", "Finalnd", "City", "Helsinki"),
+	}
+
+	nm, err := NewNetmap(NodesFromInfo(nodes))
+	require.NoError(t, err)
+
+	v, err := nm.GetContainerNodes(p, nil)
+	require.NoError(t, err)
+	require.Equal(t, 4, len(v.Flatten()))
+}
+
 func TestPlacementPolicy_ProcessSelectors(t *testing.T) {
 	p := newPlacementPolicy(2, nil,
 		[]*Selector{
