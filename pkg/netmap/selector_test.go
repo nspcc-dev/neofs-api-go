@@ -31,6 +31,42 @@ func TestPlacementPolicy_UnspecifiedClause(t *testing.T) {
 	require.Equal(t, 4, len(v.Flatten()))
 }
 
+// Issue #215.
+func TestPlacementPolicy_MultipleREP(t *testing.T) {
+	p := newPlacementPolicy(1,
+		[]*Replica{
+			newReplica(1, "LOC_SPB_PLACE"),
+			newReplica(1, "LOC_MSK_PLACE"),
+		},
+		[]*Selector{
+			newSelector("LOC_SPB_PLACE", "", ClauseUnspecified, 1, "LOC_SPB"),
+			newSelector("LOC_MSK_PLACE", "", ClauseUnspecified, 1, "LOC_MSK"),
+		},
+		[]*Filter{
+			newFilter("LOC_SPB", "City", "Saint-Petersburg", OpEQ),
+			newFilter("LOC_MSK", "City", "Moscow", OpEQ),
+		},
+	)
+	nodes := []NodeInfo{
+		nodeInfoFromAttributes("City", "Saint-Petersburg"),
+		nodeInfoFromAttributes("City", "Moscow"),
+		nodeInfoFromAttributes("City", "Berlin"),
+		nodeInfoFromAttributes("City", "Paris"),
+	}
+	nm, err := NewNetmap(NodesFromInfo(nodes))
+	require.NoError(t, err)
+
+	v, err := nm.GetContainerNodes(p, nil)
+	require.NoError(t, err)
+
+	rs := v.Replicas()
+	require.Equal(t, 2, len(rs))
+	require.Equal(t, 1, len(rs[0]))
+	require.Equal(t, "Saint-Petersburg", rs[0][0].Attribute("City"))
+	require.Equal(t, 1, len(rs[1]))
+	require.Equal(t, "Moscow", rs[1][0].Attribute("City"))
+}
+
 func TestPlacementPolicy_DefaultCBF(t *testing.T) {
 	p := newPlacementPolicy(0,
 		[]*Replica{
