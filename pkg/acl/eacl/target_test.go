@@ -11,22 +11,21 @@ import (
 )
 
 func TestTarget(t *testing.T) {
-	keys := []ecdsa.PublicKey{
-		test.DecodeKey(1).PublicKey,
-		test.DecodeKey(2).PublicKey,
+	keys := []*ecdsa.PublicKey{
+		&test.DecodeKey(1).PublicKey,
+		&test.DecodeKey(2).PublicKey,
 	}
 
-	target := &Target{
-		role: RoleSystem,
-		keys: keys,
-	}
+	target := NewTarget()
+	target.SetRole(RoleSystem)
+	SetTargetECDSAKeys(target, keys...)
 
 	v2 := target.ToV2()
 	require.NotNil(t, v2)
 	require.Equal(t, v2acl.RoleSystem, v2.GetRole())
 	require.Len(t, v2.GetKeys(), len(keys))
 	for i, key := range v2.GetKeys() {
-		require.Equal(t, key, crypto.MarshalPublicKey(&keys[i]))
+		require.Equal(t, key, crypto.MarshalPublicKey(keys[i]))
 	}
 
 	newTarget := NewTargetFromV2(v2)
@@ -40,7 +39,7 @@ func TestTarget(t *testing.T) {
 func TestTargetEncoding(t *testing.T) {
 	tar := NewTarget()
 	tar.SetRole(RoleSystem)
-	tar.SetKeys(test.DecodeKey(-1).PublicKey)
+	SetTargetECDSAKeys(tar, &test.DecodeKey(-1).PublicKey)
 
 	t.Run("binary", func(t *testing.T) {
 		data, err := tar.Marshal()

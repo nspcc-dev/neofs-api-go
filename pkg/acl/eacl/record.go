@@ -26,6 +26,11 @@ func (r Record) Targets() []*Target {
 	return r.targets
 }
 
+// SetTargets sets list of target subjects to apply ACL rule to.
+func (r *Record) SetTargets(targets ...*Target) {
+	r.targets = targets
+}
+
 // Filters returns list of filters to match and see if rule is applicable.
 func (r Record) Filters() []*Filter {
 	return r.filters
@@ -52,17 +57,25 @@ func (r *Record) SetAction(action Action) {
 }
 
 // AddTarget adds target subject with specified Role and key list.
+//
+// Deprecated: use AddFormedTarget instead.
 func (r *Record) AddTarget(role Role, keys ...ecdsa.PublicKey) {
-	t := &Target{
-		role: role,
-		keys: make([]ecdsa.PublicKey, 0, len(keys)),
-	}
+	AddFormedTarget(r, role, keys...)
+}
 
-	for i := range keys {
-		t.keys = append(t.keys, keys[i])
-	}
+// AddRecordTarget adds single Target to the Record.
+func AddRecordTarget(r *Record, t *Target) {
+	r.SetTargets(append(r.Targets(), t)...)
+}
 
-	r.targets = append(r.targets, t)
+// AddFormedTarget forms Target with specified Role and list of
+// ECDSA public keys and adds it to the Record.
+func AddFormedTarget(r *Record, role Role, keys ...ecdsa.PublicKey) {
+	t := NewTarget()
+	t.SetRole(role)
+	SetTargetECDSAKeys(t, ecdsaKeysToPtrs(keys)...)
+
+	AddRecordTarget(r, t)
 }
 
 func (r *Record) addFilter(from FilterHeaderType, m Match, keyTyp filterKeyType, key string, val fmt.Stringer) {

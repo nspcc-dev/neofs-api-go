@@ -13,17 +13,88 @@ import (
 // Target is compatible with v2 acl.EACLRecord.Target message.
 type Target struct {
 	role Role
-	keys []ecdsa.PublicKey
+	keys [][]byte
 }
 
-// SetKeys sets list of public keys to identify target subject.
+func ecdsaKeysToPtrs(keys []ecdsa.PublicKey) []*ecdsa.PublicKey {
+	keysPtr := make([]*ecdsa.PublicKey, len(keys))
+
+	for i := range keys {
+		keysPtr[i] = &keys[i]
+	}
+
+	return keysPtr
+}
+
+// SetKeys sets list of ECDSA public keys to identify target subject.
+//
+// Deprecated: use SetTargetECDSAKeys instead.
 func (t *Target) SetKeys(keys ...ecdsa.PublicKey) {
+	SetTargetECDSAKeys(t, ecdsaKeysToPtrs(keys)...)
+}
+
+// Keys returns list of ECDSA public keys to identify target subject.
+// If some key has a different format, it is ignored.
+//
+// Deprecated: use TargetECDSAKeys instead.
+func (t *Target) Keys() []ecdsa.PublicKey {
+	keysPtr := TargetECDSAKeys(t)
+	keys := make([]ecdsa.PublicKey, 0, len(keysPtr))
+
+	for i := range keysPtr {
+		if keysPtr[i] != nil {
+			keys = append(keys, *keysPtr[i])
+		}
+	}
+
+	return keys
+}
+
+// BinaryKeys returns list of public keys to identify
+// target subject in a binary format.
+func (t *Target) BinaryKeys() [][]byte {
+	return t.keys
+}
+
+// SetBinaryKeys sets list of binary public keys to identify
+// target subject.
+func (t *Target) SetBinaryKeys(keys [][]byte) {
 	t.keys = keys
 }
 
-// Keys returns list of public keys to identify target subject.
-func (t Target) Keys() []ecdsa.PublicKey {
-	return t.keys
+// SetTargetECDSAKeys converts ECDSA public keys to a binary
+// format and stores them in Target.
+func SetTargetECDSAKeys(t *Target, keys ...*ecdsa.PublicKey) {
+	binKeys := t.BinaryKeys()
+	ln := len(keys)
+
+	if cap(binKeys) >= ln {
+		binKeys = binKeys[:0]
+	} else {
+		binKeys = make([][]byte, 0, ln)
+	}
+
+	for i := 0; i < ln; i++ {
+		binKeys = append(binKeys, crypto.MarshalPublicKey(keys[i]))
+	}
+
+	t.SetBinaryKeys(binKeys)
+}
+
+// TargetECDSAKeys interprets binary public keys of Target
+// as ECDSA public keys. If any key has a different format,
+// the corresponding element will be nil.
+func TargetECDSAKeys(t *Target) []*ecdsa.PublicKey {
+	binKeys := t.BinaryKeys()
+	ln := len(binKeys)
+
+	keys := make([]*ecdsa.PublicKey, ln)
+
+	for i := 0; i < ln; i++ {
+		keys[i] = crypto.UnmarshalPublicKey(binKeys[i])
+	}
+
+	return keys
 }
 
 // SetRole sets target subject's role class.
@@ -38,16 +109,10 @@ func (t Target) Role() Role {
 
 // ToV2 converts Target to v2 acl.EACLRecord.Target message.
 func (t *Target) ToV2() *v2acl.Target {
-	keys := make([][]byte, 0, len(t.keys))
-	for i := range t.keys {
-		key := crypto.MarshalPublicKey(&t.keys[i])
-		keys = append(keys, key)
-	}
-
 	target := new(v2acl.Target)
 
 	target.SetRole(t.role.ToV2())
-	target.SetKeys(keys)
+	target.SetKeys(t.keys)
 
 	return target
 }
@@ -66,13 +131,7 @@ func NewTargetFromV2(target *v2acl.Target) *Target {
 	}
 
 	t.role = RoleFromV2(target.GetRole())
-	v2keys := target.GetKeys()
-	t.keys = make([]ecdsa.PublicKey, 0, len(v2keys))
-
-	for i := range v2keys {
-		key := crypto.UnmarshalPublicKey(v2keys[i])
-		t.keys = append(t.keys, *key)
-	}
+	t.keys = target.GetKeys()
 
 	return t
 }

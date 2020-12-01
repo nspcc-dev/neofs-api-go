@@ -15,7 +15,10 @@ func TestRecord(t *testing.T) {
 	record.SetAction(ActionAllow)
 	record.AddFilter(HeaderFromRequest, MatchStringEqual, "A", "B")
 	record.AddFilter(HeaderFromRequest, MatchStringNotEqual, "C", "D")
-	record.AddTarget(RoleSystem)
+
+	target := NewTarget()
+	target.SetRole(RoleSystem)
+	AddRecordTarget(record, target)
 
 	v2 := record.ToV2()
 	require.NotNil(t, v2)
@@ -38,8 +41,11 @@ func TestRecord(t *testing.T) {
 	})
 }
 
-func TestRecord_AddTarget(t *testing.T) {
-	targets := []*Target{
+func TestAddFormedTarget(t *testing.T) {
+	items := []struct {
+		role Role
+		keys []ecdsa.PublicKey
+	}{
 		{
 			role: RoleUnknown,
 			keys: []ecdsa.PublicKey{test.DecodeKey(1).PublicKey},
@@ -50,12 +56,26 @@ func TestRecord_AddTarget(t *testing.T) {
 		},
 	}
 
+	targets := make([]*Target, 0, len(items))
+
 	r := NewRecord()
-	for _, target := range targets {
-		r.AddTarget(target.Role(), target.Keys()...)
+
+	for _, item := range items {
+		tgt := NewTarget()
+		tgt.SetRole(item.role)
+		SetTargetECDSAKeys(tgt, ecdsaKeysToPtrs(item.keys)...)
+
+		targets = append(targets, tgt)
+
+		AddFormedTarget(r, item.role, item.keys...)
 	}
 
-	require.Equal(t, targets, r.Targets())
+	tgts := r.Targets()
+	require.Len(t, tgts, len(targets))
+
+	for _, tgt := range targets {
+		require.Contains(t, tgts, tgt)
+	}
 }
 
 func TestRecord_AddFilter(t *testing.T) {
@@ -77,7 +97,7 @@ func TestRecordEncoding(t *testing.T) {
 	r.SetOperation(OperationHead)
 	r.SetAction(ActionDeny)
 	r.AddObjectAttributeFilter(MatchStringEqual, "key", "value")
-	r.AddTarget(RoleSystem, test.DecodeKey(-1).PublicKey)
+	AddFormedTarget(r, RoleSystem, test.DecodeKey(-1).PublicKey)
 
 	t.Run("binary", func(t *testing.T) {
 		data, err := r.Marshal()
