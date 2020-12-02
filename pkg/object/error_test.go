@@ -1,0 +1,32 @@
+package object_test
+
+import (
+	"errors"
+	"testing"
+
+	"github.com/nspcc-dev/neofs-api-go/pkg/object"
+	"github.com/stretchr/testify/require"
+)
+
+func TestNewSplitInfoError(t *testing.T) {
+	var (
+		si = generateSplitInfo()
+
+		err error = object.NewSplitInfoError(si)
+	)
+
+	require.True(t, errors.As(err, new(object.SplitInfoError)))
+
+	siErr, ok := err.(object.SplitInfoError)
+	require.True(t, ok)
+	require.Equal(t, si, siErr.SplitInfo())
+}
+
+func generateSplitInfo() *object.SplitInfo {
+	si := object.NewSplitInfo()
+	si.SetSplitID(object.NewSplitID())
+	si.SetLastPart(generateID())
+	si.SetLink(generateID())
+
+	return si
+}
