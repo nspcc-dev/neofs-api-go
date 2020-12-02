@@ -40,6 +40,8 @@ type GetObjectParams struct {
 type ObjectHeaderParams struct {
 	addr *object.Address
 
+	raw bool
+
 	short bool
 }
 
@@ -494,6 +496,14 @@ func (p *ObjectHeaderParams) WithMainFields() *ObjectHeaderParams {
 	return p
 }
 
+func (p *ObjectHeaderParams) WithRawFlag(v bool) *ObjectHeaderParams {
+	if p != nil {
+		p.raw = v
+	}
+
+	return p
+}
+
 func (c *Client) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams, opts ...CallOption) (*object.Object, error) {
 	// check remote node version
 	switch c.remoteNode.Version.Major() {
@@ -540,6 +550,7 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 	// fill body fields
 	body.SetAddress(p.addr.ToV2())
 	body.SetMainOnly(p.short)
+	body.SetRaw(p.raw)
 
 	// sign the request
 	if err := signature.SignServiceMessage(c.key, req); err != nil {
