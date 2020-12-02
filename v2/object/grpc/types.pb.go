@@ -438,6 +438,79 @@ func (x *Object) GetPayload() []byte {
 	return nil
 }
 
+// Meta information of split hierarchy for object assembly. With last part
+// one can traverse linked list of split hierarchy back to first part and
+// assemble original object. With linking object one can assembly object
+// straight away from the object parts.
+type SplitInfo struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// 16 byte UUID used to identify the split object hierarchy parts.
+	SplitId []byte `protobuf:"bytes,1,opt,name=split_id,json=splitId,proto3" json:"split_id,omitempty"`
+	// Identifier of the last object in split hierarchy parts. It contains
+	// split header with original object header.
+	LastPart *grpc.ObjectID `protobuf:"bytes,2,opt,name=last_part,json=lastPart,proto3" json:"last_part,omitempty"`
+	// Identifier of linking object for split hierarchy parts. It contains
+	// split header with original object header and sorted list of
+	// object parts.
+	Link *grpc.ObjectID `protobuf:"bytes,3,opt,name=link,proto3" json:"link,omitempty"`
+}
+
+func (x *SplitInfo) Reset() {
+	*x = SplitInfo{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_object_grpc_types_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SplitInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SplitInfo) ProtoMessage() {}
+
+func (x *SplitInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_object_grpc_types_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SplitInfo.ProtoReflect.Descriptor instead.
+func (*SplitInfo) Descriptor() ([]byte, []int) {
+	return file_v2_object_grpc_types_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *SplitInfo) GetSplitId() []byte {
+	if x != nil {
+		return x.SplitId
+	}
+	return nil
+}
+
+func (x *SplitInfo) GetLastPart() *grpc.ObjectID {
+	if x != nil {
+		return x.LastPart
+	}
+	return nil
+}
+
+func (x *SplitInfo) GetLink() *grpc.ObjectID {
+	if x != nil {
+		return x.Link
+	}
+	return nil
+}
+
 // `Attribute` is a user-defined Key-Value metadata pair attached to the
 // object.
 //
@@ -474,7 +547,7 @@ type Header_Attribute struct {
 func (x *Header_Attribute) Reset() {
 	*x = Header_Attribute{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_object_grpc_types_proto_msgTypes[3]
+		mi := &file_v2_object_grpc_types_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -487,7 +560,7 @@ func (x *Header_Attribute) String() string {
 func (*Header_Attribute) ProtoMessage() {}
 
 func (x *Header_Attribute) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_object_grpc_types_proto_msgTypes[3]
+	mi := &file_v2_object_grpc_types_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -545,7 +618,7 @@ type Header_Split struct {
 func (x *Header_Split) Reset() {
 	*x = Header_Split{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_object_grpc_types_proto_msgTypes[4]
+		mi := &file_v2_object_grpc_types_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -558,7 +631,7 @@ func (x *Header_Split) String() string {
 func (*Header_Split) ProtoMessage() {}
 
 func (x *Header_Split) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_object_grpc_types_proto_msgTypes[4]
+	mi := &file_v2_object_grpc_types_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -717,20 +790,29 @@ var file_v2_object_grpc_types_proto_rawDesc = []byte{
 	0x28, 0x0b, 0x32, 0x18, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x6f,
 	0x62, 0x6a, 0x65, 0x63, 0x74, 0x2e, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x52, 0x06, 0x68, 0x65,
 	0x61, 0x64, 0x65, 0x72, 0x12, 0x18, 0x0a, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x18,
-	0x04, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x2a, 0x3b,
-	0x0a, 0x0a, 0x4f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0b, 0x0a, 0x07,
-	0x52, 0x45, 0x47, 0x55, 0x4c, 0x41, 0x52, 0x10, 0x00, 0x12, 0x0d, 0x0a, 0x09, 0x54, 0x4f, 0x4d,
-	0x42, 0x53, 0x54, 0x4f, 0x4e, 0x45, 0x10, 0x01, 0x12, 0x11, 0x0a, 0x0d, 0x53, 0x54, 0x4f, 0x52,
-	0x41, 0x47, 0x45, 0x5f, 0x47, 0x52, 0x4f, 0x55, 0x50, 0x10, 0x02, 0x2a, 0x39, 0x0a, 0x09, 0x4d,
-	0x61, 0x74, 0x63, 0x68, 0x54, 0x79, 0x70, 0x65, 0x12, 0x1a, 0x0a, 0x16, 0x4d, 0x41, 0x54, 0x43,
-	0x48, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49,
-	0x45, 0x44, 0x10, 0x00, 0x12, 0x10, 0x0a, 0x0c, 0x53, 0x54, 0x52, 0x49, 0x4e, 0x47, 0x5f, 0x45,
-	0x51, 0x55, 0x41, 0x4c, 0x10, 0x01, 0x42, 0x4f, 0x5a, 0x37, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62,
-	0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6e, 0x73, 0x70, 0x63, 0x63, 0x2d, 0x64, 0x65, 0x76, 0x2f, 0x6e,
-	0x65, 0x6f, 0x66, 0x73, 0x2d, 0x61, 0x70, 0x69, 0x2d, 0x67, 0x6f, 0x2f, 0x76, 0x32, 0x2f, 0x6f,
-	0x62, 0x6a, 0x65, 0x63, 0x74, 0x2f, 0x67, 0x72, 0x70, 0x63, 0x3b, 0x6f, 0x62, 0x6a, 0x65, 0x63,
-	0x74, 0xaa, 0x02, 0x13, 0x4e, 0x65, 0x6f, 0x46, 0x53, 0x2e, 0x41, 0x50, 0x49, 0x2e, 0x76, 0x32,
-	0x2e, 0x4f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x04, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x07, 0x70, 0x61, 0x79, 0x6c, 0x6f, 0x61, 0x64, 0x22, 0x8b,
+	0x01, 0x0a, 0x09, 0x53, 0x70, 0x6c, 0x69, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x19, 0x0a, 0x08,
+	0x73, 0x70, 0x6c, 0x69, 0x74, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x07,
+	0x73, 0x70, 0x6c, 0x69, 0x74, 0x49, 0x64, 0x12, 0x35, 0x0a, 0x09, 0x6c, 0x61, 0x73, 0x74, 0x5f,
+	0x70, 0x61, 0x72, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x6e, 0x65, 0x6f,
+	0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x66, 0x73, 0x2e, 0x4f, 0x62, 0x6a, 0x65,
+	0x63, 0x74, 0x49, 0x44, 0x52, 0x08, 0x6c, 0x61, 0x73, 0x74, 0x50, 0x61, 0x72, 0x74, 0x12, 0x2c,
+	0x0a, 0x04, 0x6c, 0x69, 0x6e, 0x6b, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x6e,
+	0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x66, 0x73, 0x2e, 0x4f, 0x62,
+	0x6a, 0x65, 0x63, 0x74, 0x49, 0x44, 0x52, 0x04, 0x6c, 0x69, 0x6e, 0x6b, 0x2a, 0x3b, 0x0a, 0x0a,
+	0x4f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0b, 0x0a, 0x07, 0x52, 0x45,
+	0x47, 0x55, 0x4c, 0x41, 0x52, 0x10, 0x00, 0x12, 0x0d, 0x0a, 0x09, 0x54, 0x4f, 0x4d, 0x42, 0x53,
+	0x54, 0x4f, 0x4e, 0x45, 0x10, 0x01, 0x12, 0x11, 0x0a, 0x0d, 0x53, 0x54, 0x4f, 0x52, 0x41, 0x47,
+	0x45, 0x5f, 0x47, 0x52, 0x4f, 0x55, 0x50, 0x10, 0x02, 0x2a, 0x39, 0x0a, 0x09, 0x4d, 0x61, 0x74,
+	0x63, 0x68, 0x54, 0x79, 0x70, 0x65, 0x12, 0x1a, 0x0a, 0x16, 0x4d, 0x41, 0x54, 0x43, 0x48, 0x5f,
+	0x54, 0x59, 0x50, 0x45, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44,
+	0x10, 0x00, 0x12, 0x10, 0x0a, 0x0c, 0x53, 0x54, 0x52, 0x49, 0x4e, 0x47, 0x5f, 0x45, 0x51, 0x55,
+	0x41, 0x4c, 0x10, 0x01, 0x42, 0x4f, 0x5a, 0x37, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63,
+	0x6f, 0x6d, 0x2f, 0x6e, 0x73, 0x70, 0x63, 0x63, 0x2d, 0x64, 0x65, 0x76, 0x2f, 0x6e, 0x65, 0x6f,
+	0x66, 0x73, 0x2d, 0x61, 0x70, 0x69, 0x2d, 0x67, 0x6f, 0x2f, 0x76, 0x32, 0x2f, 0x6f, 0x62, 0x6a,
+	0x65, 0x63, 0x74, 0x2f, 0x67, 0x72, 0x70, 0x63, 0x3b, 0x6f, 0x62, 0x6a, 0x65, 0x63, 0x74, 0xaa,
+	0x02, 0x13, 0x4e, 0x65, 0x6f, 0x46, 0x53, 0x2e, 0x41, 0x50, 0x49, 0x2e, 0x76, 0x32, 0x2e, 0x4f,
+	0x62, 0x6a, 0x65, 0x63, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -746,49 +828,52 @@ func file_v2_object_grpc_types_proto_rawDescGZIP() []byte {
 }
 
 var file_v2_object_grpc_types_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_v2_object_grpc_types_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_v2_object_grpc_types_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_v2_object_grpc_types_proto_goTypes = []interface{}{
 	(ObjectType)(0),            // 0: neo.fs.v2.object.ObjectType
 	(MatchType)(0),             // 1: neo.fs.v2.object.MatchType
 	(*ShortHeader)(nil),        // 2: neo.fs.v2.object.ShortHeader
 	(*Header)(nil),             // 3: neo.fs.v2.object.Header
 	(*Object)(nil),             // 4: neo.fs.v2.object.Object
-	(*Header_Attribute)(nil),   // 5: neo.fs.v2.object.Header.Attribute
-	(*Header_Split)(nil),       // 6: neo.fs.v2.object.Header.Split
-	(*grpc.Version)(nil),       // 7: neo.fs.v2.refs.Version
-	(*grpc.OwnerID)(nil),       // 8: neo.fs.v2.refs.OwnerID
-	(*grpc.ContainerID)(nil),   // 9: neo.fs.v2.refs.ContainerID
-	(*grpc.Checksum)(nil),      // 10: neo.fs.v2.refs.Checksum
-	(*grpc1.SessionToken)(nil), // 11: neo.fs.v2.session.SessionToken
-	(*grpc.ObjectID)(nil),      // 12: neo.fs.v2.refs.ObjectID
-	(*grpc.Signature)(nil),     // 13: neo.fs.v2.refs.Signature
+	(*SplitInfo)(nil),          // 5: neo.fs.v2.object.SplitInfo
+	(*Header_Attribute)(nil),   // 6: neo.fs.v2.object.Header.Attribute
+	(*Header_Split)(nil),       // 7: neo.fs.v2.object.Header.Split
+	(*grpc.Version)(nil),       // 8: neo.fs.v2.refs.Version
+	(*grpc.OwnerID)(nil),       // 9: neo.fs.v2.refs.OwnerID
+	(*grpc.ContainerID)(nil),   // 10: neo.fs.v2.refs.ContainerID
+	(*grpc.Checksum)(nil),      // 11: neo.fs.v2.refs.Checksum
+	(*grpc1.SessionToken)(nil), // 12: neo.fs.v2.session.SessionToken
+	(*grpc.ObjectID)(nil),      // 13: neo.fs.v2.refs.ObjectID
+	(*grpc.Signature)(nil),     // 14: neo.fs.v2.refs.Signature
 }
 var file_v2_object_grpc_types_proto_depIdxs = []int32{
-	7,  // 0: neo.fs.v2.object.ShortHeader.version:type_name -> neo.fs.v2.refs.Version
-	8,  // 1: neo.fs.v2.object.ShortHeader.owner_id:type_name -> neo.fs.v2.refs.OwnerID
+	8,  // 0: neo.fs.v2.object.ShortHeader.version:type_name -> neo.fs.v2.refs.Version
+	9,  // 1: neo.fs.v2.object.ShortHeader.owner_id:type_name -> neo.fs.v2.refs.OwnerID
 	0,  // 2: neo.fs.v2.object.ShortHeader.object_type:type_name -> neo.fs.v2.object.ObjectType
-	7,  // 3: neo.fs.v2.object.Header.version:type_name -> neo.fs.v2.refs.Version
-	9,  // 4: neo.fs.v2.object.Header.container_id:type_name -> neo.fs.v2.refs.ContainerID
-	8,  // 5: neo.fs.v2.object.Header.owner_id:type_name -> neo.fs.v2.refs.OwnerID
-	10, // 6: neo.fs.v2.object.Header.payload_hash:type_name -> neo.fs.v2.refs.Checksum
+	8,  // 3: neo.fs.v2.object.Header.version:type_name -> neo.fs.v2.refs.Version
+	10, // 4: neo.fs.v2.object.Header.container_id:type_name -> neo.fs.v2.refs.ContainerID
+	9,  // 5: neo.fs.v2.object.Header.owner_id:type_name -> neo.fs.v2.refs.OwnerID
+	11, // 6: neo.fs.v2.object.Header.payload_hash:type_name -> neo.fs.v2.refs.Checksum
 	0,  // 7: neo.fs.v2.object.Header.object_type:type_name -> neo.fs.v2.object.ObjectType
-	10, // 8: neo.fs.v2.object.Header.homomorphic_hash:type_name -> neo.fs.v2.refs.Checksum
-	11, // 9: neo.fs.v2.object.Header.session_token:type_name -> neo.fs.v2.session.SessionToken
-	5,  // 10: neo.fs.v2.object.Header.attributes:type_name -> neo.fs.v2.object.Header.Attribute
-	6,  // 11: neo.fs.v2.object.Header.split:type_name -> neo.fs.v2.object.Header.Split
-	12, // 12: neo.fs.v2.object.Object.object_id:type_name -> neo.fs.v2.refs.ObjectID
-	13, // 13: neo.fs.v2.object.Object.signature:type_name -> neo.fs.v2.refs.Signature
+	11, // 8: neo.fs.v2.object.Header.homomorphic_hash:type_name -> neo.fs.v2.refs.Checksum
+	12, // 9: neo.fs.v2.object.Header.session_token:type_name -> neo.fs.v2.session.SessionToken
+	6,  // 10: neo.fs.v2.object.Header.attributes:type_name -> neo.fs.v2.object.Header.Attribute
+	7,  // 11: neo.fs.v2.object.Header.split:type_name -> neo.fs.v2.object.Header.Split
+	13, // 12: neo.fs.v2.object.Object.object_id:type_name -> neo.fs.v2.refs.ObjectID
+	14, // 13: neo.fs.v2.object.Object.signature:type_name -> neo.fs.v2.refs.Signature
 	3,  // 14: neo.fs.v2.object.Object.header:type_name -> neo.fs.v2.object.Header
-	12, // 15: neo.fs.v2.object.Header.Split.parent:type_name -> neo.fs.v2.refs.ObjectID
-	12, // 16: neo.fs.v2.object.Header.Split.previous:type_name -> neo.fs.v2.refs.ObjectID
-	13, // 17: neo.fs.v2.object.Header.Split.parent_signature:type_name -> neo.fs.v2.refs.Signature
-	3,  // 18: neo.fs.v2.object.Header.Split.parent_header:type_name -> neo.fs.v2.object.Header
-	12, // 19: neo.fs.v2.object.Header.Split.children:type_name -> neo.fs.v2.refs.ObjectID
-	20, // [20:20] is the sub-list for method output_type
-	20, // [20:20] is the sub-list for method input_type
-	20, // [20:20] is the sub-list for extension type_name
-	20, // [20:20] is the sub-list for extension extendee
-	0,  // [0:20] is the sub-list for field type_name
+	13, // 15: neo.fs.v2.object.SplitInfo.last_part:type_name -> neo.fs.v2.refs.ObjectID
+	13, // 16: neo.fs.v2.object.SplitInfo.link:type_name -> neo.fs.v2.refs.ObjectID
+	13, // 17: neo.fs.v2.object.Header.Split.parent:type_name -> neo.fs.v2.refs.ObjectID
+	13, // 18: neo.fs.v2.object.Header.Split.previous:type_name -> neo.fs.v2.refs.ObjectID
+	14, // 19: neo.fs.v2.object.Header.Split.parent_signature:type_name -> neo.fs.v2.refs.Signature
+	3,  // 20: neo.fs.v2.object.Header.Split.parent_header:type_name -> neo.fs.v2.object.Header
+	13, // 21: neo.fs.v2.object.Header.Split.children:type_name -> neo.fs.v2.refs.ObjectID
+	22, // [22:22] is the sub-list for method output_type
+	22, // [22:22] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_v2_object_grpc_types_proto_init() }
@@ -834,7 +919,7 @@ func file_v2_object_grpc_types_proto_init() {
 			}
 		}
 		file_v2_object_grpc_types_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Header_Attribute); i {
+			switch v := v.(*SplitInfo); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -846,6 +931,18 @@ func file_v2_object_grpc_types_proto_init() {
 			}
 		}
 		file_v2_object_grpc_types_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Header_Attribute); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_object_grpc_types_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Header_Split); i {
 			case 0:
 				return &v.state
@@ -864,7 +961,7 @@ func file_v2_object_grpc_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_v2_object_grpc_types_proto_rawDesc,
 			NumEnums:      2,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

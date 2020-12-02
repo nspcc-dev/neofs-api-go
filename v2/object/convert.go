@@ -371,6 +371,46 @@ func ObjectFromGRPCMessage(m *object.Object) *Object {
 	return o
 }
 
+func SplitInfoToGRPCMessage(s *SplitInfo) *object.SplitInfo {
+	if s == nil {
+		return nil
+	}
+
+	m := new(object.SplitInfo)
+
+	m.SetSplitId(s.GetSplitID())
+
+	m.SetLastPart(
+		refs.ObjectIDToGRPCMessage(s.GetLastPart()),
+	)
+
+	m.SetLink(
+		refs.ObjectIDToGRPCMessage(s.GetLink()),
+	)
+
+	return m
+}
+
+func SplitInfoFromGRPCMessage(m *object.SplitInfo) *SplitInfo {
+	if m == nil {
+		return nil
+	}
+
+	r := new(SplitInfo)
+
+	r.SetSplitID(m.GetSplitId())
+
+	r.SetLastPart(
+		refs.ObjectIDFromGRPCMessage(m.GetLastPart()),
+	)
+
+	r.SetLink(
+		refs.ObjectIDFromGRPCMessage(m.GetLink()),
+	)
+
+	return r
+}
+
 func GetRequestBodyToGRPCMessage(r *GetRequestBody) *object.GetRequest_Body {
 	if r == nil {
 		return nil
@@ -520,6 +560,10 @@ func GetResponseBodyToGRPCMessage(r *GetResponseBody) *object.GetResponse_Body {
 		m.SetChunk(
 			GetObjectPartChunkToGRPCMessage(t),
 		)
+	case *SplitInfo:
+		m.SetSplitInfo(
+			SplitInfoToGRPCMessage(t),
+		)
 	default:
 		panic(fmt.Sprintf("unknown object part %T", t))
 	}
@@ -543,6 +587,10 @@ func GetResponseBodyFromGRPCMessage(m *object.GetResponse_Body) *GetResponseBody
 	case *object.GetResponse_Body_Chunk:
 		r.SetObjectPart(
 			GetObjectPartChunkFromGRPCMessage(v),
+		)
+	case *object.GetResponse_Body_SplitInfo:
+		r.SetObjectPart(
+			SplitInfoFromGRPCMessage(v.SplitInfo),
 		)
 	default:
 		panic(fmt.Sprintf("unknown object part %T", v))

@@ -75,6 +75,14 @@ type Object struct {
 	payload []byte
 }
 
+type SplitInfo struct {
+	splitID []byte
+
+	lastPart *refs.ObjectID
+
+	link *refs.ObjectID
+}
+
 type GetRequestBody struct {
 	addr *refs.Address
 
@@ -633,6 +641,50 @@ func (o *Object) SetPayload(v []byte) {
 		o.payload = v
 	}
 }
+
+func (s *SplitInfo) GetSplitID() []byte {
+	if s.splitID != nil {
+		return s.splitID
+	}
+
+	return nil
+}
+
+func (s *SplitInfo) SetSplitID(v []byte) {
+	if s != nil {
+		s.splitID = v
+	}
+}
+
+func (s *SplitInfo) GetLastPart() *refs.ObjectID {
+	if s != nil {
+		return s.lastPart
+	}
+
+	return nil
+}
+
+func (s *SplitInfo) SetLastPart(v *refs.ObjectID) {
+	if s != nil {
+		s.lastPart = v
+	}
+}
+
+func (s *SplitInfo) GetLink() *refs.ObjectID {
+	if s != nil {
+		return s.link
+	}
+
+	return nil
+}
+
+func (s *SplitInfo) SetLink(v *refs.ObjectID) {
+	if s != nil {
+		s.link = v
+	}
+}
+
+func (s *SplitInfo) getObjectPart() {} // implement interface to be one of response body
 
 func (r *GetRequestBody) GetAddress() *refs.Address {
 	if r != nil {

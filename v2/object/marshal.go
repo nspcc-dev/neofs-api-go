@@ -43,6 +43,10 @@ const (
 	objHeaderField    = 3
 	objPayloadField   = 4
 
+	splitInfoSplitIDField  = 1
+	splitInfoLastPartField = 2
+	splitInfoLinkField     = 3
+
 	getReqBodyAddressField = 1
 	getReqBodyRawFlagField = 2
 
@@ -50,8 +54,9 @@ const (
 	getRespInitSignatureField = 2
 	getRespInitHeaderField    = 3
 
-	getRespBodyInitField  = 1
-	getRespBodyChunkField = 2
+	getRespBodyInitField      = 1
+	getRespBodyChunkField     = 2
+	getRespBodySplitInfoField = 3
 
 	putReqInitObjectIDField  = 1
 	putReqInitSignatureField = 2
@@ -576,6 +581,54 @@ func (o *Object) Unmarshal(data []byte) error {
 	return nil
 }
 
+func (s *SplitInfo) StableMarshal(buf []byte) ([]byte, error) {
+	if s == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, s.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = proto.BytesMarshal(splitInfoSplitIDField, buf[offset:], s.splitID)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = proto.NestedStructureMarshal(splitInfoLastPartField, buf[offset:], s.lastPart)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.NestedStructureMarshal(splitInfoLinkField, buf[offset:], s.link)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (s *SplitInfo) StableSize() (size int) {
+	if s == nil {
+		return 0
+	}
+
+	size += proto.BytesSize(splitInfoSplitIDField, s.splitID)
+	size += proto.NestedStructureSize(splitInfoLastPartField, s.lastPart)
+	size += proto.NestedStructureSize(splitInfoLinkField, s.link)
+
+	return size
+}
+
 func (r *GetRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -687,6 +740,11 @@ func (r *GetResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 					return nil, err
 				}
 			}
+		case *SplitInfo:
+			_, err := proto.NestedStructureMarshal(getRespBodySplitInfoField, buf, v)
+			if err != nil {
+				return nil, err
+			}
 		default:
 			panic("unknown one of object get response body type")
 		}
@@ -708,6 +766,8 @@ func (r *GetResponseBody) StableSize() (size int) {
 			if v != nil {
 				size += proto.BytesSize(getRespBodyChunkField, v.chunk)
 			}
+		case *SplitInfo:
+			size += proto.NestedStructureSize(getRespBodySplitInfoField, v)
 		default:
 			panic("unknown one of object get response body type")
 		}

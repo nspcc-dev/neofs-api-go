@@ -93,6 +93,15 @@ func (m *GetResponse_Body) SetChunk(v *GetResponse_Body_Chunk) {
 	}
 }
 
+// SetSplitInfo sets part of the object payload.
+func (m *GetResponse_Body) SetSplitInfo(v *SplitInfo) {
+	if m != nil {
+		m.ObjectPart = &GetResponse_Body_SplitInfo{
+			SplitInfo: v,
+		}
+	}
+}
+
 // SetBody sets body of the response.
 func (m *GetResponse) SetBody(v *GetResponse_Body) {
 	if m != nil {
