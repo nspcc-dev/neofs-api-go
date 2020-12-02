@@ -445,6 +445,8 @@ func (c *Client) getObjectV2(ctx context.Context, p *GetObjectParams, opts ...Ca
 			} else {
 				payload = append(payload, v.GetChunk()...)
 			}
+		case *v2object.SplitInfo: // what else can we do here?
+			return nil, errors.New("object not found, split info has been provided")
 		default:
 			panic(fmt.Sprintf("unexpected Get object part type %T", v))
 		}
