@@ -107,8 +107,9 @@ func TestGetRequestBody_StableMarshal(t *testing.T) {
 }
 
 func TestGetResponseBody_StableMarshal(t *testing.T) {
-	initFrom := generateGetResponseBody(true)
-	chunkFrom := generateGetResponseBody(false)
+	initFrom := generateGetResponseBody(0)
+	chunkFrom := generateGetResponseBody(1)
+	splitInfoFrom := generateGetResponseBody(2)
 	transport := new(grpc.GetResponse_Body)
 
 	t.Run("init non empty", func(t *testing.T) {
@@ -131,6 +132,17 @@ func TestGetResponseBody_StableMarshal(t *testing.T) {
 
 		to := object.GetResponseBodyFromGRPCMessage(transport)
 		require.Equal(t, chunkFrom, to)
+	})
+
+	t.Run("split info non empty", func(t *testing.T) {
+		wire, err := splitInfoFrom.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = goproto.Unmarshal(wire, transport)
+		require.NoError(t, err)
+
+		to := object.GetResponseBodyFromGRPCMessage(transport)
+		require.Equal(t, splitInfoFrom, to)
 	})
 }
 
@@ -518,21 +530,29 @@ func generateGetRequestBody(cid, oid string) *object.GetRequestBody {
 	return req
 }
 
-func generateGetResponseBody(flag bool) *object.GetResponseBody {
+func generateGetResponseBody(i int) *object.GetResponseBody {
 	resp := new(object.GetResponseBody)
 	var part object.GetObjectPart
 
-	if flag {
+	switch i {
+	case 0:
 		init := new(object.GetObjectPartInit)
 		init.SetObjectID(generateObjectID("Object ID"))
 		init.SetSignature(generateSignature("Key", "Signature"))
 		init.SetHeader(generateHeader(10))
 		part = init
-	} else {
+	case 1:
 		chunk := new(object.GetObjectPartChunk)
 		chunk.SetChunk([]byte("Some data chunk"))
 		part = chunk
+	default:
+		splitInfo := new(object.SplitInfo)
+		splitInfo.SetSplitID([]byte("splitID"))
+		splitInfo.SetLastPart(generateObjectID("Right ID"))
+		splitInfo.SetLink(generateObjectID("Link ID"))
+		part = splitInfo
 	}
+
 	resp.SetObjectPart(part)
 
 	return resp

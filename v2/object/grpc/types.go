@@ -200,3 +200,24 @@ func (m *ShortHeader) SetPayloadLength(v uint64) {
 		m.PayloadLength = v
 	}
 }
+
+// SetSplitId sets id of split hierarchy.
+func (m *SplitInfo) SetSplitId(v []byte) {
+	if m != nil {
+		m.SplitId = v
+	}
+}
+
+// SetLastPart sets id of most right child in split hierarchy.
+func (m *SplitInfo) SetLastPart(v *refs.ObjectID) {
+	if m != nil {
+		m.LastPart = v
+	}
+}
+
+// SetLink sets id of linking object in split hierarchy.
+func (m *SplitInfo) SetLink(v *refs.ObjectID) {
+	if m != nil {
+		m.Link = v
+	}
+}
