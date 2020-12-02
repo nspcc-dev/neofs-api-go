@@ -629,6 +629,17 @@ func (s *SplitInfo) StableSize() (size int) {
 	return size
 }
 
+func (s *SplitInfo) Unmarshal(data []byte) error {
+	m := new(object.SplitInfo)
+	if err := goproto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*s = *SplitInfoFromGRPCMessage(m)
+
+	return nil
+}
+
 func (r *GetRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
