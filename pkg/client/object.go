@@ -32,6 +32,8 @@ type DeleteObjectParams struct {
 type GetObjectParams struct {
 	addr *object.Address
 
+	raw bool
+
 	w io.Writer
 }
 
@@ -346,6 +348,14 @@ func (p *GetObjectParams) WithPayloadWriter(w io.Writer) *GetObjectParams {
 	return p
 }
 
+func (p *GetObjectParams) WithRawFlag(v bool) *GetObjectParams {
+	if p != nil {
+		p.raw = v
+	}
+
+	return p
+}
+
 func (c *Client) GetObject(ctx context.Context, p *GetObjectParams, opts ...CallOption) (*object.Object, error) {
 	// check remote node version
 	switch c.remoteNode.Version.Major() {
@@ -391,6 +401,7 @@ func (c *Client) getObjectV2(ctx context.Context, p *GetObjectParams, opts ...Ca
 
 	// fill body fields
 	body.SetAddress(p.addr.ToV2())
+	body.SetRaw(p.raw)
 
 	// sign the request
 	if err := signature.SignServiceMessage(c.key, req); err != nil {
