@@ -47,3 +47,16 @@ func (s *SplitInfo) Link() *ID {
 func (s *SplitInfo) SetLink(v *ID) {
 	(*object.SplitInfo)(s).SetLink(v.ToV2())
 }
+
+func (s *SplitInfo) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*object.SplitInfo)(s).StableMarshal(buf)
+}
+
+func (s *SplitInfo) Unmarshal(data []byte) error {
+	return (*object.SplitInfo)(s).Unmarshal(data)
+}

@@ -29,6 +29,17 @@ func TestSplitInfo(t *testing.T) {
 
 		require.Equal(t, s, newS)
 	})
+
+	t.Run("marshal and unmarshal", func(t *testing.T) {
+		data, err := s.Marshal()
+		require.NoError(t, err)
+
+		newS := object.NewSplitInfo()
+
+		err = newS.Unmarshal(data)
+		require.NoError(t, err)
+		require.Equal(t, s, newS)
+	})
 }
 
 func generateID() *object.ID {
