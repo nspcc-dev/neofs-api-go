@@ -31,6 +31,43 @@ func TestPlacementPolicy_UnspecifiedClause(t *testing.T) {
 	require.Equal(t, 4, len(v.Flatten()))
 }
 
+func TestPlacementPolicy_Minimal(t *testing.T) {
+	nodes := []NodeInfo{
+		nodeInfoFromAttributes("City", "Saint-Petersburg"),
+		nodeInfoFromAttributes("City", "Moscow"),
+		nodeInfoFromAttributes("City", "Berlin"),
+		nodeInfoFromAttributes("City", "Paris"),
+	}
+	nm, err := NewNetmap(NodesFromInfo(nodes))
+	require.NoError(t, err)
+
+	runTest := func(t *testing.T, rep uint32, expectError bool) {
+		p := newPlacementPolicy(0,
+			[]*Replica{newReplica(rep, "")},
+			nil, nil)
+
+		v, err := nm.GetContainerNodes(p, nil)
+
+		if expectError {
+			require.Error(t, err)
+			return
+		}
+
+		require.NoError(t, err)
+		require.EqualValues(t, rep, len(v.Flatten()))
+	}
+
+	t.Run("REP 1", func(t *testing.T) {
+		runTest(t, 1, false)
+	})
+	t.Run("REP 3", func(t *testing.T) {
+		runTest(t, 3, false)
+	})
+	t.Run("REP 5", func(t *testing.T) {
+		runTest(t, 5, true)
+	})
+}
+
 // Issue #215.
 func TestPlacementPolicy_MultipleREP(t *testing.T) {
 	p := newPlacementPolicy(1,

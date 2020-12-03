@@ -71,6 +71,19 @@ func (m *Netmap) GetContainerNodes(p *PlacementPolicy, pivot []byte) (ContainerN
 		}
 
 		if r.Selector() == "" {
+			if len(p.Selectors()) == 0 {
+				s := new(Selector)
+				s.SetCount(r.Count())
+				s.SetFilter(MainFilterName)
+
+				nodes, err := c.getSelection(p, s)
+				if err != nil {
+					return nil, err
+				}
+
+				result[i] = flattenNodes(nodes)
+			}
+
 			for _, s := range p.Selectors() {
 				result[i] = append(result[i], flattenNodes(c.Selections[s.Name()])...)
 			}
