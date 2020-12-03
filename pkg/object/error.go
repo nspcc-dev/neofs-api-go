@@ -6,14 +6,14 @@ type SplitInfoError struct {
 
 const splitInfoErrorMsg = "object not found, split info has been provided"
 
-func (s SplitInfoError) Error() string {
+func (s *SplitInfoError) Error() string {
 	return splitInfoErrorMsg
 }
 
-func (s SplitInfoError) SplitInfo() *SplitInfo {
+func (s *SplitInfoError) SplitInfo() *SplitInfo {
 	return s.si
 }
 
-func NewSplitInfoError(v *SplitInfo) SplitInfoError {
-	return SplitInfoError{si: v}
+func NewSplitInfoError(v *SplitInfo) *SplitInfoError {
+	return &SplitInfoError{si: v}
 }
