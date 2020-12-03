@@ -140,12 +140,28 @@ func (p *PutObjectParams) WithObject(v *object.Object) *PutObjectParams {
 	return p
 }
 
+func (p *PutObjectParams) Object() *object.Object {
+	if p != nil {
+		return p.obj
+	}
+
+	return nil
+}
+
 func (p *PutObjectParams) WithPayloadReader(v io.Reader) *PutObjectParams {
 	if p != nil {
 		p.r = v
 	}
 
 	return p
+}
+
+func (p *PutObjectParams) PayloadReader() io.Reader {
+	if p != nil {
+		return p.r
+	}
+
+	return nil
 }
 
 func (c *Client) PutObject(ctx context.Context, p *PutObjectParams, opts ...CallOption) (*object.ID, error) {
@@ -269,6 +285,14 @@ func (p *DeleteObjectParams) WithAddress(v *object.Address) *DeleteObjectParams 
 	return p
 }
 
+func (p *DeleteObjectParams) Address() *object.Address {
+	if p != nil {
+		return p.addr
+	}
+
+	return nil
+}
+
 func (c *Client) DeleteObject(ctx context.Context, p *DeleteObjectParams, opts ...CallOption) error {
 	// check remote node version
 	switch c.remoteNode.Version.Major() {
@@ -342,6 +366,14 @@ func (p *GetObjectParams) WithAddress(v *object.Address) *GetObjectParams {
 	return p
 }
 
+func (p *GetObjectParams) Address() *object.Address {
+	if p != nil {
+		return p.addr
+	}
+
+	return nil
+}
+
 func (p *GetObjectParams) WithPayloadWriter(w io.Writer) *GetObjectParams {
 	if p != nil {
 		p.w = w
@@ -350,12 +382,28 @@ func (p *GetObjectParams) WithPayloadWriter(w io.Writer) *GetObjectParams {
 	return p
 }
 
+func (p *GetObjectParams) PayloadWriter() io.Writer {
+	if p != nil {
+		return p.w
+	}
+
+	return nil
+}
+
 func (p *GetObjectParams) WithRawFlag(v bool) *GetObjectParams {
 	if p != nil {
 		p.raw = v
 	}
 
 	return p
+}
+
+func (p *GetObjectParams) RawFlag() bool {
+	if p != nil {
+		return p.raw
+	}
+
+	return false
 }
 
 func (c *Client) GetObject(ctx context.Context, p *GetObjectParams, opts ...CallOption) (*object.Object, error) {
@@ -480,12 +528,30 @@ func (p *ObjectHeaderParams) WithAddress(v *object.Address) *ObjectHeaderParams 
 	return p
 }
 
+func (p *ObjectHeaderParams) Address() *object.Address {
+	if p != nil {
+		return p.addr
+	}
+
+	return nil
+}
+
 func (p *ObjectHeaderParams) WithAllFields() *ObjectHeaderParams {
 	if p != nil {
 		p.short = false
 	}
 
 	return p
+}
+
+// AllFields return true if parameter set to return all header fields, returns
+// false if parameter set to return only main fields of header.
+func (p *ObjectHeaderParams) AllFields() bool {
+	if p != nil {
+		return !p.short
+	}
+
+	return false
 }
 
 func (p *ObjectHeaderParams) WithMainFields() *ObjectHeaderParams {
@@ -502,6 +568,14 @@ func (p *ObjectHeaderParams) WithRawFlag(v bool) *ObjectHeaderParams {
 	}
 
 	return p
+}
+
+func (p *ObjectHeaderParams) RawFlag() bool {
+	if p != nil {
+		return p.raw
+	}
+
+	return false
 }
 
 func (c *Client) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams, opts ...CallOption) (*object.Object, error) {
@@ -639,6 +713,14 @@ func (p *RangeDataParams) WithAddress(v *object.Address) *RangeDataParams {
 	return p
 }
 
+func (p *RangeDataParams) Address() *object.Address {
+	if p != nil {
+		return p.addr
+	}
+
+	return nil
+}
+
 func (p *RangeDataParams) WithRange(v *object.Range) *RangeDataParams {
 	if p != nil {
 		p.r = v
@@ -647,12 +729,28 @@ func (p *RangeDataParams) WithRange(v *object.Range) *RangeDataParams {
 	return p
 }
 
+func (p *RangeDataParams) Range() *object.Range {
+	if p != nil {
+		return p.r
+	}
+
+	return nil
+}
+
 func (p *RangeDataParams) WithDataWriter(v io.Writer) *RangeDataParams {
 	if p != nil {
 		p.w = v
 	}
 
 	return p
+}
+
+func (p *RangeDataParams) DataWriter() io.Writer {
+	if p != nil {
+		return p.w
+	}
+
+	return nil
 }
 
 func (c *Client) ObjectPayloadRangeData(ctx context.Context, p *RangeDataParams, opts ...CallOption) ([]byte, error) {
@@ -756,6 +854,14 @@ func (p *RangeChecksumParams) WithAddress(v *object.Address) *RangeChecksumParam
 	return p
 }
 
+func (p *RangeChecksumParams) Address() *object.Address {
+	if p != nil {
+		return p.addr
+	}
+
+	return nil
+}
+
 func (p *RangeChecksumParams) WithRangeList(rs ...*object.Range) *RangeChecksumParams {
 	if p != nil {
 		p.rs = rs
@@ -764,12 +870,28 @@ func (p *RangeChecksumParams) WithRangeList(rs ...*object.Range) *RangeChecksumP
 	return p
 }
 
+func (p *RangeChecksumParams) RangeList() []*object.Range {
+	if p != nil {
+		return p.rs
+	}
+
+	return nil
+}
+
 func (p *RangeChecksumParams) WithSalt(v []byte) *RangeChecksumParams {
 	if p != nil {
 		p.salt = v
 	}
 
 	return p
+}
+
+func (p *RangeChecksumParams) Salt() []byte {
+	if p != nil {
+		return p.salt
+	}
+
+	return nil
 }
 
 func (p *RangeChecksumParams) withChecksumType(t checksumType) *RangeChecksumParams {
@@ -923,12 +1045,28 @@ func (p *SearchObjectParams) WithContainerID(v *container.ID) *SearchObjectParam
 	return p
 }
 
+func (p *SearchObjectParams) ContainerID() *container.ID {
+	if p != nil {
+		return p.cid
+	}
+
+	return nil
+}
+
 func (p *SearchObjectParams) WithSearchFilters(v object.SearchFilters) *SearchObjectParams {
 	if p != nil {
 		p.filters = v
 	}
 
 	return p
+}
+
+func (p *SearchObjectParams) SearchFilters() object.SearchFilters {
+	if p != nil {
+		return p.filters
+	}
+
+	return nil
 }
 
 func (c *Client) SearchObject(ctx context.Context, p *SearchObjectParams, opts ...CallOption) ([]*object.ID, error) {
