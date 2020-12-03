@@ -12,12 +12,13 @@ func TestNewSplitInfoError(t *testing.T) {
 	var (
 		si = generateSplitInfo()
 
-		err error = object.NewSplitInfoError(si)
+		err         error = object.NewSplitInfoError(si)
+		expectedErr *object.SplitInfoError
 	)
 
-	require.True(t, errors.As(err, new(object.SplitInfoError)))
+	require.True(t, errors.As(err, &expectedErr))
 
-	siErr, ok := err.(object.SplitInfoError)
+	siErr, ok := err.(*object.SplitInfoError)
 	require.True(t, ok)
 	require.Equal(t, si, siErr.SplitInfo())
 }
