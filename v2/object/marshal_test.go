@@ -611,13 +611,9 @@ func generateHeadResponseBody(flag bool) *object.HeadResponseBody {
 	var part object.GetHeaderPart
 
 	if flag {
-		short := new(object.GetHeaderPartShort)
-		short.SetShortHeader(generateShortHeader("short id"))
-		part = short
+		part = generateShortHeader("short id")
 	} else {
-		full := new(object.GetHeaderPartFull)
-		full.SetHeaderWithSignature(generateHeaderWithSignature())
-		part = full
+		part = generateHeaderWithSignature()
 	}
 
 	req.SetHeaderPart(part)

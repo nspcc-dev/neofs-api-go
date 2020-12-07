@@ -161,11 +161,8 @@ func testHeadResponse() *object.HeadResponse {
 	shortHdr := new(object.ShortHeader)
 	shortHdr.SetCreationEpoch(100)
 
-	hdrPart := new(object.GetHeaderPartShort)
-	hdrPart.SetShortHeader(shortHdr)
-
 	body := new(object.HeadResponseBody)
-	body.SetHeaderPart(hdrPart)
+	body.SetHeaderPart(shortHdr)
 
 	meta := new(session.ResponseMetaHeader)
 	meta.SetTTL(1)
