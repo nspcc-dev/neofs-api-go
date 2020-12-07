@@ -151,14 +151,6 @@ type GetHeaderPart interface {
 	getHeaderPart()
 }
 
-type GetHeaderPartFull struct {
-	hdr *HeaderWithSignature
-}
-
-type GetHeaderPartShort struct {
-	hdr *ShortHeader
-}
-
 type HeadResponseBody struct {
 	hdrPart GetHeaderPart
 }
@@ -291,6 +283,8 @@ func (h *ShortHeader) SetPayloadLength(v uint64) {
 		h.payloadLen = v
 	}
 }
+
+func (h *ShortHeader) getHeaderPart() {}
 
 func (a *Attribute) GetKey() string {
 	if a != nil {
@@ -585,6 +579,8 @@ func (h *HeaderWithSignature) SetSignature(v *refs.Signature) {
 		h.signature = v
 	}
 }
+
+func (h *HeaderWithSignature) getHeaderPart() {}
 
 func (o *Object) GetObjectID() *refs.ObjectID {
 	if o != nil {
@@ -1239,38 +1235,6 @@ func (r *HeadRequest) SetVerificationHeader(v *session.RequestVerificationHeader
 		r.verifyHeader = v
 	}
 }
-
-func (h *GetHeaderPartFull) GetHeaderWithSignature() *HeaderWithSignature {
-	if h != nil {
-		return h.hdr
-	}
-
-	return nil
-}
-
-func (h *GetHeaderPartFull) SetHeaderWithSignature(v *HeaderWithSignature) {
-	if h != nil {
-		h.hdr = v
-	}
-}
-
-func (*GetHeaderPartFull) getHeaderPart() {}
-
-func (h *GetHeaderPartShort) GetShortHeader() *ShortHeader {
-	if h != nil {
-		return h.hdr
-	}
-
-	return nil
-}
-
-func (h *GetHeaderPartShort) SetShortHeader(v *ShortHeader) {
-	if h != nil {
-		h.hdr = v
-	}
-}
-
-func (*GetHeaderPartShort) getHeaderPart() {}
 
 func (r *HeadResponseBody) GetHeaderPart() GetHeaderPart {
 	if r != nil {

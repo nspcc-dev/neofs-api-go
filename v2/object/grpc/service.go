@@ -323,38 +323,6 @@ func (m *HeadRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	}
 }
 
-// GetShortHeader returns short header of the object.
-func (m *HeadResponse_Body_ShortHeader) GetShortHeader() *ShortHeader {
-	if m != nil {
-		return m.ShortHeader
-	}
-
-	return nil
-}
-
-// SetShortHeader sets short header of the object.
-func (m *HeadResponse_Body_ShortHeader) SetShortHeader(v *ShortHeader) {
-	if m != nil {
-		m.ShortHeader = v
-	}
-}
-
-// GetHeaderWithSignature returns object header.
-func (m *HeadResponse_Body_Header) GetHeaderWithSignature() *HeaderWithSignature {
-	if m != nil {
-		return m.Header
-	}
-
-	return nil
-}
-
-// SetHeaderWithSignature sets object header.
-func (m *HeadResponse_Body_Header) SetHeaderWithSignature(v *HeaderWithSignature) {
-	if m != nil {
-		m.Header = v
-	}
-}
-
 // SetHeader sets object header.
 func (m *HeaderWithSignature) SetHeader(v *Header) {
 	if m != nil {
@@ -370,16 +338,20 @@ func (m *HeaderWithSignature) SetSignature(v *refs.Signature) {
 }
 
 // SetHeader sets full header of the object.
-func (m *HeadResponse_Body) SetHeader(v *HeadResponse_Body_Header) {
+func (m *HeadResponse_Body) SetHeader(v *HeaderWithSignature) {
 	if m != nil {
-		m.Head = v
+		m.Head = &HeadResponse_Body_Header{
+			Header: v,
+		}
 	}
 }
 
 // SetShortHeader sets short header of the object.
-func (m *HeadResponse_Body) SetShortHeader(v *HeadResponse_Body_ShortHeader) {
+func (m *HeadResponse_Body) SetShortHeader(v *ShortHeader) {
 	if m != nil {
-		m.Head = v
+		m.Head = &HeadResponse_Body_ShortHeader{
+			ShortHeader: v,
+		}
 	}
 }
 

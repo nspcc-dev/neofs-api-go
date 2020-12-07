@@ -650,14 +650,14 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 	switch v := resp.GetBody().GetHeaderPart().(type) {
 	case nil:
 		return nil, errNilObjectPart
-	case *v2object.GetHeaderPartShort:
+	case *v2object.ShortHeader:
 		if !p.short {
 			return nil, errors.Errorf("wrong header part type: expected %T, received %T",
-				(*v2object.GetHeaderPartFull)(nil), (*v2object.GetHeaderPartShort)(nil),
+				(*v2object.ShortHeader)(nil), (*v2object.HeaderWithSignature)(nil),
 			)
 		}
 
-		h := v.GetShortHeader()
+		h := v
 
 		hdr = new(v2object.Header)
 		hdr.SetPayloadLength(h.GetPayloadLength())
@@ -665,14 +665,14 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 		hdr.SetOwnerID(h.GetOwnerID())
 		hdr.SetObjectType(h.GetObjectType())
 		hdr.SetCreationEpoch(h.GetCreationEpoch())
-	case *v2object.GetHeaderPartFull:
+	case *v2object.HeaderWithSignature:
 		if p.short {
 			return nil, errors.Errorf("wrong header part type: expected %T, received %T",
-				(*v2object.GetHeaderPartShort)(nil), (*v2object.GetHeaderPartFull)(nil),
+				(*v2object.HeaderWithSignature)(nil), (*v2object.ShortHeader)(nil),
 			)
 		}
 
-		hdrWithSig := v.GetHeaderWithSignature()
+		hdrWithSig := v
 		if hdrWithSig == nil {
 			return nil, errNilObjectPart
 		}

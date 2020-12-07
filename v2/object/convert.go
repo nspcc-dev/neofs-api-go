@@ -1023,62 +1023,6 @@ func HeadRequestFromGRPCMessage(m *object.HeadRequest) *HeadRequest {
 	return r
 }
 
-func GetHeaderPartFullToGRPCMessage(r *GetHeaderPartFull) *object.HeadResponse_Body_Header {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.HeadResponse_Body_Header)
-
-	m.SetHeaderWithSignature(
-		HeaderWithSignatureToGRPCMessage(r.GetHeaderWithSignature()),
-	)
-
-	return m
-}
-
-func GetHeaderPartFullFromGRPCMessage(m *object.HeadResponse_Body_Header) *GetHeaderPartFull {
-	if m == nil {
-		return nil
-	}
-
-	r := new(GetHeaderPartFull)
-
-	r.SetHeaderWithSignature(
-		HeaderWithSignatureFromGRPCMessage(m.GetHeaderWithSignature()),
-	)
-
-	return r
-}
-
-func GetHeaderPartShortToGRPCMessage(r *GetHeaderPartShort) *object.HeadResponse_Body_ShortHeader {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.HeadResponse_Body_ShortHeader)
-
-	m.SetShortHeader(
-		ShortHeaderToGRPCMessage(r.GetShortHeader()),
-	)
-
-	return m
-}
-
-func GetHeaderPartShortFromGRPCMessage(m *object.HeadResponse_Body_ShortHeader) *GetHeaderPartShort {
-	if m == nil {
-		return nil
-	}
-
-	r := new(GetHeaderPartShort)
-
-	r.SetShortHeader(
-		ShortHeaderFromGRPCMessage(m.GetShortHeader()),
-	)
-
-	return r
-}
-
 func HeadResponseBodyToGRPCMessage(r *HeadResponseBody) *object.HeadResponse_Body {
 	if r == nil {
 		return nil
@@ -1088,13 +1032,13 @@ func HeadResponseBodyToGRPCMessage(r *HeadResponseBody) *object.HeadResponse_Bod
 
 	switch v := r.GetHeaderPart(); t := v.(type) {
 	case nil:
-	case *GetHeaderPartFull:
+	case *HeaderWithSignature:
 		m.SetHeader(
-			GetHeaderPartFullToGRPCMessage(t),
+			HeaderWithSignatureToGRPCMessage(t),
 		)
-	case *GetHeaderPartShort:
+	case *ShortHeader:
 		m.SetShortHeader(
-			GetHeaderPartShortToGRPCMessage(t),
+			ShortHeaderToGRPCMessage(t),
 		)
 	default:
 		panic(fmt.Sprintf("unknown header part %T", t))
@@ -1114,11 +1058,11 @@ func HeadResponseBodyFromGRPCMessage(m *object.HeadResponse_Body) *HeadResponseB
 	case nil:
 	case *object.HeadResponse_Body_Header:
 		r.SetHeaderPart(
-			GetHeaderPartFullFromGRPCMessage(v),
+			HeaderWithSignatureFromGRPCMessage(v.Header),
 		)
 	case *object.HeadResponse_Body_ShortHeader:
 		r.SetHeaderPart(
-			GetHeaderPartShortFromGRPCMessage(v),
+			ShortHeaderFromGRPCMessage(v.ShortHeader),
 		)
 	default:
 		panic(fmt.Sprintf("unknown header part %T", v))

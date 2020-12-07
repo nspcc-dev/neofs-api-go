@@ -1016,16 +1016,16 @@ func (r *HeadResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 
 	if r.hdrPart != nil {
 		switch v := r.hdrPart.(type) {
-		case *GetHeaderPartFull:
+		case *HeaderWithSignature:
 			if v != nil {
-				_, err := proto.NestedStructureMarshal(headRespBodyHeaderField, buf, v.hdr)
+				_, err := proto.NestedStructureMarshal(headRespBodyHeaderField, buf, v)
 				if err != nil {
 					return nil, err
 				}
 			}
-		case *GetHeaderPartShort:
+		case *ShortHeader:
 			if v != nil {
-				_, err := proto.NestedStructureMarshal(headRespBodyShortHeaderField, buf, v.hdr)
+				_, err := proto.NestedStructureMarshal(headRespBodyShortHeaderField, buf, v)
 				if err != nil {
 					return nil, err
 				}
@@ -1045,13 +1045,13 @@ func (r *HeadResponseBody) StableSize() (size int) {
 
 	if r.hdrPart != nil {
 		switch v := r.hdrPart.(type) {
-		case *GetHeaderPartFull:
+		case *HeaderWithSignature:
 			if v != nil {
-				size += proto.NestedStructureSize(headRespBodyHeaderField, v.hdr)
+				size += proto.NestedStructureSize(headRespBodyHeaderField, v)
 			}
-		case *GetHeaderPartShort:
+		case *ShortHeader:
 			if v != nil {
-				size += proto.NestedStructureSize(headRespBodyShortHeaderField, v.hdr)
+				size += proto.NestedStructureSize(headRespBodyShortHeaderField, v)
 			}
 		default:
 			panic("unknown one of object put request body type")
