@@ -1040,6 +1040,10 @@ func HeadResponseBodyToGRPCMessage(r *HeadResponseBody) *object.HeadResponse_Bod
 		m.SetShortHeader(
 			ShortHeaderToGRPCMessage(t),
 		)
+	case *SplitInfo:
+		m.SetSplitInfo(
+			SplitInfoToGRPCMessage(t),
+		)
 	default:
 		panic(fmt.Sprintf("unknown header part %T", t))
 	}
@@ -1063,6 +1067,10 @@ func HeadResponseBodyFromGRPCMessage(m *object.HeadResponse_Body) *HeadResponseB
 	case *object.HeadResponse_Body_ShortHeader:
 		r.SetHeaderPart(
 			ShortHeaderFromGRPCMessage(v.ShortHeader),
+		)
+	case *object.HeadResponse_Body_SplitInfo:
+		r.SetHeaderPart(
+			SplitInfoFromGRPCMessage(v.SplitInfo),
 		)
 	default:
 		panic(fmt.Sprintf("unknown header part %T", v))
@@ -1332,6 +1340,8 @@ func GetRangeRequestBodyToGRPCMessage(r *GetRangeRequestBody) *object.GetRangeRe
 		RangeToGRPCMessage(r.GetRange()),
 	)
 
+	m.SetRaw(r.GetRaw())
+
 	return m
 }
 
@@ -1349,6 +1359,8 @@ func GetRangeRequestBodyFromGRPCMessage(m *object.GetRangeRequest_Body) *GetRang
 	r.SetRange(
 		RangeFromGRPCMessage(m.GetRange()),
 	)
+
+	r.SetRaw(m.GetRaw())
 
 	return r
 }
@@ -1385,6 +1397,30 @@ func GetRangeRequestFromGRPCMessage(m *object.GetRangeRequest) *GetRangeRequest 
 	return r
 }
 
+func GetRangePartChunkToGRPCMessage(r *GetRangePartChunk) *object.GetRangeResponse_Body_Chunk {
+	if r == nil {
+		return nil
+	}
+
+	m := new(object.GetRangeResponse_Body_Chunk)
+
+	m.SetChunk(r.GetChunk())
+
+	return m
+}
+
+func GetRangePartChunkFromGRPCMessage(m *object.GetRangeResponse_Body_Chunk) *GetRangePartChunk {
+	if m == nil {
+		return nil
+	}
+
+	r := new(GetRangePartChunk)
+
+	r.SetChunk(m.GetChunk())
+
+	return r
+}
+
 func GetRangeResponseBodyToGRPCMessage(r *GetRangeResponseBody) *object.GetRangeResponse_Body {
 	if r == nil {
 		return nil
@@ -1392,7 +1428,19 @@ func GetRangeResponseBodyToGRPCMessage(r *GetRangeResponseBody) *object.GetRange
 
 	m := new(object.GetRangeResponse_Body)
 
-	m.SetChunk(r.GetChunk())
+	switch v := r.GetRangePart(); t := v.(type) {
+	case nil:
+	case *GetRangePartChunk:
+		m.SetChunk(
+			GetRangePartChunkToGRPCMessage(t),
+		)
+	case *SplitInfo:
+		m.SetSplitInfo(
+			SplitInfoToGRPCMessage(t),
+		)
+	default:
+		panic(fmt.Sprintf("unknown get range part %T", t))
+	}
 
 	return m
 }
@@ -1404,7 +1452,19 @@ func GetRangeResponseBodyFromGRPCMessage(m *object.GetRangeResponse_Body) *GetRa
 
 	r := new(GetRangeResponseBody)
 
-	r.SetChunk(m.GetChunk())
+	switch v := m.GetRangePart().(type) {
+	case nil:
+	case *object.GetRangeResponse_Body_Chunk:
+		r.SetRangePart(
+			GetRangePartChunkFromGRPCMessage(v),
+		)
+	case *object.GetRangeResponse_Body_SplitInfo:
+		r.SetRangePart(
+			SplitInfoFromGRPCMessage(v.SplitInfo),
+		)
+	default:
+		panic(fmt.Sprintf("unknown get range part %T", v))
+	}
 
 	return r
 }
