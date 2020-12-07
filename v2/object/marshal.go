@@ -76,6 +76,7 @@ const (
 
 	headRespBodyHeaderField      = 1
 	headRespBodyShortHeaderField = 2
+	headRespBodySplitInfoField   = 3
 
 	searchFilterMatchField = 1
 	searchFilterNameField  = 2
@@ -92,8 +93,10 @@ const (
 
 	getRangeReqBodyAddressField = 1
 	getRangeReqBodyRangeField   = 2
+	getRangeReqBodyRawField     = 3
 
-	getRangeRespChunkField = 1
+	getRangeRespChunkField     = 1
+	getRangeRespSplitInfoField = 2
 
 	getRangeHashReqBodyAddressField = 1
 	getRangeHashReqBodyRangesField  = 2
@@ -1030,6 +1033,13 @@ func (r *HeadResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 					return nil, err
 				}
 			}
+		case *SplitInfo:
+			if v != nil {
+				_, err := proto.NestedStructureMarshal(headRespBodySplitInfoField, buf, v)
+				if err != nil {
+					return nil, err
+				}
+			}
 		default:
 			panic("unknown one of object put request body type")
 		}
@@ -1052,6 +1062,10 @@ func (r *HeadResponseBody) StableSize() (size int) {
 		case *ShortHeader:
 			if v != nil {
 				size += proto.NestedStructureSize(headRespBodyShortHeaderField, v)
+			}
+		case *SplitInfo:
+			if v != nil {
+				size += proto.NestedStructureSize(headRespBodySplitInfoField, v)
 			}
 		default:
 			panic("unknown one of object put request body type")
@@ -1263,7 +1277,14 @@ func (r *GetRangeRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = proto.NestedStructureMarshal(getRangeReqBodyRangeField, buf[offset:], r.rng)
+	n, err = proto.NestedStructureMarshal(getRangeReqBodyRangeField, buf[offset:], r.rng)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.BoolMarshal(getRangeReqBodyRawField, buf[offset:], r.raw)
 	if err != nil {
 		return nil, err
 	}
@@ -1278,6 +1299,7 @@ func (r *GetRangeRequestBody) StableSize() (size int) {
 
 	size += proto.NestedStructureSize(getRangeReqBodyAddressField, r.addr)
 	size += proto.NestedStructureSize(getRangeReqBodyRangeField, r.rng)
+	size += proto.BoolSize(getRangeReqBodyRawField, r.raw)
 
 	return size
 }
@@ -1291,9 +1313,25 @@ func (r *GetRangeResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	_, err := proto.BytesMarshal(getRangeRespChunkField, buf, r.chunk)
-	if err != nil {
-		return nil, err
+	if r.rngPart != nil {
+		switch v := r.rngPart.(type) {
+		case *GetRangePartChunk:
+			if v != nil {
+				_, err := proto.BytesMarshal(getRangeRespChunkField, buf, v.chunk)
+				if err != nil {
+					return nil, err
+				}
+			}
+		case *SplitInfo:
+			if v != nil {
+				_, err := proto.NestedStructureMarshal(getRangeRespSplitInfoField, buf, v)
+				if err != nil {
+					return nil, err
+				}
+			}
+		default:
+			panic("unknown one of object get range request body type")
+		}
 	}
 
 	return buf, nil
@@ -1304,7 +1342,20 @@ func (r *GetRangeResponseBody) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.BytesSize(getRangeRespChunkField, r.chunk)
+	if r.rngPart != nil {
+		switch v := r.rngPart.(type) {
+		case *GetRangePartChunk:
+			if v != nil {
+				size += proto.BytesSize(getRangeRespChunkField, v.chunk)
+			}
+		case *SplitInfo:
+			if v != nil {
+				size = proto.NestedStructureSize(getRangeRespSplitInfoField, v)
+			}
+		default:
+			panic("unknown one of object get range request body type")
+		}
+	}
 
 	return size
 }

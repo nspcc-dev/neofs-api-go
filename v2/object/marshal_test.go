@@ -239,8 +239,9 @@ func TestSplitHeaderFromGRPCMessage(t *testing.T) {
 }
 
 func TestHeadResponseBody_StableMarshal(t *testing.T) {
-	shortFrom := generateHeadResponseBody(true)
-	fullFrom := generateHeadResponseBody(false)
+	shortFrom := generateHeadResponseBody(0)
+	fullFrom := generateHeadResponseBody(1)
+	splitInfoFrom := generateHeadResponseBody(2)
 	transport := new(grpc.HeadResponse_Body)
 
 	t.Run("short header non empty", func(t *testing.T) {
@@ -263,6 +264,17 @@ func TestHeadResponseBody_StableMarshal(t *testing.T) {
 
 		to := object.HeadResponseBodyFromGRPCMessage(transport)
 		require.Equal(t, fullFrom, to)
+	})
+
+	t.Run("split info non empty", func(t *testing.T) {
+		wire, err := splitInfoFrom.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = goproto.Unmarshal(wire, transport)
+		require.NoError(t, err)
+
+		to := object.HeadResponseBodyFromGRPCMessage(transport)
+		require.Equal(t, splitInfoFrom, to)
 	})
 }
 
@@ -315,18 +327,30 @@ func TestGetRangeRequestBody_StableMarshal(t *testing.T) {
 }
 
 func TestGetRangeResponseBody_StableMarshal(t *testing.T) {
-	from := generateRangeResponseBody("some data")
+	dataFrom := generateRangeResponseBody("some data", true)
+	splitInfoFrom := generateRangeResponseBody("some data", false)
 	transport := new(grpc.GetRangeResponse_Body)
 
-	t.Run("non empty", func(t *testing.T) {
-		wire, err := from.StableMarshal(nil)
+	t.Run("data non empty", func(t *testing.T) {
+		wire, err := dataFrom.StableMarshal(nil)
 		require.NoError(t, err)
 
 		err = goproto.Unmarshal(wire, transport)
 		require.NoError(t, err)
 
 		to := object.GetRangeResponseBodyFromGRPCMessage(transport)
-		require.Equal(t, from, to)
+		require.Equal(t, dataFrom, to)
+	})
+
+	t.Run("split info non empty", func(t *testing.T) {
+		wire, err := splitInfoFrom.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = goproto.Unmarshal(wire, transport)
+		require.NoError(t, err)
+
+		to := object.GetRangeResponseBodyFromGRPCMessage(transport)
+		require.Equal(t, splitInfoFrom, to)
 	})
 }
 
@@ -546,11 +570,7 @@ func generateGetResponseBody(i int) *object.GetResponseBody {
 		chunk.SetChunk([]byte("Some data chunk"))
 		part = chunk
 	default:
-		splitInfo := new(object.SplitInfo)
-		splitInfo.SetSplitID([]byte("splitID"))
-		splitInfo.SetLastPart(generateObjectID("Right ID"))
-		splitInfo.SetLink(generateObjectID("Link ID"))
-		part = splitInfo
+		part = generateSplitInfo()
 	}
 
 	resp.SetObjectPart(part)
@@ -606,14 +626,17 @@ func generateHeadRequestBody(cid, oid string) *object.HeadRequestBody {
 	return req
 }
 
-func generateHeadResponseBody(flag bool) *object.HeadResponseBody {
+func generateHeadResponseBody(flag int) *object.HeadResponseBody {
 	req := new(object.HeadResponseBody)
 	var part object.GetHeaderPart
 
-	if flag {
+	switch flag {
+	case 0:
 		part = generateShortHeader("short id")
-	} else {
+	case 1:
 		part = generateHeaderWithSignature()
+	default:
+		part = generateSplitInfo()
 	}
 
 	req.SetHeaderPart(part)
@@ -677,13 +700,21 @@ func generateRangeRequestBody(cid, oid string) *object.GetRangeRequestBody {
 	req := new(object.GetRangeRequestBody)
 	req.SetAddress(generateAddress(cid, oid))
 	req.SetRange(generateRange(10, 20))
+	req.SetRaw(true)
 
 	return req
 }
 
-func generateRangeResponseBody(data string) *object.GetRangeResponseBody {
+func generateRangeResponseBody(data string, flag bool) *object.GetRangeResponseBody {
 	resp := new(object.GetRangeResponseBody)
-	resp.SetChunk([]byte(data))
+
+	if flag {
+		p := new(object.GetRangePartChunk)
+		p.SetChunk([]byte(data))
+		resp.SetRangePart(p)
+	} else {
+		resp.SetRangePart(generateSplitInfo())
+	}
 
 	return resp
 }
@@ -728,4 +759,13 @@ func TestObject_StableUnmarshal(t *testing.T) {
 	require.NoError(t, obj2.StableUnmarshal(data))
 
 	require.Equal(t, obj, obj2)
+}
+
+func generateSplitInfo() *object.SplitInfo {
+	splitInfo := new(object.SplitInfo)
+	splitInfo.SetSplitID([]byte("splitID"))
+	splitInfo.SetLastPart(generateObjectID("Right ID"))
+	splitInfo.SetLink(generateObjectID("Link ID"))
+
+	return splitInfo
 }

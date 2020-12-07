@@ -181,10 +181,20 @@ type GetRangeRequestBody struct {
 	addr *refs.Address
 
 	rng *Range
+
+	raw bool
+}
+
+type GetRangePart interface {
+	getRangePart()
+}
+
+type GetRangePartChunk struct {
+	chunk []byte
 }
 
 type GetRangeResponseBody struct {
-	chunk []byte
+	rngPart GetRangePart
 }
 
 type GetRangeHashRequestBody struct {
@@ -680,7 +690,11 @@ func (s *SplitInfo) SetLink(v *refs.ObjectID) {
 	}
 }
 
-func (s *SplitInfo) getObjectPart() {} // implement interface to be one of response body
+func (s *SplitInfo) getObjectPart() {}
+
+func (s *SplitInfo) getHeaderPart() {}
+
+func (s *SplitInfo) getRangePart() {}
 
 func (r *GetRequestBody) GetAddress() *refs.Address {
 	if r != nil {
@@ -1530,6 +1544,20 @@ func (r *GetRangeRequestBody) SetRange(v *Range) {
 	}
 }
 
+func (r *GetRangeRequestBody) GetRaw() bool {
+	if r != nil {
+		return r.raw
+	}
+
+	return false
+}
+
+func (r *GetRangeRequestBody) SetRaw(v bool) {
+	if r != nil {
+		r.raw = v
+	}
+}
+
 func (r *GetRangeRequest) GetBody() *GetRangeRequestBody {
 	if r != nil {
 		return r.body
@@ -1572,7 +1600,7 @@ func (r *GetRangeRequest) SetVerificationHeader(v *session.RequestVerificationHe
 	}
 }
 
-func (r *GetRangeResponseBody) GetChunk() []byte {
+func (r *GetRangePartChunk) GetChunk() []byte {
 	if r != nil {
 		return r.chunk
 	}
@@ -1580,9 +1608,25 @@ func (r *GetRangeResponseBody) GetChunk() []byte {
 	return nil
 }
 
-func (r *GetRangeResponseBody) SetChunk(v []byte) {
+func (r *GetRangePartChunk) SetChunk(v []byte) {
 	if r != nil {
 		r.chunk = v
+	}
+}
+
+func (r *GetRangePartChunk) getRangePart() {}
+
+func (r *GetRangeResponseBody) GetRangePart() GetRangePart {
+	if r != nil {
+		return r.rngPart
+	}
+
+	return nil
+}
+
+func (r *GetRangeResponseBody) SetRangePart(v GetRangePart) {
+	if r != nil {
+		r.rngPart = v
 	}
 }
 
