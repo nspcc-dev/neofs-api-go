@@ -48,6 +48,8 @@ type ObjectHeaderParams struct {
 type RangeDataParams struct {
 	addr *object.Address
 
+	raw bool
+
 	r *object.Range
 
 	w io.Writer
@@ -690,6 +692,10 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 		); err != nil {
 			return nil, errors.Wrap(err, "incorrect object header signature")
 		}
+	case *v2object.SplitInfo:
+		si := object.NewSplitInfoFromV2(v)
+
+		return nil, object.NewSplitInfoError(si)
 	default:
 		panic(fmt.Sprintf("unexpected Head object type %T", v))
 	}
@@ -719,6 +725,22 @@ func (p *RangeDataParams) Address() *object.Address {
 	}
 
 	return nil
+}
+
+func (p *RangeDataParams) WithRaw(v bool) *RangeDataParams {
+	if p != nil {
+		p.raw = v
+	}
+
+	return p
+}
+
+func (p *RangeDataParams) Raw() bool {
+	if p != nil {
+		return p.raw
+	}
+
+	return false
 }
 
 func (p *RangeDataParams) WithRange(v *object.Range) *RangeDataParams {
@@ -799,6 +821,7 @@ func (c *Client) objectPayloadRangeV2(ctx context.Context, p *RangeDataParams, o
 	// fill body fields
 	body.SetAddress(p.addr.ToV2())
 	body.SetRange(p.r.ToV2())
+	body.SetRaw(p.raw)
 
 	// sign the request
 	if err := signature.SignServiceMessage(c.key, req); err != nil {
@@ -832,14 +855,23 @@ func (c *Client) objectPayloadRangeV2(ctx context.Context, p *RangeDataParams, o
 			return nil, errors.Wrapf(err, "could not verify %T", resp)
 		}
 
-		chunk := resp.GetBody().GetChunk()
-
-		if p.w != nil {
-			if _, err := p.w.Write(chunk); err != nil {
-				return nil, errors.Wrap(err, "could not write payload chunk")
+		switch v := resp.GetBody().GetRangePart().(type) {
+		case nil:
+			return nil, errNilObjectPart
+		case *v2object.GetRangePartChunk:
+			if p.w != nil {
+				if _, err = p.w.Write(v.GetChunk()); err != nil {
+					return nil, errors.Wrap(err, "could not write payload chunk")
+				}
+			} else {
+				payload = append(payload, v.GetChunk()...)
 			}
-		} else {
-			payload = append(payload, chunk...)
+		case *v2object.SplitInfo:
+			si := object.NewSplitInfoFromV2(v)
+
+			return nil, object.NewSplitInfoError(si)
+		default:
+			panic(fmt.Sprintf("unexpected GetRange object type %T", v))
 		}
 	}
 
