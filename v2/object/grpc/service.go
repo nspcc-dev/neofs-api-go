@@ -355,6 +355,15 @@ func (m *HeadResponse_Body) SetShortHeader(v *ShortHeader) {
 	}
 }
 
+// SetSplitInfo sets meta info about split hierarchy of the object.
+func (m *HeadResponse_Body) SetSplitInfo(v *SplitInfo) {
+	if m != nil {
+		m.Head = &HeadResponse_Body_SplitInfo{
+			SplitInfo: v,
+		}
+	}
+}
+
 // SetBody sets body of the response.
 func (m *HeadResponse) SetBody(v *HeadResponse_Body) {
 	if m != nil {
@@ -411,7 +420,7 @@ func (m *SearchRequest_Body) SetFilters(v []*SearchRequest_Body_Filter) {
 	}
 }
 
-// SetRaw sets raw flag of the request.
+// SetContainerId sets container ID of the search requets.
 func (m *SearchRequest_Body) SetContainerId(v *refs.ContainerID) {
 	if m != nil {
 		m.ContainerId = v
@@ -495,6 +504,13 @@ func (m *GetRangeRequest_Body) SetRange(v *Range) {
 	}
 }
 
+// SetRaw sets raw flag of the request.
+func (m *GetRangeRequest_Body) SetRaw(v bool) {
+	if m != nil {
+		m.Raw = v
+	}
+}
+
 // SetBody sets body of the request.
 func (m *GetRangeRequest) SetBody(v *GetRangeRequest_Body) {
 	if m != nil {
@@ -516,10 +532,35 @@ func (m *GetRangeRequest) SetVerifyHeader(v *session.RequestVerificationHeader) 
 	}
 }
 
-// SetChunk sets chunk of the object payload.
-func (m *GetRangeResponse_Body) SetChunk(v []byte) {
+// GetChunk returns chunk of the object payload range bytes.
+func (m *GetRangeResponse_Body_Chunk) GetChunk() []byte {
+	if m != nil {
+		return m.Chunk
+	}
+
+	return nil
+}
+
+// SetChunk sets chunk of the object payload range bytes.
+func (m *GetRangeResponse_Body_Chunk) SetChunk(v []byte) {
 	if m != nil {
 		m.Chunk = v
+	}
+}
+
+// SetChunk sets chunk of the object payload.
+func (m *GetRangeResponse_Body) SetChunk(v *GetRangeResponse_Body_Chunk) {
+	if m != nil {
+		m.RangePart = v
+	}
+}
+
+// SetSplitInfo sets meta info about split hierarchy of the object.
+func (m *GetRangeResponse_Body) SetSplitInfo(v *SplitInfo) {
+	if m != nil {
+		m.RangePart = &GetRangeResponse_Body_SplitInfo{
+			SplitInfo: v,
+		}
 	}
 }
 
