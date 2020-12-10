@@ -260,6 +260,13 @@ func (m *DeleteRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
 	}
 }
 
+// SetTombstone sets tombstone address.
+func (x *DeleteResponse_Body) SetTombstone(v *refs.Address) {
+	if x != nil {
+		x.Tombstone = v
+	}
+}
+
 // SetBody sets body of the response.
 func (m *DeleteResponse) SetBody(v *DeleteResponse_Body) {
 	if m != nil {

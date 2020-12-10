@@ -139,7 +139,9 @@ type DeleteRequestBody struct {
 	addr *refs.Address
 }
 
-type DeleteResponseBody struct{}
+type DeleteResponseBody struct {
+	tombstone *refs.Address
+}
 
 type HeadRequestBody struct {
 	addr *refs.Address
@@ -1121,6 +1123,22 @@ func (r *DeleteRequest) GetVerificationHeader() *session.RequestVerificationHead
 func (r *DeleteRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
+	}
+}
+
+// GetTombstone returns tombstone address.
+func (r *DeleteResponseBody) GetTombstone() *refs.Address {
+	if r != nil {
+		return r.tombstone
+	}
+
+	return nil
+}
+
+// SetTombstone sets tombstone address.
+func (r *DeleteResponseBody) SetTombstone(v *refs.Address) {
+	if r != nil {
+		r.tombstone = v
 	}
 }
 
