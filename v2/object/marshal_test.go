@@ -207,7 +207,7 @@ func TestDeleteRequestBody_StableMarshal(t *testing.T) {
 }
 
 func TestDeleteResponseBody_StableMarshal(t *testing.T) {
-	from := generateDeleteResponseBody()
+	from := generateDeleteResponseBody("CID", "OID")
 	transport := new(grpc.DeleteResponse_Body)
 
 	t.Run("non empty", func(t *testing.T) {
@@ -613,8 +613,11 @@ func generateDeleteRequestBody(cid, oid string) *object.DeleteRequestBody {
 	return req
 }
 
-func generateDeleteResponseBody() *object.DeleteResponseBody {
-	return new(object.DeleteResponseBody)
+func generateDeleteResponseBody(cid, oid string) *object.DeleteResponseBody {
+	resp := new(object.DeleteResponseBody)
+	resp.SetTombstone(generateAddress(cid, oid))
+
+	return resp
 }
 
 func generateHeadRequestBody(cid, oid string) *object.HeadRequestBody {

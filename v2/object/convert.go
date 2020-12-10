@@ -909,6 +909,9 @@ func DeleteResponseBodyToGRPCMessage(r *DeleteResponseBody) *object.DeleteRespon
 	}
 
 	m := new(object.DeleteResponse_Body)
+	m.SetTombstone(
+		refs.AddressToGRPCMessage(r.GetTombstone()),
+	)
 
 	return m
 }
@@ -919,6 +922,9 @@ func DeleteResponseBodyFromGRPCMessage(m *object.DeleteResponse_Body) *DeleteRes
 	}
 
 	r := new(DeleteResponseBody)
+	r.SetTombstone(
+		refs.AddressFromGRPCMessage(m.GetTombstone()),
+	)
 
 	return r
 }

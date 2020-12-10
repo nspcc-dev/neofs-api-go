@@ -70,6 +70,8 @@ const (
 
 	deleteReqBodyAddressField = 1
 
+	deleteRespBodyTombstoneFNum = 1
+
 	headReqBodyAddressField  = 1
 	headReqBodyMainFlagField = 2
 	headReqBodyRawFlagField  = 3
@@ -953,11 +955,30 @@ func (r *DeleteRequestBody) StableSize() (size int) {
 }
 
 func (r *DeleteResponseBody) StableMarshal(buf []byte) ([]byte, error) {
-	return nil, nil
+	if r == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, r.StableSize())
+	}
+
+	_, err := proto.NestedStructureMarshal(deleteRespBodyTombstoneFNum, buf, r.tombstone)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
 }
 
 func (r *DeleteResponseBody) StableSize() (size int) {
-	return 0
+	if r == nil {
+		return 0
+	}
+
+	size += proto.NestedStructureSize(deleteRespBodyTombstoneFNum, r.tombstone)
+
+	return size
 }
 
 func (r *HeadRequestBody) StableMarshal(buf []byte) ([]byte, error) {
