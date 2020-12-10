@@ -44,7 +44,7 @@ func (t *Tombstone) SetSplitID(v *SplitID) {
 		SetSplitID(v.ToV2())
 }
 
-// SplitID returns identifier of object split hierarchy.
+// Members returns list of objects to be deleted.
 func (t *Tombstone) Members() []*ID {
 	msV2 := (*tombstone.Tombstone)(t).
 		GetMembers()
@@ -62,7 +62,7 @@ func (t *Tombstone) Members() []*ID {
 	return ms
 }
 
-// SplitID returns identifier of object split hierarchy.
+// SetMembers sets list of objects to be deleted.
 func (t *Tombstone) SetMembers(v []*ID) {
 	var ms []*refs.ObjectID
 

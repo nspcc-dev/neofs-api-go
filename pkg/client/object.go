@@ -25,8 +25,20 @@ type PutObjectParams struct {
 	r io.Reader
 }
 
+// ObjectAddressWriter is an interface of the
+// component that writes the object address.
+type ObjectAddressWriter interface {
+	SetAddress(*object.Address)
+}
+
+type objectAddressWriter struct {
+	addr *object.Address
+}
+
 type DeleteObjectParams struct {
 	addr *object.Address
+
+	tombTgt ObjectAddressWriter
 }
 
 type GetObjectParams struct {
@@ -96,6 +108,10 @@ const TZSize = 64
 const searchQueryVersion uint32 = 1
 
 var errNilObjectPart = errors.New("received nil object part")
+
+func (w objectAddressWriter) SetAddress(addr *object.Address) {
+	w.addr = addr
+}
 
 func rangesToV2(rs []*object.Range) []*v2object.Range {
 	r2 := make([]*v2object.Range, 0, len(rs))
@@ -295,21 +311,68 @@ func (p *DeleteObjectParams) Address() *object.Address {
 	return nil
 }
 
+// WithTombstoneAddressTarget sets target component to write tombstone address.
+func (p *DeleteObjectParams) WithTombstoneAddressTarget(v ObjectAddressWriter) *DeleteObjectParams {
+	if p != nil {
+		p.tombTgt = v
+	}
+
+	return p
+}
+
+// TombstoneAddressTarget returns target component to write tombstone address.
+func (p *DeleteObjectParams) TombstoneAddressTarget() ObjectAddressWriter {
+	if p != nil {
+		return p.tombTgt
+	}
+
+	return nil
+}
+
+// DeleteObject is a wrapper over Client.DeleteObject method
+// that provides the ability to receive tombstone address
+// without setting a target in the parameters.
+func DeleteObject(c *Client, ctx context.Context, p *DeleteObjectParams, opts ...CallOption) (*object.Address, error) {
+	w := new(objectAddressWriter)
+
+	err := c.DeleteObject(ctx, p.WithTombstoneAddressTarget(w), opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	return w.addr, nil
+}
+
+// DeleteObject removes object by address.
+//
+// If target of tombstone address is not set, the address is ignored.
 func (c *Client) DeleteObject(ctx context.Context, p *DeleteObjectParams, opts ...CallOption) error {
 	// check remote node version
 	switch c.remoteNode.Version.Major() {
 	case 2:
-		return c.deleteObjectV2(ctx, p, opts...)
+		if p.tombTgt == nil {
+			p.tombTgt = new(objectAddressWriter)
+		}
+
+		resp, err := c.deleteObjectV2(ctx, p, opts...)
+		if err != nil {
+			return err
+		}
+
+		addrV2 := resp.GetBody().GetTombstone()
+		p.tombTgt.SetAddress(object.NewAddressFromV2(addrV2))
+
+		return nil
 	default:
 		return errUnsupportedProtocol
 	}
 }
 
-func (c *Client) deleteObjectV2(ctx context.Context, p *DeleteObjectParams, opts ...CallOption) error {
+func (c *Client) deleteObjectV2(ctx context.Context, p *DeleteObjectParams, opts ...CallOption) (*v2object.DeleteResponse, error) {
 	// create V2 Object client
 	cli, err := v2ObjectClient(c.remoteNode.Protocol, c.opts)
 	if err != nil {
-		return errors.Wrap(err, "could not create Object V2 client")
+		return nil, errors.Wrap(err, "could not create Object V2 client")
 	}
 
 	callOpts := c.defaultCallOptions()
@@ -333,7 +396,7 @@ func (c *Client) deleteObjectV2(ctx context.Context, p *DeleteObjectParams, opts
 		addr: p.addr.ToV2(),
 		verb: v2session.ObjectVerbDelete,
 	}); err != nil {
-		return errors.Wrap(err, "could not sign session token")
+		return nil, errors.Wrap(err, "could not sign session token")
 	}
 
 	req.SetMetaHeader(meta)
@@ -343,21 +406,21 @@ func (c *Client) deleteObjectV2(ctx context.Context, p *DeleteObjectParams, opts
 
 	// sign the request
 	if err := signature.SignServiceMessage(c.key, req); err != nil {
-		return errors.Wrapf(err, "could not sign %T", req)
+		return nil, errors.Wrapf(err, "could not sign %T", req)
 	}
 
 	// send request
 	resp, err := cli.Delete(ctx, req)
 	if err != nil {
-		return errors.Wrapf(err, "could not send %T", req)
+		return nil, errors.Wrapf(err, "could not send %T", req)
 	}
 
 	// verify response structure
 	if err := signature.VerifyServiceMessage(resp); err != nil {
-		return errors.Wrapf(err, "could not verify %T", resp)
+		return nil, errors.Wrapf(err, "could not verify %T", resp)
 	}
 
-	return nil
+	return resp, nil
 }
 
 func (p *GetObjectParams) WithAddress(v *object.Address) *GetObjectParams {
