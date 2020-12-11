@@ -109,7 +109,7 @@ const searchQueryVersion uint32 = 1
 
 var errNilObjectPart = errors.New("received nil object part")
 
-func (w objectAddressWriter) SetAddress(addr *object.Address) {
+func (w *objectAddressWriter) SetAddress(addr *object.Address) {
 	w.addr = addr
 }
 
