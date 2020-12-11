@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.21.0] - 2020-12-11 - Modo (모도, 茅島)
+
+### Added
+
+- `SplitID` message support
+- Search filter by `SplitID` field
+- `SplitInfo` message support and related error
+- `Raw` flag support in `Client.GetObject(Header)`
+- Getters for parameter structures in `pkg/client` package
+- `Tombstone` message support
+- Tombstone address target parameter of `Client.DeleteObject` method
+- `client.DeleteObject` helpful function
+- Usage of default value for backup factor in placement builder
+
+### Removed
+
+- Object search filter by `CHILDFREE` property
+
+### Renamed
+
+- `AddLeafFilter` to `AddPhyFilter` 
+
+### Fixed
+
+- NPE in `eacl.NewTargetFromV2` function
+- Processing `REP X` policies in placement builder
+
+
 ## [1.20.3] - 2020-11-25
 
 ### Added
@@ -428,3 +456,4 @@ Initial public release
 [1.20.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.0...v1.20.1
 [1.20.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.1...v1.20.2
 [1.20.3]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.2...v1.20.3
+[1.21.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.3...v1.21.0
