@@ -23,6 +23,7 @@ versions and SDK layer working with all of them in a handy way.
 |:------------------:|:--------------------------:|
 |< v1.20.0 **(unsupported)**|up to v1.2.0|
 |v1.20.x|[v2.0.2](https://github.com/nspcc-dev/neofs-api/releases/tag/v2.0.2)|
+|v1.21.x|[v2.1.0](https://github.com/nspcc-dev/neofs-api/releases/tag/v2.1.0)|
 
 
 ## Contributing
