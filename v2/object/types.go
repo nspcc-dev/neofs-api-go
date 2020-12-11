@@ -651,7 +651,7 @@ func (o *Object) SetPayload(v []byte) {
 }
 
 func (s *SplitInfo) GetSplitID() []byte {
-	if s.splitID != nil {
+	if s != nil {
 		return s.splitID
 	}
 
