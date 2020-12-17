@@ -140,3 +140,20 @@ func TestSearchFilters_AddSplitIDFilter(t *testing.T) {
 		require.Equal(t, v2object.MatchStringEqual, fsV2[0].GetMatchType())
 	})
 }
+
+func TestSearchFilters_AddTypeFilter(t *testing.T) {
+	typ := object.TypeTombstone
+
+	fs := new(object.SearchFilters)
+	fs.AddTypeFilter(object.MatchStringEqual, typ)
+
+	t.Run("v2", func(t *testing.T) {
+		fsV2 := fs.ToV2()
+
+		require.Len(t, fsV2, 1)
+
+		require.Equal(t, v2object.FilterHeaderObjectType, fsV2[0].GetKey())
+		require.Equal(t, typ.String(), fsV2[0].GetValue())
+		require.Equal(t, v2object.MatchStringEqual, fsV2[0].GetMatchType())
+	})
+}
