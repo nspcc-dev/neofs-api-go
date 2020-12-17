@@ -34,3 +34,13 @@ func TestType_ToV2(t *testing.T) {
 		require.Equal(t, item.t, TypeFromV2(item.t2))
 	}
 }
+
+func TestType_String(t *testing.T) {
+	for _, typ := range []Type{
+		TypeRegular,
+		TypeTombstone,
+		TypeStorageGroup,
+	} {
+		require.Equal(t, typ, TypeFromString(typ.String()))
+	}
+}
