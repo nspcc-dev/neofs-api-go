@@ -64,6 +64,23 @@ func (c Client) GetContainer(ctx context.Context, id *container.ID, opts ...Call
 	}
 }
 
+// GetVerifiedContainerStructure is a wrapper over Client.GetContainer method
+// which checks if the structure of the resulting container matches its identifier.
+//
+// Returns container.ErrIDMismatch if container does not match the identifier.
+func GetVerifiedContainerStructure(ctx context.Context, c *Client, id *container.ID, opts ...CallOption) (*container.Container, error) {
+	cnr, err := c.GetContainer(ctx, id, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	if !container.CalculateID(cnr).Equal(id) {
+		return nil, container.ErrIDMismatch
+	}
+
+	return cnr, nil
+}
+
 func (c Client) ListContainers(ctx context.Context, owner *owner.ID, opts ...CallOption) ([]*container.ID, error) {
 	switch c.remoteNode.Version.Major() {
 	case 2:
