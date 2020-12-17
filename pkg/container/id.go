@@ -12,6 +12,10 @@ import (
 // ID represents v2-compatible container identifier.
 type ID refs.ContainerID
 
+// ErrIDMismatch is returned when container structure does not match
+// a specific identifier.
+var ErrIDMismatch = errors.New("container structure does not match the identifier")
+
 var errInvalidIDString = errors.New("incorrect format of the string container ID")
 
 // NewIDFromV2 wraps v2 ContainerID message to ID.
