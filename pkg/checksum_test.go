@@ -90,4 +90,12 @@ func TestChecksumEncoding(t *testing.T) {
 
 		require.Equal(t, cs, cs2)
 	})
+
+	t.Run("string", func(t *testing.T) {
+		cs2 := NewChecksum()
+
+		require.NoError(t, cs2.Parse(cs.String()))
+
+		require.Equal(t, cs, cs2)
+	})
 }
