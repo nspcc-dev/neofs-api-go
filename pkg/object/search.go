@@ -240,3 +240,8 @@ func (f *SearchFilters) AddObjectIDFilter(m SearchMatchType, id *ID) {
 func (f *SearchFilters) AddSplitIDFilter(m SearchMatchType, id *SplitID) {
 	f.addReservedFilter(m, fKeySplitID, id)
 }
+
+// AddTypeFilter adds filter by object type.
+func (f *SearchFilters) AddTypeFilter(m SearchMatchType, typ Type) {
+	f.addReservedFilter(m, fKeyType, typ)
+}
