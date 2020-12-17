@@ -33,3 +33,14 @@ func TypeFromV2(t object.Type) Type {
 		return TypeRegular
 	}
 }
+
+func (t Type) String() string {
+	return t.ToV2().String()
+}
+
+// TypeFromString parses Type from its string representation.
+func TypeFromString(s string) Type {
+	return TypeFromV2(
+		object.TypeFromString(s),
+	)
+}
