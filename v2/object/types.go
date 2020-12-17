@@ -19,6 +19,8 @@ type ShortHeader struct {
 	typ Type
 
 	payloadLen uint64
+
+	payloadHash, homoHash *refs.Checksum
 }
 
 type Attribute struct {
@@ -293,6 +295,34 @@ func (h *ShortHeader) GetPayloadLength() uint64 {
 func (h *ShortHeader) SetPayloadLength(v uint64) {
 	if h != nil {
 		h.payloadLen = v
+	}
+}
+
+func (h *ShortHeader) GetPayloadHash() *refs.Checksum {
+	if h != nil {
+		return h.payloadHash
+	}
+
+	return nil
+}
+
+func (h *ShortHeader) SetPayloadHash(v *refs.Checksum) {
+	if h != nil {
+		h.payloadHash = v
+	}
+}
+
+func (h *ShortHeader) GetHomomorphicHash() *refs.Checksum {
+	if h != nil {
+		return h.homoHash
+	}
+
+	return nil
+}
+
+func (h *ShortHeader) SetHomomorphicHash(v *refs.Checksum) {
+	if h != nil {
+		h.homoHash = v
 	}
 }
 
