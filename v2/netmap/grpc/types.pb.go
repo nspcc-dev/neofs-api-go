@@ -536,7 +536,10 @@ type NodeInfo struct {
 	PublicKey []byte `protobuf:"bytes,1,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
 	// Ways to connect to a node
 	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
-	// Carries list of the NeoFS node attributes in a string key-value format.
+	// Carries list of the NeoFS node attributes in a key-value form. Key name
+	// must be a node-unique valid UTF-8 string. Value can't be empty. NodeInfo
+	// structures with duplicated attribute names or attributes with empty values
+	// will be considered invalid.
 	Attributes []*NodeInfo_Attribute `protobuf:"bytes,3,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	// Carries state of the NeoFS node.
 	State NodeInfo_State `protobuf:"varint,4,opt,name=state,proto3,enum=neo.fs.v2.netmap.NodeInfo_State" json:"state,omitempty"`

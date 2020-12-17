@@ -130,7 +130,9 @@ func (x *Container) GetPlacementPolicy() *grpc1.PlacementPolicy {
 // container. Container attributes are immutable. They are set at container
 // creation and can never be added or updated.
 //
-// Key name must be a valid UTF-8 string. Value can't be empty.
+// Key name must be a container-unique valid UTF-8 string. Value can't be
+// empty. Containers with duplicated attribute names or attributes with empty
+// values will be considered invalid.
 //
 // There are some "well-known" attributes affecting system behaviour:
 //
