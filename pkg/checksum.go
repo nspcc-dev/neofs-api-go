@@ -3,8 +3,10 @@ package pkg
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/hex"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	"github.com/pkg/errors"
 )
 
 // Checksum represents v2-compatible checksum.
@@ -108,4 +110,36 @@ func (c *Checksum) MarshalJSON() ([]byte, error) {
 func (c *Checksum) UnmarshalJSON(data []byte) error {
 	return (*refs.Checksum)(c).
 		UnmarshalJSON(data)
+}
+
+func (c *Checksum) String() string {
+	return hex.EncodeToString(
+		(*refs.Checksum)(c).
+			GetSum(),
+	)
+}
+
+// Parse parses Checksum from its string representation.
+func (c *Checksum) Parse(s string) error {
+	data, err := hex.DecodeString(s)
+	if err != nil {
+		return err
+	}
+
+	var typ refs.ChecksumType
+
+	switch ln := len(data); ln {
+	default:
+		return errors.Errorf("unsupported checksum length %d", ln)
+	case sha256.Size:
+		typ = refs.SHA256
+	case 64:
+		typ = refs.TillichZemor
+	}
+
+	cV2 := (*refs.Checksum)(c)
+	cV2.SetType(typ)
+	cV2.SetSum(data)
+
+	return nil
 }
