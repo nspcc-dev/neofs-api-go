@@ -730,6 +730,8 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 		hdr.SetOwnerID(h.GetOwnerID())
 		hdr.SetObjectType(h.GetObjectType())
 		hdr.SetCreationEpoch(h.GetCreationEpoch())
+		hdr.SetPayloadHash(h.GetPayloadHash())
+		hdr.SetHomomorphicHash(h.GetHomomorphicHash())
 	case *v2object.HeaderWithSignature:
 		if p.short {
 			return nil, errors.Errorf("wrong header part type: expected %T, received %T",
