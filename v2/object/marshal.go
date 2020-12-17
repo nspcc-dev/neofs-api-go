@@ -12,6 +12,8 @@ const (
 	shortHdrOwnerField      = 3
 	shortHdrObjectTypeField = 4
 	shortHdrPayloadLength   = 5
+	shortHdrHashField       = 6
+	shortHdrHomoHashField   = 7
 
 	attributeKeyField   = 1
 	attributeValueField = 2
@@ -151,7 +153,21 @@ func (h *ShortHeader) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = proto.UInt64Marshal(shortHdrPayloadLength, buf[offset:], h.payloadLen)
+	n, err = proto.UInt64Marshal(shortHdrPayloadLength, buf[offset:], h.payloadLen)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = proto.NestedStructureMarshal(shortHdrHashField, buf[offset:], h.payloadHash)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = proto.NestedStructureMarshal(shortHdrHomoHashField, buf[offset:], h.homoHash)
 	if err != nil {
 		return nil, err
 	}
@@ -169,6 +185,8 @@ func (h *ShortHeader) StableSize() (size int) {
 	size += proto.NestedStructureSize(shortHdrOwnerField, h.ownerID)
 	size += proto.EnumSize(shortHdrObjectTypeField, int32(h.typ))
 	size += proto.UInt64Size(shortHdrPayloadLength, h.payloadLen)
+	size += proto.NestedStructureSize(shortHdrHashField, h.payloadHash)
+	size += proto.NestedStructureSize(shortHdrHomoHashField, h.homoHash)
 
 	return size
 }

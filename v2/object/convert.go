@@ -48,6 +48,14 @@ func ShortHeaderToGRPCMessage(h *ShortHeader) *object.ShortHeader {
 
 	m.SetPayloadLength(h.GetPayloadLength())
 
+	m.SetPayloadHash(
+		refs.ChecksumToGRPCMessage(h.GetPayloadHash()),
+	)
+
+	m.SetHomomorphicHash(
+		refs.ChecksumToGRPCMessage(h.GetHomomorphicHash()),
+	)
+
 	return m
 }
 
@@ -73,6 +81,14 @@ func ShortHeaderFromGRPCMessage(m *object.ShortHeader) *ShortHeader {
 	)
 
 	h.SetPayloadLength(m.GetPayloadLength())
+
+	h.SetPayloadHash(
+		refs.ChecksumFromGRPCMessage(m.GetPayloadHash()),
+	)
+
+	h.SetHomomorphicHash(
+		refs.ChecksumFromGRPCMessage(m.GetHomomorphicHash()),
+	)
 
 	return h
 }
