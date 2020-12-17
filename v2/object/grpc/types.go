@@ -201,6 +201,20 @@ func (m *ShortHeader) SetPayloadLength(v uint64) {
 	}
 }
 
+// SetPayloadHash sets hash of the object payload.
+func (m *ShortHeader) SetPayloadHash(v *refs.Checksum) {
+	if m != nil {
+		m.PayloadHash = v
+	}
+}
+
+// SetHomomorphicHash sets homomorphic hash of the object payload.
+func (m *ShortHeader) SetHomomorphicHash(v *refs.Checksum) {
+	if m != nil {
+		m.HomomorphicHash = v
+	}
+}
+
 // SetSplitId sets id of split hierarchy.
 func (m *SplitInfo) SetSplitId(v []byte) {
 	if m != nil {
