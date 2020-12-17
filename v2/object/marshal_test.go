@@ -476,6 +476,8 @@ func generateShortHeader(id string) *object.ShortHeader {
 	hdr.SetCreationEpoch(200)
 	hdr.SetObjectType(object.TypeRegular)
 	hdr.SetPayloadLength(10)
+	hdr.SetPayloadHash(generateChecksum("payload hash"))
+	hdr.SetHomomorphicHash(generateChecksum("homomorphic hash"))
 
 	return hdr
 }
