@@ -520,7 +520,9 @@ func (x *SplitInfo) GetLink() *grpc.ObjectID {
 // `Attribute` is a user-defined Key-Value metadata pair attached to the
 // object.
 //
-// Key name must be a valid UTF-8 string. Value can't be empty.
+// Key name must be a object-unique valid UTF-8 string. Value can't be empty.
+// Objects with duplicated attribute names or attributes with empty values
+// will be considered invalid.
 //
 // There are some "well-known" attributes starting with `__NEOFS__` prefix
 // that affect system behaviour:

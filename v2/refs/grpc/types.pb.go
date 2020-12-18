@@ -142,10 +142,19 @@ func (x *Address) GetObjectId() *ObjectID {
 // NeoFS Object unique identifier. Objects are immutable and content-addressed.
 // It means `ObjectID` will change if `header` or `payload` changes.
 //
-// `ObjectID` is a 32 byte long SHA256 hash of object's `header` field, which,
-// in it's turn, contains hash of object's payload.
+// `ObjectID` is a 32 byte long
+// [SHA256](https://csrc.nist.gov/publications/detail/fips/180/4/final) hash of
+// object's `header` field, which, in it's turn, contains hash of object's
+// payload.
 //
-// String presentation is base58 encoded string.
+// String presentation is
+// [base58](https://tools.ietf.org/html/draft-msporny-base58-02) encoded string.
+//
+// JSON value will be the data encoded as a string using standard base64
+// encoding with paddings. Either
+// [standard](https://tools.ietf.org/html/rfc4648#section-4) or
+// [URL-safe](https://tools.ietf.org/html/rfc4648#section-5) base64 encoding
+// with/without paddings are accepted.
 type ObjectID struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -197,10 +206,18 @@ func (x *ObjectID) GetValue() []byte {
 // NeoFS container identifier. Container structures are immutable and
 // content-addressed.
 //
-// `ContainerID` is a 32 byte long SHA256 hash of stable-marshalled container
-// message.
+// `ContainerID` is a 32 byte long
+// [SHA256](https://csrc.nist.gov/publications/detail/fips/180/4/final) hash of
+// stable-marshalled container message.
 //
-// String presentation is base58 encoded string.
+// String presentation is
+// [base58](https://tools.ietf.org/html/draft-msporny-base58-02) encoded string.
+//
+// JSON value will be the data encoded as a string using standard base64
+// encoding with paddings. Either
+// [standard](https://tools.ietf.org/html/rfc4648#section-4) or
+// [URL-safe](https://tools.ietf.org/html/rfc4648#section-5) base64 encoding
+// with/without paddings are accepted.
 type ContainerID struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -256,7 +273,14 @@ func (x *ContainerID) GetValue() []byte {
 // `OwnerID` is a 25 bytes sequence starting with Neo version prefix byte
 // followed by 20 bytes of ScrptHash and 4 bytes of checksum.
 //
-// String presentation is Base58 Check Encoded string.
+// String presentation is [Base58
+// Check](https://en.bitcoin.it/wiki/Base58Check_encoding) Encoded string.
+//
+// JSON value will be the data encoded as a string using standard base64
+// encoding with paddings. Either
+// [standard](https://tools.ietf.org/html/rfc4648#section-4) or
+// [URL-safe](https://tools.ietf.org/html/rfc4648#section-5) base64 encoding
+// with/without paddings are accepted.
 type OwnerID struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
