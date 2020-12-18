@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.21.1] - 2020-12-18
+
+Support neofs-api v2.1.1.
+
+### Added
+
+- `client.GetVerifiedContainerStructure` function to check 
+  that the container structure matches the requested identifier.
+
 ## [1.21.0] - 2020-12-11 - Modo (모도, 茅島)
 
 ### Added
@@ -457,3 +466,4 @@ Initial public release
 [1.20.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.1...v1.20.2
 [1.20.3]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.2...v1.20.3
 [1.21.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.3...v1.21.0
+[1.21.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.21.0...v1.21.1
