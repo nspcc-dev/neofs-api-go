@@ -25,6 +25,10 @@ func TestDataAuditResult_StableMarshal(t *testing.T) {
 func generateDataAuditResult() *audit.DataAuditResult {
 	a := new(audit.DataAuditResult)
 
+	v := new(refs.Version)
+	v.SetMajor(2)
+	v.SetMinor(1)
+
 	oid1 := new(refs.ObjectID)
 	oid1.SetValue([]byte("Object ID 1"))
 
@@ -34,9 +38,11 @@ func generateDataAuditResult() *audit.DataAuditResult {
 	cid := new(refs.ContainerID)
 	cid.SetValue([]byte("Container ID"))
 
+	a.SetVersion(v)
 	a.SetAuditEpoch(13)
 	a.SetContainerID(cid)
 	a.SetPublicKey([]byte("Public key"))
+	a.SetComplete(true)
 	a.SetPassSG([]*refs.ObjectID{oid1, oid2})
 	a.SetFailSG([]*refs.ObjectID{oid2, oid1})
 	a.SetHit(1)
