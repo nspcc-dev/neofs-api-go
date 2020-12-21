@@ -2,6 +2,7 @@ package storagegroup
 
 import (
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	storagegroup "github.com/nspcc-dev/neofs-api-go/v2/storagegroup/grpc"
 	goproto "google.golang.org/protobuf/proto"
 )
@@ -50,13 +51,9 @@ func (s *StorageGroup) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	for i := range s.members {
-		n, err = proto.NestedStructureMarshal(objectIDsField, buf[offset:], s.members[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+	n, err = refs.ObjectIDNestedListMarshal(objectIDsField, buf[offset:], s.members)
+	if err != nil {
+		return nil, err
 	}
 
 	return buf, nil
@@ -71,10 +68,7 @@ func (s *StorageGroup) StableSize() (size int) {
 	size += proto.UInt64Size(sizeField, s.size)
 	size += proto.NestedStructureSize(hashField, s.hash)
 	size += proto.UInt64Size(expirationField, s.exp)
-
-	for i := range s.members {
-		size += proto.NestedStructureSize(objectIDsField, s.members[i])
-	}
+	size += refs.ObjectIDNestedListSize(objectIDsField, s.members)
 
 	return size
 }

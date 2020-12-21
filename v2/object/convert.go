@@ -1258,14 +1258,9 @@ func SearchResponseBodyToGRPCMessage(r *SearchResponseBody) *object.SearchRespon
 
 	m := new(object.SearchResponse_Body)
 
-	ids := r.GetIDList()
-	idMsg := make([]*refsGRPC.ObjectID, 0, len(ids))
-
-	for i := range ids {
-		idMsg = append(idMsg, refs.ObjectIDToGRPCMessage(ids[i]))
-	}
-
-	m.SetIdList(idMsg)
+	m.SetIdList(
+		refs.ObjectIDListToGRPCMessage(r.GetIDList()),
+	)
 
 	return m
 }
@@ -1277,14 +1272,9 @@ func SearchResponseBodyFromGRPCMessage(m *object.SearchResponse_Body) *SearchRes
 
 	r := new(SearchResponseBody)
 
-	idMsg := m.GetIdList()
-	ids := make([]*refs.ObjectID, 0, len(idMsg))
-
-	for i := range idMsg {
-		ids = append(ids, refs.ObjectIDFromGRPCMessage(idMsg[i]))
-	}
-
-	r.SetIDList(ids)
+	r.SetIDList(
+		refs.ObjectIDListFromGRPCMessage(m.GetIdList()),
+	)
 
 	return r
 }
