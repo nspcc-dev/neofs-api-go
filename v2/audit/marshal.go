@@ -9,9 +9,11 @@ import (
 
 const (
 	_ = iota
+	versionFNum
 	auditEpochFNum
 	cidFNum
 	pubKeyFNum
+	completeFNum
 	passSGFNum
 	failSGFNum
 	hitFNum
@@ -37,6 +39,13 @@ func (a *DataAuditResult) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
+	n, err = proto.NestedStructureMarshal(versionFNum, buf[offset:], a.version)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
 	n, err = proto.Fixed64Marshal(auditEpochFNum, buf[offset:], a.auditEpoch)
 	if err != nil {
 		return nil, err
@@ -52,6 +61,13 @@ func (a *DataAuditResult) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	n, err = proto.BytesMarshal(pubKeyFNum, buf[offset:], a.pubKey)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = proto.BoolMarshal(completeFNum, buf[offset:], a.complete)
 	if err != nil {
 		return nil, err
 	}
@@ -115,9 +131,11 @@ func (a *DataAuditResult) StableSize() (size int) {
 		return 0
 	}
 
+	size += proto.NestedStructureSize(versionFNum, a.version)
 	size += proto.Fixed64Size(auditEpochFNum, a.auditEpoch)
 	size += proto.NestedStructureSize(cidFNum, a.cid)
 	size += proto.BytesSize(pubKeyFNum, a.pubKey)
+	size += proto.BoolSize(completeFNum, a.complete)
 	size += refs.ObjectIDNestedListSize(passSGFNum, a.passSG)
 	size += refs.ObjectIDNestedListSize(failSGFNum, a.failSG)
 	size += proto.UInt32Size(hitFNum, a.hit)
