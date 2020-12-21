@@ -4,6 +4,13 @@ import (
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
+// SetVersion is a Version field setter.
+func (x *DataAuditResult) SetVersion(v *refs.Version) {
+	if x != nil {
+		x.Version = v
+	}
+}
+
 // SetAuditEpoch is an AuditEpoch field setter.
 func (x *DataAuditResult) SetAuditEpoch(v uint64) {
 	if x != nil {
@@ -22,6 +29,13 @@ func (x *DataAuditResult) SetContainerId(v *refs.ContainerID) {
 func (x *DataAuditResult) SetPublicKey(v []byte) {
 	if x != nil {
 		x.PublicKey = v
+	}
+}
+
+// SetComplete is a Complete field setter.
+func (x *DataAuditResult) SetComplete(v bool) {
+	if x != nil {
+		x.Complete = v
 	}
 }
 

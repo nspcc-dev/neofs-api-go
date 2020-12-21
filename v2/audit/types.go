@@ -7,6 +7,8 @@ import (
 // DataAuditResult is a unified structure of
 // DataAuditResult message from proto definition.
 type DataAuditResult struct {
+	version *refs.Version
+
 	auditEpoch uint64
 
 	hit, miss, fail uint32
@@ -18,6 +20,24 @@ type DataAuditResult struct {
 	passSG, failSG []*refs.ObjectID
 
 	failNodes, passNodes [][]byte
+
+	complete bool
+}
+
+// GetVersion returns version of Data Audit structure.
+func (a *DataAuditResult) GetVersion() *refs.Version {
+	if a != nil {
+		return a.version
+	}
+
+	return nil
+}
+
+// SetVersion sets version of Data Audit structure.
+func (a *DataAuditResult) SetVersion(v *refs.Version) {
+	if a != nil {
+		a.version = v
+	}
 }
 
 // GetAuditEpoch returns epoch number when the Data Audit was conducted.
@@ -193,5 +213,21 @@ func (a *DataAuditResult) GetFailNodes() [][]byte {
 func (a *DataAuditResult) SetFailNodes(v [][]byte) {
 	if a != nil {
 		a.failNodes = v
+	}
+}
+
+// GetComplete returns boolean completion statement of audit result.
+func (a *DataAuditResult) GetComplete() bool {
+	if a != nil {
+		return a.complete
+	}
+
+	return false // bool default
+}
+
+// SetComplete sets boolean completion statement of audit result.
+func (a *DataAuditResult) SetComplete(v bool) {
+	if a != nil {
+		a.complete = v
 	}
 }

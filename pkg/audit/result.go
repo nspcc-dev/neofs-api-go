@@ -1,6 +1,7 @@
 package audit
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/audit"
@@ -17,7 +18,10 @@ func NewResultFromV2(aV2 *audit.DataAuditResult) *Result {
 
 // New creates and initializes blank Result.
 func NewResult() *Result {
-	return NewResultFromV2(new(audit.DataAuditResult))
+	r := NewResultFromV2(new(audit.DataAuditResult))
+	r.SetVersion(pkg.SDKVersion())
+
+	return r
 }
 
 // ToV2 converts Result to v2 DataAuditResult message.
@@ -57,6 +61,19 @@ func (r *Result) UnmarshalJSON(data []byte) error {
 		UnmarshalJSON(data)
 }
 
+// Version returns Data Audit structure version.
+func (r *Result) Version() *pkg.Version {
+	return pkg.NewVersionFromV2(
+		(*audit.DataAuditResult)(r).GetVersion(),
+	)
+}
+
+// SetVersion sets Data Audit structure version.
+func (r *Result) SetVersion(v *pkg.Version) {
+	(*audit.DataAuditResult)(r).
+		SetVersion(v.ToV2())
+}
+
 // AuditEpoch returns epoch number when the Data Audit was conducted.
 func (r *Result) AuditEpoch() uint64 {
 	return (*audit.DataAuditResult)(r).
@@ -93,6 +110,18 @@ func (r *Result) PublicKey() []byte {
 func (r *Result) SetPublicKey(key []byte) {
 	(*audit.DataAuditResult)(r).
 		SetPublicKey(key)
+}
+
+// Complete returns completion state of audit result.
+func (r *Result) Complete() bool {
+	return (*audit.DataAuditResult)(r).
+		GetComplete()
+}
+
+// SetComplete sets completion state of audit result.
+func (r *Result) SetComplete(v bool) {
+	(*audit.DataAuditResult)(r).
+		SetComplete(v)
 }
 
 // PassSG returns list of Storage Groups that passed audit PoR stage.
