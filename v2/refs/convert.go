@@ -76,6 +76,34 @@ func ObjectIDFromGRPCMessage(m *refs.ObjectID) *ObjectID {
 	return o
 }
 
+func ObjectIDListToGRPCMessage(ids []*ObjectID) []*refs.ObjectID {
+	if ids == nil {
+		return nil
+	}
+
+	idsV2 := make([]*refs.ObjectID, 0, len(ids))
+
+	for i := range ids {
+		idsV2 = append(idsV2, ObjectIDToGRPCMessage(ids[i]))
+	}
+
+	return idsV2
+}
+
+func ObjectIDListFromGRPCMessage(idsV2 []*refs.ObjectID) []*ObjectID {
+	if idsV2 == nil {
+		return nil
+	}
+
+	ids := make([]*ObjectID, 0, len(idsV2))
+
+	for i := range idsV2 {
+		ids = append(ids, ObjectIDFromGRPCMessage(idsV2[i]))
+	}
+
+	return ids
+}
+
 func AddressToGRPCMessage(a *Address) *refs.Address {
 	if a == nil {
 		return nil
