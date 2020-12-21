@@ -3,6 +3,7 @@ package object
 import (
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 	object "github.com/nspcc-dev/neofs-api-go/v2/object/grpc"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	goproto "google.golang.org/protobuf/proto"
 )
 
@@ -295,14 +296,12 @@ func (h *SplitHeader) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	for i := range h.children {
-		n, err = proto.NestedStructureMarshal(splitHdrChildrenField, buf[offset:], h.children[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+	n, err = refs.ObjectIDNestedListMarshal(splitHdrChildrenField, buf[offset:], h.children)
+	if err != nil {
+		return nil, err
 	}
+
+	offset += n
 
 	_, err = proto.BytesMarshal(splitHdrSplitIDField, buf[offset:], h.splitID)
 	if err != nil {
@@ -321,11 +320,7 @@ func (h *SplitHeader) StableSize() (size int) {
 	size += proto.NestedStructureSize(splitHdrPreviousField, h.prev)
 	size += proto.NestedStructureSize(splitHdrParentSignatureField, h.parSig)
 	size += proto.NestedStructureSize(splitHdrParentHeaderField, h.parHdr)
-
-	for i := range h.children {
-		size += proto.NestedStructureSize(splitHdrChildrenField, h.children[i])
-	}
-
+	size += refs.ObjectIDNestedListSize(splitHdrChildrenField, h.children)
 	size += proto.BytesSize(splitHdrSplitIDField, h.splitID)
 
 	return size
@@ -1227,17 +1222,13 @@ func (r *SearchResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	}
 
 	var (
-		offset, n int
-		err       error
+		offset int
+		err    error
 	)
 
-	for i := range r.idList {
-		n, err = proto.NestedStructureMarshal(searchRespBodyObjectIDsField, buf[offset:], r.idList[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+	_, err = refs.ObjectIDNestedListMarshal(searchRespBodyObjectIDsField, buf[offset:], r.idList)
+	if err != nil {
+		return nil, err
 	}
 
 	return buf, nil
@@ -1248,9 +1239,7 @@ func (r *SearchResponseBody) StableSize() (size int) {
 		return 0
 	}
 
-	for i := range r.idList {
-		size += proto.NestedStructureSize(searchRespBodyObjectIDsField, r.idList[i])
-	}
+	size += refs.ObjectIDNestedListSize(searchRespBodyObjectIDsField, r.idList)
 
 	return size
 }
