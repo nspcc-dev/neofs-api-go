@@ -335,3 +335,28 @@ func NestedStructureSize(field int64, v stableMarshaller) (size int) {
 
 	return size
 }
+
+func Fixed64Marshal(field int, buf []byte, v uint64) (int, error) {
+	if v == 0 {
+		return 0, nil
+	}
+
+	prefix := field<<3 | 1
+
+	// buf length check can prevent panic at PutUvarint, but it will make
+	// marshaller a bit slower.
+	i := binary.PutUvarint(buf, uint64(prefix))
+	binary.LittleEndian.PutUint64(buf[i:], v)
+
+	return i + 8, nil
+}
+
+func Fixed64Size(fNum int, v uint64) int {
+	if v == 0 {
+		return 0
+	}
+
+	prefix := fNum<<3 | 1
+
+	return VarUIntSize(uint64(prefix)) + 8
+}
