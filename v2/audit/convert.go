@@ -14,6 +14,10 @@ func DataAuditResultToGRPCMessage(a *DataAuditResult) *audit.DataAuditResult {
 
 	m := new(audit.DataAuditResult)
 
+	m.SetVersion(
+		refs.VersionToGRPCMessage(a.GetVersion()),
+	)
+
 	m.SetAuditEpoch(a.GetAuditEpoch())
 
 	m.SetContainerId(
@@ -21,6 +25,8 @@ func DataAuditResultToGRPCMessage(a *DataAuditResult) *audit.DataAuditResult {
 	)
 
 	m.SetPublicKey(a.GetPublicKey())
+
+	m.SetComplete(a.GetComplete())
 
 	m.SetPassSg(
 		refs.ObjectIDListToGRPCMessage(a.GetPassSG()),
@@ -49,6 +55,10 @@ func DataAuditResultFromGRPCMessage(m *audit.DataAuditResult) *DataAuditResult {
 
 	a := new(DataAuditResult)
 
+	a.SetVersion(
+		refs.VersionFromGRPCMessage(m.GetVersion()),
+	)
+
 	a.SetAuditEpoch(m.GetAuditEpoch())
 
 	a.SetContainerID(
@@ -56,6 +66,8 @@ func DataAuditResultFromGRPCMessage(m *audit.DataAuditResult) *DataAuditResult {
 	)
 
 	a.SetPublicKey(m.GetPublicKey())
+
+	a.SetComplete(m.GetComplete())
 
 	a.SetPassSG(
 		refs.ObjectIDListFromGRPCMessage(m.GetPassSg()),

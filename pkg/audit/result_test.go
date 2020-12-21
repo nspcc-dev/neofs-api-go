@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"testing"
 
+	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/audit"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
@@ -32,6 +33,7 @@ func testOID() *object.ID {
 
 func TestResult(t *testing.T) {
 	r := audit.NewResult()
+	require.Equal(t, pkg.SDKVersion(), r.Version())
 
 	epoch := uint64(13)
 	r.SetAuditEpoch(epoch)
@@ -44,6 +46,9 @@ func TestResult(t *testing.T) {
 	key := []byte{1, 2, 3}
 	r.SetPublicKey(key)
 	require.Equal(t, key, r.PublicKey())
+
+	r.SetComplete(true)
+	require.True(t, r.Complete())
 
 	passSG := []*object.ID{testOID(), testOID()}
 	r.SetPassSG(passSG)
