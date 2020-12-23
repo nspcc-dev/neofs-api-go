@@ -39,6 +39,20 @@ func (x *DataAuditResult) SetComplete(v bool) {
 	}
 }
 
+// SetRequests is a Requests field setter.
+func (x *DataAuditResult) SetRequests(v uint32) {
+	if x != nil {
+		x.Requests = v
+	}
+}
+
+// SetRetries is a Retries field setter.
+func (x *DataAuditResult) SetRetries(v uint32) {
+	if x != nil {
+		x.Retries = v
+	}
+}
+
 // SetPassSg is a PassSg field setter.
 func (x *DataAuditResult) SetPassSg(v []*refs.ObjectID) {
 	if x != nil {

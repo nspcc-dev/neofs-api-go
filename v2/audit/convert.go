@@ -36,6 +36,9 @@ func DataAuditResultToGRPCMessage(a *DataAuditResult) *audit.DataAuditResult {
 		refs.ObjectIDListToGRPCMessage(a.GetFailSG()),
 	)
 
+	m.SetRequests(a.GetRequests())
+	m.SetRetries(a.GetRetries())
+
 	m.SetHit(a.GetHit())
 	m.SetMiss(a.GetMiss())
 	m.SetFail(a.GetFail())
@@ -76,6 +79,9 @@ func DataAuditResultFromGRPCMessage(m *audit.DataAuditResult) *DataAuditResult {
 	a.SetFailSG(
 		refs.ObjectIDListFromGRPCMessage(m.GetFailSg()),
 	)
+
+	a.SetRequests(m.GetRequests())
+	a.SetRetries(m.GetRetries())
 
 	a.SetHit(m.GetHit())
 	a.SetMiss(m.GetMiss())

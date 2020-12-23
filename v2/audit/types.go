@@ -11,6 +11,8 @@ type DataAuditResult struct {
 
 	auditEpoch uint64
 
+	requests, retries uint32
+
 	hit, miss, fail uint32
 
 	cid *refs.ContainerID
@@ -117,6 +119,42 @@ func (a *DataAuditResult) GetFailSG() []*refs.ObjectID {
 func (a *DataAuditResult) SetFailSG(v []*refs.ObjectID) {
 	if a != nil {
 		a.failSG = v
+	}
+}
+
+// GetRequests returns number of requests made by PoR audit check to get
+// all headers of the objects inside storage groups.
+func (a *DataAuditResult) GetRequests() uint32 {
+	if a != nil {
+		return a.requests
+	}
+
+	return 0
+}
+
+// SetRequests sets number of requests made by PoR audit check to get
+// all headers of the objects inside storage groups.
+func (a *DataAuditResult) SetRequests(v uint32) {
+	if a != nil {
+		a.requests = v
+	}
+}
+
+// GetRetries returns number of retries made by PoR audit check to get
+// all headers of the objects inside storage groups.
+func (a *DataAuditResult) GetRetries() uint32 {
+	if a != nil {
+		return a.retries
+	}
+
+	return 0
+}
+
+// SetRetries sets number of retries made by PoR audit check to get
+// all headers of the objects inside storage groups.
+func (a *DataAuditResult) SetRetries(v uint32) {
+	if a != nil {
+		a.retries = v
 	}
 }
 

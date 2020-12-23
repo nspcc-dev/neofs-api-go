@@ -43,6 +43,8 @@ func generateDataAuditResult() *audit.DataAuditResult {
 	a.SetContainerID(cid)
 	a.SetPublicKey([]byte("Public key"))
 	a.SetComplete(true)
+	a.SetRequests(10)
+	a.SetRetries(9)
 	a.SetPassSG([]*refs.ObjectID{oid1, oid2})
 	a.SetFailSG([]*refs.ObjectID{oid2, oid1})
 	a.SetHit(1)
