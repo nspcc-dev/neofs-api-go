@@ -14,6 +14,8 @@ const (
 	cidFNum
 	pubKeyFNum
 	completeFNum
+	requestsFNum
+	retriesFNum
 	passSGFNum
 	failSGFNum
 	hitFNum
@@ -68,6 +70,20 @@ func (a *DataAuditResult) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	n, err = proto.BoolMarshal(completeFNum, buf[offset:], a.complete)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = proto.UInt32Marshal(requestsFNum, buf[offset:], a.requests)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = proto.UInt32Marshal(retriesFNum, buf[offset:], a.retries)
 	if err != nil {
 		return nil, err
 	}
@@ -136,6 +152,8 @@ func (a *DataAuditResult) StableSize() (size int) {
 	size += proto.NestedStructureSize(cidFNum, a.cid)
 	size += proto.BytesSize(pubKeyFNum, a.pubKey)
 	size += proto.BoolSize(completeFNum, a.complete)
+	size += proto.UInt32Size(requestsFNum, a.requests)
+	size += proto.UInt32Size(retriesFNum, a.retries)
 	size += refs.ObjectIDNestedListSize(passSGFNum, a.passSG)
 	size += refs.ObjectIDNestedListSize(failSGFNum, a.failSG)
 	size += proto.UInt32Size(hitFNum, a.hit)

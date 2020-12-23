@@ -124,6 +124,34 @@ func (r *Result) SetComplete(v bool) {
 		SetComplete(v)
 }
 
+// Requests returns number of requests made by PoR audit check to get
+// all headers of the objects inside storage groups.
+func (r *Result) Requests() uint32 {
+	return (*audit.DataAuditResult)(r).
+		GetRequests()
+}
+
+// SetRequests sets number of requests made by PoR audit check to get
+// all headers of the objects inside storage groups.
+func (r *Result) SetRequests(v uint32) {
+	(*audit.DataAuditResult)(r).
+		SetRequests(v)
+}
+
+// Retries returns number of retries made by PoR audit check to get
+// all headers of the objects inside storage groups.
+func (r *Result) Retries() uint32 {
+	return (*audit.DataAuditResult)(r).
+		GetRetries()
+}
+
+// SetRetries sets number of retries made by PoR audit check to get
+// all headers of the objects inside storage groups.
+func (r *Result) SetRetries(v uint32) {
+	(*audit.DataAuditResult)(r).
+		SetRetries(v)
+}
+
 // PassSG returns list of Storage Groups that passed audit PoR stage.
 func (r *Result) PassSG() []*object.ID {
 	mV2 := (*audit.DataAuditResult)(r).

@@ -50,6 +50,14 @@ func TestResult(t *testing.T) {
 	r.SetComplete(true)
 	require.True(t, r.Complete())
 
+	requests := uint32(2)
+	r.SetRequests(requests)
+	require.Equal(t, requests, r.Requests())
+
+	retries := uint32(1)
+	r.SetRetries(retries)
+	require.Equal(t, retries, r.Retries())
+
 	passSG := []*object.ID{testOID(), testOID()}
 	r.SetPassSG(passSG)
 	require.Equal(t, passSG, r.PassSG())
@@ -86,6 +94,8 @@ func TestStorageGroupEncoding(t *testing.T) {
 	r.SetPublicKey([]byte{1, 2, 3})
 	r.SetPassSG([]*object.ID{testOID(), testOID()})
 	r.SetFailSG([]*object.ID{testOID(), testOID()})
+	r.SetRequests(3)
+	r.SetRetries(2)
 	r.SetHit(1)
 	r.SetMiss(2)
 	r.SetFail(3)
