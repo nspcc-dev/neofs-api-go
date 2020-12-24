@@ -55,6 +55,9 @@ func (c Client) PutContainer(ctx context.Context, cnr *container.Container, opts
 	}
 }
 
+// GetContainer receives container structure through NeoFS API call.
+//
+// Returns error if container structure is received but does not meet NeoFS API specification.
 func (c Client) GetContainer(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
 	switch c.remoteNode.Version.Major() {
 	case 2:
@@ -259,7 +262,7 @@ func (c Client) getContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 			return nil, errors.Wrap(err, "can't verify response message")
 		}
 
-		return container.NewContainerFromV2(resp.GetBody().GetContainer()), nil
+		return container.NewVerifiedFromV2(resp.GetBody().GetContainer())
 	default:
 		return nil, errUnsupportedProtocol
 	}
