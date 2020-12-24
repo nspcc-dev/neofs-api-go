@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.21.2] - 2020-12-24
+
+### Added
+
+- `Container.NonceUUID` getter of container nonce in UUID format.
+- `Container.SetNonceUUID` setter of container nonce in UUID format.
+- `NewVerifiedContainerFromV2` container constructor that preliminary
+  checks if container message argument meets NeoFS API V2 specification.
+  
+### Changed
+
+- `Container.Nonce`/`Container.SetNonce` marked as deprecated.
+- `Client.GetContainer` method returns an error if received
+  container does not meet NeoFS API specification.
+
+### Fixed
+
+- `pkg.SDKVersion` to return version with minor `1`.
+- `pkg.IsSupportedVersion` to consider `2.1` as supported.
+
 ## [1.21.1] - 2020-12-18
 
 Support neofs-api v2.1.1.
@@ -467,3 +487,4 @@ Initial public release
 [1.20.3]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.2...v1.20.3
 [1.21.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.3...v1.21.0
 [1.21.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.21.0...v1.21.1
+[1.21.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.21.1...v1.21.2
