@@ -17,8 +17,7 @@ import (
 func TestNewContainer(t *testing.T) {
 	c := container.New()
 
-	nonce, err := uuid.New().MarshalBinary()
-	require.NoError(t, err)
+	nonce := uuid.New()
 
 	wallet, err := owner.NEO3WalletFromPublicKey(&test.DecodeKey(1).PublicKey)
 	require.NoError(t, err)
@@ -29,7 +28,7 @@ func TestNewContainer(t *testing.T) {
 	c.SetBasicACL(acl.PublicBasicRule)
 	c.SetAttributes(generateAttributes(5))
 	c.SetPlacementPolicy(policy)
-	c.SetNonce(nonce)
+	c.SetNonceUUID(nonce)
 	c.SetOwnerID(ownerID)
 	c.SetVersion(pkg.SDKVersion())
 
@@ -39,7 +38,11 @@ func TestNewContainer(t *testing.T) {
 	require.EqualValues(t, newContainer.PlacementPolicy(), policy)
 	require.EqualValues(t, newContainer.Attributes(), generateAttributes(5))
 	require.EqualValues(t, newContainer.BasicACL(), acl.PublicBasicRule)
-	require.EqualValues(t, newContainer.Nonce(), nonce)
+
+	newNonce, err := newContainer.NonceUUID()
+	require.NoError(t, err)
+
+	require.EqualValues(t, newNonce, nonce)
 	require.EqualValues(t, newContainer.OwnerID(), ownerID)
 	require.EqualValues(t, newContainer.Version(), pkg.SDKVersion())
 }
