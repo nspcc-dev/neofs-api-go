@@ -3,6 +3,7 @@ package container
 import (
 	"crypto/sha256"
 
+	"github.com/google/uuid"
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
@@ -21,7 +22,7 @@ func New(opts ...NewOption) *Container {
 	}
 
 	cnr := new(Container)
-	cnr.SetNonce(cnrOptions.nonce[:])
+	cnr.SetNonceUUID(cnrOptions.nonce)
 	cnr.SetBasicACL(cnrOptions.acl)
 
 	if cnrOptions.owner != nil {
@@ -81,12 +82,46 @@ func (c *Container) SetOwnerID(v *owner.ID) {
 	c.v2.SetOwnerID(v.ToV2())
 }
 
+// Nonce returns container nonce in a binary format.
+//
+// Returns nil if container nonce is not a valid UUID.
+//
+// Deprecated: use NonceUUID instead.
 func (c *Container) Nonce() []byte {
-	return c.v2.GetNonce() // return uuid?
+	uid, err := c.NonceUUID()
+	if err == nil {
+		data, _ := uid.MarshalBinary()
+		return data
+	}
+
+	return nil
 }
 
+// SetNonce sets container nonce in a binary format.
+//
+// If slice length is less than UUID size, than
+// value is padded with a sequence of zeros.
+// If slice length is more than UUID size, than
+// value is cut.
+//
+// Deprecated: use SetNonceUUID instead.
 func (c *Container) SetNonce(v []byte) {
-	c.v2.SetNonce(v) // set uuid?
+	u := uuid.UUID{}
+	copy(u[:], v)
+	c.v2.SetNonce(u[:])
+}
+
+// Returns container nonce in UUID format.
+//
+// Returns error if container nonce is not a valid UUID.
+func (c *Container) NonceUUID() (uuid.UUID, error) {
+	return uuid.FromBytes(c.v2.GetNonce())
+}
+
+// SetNonceUUID sets container nonce as UUID.
+func (c *Container) SetNonceUUID(v uuid.UUID) {
+	data, _ := v.MarshalBinary()
+	c.v2.SetNonce(data)
 }
 
 func (c *Container) BasicACL() uint32 {
