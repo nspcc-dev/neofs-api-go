@@ -46,7 +46,7 @@ func TestIsSupportedVersion(t *testing.T) {
 	}{
 		{
 			mjr:    2,
-			maxMnr: 0,
+			maxMnr: 1,
 		},
 	} {
 		v.SetMajor(item.mjr)
