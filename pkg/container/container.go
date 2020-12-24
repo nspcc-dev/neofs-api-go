@@ -42,6 +42,10 @@ func (c *Container) ToV2() *container.Container {
 	return &c.v2
 }
 
+// NewVerifiedFromV2 constructs Container from NeoFS API V2 Container message.
+//
+// Does not perform if message meets NeoFS API V2 specification. To do this
+// use NewVerifiedFromV2 constructor.
 func NewContainerFromV2(c *container.Container) *Container {
 	cnr := new(Container)
 
