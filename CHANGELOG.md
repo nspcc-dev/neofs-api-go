@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.22.0] - 2020-12-XX - Yeouido (여의도, 汝矣島)
+
+Support changes from NeoFS API Yeouido.
+
+### Added
+
+- Payload hash field to `ShortHeader` message.
+- Payload homomorphic hash field to `ShortHeader` message.
+- Support of `StorageGroup` message.
+- Support of `DataAuditResult` message.
+- Stringer and string parser for `Checksum` type of client library.
+- Stringer and string parser for `Type` message. 
+- Stringer and string parser for `Type` type of client library.
+- `AddTypeFilter` method on `SearchFilters` type of client library
+  that adds filter by object type.
+- Utility functions for working with `fixed64` protobuf type to `proto` library.
+- Converters for `repeated` object ID messages in `v2` library.
+
 ## [1.21.2] - 2020-12-24
 
 ### Added
@@ -488,3 +506,4 @@ Initial public release
 [1.21.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.20.3...v1.21.0
 [1.21.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.21.0...v1.21.1
 [1.21.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.21.1...v1.21.2
+[1.22.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.21.2...v1.22.0
