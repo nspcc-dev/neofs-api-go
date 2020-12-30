@@ -25,7 +25,7 @@ Start by forking the `neofs-api-go` repository, make changes in a branch and the
 send a pull request. We encourage pull requests to discuss code changes. Here
 are the steps in details:
 
-### Setup your GitHub Repository
+### Set up your GitHub Repository
 Fork [NeoFS node upstream](https://github.com/nspcc-dev/neofs-api-go/fork) source
 repository to your own personal repository. Copy the URL of your fork (you will
 need it for the `git clone` command below).
@@ -109,7 +109,7 @@ Signed-off-by: Samii Sakisaka <samii@nspcc.ru>
 This can easily be done with the `--signoff` option to `git commit`.
 
 By doing this you state that you can certify the following (from [The Developer
-Certificate of Origin](https://developercertificate.org/):
+Certificate of Origin](https://developercertificate.org/)):
 
 ```
 Developer Certificate of Origin

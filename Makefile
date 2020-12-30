@@ -20,7 +20,7 @@ dep:
 	GO111MODULE=on \
 	go test -i ./... && echo OK
 
-# Run all code formaters
+# Run all code formatters
 fmts: fmt imports
 
 # Reformat code
@@ -53,7 +53,7 @@ protoc:
 
 # Run Unit Test with go test
 test:
-	@echo "⇒ Runnning go test"
+	@echo "⇒ Running go test"
 	@GO111MODULE=on go test ./...
 
 # Run linters
