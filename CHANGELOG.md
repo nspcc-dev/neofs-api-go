@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.22.0] - 2020-12-XX - Yeouido (여의도, 汝矣島)
+## [1.22.0] - 2020-12-30 - Yeouido (여의도, 汝矣島)
 
 Support changes from NeoFS API Yeouido.
 
