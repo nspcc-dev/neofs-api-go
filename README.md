@@ -32,8 +32,8 @@ versions and SDK layer working with all of them in a handy way.
 Feel free to contribute to this project after reading the [contributing
 guidelines](CONTRIBUTING.md).
 
-Before starting to work on a certain topic, create an new issue first,
-describing the feature/topic you are going to implement.
+Before starting to work on a certain topic, create a new issue first, describing
+the feature/topic you are going to implement.
 
 ## License
 
