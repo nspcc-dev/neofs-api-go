@@ -46,7 +46,6 @@ func (m *Filter) SetKey(v string) {
 func (m *Filter) SetOp(v Operation) {
 	if m != nil {
 		m.Op = v
-
 	}
 }
 
