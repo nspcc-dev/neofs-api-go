@@ -332,7 +332,7 @@ func (p *DeleteObjectParams) TombstoneAddressTarget() ObjectAddressWriter {
 // DeleteObject is a wrapper over Client.DeleteObject method
 // that provides the ability to receive tombstone address
 // without setting a target in the parameters.
-func DeleteObject(c *Client, ctx context.Context, p *DeleteObjectParams, opts ...CallOption) (*object.Address, error) {
+func DeleteObject(ctx context.Context, c *Client, p *DeleteObjectParams, opts ...CallOption) (*object.Address, error) {
 	w := new(objectAddressWriter)
 
 	err := c.DeleteObject(ctx, p.WithTombstoneAddressTarget(w), opts...)
