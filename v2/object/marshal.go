@@ -168,7 +168,7 @@ func (h *ShortHeader) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.NestedStructureMarshal(shortHdrHomoHashField, buf[offset:], h.homoHash)
+	_, err = proto.NestedStructureMarshal(shortHdrHomoHashField, buf[offset:], h.homoHash)
 	if err != nil {
 		return nil, err
 	}
@@ -485,12 +485,10 @@ func (h *HeaderWithSignature) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.NestedStructureMarshal(hdrWithSigSignatureField, buf[offset:], h.signature)
+	_, err = proto.NestedStructureMarshal(hdrWithSigSignatureField, buf[offset:], h.signature)
 	if err != nil {
 		return nil, err
 	}
-
-	offset += n
 
 	return buf, nil
 }
@@ -840,7 +838,7 @@ func (r *PutObjectPartInit) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.UInt32Marshal(putReqInitCopiesNumField, buf[offset:], r.copyNum)
+	_, err = proto.UInt32Marshal(putReqInitCopiesNumField, buf[offset:], r.copyNum)
 	if err != nil {
 		return nil, err
 	}

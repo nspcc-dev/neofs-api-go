@@ -132,7 +132,7 @@ func (a *DataAuditResult) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.RepeatedBytesMarshal(failNodesFNum, buf[offset:], a.failNodes)
+	_, err = proto.RepeatedBytesMarshal(failNodesFNum, buf[offset:], a.failNodes)
 	if err != nil {
 		return nil, err
 	}
