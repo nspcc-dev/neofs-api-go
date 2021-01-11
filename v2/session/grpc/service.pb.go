@@ -176,7 +176,7 @@ type CreateRequest_Body struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Dession initiating user's or node's key derived `OwnerID`.
+	// Session initiating user's or node's key derived `OwnerID`
 	OwnerId *grpc.OwnerID `protobuf:"bytes,1,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
 	// Session expiration `Epoch`
 	Expiration uint64 `protobuf:"varint,2,opt,name=expiration,proto3" json:"expiration,omitempty"`
