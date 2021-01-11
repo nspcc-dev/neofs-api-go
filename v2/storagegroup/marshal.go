@@ -51,7 +51,7 @@ func (s *StorageGroup) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = refs.ObjectIDNestedListMarshal(objectIDsField, buf[offset:], s.members)
+	_, err = refs.ObjectIDNestedListMarshal(objectIDsField, buf[offset:], s.members)
 	if err != nil {
 		return nil, err
 	}

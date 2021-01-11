@@ -159,7 +159,7 @@ func (s *Selector) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = protoutil.StringMarshal(filterSelectorField, buf[offset:], s.filter)
+	_, err = protoutil.StringMarshal(filterSelectorField, buf[offset:], s.filter)
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +209,7 @@ func (r *Replica) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = protoutil.StringMarshal(selectorReplicaField, buf[offset:], r.selector)
+	_, err = protoutil.StringMarshal(selectorReplicaField, buf[offset:], r.selector)
 	if err != nil {
 		return nil, err
 	}
@@ -418,7 +418,7 @@ func (ni *NodeInfo) StableMarshal(buf []byte) ([]byte, error) {
 		offset += n
 	}
 
-	n, err = protoutil.EnumMarshal(stateNodeInfoField, buf[offset:], int32(ni.state))
+	_, err = protoutil.EnumMarshal(stateNodeInfoField, buf[offset:], int32(ni.state))
 	if err != nil {
 		return nil, err
 	}

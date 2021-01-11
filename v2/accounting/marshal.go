@@ -36,7 +36,7 @@ func (d *Decimal) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = protoutil.UInt32Marshal(decimalPrecisionField, buf[offset:], d.prec)
+	_, err = protoutil.UInt32Marshal(decimalPrecisionField, buf[offset:], d.prec)
 	if err != nil {
 		return nil, err
 	}
