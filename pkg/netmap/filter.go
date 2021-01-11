@@ -139,6 +139,8 @@ func (c *Context) matchKeyValue(f *Filter, b *Node) bool {
 			return attr < c.numCache[f]
 		case OpLE:
 			return attr <= c.numCache[f]
+		default:
+			// do nothing and return false
 		}
 	}
 	// will not happen if context was created from f (maybe panic?)
