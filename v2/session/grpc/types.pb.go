@@ -218,7 +218,25 @@ func (x *SessionToken) GetSignature() *grpc.Signature {
 	return nil
 }
 
-// Extended headers for Request/Response.
+// Extended headers for Request/Response. May contain any user-defined headers
+// to be interpreted on application level.
+//
+// Key name must be unique valid UTF-8 string. Value can't be empty. Requests or
+// Responses with duplicated header names or headers with empty values will be
+// considered invalid.
+//
+// There are some "well-known" headers starting with `__NEOFS__` prefix that
+// affect system behaviour:
+//
+// * __NEOFS__NETMAP_EPOCH \
+//   Netmap epoch to use for object placement calculation. The `value` is string
+//   encoded `uint64` in decimal presentation. If set to '0' or not set, the
+//   current epoch only will be used.
+// * __NEOFS__NETMAP_LOOKUP_DEPTH \
+//   If object can't be found using current epoch's netmap, this header limits
+//   how many past epochs back the node can lookup. The `value` is string
+//   encoded `uint64` in decimal presentation. If set to '0' or not set, the
+//   current epoch only will be used.
 type XHeader struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
