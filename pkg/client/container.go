@@ -153,6 +153,20 @@ func (c Client) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...CallOptio
 	}
 }
 
+// AnnounceContainerUsedSpace used by storage nodes to estimate their container
+// sizes during lifetime. Use it only in storage node applications.
+func (c Client) AnnounceContainerUsedSpace(
+	ctx context.Context,
+	announce []container.UsedSpaceAnnouncement,
+	opts ...CallOption) error {
+	switch c.remoteNode.Version.Major() {
+	case 2:
+		return c.announceContainerUsedSpaceV2(ctx, announce, opts...)
+	default:
+		return errUnsupportedProtocol
+	}
+}
+
 func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
@@ -480,6 +494,60 @@ func (c Client) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOpt
 		}
 
 		resp, err := cli.SetExtendedACL(ctx, req)
+		if err != nil {
+			return errors.Wrap(err, "transport error")
+		}
+
+		err = v2signature.VerifyServiceMessage(resp)
+		if err != nil {
+			return errors.Wrap(err, "can't verify response message")
+		}
+
+		return nil
+	default:
+		return errUnsupportedProtocol
+	}
+}
+
+func (c Client) announceContainerUsedSpaceV2(
+	ctx context.Context,
+	announce []container.UsedSpaceAnnouncement,
+	opts ...CallOption) error {
+	callOptions := c.defaultCallOptions() // apply all available options
+
+	for i := range opts {
+		opts[i].apply(&callOptions)
+	}
+
+	// convert list of SDK announcement structures into NeoFS-API v2 list
+	v2announce := make([]*v2container.UsedSpaceAnnouncement, 0, len(announce))
+	for i := range announce {
+		v2announce = append(v2announce, announce[i].ToV2())
+	}
+
+	// prepare body of the NeoFS-API v2 request and request itself
+	reqBody := new(v2container.AnnounceUsedSpaceRequestBody)
+	reqBody.SetAnnouncements(v2announce)
+
+	req := new(v2container.AnnounceUsedSpaceRequest)
+	req.SetBody(reqBody)
+	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
+
+	// sign the request
+	err := v2signature.SignServiceMessage(c.key, req)
+	if err != nil {
+		return err
+	}
+
+	// choose underline transport protocol and send message over it
+	switch c.remoteNode.Protocol {
+	case GRPC:
+		cli, err := v2ContainerClientFromOptions(c.opts)
+		if err != nil {
+			return errors.Wrap(err, "can't create grpc client")
+		}
+
+		resp, err := cli.AnnounceUsedSpace(ctx, req)
 		if err != nil {
 			return errors.Wrap(err, "transport error")
 		}
