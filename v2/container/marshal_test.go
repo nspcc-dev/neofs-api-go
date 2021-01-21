@@ -1,7 +1,9 @@
 package container_test
 
 import (
+	"crypto/sha256"
 	"fmt"
+	"math/rand"
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
@@ -232,6 +234,38 @@ func TestGetEACLResponseBody_StableMarshal(t *testing.T) {
 	})
 }
 
+func TestAnnounceUsedSpaceRequestBody_StableMarshal(t *testing.T) {
+	requestFrom := generateAnnounceRequestBody(10)
+	transport := new(grpc.AnnounceUsedSpaceRequest_Body)
+
+	t.Run("non empty", func(t *testing.T) {
+		wire, err := requestFrom.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = goproto.Unmarshal(wire, transport)
+		require.NoError(t, err)
+
+		requestTo := container.AnnounceUsedSpaceRequestBodyFromGRPCMessage(transport)
+		require.Equal(t, requestFrom, requestTo)
+	})
+}
+
+func TestAnnounceUsedSpaceResponseBody_StableMarshal(t *testing.T) {
+	responseFrom := generateAnnounceResponseBody()
+	transport := new(grpc.AnnounceUsedSpaceResponse_Body)
+
+	t.Run("non empty", func(t *testing.T) {
+		wire, err := responseFrom.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = goproto.Unmarshal(wire, transport)
+		require.NoError(t, err)
+
+		responseTo := container.AnnounceUsedSpaceResponseBodyFromGRPCMessage(transport)
+		require.Equal(t, responseFrom, responseTo)
+	})
+}
+
 func generateAttribute(k, v string) *container.Attribute {
 	attr := new(container.Attribute)
 	attr.SetKey(k)
@@ -407,4 +441,29 @@ func generateGetEACLResponseBody(n int, k, v string) *container.GetExtendedACLRe
 	resp.SetSignature(generateSignature("public key", "signature"))
 
 	return resp
+}
+
+func generateAnnounceRequestBody(n int) *container.AnnounceUsedSpaceRequestBody {
+	resp := new(container.AnnounceUsedSpaceRequestBody)
+	buf := make([]byte, sha256.Size)
+
+	announcements := make([]*container.UsedSpaceAnnouncement, 0, n)
+	for i := 0; i < n; i++ {
+		rand.Read(buf)
+
+		cid := new(refs.ContainerID)
+		cid.SetValue(buf)
+
+		a := new(container.UsedSpaceAnnouncement)
+		a.SetContainerID(cid)
+		a.SetUsedSpace(rand.Uint64())
+	}
+
+	resp.SetAnnouncements(announcements)
+
+	return resp
+}
+
+func generateAnnounceResponseBody() *container.AnnounceUsedSpaceResponseBody {
+	return new(container.AnnounceUsedSpaceResponseBody)
 }
