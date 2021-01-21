@@ -93,6 +93,18 @@ type GetExtendedACLResponseBody struct {
 	sig *refs.Signature
 }
 
+type UsedSpaceAnnouncement struct {
+	cid *refs.ContainerID
+
+	usedSpace uint64
+}
+
+type AnnounceUsedSpaceRequestBody struct {
+	announcements []*UsedSpaceAnnouncement
+}
+
+type AnnounceUsedSpaceResponseBody struct{}
+
 func (a *Attribute) GetKey() string {
 	if a != nil {
 		return a.key
@@ -900,6 +912,132 @@ func (r *GetExtendedACLResponse) GetVerificationHeader() *session.ResponseVerifi
 }
 
 func (r *GetExtendedACLResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
+	if r != nil {
+		r.verifyHeader = v
+	}
+}
+
+func (a *UsedSpaceAnnouncement) GetUsedSpace() uint64 {
+	if a != nil {
+		return a.usedSpace
+	}
+
+	return 0
+}
+
+func (a *UsedSpaceAnnouncement) SetUsedSpace(v uint64) {
+	if a != nil {
+		a.usedSpace = v
+	}
+}
+
+func (a *UsedSpaceAnnouncement) GetContainerID() *refs.ContainerID {
+	if a != nil {
+		return a.cid
+	}
+
+	return nil
+}
+
+func (a *UsedSpaceAnnouncement) SetContainerID(v *refs.ContainerID) {
+	if a != nil {
+		a.cid = v
+	}
+}
+
+func (r *AnnounceUsedSpaceRequestBody) GetAnnouncements() []*UsedSpaceAnnouncement {
+	if r != nil {
+		return r.announcements
+	}
+
+	return nil
+}
+
+func (r *AnnounceUsedSpaceRequestBody) SetAnnouncements(v []*UsedSpaceAnnouncement) {
+	if r != nil {
+		r.announcements = v
+	}
+}
+
+func (r *AnnounceUsedSpaceRequest) GetBody() *AnnounceUsedSpaceRequestBody {
+	if r != nil {
+		return r.body
+	}
+
+	return nil
+}
+
+func (r *AnnounceUsedSpaceRequest) SetBody(v *AnnounceUsedSpaceRequestBody) {
+	if r != nil {
+		r.body = v
+	}
+}
+
+func (r *AnnounceUsedSpaceRequest) GetMetaHeader() *session.RequestMetaHeader {
+	if r != nil {
+		return r.metaHeader
+	}
+
+	return nil
+}
+
+func (r *AnnounceUsedSpaceRequest) SetMetaHeader(v *session.RequestMetaHeader) {
+	if r != nil {
+		r.metaHeader = v
+	}
+}
+
+func (r *AnnounceUsedSpaceRequest) GetVerificationHeader() *session.RequestVerificationHeader {
+	if r != nil {
+		return r.verifyHeader
+	}
+
+	return nil
+}
+
+func (r *AnnounceUsedSpaceRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
+	if r != nil {
+		r.verifyHeader = v
+	}
+}
+
+func (r *AnnounceUsedSpaceResponse) GetBody() *AnnounceUsedSpaceResponseBody {
+	if r != nil {
+		return r.body
+	}
+
+	return nil
+}
+
+func (r *AnnounceUsedSpaceResponse) SetBody(v *AnnounceUsedSpaceResponseBody) {
+	if r != nil {
+		r.body = v
+	}
+}
+
+func (r *AnnounceUsedSpaceResponse) GetMetaHeader() *session.ResponseMetaHeader {
+	if r != nil {
+		return r.metaHeader
+	}
+
+	return nil
+}
+
+func (r *AnnounceUsedSpaceResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
+	if r != nil {
+		r.metaHeader = v
+	}
+}
+
+func (r *AnnounceUsedSpaceResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
+	if r != nil {
+		return r.verifyHeader
+	}
+
+	return nil
+}
+
+func (r *AnnounceUsedSpaceResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
 	}

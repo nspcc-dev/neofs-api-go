@@ -40,6 +40,11 @@ const (
 
 	getEACLRespBodyTableField     = 1
 	getEACLRespBodySignatureField = 2
+
+	usedSpaceAnnounceCIDField       = 1
+	usedSpaceAnnounceUsedSpaceField = 2
+
+	usedSpaceReqBodyAnnouncementsField = 1
 )
 
 func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
@@ -533,4 +538,90 @@ func (r *GetExtendedACLResponseBody) StableSize() (size int) {
 	size += protoutil.NestedStructureSize(getEACLRespBodySignatureField, r.sig)
 
 	return size
+}
+
+func (a *UsedSpaceAnnouncement) StableMarshal(buf []byte) ([]byte, error) {
+	if a == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, a.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = protoutil.NestedStructureMarshal(usedSpaceAnnounceCIDField, buf[offset:], a.cid)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = protoutil.UInt64Marshal(usedSpaceAnnounceUsedSpaceField, buf[offset:], a.usedSpace)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (a *UsedSpaceAnnouncement) StableSize() (size int) {
+	if a == nil {
+		return 0
+	}
+
+	size += protoutil.NestedStructureSize(usedSpaceAnnounceCIDField, a.cid)
+	size += protoutil.UInt64Size(usedSpaceAnnounceUsedSpaceField, a.usedSpace)
+
+	return size
+}
+
+func (r *AnnounceUsedSpaceRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+	if r == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, r.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	for i := range r.announcements {
+		n, err = protoutil.NestedStructureMarshal(usedSpaceReqBodyAnnouncementsField, buf[offset:], r.announcements[i])
+		if err != nil {
+			return nil, err
+		}
+
+		offset += n
+	}
+
+	return buf, nil
+}
+
+func (r *AnnounceUsedSpaceRequestBody) StableSize() (size int) {
+	if r == nil {
+		return 0
+	}
+
+	for i := range r.announcements {
+		size += protoutil.NestedStructureSize(usedSpaceReqBodyAnnouncementsField, r.announcements[i])
+	}
+
+	return size
+}
+
+func (r *AnnounceUsedSpaceResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+	return nil, nil
+}
+
+func (r *AnnounceUsedSpaceResponseBody) StableSize() (size int) {
+	return 0
 }

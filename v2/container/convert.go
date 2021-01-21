@@ -849,3 +849,163 @@ func GetExtendedACLResponseFromGRPCMessage(m *container.GetExtendedACLResponse) 
 
 	return r
 }
+
+func UsedSpaceAnnouncementToGRPCMessage(a *UsedSpaceAnnouncement) *container.AnnounceUsedSpaceRequest_Body_Announcement {
+	if a == nil {
+		return nil
+	}
+
+	m := new(container.AnnounceUsedSpaceRequest_Body_Announcement)
+
+	m.SetContainerId(
+		refs.ContainerIDToGRPCMessage(a.GetContainerID()),
+	)
+
+	m.SetUsedSpace(a.GetUsedSpace())
+
+	return m
+}
+
+func UsedSpaceAnnouncementFromGRPCMessage(m *container.AnnounceUsedSpaceRequest_Body_Announcement) *UsedSpaceAnnouncement {
+	if m == nil {
+		return nil
+	}
+
+	a := new(UsedSpaceAnnouncement)
+
+	a.SetContainerID(
+		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
+	)
+
+	a.SetUsedSpace(m.GetUsedSpace())
+
+	return a
+}
+
+func AnnounceUsedSpaceRequestBodyToGRPCMessage(r *AnnounceUsedSpaceRequestBody) *container.AnnounceUsedSpaceRequest_Body {
+	if r == nil {
+		return nil
+	}
+
+	m := new(container.AnnounceUsedSpaceRequest_Body)
+
+	announcements := r.GetAnnouncements()
+	msgAnnouncements := make([]*container.AnnounceUsedSpaceRequest_Body_Announcement, 0, len(announcements))
+
+	for i := range announcements {
+		msgAnnouncements = append(
+			msgAnnouncements,
+			UsedSpaceAnnouncementToGRPCMessage(announcements[i]),
+		)
+	}
+
+	m.SetAnnouncements(msgAnnouncements)
+
+	return m
+}
+
+func AnnounceUsedSpaceRequestBodyFromGRPCMessage(m *container.AnnounceUsedSpaceRequest_Body) *AnnounceUsedSpaceRequestBody {
+	if m == nil {
+		return nil
+	}
+
+	r := new(AnnounceUsedSpaceRequestBody)
+
+	msgAnnouncements := m.GetAnnouncements()
+	announcements := make([]*UsedSpaceAnnouncement, 0, len(msgAnnouncements))
+
+	for i := range msgAnnouncements {
+		announcements = append(
+			announcements,
+			UsedSpaceAnnouncementFromGRPCMessage(msgAnnouncements[i]),
+		)
+	}
+
+	r.SetAnnouncements(announcements)
+
+	return r
+}
+
+func AnnounceUsedSpaceRequestToGRPCMessage(r *AnnounceUsedSpaceRequest) *container.AnnounceUsedSpaceRequest {
+	if r == nil {
+		return nil
+	}
+
+	m := new(container.AnnounceUsedSpaceRequest)
+
+	m.SetBody(
+		AnnounceUsedSpaceRequestBodyToGRPCMessage(r.GetBody()),
+	)
+
+	session.RequestHeadersToGRPC(r, m)
+
+	return m
+}
+
+func AnnounceUsedSpaceRequestFromGRPCMessage(m *container.AnnounceUsedSpaceRequest) *AnnounceUsedSpaceRequest {
+	if m == nil {
+		return nil
+	}
+
+	r := new(AnnounceUsedSpaceRequest)
+
+	r.SetBody(
+		AnnounceUsedSpaceRequestBodyFromGRPCMessage(m.GetBody()),
+	)
+
+	session.RequestHeadersFromGRPC(m, r)
+
+	return r
+}
+
+func AnnounceUsedSpaceResponseBodyToGRPCMessage(r *AnnounceUsedSpaceResponseBody) *container.AnnounceUsedSpaceResponse_Body {
+	if r == nil {
+		return nil
+	}
+
+	m := new(container.AnnounceUsedSpaceResponse_Body)
+
+	return m
+}
+
+func AnnounceUsedSpaceResponseBodyFromGRPCMessage(m *container.AnnounceUsedSpaceResponse_Body) *AnnounceUsedSpaceResponseBody {
+	if m == nil {
+		return nil
+	}
+
+	r := new(AnnounceUsedSpaceResponseBody)
+
+	return r
+}
+
+func AnnounceUsedSpaceResponseToGRPCMessage(r *AnnounceUsedSpaceResponse) *container.AnnounceUsedSpaceResponse {
+	if r == nil {
+		return nil
+	}
+
+	m := new(container.AnnounceUsedSpaceResponse)
+
+	m.SetBody(
+		AnnounceUsedSpaceResponseBodyToGRPCMessage(r.GetBody()),
+	)
+
+	session.ResponseHeadersToGRPC(r, m)
+
+	return m
+}
+
+func AnnounceUsedSpaceResponseFromGRPCMessage(m *container.AnnounceUsedSpaceResponse) *AnnounceUsedSpaceResponse {
+	if m == nil {
+		return nil
+	}
+
+	r := new(AnnounceUsedSpaceResponse)
+
+	r.SetBody(
+		AnnounceUsedSpaceResponseBodyFromGRPCMessage(m.GetBody()),
+	)
+
+	session.ResponseHeadersFromGRPC(m, r)
+
+	return r
+}
