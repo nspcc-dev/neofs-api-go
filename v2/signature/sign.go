@@ -330,6 +330,10 @@ func serviceMessageBody(req interface{}) stableMarshaler {
 		return v.GetBody()
 	case *container.GetExtendedACLResponse:
 		return v.GetBody()
+	case *container.AnnounceUsedSpaceRequest:
+		return v.GetBody()
+	case *container.AnnounceUsedSpaceResponse:
+		return v.GetBody()
 
 		/* Object */
 	case *object.PutRequest:

@@ -353,3 +353,66 @@ func (m *GetExtendedACLResponse) SetVerifyHeader(v *session.ResponseVerification
 		m.VerifyHeader = v
 	}
 }
+
+// SetContainerId sets identifier of the container.
+func (m *AnnounceUsedSpaceRequest_Body_Announcement) SetContainerId(v *refs.ContainerID) {
+	if m != nil {
+		m.ContainerId = v
+	}
+}
+
+// SetUsedSpace sets used space value of the container.
+func (m *AnnounceUsedSpaceRequest_Body_Announcement) SetUsedSpace(v uint64) {
+	if m != nil {
+		m.UsedSpace = v
+	}
+}
+
+// SetAnnouncements sets list of announcement for shared containers between nodes.
+func (m *AnnounceUsedSpaceRequest_Body) SetAnnouncements(v []*AnnounceUsedSpaceRequest_Body_Announcement) {
+	if m != nil {
+		m.Announcements = v
+	}
+}
+
+// SetBody sets body of the request.
+func (m *AnnounceUsedSpaceRequest) SetBody(v *AnnounceUsedSpaceRequest_Body) {
+	if m != nil {
+		m.Body = v
+	}
+}
+
+// SetMetaHeader sets meta header of the request.
+func (m *AnnounceUsedSpaceRequest) SetMetaHeader(v *session.RequestMetaHeader) {
+	if m != nil {
+		m.MetaHeader = v
+	}
+}
+
+// SetVerifyHeader sets verification header of the request.
+func (m *AnnounceUsedSpaceRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
+	if m != nil {
+		m.VerifyHeader = v
+	}
+}
+
+// SetBody sets body of the response.
+func (m *AnnounceUsedSpaceResponse) SetBody(v *AnnounceUsedSpaceResponse_Body) {
+	if m != nil {
+		m.Body = v
+	}
+}
+
+// SetMetaHeader sets meta header of the response.
+func (m *AnnounceUsedSpaceResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
+	if m != nil {
+		m.MetaHeader = v
+	}
+}
+
+// SetVerifyHeader sets verification header of the response.
+func (m *AnnounceUsedSpaceResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
+	if m != nil {
+		m.VerifyHeader = v
+	}
+}

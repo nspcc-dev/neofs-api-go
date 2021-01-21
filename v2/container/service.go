@@ -13,6 +13,7 @@ type Service interface {
 	List(context.Context, *ListRequest) (*ListResponse, error)
 	SetExtendedACL(context.Context, *SetExtendedACLRequest) (*SetExtendedACLResponse, error)
 	GetExtendedACL(context.Context, *GetExtendedACLRequest) (*GetExtendedACLResponse, error)
+	AnnounceUsedSpace(context.Context, *AnnounceUsedSpaceRequest) (*AnnounceUsedSpaceResponse, error)
 }
 
 type PutRequest struct {
@@ -89,6 +90,22 @@ type GetExtendedACLRequest struct {
 
 type GetExtendedACLResponse struct {
 	body *GetExtendedACLResponseBody
+
+	metaHeader *session.ResponseMetaHeader
+
+	verifyHeader *session.ResponseVerificationHeader
+}
+
+type AnnounceUsedSpaceRequest struct {
+	body *AnnounceUsedSpaceRequestBody
+
+	metaHeader *session.RequestMetaHeader
+
+	verifyHeader *session.RequestVerificationHeader
+}
+
+type AnnounceUsedSpaceResponse struct {
+	body *AnnounceUsedSpaceResponseBody
 
 	metaHeader *session.ResponseMetaHeader
 

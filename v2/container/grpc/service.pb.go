@@ -873,6 +873,146 @@ func (x *GetExtendedACLResponse) GetVerifyHeader() *grpc.ResponseVerificationHea
 	return nil
 }
 
+// Announce container used space
+type AnnounceUsedSpaceRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Body of announce used space request message.
+	Body *AnnounceUsedSpaceRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
+	// Carries request meta information. Header data is used only to regulate
+	// message transport and does not affect request execution.
+	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
+	// Carries request verification information. This header is used to
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
+	VerifyHeader *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
+}
+
+func (x *AnnounceUsedSpaceRequest) Reset() {
+	*x = AnnounceUsedSpaceRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_container_grpc_service_proto_msgTypes[12]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AnnounceUsedSpaceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnnounceUsedSpaceRequest) ProtoMessage() {}
+
+func (x *AnnounceUsedSpaceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_container_grpc_service_proto_msgTypes[12]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnnounceUsedSpaceRequest.ProtoReflect.Descriptor instead.
+func (*AnnounceUsedSpaceRequest) Descriptor() ([]byte, []int) {
+	return file_v2_container_grpc_service_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *AnnounceUsedSpaceRequest) GetBody() *AnnounceUsedSpaceRequest_Body {
+	if x != nil {
+		return x.Body
+	}
+	return nil
+}
+
+func (x *AnnounceUsedSpaceRequest) GetMetaHeader() *grpc.RequestMetaHeader {
+	if x != nil {
+		return x.MetaHeader
+	}
+	return nil
+}
+
+func (x *AnnounceUsedSpaceRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
+	if x != nil {
+		return x.VerifyHeader
+	}
+	return nil
+}
+
+// Announce container used space
+type AnnounceUsedSpaceResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Body of announce used space response message.
+	Body *AnnounceUsedSpaceResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
+	// Carries response meta information. Header data is used only to regulate
+	// message transport and does not affect request execution.
+	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
+	// Carries response verification information. This header is used to
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
+	VerifyHeader *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
+}
+
+func (x *AnnounceUsedSpaceResponse) Reset() {
+	*x = AnnounceUsedSpaceResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_container_grpc_service_proto_msgTypes[13]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AnnounceUsedSpaceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnnounceUsedSpaceResponse) ProtoMessage() {}
+
+func (x *AnnounceUsedSpaceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_container_grpc_service_proto_msgTypes[13]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnnounceUsedSpaceResponse.ProtoReflect.Descriptor instead.
+func (*AnnounceUsedSpaceResponse) Descriptor() ([]byte, []int) {
+	return file_v2_container_grpc_service_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *AnnounceUsedSpaceResponse) GetBody() *AnnounceUsedSpaceResponse_Body {
+	if x != nil {
+		return x.Body
+	}
+	return nil
+}
+
+func (x *AnnounceUsedSpaceResponse) GetMetaHeader() *grpc.ResponseMetaHeader {
+	if x != nil {
+		return x.MetaHeader
+	}
+	return nil
+}
+
+func (x *AnnounceUsedSpaceResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
+	if x != nil {
+		return x.VerifyHeader
+	}
+	return nil
+}
+
 // Container creation request has container structure's signature as a
 // separate field. It's not stored in sidechain, just verified on container
 // creation by `Container` smart contract. `ContainerID` is a SHA256 hash of
@@ -892,7 +1032,7 @@ type PutRequest_Body struct {
 func (x *PutRequest_Body) Reset() {
 	*x = PutRequest_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_container_grpc_service_proto_msgTypes[12]
+		mi := &file_v2_container_grpc_service_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -905,7 +1045,7 @@ func (x *PutRequest_Body) String() string {
 func (*PutRequest_Body) ProtoMessage() {}
 
 func (x *PutRequest_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_container_grpc_service_proto_msgTypes[12]
+	mi := &file_v2_container_grpc_service_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -951,7 +1091,7 @@ type PutResponse_Body struct {
 func (x *PutResponse_Body) Reset() {
 	*x = PutResponse_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_container_grpc_service_proto_msgTypes[13]
+		mi := &file_v2_container_grpc_service_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -964,7 +1104,7 @@ func (x *PutResponse_Body) String() string {
 func (*PutResponse_Body) ProtoMessage() {}
 
 func (x *PutResponse_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_container_grpc_service_proto_msgTypes[13]
+	mi := &file_v2_container_grpc_service_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1004,7 +1144,7 @@ type DeleteRequest_Body struct {
 func (x *DeleteRequest_Body) Reset() {
 	*x = DeleteRequest_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_container_grpc_service_proto_msgTypes[14]
+		mi := &file_v2_container_grpc_service_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1017,7 +1157,7 @@ func (x *DeleteRequest_Body) String() string {
 func (*DeleteRequest_Body) ProtoMessage() {}
 
 func (x *DeleteRequest_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_container_grpc_service_proto_msgTypes[14]
+	mi := &file_v2_container_grpc_service_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1058,7 +1198,7 @@ type DeleteResponse_Body struct {
 func (x *DeleteResponse_Body) Reset() {
 	*x = DeleteResponse_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_container_grpc_service_proto_msgTypes[15]
+		mi := &file_v2_container_grpc_service_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1071,7 +1211,7 @@ func (x *DeleteResponse_Body) String() string {
 func (*DeleteResponse_Body) ProtoMessage() {}
 
 func (x *DeleteResponse_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_container_grpc_service_proto_msgTypes[15]
+	mi := &file_v2_container_grpc_service_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1100,7 +1240,7 @@ type GetRequest_Body struct {
 func (x *GetRequest_Body) Reset() {
 	*x = GetRequest_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_container_grpc_service_proto_msgTypes[16]
+		mi := &file_v2_container_grpc_service_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1113,7 +1253,7 @@ func (x *GetRequest_Body) String() string {
 func (*GetRequest_Body) ProtoMessage() {}
 
 func (x *GetRequest_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_container_grpc_service_proto_msgTypes[16]
+	mi := &file_v2_container_grpc_service_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1150,7 +1290,7 @@ type GetResponse_Body struct {
 func (x *GetResponse_Body) Reset() {
 	*x = GetResponse_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_container_grpc_service_proto_msgTypes[17]
+		mi := &file_v2_container_grpc_service_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1163,7 +1303,7 @@ func (x *GetResponse_Body) String() string {
 func (*GetResponse_Body) ProtoMessage() {}
 
 func (x *GetResponse_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_container_grpc_service_proto_msgTypes[17]
+	mi := &file_v2_container_grpc_service_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1199,7 +1339,7 @@ type ListRequest_Body struct {
 func (x *ListRequest_Body) Reset() {
 	*x = ListRequest_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_container_grpc_service_proto_msgTypes[18]
+		mi := &file_v2_container_grpc_service_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1212,7 +1352,7 @@ func (x *ListRequest_Body) String() string {
 func (*ListRequest_Body) ProtoMessage() {}
 
 func (x *ListRequest_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_container_grpc_service_proto_msgTypes[18]
+	mi := &file_v2_container_grpc_service_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1248,7 +1388,7 @@ type ListResponse_Body struct {
 func (x *ListResponse_Body) Reset() {
 	*x = ListResponse_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_container_grpc_service_proto_msgTypes[19]
+		mi := &file_v2_container_grpc_service_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1261,7 +1401,7 @@ func (x *ListResponse_Body) String() string {
 func (*ListResponse_Body) ProtoMessage() {}
 
 func (x *ListResponse_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_container_grpc_service_proto_msgTypes[19]
+	mi := &file_v2_container_grpc_service_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1300,7 +1440,7 @@ type SetExtendedACLRequest_Body struct {
 func (x *SetExtendedACLRequest_Body) Reset() {
 	*x = SetExtendedACLRequest_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_container_grpc_service_proto_msgTypes[20]
+		mi := &file_v2_container_grpc_service_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1313,7 +1453,7 @@ func (x *SetExtendedACLRequest_Body) String() string {
 func (*SetExtendedACLRequest_Body) ProtoMessage() {}
 
 func (x *SetExtendedACLRequest_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_container_grpc_service_proto_msgTypes[20]
+	mi := &file_v2_container_grpc_service_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1355,7 +1495,7 @@ type SetExtendedACLResponse_Body struct {
 func (x *SetExtendedACLResponse_Body) Reset() {
 	*x = SetExtendedACLResponse_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_container_grpc_service_proto_msgTypes[21]
+		mi := &file_v2_container_grpc_service_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1368,7 +1508,7 @@ func (x *SetExtendedACLResponse_Body) String() string {
 func (*SetExtendedACLResponse_Body) ProtoMessage() {}
 
 func (x *SetExtendedACLResponse_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_container_grpc_service_proto_msgTypes[21]
+	mi := &file_v2_container_grpc_service_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1397,7 +1537,7 @@ type GetExtendedACLRequest_Body struct {
 func (x *GetExtendedACLRequest_Body) Reset() {
 	*x = GetExtendedACLRequest_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_container_grpc_service_proto_msgTypes[22]
+		mi := &file_v2_container_grpc_service_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1410,7 +1550,7 @@ func (x *GetExtendedACLRequest_Body) String() string {
 func (*GetExtendedACLRequest_Body) ProtoMessage() {}
 
 func (x *GetExtendedACLRequest_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_container_grpc_service_proto_msgTypes[22]
+	mi := &file_v2_container_grpc_service_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1450,7 +1590,7 @@ type GetExtendedACLResponse_Body struct {
 func (x *GetExtendedACLResponse_Body) Reset() {
 	*x = GetExtendedACLResponse_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_container_grpc_service_proto_msgTypes[23]
+		mi := &file_v2_container_grpc_service_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1463,7 +1603,7 @@ func (x *GetExtendedACLResponse_Body) String() string {
 func (*GetExtendedACLResponse_Body) ProtoMessage() {}
 
 func (x *GetExtendedACLResponse_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_container_grpc_service_proto_msgTypes[23]
+	mi := &file_v2_container_grpc_service_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1491,6 +1631,155 @@ func (x *GetExtendedACLResponse_Body) GetSignature() *grpc1.Signature {
 		return x.Signature
 	}
 	return nil
+}
+
+// Container used space announcement body.
+type AnnounceUsedSpaceRequest_Body struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// List of announcements. If nodes share several containers, then
+	// announcements transferred in a batch.
+	Announcements []*AnnounceUsedSpaceRequest_Body_Announcement `protobuf:"bytes,1,rep,name=announcements,proto3" json:"announcements,omitempty"`
+}
+
+func (x *AnnounceUsedSpaceRequest_Body) Reset() {
+	*x = AnnounceUsedSpaceRequest_Body{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_container_grpc_service_proto_msgTypes[26]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AnnounceUsedSpaceRequest_Body) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnnounceUsedSpaceRequest_Body) ProtoMessage() {}
+
+func (x *AnnounceUsedSpaceRequest_Body) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_container_grpc_service_proto_msgTypes[26]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnnounceUsedSpaceRequest_Body.ProtoReflect.Descriptor instead.
+func (*AnnounceUsedSpaceRequest_Body) Descriptor() ([]byte, []int) {
+	return file_v2_container_grpc_service_proto_rawDescGZIP(), []int{12, 0}
+}
+
+func (x *AnnounceUsedSpaceRequest_Body) GetAnnouncements() []*AnnounceUsedSpaceRequest_Body_Announcement {
+	if x != nil {
+		return x.Announcements
+	}
+	return nil
+}
+
+// Announcement contains used space information about single container.
+type AnnounceUsedSpaceRequest_Body_Announcement struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Identifier of the container
+	ContainerId *grpc1.ContainerID `protobuf:"bytes,1,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
+	// used_space is a sum of object payused space sizes of specified
+	// container, stored in the node. It must not include inhumed objects.
+	UsedSpace uint64 `protobuf:"varint,2,opt,name=used_space,json=usedSpace,proto3" json:"used_space,omitempty"`
+}
+
+func (x *AnnounceUsedSpaceRequest_Body_Announcement) Reset() {
+	*x = AnnounceUsedSpaceRequest_Body_Announcement{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_container_grpc_service_proto_msgTypes[27]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AnnounceUsedSpaceRequest_Body_Announcement) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnnounceUsedSpaceRequest_Body_Announcement) ProtoMessage() {}
+
+func (x *AnnounceUsedSpaceRequest_Body_Announcement) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_container_grpc_service_proto_msgTypes[27]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnnounceUsedSpaceRequest_Body_Announcement.ProtoReflect.Descriptor instead.
+func (*AnnounceUsedSpaceRequest_Body_Announcement) Descriptor() ([]byte, []int) {
+	return file_v2_container_grpc_service_proto_rawDescGZIP(), []int{12, 0, 0}
+}
+
+func (x *AnnounceUsedSpaceRequest_Body_Announcement) GetContainerId() *grpc1.ContainerID {
+	if x != nil {
+		return x.ContainerId
+	}
+	return nil
+}
+
+func (x *AnnounceUsedSpaceRequest_Body_Announcement) GetUsedSpace() uint64 {
+	if x != nil {
+		return x.UsedSpace
+	}
+	return 0
+}
+
+// `AnnounceUsedSpaceResponse` has an empty body because announcements are
+// one way communication.
+type AnnounceUsedSpaceResponse_Body struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *AnnounceUsedSpaceResponse_Body) Reset() {
+	*x = AnnounceUsedSpaceResponse_Body{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_container_grpc_service_proto_msgTypes[28]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AnnounceUsedSpaceResponse_Body) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnnounceUsedSpaceResponse_Body) ProtoMessage() {}
+
+func (x *AnnounceUsedSpaceResponse_Body) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_container_grpc_service_proto_msgTypes[28]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnnounceUsedSpaceResponse_Body.ProtoReflect.Descriptor instead.
+func (*AnnounceUsedSpaceResponse_Body) Descriptor() ([]byte, []int) {
+	return file_v2_container_grpc_service_proto_rawDescGZIP(), []int{13, 0}
 }
 
 var File_v2_container_grpc_service_proto protoreflect.FileDescriptor
@@ -1741,47 +2030,101 @@ var file_v2_container_grpc_service_proto_rawDesc = []byte{
 	0x63, 0x6c, 0x12, 0x37, 0x0a, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18,
 	0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76,
 	0x32, 0x2e, 0x72, 0x65, 0x66, 0x73, 0x2e, 0x53, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65,
-	0x52, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x32, 0x9c, 0x04, 0x0a, 0x10,
-	0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65,
-	0x12, 0x48, 0x0a, 0x03, 0x50, 0x75, 0x74, 0x12, 0x1f, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73,
-	0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x50, 0x75,
-	0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66,
-	0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x50,
-	0x75, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x51, 0x0a, 0x06, 0x44, 0x65,
-	0x6c, 0x65, 0x74, 0x65, 0x12, 0x22, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32,
-	0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
-	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x23, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66,
-	0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x44,
-	0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x48, 0x0a,
-	0x03, 0x47, 0x65, 0x74, 0x12, 0x1f, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32,
-	0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x47, 0x65, 0x74, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76,
-	0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x47, 0x65, 0x74, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x4b, 0x0a, 0x04, 0x4c, 0x69, 0x73, 0x74, 0x12,
-	0x20, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74,
-	0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x1a, 0x21, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f,
-	0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x69, 0x0a, 0x0e, 0x53, 0x65, 0x74, 0x45, 0x78, 0x74, 0x65, 0x6e,
-	0x64, 0x65, 0x64, 0x41, 0x43, 0x4c, 0x12, 0x2a, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e,
-	0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x53, 0x65, 0x74,
-	0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41, 0x43, 0x4c, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x2b, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63,
-	0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x53, 0x65, 0x74, 0x45, 0x78, 0x74, 0x65,
-	0x6e, 0x64, 0x65, 0x64, 0x41, 0x43, 0x4c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x69, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41, 0x43,
-	0x4c, 0x12, 0x2a, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f,
-	0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x47, 0x65, 0x74, 0x45, 0x78, 0x74, 0x65, 0x6e,
-	0x64, 0x65, 0x64, 0x41, 0x43, 0x4c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2b, 0x2e,
+	0x52, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22, 0xdb, 0x03, 0x0a, 0x18,
+	0x41, 0x6e, 0x6e, 0x6f, 0x75, 0x6e, 0x63, 0x65, 0x55, 0x73, 0x65, 0x64, 0x53, 0x70, 0x61, 0x63,
+	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x46, 0x0a, 0x04, 0x62, 0x6f, 0x64, 0x79,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x32, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e,
+	0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x41, 0x6e, 0x6e,
+	0x6f, 0x75, 0x6e, 0x63, 0x65, 0x55, 0x73, 0x65, 0x64, 0x53, 0x70, 0x61, 0x63, 0x65, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x42, 0x6f, 0x64, 0x79, 0x52, 0x04, 0x62, 0x6f, 0x64, 0x79,
+	0x12, 0x45, 0x0a, 0x0b, 0x6d, 0x65, 0x74, 0x61, 0x5f, 0x68, 0x65, 0x61, 0x64, 0x65, 0x72, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x24, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76,
+	0x32, 0x2e, 0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x4d, 0x65, 0x74, 0x61, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x52, 0x0a, 0x6d, 0x65, 0x74,
+	0x61, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x12, 0x51, 0x0a, 0x0d, 0x76, 0x65, 0x72, 0x69, 0x66,
+	0x79, 0x5f, 0x68, 0x65, 0x61, 0x64, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x2c,
+	0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x73, 0x65, 0x73, 0x73, 0x69,
+	0x6f, 0x6e, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x56, 0x65, 0x72, 0x69, 0x66, 0x69,
+	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x52, 0x0c, 0x76, 0x65,
+	0x72, 0x69, 0x66, 0x79, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x1a, 0xdc, 0x01, 0x0a, 0x04, 0x42,
+	0x6f, 0x64, 0x79, 0x12, 0x65, 0x0a, 0x0d, 0x61, 0x6e, 0x6e, 0x6f, 0x75, 0x6e, 0x63, 0x65, 0x6d,
+	0x65, 0x6e, 0x74, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x3f, 0x2e, 0x6e, 0x65, 0x6f,
+	0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72,
+	0x2e, 0x41, 0x6e, 0x6e, 0x6f, 0x75, 0x6e, 0x63, 0x65, 0x55, 0x73, 0x65, 0x64, 0x53, 0x70, 0x61,
+	0x63, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x42, 0x6f, 0x64, 0x79, 0x2e, 0x41,
+	0x6e, 0x6e, 0x6f, 0x75, 0x6e, 0x63, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x0d, 0x61, 0x6e, 0x6e,
+	0x6f, 0x75, 0x6e, 0x63, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x1a, 0x6d, 0x0a, 0x0c, 0x41, 0x6e,
+	0x6e, 0x6f, 0x75, 0x6e, 0x63, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x12, 0x3e, 0x0a, 0x0c, 0x63, 0x6f,
+	0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x1b, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x66,
+	0x73, 0x2e, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x49, 0x44, 0x52, 0x0b, 0x63,
+	0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x49, 0x64, 0x12, 0x1d, 0x0a, 0x0a, 0x75, 0x73,
+	0x65, 0x64, 0x5f, 0x73, 0x70, 0x61, 0x63, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x09,
+	0x75, 0x73, 0x65, 0x64, 0x53, 0x70, 0x61, 0x63, 0x65, 0x22, 0x88, 0x02, 0x0a, 0x19, 0x41, 0x6e,
+	0x6e, 0x6f, 0x75, 0x6e, 0x63, 0x65, 0x55, 0x73, 0x65, 0x64, 0x53, 0x70, 0x61, 0x63, 0x65, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x47, 0x0a, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x33, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76,
+	0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x41, 0x6e, 0x6e, 0x6f,
+	0x75, 0x6e, 0x63, 0x65, 0x55, 0x73, 0x65, 0x64, 0x53, 0x70, 0x61, 0x63, 0x65, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x42, 0x6f, 0x64, 0x79, 0x52, 0x04, 0x62, 0x6f, 0x64, 0x79,
+	0x12, 0x46, 0x0a, 0x0b, 0x6d, 0x65, 0x74, 0x61, 0x5f, 0x68, 0x65, 0x61, 0x64, 0x65, 0x72, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x25, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76,
+	0x32, 0x2e, 0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x4d, 0x65, 0x74, 0x61, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x52, 0x0a, 0x6d, 0x65,
+	0x74, 0x61, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x12, 0x52, 0x0a, 0x0d, 0x76, 0x65, 0x72, 0x69,
+	0x66, 0x79, 0x5f, 0x68, 0x65, 0x61, 0x64, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x2d, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x73, 0x65, 0x73, 0x73,
+	0x69, 0x6f, 0x6e, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x56, 0x65, 0x72, 0x69,
+	0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x52, 0x0c,
+	0x76, 0x65, 0x72, 0x69, 0x66, 0x79, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x1a, 0x06, 0x0a, 0x04,
+	0x42, 0x6f, 0x64, 0x79, 0x32, 0x90, 0x05, 0x0a, 0x10, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e,
+	0x65, 0x72, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x48, 0x0a, 0x03, 0x50, 0x75, 0x74,
+	0x12, 0x1f, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e,
+	0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x50, 0x75, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x20, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f,
+	0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x50, 0x75, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x51, 0x0a, 0x06, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x12, 0x22, 0x2e,
 	0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69,
-	0x6e, 0x65, 0x72, 0x2e, 0x47, 0x65, 0x74, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41,
-	0x43, 0x4c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x58, 0x5a, 0x3d, 0x67, 0x69,
-	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6e, 0x73, 0x70, 0x63, 0x63, 0x2d, 0x64,
-	0x65, 0x76, 0x2f, 0x6e, 0x65, 0x6f, 0x66, 0x73, 0x2d, 0x61, 0x70, 0x69, 0x2d, 0x67, 0x6f, 0x2f,
-	0x76, 0x32, 0x2f, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2f, 0x67, 0x72, 0x70,
-	0x63, 0x3b, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0xaa, 0x02, 0x16, 0x4e, 0x65,
-	0x6f, 0x46, 0x53, 0x2e, 0x41, 0x50, 0x49, 0x2e, 0x76, 0x32, 0x2e, 0x43, 0x6f, 0x6e, 0x74, 0x61,
-	0x69, 0x6e, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6e, 0x65, 0x72, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x23, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f,
+	0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x48, 0x0a, 0x03, 0x47, 0x65, 0x74, 0x12, 0x1f, 0x2e,
+	0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69,
+	0x6e, 0x65, 0x72, 0x2e, 0x47, 0x65, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20,
+	0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61,
+	0x69, 0x6e, 0x65, 0x72, 0x2e, 0x47, 0x65, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x4b, 0x0a, 0x04, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x20, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66,
+	0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x4c,
+	0x69, 0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x21, 0x2e, 0x6e, 0x65, 0x6f,
+	0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72,
+	0x2e, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x69, 0x0a,
+	0x0e, 0x53, 0x65, 0x74, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41, 0x43, 0x4c, 0x12,
+	0x2a, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74,
+	0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x53, 0x65, 0x74, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65,
+	0x64, 0x41, 0x43, 0x4c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2b, 0x2e, 0x6e, 0x65,
+	0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65,
+	0x72, 0x2e, 0x53, 0x65, 0x74, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41, 0x43, 0x4c,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x69, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x45,
+	0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41, 0x43, 0x4c, 0x12, 0x2a, 0x2e, 0x6e, 0x65, 0x6f,
+	0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72,
+	0x2e, 0x47, 0x65, 0x74, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41, 0x43, 0x4c, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2b, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e,
+	0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x47, 0x65, 0x74,
+	0x45, 0x78, 0x74, 0x65, 0x6e, 0x64, 0x65, 0x64, 0x41, 0x43, 0x4c, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x72, 0x0a, 0x11, 0x41, 0x6e, 0x6e, 0x6f, 0x75, 0x6e, 0x63, 0x65, 0x55,
+	0x73, 0x65, 0x64, 0x53, 0x70, 0x61, 0x63, 0x65, 0x12, 0x2d, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66,
+	0x73, 0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x41,
+	0x6e, 0x6e, 0x6f, 0x75, 0x6e, 0x63, 0x65, 0x55, 0x73, 0x65, 0x64, 0x53, 0x70, 0x61, 0x63, 0x65,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2e, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73,
+	0x2e, 0x76, 0x32, 0x2e, 0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2e, 0x41, 0x6e,
+	0x6e, 0x6f, 0x75, 0x6e, 0x63, 0x65, 0x55, 0x73, 0x65, 0x64, 0x53, 0x70, 0x61, 0x63, 0x65, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x58, 0x5a, 0x3d, 0x67, 0x69, 0x74, 0x68, 0x75,
+	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6e, 0x73, 0x70, 0x63, 0x63, 0x2d, 0x64, 0x65, 0x76, 0x2f,
+	0x6e, 0x65, 0x6f, 0x66, 0x73, 0x2d, 0x61, 0x70, 0x69, 0x2d, 0x67, 0x6f, 0x2f, 0x76, 0x32, 0x2f,
+	0x63, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x2f, 0x67, 0x72, 0x70, 0x63, 0x3b, 0x63,
+	0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0xaa, 0x02, 0x16, 0x4e, 0x65, 0x6f, 0x46, 0x53,
+	0x2e, 0x41, 0x50, 0x49, 0x2e, 0x76, 0x32, 0x2e, 0x43, 0x6f, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65,
+	0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1796,110 +2139,125 @@ func file_v2_container_grpc_service_proto_rawDescGZIP() []byte {
 	return file_v2_container_grpc_service_proto_rawDescData
 }
 
-var file_v2_container_grpc_service_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_v2_container_grpc_service_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
 var file_v2_container_grpc_service_proto_goTypes = []interface{}{
-	(*PutRequest)(nil),                      // 0: neo.fs.v2.container.PutRequest
-	(*PutResponse)(nil),                     // 1: neo.fs.v2.container.PutResponse
-	(*DeleteRequest)(nil),                   // 2: neo.fs.v2.container.DeleteRequest
-	(*DeleteResponse)(nil),                  // 3: neo.fs.v2.container.DeleteResponse
-	(*GetRequest)(nil),                      // 4: neo.fs.v2.container.GetRequest
-	(*GetResponse)(nil),                     // 5: neo.fs.v2.container.GetResponse
-	(*ListRequest)(nil),                     // 6: neo.fs.v2.container.ListRequest
-	(*ListResponse)(nil),                    // 7: neo.fs.v2.container.ListResponse
-	(*SetExtendedACLRequest)(nil),           // 8: neo.fs.v2.container.SetExtendedACLRequest
-	(*SetExtendedACLResponse)(nil),          // 9: neo.fs.v2.container.SetExtendedACLResponse
-	(*GetExtendedACLRequest)(nil),           // 10: neo.fs.v2.container.GetExtendedACLRequest
-	(*GetExtendedACLResponse)(nil),          // 11: neo.fs.v2.container.GetExtendedACLResponse
-	(*PutRequest_Body)(nil),                 // 12: neo.fs.v2.container.PutRequest.Body
-	(*PutResponse_Body)(nil),                // 13: neo.fs.v2.container.PutResponse.Body
-	(*DeleteRequest_Body)(nil),              // 14: neo.fs.v2.container.DeleteRequest.Body
-	(*DeleteResponse_Body)(nil),             // 15: neo.fs.v2.container.DeleteResponse.Body
-	(*GetRequest_Body)(nil),                 // 16: neo.fs.v2.container.GetRequest.Body
-	(*GetResponse_Body)(nil),                // 17: neo.fs.v2.container.GetResponse.Body
-	(*ListRequest_Body)(nil),                // 18: neo.fs.v2.container.ListRequest.Body
-	(*ListResponse_Body)(nil),               // 19: neo.fs.v2.container.ListResponse.Body
-	(*SetExtendedACLRequest_Body)(nil),      // 20: neo.fs.v2.container.SetExtendedACLRequest.Body
-	(*SetExtendedACLResponse_Body)(nil),     // 21: neo.fs.v2.container.SetExtendedACLResponse.Body
-	(*GetExtendedACLRequest_Body)(nil),      // 22: neo.fs.v2.container.GetExtendedACLRequest.Body
-	(*GetExtendedACLResponse_Body)(nil),     // 23: neo.fs.v2.container.GetExtendedACLResponse.Body
-	(*grpc.RequestMetaHeader)(nil),          // 24: neo.fs.v2.session.RequestMetaHeader
-	(*grpc.RequestVerificationHeader)(nil),  // 25: neo.fs.v2.session.RequestVerificationHeader
-	(*grpc.ResponseMetaHeader)(nil),         // 26: neo.fs.v2.session.ResponseMetaHeader
-	(*grpc.ResponseVerificationHeader)(nil), // 27: neo.fs.v2.session.ResponseVerificationHeader
-	(*Container)(nil),                       // 28: neo.fs.v2.container.Container
-	(*grpc1.Signature)(nil),                 // 29: neo.fs.v2.refs.Signature
-	(*grpc1.ContainerID)(nil),               // 30: neo.fs.v2.refs.ContainerID
-	(*grpc1.OwnerID)(nil),                   // 31: neo.fs.v2.refs.OwnerID
-	(*grpc2.EACLTable)(nil),                 // 32: neo.fs.v2.acl.EACLTable
+	(*PutRequest)(nil),                                 // 0: neo.fs.v2.container.PutRequest
+	(*PutResponse)(nil),                                // 1: neo.fs.v2.container.PutResponse
+	(*DeleteRequest)(nil),                              // 2: neo.fs.v2.container.DeleteRequest
+	(*DeleteResponse)(nil),                             // 3: neo.fs.v2.container.DeleteResponse
+	(*GetRequest)(nil),                                 // 4: neo.fs.v2.container.GetRequest
+	(*GetResponse)(nil),                                // 5: neo.fs.v2.container.GetResponse
+	(*ListRequest)(nil),                                // 6: neo.fs.v2.container.ListRequest
+	(*ListResponse)(nil),                               // 7: neo.fs.v2.container.ListResponse
+	(*SetExtendedACLRequest)(nil),                      // 8: neo.fs.v2.container.SetExtendedACLRequest
+	(*SetExtendedACLResponse)(nil),                     // 9: neo.fs.v2.container.SetExtendedACLResponse
+	(*GetExtendedACLRequest)(nil),                      // 10: neo.fs.v2.container.GetExtendedACLRequest
+	(*GetExtendedACLResponse)(nil),                     // 11: neo.fs.v2.container.GetExtendedACLResponse
+	(*AnnounceUsedSpaceRequest)(nil),                   // 12: neo.fs.v2.container.AnnounceUsedSpaceRequest
+	(*AnnounceUsedSpaceResponse)(nil),                  // 13: neo.fs.v2.container.AnnounceUsedSpaceResponse
+	(*PutRequest_Body)(nil),                            // 14: neo.fs.v2.container.PutRequest.Body
+	(*PutResponse_Body)(nil),                           // 15: neo.fs.v2.container.PutResponse.Body
+	(*DeleteRequest_Body)(nil),                         // 16: neo.fs.v2.container.DeleteRequest.Body
+	(*DeleteResponse_Body)(nil),                        // 17: neo.fs.v2.container.DeleteResponse.Body
+	(*GetRequest_Body)(nil),                            // 18: neo.fs.v2.container.GetRequest.Body
+	(*GetResponse_Body)(nil),                           // 19: neo.fs.v2.container.GetResponse.Body
+	(*ListRequest_Body)(nil),                           // 20: neo.fs.v2.container.ListRequest.Body
+	(*ListResponse_Body)(nil),                          // 21: neo.fs.v2.container.ListResponse.Body
+	(*SetExtendedACLRequest_Body)(nil),                 // 22: neo.fs.v2.container.SetExtendedACLRequest.Body
+	(*SetExtendedACLResponse_Body)(nil),                // 23: neo.fs.v2.container.SetExtendedACLResponse.Body
+	(*GetExtendedACLRequest_Body)(nil),                 // 24: neo.fs.v2.container.GetExtendedACLRequest.Body
+	(*GetExtendedACLResponse_Body)(nil),                // 25: neo.fs.v2.container.GetExtendedACLResponse.Body
+	(*AnnounceUsedSpaceRequest_Body)(nil),              // 26: neo.fs.v2.container.AnnounceUsedSpaceRequest.Body
+	(*AnnounceUsedSpaceRequest_Body_Announcement)(nil), // 27: neo.fs.v2.container.AnnounceUsedSpaceRequest.Body.Announcement
+	(*AnnounceUsedSpaceResponse_Body)(nil),             // 28: neo.fs.v2.container.AnnounceUsedSpaceResponse.Body
+	(*grpc.RequestMetaHeader)(nil),                     // 29: neo.fs.v2.session.RequestMetaHeader
+	(*grpc.RequestVerificationHeader)(nil),             // 30: neo.fs.v2.session.RequestVerificationHeader
+	(*grpc.ResponseMetaHeader)(nil),                    // 31: neo.fs.v2.session.ResponseMetaHeader
+	(*grpc.ResponseVerificationHeader)(nil),            // 32: neo.fs.v2.session.ResponseVerificationHeader
+	(*Container)(nil),                                  // 33: neo.fs.v2.container.Container
+	(*grpc1.Signature)(nil),                            // 34: neo.fs.v2.refs.Signature
+	(*grpc1.ContainerID)(nil),                          // 35: neo.fs.v2.refs.ContainerID
+	(*grpc1.OwnerID)(nil),                              // 36: neo.fs.v2.refs.OwnerID
+	(*grpc2.EACLTable)(nil),                            // 37: neo.fs.v2.acl.EACLTable
 }
 var file_v2_container_grpc_service_proto_depIdxs = []int32{
-	12, // 0: neo.fs.v2.container.PutRequest.body:type_name -> neo.fs.v2.container.PutRequest.Body
-	24, // 1: neo.fs.v2.container.PutRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
-	25, // 2: neo.fs.v2.container.PutRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
-	13, // 3: neo.fs.v2.container.PutResponse.body:type_name -> neo.fs.v2.container.PutResponse.Body
-	26, // 4: neo.fs.v2.container.PutResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
-	27, // 5: neo.fs.v2.container.PutResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
-	14, // 6: neo.fs.v2.container.DeleteRequest.body:type_name -> neo.fs.v2.container.DeleteRequest.Body
-	24, // 7: neo.fs.v2.container.DeleteRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
-	25, // 8: neo.fs.v2.container.DeleteRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
-	15, // 9: neo.fs.v2.container.DeleteResponse.body:type_name -> neo.fs.v2.container.DeleteResponse.Body
-	26, // 10: neo.fs.v2.container.DeleteResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
-	27, // 11: neo.fs.v2.container.DeleteResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
-	16, // 12: neo.fs.v2.container.GetRequest.body:type_name -> neo.fs.v2.container.GetRequest.Body
-	24, // 13: neo.fs.v2.container.GetRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
-	25, // 14: neo.fs.v2.container.GetRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
-	17, // 15: neo.fs.v2.container.GetResponse.body:type_name -> neo.fs.v2.container.GetResponse.Body
-	26, // 16: neo.fs.v2.container.GetResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
-	27, // 17: neo.fs.v2.container.GetResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
-	18, // 18: neo.fs.v2.container.ListRequest.body:type_name -> neo.fs.v2.container.ListRequest.Body
-	24, // 19: neo.fs.v2.container.ListRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
-	25, // 20: neo.fs.v2.container.ListRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
-	19, // 21: neo.fs.v2.container.ListResponse.body:type_name -> neo.fs.v2.container.ListResponse.Body
-	26, // 22: neo.fs.v2.container.ListResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
-	27, // 23: neo.fs.v2.container.ListResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
-	20, // 24: neo.fs.v2.container.SetExtendedACLRequest.body:type_name -> neo.fs.v2.container.SetExtendedACLRequest.Body
-	24, // 25: neo.fs.v2.container.SetExtendedACLRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
-	25, // 26: neo.fs.v2.container.SetExtendedACLRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
-	21, // 27: neo.fs.v2.container.SetExtendedACLResponse.body:type_name -> neo.fs.v2.container.SetExtendedACLResponse.Body
-	26, // 28: neo.fs.v2.container.SetExtendedACLResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
-	27, // 29: neo.fs.v2.container.SetExtendedACLResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
-	22, // 30: neo.fs.v2.container.GetExtendedACLRequest.body:type_name -> neo.fs.v2.container.GetExtendedACLRequest.Body
-	24, // 31: neo.fs.v2.container.GetExtendedACLRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
-	25, // 32: neo.fs.v2.container.GetExtendedACLRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
-	23, // 33: neo.fs.v2.container.GetExtendedACLResponse.body:type_name -> neo.fs.v2.container.GetExtendedACLResponse.Body
-	26, // 34: neo.fs.v2.container.GetExtendedACLResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
-	27, // 35: neo.fs.v2.container.GetExtendedACLResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
-	28, // 36: neo.fs.v2.container.PutRequest.Body.container:type_name -> neo.fs.v2.container.Container
-	29, // 37: neo.fs.v2.container.PutRequest.Body.signature:type_name -> neo.fs.v2.refs.Signature
-	30, // 38: neo.fs.v2.container.PutResponse.Body.container_id:type_name -> neo.fs.v2.refs.ContainerID
-	30, // 39: neo.fs.v2.container.DeleteRequest.Body.container_id:type_name -> neo.fs.v2.refs.ContainerID
-	29, // 40: neo.fs.v2.container.DeleteRequest.Body.signature:type_name -> neo.fs.v2.refs.Signature
-	30, // 41: neo.fs.v2.container.GetRequest.Body.container_id:type_name -> neo.fs.v2.refs.ContainerID
-	28, // 42: neo.fs.v2.container.GetResponse.Body.container:type_name -> neo.fs.v2.container.Container
-	31, // 43: neo.fs.v2.container.ListRequest.Body.owner_id:type_name -> neo.fs.v2.refs.OwnerID
-	30, // 44: neo.fs.v2.container.ListResponse.Body.container_ids:type_name -> neo.fs.v2.refs.ContainerID
-	32, // 45: neo.fs.v2.container.SetExtendedACLRequest.Body.eacl:type_name -> neo.fs.v2.acl.EACLTable
-	29, // 46: neo.fs.v2.container.SetExtendedACLRequest.Body.signature:type_name -> neo.fs.v2.refs.Signature
-	30, // 47: neo.fs.v2.container.GetExtendedACLRequest.Body.container_id:type_name -> neo.fs.v2.refs.ContainerID
-	32, // 48: neo.fs.v2.container.GetExtendedACLResponse.Body.eacl:type_name -> neo.fs.v2.acl.EACLTable
-	29, // 49: neo.fs.v2.container.GetExtendedACLResponse.Body.signature:type_name -> neo.fs.v2.refs.Signature
-	0,  // 50: neo.fs.v2.container.ContainerService.Put:input_type -> neo.fs.v2.container.PutRequest
-	2,  // 51: neo.fs.v2.container.ContainerService.Delete:input_type -> neo.fs.v2.container.DeleteRequest
-	4,  // 52: neo.fs.v2.container.ContainerService.Get:input_type -> neo.fs.v2.container.GetRequest
-	6,  // 53: neo.fs.v2.container.ContainerService.List:input_type -> neo.fs.v2.container.ListRequest
-	8,  // 54: neo.fs.v2.container.ContainerService.SetExtendedACL:input_type -> neo.fs.v2.container.SetExtendedACLRequest
-	10, // 55: neo.fs.v2.container.ContainerService.GetExtendedACL:input_type -> neo.fs.v2.container.GetExtendedACLRequest
-	1,  // 56: neo.fs.v2.container.ContainerService.Put:output_type -> neo.fs.v2.container.PutResponse
-	3,  // 57: neo.fs.v2.container.ContainerService.Delete:output_type -> neo.fs.v2.container.DeleteResponse
-	5,  // 58: neo.fs.v2.container.ContainerService.Get:output_type -> neo.fs.v2.container.GetResponse
-	7,  // 59: neo.fs.v2.container.ContainerService.List:output_type -> neo.fs.v2.container.ListResponse
-	9,  // 60: neo.fs.v2.container.ContainerService.SetExtendedACL:output_type -> neo.fs.v2.container.SetExtendedACLResponse
-	11, // 61: neo.fs.v2.container.ContainerService.GetExtendedACL:output_type -> neo.fs.v2.container.GetExtendedACLResponse
-	56, // [56:62] is the sub-list for method output_type
-	50, // [50:56] is the sub-list for method input_type
-	50, // [50:50] is the sub-list for extension type_name
-	50, // [50:50] is the sub-list for extension extendee
-	0,  // [0:50] is the sub-list for field type_name
+	14, // 0: neo.fs.v2.container.PutRequest.body:type_name -> neo.fs.v2.container.PutRequest.Body
+	29, // 1: neo.fs.v2.container.PutRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
+	30, // 2: neo.fs.v2.container.PutRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
+	15, // 3: neo.fs.v2.container.PutResponse.body:type_name -> neo.fs.v2.container.PutResponse.Body
+	31, // 4: neo.fs.v2.container.PutResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
+	32, // 5: neo.fs.v2.container.PutResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
+	16, // 6: neo.fs.v2.container.DeleteRequest.body:type_name -> neo.fs.v2.container.DeleteRequest.Body
+	29, // 7: neo.fs.v2.container.DeleteRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
+	30, // 8: neo.fs.v2.container.DeleteRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
+	17, // 9: neo.fs.v2.container.DeleteResponse.body:type_name -> neo.fs.v2.container.DeleteResponse.Body
+	31, // 10: neo.fs.v2.container.DeleteResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
+	32, // 11: neo.fs.v2.container.DeleteResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
+	18, // 12: neo.fs.v2.container.GetRequest.body:type_name -> neo.fs.v2.container.GetRequest.Body
+	29, // 13: neo.fs.v2.container.GetRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
+	30, // 14: neo.fs.v2.container.GetRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
+	19, // 15: neo.fs.v2.container.GetResponse.body:type_name -> neo.fs.v2.container.GetResponse.Body
+	31, // 16: neo.fs.v2.container.GetResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
+	32, // 17: neo.fs.v2.container.GetResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
+	20, // 18: neo.fs.v2.container.ListRequest.body:type_name -> neo.fs.v2.container.ListRequest.Body
+	29, // 19: neo.fs.v2.container.ListRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
+	30, // 20: neo.fs.v2.container.ListRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
+	21, // 21: neo.fs.v2.container.ListResponse.body:type_name -> neo.fs.v2.container.ListResponse.Body
+	31, // 22: neo.fs.v2.container.ListResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
+	32, // 23: neo.fs.v2.container.ListResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
+	22, // 24: neo.fs.v2.container.SetExtendedACLRequest.body:type_name -> neo.fs.v2.container.SetExtendedACLRequest.Body
+	29, // 25: neo.fs.v2.container.SetExtendedACLRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
+	30, // 26: neo.fs.v2.container.SetExtendedACLRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
+	23, // 27: neo.fs.v2.container.SetExtendedACLResponse.body:type_name -> neo.fs.v2.container.SetExtendedACLResponse.Body
+	31, // 28: neo.fs.v2.container.SetExtendedACLResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
+	32, // 29: neo.fs.v2.container.SetExtendedACLResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
+	24, // 30: neo.fs.v2.container.GetExtendedACLRequest.body:type_name -> neo.fs.v2.container.GetExtendedACLRequest.Body
+	29, // 31: neo.fs.v2.container.GetExtendedACLRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
+	30, // 32: neo.fs.v2.container.GetExtendedACLRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
+	25, // 33: neo.fs.v2.container.GetExtendedACLResponse.body:type_name -> neo.fs.v2.container.GetExtendedACLResponse.Body
+	31, // 34: neo.fs.v2.container.GetExtendedACLResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
+	32, // 35: neo.fs.v2.container.GetExtendedACLResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
+	26, // 36: neo.fs.v2.container.AnnounceUsedSpaceRequest.body:type_name -> neo.fs.v2.container.AnnounceUsedSpaceRequest.Body
+	29, // 37: neo.fs.v2.container.AnnounceUsedSpaceRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
+	30, // 38: neo.fs.v2.container.AnnounceUsedSpaceRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
+	28, // 39: neo.fs.v2.container.AnnounceUsedSpaceResponse.body:type_name -> neo.fs.v2.container.AnnounceUsedSpaceResponse.Body
+	31, // 40: neo.fs.v2.container.AnnounceUsedSpaceResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
+	32, // 41: neo.fs.v2.container.AnnounceUsedSpaceResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
+	33, // 42: neo.fs.v2.container.PutRequest.Body.container:type_name -> neo.fs.v2.container.Container
+	34, // 43: neo.fs.v2.container.PutRequest.Body.signature:type_name -> neo.fs.v2.refs.Signature
+	35, // 44: neo.fs.v2.container.PutResponse.Body.container_id:type_name -> neo.fs.v2.refs.ContainerID
+	35, // 45: neo.fs.v2.container.DeleteRequest.Body.container_id:type_name -> neo.fs.v2.refs.ContainerID
+	34, // 46: neo.fs.v2.container.DeleteRequest.Body.signature:type_name -> neo.fs.v2.refs.Signature
+	35, // 47: neo.fs.v2.container.GetRequest.Body.container_id:type_name -> neo.fs.v2.refs.ContainerID
+	33, // 48: neo.fs.v2.container.GetResponse.Body.container:type_name -> neo.fs.v2.container.Container
+	36, // 49: neo.fs.v2.container.ListRequest.Body.owner_id:type_name -> neo.fs.v2.refs.OwnerID
+	35, // 50: neo.fs.v2.container.ListResponse.Body.container_ids:type_name -> neo.fs.v2.refs.ContainerID
+	37, // 51: neo.fs.v2.container.SetExtendedACLRequest.Body.eacl:type_name -> neo.fs.v2.acl.EACLTable
+	34, // 52: neo.fs.v2.container.SetExtendedACLRequest.Body.signature:type_name -> neo.fs.v2.refs.Signature
+	35, // 53: neo.fs.v2.container.GetExtendedACLRequest.Body.container_id:type_name -> neo.fs.v2.refs.ContainerID
+	37, // 54: neo.fs.v2.container.GetExtendedACLResponse.Body.eacl:type_name -> neo.fs.v2.acl.EACLTable
+	34, // 55: neo.fs.v2.container.GetExtendedACLResponse.Body.signature:type_name -> neo.fs.v2.refs.Signature
+	27, // 56: neo.fs.v2.container.AnnounceUsedSpaceRequest.Body.announcements:type_name -> neo.fs.v2.container.AnnounceUsedSpaceRequest.Body.Announcement
+	35, // 57: neo.fs.v2.container.AnnounceUsedSpaceRequest.Body.Announcement.container_id:type_name -> neo.fs.v2.refs.ContainerID
+	0,  // 58: neo.fs.v2.container.ContainerService.Put:input_type -> neo.fs.v2.container.PutRequest
+	2,  // 59: neo.fs.v2.container.ContainerService.Delete:input_type -> neo.fs.v2.container.DeleteRequest
+	4,  // 60: neo.fs.v2.container.ContainerService.Get:input_type -> neo.fs.v2.container.GetRequest
+	6,  // 61: neo.fs.v2.container.ContainerService.List:input_type -> neo.fs.v2.container.ListRequest
+	8,  // 62: neo.fs.v2.container.ContainerService.SetExtendedACL:input_type -> neo.fs.v2.container.SetExtendedACLRequest
+	10, // 63: neo.fs.v2.container.ContainerService.GetExtendedACL:input_type -> neo.fs.v2.container.GetExtendedACLRequest
+	12, // 64: neo.fs.v2.container.ContainerService.AnnounceUsedSpace:input_type -> neo.fs.v2.container.AnnounceUsedSpaceRequest
+	1,  // 65: neo.fs.v2.container.ContainerService.Put:output_type -> neo.fs.v2.container.PutResponse
+	3,  // 66: neo.fs.v2.container.ContainerService.Delete:output_type -> neo.fs.v2.container.DeleteResponse
+	5,  // 67: neo.fs.v2.container.ContainerService.Get:output_type -> neo.fs.v2.container.GetResponse
+	7,  // 68: neo.fs.v2.container.ContainerService.List:output_type -> neo.fs.v2.container.ListResponse
+	9,  // 69: neo.fs.v2.container.ContainerService.SetExtendedACL:output_type -> neo.fs.v2.container.SetExtendedACLResponse
+	11, // 70: neo.fs.v2.container.ContainerService.GetExtendedACL:output_type -> neo.fs.v2.container.GetExtendedACLResponse
+	13, // 71: neo.fs.v2.container.ContainerService.AnnounceUsedSpace:output_type -> neo.fs.v2.container.AnnounceUsedSpaceResponse
+	65, // [65:72] is the sub-list for method output_type
+	58, // [58:65] is the sub-list for method input_type
+	58, // [58:58] is the sub-list for extension type_name
+	58, // [58:58] is the sub-list for extension extendee
+	0,  // [0:58] is the sub-list for field type_name
 }
 
 func init() { file_v2_container_grpc_service_proto_init() }
@@ -2054,7 +2412,7 @@ func file_v2_container_grpc_service_proto_init() {
 			}
 		}
 		file_v2_container_grpc_service_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*PutRequest_Body); i {
+			switch v := v.(*AnnounceUsedSpaceRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2066,7 +2424,7 @@ func file_v2_container_grpc_service_proto_init() {
 			}
 		}
 		file_v2_container_grpc_service_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*PutResponse_Body); i {
+			switch v := v.(*AnnounceUsedSpaceResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2078,7 +2436,7 @@ func file_v2_container_grpc_service_proto_init() {
 			}
 		}
 		file_v2_container_grpc_service_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteRequest_Body); i {
+			switch v := v.(*PutRequest_Body); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2090,7 +2448,7 @@ func file_v2_container_grpc_service_proto_init() {
 			}
 		}
 		file_v2_container_grpc_service_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteResponse_Body); i {
+			switch v := v.(*PutResponse_Body); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2102,7 +2460,7 @@ func file_v2_container_grpc_service_proto_init() {
 			}
 		}
 		file_v2_container_grpc_service_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetRequest_Body); i {
+			switch v := v.(*DeleteRequest_Body); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2114,7 +2472,7 @@ func file_v2_container_grpc_service_proto_init() {
 			}
 		}
 		file_v2_container_grpc_service_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetResponse_Body); i {
+			switch v := v.(*DeleteResponse_Body); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2126,7 +2484,7 @@ func file_v2_container_grpc_service_proto_init() {
 			}
 		}
 		file_v2_container_grpc_service_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListRequest_Body); i {
+			switch v := v.(*GetRequest_Body); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2138,7 +2496,7 @@ func file_v2_container_grpc_service_proto_init() {
 			}
 		}
 		file_v2_container_grpc_service_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListResponse_Body); i {
+			switch v := v.(*GetResponse_Body); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2150,7 +2508,7 @@ func file_v2_container_grpc_service_proto_init() {
 			}
 		}
 		file_v2_container_grpc_service_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SetExtendedACLRequest_Body); i {
+			switch v := v.(*ListRequest_Body); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2162,7 +2520,7 @@ func file_v2_container_grpc_service_proto_init() {
 			}
 		}
 		file_v2_container_grpc_service_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SetExtendedACLResponse_Body); i {
+			switch v := v.(*ListResponse_Body); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2174,7 +2532,7 @@ func file_v2_container_grpc_service_proto_init() {
 			}
 		}
 		file_v2_container_grpc_service_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetExtendedACLRequest_Body); i {
+			switch v := v.(*SetExtendedACLRequest_Body); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2186,7 +2544,67 @@ func file_v2_container_grpc_service_proto_init() {
 			}
 		}
 		file_v2_container_grpc_service_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SetExtendedACLResponse_Body); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_container_grpc_service_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetExtendedACLRequest_Body); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_container_grpc_service_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetExtendedACLResponse_Body); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_container_grpc_service_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AnnounceUsedSpaceRequest_Body); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_container_grpc_service_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AnnounceUsedSpaceRequest_Body_Announcement); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_container_grpc_service_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AnnounceUsedSpaceResponse_Body); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2204,7 +2622,7 @@ func file_v2_container_grpc_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_v2_container_grpc_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   24,
+			NumMessages:   29,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -2251,6 +2669,8 @@ type ContainerServiceClient interface {
 	// Returns Extended ACL table and signature from `Container` smart contract
 	// storage.
 	GetExtendedACL(ctx context.Context, in *GetExtendedACLRequest, opts ...grpc3.CallOption) (*GetExtendedACLResponse, error)
+	// Announce container used space values for P2P synchronization.
+	AnnounceUsedSpace(ctx context.Context, in *AnnounceUsedSpaceRequest, opts ...grpc3.CallOption) (*AnnounceUsedSpaceResponse, error)
 }
 
 type containerServiceClient struct {
@@ -2315,6 +2735,15 @@ func (c *containerServiceClient) GetExtendedACL(ctx context.Context, in *GetExte
 	return out, nil
 }
 
+func (c *containerServiceClient) AnnounceUsedSpace(ctx context.Context, in *AnnounceUsedSpaceRequest, opts ...grpc3.CallOption) (*AnnounceUsedSpaceResponse, error) {
+	out := new(AnnounceUsedSpaceResponse)
+	err := c.cc.Invoke(ctx, "/neo.fs.v2.container.ContainerService/AnnounceUsedSpace", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ContainerServiceServer is the server API for ContainerService service.
 type ContainerServiceServer interface {
 	// `Put` invokes `Container` smart contract's `Put` method and returns
@@ -2338,6 +2767,8 @@ type ContainerServiceServer interface {
 	// Returns Extended ACL table and signature from `Container` smart contract
 	// storage.
 	GetExtendedACL(context.Context, *GetExtendedACLRequest) (*GetExtendedACLResponse, error)
+	// Announce container used space values for P2P synchronization.
+	AnnounceUsedSpace(context.Context, *AnnounceUsedSpaceRequest) (*AnnounceUsedSpaceResponse, error)
 }
 
 // UnimplementedContainerServiceServer can be embedded to have forward compatible implementations.
@@ -2361,6 +2792,9 @@ func (*UnimplementedContainerServiceServer) SetExtendedACL(context.Context, *Set
 }
 func (*UnimplementedContainerServiceServer) GetExtendedACL(context.Context, *GetExtendedACLRequest) (*GetExtendedACLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetExtendedACL not implemented")
+}
+func (*UnimplementedContainerServiceServer) AnnounceUsedSpace(context.Context, *AnnounceUsedSpaceRequest) (*AnnounceUsedSpaceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AnnounceUsedSpace not implemented")
 }
 
 func RegisterContainerServiceServer(s *grpc3.Server, srv ContainerServiceServer) {
@@ -2475,6 +2909,24 @@ func _ContainerService_GetExtendedACL_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ContainerService_AnnounceUsedSpace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc3.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AnnounceUsedSpaceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContainerServiceServer).AnnounceUsedSpace(ctx, in)
+	}
+	info := &grpc3.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/neo.fs.v2.container.ContainerService/AnnounceUsedSpace",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContainerServiceServer).AnnounceUsedSpace(ctx, req.(*AnnounceUsedSpaceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ContainerService_serviceDesc = grpc3.ServiceDesc{
 	ServiceName: "neo.fs.v2.container.ContainerService",
 	HandlerType: (*ContainerServiceServer)(nil),
@@ -2502,6 +2954,10 @@ var _ContainerService_serviceDesc = grpc3.ServiceDesc{
 		{
 			MethodName: "GetExtendedACL",
 			Handler:    _ContainerService_GetExtendedACL_Handler,
+		},
+		{
+			MethodName: "AnnounceUsedSpace",
+			Handler:    _ContainerService_AnnounceUsedSpace_Handler,
 		},
 	},
 	Streams:  []grpc3.StreamDesc{},
