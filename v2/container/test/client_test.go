@@ -22,14 +22,15 @@ type testGRPCClient struct {
 }
 
 type testGRPCServer struct {
-	key       *ecdsa.PrivateKey
-	putResp   *container.PutResponse
-	getResp   *container.GetResponse
-	delResp   *container.DeleteResponse
-	listResp  *container.ListResponse
-	sEaclResp *container.SetExtendedACLResponse
-	gEaclResp *container.GetExtendedACLResponse
-	err       error
+	key          *ecdsa.PrivateKey
+	putResp      *container.PutResponse
+	getResp      *container.GetResponse
+	delResp      *container.DeleteResponse
+	listResp     *container.ListResponse
+	sEaclResp    *container.SetExtendedACLResponse
+	gEaclResp    *container.GetExtendedACLResponse
+	announceResp *container.AnnounceUsedSpaceResponse
+	err          error
 }
 
 func (s *testGRPCClient) Put(ctx context.Context, in *containerGRPC.PutRequest, opts ...grpc.CallOption) (*containerGRPC.PutResponse, error) {
@@ -54,6 +55,10 @@ func (s *testGRPCClient) SetExtendedACL(ctx context.Context, in *containerGRPC.S
 
 func (s *testGRPCClient) GetExtendedACL(ctx context.Context, in *containerGRPC.GetExtendedACLRequest, opts ...grpc.CallOption) (*containerGRPC.GetExtendedACLResponse, error) {
 	return s.server.GetExtendedACL(ctx, in)
+}
+
+func (s *testGRPCClient) AnnounceUsedSpace(ctx context.Context, in *containerGRPC.AnnounceUsedSpaceRequest, opts ...grpc.CallOption) (*containerGRPC.AnnounceUsedSpaceResponse, error) {
+	return s.server.AnnounceUsedSpace(ctx, in)
 }
 
 func (s *testGRPCServer) Put(_ context.Context, req *containerGRPC.PutRequest) (*containerGRPC.PutResponse, error) {
@@ -174,6 +179,26 @@ func (s *testGRPCServer) GetExtendedACL(_ context.Context, req *containerGRPC.Ge
 	}
 
 	return container.GetExtendedACLResponseToGRPCMessage(s.gEaclResp), nil
+}
+
+func (s *testGRPCServer) AnnounceUsedSpace(_ context.Context, req *containerGRPC.AnnounceUsedSpaceRequest) (*containerGRPC.AnnounceUsedSpaceResponse, error) {
+	if s.err != nil {
+		return nil, s.err
+	}
+
+	// verify request structure
+	if err := signature.VerifyServiceMessage(
+		container.AnnounceUsedSpaceRequestFromGRPCMessage(req),
+	); err != nil {
+		return nil, err
+	}
+
+	// sign response structure
+	if err := signature.SignServiceMessage(s.key, s.announceResp); err != nil {
+		return nil, err
+	}
+
+	return container.AnnounceUsedSpaceResponseToGRPCMessage(s.announceResp), nil
 }
 
 func testPutRequest() *container.PutRequest {
@@ -379,6 +404,50 @@ func testGetEACLResponse() *container.GetExtendedACLResponse {
 	meta.SetXHeaders([]*session.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
 
 	resp := new(container.GetExtendedACLResponse)
+	resp.SetBody(body)
+	resp.SetMetaHeader(meta)
+
+	return resp
+}
+
+func testAnnounceRequest() *container.AnnounceUsedSpaceRequest {
+	cid1 := new(refs.ContainerID)
+	cid1.SetValue([]byte{1, 2, 3})
+
+	cid2 := new(refs.ContainerID)
+	cid2.SetValue([]byte{4, 5, 6})
+
+	a1 := new(container.UsedSpaceAnnouncement)
+	a1.SetUsedSpace(10)
+	a1.SetContainerID(cid1)
+
+	a2 := new(container.UsedSpaceAnnouncement)
+	a2.SetUsedSpace(20)
+	a2.SetContainerID(cid2)
+
+	announcements := []*container.UsedSpaceAnnouncement{a1, a2}
+
+	body := new(container.AnnounceUsedSpaceRequestBody)
+	body.SetAnnouncements(announcements)
+
+	meta := new(session.RequestMetaHeader)
+	meta.SetTTL(1)
+
+	req := new(container.AnnounceUsedSpaceRequest)
+	req.SetBody(body)
+	req.SetMetaHeader(meta)
+
+	return req
+}
+
+func testAnnounceResponse() *container.AnnounceUsedSpaceResponse {
+	body := new(container.AnnounceUsedSpaceResponseBody)
+
+	meta := new(session.ResponseMetaHeader)
+	meta.SetTTL(1)
+	meta.SetXHeaders([]*session.XHeader{}) // w/o this require.Equal fails due to nil and []T{} difference
+
+	resp := new(container.AnnounceUsedSpaceResponse)
 	resp.SetBody(body)
 	resp.SetMetaHeader(meta)
 
@@ -807,6 +876,77 @@ func TestGRPCClient_GetEACL(t *testing.T) {
 		require.NoError(t, err)
 
 		r, err := c.GetExtendedACL(ctx, req)
+		require.NoError(t, err)
+
+		require.NoError(t, signature.VerifyServiceMessage(r))
+		require.Equal(t, resp.GetBody(), r.GetBody())
+		require.Equal(t, resp.GetMetaHeader(), r.GetMetaHeader())
+	})
+}
+
+func TestGRPCClient_AnnounceUsedSpace(t *testing.T) {
+	ctx := context.TODO()
+
+	cliKey := test.DecodeKey(0)
+	srvKey := test.DecodeKey(1)
+
+	t.Run("gRPC server error", func(t *testing.T) {
+		srvErr := errors.New("test server error")
+
+		srv := &testGRPCServer{
+			err: srvErr,
+		}
+
+		cli := &testGRPCClient{
+			server: srv,
+		}
+
+		c, err := container.NewClient(container.WithGRPCServiceClient(cli))
+		require.NoError(t, err)
+
+		resp, err := c.AnnounceUsedSpace(ctx, new(container.AnnounceUsedSpaceRequest))
+		require.True(t, errors.Is(err, srvErr))
+		require.Nil(t, resp)
+	})
+	t.Run("invalid request structure", func(t *testing.T) {
+		req := testAnnounceRequest()
+
+		require.Error(t, signature.VerifyServiceMessage(req))
+
+		c, err := container.NewClient(
+			container.WithGRPCServiceClient(
+				&testGRPCClient{
+					server: new(testGRPCServer),
+				},
+			),
+		)
+		require.NoError(t, err)
+
+		resp, err := c.AnnounceUsedSpace(ctx, req)
+		require.Error(t, err)
+		require.Nil(t, resp)
+	})
+
+	t.Run("correct response", func(t *testing.T) {
+		req := testAnnounceRequest()
+
+		require.NoError(t, signature.SignServiceMessage(cliKey, req))
+
+		resp := testAnnounceResponse()
+
+		c, err := container.NewClient(
+			container.WithGRPCServiceClient(
+				&testGRPCClient{
+					server: &testGRPCServer{
+						key:          srvKey,
+						announceResp: resp,
+					},
+				},
+			),
+		)
+		require.NoError(t, err)
+
+		r, err := c.AnnounceUsedSpace(ctx, req)
 		require.NoError(t, err)
 
 		require.NoError(t, signature.VerifyServiceMessage(r))
