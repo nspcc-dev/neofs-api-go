@@ -23,6 +23,8 @@ type Client struct {
 	cSetEACL *setEACLClient
 
 	cGetEACL *getEACLClient
+
+	cAnnounce *announceUsedSpaceClient
 }
 
 // Option represents Client option.
@@ -92,6 +94,14 @@ type getEACLClient struct {
 	caller func(context.Context, interface{}) (interface{}, error)
 
 	responseConverter func(interface{}) *GetExtendedACLResponse
+}
+
+type announceUsedSpaceClient struct {
+	requestConverter func(request *AnnounceUsedSpaceRequest) interface{}
+
+	caller func(context.Context, interface{}) (interface{}, error)
+
+	responseConverter func(interface{}) *AnnounceUsedSpaceResponse
 }
 
 // Put sends PutRequest over the network and returns PutResponse.
@@ -164,6 +174,19 @@ func (c *Client) GetExtendedACL(ctx context.Context, req *GetExtendedACLRequest)
 	}
 
 	return c.cGetEACL.responseConverter(resp), nil
+}
+
+// AnnounceUsedSpace sends AnnounceUsedSpaceRequest over the network and returns
+// AnnounceUsedSpaceResponse.
+//
+// It returns any error encountered during the call.
+func (c *Client) AnnounceUsedSpace(ctx context.Context, req *AnnounceUsedSpaceRequest) (*AnnounceUsedSpaceResponse, error) {
+	resp, err := c.cAnnounce.caller(ctx, c.cAnnounce.requestConverter(req))
+	if err != nil {
+		return nil, errors.Wrap(err, "could not send announce used space request")
+	}
+
+	return c.cAnnounce.responseConverter(resp), nil
 }
 
 func defaultCfg() *cfg {
@@ -253,6 +276,17 @@ func NewClient(opts ...Option) (*Client, error) {
 				},
 				responseConverter: func(resp interface{}) *GetExtendedACLResponse {
 					return GetExtendedACLResponseFromGRPCMessage(resp.(*container.GetExtendedACLResponse))
+				},
+			},
+			cAnnounce: &announceUsedSpaceClient{
+				requestConverter: func(req *AnnounceUsedSpaceRequest) interface{} {
+					return AnnounceUsedSpaceRequestToGRPCMessage(req)
+				},
+				caller: func(ctx context.Context, req interface{}) (interface{}, error) {
+					return c.AnnounceUsedSpace(ctx, req.(*container.AnnounceUsedSpaceRequest))
+				},
+				responseConverter: func(resp interface{}) *AnnounceUsedSpaceResponse {
+					return AnnounceUsedSpaceResponseFromGRPCMessage(resp.(*container.AnnounceUsedSpaceResponse))
 				},
 			},
 		}, nil

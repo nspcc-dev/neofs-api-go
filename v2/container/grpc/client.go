@@ -73,6 +73,10 @@ func (c *Client) GetExtendedACL(ctx context.Context, req *GetExtendedACLRequest)
 	return c.client.GetExtendedACL(ctx, req, c.callOpts...)
 }
 
+func (c *Client) AnnounceUsedSpace(ctx context.Context, req *AnnounceUsedSpaceRequest) (*AnnounceUsedSpaceResponse, error) {
+	return c.client.AnnounceUsedSpace(ctx, req, c.callOpts...)
+}
+
 // WithCallOptions returns Option that configures
 // Client to attach call options to each rpc call.
 func WithCallOptions(opts []grpc.CallOption) Option {
