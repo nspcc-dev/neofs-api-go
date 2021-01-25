@@ -6,7 +6,7 @@
 </p>
 
 ---
-![Go](https://github.com/nspcc-dev/neofs-api-go/workflows/Go/badge.svg)
+![Tests](https://github.com/nspcc-dev/neofs-api-go/workflows/neofs-api-go%20tests/badge.svg)
 [![codecov](https://codecov.io/gh/nspcc-dev/neofs-api-go/branch/master/graph/badge.svg)](https://codecov.io/gh/nspcc-dev/neofs-api-go)
 [![Report](https://goreportcard.com/badge/github.com/nspcc-dev/neofs-api-go)](https://goreportcard.com/report/github.com/nspcc-dev/neofs-api-go)
 [![GitHub release](https://img.shields.io/github/release/nspcc-dev/neofs-api-go.svg)](https://github.com/nspcc-dev/neofs-api-go)
