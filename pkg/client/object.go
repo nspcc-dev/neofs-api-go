@@ -83,6 +83,10 @@ type SearchObjectParams struct {
 	filters object.SearchFilters
 }
 
+type putObjectV2Reader struct {
+	r io.Reader
+}
+
 type putObjectV2Writer struct {
 	key *ecdsa.PrivateKey
 
@@ -132,6 +136,10 @@ func (t checksumType) toV2() v2refs.ChecksumType {
 	default:
 		panic(fmt.Sprintf("invalid checksum type %d", t))
 	}
+}
+
+func (w *putObjectV2Reader) Read(p []byte) (int, error) {
+	return w.r.Read(p)
 }
 
 func (w *putObjectV2Writer) Write(p []byte) (int, error) {
@@ -272,8 +280,10 @@ func (c *Client) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...Ca
 		stream:    stream,
 	}
 
+	r := &putObjectV2Reader{r: rPayload}
+
 	// copy payload from reader to stream writer
-	_, err = io.CopyBuffer(w, rPayload, make([]byte, chunkSize))
+	_, err = io.CopyBuffer(w, r, make([]byte, chunkSize))
 	if err != nil && !errors.Is(errors.Cause(err), io.EOF) {
 		return nil, errors.Wrap(err, "could not send payload bytes to Put object stream")
 	}
