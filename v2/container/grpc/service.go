@@ -354,6 +354,13 @@ func (m *GetExtendedACLResponse) SetVerifyHeader(v *session.ResponseVerification
 	}
 }
 
+// SetEpoch sets epoch of the size estimation.
+func (m *AnnounceUsedSpaceRequest_Body_Announcement) SetEpoch(v uint64) {
+	if m != nil {
+		m.Epoch = v
+	}
+}
+
 // SetContainerId sets identifier of the container.
 func (m *AnnounceUsedSpaceRequest_Body_Announcement) SetContainerId(v *refs.ContainerID) {
 	if m != nil {

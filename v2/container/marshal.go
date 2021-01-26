@@ -41,8 +41,9 @@ const (
 	getEACLRespBodyTableField     = 1
 	getEACLRespBodySignatureField = 2
 
-	usedSpaceAnnounceCIDField       = 1
-	usedSpaceAnnounceUsedSpaceField = 2
+	usedSpaceAnnounceEpochField     = 1
+	usedSpaceAnnounceCIDField       = 2
+	usedSpaceAnnounceUsedSpaceField = 3
 
 	usedSpaceReqBodyAnnouncementsField = 1
 )
@@ -554,6 +555,13 @@ func (a *UsedSpaceAnnouncement) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
+	n, err = protoutil.UInt64Marshal(usedSpaceAnnounceEpochField, buf[offset:], a.epoch)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
 	n, err = protoutil.NestedStructureMarshal(usedSpaceAnnounceCIDField, buf[offset:], a.cid)
 	if err != nil {
 		return nil, err
@@ -574,6 +582,7 @@ func (a *UsedSpaceAnnouncement) StableSize() (size int) {
 		return 0
 	}
 
+	size += protoutil.UInt64Size(usedSpaceAnnounceEpochField, a.epoch)
 	size += protoutil.NestedStructureSize(usedSpaceAnnounceCIDField, a.cid)
 	size += protoutil.UInt64Size(usedSpaceAnnounceUsedSpaceField, a.usedSpace)
 

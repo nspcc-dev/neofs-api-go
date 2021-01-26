@@ -418,10 +418,12 @@ func testAnnounceRequest() *container.AnnounceUsedSpaceRequest {
 	cid2.SetValue([]byte{4, 5, 6})
 
 	a1 := new(container.UsedSpaceAnnouncement)
+	a1.SetEpoch(20)
 	a1.SetUsedSpace(10)
 	a1.SetContainerID(cid1)
 
 	a2 := new(container.UsedSpaceAnnouncement)
+	a2.SetEpoch(20)
 	a2.SetUsedSpace(20)
 	a2.SetContainerID(cid2)
 
