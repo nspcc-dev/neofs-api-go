@@ -29,6 +29,9 @@ type Context struct {
 	// weightFunc is a weighting function for determining node priority.
 	// By default in combines favours low price and high capacity.
 	weightFunc weightFunc
+	// container backup factor is a factor for selector counters that expand
+	// amount of chosen nodes.
+	cbf uint32
 }
 
 // Various validation errors.
@@ -56,6 +59,7 @@ func NewContext(nm *Netmap) *Context {
 		numCache:   make(map[*Filter]uint64),
 		aggregator: newMeanIQRAgg,
 		weightFunc: GetDefaultWeightFunc(nm.Nodes),
+		cbf:        defaultCBF,
 	}
 }
 
@@ -63,6 +67,14 @@ func (c *Context) setPivot(pivot []byte) {
 	if len(pivot) != 0 {
 		c.pivot = pivot
 		c.pivotHash = hrw.Hash(pivot)
+	}
+}
+
+func (c *Context) setCBF(cbf uint32) {
+	if cbf == 0 {
+		c.cbf = defaultCBF
+	} else {
+		c.cbf = cbf
 	}
 }
 
