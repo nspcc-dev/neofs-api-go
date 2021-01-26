@@ -94,6 +94,8 @@ type GetExtendedACLResponseBody struct {
 }
 
 type UsedSpaceAnnouncement struct {
+	epoch uint64
+
 	cid *refs.ContainerID
 
 	usedSpace uint64
@@ -914,6 +916,20 @@ func (r *GetExtendedACLResponse) GetVerificationHeader() *session.ResponseVerifi
 func (r *GetExtendedACLResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
 	if r != nil {
 		r.verifyHeader = v
+	}
+}
+
+func (a *UsedSpaceAnnouncement) GetEpoch() uint64 {
+	if a != nil {
+		return a.epoch
+	}
+
+	return 0
+}
+
+func (a *UsedSpaceAnnouncement) SetEpoch(v uint64) {
+	if a != nil {
+		a.epoch = v
 	}
 }
 
