@@ -455,6 +455,7 @@ func generateAnnounceRequestBody(n int) *container.AnnounceUsedSpaceRequestBody 
 		cid.SetValue(buf)
 
 		a := new(container.UsedSpaceAnnouncement)
+		a.SetEpoch(rand.Uint64())
 		a.SetContainerID(cid)
 		a.SetUsedSpace(rand.Uint64())
 	}
