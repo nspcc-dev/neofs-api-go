@@ -270,6 +270,7 @@ func TestPlacementPolicy_ProcessSelectors(t *testing.T) {
 	nm, err := NewNetmap(NodesFromInfo(nodes))
 	require.NoError(t, err)
 	c := NewContext(nm)
+	c.setCBF(p.ContainerBackupFactor())
 	require.NoError(t, c.processFilters(p))
 	require.NoError(t, c.processSelectors(p))
 
@@ -277,7 +278,7 @@ func TestPlacementPolicy_ProcessSelectors(t *testing.T) {
 		sel := c.Selections[s.Name()]
 		s := c.Selectors[s.Name()]
 		bucketCount, nodesInBucket := GetNodesCount(p, s)
-		nodesInBucket *= int(p.ContainerBackupFactor())
+		nodesInBucket *= int(c.cbf)
 		targ := fmt.Sprintf("selector '%s'", s.Name())
 		require.Equal(t, bucketCount, len(sel), targ)
 		for _, res := range sel {
@@ -312,6 +313,7 @@ func TestPlacementPolicy_ProcessSelectorsHRW(t *testing.T) {
 	require.NoError(t, err)
 	c := NewContext(nm)
 	c.setPivot([]byte("containerID"))
+	c.setCBF(p.ContainerBackupFactor())
 	c.weightFunc = newWeightFunc(newMaxNorm(10000), newReverseMinNorm(1))
 	c.aggregator = func() aggregator {
 		return new(maxAgg)
@@ -388,6 +390,7 @@ func TestPlacementPolicy_ProcessSelectorsInvalid(t *testing.T) {
 			nm, err := NewNetmap(NodesFromInfo(nodes))
 			require.NoError(t, err)
 			c := NewContext(nm)
+			c.setCBF(tc.p.ContainerBackupFactor())
 			require.NoError(t, c.processFilters(tc.p))
 
 			err = c.processSelectors(tc.p)

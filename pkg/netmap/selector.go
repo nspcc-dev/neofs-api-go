@@ -69,7 +69,7 @@ func (c *Context) getSelection(p *PlacementPolicy, s *Selector) ([]Nodes, error)
 		}
 	}
 
-	maxNodesInBucket := nodesInBucket * int(p.ContainerBackupFactor())
+	maxNodesInBucket := nodesInBucket * int(c.cbf)
 	nodes := make([]Nodes, 0, len(buckets))
 	fallback := make([]Nodes, 0, len(buckets))
 

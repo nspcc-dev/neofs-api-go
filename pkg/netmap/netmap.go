@@ -50,10 +50,7 @@ func (m *Netmap) GetPlacementVectors(cnt ContainerNodes, pivot []byte) ([]Nodes,
 func (m *Netmap) GetContainerNodes(p *PlacementPolicy, pivot []byte) (ContainerNodes, error) {
 	c := NewContext(m)
 	c.setPivot(pivot)
-
-	if p.ContainerBackupFactor() == 0 {
-		p.SetContainerBackupFactor(defaultCBF)
-	}
+	c.setCBF(p.ContainerBackupFactor())
 
 	if err := c.processFilters(p); err != nil {
 		return nil, err
