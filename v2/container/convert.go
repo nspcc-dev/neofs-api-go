@@ -857,6 +857,8 @@ func UsedSpaceAnnouncementToGRPCMessage(a *UsedSpaceAnnouncement) *container.Ann
 
 	m := new(container.AnnounceUsedSpaceRequest_Body_Announcement)
 
+	m.SetEpoch(a.GetEpoch())
+
 	m.SetContainerId(
 		refs.ContainerIDToGRPCMessage(a.GetContainerID()),
 	)
@@ -872,6 +874,8 @@ func UsedSpaceAnnouncementFromGRPCMessage(m *container.AnnounceUsedSpaceRequest_
 	}
 
 	a := new(UsedSpaceAnnouncement)
+
+	a.SetEpoch(m.GetEpoch())
 
 	a.SetContainerID(
 		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
