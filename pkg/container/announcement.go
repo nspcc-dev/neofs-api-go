@@ -19,6 +19,16 @@ func NewAnnouncementFromV2(v *container.UsedSpaceAnnouncement) *UsedSpaceAnnounc
 	return (*UsedSpaceAnnouncement)(v)
 }
 
+// Epoch of the announcement.
+func (a *UsedSpaceAnnouncement) Epoch() uint64 {
+	return (*container.UsedSpaceAnnouncement)(a).GetEpoch()
+}
+
+// SetEpoch sets announcement epoch value.
+func (a *UsedSpaceAnnouncement) SetEpoch(epoch uint64) {
+	(*container.UsedSpaceAnnouncement)(a).SetEpoch(epoch)
+}
+
 // ContainerID of the announcement.
 func (a *UsedSpaceAnnouncement) ContainerID() *ID {
 	return NewIDFromV2(
