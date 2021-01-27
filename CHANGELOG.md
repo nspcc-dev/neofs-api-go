@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.22.2] - 2021-01-27
+
+### Fixed
+
+- Fix size limit for grpc messages in object.Put operation.
+- Fix `GetContainerNode()` function, so that it does not modify placement policy.
+
 ## [1.22.1] - 2021-01-15
 
 Support changes from NeoFS API v2.2.1 release.
@@ -526,3 +533,4 @@ Initial public release
 [1.21.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.21.1...v1.21.2
 [1.22.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.21.2...v1.22.0
 [1.22.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.22.0...v1.22.1
+[1.22.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.22.1...v1.22.2
