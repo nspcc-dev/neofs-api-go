@@ -4,8 +4,61 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestPlacementPolicy_CBFWithEmptySelector(t *testing.T) {
+	nodes := []NodeInfo{
+		nodeInfoFromAttributes("ID", "1", "Attr", "Same"),
+		nodeInfoFromAttributes("ID", "2", "Attr", "Same"),
+		nodeInfoFromAttributes("ID", "3", "Attr", "Same"),
+		nodeInfoFromAttributes("ID", "4", "Attr", "Same"),
+	}
+
+	p1 := newPlacementPolicy(0,
+		[]*Replica{newReplica(2, "")},
+		nil, // selectors
+		nil, // filters
+	)
+
+	p2 := newPlacementPolicy(3,
+		[]*Replica{newReplica(2, "")},
+		nil, // selectors
+		nil, // filters
+	)
+
+	p3 := newPlacementPolicy(3,
+		[]*Replica{newReplica(2, "X")},
+		[]*Selector{newSelector("X", "", ClauseDistinct, 2, "*")},
+		nil, // filters
+	)
+
+	p4 := newPlacementPolicy(3,
+		[]*Replica{newReplica(2, "X")},
+		[]*Selector{newSelector("X", "Attr", ClauseSame, 2, "*")},
+		nil, // filters
+	)
+
+	nm, err := NewNetmap(NodesFromInfo(nodes))
+	require.NoError(t, err)
+
+	v, err := nm.GetContainerNodes(p1, nil)
+	require.NoError(t, err)
+	assert.Len(t, v.Flatten(), 4)
+
+	v, err = nm.GetContainerNodes(p2, nil)
+	require.NoError(t, err)
+	assert.Len(t, v.Flatten(), 4)
+
+	v, err = nm.GetContainerNodes(p3, nil)
+	require.NoError(t, err)
+	assert.Len(t, v.Flatten(), 4)
+
+	v, err = nm.GetContainerNodes(p4, nil)
+	require.NoError(t, err)
+	assert.Len(t, v.Flatten(), 4)
+}
 
 func TestPlacementPolicyFromV2(t *testing.T) {
 	pV2 := new(netmap.PlacementPolicy)
