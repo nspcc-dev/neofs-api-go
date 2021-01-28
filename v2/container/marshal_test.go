@@ -234,6 +234,22 @@ func TestGetEACLResponseBody_StableMarshal(t *testing.T) {
 	})
 }
 
+func TestUsedSpaceAnnouncement_StableMarshal(t *testing.T) {
+	from := generateAnnouncement()
+	transport := new(grpc.AnnounceUsedSpaceRequest_Body_Announcement)
+
+	t.Run("non empty", func(t *testing.T) {
+		wire, err := from.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = goproto.Unmarshal(wire, transport)
+		require.NoError(t, err)
+
+		to := container.UsedSpaceAnnouncementFromGRPCMessage(transport)
+		require.Equal(t, from, to)
+	})
+}
+
 func TestAnnounceUsedSpaceRequestBody_StableMarshal(t *testing.T) {
 	requestFrom := generateAnnounceRequestBody(10)
 	transport := new(grpc.AnnounceUsedSpaceRequest_Body)
@@ -443,21 +459,27 @@ func generateGetEACLResponseBody(n int, k, v string) *container.GetExtendedACLRe
 	return resp
 }
 
+func generateAnnouncement() *container.UsedSpaceAnnouncement {
+	buf := make([]byte, sha256.Size)
+	rand.Read(buf)
+
+	cid := new(refs.ContainerID)
+	cid.SetValue(buf)
+
+	a := new(container.UsedSpaceAnnouncement)
+	a.SetEpoch(rand.Uint64())
+	a.SetContainerID(cid)
+	a.SetUsedSpace(rand.Uint64())
+
+	return a
+}
+
 func generateAnnounceRequestBody(n int) *container.AnnounceUsedSpaceRequestBody {
 	resp := new(container.AnnounceUsedSpaceRequestBody)
-	buf := make([]byte, sha256.Size)
 
 	announcements := make([]*container.UsedSpaceAnnouncement, 0, n)
 	for i := 0; i < n; i++ {
-		rand.Read(buf)
-
-		cid := new(refs.ContainerID)
-		cid.SetValue(buf)
-
-		a := new(container.UsedSpaceAnnouncement)
-		a.SetEpoch(rand.Uint64())
-		a.SetContainerID(cid)
-		a.SetUsedSpace(rand.Uint64())
+		announcements = append(announcements, generateAnnouncement())
 	}
 
 	resp.SetAnnouncements(announcements)

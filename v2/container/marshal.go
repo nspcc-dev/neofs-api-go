@@ -589,6 +589,17 @@ func (a *UsedSpaceAnnouncement) StableSize() (size int) {
 	return size
 }
 
+func (a *UsedSpaceAnnouncement) Unmarshal(data []byte) error {
+	m := new(container.AnnounceUsedSpaceRequest_Body_Announcement)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*a = *UsedSpaceAnnouncementFromGRPCMessage(m)
+
+	return nil
+}
+
 func (r *AnnounceUsedSpaceRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
