@@ -55,3 +55,23 @@ func (a *UsedSpaceAnnouncement) SetUsedSpace(value uint64) {
 func (a *UsedSpaceAnnouncement) ToV2() *container.UsedSpaceAnnouncement {
 	return (*container.UsedSpaceAnnouncement)(a)
 }
+
+// Marshal marshals UsedSpaceAnnouncement into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (a *UsedSpaceAnnouncement) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return a.ToV2().
+		StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of UsedSpaceAnnouncement.
+func (a *UsedSpaceAnnouncement) Unmarshal(data []byte) error {
+	return a.ToV2().
+		Unmarshal(data)
+}

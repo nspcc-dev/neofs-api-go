@@ -1,6 +1,7 @@
 package container_test
 
 import (
+	"crypto/sha256"
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
@@ -45,5 +46,26 @@ func TestAnnouncement(t *testing.T) {
 		require.Equal(t, newEpoch, newA.Epoch())
 		require.Equal(t, newUsedSpace, newA.UsedSpace())
 		require.Equal(t, container.NewIDFromV2(newCID), newA.ContainerID())
+	})
+}
+
+func TestUsedSpaceEncoding(t *testing.T) {
+	a := container.NewAnnouncement()
+	a.SetUsedSpace(13)
+	a.SetEpoch(666)
+
+	id := container.NewID()
+	id.SetSHA256([sha256.Size]byte{1, 2, 3})
+
+	a.SetContainerID(id)
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := a.Marshal()
+		require.NoError(t, err)
+
+		a2 := container.NewAnnouncement()
+		require.NoError(t, a2.Unmarshal(data))
+
+		require.Equal(t, a, a2)
 	})
 }
