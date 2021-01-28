@@ -54,7 +54,11 @@ func TestPlacementPolicy_Minimal(t *testing.T) {
 		}
 
 		require.NoError(t, err)
-		require.EqualValues(t, rep, len(v.Flatten()))
+		count := int(rep * defaultCBF)
+		if count > len(nm.Nodes) {
+			count = len(nm.Nodes)
+		}
+		require.EqualValues(t, count, len(v.Flatten()))
 	}
 
 	t.Run("REP 1", func(t *testing.T) {

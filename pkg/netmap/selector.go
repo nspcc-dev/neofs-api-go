@@ -48,6 +48,7 @@ func GetNodesCount(_ *PlacementPolicy, s *Selector) (int, int) {
 }
 
 // getSelection returns nodes grouped by s.attribute.
+// Last argument specifies if more buckets can be used to fullfill CBF.
 func (c *Context) getSelection(p *PlacementPolicy, s *Selector) ([]Nodes, error) {
 	bucketCount, nodesInBucket := GetNodesCount(p, s)
 	buckets := c.getSelectionBase(s)
@@ -97,6 +98,17 @@ func (c *Context) getSelection(p *PlacementPolicy, s *Selector) ([]Nodes, error)
 		}
 
 		hrw.SortSliceByWeightIndex(nodes, weights, c.pivotHash)
+	}
+
+	if s.Attribute() == "" {
+		nodes, fallback = nodes[:bucketCount], nodes[bucketCount:]
+		for i := range fallback {
+			index := i % bucketCount
+			if len(nodes[index]) >= maxNodesInBucket {
+				break
+			}
+			nodes[index] = append(nodes[index], fallback[i]...)
+		}
 	}
 
 	return nodes[:bucketCount], nil
