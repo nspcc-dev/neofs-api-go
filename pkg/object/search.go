@@ -15,12 +15,18 @@ type SearchMatchType uint32
 const (
 	MatchUnknown SearchMatchType = iota
 	MatchStringEqual
+	MatchStringNotEqual
+	MatchNotPresent
 )
 
 func (m SearchMatchType) ToV2() v2object.MatchType {
 	switch m {
 	case MatchStringEqual:
 		return v2object.MatchStringEqual
+	case MatchStringNotEqual:
+		return v2object.MatchStringNotEqual
+	case MatchNotPresent:
+		return v2object.MatchNotPresent
 	default:
 		return v2object.MatchUnknown
 	}
@@ -30,6 +36,10 @@ func SearchMatchFromV2(t v2object.MatchType) (m SearchMatchType) {
 	switch t {
 	case v2object.MatchStringEqual:
 		m = MatchStringEqual
+	case v2object.MatchStringNotEqual:
+		m = MatchStringNotEqual
+	case v2object.MatchNotPresent:
+		m = MatchNotPresent
 	default:
 		m = MatchUnknown
 	}

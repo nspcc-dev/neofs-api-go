@@ -12,8 +12,10 @@ import (
 
 var (
 	eqV2Matches = map[object.SearchMatchType]v2object.MatchType{
-		object.MatchUnknown:     v2object.MatchUnknown,
-		object.MatchStringEqual: v2object.MatchStringEqual,
+		object.MatchUnknown:        v2object.MatchUnknown,
+		object.MatchStringEqual:    v2object.MatchStringEqual,
+		object.MatchStringNotEqual: v2object.MatchStringNotEqual,
+		object.MatchNotPresent:     v2object.MatchNotPresent,
 	}
 )
 
