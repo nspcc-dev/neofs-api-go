@@ -1952,6 +1952,10 @@ func (x *SearchRequest_Body) GetFilters() []*SearchRequest_Body_Filter {
 // * $Object:PHY \
 //   Returns only objects physically stored in the system. This filter is
 //   activated if the `key` exists, disregarding the value and matcher type.
+//
+// Note: using filters with a key with prefix `$Object:` and match type
+// `NOT_PRESENT `is not recommended since this is not a cross-version approach.
+// Behavior when processing this kind of filters is undefined.
 type SearchRequest_Body_Filter struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
