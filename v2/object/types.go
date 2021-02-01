@@ -226,6 +226,8 @@ const (
 const (
 	MatchUnknown MatchType = iota
 	MatchStringEqual
+	MatchStringNotEqual
+	MatchNotPresent
 )
 
 func (h *ShortHeader) GetVersion() *refs.Version {
