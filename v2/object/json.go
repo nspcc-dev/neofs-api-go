@@ -124,3 +124,23 @@ func (o *Object) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (f *SearchFilter) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		SearchFilterToGRPCMessage(f),
+	)
+}
+
+func (f *SearchFilter) UnmarshalJSON(data []byte) error {
+	msg := new(object.SearchRequest_Body_Filter)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*f = *SearchFilterFromGRPCMessage(msg)
+
+	return nil
+}
