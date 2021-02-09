@@ -1,6 +1,7 @@
 package object
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
@@ -254,4 +255,22 @@ func (f *SearchFilters) AddSplitIDFilter(m SearchMatchType, id *SplitID) {
 // AddTypeFilter adds filter by object type.
 func (f *SearchFilters) AddTypeFilter(m SearchMatchType, typ Type) {
 	f.addReservedFilter(m, fKeyType, typ)
+}
+
+// MarshalJSON encodes SearchFilters to protobuf JSON format.
+func (f *SearchFilters) MarshalJSON() ([]byte, error) {
+	return json.Marshal(f.ToV2())
+}
+
+// UnmarshalJSON decodes SearchFilters from protobuf JSON format.
+func (f *SearchFilters) UnmarshalJSON(data []byte) error {
+	var fsV2 []*v2object.SearchFilter
+
+	if err := json.Unmarshal(data, &fsV2); err != nil {
+		return err
+	}
+
+	*f = NewSearchFiltersFromV2(fsV2)
+
+	return nil
 }
