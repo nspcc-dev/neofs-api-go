@@ -78,3 +78,15 @@ func TestObjectJSON(t *testing.T) {
 
 	require.Equal(t, o, o2)
 }
+
+func TestSearchFilterJSON(t *testing.T) {
+	f := generateFilter("key", "value")
+
+	data, err := f.MarshalJSON()
+	require.NoError(t, err)
+
+	f2 := new(object.SearchFilter)
+	require.NoError(t, f2.UnmarshalJSON(data))
+
+	require.Equal(t, f, f2)
+}
