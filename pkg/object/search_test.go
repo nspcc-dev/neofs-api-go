@@ -176,3 +176,19 @@ func TestSearchFilters_AddTypeFilter(t *testing.T) {
 		require.Equal(t, v2object.MatchStringEqual, fsV2[0].GetMatchType())
 	})
 }
+
+func TestSearchFiltersEncoding(t *testing.T) {
+	fs := object.NewSearchFilters()
+	fs.AddFilter("key 1", "value 2", object.MatchStringEqual)
+	fs.AddFilter("key 2", "value 2", object.MatchStringNotEqual)
+
+	t.Run("json", func(t *testing.T) {
+		data, err := fs.MarshalJSON()
+		require.NoError(t, err)
+
+		fs2 := object.NewSearchFilters()
+		require.NoError(t, fs2.UnmarshalJSON(data))
+
+		require.Equal(t, fs, fs2)
+	})
+}
