@@ -44,8 +44,13 @@ const (
 
 // Enumeration of well-known attributes.
 const (
-	CapacityAttr = "Capacity"
-	PriceAttr    = "Price"
+	// AttrPrice is a key to the node attribute that indicates the
+	// price in GAS tokens for storing one GB of data during one Epoch.
+	AttrPrice = "Price"
+
+	// AttrCapacity is a key to the node attribute that indicates the
+	// total available disk space in Gigabytes.
+	AttrCapacity = "Capacity"
 )
 
 var _ hrw.Hasher = (*Node)(nil)
@@ -77,9 +82,9 @@ func newNodeV2(index int, ni *NodeInfo) *Node {
 
 	for _, attr := range ni.Attributes() {
 		switch attr.Key() {
-		case CapacityAttr:
+		case AttrCapacity:
 			n.Capacity, _ = strconv.ParseUint(attr.Value(), 10, 64)
-		case PriceAttr:
+		case AttrPrice:
 			n.Price, _ = strconv.ParseUint(attr.Value(), 10, 64)
 		}
 
