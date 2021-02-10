@@ -115,9 +115,9 @@ func (c *Context) matchKeyValue(f *Filter, b *Node) bool {
 		var attr uint64
 
 		switch f.Key() {
-		case PriceAttr:
+		case AttrPrice:
 			attr = b.Price
-		case CapacityAttr:
+		case AttrCapacity:
 			attr = b.Capacity
 		default:
 			var err error
