@@ -299,15 +299,15 @@ func TestPlacementPolicy_ProcessSelectorsHRW(t *testing.T) {
 
 	// bucket weight order: RU > DE > FR
 	nodes := []NodeInfo{
-		nodeInfoFromAttributes("Country", "Germany", PriceAttr, "2", CapacityAttr, "10000"),
-		nodeInfoFromAttributes("Country", "Germany", PriceAttr, "4", CapacityAttr, "1"),
-		nodeInfoFromAttributes("Country", "France", PriceAttr, "3", CapacityAttr, "10"),
-		nodeInfoFromAttributes("Country", "Russia", PriceAttr, "2", CapacityAttr, "10000"),
-		nodeInfoFromAttributes("Country", "Russia", PriceAttr, "1", CapacityAttr, "10000"),
-		nodeInfoFromAttributes("Country", "Russia", CapacityAttr, "10000"),
-		nodeInfoFromAttributes("Country", "France", PriceAttr, "100", CapacityAttr, "1"),
-		nodeInfoFromAttributes("Country", "France", PriceAttr, "7", CapacityAttr, "10000"),
-		nodeInfoFromAttributes("Country", "Russia", PriceAttr, "2", CapacityAttr, "1"),
+		nodeInfoFromAttributes("Country", "Germany", AttrPrice, "2", AttrCapacity, "10000"),
+		nodeInfoFromAttributes("Country", "Germany", AttrPrice, "4", AttrCapacity, "1"),
+		nodeInfoFromAttributes("Country", "France", AttrPrice, "3", AttrCapacity, "10"),
+		nodeInfoFromAttributes("Country", "Russia", AttrPrice, "2", AttrCapacity, "10000"),
+		nodeInfoFromAttributes("Country", "Russia", AttrPrice, "1", AttrCapacity, "10000"),
+		nodeInfoFromAttributes("Country", "Russia", AttrCapacity, "10000"),
+		nodeInfoFromAttributes("Country", "France", AttrPrice, "100", AttrCapacity, "1"),
+		nodeInfoFromAttributes("Country", "France", AttrPrice, "7", AttrCapacity, "10000"),
+		nodeInfoFromAttributes("Country", "Russia", AttrPrice, "2", AttrCapacity, "1"),
 	}
 	nm, err := NewNetmap(NodesFromInfo(nodes))
 	require.NoError(t, err)
