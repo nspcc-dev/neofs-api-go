@@ -626,21 +626,37 @@ func (x *NodeInfo) GetState() NodeInfo_State {
 // * Subnet \
 //   String ID of Node's storage subnet. There can be only one subnet served
 //   by the Storage Node.
-// * Locode \
+// * UN-LOCODE \
 //   Node's geographic location in
 //   [UN/LOCODE](https://www.unece.org/cefact/codesfortrade/codes_index.html)
-//   format approximated to the nearest point defined in standard.
-// * Country \
+//   format approximated to the nearest point defined in the standard.
+// * CountryCode \
 //   Country code in
 //   [ISO 3166-1_alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
-//   format. Calculated automatically from `Locode` attribute
-// * Region \
-//   Country's administative subdivision where node is located. Calculated
-//   automatically from `Locode` attribute based on `SubDiv` field. Presented
-//   in [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2) format.
-// * City \
-//   City, town, village or rural area name where node is located written
-//   without diacritics . Calculated automatically from `Locode` attribute.
+//   format. Calculated automatically from `UN-LOCODE` attribute.
+// * Country \
+//   Country short name in English, as defined in
+//   [ISO-3166](https://www.iso.org/obp/ui/#search). Calculated automatically
+//   from `UN-LOCODE` attribute.
+// * Location \
+//   Place names are given, whenever possible, in their national language
+//   versions as expressed in the Roman alphabet using the 26 characters of
+//   the character set adopted for international trade data interchange,
+//   written without diacritics . Calculated automatically from `UN-LOCODE`
+//   attribute.
+// * SubDivCode \
+//   Country's administrative subdivision where node is located. Calculated
+//   automatically from `UN-LOCODE` attribute based on `SubDiv` field.
+//   Presented in [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2)
+//   format.
+// * SubDiv \
+//   Country's administrative subdivision name, as defined in
+//   [ISO 3166-2](https://en.wikipedia.org/wiki/ISO_3166-2). Calculated
+//   automatically from `UN-LOCODE` attribute.
+// * Continent \
+//   Node's continent name according to the [Seven-Continent model]
+//   (https://en.wikipedia.org/wiki/Continent#Number). Calculated
+//   automatically from `UN-LOCODE` attribute.
 //
 // For detailed description of each well-known attribute please see the
 // corresponding section in NeoFS Technical specification.
