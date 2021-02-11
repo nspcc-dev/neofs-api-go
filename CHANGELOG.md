@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.23.0] - 2021-02-11 - Seonyudo (선유도, 仙遊島)
+
+Support changes from NeoFS API v2.3.0 "Seonyudo" release.
+
+### Added
+
+- Fulfill backup factor for default attribute in placement.
+- Support of `Container.AnnounceUsedSpace` RPC from NeoFS API.
+- New `pkg/client.Client.AnnounceContainerUsedSpace` method.
+- Support of `STRING_NOT_EQUAL` and `NOT_PRESENT` object search filters.
+- Implementation of `json.Marshaler`/`json.Unmarshaler` on `v2/object/SearchFilter`.
+- Implementation of `json.Marshaler`/`json.Unmarshaler` on `pkg/object/SearchFilters`.
+- Named constants of well-known node attributes in `pkg/netmap`.
+
+### Renamed
+
+- `pkg/netmap/PriceAttr` to `pkg/netmap/AttrPrice`.
+- `pkg/netmap/CapacityAttr` to `pkg/netmap/AttrCapacity`.
+
 ## [1.22.2] - 2021-01-27
 
 ### Fixed
@@ -534,3 +553,4 @@ Initial public release
 [1.22.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.21.2...v1.22.0
 [1.22.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.22.0...v1.22.1
 [1.22.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.22.1...v1.22.2
+[1.23.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.22.2...v1.23.0
