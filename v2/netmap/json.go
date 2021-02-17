@@ -124,3 +124,23 @@ func (ni *NodeInfo) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+func (i *NetworkInfo) MarshalJSON() ([]byte, error) {
+	return protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(
+		NetworkInfoToGRPCMessage(i),
+	)
+}
+
+func (i *NetworkInfo) UnmarshalJSON(data []byte) error {
+	msg := new(netmap.NetworkInfo)
+
+	if err := protojson.Unmarshal(data, msg); err != nil {
+		return err
+	}
+
+	*i = *NetworkInfoFromGRPCMessage(msg)
+
+	return nil
+}
