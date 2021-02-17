@@ -66,3 +66,15 @@ func TestNodeInfoJSON(t *testing.T) {
 
 	require.Equal(t, i, i2)
 }
+
+func TestNetworkInfoJSON(t *testing.T) {
+	i := generateNetworkInfo()
+
+	data, err := i.MarshalJSON()
+	require.NoError(t, err)
+
+	i2 := new(netmap.NetworkInfo)
+	require.NoError(t, i2.UnmarshalJSON(data))
+
+	require.Equal(t, i, i2)
+}
