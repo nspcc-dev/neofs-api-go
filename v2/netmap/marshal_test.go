@@ -111,6 +111,22 @@ func TestLocalNodeInfoResponseBody_StableMarshal(t *testing.T) {
 	})
 }
 
+func TestNetworkInfoResponseBody_StableMarshal(t *testing.T) {
+	from := generateNetworkInfoResponseBody()
+	transport := new(grpc.NetworkInfoResponse_Body)
+
+	t.Run("non empty", func(t *testing.T) {
+		wire, err := from.StableMarshal(nil)
+		require.NoError(t, err)
+
+		err = goproto.Unmarshal(wire, transport)
+		require.NoError(t, err)
+
+		to := netmap.NetworkInfoResponseBodyFromGRPCMessage(transport)
+		require.Equal(t, from, to)
+	})
+}
+
 func generateAttribute(k, v string) *netmap.Attribute {
 	attr := new(netmap.Attribute)
 	attr.SetKey(k)
@@ -212,4 +228,21 @@ func generateVersion(maj, min uint32) *refs.Version {
 	version.SetMinor(min)
 
 	return version
+}
+
+func generateNetworkInfo() *netmap.NetworkInfo {
+	ni := new(netmap.NetworkInfo)
+	ni.SetCurrentEpoch(13)
+	ni.SetMagicNumber(666)
+
+	return ni
+}
+
+func generateNetworkInfoResponseBody() *netmap.NetworkInfoResponseBody {
+	ni := generateNetworkInfo()
+
+	r := new(netmap.NetworkInfoResponseBody)
+	r.SetNetworkInfo(ni)
+
+	return r
 }
