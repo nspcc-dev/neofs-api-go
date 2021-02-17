@@ -160,3 +160,17 @@ func (m *NodeInfo) SetState(v NodeInfo_State) {
 		m.State = v
 	}
 }
+
+// SetCurrentEpoch sets number of the current epoch.
+func (x *NetworkInfo) SetCurrentEpoch(v uint64) {
+	if x != nil {
+		x.CurrentEpoch = v
+	}
+}
+
+// SetMagicNumber sets magic number of the sidechain.
+func (x *NetworkInfo) SetMagicNumber(v uint64) {
+	if x != nil {
+		x.MagicNumber = v
+	}
+}
