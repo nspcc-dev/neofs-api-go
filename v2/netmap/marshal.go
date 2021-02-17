@@ -500,3 +500,100 @@ func (l *LocalNodeInfoResponseBody) StableSize() (size int) {
 
 	return size
 }
+
+const (
+	_ = iota
+	netInfoCurEpochFNum
+	netInfoMagicNumFNum
+)
+
+func (i *NetworkInfo) StableMarshal(buf []byte) ([]byte, error) {
+	if i == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, i.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = protoutil.UInt64Marshal(netInfoCurEpochFNum, buf[offset:], i.curEpoch)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = protoutil.UInt64Marshal(netInfoMagicNumFNum, buf[offset:], i.magicNum)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (i *NetworkInfo) StableSize() (size int) {
+	if i == nil {
+		return 0
+	}
+
+	size += protoutil.UInt64Size(netInfoCurEpochFNum, i.curEpoch)
+	size += protoutil.UInt64Size(netInfoMagicNumFNum, i.magicNum)
+
+	return size
+}
+
+func (i *NetworkInfo) Unmarshal(data []byte) error {
+	m := new(netmap.NetworkInfo)
+	if err := proto.Unmarshal(data, m); err != nil {
+		return err
+	}
+
+	*i = *NetworkInfoFromGRPCMessage(m)
+
+	return nil
+}
+
+func (l *NetworkInfoRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+	return nil, nil
+}
+
+func (l *NetworkInfoRequestBody) StableSize() (size int) {
+	return 0
+}
+
+const (
+	_ = iota
+	netInfoRespBodyNetInfoFNum
+)
+
+func (i *NetworkInfoResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+	if i == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, i.StableSize())
+	}
+
+	_, err := protoutil.NestedStructureMarshal(netInfoRespBodyNetInfoFNum, buf, i.netInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (i *NetworkInfoResponseBody) StableSize() (size int) {
+	if i == nil {
+		return 0
+	}
+
+	size += protoutil.NestedStructureSize(netInfoRespBodyNetInfoFNum, i.netInfo)
+
+	return size
+}
