@@ -354,3 +354,120 @@ func LocalNodeInfoResponseFromGRPCMessage(m *netmap.LocalNodeInfoResponse) *Loca
 
 	return r
 }
+
+func NetworkInfoToGRPCMessage(n *NetworkInfo) *netmap.NetworkInfo {
+	if n == nil {
+		return nil
+	}
+
+	m := new(netmap.NetworkInfo)
+
+	m.SetCurrentEpoch(n.GetCurrentEpoch())
+	m.SetMagicNumber(n.GetMagicNumber())
+
+	return m
+}
+
+func NetworkInfoFromGRPCMessage(m *netmap.NetworkInfo) *NetworkInfo {
+	if m == nil {
+		return nil
+	}
+
+	n := new(NetworkInfo)
+
+	n.SetCurrentEpoch(m.GetCurrentEpoch())
+	n.SetMagicNumber(m.GetMagicNumber())
+
+	return n
+}
+
+func NetworkInfoRequestBodyToGRPCMessage(r *NetworkInfoRequestBody) *netmap.NetworkInfoRequest_Body {
+	if r == nil {
+		return nil
+	}
+
+	return new(netmap.NetworkInfoRequest_Body)
+}
+
+func NetworkInfoRequestBodyFromGRPCMessage(m *netmap.NetworkInfoRequest_Body) *NetworkInfoRequestBody {
+	if m == nil {
+		return nil
+	}
+
+	return new(NetworkInfoRequestBody)
+}
+
+func NetworkInfoResponseBodyToGRPCMessage(r *NetworkInfoResponseBody) *netmap.NetworkInfoResponse_Body {
+	if r == nil {
+		return nil
+	}
+
+	m := new(netmap.NetworkInfoResponse_Body)
+
+	m.SetNetworkInfo(NetworkInfoToGRPCMessage(r.GetNetworkInfo()))
+
+	return m
+}
+
+func NetworkInfoResponseBodyFromGRPCMessage(m *netmap.NetworkInfoResponse_Body) *NetworkInfoResponseBody {
+	if m == nil {
+		return nil
+	}
+
+	r := new(NetworkInfoResponseBody)
+	r.SetNetworkInfo(NetworkInfoFromGRPCMessage(m.GetNetworkInfo()))
+
+	return r
+}
+
+func NetworkInfoRequestToGRPCMessage(r *NetworkInfoRequest) *netmap.NetworkInfoRequest {
+	if r == nil {
+		return nil
+	}
+
+	m := new(netmap.NetworkInfoRequest)
+	m.SetBody(NetworkInfoRequestBodyToGRPCMessage(r.GetBody()))
+
+	session.RequestHeadersToGRPC(r, m)
+
+	return m
+}
+
+func NetworkInfoRequestFromGRPCMessage(m *netmap.NetworkInfoRequest) *NetworkInfoRequest {
+	if m == nil {
+		return nil
+	}
+
+	r := new(NetworkInfoRequest)
+	r.SetBody(NetworkInfoRequestBodyFromGRPCMessage(m.GetBody()))
+
+	session.RequestHeadersFromGRPC(m, r)
+
+	return r
+}
+
+func NetworkInfoResponseToGRPCMessage(r *NetworkInfoResponse) *netmap.NetworkInfoResponse {
+	if r == nil {
+		return nil
+	}
+
+	m := new(netmap.NetworkInfoResponse)
+	m.SetBody(NetworkInfoResponseBodyToGRPCMessage(r.GetBody()))
+
+	session.ResponseHeadersToGRPC(r, m)
+
+	return m
+}
+
+func NetworkInfoResponseFromGRPCMessage(m *netmap.NetworkInfoResponse) *NetworkInfoResponse {
+	if m == nil {
+		return nil
+	}
+
+	r := new(NetworkInfoResponse)
+	r.SetBody(NetworkInfoResponseBodyFromGRPCMessage(m.GetBody()))
+
+	session.ResponseHeadersFromGRPC(m, r)
+
+	return r
+}
