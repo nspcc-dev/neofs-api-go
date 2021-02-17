@@ -53,6 +53,10 @@ func (c *Client) LocalNodeInfo(ctx context.Context, req *LocalNodeInfoRequest) (
 	return c.client.LocalNodeInfo(ctx, req, c.callOpts...)
 }
 
+func (c *Client) NetworkInfo(ctx context.Context, req *NetworkInfoRequest) (*NetworkInfoResponse, error) {
+	return c.client.NetworkInfo(ctx, req, c.callOpts...)
+}
+
 // WithCallOptions returns Option that configures
 // Client to attach call options to each rpc call.
 func WithCallOptions(opts []grpc.CallOption) Option {
