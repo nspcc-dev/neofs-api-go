@@ -60,3 +60,52 @@ func (m *LocalNodeInfoResponse) SetVerifyHeader(v *session.ResponseVerificationH
 		m.VerifyHeader = v
 	}
 }
+
+// SetBody sets body of the request.
+func (x *NetworkInfoRequest) SetBody(v *NetworkInfoRequest_Body) {
+	if x != nil {
+		x.Body = v
+	}
+}
+
+// SetMetaHeader sets meta header of the request.
+func (x *NetworkInfoRequest) SetMetaHeader(v *session.RequestMetaHeader) {
+	if x != nil {
+		x.MetaHeader = v
+	}
+}
+
+// SetVerifyHeader sets verification header of the request.
+func (x *NetworkInfoRequest) SetVerifyHeader(v *session.RequestVerificationHeader) {
+	if x != nil {
+		x.VerifyHeader = v
+	}
+}
+
+// SetNetworkInfo sets information about the network.
+func (x *NetworkInfoResponse_Body) SetNetworkInfo(v *NetworkInfo) {
+	if x != nil {
+		x.NetworkInfo = v
+	}
+}
+
+// SetBody sets body of the response.
+func (x *NetworkInfoResponse) SetBody(v *NetworkInfoResponse_Body) {
+	if x != nil {
+		x.Body = v
+	}
+}
+
+// SetMetaHeader sets meta header of the response.
+func (x *NetworkInfoResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
+	if x != nil {
+		x.MetaHeader = v
+	}
+}
+
+// SetVerifyHeader sets verification header of the response.
+func (x *NetworkInfoResponse) SetVerifyHeader(v *session.ResponseVerificationHeader) {
+	if x != nil {
+		x.VerifyHeader = v
+	}
+}
