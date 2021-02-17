@@ -8,6 +8,7 @@ import (
 
 type Service interface {
 	LocalNodeInfo(ctx context.Context, request *LocalNodeInfoRequest) (*LocalNodeInfoResponse, error)
+	NetworkInfo(ctx context.Context, request *NetworkInfoRequest) (*NetworkInfoResponse, error)
 }
 
 type LocalNodeInfoRequest struct {
@@ -20,6 +21,24 @@ type LocalNodeInfoRequest struct {
 
 type LocalNodeInfoResponse struct {
 	body *LocalNodeInfoResponseBody
+
+	metaHeader *session.ResponseMetaHeader
+
+	verifyHeader *session.ResponseVerificationHeader
+}
+
+// NetworkInfoRequest is a structure of NetworkInfo request.
+type NetworkInfoRequest struct {
+	body *NetworkInfoRequestBody
+
+	metaHeader *session.RequestMetaHeader
+
+	verifyHeader *session.RequestVerificationHeader
+}
+
+// NetworkInfoResponse is a structure of NetworkInfo response.
+type NetworkInfoResponse struct {
+	body *NetworkInfoResponseBody
 
 	metaHeader *session.ResponseMetaHeader
 
