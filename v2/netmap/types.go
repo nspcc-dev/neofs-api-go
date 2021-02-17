@@ -507,3 +507,143 @@ func (l *LocalNodeInfoResponse) SetVerificationHeader(verifyHeader *session.Resp
 		l.verifyHeader = verifyHeader
 	}
 }
+
+// NetworkInfo groups information about
+// NeoFS network.
+type NetworkInfo struct {
+	curEpoch, magicNum uint64
+}
+
+// GetCurrentEpoch returns number of the current epoch.
+func (i *NetworkInfo) GetCurrentEpoch() uint64 {
+	if i != nil {
+		return i.curEpoch
+	}
+
+	return 0
+}
+
+// SetCurrentEpoch sets number of the current epoch.
+func (i *NetworkInfo) SetCurrentEpoch(epoch uint64) {
+	if i != nil {
+		i.curEpoch = epoch
+	}
+}
+
+// GetMagicNumber returns magic number of the sidechain.
+func (i *NetworkInfo) GetMagicNumber() uint64 {
+	if i != nil {
+		return i.magicNum
+	}
+
+	return 0
+}
+
+// SetMagicNumber sets magic number of the sidechain.
+func (i *NetworkInfo) SetMagicNumber(magic uint64) {
+	if i != nil {
+		i.magicNum = magic
+	}
+}
+
+// NetworkInfoRequestBody is a structure of NetworkInfo request body.
+type NetworkInfoRequestBody struct{}
+
+// NetworkInfoResponseBody is a structure of NetworkInfo response body.
+type NetworkInfoResponseBody struct {
+	netInfo *NetworkInfo
+}
+
+// GetNetworkInfo returns information about the NeoFS network.
+func (i *NetworkInfoResponseBody) GetNetworkInfo() *NetworkInfo {
+	if i != nil {
+		return i.netInfo
+	}
+
+	return nil
+}
+
+// SetNetworkInfo sets information about the NeoFS network.
+func (i *NetworkInfoResponseBody) SetNetworkInfo(netInfo *NetworkInfo) {
+	if i != nil {
+		i.netInfo = netInfo
+	}
+}
+
+func (l *NetworkInfoRequest) GetBody() *NetworkInfoRequestBody {
+	if l != nil {
+		return l.body
+	}
+	return nil
+}
+
+func (l *NetworkInfoRequest) SetBody(body *NetworkInfoRequestBody) {
+	if l != nil {
+		l.body = body
+	}
+}
+
+func (l *NetworkInfoRequest) GetMetaHeader() *session.RequestMetaHeader {
+	if l != nil {
+		return l.metaHeader
+	}
+	return nil
+}
+
+func (l *NetworkInfoRequest) SetMetaHeader(metaHeader *session.RequestMetaHeader) {
+	if l != nil {
+		l.metaHeader = metaHeader
+	}
+}
+
+func (l *NetworkInfoRequest) GetVerificationHeader() *session.RequestVerificationHeader {
+	if l != nil {
+		return l.verifyHeader
+	}
+	return nil
+}
+
+func (l *NetworkInfoRequest) SetVerificationHeader(verifyHeader *session.RequestVerificationHeader) {
+	if l != nil {
+		l.verifyHeader = verifyHeader
+	}
+}
+
+func (l *NetworkInfoResponse) GetBody() *NetworkInfoResponseBody {
+	if l != nil {
+		return l.body
+	}
+	return nil
+}
+
+func (l *NetworkInfoResponse) SetBody(body *NetworkInfoResponseBody) {
+	if l != nil {
+		l.body = body
+	}
+}
+
+func (l *NetworkInfoResponse) GetMetaHeader() *session.ResponseMetaHeader {
+	if l != nil {
+		return l.metaHeader
+	}
+	return nil
+}
+
+func (l *NetworkInfoResponse) SetMetaHeader(metaHeader *session.ResponseMetaHeader) {
+	if l != nil {
+		l.metaHeader = metaHeader
+	}
+}
+
+func (l *NetworkInfoResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
+	if l != nil {
+		return l.verifyHeader
+	}
+	return nil
+}
+
+func (l *NetworkInfoResponse) SetVerificationHeader(verifyHeader *session.ResponseVerificationHeader) {
+	if l != nil {
+		l.verifyHeader = verifyHeader
+	}
+}
