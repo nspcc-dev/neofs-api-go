@@ -370,5 +370,9 @@ func serviceMessageBody(req interface{}) stableMarshaler {
 		return v.GetBody()
 	case *netmap.LocalNodeInfoResponse:
 		return v.GetBody()
+	case *netmap.NetworkInfoRequest:
+		return v.GetBody()
+	case *netmap.NetworkInfoResponse:
+		return v.GetBody()
 	}
 }
