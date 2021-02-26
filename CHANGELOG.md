@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.24.0] - 2021-02-26 - Ganghwado (강화도, 江華島)
+
+Support changes from NeoFS API v2.4.0 "Ganghwado" release.
+
+### Added 
+
+- `netmap.NetworkInfo` definitions in `v2` and `pkg/netmap`.
+- `netmap.NetworkInfo` RPC support in `pkg/client`.
+
+### Changed
+
+- Updated in-line docs from NeoFS API "Ganghwado" release.
+
 ## [1.23.0] - 2021-02-11 - Seonyudo (선유도, 仙遊島)
 
 Support changes from NeoFS API v2.3.0 "Seonyudo" release.
@@ -554,3 +567,4 @@ Initial public release
 [1.22.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.22.0...v1.22.1
 [1.22.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.22.1...v1.22.2
 [1.23.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.22.2...v1.23.0
+[1.24.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.23.0...v1.24.0
