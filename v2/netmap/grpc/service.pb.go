@@ -171,6 +171,7 @@ func (x *LocalNodeInfoResponse) GetVerifyHeader() *grpc.ResponseVerificationHead
 	return nil
 }
 
+// Get NetworkInfo structure with the network view from particular node.
 type NetworkInfoRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -240,6 +241,8 @@ func (x *NetworkInfoRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
+// Response with NetworkInfo structure including current epoch and
+// sidechain magic number.
 type NetworkInfoResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

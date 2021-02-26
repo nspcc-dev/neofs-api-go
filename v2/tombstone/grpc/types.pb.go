@@ -34,7 +34,9 @@ type Tombstone struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Last NeoFS epoch number of the tombstone lifetime. It's set by tombstone
-	// creator depending on current NeoFS network settings.
+	// creator depending on current NeoFS network settings. Tombstone object
+	// must have the same expiration epoch value in `__NEOFS__EXPIRATION_EPOCH`
+	// attribute. Otherwise tombstone will be rejected by storage node.
 	ExpirationEpoch uint64 `protobuf:"varint,1,opt,name=expiration_epoch,json=expirationEpoch,proto3" json:"expiration_epoch,omitempty"`
 	// 16 byte UUID used to identify the split object hierarchy parts. Must be
 	// unique inside container. All objects participating in the split must
