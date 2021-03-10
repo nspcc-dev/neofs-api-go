@@ -12,15 +12,7 @@ import (
 )
 
 func (c Client) GetSelfBalance(ctx context.Context, opts ...CallOption) (*accounting.Decimal, error) {
-	w, err := owner.NEO3WalletFromPublicKey(&c.key.PublicKey)
-	if err != nil {
-		return nil, err
-	}
-
-	ownerID := new(owner.ID)
-	ownerID.SetNeo3Wallet(w)
-
-	return c.GetBalance(ctx, ownerID, opts...)
+	return c.GetBalance(ctx, nil, opts...)
 }
 
 func (c Client) GetBalance(ctx context.Context, owner *owner.ID, opts ...CallOption) (*accounting.Decimal, error) {
@@ -33,7 +25,7 @@ func (c Client) GetBalance(ctx context.Context, owner *owner.ID, opts ...CallOpt
 	}
 }
 
-func (c Client) getBalanceV2(ctx context.Context, owner *owner.ID, opts ...CallOption) (*accounting.Decimal, error) {
+func (c Client) getBalanceV2(ctx context.Context, ownerID *owner.ID, opts ...CallOption) (*accounting.Decimal, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -41,8 +33,18 @@ func (c Client) getBalanceV2(ctx context.Context, owner *owner.ID, opts ...CallO
 		opts[i].apply(&callOptions)
 	}
 
+	if ownerID == nil {
+		w, err := owner.NEO3WalletFromPublicKey(&c.key.PublicKey)
+		if err != nil {
+			return nil, err
+		}
+
+		ownerID = new(owner.ID)
+		ownerID.SetNeo3Wallet(w)
+	}
+
 	reqBody := new(v2accounting.BalanceRequestBody)
-	reqBody.SetOwnerID(owner.ToV2())
+	reqBody.SetOwnerID(ownerID.ToV2())
 
 	req := new(v2accounting.BalanceRequest)
 	req.SetBody(reqBody)

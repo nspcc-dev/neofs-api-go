@@ -94,15 +94,7 @@ func (c Client) ListContainers(ctx context.Context, owner *owner.ID, opts ...Cal
 }
 
 func (c Client) ListSelfContainers(ctx context.Context, opts ...CallOption) ([]*container.ID, error) {
-	w, err := owner.NEO3WalletFromPublicKey(&c.key.PublicKey)
-	if err != nil {
-		return nil, err
-	}
-
-	ownerID := new(owner.ID)
-	ownerID.SetNeo3Wallet(w)
-
-	return c.ListContainers(ctx, ownerID, opts...)
+	return c.ListContainers(ctx, nil, opts...)
 }
 
 func (c Client) DeleteContainer(ctx context.Context, id *container.ID, opts ...CallOption) error {
@@ -282,7 +274,7 @@ func (c Client) getContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 	}
 }
 
-func (c Client) listContainerV2(ctx context.Context, owner *owner.ID, opts ...CallOption) ([]*container.ID, error) {
+func (c Client) listContainerV2(ctx context.Context, ownerID *owner.ID, opts ...CallOption) ([]*container.ID, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -290,8 +282,18 @@ func (c Client) listContainerV2(ctx context.Context, owner *owner.ID, opts ...Ca
 		opts[i].apply(&callOptions)
 	}
 
+	if ownerID == nil {
+		w, err := owner.NEO3WalletFromPublicKey(&c.key.PublicKey)
+		if err != nil {
+			return nil, err
+		}
+
+		ownerID = new(owner.ID)
+		ownerID.SetNeo3Wallet(w)
+	}
+
 	reqBody := new(v2container.ListRequestBody)
-	reqBody.SetOwnerID(owner.ToV2())
+	reqBody.SetOwnerID(ownerID.ToV2())
 
 	req := new(v2container.ListRequest)
 	req.SetBody(reqBody)
