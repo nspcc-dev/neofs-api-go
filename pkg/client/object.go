@@ -254,7 +254,7 @@ func (c *Client) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...Ca
 	initPart.SetHeader(obj.GetHeader())
 
 	// sign the request
-	if err := signature.SignServiceMessage(c.key, req); err != nil {
+	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
 		return nil, errors.Wrapf(err, "could not sign %T", req)
 	}
 
@@ -274,7 +274,7 @@ func (c *Client) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...Ca
 	body.SetObjectPart(chunkPart)
 
 	w := &putObjectV2Writer{
-		key:       c.key,
+		key:       callOpts.key,
 		chunkPart: chunkPart,
 		req:       req,
 		stream:    stream,
@@ -415,7 +415,7 @@ func (c *Client) deleteObjectV2(ctx context.Context, p *DeleteObjectParams, opts
 	body.SetAddress(p.addr.ToV2())
 
 	// sign the request
-	if err := signature.SignServiceMessage(c.key, req); err != nil {
+	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
 		return nil, errors.Wrapf(err, "could not sign %T", req)
 	}
 
@@ -529,7 +529,7 @@ func (c *Client) getObjectV2(ctx context.Context, p *GetObjectParams, opts ...Ca
 	body.SetRaw(p.raw)
 
 	// sign the request
-	if err := signature.SignServiceMessage(c.key, req); err != nil {
+	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
 		return nil, errors.Wrapf(err, "could not sign %T", req)
 	}
 
@@ -702,7 +702,7 @@ func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, o
 	body.SetRaw(p.raw)
 
 	// sign the request
-	if err := signature.SignServiceMessage(c.key, req); err != nil {
+	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
 		return nil, errors.Wrapf(err, "could not sign %T", req)
 	}
 
@@ -899,7 +899,7 @@ func (c *Client) objectPayloadRangeV2(ctx context.Context, p *RangeDataParams, o
 	body.SetRaw(p.raw)
 
 	// sign the request
-	if err := signature.SignServiceMessage(c.key, req); err != nil {
+	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
 		return nil, errors.Wrapf(err, "could not sign %T", req)
 	}
 
@@ -1081,7 +1081,7 @@ func (c *Client) objectPayloadRangeHashV2(ctx context.Context, p *RangeChecksumP
 	body.SetRanges(rsV2)
 
 	// sign the request
-	if err := signature.SignServiceMessage(c.key, req); err != nil {
+	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
 		return nil, errors.Wrapf(err, "could not sign %T", req)
 	}
 
@@ -1228,7 +1228,7 @@ func (c *Client) searchObjectV2(ctx context.Context, p *SearchObjectParams, opts
 	body.SetFilters(p.filters.ToV2())
 
 	// sign the request
-	if err := signature.SignServiceMessage(c.key, req); err != nil {
+	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
 		return nil, errors.Wrapf(err, "could not sign %T", req)
 	}
 
@@ -1327,7 +1327,7 @@ func (c Client) attachV2SessionToken(opts callOptions, hdr *v2session.RequestMet
 
 	signWrapper := signature.StableMarshalerWrapper{SM: token.GetBody()}
 
-	err := signer.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
+	err := signer.SignDataWithHandler(opts.key, signWrapper, func(key []byte, sig []byte) {
 		sessionTokenSignature := new(v2refs.Signature)
 		sessionTokenSignature.SetKey(key)
 		sessionTokenSignature.SetSign(sig)

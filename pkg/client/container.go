@@ -172,7 +172,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 
 	// if container owner is not set, then use client key as owner
 	if cnr.OwnerID() == nil {
-		w, err := owner.NEO3WalletFromPublicKey(&c.key.PublicKey)
+		w, err := owner.NEO3WalletFromPublicKey(&callOptions.key.PublicKey)
 		if err != nil {
 			return nil, err
 		}
@@ -189,7 +189,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 	// sign container
 	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetContainer()}
 
-	err := signature.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
+	err := signature.SignDataWithHandler(callOptions.key, signWrapper, func(key []byte, sig []byte) {
 		containerSignature := new(refs.Signature)
 		containerSignature.SetKey(key)
 		containerSignature.SetSign(sig)
@@ -203,7 +203,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err = v2signature.SignServiceMessage(c.key, req)
+	err = v2signature.SignServiceMessage(callOptions.key, req)
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +246,7 @@ func (c Client) getContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(c.key, req)
+	err := v2signature.SignServiceMessage(callOptions.key, req)
 	if err != nil {
 		return nil, err
 	}
@@ -283,7 +283,7 @@ func (c Client) listContainerV2(ctx context.Context, ownerID *owner.ID, opts ...
 	}
 
 	if ownerID == nil {
-		w, err := owner.NEO3WalletFromPublicKey(&c.key.PublicKey)
+		w, err := owner.NEO3WalletFromPublicKey(&callOptions.key.PublicKey)
 		if err != nil {
 			return nil, err
 		}
@@ -299,7 +299,7 @@ func (c Client) listContainerV2(ctx context.Context, ownerID *owner.ID, opts ...
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(c.key, req)
+	err := v2signature.SignServiceMessage(callOptions.key, req)
 	if err != nil {
 		return nil, err
 	}
@@ -344,7 +344,7 @@ func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 	reqBody.SetContainerID(id.ToV2())
 
 	// sign container
-	err := signature.SignDataWithHandler(c.key,
+	err := signature.SignDataWithHandler(callOptions.key,
 		delContainerSignWrapper{
 			body: reqBody,
 		},
@@ -363,7 +363,7 @@ func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err = v2signature.SignServiceMessage(c.key, req)
+	err = v2signature.SignServiceMessage(callOptions.key, req)
 	if err != nil {
 		return err
 	}
@@ -406,7 +406,7 @@ func (c Client) getEACLV2(ctx context.Context, id *container.ID, verify bool, op
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(c.key, req)
+	err := v2signature.SignServiceMessage(callOptions.key, req)
 	if err != nil {
 		return nil, err
 	}
@@ -469,7 +469,7 @@ func (c Client) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOpt
 
 	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetEACL()}
 
-	err := signature.SignDataWithHandler(c.key, signWrapper, func(key []byte, sig []byte) {
+	err := signature.SignDataWithHandler(callOptions.key, signWrapper, func(key []byte, sig []byte) {
 		eaclSignature := new(refs.Signature)
 		eaclSignature.SetKey(key)
 		eaclSignature.SetSign(sig)
@@ -483,7 +483,7 @@ func (c Client) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOpt
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err = v2signature.SignServiceMessage(c.key, req)
+	err = v2signature.SignServiceMessage(callOptions.key, req)
 	if err != nil {
 		return err
 	}
@@ -536,7 +536,7 @@ func (c Client) announceContainerUsedSpaceV2(
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
 	// sign the request
-	err := v2signature.SignServiceMessage(c.key, req)
+	err := v2signature.SignServiceMessage(callOptions.key, req)
 	if err != nil {
 		return err
 	}

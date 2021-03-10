@@ -1,10 +1,12 @@
 package client
 
 import (
+	"crypto/ecdsa"
 	"fmt"
 	"time"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
+	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 	v2accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting"
 	v2container "github.com/nspcc-dev/neofs-api-go/v2/container"
@@ -29,6 +31,7 @@ type (
 		xHeaders []*pkg.XHeader
 		ttl      uint32
 		epoch    uint64
+		key      *ecdsa.PrivateKey
 		session  *token.SessionToken
 		bearer   *token.BearerToken
 	}
@@ -69,6 +72,7 @@ func (c Client) defaultCallOptions() callOptions {
 	return callOptions{
 		ttl:     2,
 		version: pkg.SDKVersion(),
+		key:     c.key,
 		session: c.sessionToken,
 		bearer:  c.bearerToken,
 	}
@@ -97,6 +101,13 @@ func WithXHeader(x *pkg.XHeader) CallOption {
 func WithTTL(ttl uint32) CallOption {
 	return newFuncCallOption(func(option *callOptions) {
 		option.ttl = ttl
+	})
+}
+
+// WithKey sets client's key for the next request.
+func WithKey(key *ecdsa.PrivateKey) CallOption {
+	return newFuncCallOption(func(option *callOptions) {
+		option.key = key
 	})
 }
 
@@ -177,4 +188,15 @@ func WithDialTimeout(dur time.Duration) Option {
 	return newFuncClientOption(func(option *clientOptions) {
 		option.dialTimeout = dur
 	})
+}
+
+func newOwnerIDFromKey(key *ecdsa.PublicKey) (*owner.ID, error) {
+	w, err := owner.NEO3WalletFromPublicKey(key)
+	if err != nil {
+		return nil, err
+	}
+
+	ownerID := new(owner.ID)
+	ownerID.SetNeo3Wallet(w)
+	return ownerID, nil
 }
