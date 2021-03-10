@@ -30,7 +30,7 @@ func (c Client) createSessionV2(ctx context.Context, expiration uint64, opts ...
 		opts[i].apply(&callOptions)
 	}
 
-	w, err := owner.NEO3WalletFromPublicKey(&c.key.PublicKey)
+	w, err := owner.NEO3WalletFromPublicKey(&callOptions.key.PublicKey)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c Client) createSessionV2(ctx context.Context, expiration uint64, opts ...
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err = v2signature.SignServiceMessage(c.key, req)
+	err = v2signature.SignServiceMessage(callOptions.key, req)
 	if err != nil {
 		return nil, err
 	}

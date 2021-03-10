@@ -56,7 +56,7 @@ func (c Client) endpointInfoV2(ctx context.Context, opts ...CallOption) (*v2netm
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(c.key, req)
+	err := v2signature.SignServiceMessage(callOptions.key, req)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +144,7 @@ func (c Client) networkInfoV2(ctx context.Context, opts ...CallOption) (*v2netma
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(c.key, req)
+	err := v2signature.SignServiceMessage(callOptions.key, req)
 	if err != nil {
 		return nil, err
 	}
