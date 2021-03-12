@@ -19,6 +19,26 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Object contains methods for working with objects.
+type Object interface {
+	// PutObject puts new object to NeoFS.
+	PutObject(context.Context, *PutObjectParams, ...CallOption) (*object.ID, error)
+	// DeleteObject deletes object to NeoFS.
+	DeleteObject(context.Context, *DeleteObjectParams, ...CallOption) error
+	// GetObject returns object stored in NeoFS.
+	GetObject(context.Context, *GetObjectParams, ...CallOption) (*object.Object, error)
+	// GetObjectHeader returns object header.
+	GetObjectHeader(context.Context, *ObjectHeaderParams, ...CallOption) (*object.Object, error)
+	// ObjectPayloadRangeData returns range of object payload.
+	ObjectPayloadRangeData(context.Context, *RangeDataParams, ...CallOption) ([]byte, error)
+	// ObjectPayloadRangeSHA256 returns sha-256 hashes of object sub-ranges from NeoFS.
+	ObjectPayloadRangeSHA256(context.Context, *RangeChecksumParams, ...CallOption) ([][sha256.Size]byte, error)
+	// ObjectPayloadRangeTZ returns homomorphic hashes of object sub-ranges from NeoFS.
+	ObjectPayloadRangeTZ(context.Context, *RangeChecksumParams, ...CallOption) ([][TZSize]byte, error)
+	// SearchObject searches for objects in NeoFS using provided parameters.
+	SearchObject(context.Context, *SearchObjectParams, ...CallOption) ([]*object.ID, error)
+}
+
 type PutObjectParams struct {
 	obj *object.Object
 
@@ -190,7 +210,7 @@ func (p *PutObjectParams) PayloadReader() io.Reader {
 	return nil
 }
 
-func (c *Client) PutObject(ctx context.Context, p *PutObjectParams, opts ...CallOption) (*object.ID, error) {
+func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...CallOption) (*object.ID, error) {
 	// check remote node version
 	switch c.remoteNode.Version.Major() {
 	case 2:
@@ -200,7 +220,7 @@ func (c *Client) PutObject(ctx context.Context, p *PutObjectParams, opts ...Call
 	}
 }
 
-func (c *Client) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...CallOption) (*object.ID, error) {
+func (c *clientImpl) putObjectV2(ctx context.Context, p *PutObjectParams, opts ...CallOption) (*object.ID, error) {
 	// create V2 Object client
 	cli, err := v2ObjectClient(c.remoteNode.Protocol, c.opts)
 	if err != nil {
@@ -342,7 +362,7 @@ func (p *DeleteObjectParams) TombstoneAddressTarget() ObjectAddressWriter {
 // DeleteObject is a wrapper over Client.DeleteObject method
 // that provides the ability to receive tombstone address
 // without setting a target in the parameters.
-func DeleteObject(ctx context.Context, c *Client, p *DeleteObjectParams, opts ...CallOption) (*object.Address, error) {
+func DeleteObject(ctx context.Context, c Client, p *DeleteObjectParams, opts ...CallOption) (*object.Address, error) {
 	w := new(objectAddressWriter)
 
 	err := c.DeleteObject(ctx, p.WithTombstoneAddressTarget(w), opts...)
@@ -356,7 +376,7 @@ func DeleteObject(ctx context.Context, c *Client, p *DeleteObjectParams, opts ..
 // DeleteObject removes object by address.
 //
 // If target of tombstone address is not set, the address is ignored.
-func (c *Client) DeleteObject(ctx context.Context, p *DeleteObjectParams, opts ...CallOption) error {
+func (c *clientImpl) DeleteObject(ctx context.Context, p *DeleteObjectParams, opts ...CallOption) error {
 	// check remote node version
 	switch c.remoteNode.Version.Major() {
 	case 2:
@@ -378,7 +398,7 @@ func (c *Client) DeleteObject(ctx context.Context, p *DeleteObjectParams, opts .
 	}
 }
 
-func (c *Client) deleteObjectV2(ctx context.Context, p *DeleteObjectParams, opts ...CallOption) (*v2object.DeleteResponse, error) {
+func (c *clientImpl) deleteObjectV2(ctx context.Context, p *DeleteObjectParams, opts ...CallOption) (*v2object.DeleteResponse, error) {
 	// create V2 Object client
 	cli, err := v2ObjectClient(c.remoteNode.Protocol, c.opts)
 	if err != nil {
@@ -481,7 +501,7 @@ func (p *GetObjectParams) RawFlag() bool {
 	return false
 }
 
-func (c *Client) GetObject(ctx context.Context, p *GetObjectParams, opts ...CallOption) (*object.Object, error) {
+func (c *clientImpl) GetObject(ctx context.Context, p *GetObjectParams, opts ...CallOption) (*object.Object, error) {
 	// check remote node version
 	switch c.remoteNode.Version.Major() {
 	case 2:
@@ -491,7 +511,7 @@ func (c *Client) GetObject(ctx context.Context, p *GetObjectParams, opts ...Call
 	}
 }
 
-func (c *Client) getObjectV2(ctx context.Context, p *GetObjectParams, opts ...CallOption) (*object.Object, error) {
+func (c *clientImpl) getObjectV2(ctx context.Context, p *GetObjectParams, opts ...CallOption) (*object.Object, error) {
 	// create V2 Object client
 	cli, err := v2ObjectClient(c.remoteNode.Protocol, c.opts)
 	if err != nil {
@@ -653,7 +673,7 @@ func (p *ObjectHeaderParams) RawFlag() bool {
 	return false
 }
 
-func (c *Client) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams, opts ...CallOption) (*object.Object, error) {
+func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams, opts ...CallOption) (*object.Object, error) {
 	// check remote node version
 	switch c.remoteNode.Version.Major() {
 	case 2:
@@ -663,7 +683,7 @@ func (c *Client) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams, opt
 	}
 }
 
-func (c *Client) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, opts ...CallOption) (*object.Object, error) {
+func (c *clientImpl) getObjectHeaderV2(ctx context.Context, p *ObjectHeaderParams, opts ...CallOption) (*object.Object, error) {
 	// create V2 Object client
 	cli, err := v2ObjectClient(c.remoteNode.Protocol, c.opts)
 	if err != nil {
@@ -850,7 +870,7 @@ func (p *RangeDataParams) DataWriter() io.Writer {
 	return nil
 }
 
-func (c *Client) ObjectPayloadRangeData(ctx context.Context, p *RangeDataParams, opts ...CallOption) ([]byte, error) {
+func (c *clientImpl) ObjectPayloadRangeData(ctx context.Context, p *RangeDataParams, opts ...CallOption) ([]byte, error) {
 	// check remote node version
 	switch c.remoteNode.Version.Major() {
 	case 2:
@@ -860,7 +880,7 @@ func (c *Client) ObjectPayloadRangeData(ctx context.Context, p *RangeDataParams,
 	}
 }
 
-func (c *Client) objectPayloadRangeV2(ctx context.Context, p *RangeDataParams, opts ...CallOption) ([]byte, error) {
+func (c *clientImpl) objectPayloadRangeV2(ctx context.Context, p *RangeDataParams, opts ...CallOption) ([]byte, error) {
 	// create V2 Object client
 	cli, err := v2ObjectClient(c.remoteNode.Protocol, c.opts)
 	if err != nil {
@@ -1009,7 +1029,7 @@ func (p *RangeChecksumParams) withChecksumType(t checksumType) *RangeChecksumPar
 	return p
 }
 
-func (c *Client) ObjectPayloadRangeSHA256(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) ([][sha256.Size]byte, error) {
+func (c *clientImpl) ObjectPayloadRangeSHA256(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) ([][sha256.Size]byte, error) {
 	res, err := c.objectPayloadRangeHash(ctx, p.withChecksumType(checksumSHA256), opts...)
 	if err != nil {
 		return nil, err
@@ -1018,7 +1038,7 @@ func (c *Client) ObjectPayloadRangeSHA256(ctx context.Context, p *RangeChecksumP
 	return res.([][sha256.Size]byte), nil
 }
 
-func (c *Client) ObjectPayloadRangeTZ(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) ([][TZSize]byte, error) {
+func (c *clientImpl) ObjectPayloadRangeTZ(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) ([][TZSize]byte, error) {
 	res, err := c.objectPayloadRangeHash(ctx, p.withChecksumType(checksumTZ), opts...)
 	if err != nil {
 		return nil, err
@@ -1027,7 +1047,7 @@ func (c *Client) ObjectPayloadRangeTZ(ctx context.Context, p *RangeChecksumParam
 	return res.([][TZSize]byte), nil
 }
 
-func (c *Client) objectPayloadRangeHash(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) (interface{}, error) {
+func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) (interface{}, error) {
 	// check remote node version
 	switch c.remoteNode.Version.Major() {
 	case 2:
@@ -1037,7 +1057,7 @@ func (c *Client) objectPayloadRangeHash(ctx context.Context, p *RangeChecksumPar
 	}
 }
 
-func (c *Client) objectPayloadRangeHashV2(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) (interface{}, error) {
+func (c *clientImpl) objectPayloadRangeHashV2(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) (interface{}, error) {
 	// create V2 Object client
 	cli, err := v2ObjectClient(c.remoteNode.Protocol, c.opts)
 	if err != nil {
@@ -1176,7 +1196,7 @@ func (p *SearchObjectParams) SearchFilters() object.SearchFilters {
 	return nil
 }
 
-func (c *Client) SearchObject(ctx context.Context, p *SearchObjectParams, opts ...CallOption) ([]*object.ID, error) {
+func (c *clientImpl) SearchObject(ctx context.Context, p *SearchObjectParams, opts ...CallOption) ([]*object.ID, error) {
 	// check remote node version
 	switch c.remoteNode.Version.Major() {
 	case 2:
@@ -1186,7 +1206,7 @@ func (c *Client) SearchObject(ctx context.Context, p *SearchObjectParams, opts .
 	}
 }
 
-func (c *Client) searchObjectV2(ctx context.Context, p *SearchObjectParams, opts ...CallOption) ([]*object.ID, error) {
+func (c *clientImpl) searchObjectV2(ctx context.Context, p *SearchObjectParams, opts ...CallOption) ([]*object.ID, error) {
 	// create V2 Object client
 	cli, err := v2ObjectClient(c.remoteNode.Protocol, c.opts)
 	if err != nil {
@@ -1297,7 +1317,7 @@ func v2ObjectClient(proto TransportProtocol, opts *clientOptions) (*v2object.Cli
 	}
 }
 
-func (c Client) attachV2SessionToken(opts callOptions, hdr *v2session.RequestMetaHeader, info v2SessionReqInfo) error {
+func (c clientImpl) attachV2SessionToken(opts callOptions, hdr *v2session.RequestMetaHeader, info v2SessionReqInfo) error {
 	if opts.session == nil {
 		return nil
 	}

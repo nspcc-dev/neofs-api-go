@@ -11,9 +11,19 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Session contains session-related methods.
+type Session interface {
+	// CreateSession creates session using provided expiration time.
+	CreateSession(context.Context, uint64, ...CallOption) (*token.SessionToken, error)
+	// AttachSessionToken attaches session token to be used by default for following requests.
+	AttachSessionToken(*token.SessionToken)
+	// AttachBearerToken attaches bearer token to be used by default for following requests.
+	AttachBearerToken(*token.BearerToken)
+}
+
 var errMalformedResponseBody = errors.New("malformed response body")
 
-func (c Client) CreateSession(ctx context.Context, expiration uint64, opts ...CallOption) (*token.SessionToken, error) {
+func (c clientImpl) CreateSession(ctx context.Context, expiration uint64, opts ...CallOption) (*token.SessionToken, error) {
 	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.createSessionV2(ctx, expiration, opts...)
@@ -22,7 +32,7 @@ func (c Client) CreateSession(ctx context.Context, expiration uint64, opts ...Ca
 	}
 }
 
-func (c Client) createSessionV2(ctx context.Context, expiration uint64, opts ...CallOption) (*token.SessionToken, error) {
+func (c clientImpl) createSessionV2(ctx context.Context, expiration uint64, opts ...CallOption) (*token.SessionToken, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -119,7 +129,7 @@ func v2SessionClientFromOptions(opts *clientOptions) (cli *v2session.Client, err
 //
 // Provided token is attached to all requests without WithSession option.
 // Use WithSession(nil) option in order to send request without session token.
-func (c *Client) AttachSessionToken(token *token.SessionToken) {
+func (c *clientImpl) AttachSessionToken(token *token.SessionToken) {
 	c.sessionToken = token
 }
 
@@ -127,6 +137,6 @@ func (c *Client) AttachSessionToken(token *token.SessionToken) {
 //
 // Provided bearer is attached to all requests without WithBearer option.
 // Use WithBearer(nil) option in order to send request without bearer token.
-func (c *Client) AttachBearerToken(token *token.BearerToken) {
+func (c *clientImpl) AttachBearerToken(token *token.BearerToken) {
 	c.bearerToken = token
 }

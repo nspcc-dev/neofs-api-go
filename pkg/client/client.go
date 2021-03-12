@@ -9,7 +9,16 @@ import (
 )
 
 type (
-	Client struct {
+	// Client represents NeoFS client.
+	Client interface {
+		Accounting
+		Container
+		Netmap
+		Object
+		Session
+	}
+
+	clientImpl struct {
 		key        *ecdsa.PrivateKey
 		remoteNode TransportInfo
 
@@ -35,7 +44,8 @@ const (
 
 var errUnsupportedProtocol = errors.New("unsupported transport protocol")
 
-func New(key *ecdsa.PrivateKey, opts ...Option) (*Client, error) {
+// New returns new client which uses key as default signing key.
+func New(key *ecdsa.PrivateKey, opts ...Option) (Client, error) {
 	clientOptions := defaultClientOptions()
 
 	for i := range opts {
@@ -43,7 +53,7 @@ func New(key *ecdsa.PrivateKey, opts ...Option) (*Client, error) {
 	}
 
 	// todo: make handshake to check latest version
-	return &Client{
+	return &clientImpl{
 		key: key,
 		remoteNode: TransportInfo{
 			Version:  pkg.SDKVersion(),

@@ -10,10 +10,22 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Netmap contains methods related to netmap.
+type Netmap interface {
+	// EndpointInfo returns attributes, address and public key of the node, specified
+	// in client constructor via address or open connection. This can be used as a
+	// health check to see if node is alive and responses to requests.
+	EndpointInfo(context.Context, ...CallOption) (*netmap.NodeInfo, error)
+	// Epoch returns the epoch number from the local state of the remote host.
+	Epoch(context.Context, ...CallOption) (uint64, error)
+	// NetworkInfo returns information about the NeoFS network of which the remote server is a part.
+	NetworkInfo(context.Context, ...CallOption) (*netmap.NetworkInfo, error)
+}
+
 // EndpointInfo returns attributes, address and public key of the node, specified
 // in client constructor via address or open connection. This can be used as a
 // health check to see if node is alive and responses to requests.
-func (c Client) EndpointInfo(ctx context.Context, opts ...CallOption) (*netmap.NodeInfo, error) {
+func (c clientImpl) EndpointInfo(ctx context.Context, opts ...CallOption) (*netmap.NodeInfo, error) {
 	switch c.remoteNode.Version.Major() {
 	case 2:
 		resp, err := c.endpointInfoV2(ctx, opts...)
@@ -28,7 +40,7 @@ func (c Client) EndpointInfo(ctx context.Context, opts ...CallOption) (*netmap.N
 }
 
 // Epoch returns the epoch number from the local state of the remote host.
-func (c Client) Epoch(ctx context.Context, opts ...CallOption) (uint64, error) {
+func (c clientImpl) Epoch(ctx context.Context, opts ...CallOption) (uint64, error) {
 	switch c.remoteNode.Version.Major() {
 	case 2:
 		resp, err := c.endpointInfoV2(ctx, opts...)
@@ -42,7 +54,7 @@ func (c Client) Epoch(ctx context.Context, opts ...CallOption) (uint64, error) {
 	}
 }
 
-func (c Client) endpointInfoV2(ctx context.Context, opts ...CallOption) (*v2netmap.LocalNodeInfoResponse, error) {
+func (c clientImpl) endpointInfoV2(ctx context.Context, opts ...CallOption) (*v2netmap.LocalNodeInfoResponse, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -116,7 +128,7 @@ func v2NetmapClientFromOptions(opts *clientOptions) (cli *v2netmap.Client, err e
 }
 
 // NetworkInfo returns information about the NeoFS network of which the remote server is a part.
-func (c Client) NetworkInfo(ctx context.Context, opts ...CallOption) (*netmap.NetworkInfo, error) {
+func (c clientImpl) NetworkInfo(ctx context.Context, opts ...CallOption) (*netmap.NetworkInfo, error) {
 	switch c.remoteNode.Version.Major() {
 	case 2:
 		resp, err := c.networkInfoV2(ctx, opts...)
@@ -130,7 +142,7 @@ func (c Client) NetworkInfo(ctx context.Context, opts ...CallOption) (*netmap.Ne
 	}
 }
 
-func (c Client) networkInfoV2(ctx context.Context, opts ...CallOption) (*v2netmap.NetworkInfoResponse, error) {
+func (c clientImpl) networkInfoV2(ctx context.Context, opts ...CallOption) (*v2netmap.NetworkInfoResponse, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 

@@ -68,7 +68,7 @@ func (e errOptionsLack) Error() string {
 	return fmt.Sprintf("lack of sdk client options to create %s client", string(e))
 }
 
-func (c Client) defaultCallOptions() callOptions {
+func (c clientImpl) defaultCallOptions() callOptions {
 	return callOptions{
 		ttl:     2,
 		version: pkg.SDKVersion(),
