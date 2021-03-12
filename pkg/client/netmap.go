@@ -3,9 +3,11 @@ package client
 import (
 	"context"
 
+	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
-	"github.com/nspcc-dev/neofs-api-go/v2/client"
+	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 	v2netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap"
+	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
 	"github.com/pkg/errors"
 )
@@ -15,51 +17,37 @@ type Netmap interface {
 	// EndpointInfo returns attributes, address and public key of the node, specified
 	// in client constructor via address or open connection. This can be used as a
 	// health check to see if node is alive and responses to requests.
-	EndpointInfo(context.Context, ...CallOption) (*netmap.NodeInfo, error)
-	// Epoch returns the epoch number from the local state of the remote host.
-	Epoch(context.Context, ...CallOption) (uint64, error)
+	EndpointInfo(context.Context, ...CallOption) (*EndpointInfo, error)
 	// NetworkInfo returns information about the NeoFS network of which the remote server is a part.
 	NetworkInfo(context.Context, ...CallOption) (*netmap.NetworkInfo, error)
+}
+
+// EACLWithSignature represents eACL table/signature pair.
+type EndpointInfo struct {
+	version *pkg.Version
+
+	ni *netmap.NodeInfo
+}
+
+// LatestVersion returns latest NeoFS API version in use.
+func (e *EndpointInfo) LatestVersion() *pkg.Version {
+	return e.version
+}
+
+// NodeInfo returns returns information about the NeoFS node.
+func (e *EndpointInfo) NodeInfo() *netmap.NodeInfo {
+	return e.ni
 }
 
 // EndpointInfo returns attributes, address and public key of the node, specified
 // in client constructor via address or open connection. This can be used as a
 // health check to see if node is alive and responses to requests.
-func (c clientImpl) EndpointInfo(ctx context.Context, opts ...CallOption) (*netmap.NodeInfo, error) {
-	switch c.remoteNode.Version.Major() {
-	case 2:
-		resp, err := c.endpointInfoV2(ctx, opts...)
-		if err != nil {
-			return nil, err
-		}
-
-		return netmap.NewNodeInfoFromV2(resp.GetBody().GetNodeInfo()), nil
-	default:
-		return nil, errUnsupportedProtocol
-	}
-}
-
-// Epoch returns the epoch number from the local state of the remote host.
-func (c clientImpl) Epoch(ctx context.Context, opts ...CallOption) (uint64, error) {
-	switch c.remoteNode.Version.Major() {
-	case 2:
-		resp, err := c.endpointInfoV2(ctx, opts...)
-		if err != nil {
-			return 0, err
-		}
-
-		return resp.GetMetaHeader().GetEpoch(), nil
-	default:
-		return 0, errUnsupportedProtocol
-	}
-}
-
-func (c clientImpl) endpointInfoV2(ctx context.Context, opts ...CallOption) (*v2netmap.LocalNodeInfoResponse, error) {
+func (c *clientImpl) EndpointInfo(ctx context.Context, opts ...CallOption) (*EndpointInfo, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
 	for i := range opts {
-		opts[i].apply(&callOptions)
+		opts[i](callOptions)
 	}
 
 	reqBody := new(v2netmap.LocalNodeInfoRequestBody)
@@ -73,81 +61,31 @@ func (c clientImpl) endpointInfoV2(ctx context.Context, opts ...CallOption) (*v2
 		return nil, err
 	}
 
-	switch c.remoteNode.Protocol {
-	case GRPC:
-		cli, err := v2NetmapClientFromOptions(c.opts)
-		if err != nil {
-			return nil, errors.Wrap(err, "can't create grpc client")
-		}
-
-		resp, err := cli.LocalNodeInfo(ctx, req)
-		if err != nil {
-			return nil, errors.Wrap(err, "transport error")
-		}
-
-		err = v2signature.VerifyServiceMessage(resp)
-		if err != nil {
-			return nil, errors.Wrap(err, "can't verify response message")
-		}
-
-		return resp, nil
-	default:
-		return nil, errUnsupportedProtocol
-	}
-}
-
-func v2NetmapClientFromOptions(opts *clientOptions) (cli *v2netmap.Client, err error) {
-	switch {
-	case opts.grpcOpts.v2NetmapClient != nil:
-		// return value from client cache
-		return opts.grpcOpts.v2NetmapClient, nil
-
-	case opts.grpcOpts.conn != nil:
-		cli, err = v2netmap.NewClient(v2netmap.WithGlobalOpts(
-			client.WithGRPCConn(opts.grpcOpts.conn)),
-		)
-
-	case opts.addr != "":
-		cli, err = v2netmap.NewClient(v2netmap.WithGlobalOpts(
-			client.WithNetworkAddress(opts.addr),
-			client.WithDialTimeout(opts.dialTimeout),
-		))
-
-	default:
-		return nil, errOptionsLack("Netmap")
-	}
-
-	// check if client correct and save in cache
+	resp, err := rpcapi.LocalNodeInfo(c.Raw(), req)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "transport error")
 	}
 
-	opts.grpcOpts.v2NetmapClient = cli
+	err = v2signature.VerifyServiceMessage(resp)
+	if err != nil {
+		return nil, errors.Wrap(err, "can't verify response message")
+	}
 
-	return cli, nil
+	body := resp.GetBody()
+
+	return &EndpointInfo{
+		version: pkg.NewVersionFromV2(body.GetVersion()),
+		ni:      netmap.NewNodeInfoFromV2(body.GetNodeInfo()),
+	}, nil
 }
 
 // NetworkInfo returns information about the NeoFS network of which the remote server is a part.
-func (c clientImpl) NetworkInfo(ctx context.Context, opts ...CallOption) (*netmap.NetworkInfo, error) {
-	switch c.remoteNode.Version.Major() {
-	case 2:
-		resp, err := c.networkInfoV2(ctx, opts...)
-		if err != nil {
-			return nil, err
-		}
-
-		return netmap.NewNetworkInfoFromV2(resp.GetBody().GetNetworkInfo()), nil
-	default:
-		return nil, errUnsupportedProtocol
-	}
-}
-
-func (c clientImpl) networkInfoV2(ctx context.Context, opts ...CallOption) (*v2netmap.NetworkInfoResponse, error) {
+func (c *clientImpl) NetworkInfo(ctx context.Context, opts ...CallOption) (*netmap.NetworkInfo, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
 	for i := range opts {
-		opts[i].apply(&callOptions)
+		opts[i](callOptions)
 	}
 
 	reqBody := new(v2netmap.NetworkInfoRequestBody)
@@ -161,25 +99,15 @@ func (c clientImpl) networkInfoV2(ctx context.Context, opts ...CallOption) (*v2n
 		return nil, err
 	}
 
-	switch c.remoteNode.Protocol {
-	case GRPC:
-		cli, err := v2NetmapClientFromOptions(c.opts)
-		if err != nil {
-			return nil, errors.Wrap(err, "could not create grpc client")
-		}
-
-		resp, err := cli.NetworkInfo(ctx, req)
-		if err != nil {
-			return nil, errors.Wrap(err, "v2 NetworkInfo RPC failure")
-		}
-
-		err = v2signature.VerifyServiceMessage(resp)
-		if err != nil {
-			return nil, errors.Wrap(err, "response message verification failed")
-		}
-
-		return resp, nil
-	default:
-		return nil, errUnsupportedProtocol
+	resp, err := rpcapi.NetworkInfo(c.Raw(), req, client.WithContext(ctx))
+	if err != nil {
+		return nil, errors.Wrap(err, "v2 NetworkInfo RPC failure")
 	}
+
+	err = v2signature.VerifyServiceMessage(resp)
+	if err != nil {
+		return nil, errors.Wrap(err, "response message verification failed")
+	}
+
+	return netmap.NewNetworkInfoFromV2(resp.GetBody().GetNetworkInfo()), nil
 }

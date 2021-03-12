@@ -1,64 +1,37 @@
 package client
 
 import (
-	"crypto/ecdsa"
-	"errors"
+	"sync"
 
-	"github.com/nspcc-dev/neofs-api-go/pkg"
-	"github.com/nspcc-dev/neofs-api-go/pkg/token"
+	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 )
 
-type (
-	// Client represents NeoFS client.
-	Client interface {
-		Accounting
-		Container
-		Netmap
-		Object
-		Session
-	}
+// Client represents NeoFS client.
+type Client interface {
+	Accounting
+	Container
+	Netmap
+	Object
+	Session
+}
 
-	clientImpl struct {
-		key        *ecdsa.PrivateKey
-		remoteNode TransportInfo
+type clientImpl struct {
+	onceInit sync.Once
 
-		opts *clientOptions
+	raw *client.Client
 
-		sessionToken *token.SessionToken
+	opts *clientOptions
+}
 
-		bearerToken *token.BearerToken
-	}
-
-	TransportProtocol uint32
-
-	TransportInfo struct {
-		Version  *pkg.Version
-		Protocol TransportProtocol
-	}
-)
-
-const (
-	Unknown TransportProtocol = iota
-	GRPC
-)
-
-var errUnsupportedProtocol = errors.New("unsupported transport protocol")
-
-// New returns new client which uses key as default signing key.
-func New(key *ecdsa.PrivateKey, opts ...Option) (Client, error) {
+func New(opts ...Option) (Client, error) {
 	clientOptions := defaultClientOptions()
 
 	for i := range opts {
-		opts[i].apply(clientOptions)
+		opts[i](clientOptions)
 	}
 
-	// todo: make handshake to check latest version
 	return &clientImpl{
-		key: key,
-		remoteNode: TransportInfo{
-			Version:  pkg.SDKVersion(),
-			Protocol: GRPC,
-		},
+		raw:  client.New(),
 		opts: clientOptions,
 	}, nil
 }
