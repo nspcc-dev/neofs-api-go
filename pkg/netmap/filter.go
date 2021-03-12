@@ -230,14 +230,16 @@ func (f *Filter) InnerFilters() []*Filter {
 	)
 }
 
-func filtersToV2(fs []*Filter) []*netmap.Filter {
-	fsV2 := make([]*netmap.Filter, 0, len(fs))
+func filtersToV2(fs []*Filter) (fsV2 []*netmap.Filter) {
+	if fs != nil {
+		fsV2 = make([]*netmap.Filter, 0, len(fs))
 
-	for i := range fs {
-		fsV2 = append(fsV2, fs[i].ToV2())
+		for i := range fs {
+			fsV2 = append(fsV2, fs[i].ToV2())
+		}
 	}
 
-	return fsV2
+	return
 }
 
 // SetInnerFilters sets list of inner filters.

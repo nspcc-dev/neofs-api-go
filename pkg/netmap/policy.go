@@ -38,10 +38,14 @@ func (p *PlacementPolicy) Replicas() []*Replica {
 
 // SetReplicas sets list of object replica descriptors.
 func (p *PlacementPolicy) SetReplicas(rs ...*Replica) {
-	rsV2 := make([]*netmap.Replica, 0, len(rs))
+	var rsV2 []*netmap.Replica
 
-	for i := range rs {
-		rsV2 = append(rsV2, rs[i].ToV2())
+	if rs != nil {
+		rsV2 = make([]*netmap.Replica, 0, len(rs))
+
+		for i := range rs {
+			rsV2 = append(rsV2, rs[i].ToV2())
+		}
 	}
 
 	(*netmap.PlacementPolicy)(p).
@@ -76,14 +80,18 @@ func (p *PlacementPolicy) Selectors() []*Selector {
 
 // SetSelectors sets set of selectors to form the container's nodes subset.
 func (p *PlacementPolicy) SetSelectors(ss ...*Selector) {
-	rsV2 := make([]*netmap.Selector, 0, len(ss))
+	var ssV2 []*netmap.Selector
 
-	for i := range ss {
-		rsV2 = append(rsV2, ss[i].ToV2())
+	if ss != nil {
+		ssV2 = make([]*netmap.Selector, 0, len(ss))
+
+		for i := range ss {
+			ssV2 = append(ssV2, ss[i].ToV2())
+		}
 	}
 
 	(*netmap.PlacementPolicy)(p).
-		SetSelectors(rsV2)
+		SetSelectors(ssV2)
 }
 
 // Filters returns list of named filters to reference in selectors.
