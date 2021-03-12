@@ -1,167 +1,252 @@
 package netmap
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/session"
+	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
-func FilterToGRPCMessage(f *Filter) *netmap.Filter {
-	if f == nil {
-		return nil
+func (f *Filter) ToGRPCMessage() grpc.Message {
+	var m *netmap.Filter
+
+	if f != nil {
+		m = new(netmap.Filter)
+
+		m.SetKey(f.key)
+		m.SetValue(f.value)
+		m.SetName(f.name)
+		m.SetOp(OperationToGRPCMessage(f.op))
+		m.SetFilters(FiltersToGRPC(f.filters))
 	}
-
-	m := new(netmap.Filter)
-
-	m.SetName(f.GetName())
-	m.SetKey(f.GetKey())
-	m.SetValue(f.GetValue())
-	m.SetOp(OperationToGRPCMessage(f.GetOp()))
-
-	filters := make([]*netmap.Filter, 0, len(f.GetFilters()))
-	for _, filter := range f.GetFilters() {
-		filters = append(filters, FilterToGRPCMessage(filter))
-	}
-	m.SetFilters(filters)
 
 	return m
 }
 
-func FilterFromGRPCMessage(m *netmap.Filter) *Filter {
-	if m == nil {
-		return nil
+func (f *Filter) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.Filter)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	f := new(Filter)
-	f.SetName(m.GetName())
-	f.SetKey(m.GetKey())
-	f.SetValue(m.GetValue())
-	f.SetOp(OperationFromGRPCMessage(m.GetOp()))
+	var err error
 
-	filters := make([]*Filter, 0, len(f.GetFilters()))
-	for _, filter := range m.GetFilters() {
-		filters = append(filters, FilterFromGRPCMessage(filter))
+	f.filters, err = FiltersFromGRPC(v.GetFilters())
+	if err != nil {
+		return err
 	}
-	f.SetFilters(filters)
 
-	return f
+	f.key = v.GetKey()
+	f.value = v.GetValue()
+	f.name = v.GetName()
+	f.op = OperationFromGRPCMessage(v.GetOp())
+
+	return nil
 }
 
-func SelectorToGRPCMessage(s *Selector) *netmap.Selector {
-	if s == nil {
-		return nil
+func FiltersToGRPC(fs []*Filter) (res []*netmap.Filter) {
+	if fs != nil {
+		res = make([]*netmap.Filter, 0, len(fs))
+
+		for i := range fs {
+			res = append(res, fs[i].ToGRPCMessage().(*netmap.Filter))
+		}
 	}
 
-	m := new(netmap.Selector)
+	return
+}
 
-	m.SetName(s.GetName())
-	m.SetCount(s.GetCount())
-	m.SetClause(ClauseToGRPCMessage(s.GetClause()))
-	m.SetFilter(s.GetFilter())
-	m.SetAttribute(s.GetAttribute())
+func FiltersFromGRPC(fs []*netmap.Filter) (res []*Filter, err error) {
+	if fs != nil {
+		res = make([]*Filter, 0, len(fs))
+
+		for i := range fs {
+			var f *Filter
+
+			if fs[i] != nil {
+				f = new(Filter)
+
+				err = f.FromGRPCMessage(fs[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, f)
+		}
+	}
+
+	return
+}
+
+func (s *Selector) ToGRPCMessage() grpc.Message {
+	var m *netmap.Selector
+
+	if s != nil {
+		m = new(netmap.Selector)
+
+		m.SetName(s.name)
+		m.SetAttribute(s.attribute)
+		m.SetFilter(s.filter)
+		m.SetCount(s.count)
+		m.SetClause(ClauseToGRPCMessage(s.clause))
+	}
 
 	return m
 }
 
-func SelectorFromGRPCMessage(m *netmap.Selector) *Selector {
-	if m == nil {
-		return nil
+func (s *Selector) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.Selector)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	s := new(Selector)
+	s.name = v.GetName()
+	s.attribute = v.GetAttribute()
+	s.filter = v.GetFilter()
+	s.count = v.GetCount()
+	s.clause = ClauseFromGRPCMessage(v.GetClause())
 
-	s.SetName(m.GetName())
-	s.SetCount(m.GetCount())
-	s.SetClause(ClauseFromGRPCMessage(m.GetClause()))
-	s.SetFilter(m.GetFilter())
-	s.SetAttribute(m.GetAttribute())
-
-	return s
+	return nil
 }
 
-func ReplicaToGRPCMessage(r *Replica) *netmap.Replica {
-	if r == nil {
-		return nil
+func SelectorsToGRPC(ss []*Selector) (res []*netmap.Selector) {
+	if ss != nil {
+		res = make([]*netmap.Selector, 0, len(ss))
+
+		for i := range ss {
+			res = append(res, ss[i].ToGRPCMessage().(*netmap.Selector))
+		}
 	}
 
-	m := new(netmap.Replica)
+	return
+}
 
-	m.SetCount(r.GetCount())
-	m.SetSelector(r.GetSelector())
+func SelectorsFromGRPC(ss []*netmap.Selector) (res []*Selector, err error) {
+	if ss != nil {
+		res = make([]*Selector, 0, len(ss))
+
+		for i := range ss {
+			var s *Selector
+
+			if ss[i] != nil {
+				s = new(Selector)
+
+				err = s.FromGRPCMessage(ss[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, s)
+		}
+	}
+
+	return
+}
+
+func (r *Replica) ToGRPCMessage() grpc.Message {
+	var m *netmap.Replica
+
+	if r != nil {
+		m = new(netmap.Replica)
+
+		m.SetSelector(r.selector)
+		m.SetCount(r.count)
+	}
 
 	return m
 }
 
-func ReplicaFromGRPCMessage(m *netmap.Replica) *Replica {
-	if m == nil {
-		return nil
+func (r *Replica) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.Replica)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(Replica)
-	r.SetSelector(m.GetSelector())
-	r.SetCount(m.GetCount())
+	r.selector = v.GetSelector()
+	r.count = v.GetCount()
 
-	return r
+	return nil
 }
 
-func PlacementPolicyToGRPCMessage(p *PlacementPolicy) *netmap.PlacementPolicy {
-	if p == nil {
-		return nil
+func ReplicasToGRPC(rs []*Replica) (res []*netmap.Replica) {
+	if rs != nil {
+		res = make([]*netmap.Replica, 0, len(rs))
+
+		for i := range rs {
+			res = append(res, rs[i].ToGRPCMessage().(*netmap.Replica))
+		}
 	}
 
-	filters := make([]*netmap.Filter, 0, len(p.GetFilters()))
-	for _, filter := range p.GetFilters() {
-		filters = append(filters, FilterToGRPCMessage(filter))
+	return
+}
+
+func ReplicasFromGRPC(rs []*netmap.Replica) (res []*Replica, err error) {
+	if rs != nil {
+		res = make([]*Replica, 0, len(rs))
+
+		for i := range rs {
+			var r *Replica
+
+			if rs[i] != nil {
+				r = new(Replica)
+
+				err = r.FromGRPCMessage(rs[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, r)
+		}
 	}
 
-	selectors := make([]*netmap.Selector, 0, len(p.GetSelectors()))
-	for _, selector := range p.GetSelectors() {
-		selectors = append(selectors, SelectorToGRPCMessage(selector))
+	return
+}
+
+func (p *PlacementPolicy) ToGRPCMessage() grpc.Message {
+	var m *netmap.PlacementPolicy
+
+	if p != nil {
+		m = new(netmap.PlacementPolicy)
+
+		m.SetFilters(FiltersToGRPC(p.filters))
+		m.SetSelectors(SelectorsToGRPC(p.selectors))
+		m.SetReplicas(ReplicasToGRPC(p.replicas))
+		m.SetContainerBackupFactor(p.backupFactor)
 	}
-
-	replicas := make([]*netmap.Replica, 0, len(p.GetReplicas()))
-	for _, replica := range p.GetReplicas() {
-		replicas = append(replicas, ReplicaToGRPCMessage(replica))
-	}
-
-	m := new(netmap.PlacementPolicy)
-
-	m.SetContainerBackupFactor(p.GetContainerBackupFactor())
-	m.SetFilters(filters)
-	m.SetSelectors(selectors)
-	m.SetReplicas(replicas)
 
 	return m
 }
 
-func PlacementPolicyFromGRPCMessage(m *netmap.PlacementPolicy) *PlacementPolicy {
-	if m == nil {
-		return nil
+func (p *PlacementPolicy) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.PlacementPolicy)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	filters := make([]*Filter, 0, len(m.GetFilters()))
-	for _, filter := range m.GetFilters() {
-		filters = append(filters, FilterFromGRPCMessage(filter))
+	var err error
+
+	p.filters, err = FiltersFromGRPC(v.GetFilters())
+	if err != nil {
+		return err
 	}
 
-	selectors := make([]*Selector, 0, len(m.GetSelectors()))
-	for _, selector := range m.GetSelectors() {
-		selectors = append(selectors, SelectorFromGRPCMessage(selector))
+	p.selectors, err = SelectorsFromGRPC(v.GetSelectors())
+	if err != nil {
+		return err
 	}
 
-	replicas := make([]*Replica, 0, len(m.GetReplicas()))
-	for _, replica := range m.GetReplicas() {
-		replicas = append(replicas, ReplicaFromGRPCMessage(replica))
+	p.replicas, err = ReplicasFromGRPC(v.GetReplicas())
+	if err != nil {
+		return err
 	}
 
-	p := new(PlacementPolicy)
+	p.backupFactor = v.GetContainerBackupFactor()
 
-	p.SetContainerBackupFactor(m.GetContainerBackupFactor())
-	p.SetFilters(filters)
-	p.SetSelectors(selectors)
-	p.SetReplicas(replicas)
-
-	return p
+	return nil
 }
 
 func ClauseToGRPCMessage(n Clause) netmap.Clause {
@@ -188,286 +273,397 @@ func NodeStateFromRPCMessage(n netmap.NodeInfo_State) NodeState {
 	return NodeState(n)
 }
 
-func AttributeToGRPCMessage(a *Attribute) *netmap.NodeInfo_Attribute {
-	if a == nil {
-		return nil
+func (a *Attribute) ToGRPCMessage() grpc.Message {
+	var m *netmap.NodeInfo_Attribute
+
+	if a != nil {
+		m = new(netmap.NodeInfo_Attribute)
+
+		m.SetKey(a.key)
+		m.SetValue(a.value)
+		m.SetParents(a.parents)
 	}
-
-	m := new(netmap.NodeInfo_Attribute)
-
-	m.SetKey(a.GetKey())
-	m.SetValue(a.GetValue())
-	m.SetParents(a.GetParents())
 
 	return m
 }
 
-func AttributeFromGRPCMessage(m *netmap.NodeInfo_Attribute) *Attribute {
-	if m == nil {
-		return nil
+func (a *Attribute) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NodeInfo_Attribute)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	a := new(Attribute)
+	a.key = v.GetKey()
+	a.value = v.GetValue()
+	a.parents = v.GetParents()
 
-	a.SetKey(m.GetKey())
-	a.SetValue(m.GetValue())
-	a.SetParents(m.GetParents())
-
-	return a
+	return nil
 }
 
-func NodeInfoToGRPCMessage(n *NodeInfo) *netmap.NodeInfo {
-	if n == nil {
-		return nil
+func AttributesToGRPC(as []*Attribute) (res []*netmap.NodeInfo_Attribute) {
+	if as != nil {
+		res = make([]*netmap.NodeInfo_Attribute, 0, len(as))
+
+		for i := range as {
+			res = append(res, as[i].ToGRPCMessage().(*netmap.NodeInfo_Attribute))
+		}
 	}
 
-	m := new(netmap.NodeInfo)
+	return
+}
 
-	m.SetPublicKey(n.GetPublicKey())
-	m.SetAddress(n.GetAddress())
-	m.SetState(NodeStateToGRPCMessage(n.GetState()))
+func AttributesFromGRPC(as []*netmap.NodeInfo_Attribute) (res []*Attribute, err error) {
+	if as != nil {
+		res = make([]*Attribute, 0, len(as))
 
-	attr := n.GetAttributes()
-	attrMsg := make([]*netmap.NodeInfo_Attribute, 0, len(attr))
+		for i := range as {
+			var a *Attribute
 
-	for i := range attr {
-		attrMsg = append(attrMsg, AttributeToGRPCMessage(attr[i]))
+			if as[i] != nil {
+				a = new(Attribute)
+
+				err = a.FromGRPCMessage(as[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, a)
+		}
 	}
 
-	m.SetAttributes(attrMsg)
+	return
+}
+
+func (ni *NodeInfo) ToGRPCMessage() grpc.Message {
+	var m *netmap.NodeInfo
+
+	if ni != nil {
+		m = new(netmap.NodeInfo)
+
+		m.SetPublicKey(ni.publicKey)
+		m.SetAddress(ni.address)
+		m.SetState(NodeStateToGRPCMessage(ni.state))
+		m.SetAttributes(AttributesToGRPC(ni.attributes))
+	}
 
 	return m
 }
 
-func NodeInfoFromGRPCMessage(m *netmap.NodeInfo) *NodeInfo {
-	if m == nil {
-		return nil
+func (ni *NodeInfo) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NodeInfo)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	a := new(NodeInfo)
+	var err error
 
-	a.SetPublicKey(m.GetPublicKey())
-	a.SetAddress(m.GetAddress())
-	a.SetState(NodeStateFromRPCMessage(m.GetState()))
-
-	attrMsg := m.GetAttributes()
-	attr := make([]*Attribute, 0, len(attrMsg))
-
-	for i := range attrMsg {
-		attr = append(attr, AttributeFromGRPCMessage(attrMsg[i]))
+	ni.attributes, err = AttributesFromGRPC(v.GetAttributes())
+	if err != nil {
+		return err
 	}
 
-	a.SetAttributes(attr)
+	ni.publicKey = v.GetPublicKey()
+	ni.address = v.GetAddress()
+	ni.state = NodeStateFromRPCMessage(v.GetState())
 
-	return a
+	return nil
 }
 
-func LocalNodeInfoRequestBodyToGRPCMessage(r *LocalNodeInfoRequestBody) *netmap.LocalNodeInfoRequest_Body {
-	if r == nil {
-		return nil
+func (l *LocalNodeInfoRequestBody) ToGRPCMessage() grpc.Message {
+	var m *netmap.LocalNodeInfoRequest_Body
+
+	if l != nil {
+		m = new(netmap.LocalNodeInfoRequest_Body)
 	}
-
-	return new(netmap.LocalNodeInfoRequest_Body)
-}
-
-func LocalNodeInfoRequestBodyFromGRPCMessage(m *netmap.LocalNodeInfoRequest_Body) *LocalNodeInfoRequestBody {
-	if m == nil {
-		return nil
-	}
-
-	return new(LocalNodeInfoRequestBody)
-}
-
-func LocalNodeInfoResponseBodyToGRPCMessage(r *LocalNodeInfoResponseBody) *netmap.LocalNodeInfoResponse_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(netmap.LocalNodeInfoResponse_Body)
-
-	m.SetVersion(refs.VersionToGRPCMessage(r.GetVersion()))
-	m.SetNodeInfo(NodeInfoToGRPCMessage(r.GetNodeInfo()))
 
 	return m
 }
 
-func LocalNodeInfoResponseBodyFromGRPCMessage(m *netmap.LocalNodeInfoResponse_Body) *LocalNodeInfoResponseBody {
-	if m == nil {
-		return nil
+func (l *LocalNodeInfoRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.LocalNodeInfoRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(LocalNodeInfoResponseBody)
-	r.SetVersion(refs.VersionFromGRPCMessage(m.GetVersion()))
-	r.SetNodeInfo(NodeInfoFromGRPCMessage(m.GetNodeInfo()))
-
-	return r
+	return nil
 }
 
-func LocalNodeInfoRequestToGRPCMessage(r *LocalNodeInfoRequest) *netmap.LocalNodeInfoRequest {
-	if r == nil {
-		return nil
+func (l *LocalNodeInfoRequest) ToGRPCMessage() grpc.Message {
+	var m *netmap.LocalNodeInfoRequest
+
+	if l != nil {
+		m = new(netmap.LocalNodeInfoRequest)
+
+		m.SetBody(l.body.ToGRPCMessage().(*netmap.LocalNodeInfoRequest_Body))
+		l.RequestHeaders.ToMessage(m)
 	}
-
-	m := new(netmap.LocalNodeInfoRequest)
-	m.SetBody(LocalNodeInfoRequestBodyToGRPCMessage(r.GetBody()))
-
-	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
 
-func LocalNodeInfoRequestFromGRPCMessage(m *netmap.LocalNodeInfoRequest) *LocalNodeInfoRequest {
-	if m == nil {
-		return nil
+func (l *LocalNodeInfoRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.LocalNodeInfoRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(LocalNodeInfoRequest)
-	r.SetBody(LocalNodeInfoRequestBodyFromGRPCMessage(m.GetBody()))
+	var err error
 
-	session.RequestHeadersFromGRPC(m, r)
+	body := v.GetBody()
+	if body == nil {
+		l.body = nil
+	} else {
+		if l.body == nil {
+			l.body = new(LocalNodeInfoRequestBody)
+		}
 
-	return r
+		err = l.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return l.RequestHeaders.FromMessage(v)
 }
 
-func LocalNodeInfoResponseToGRPCMessage(r *LocalNodeInfoResponse) *netmap.LocalNodeInfoResponse {
-	if r == nil {
-		return nil
+func (l *LocalNodeInfoResponseBody) ToGRPCMessage() grpc.Message {
+	var m *netmap.LocalNodeInfoResponse_Body
+
+	if l != nil {
+		m = new(netmap.LocalNodeInfoResponse_Body)
+
+		m.SetVersion(l.version.ToGRPCMessage().(*refsGRPC.Version))
+		m.SetNodeInfo(l.nodeInfo.ToGRPCMessage().(*netmap.NodeInfo))
 	}
-
-	m := new(netmap.LocalNodeInfoResponse)
-	m.SetBody(LocalNodeInfoResponseBodyToGRPCMessage(r.GetBody()))
-
-	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
 
-func LocalNodeInfoResponseFromGRPCMessage(m *netmap.LocalNodeInfoResponse) *LocalNodeInfoResponse {
-	if m == nil {
-		return nil
+func (l *LocalNodeInfoResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.LocalNodeInfoResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(LocalNodeInfoResponse)
-	r.SetBody(LocalNodeInfoResponseBodyFromGRPCMessage(m.GetBody()))
+	var err error
 
-	session.ResponseHeadersFromGRPC(m, r)
+	version := v.GetVersion()
+	if version == nil {
+		l.version = nil
+	} else {
+		if l.version == nil {
+			l.version = new(refs.Version)
+		}
 
-	return r
+		err = l.version.FromGRPCMessage(version)
+		if err != nil {
+			return err
+		}
+	}
+
+	nodeInfo := v.GetNodeInfo()
+	if nodeInfo == nil {
+		l.nodeInfo = nil
+	} else {
+		if l.nodeInfo == nil {
+			l.nodeInfo = new(NodeInfo)
+		}
+
+		err = l.nodeInfo.FromGRPCMessage(nodeInfo)
+	}
+
+	return err
 }
 
-func NetworkInfoToGRPCMessage(n *NetworkInfo) *netmap.NetworkInfo {
-	if n == nil {
-		return nil
+func (l *LocalNodeInfoResponse) ToGRPCMessage() grpc.Message {
+	var m *netmap.LocalNodeInfoResponse
+
+	if l != nil {
+		m = new(netmap.LocalNodeInfoResponse)
+
+		m.SetBody(l.body.ToGRPCMessage().(*netmap.LocalNodeInfoResponse_Body))
+		l.ResponseHeaders.ToMessage(m)
 	}
-
-	m := new(netmap.NetworkInfo)
-
-	m.SetCurrentEpoch(n.GetCurrentEpoch())
-	m.SetMagicNumber(n.GetMagicNumber())
 
 	return m
 }
 
-func NetworkInfoFromGRPCMessage(m *netmap.NetworkInfo) *NetworkInfo {
-	if m == nil {
-		return nil
+func (l *LocalNodeInfoResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.LocalNodeInfoResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	n := new(NetworkInfo)
+	var err error
 
-	n.SetCurrentEpoch(m.GetCurrentEpoch())
-	n.SetMagicNumber(m.GetMagicNumber())
+	body := v.GetBody()
+	if body == nil {
+		l.body = nil
+	} else {
+		if l.body == nil {
+			l.body = new(LocalNodeInfoResponseBody)
+		}
 
-	return n
+		err = l.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return l.ResponseHeaders.FromMessage(v)
 }
 
-func NetworkInfoRequestBodyToGRPCMessage(r *NetworkInfoRequestBody) *netmap.NetworkInfoRequest_Body {
-	if r == nil {
-		return nil
+func (i *NetworkInfo) ToGRPCMessage() grpc.Message {
+	var m *netmap.NetworkInfo
+
+	if i != nil {
+		m = new(netmap.NetworkInfo)
+
+		m.SetMagicNumber(i.magicNum)
+		m.SetCurrentEpoch(i.curEpoch)
 	}
-
-	return new(netmap.NetworkInfoRequest_Body)
-}
-
-func NetworkInfoRequestBodyFromGRPCMessage(m *netmap.NetworkInfoRequest_Body) *NetworkInfoRequestBody {
-	if m == nil {
-		return nil
-	}
-
-	return new(NetworkInfoRequestBody)
-}
-
-func NetworkInfoResponseBodyToGRPCMessage(r *NetworkInfoResponseBody) *netmap.NetworkInfoResponse_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(netmap.NetworkInfoResponse_Body)
-
-	m.SetNetworkInfo(NetworkInfoToGRPCMessage(r.GetNetworkInfo()))
 
 	return m
 }
 
-func NetworkInfoResponseBodyFromGRPCMessage(m *netmap.NetworkInfoResponse_Body) *NetworkInfoResponseBody {
-	if m == nil {
-		return nil
+func (i *NetworkInfo) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NetworkInfo)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(NetworkInfoResponseBody)
-	r.SetNetworkInfo(NetworkInfoFromGRPCMessage(m.GetNetworkInfo()))
+	i.magicNum = v.GetMagicNumber()
+	i.curEpoch = v.GetCurrentEpoch()
 
-	return r
+	return nil
 }
 
-func NetworkInfoRequestToGRPCMessage(r *NetworkInfoRequest) *netmap.NetworkInfoRequest {
-	if r == nil {
-		return nil
+func (l *NetworkInfoRequestBody) ToGRPCMessage() grpc.Message {
+	var m *netmap.NetworkInfoRequest_Body
+
+	if l != nil {
+		m = new(netmap.NetworkInfoRequest_Body)
 	}
-
-	m := new(netmap.NetworkInfoRequest)
-	m.SetBody(NetworkInfoRequestBodyToGRPCMessage(r.GetBody()))
-
-	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
 
-func NetworkInfoRequestFromGRPCMessage(m *netmap.NetworkInfoRequest) *NetworkInfoRequest {
-	if m == nil {
-		return nil
+func (l *NetworkInfoRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NetworkInfoRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(NetworkInfoRequest)
-	r.SetBody(NetworkInfoRequestBodyFromGRPCMessage(m.GetBody()))
-
-	session.RequestHeadersFromGRPC(m, r)
-
-	return r
+	return nil
 }
 
-func NetworkInfoResponseToGRPCMessage(r *NetworkInfoResponse) *netmap.NetworkInfoResponse {
-	if r == nil {
-		return nil
+func (l *NetworkInfoRequest) ToGRPCMessage() grpc.Message {
+	var m *netmap.NetworkInfoRequest
+
+	if l != nil {
+		m = new(netmap.NetworkInfoRequest)
+
+		m.SetBody(l.body.ToGRPCMessage().(*netmap.NetworkInfoRequest_Body))
+		l.RequestHeaders.ToMessage(m)
 	}
-
-	m := new(netmap.NetworkInfoResponse)
-	m.SetBody(NetworkInfoResponseBodyToGRPCMessage(r.GetBody()))
-
-	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
 
-func NetworkInfoResponseFromGRPCMessage(m *netmap.NetworkInfoResponse) *NetworkInfoResponse {
-	if m == nil {
-		return nil
+func (l *NetworkInfoRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NetworkInfoRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(NetworkInfoResponse)
-	r.SetBody(NetworkInfoResponseBodyFromGRPCMessage(m.GetBody()))
+	var err error
 
-	session.ResponseHeadersFromGRPC(m, r)
+	body := v.GetBody()
+	if body == nil {
+		l.body = nil
+	} else {
+		if l.body == nil {
+			l.body = new(NetworkInfoRequestBody)
+		}
 
-	return r
+		err = l.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return l.RequestHeaders.FromMessage(v)
+}
+
+func (i *NetworkInfoResponseBody) ToGRPCMessage() grpc.Message {
+	var m *netmap.NetworkInfoResponse_Body
+
+	if i != nil {
+		m = new(netmap.NetworkInfoResponse_Body)
+
+		m.SetNetworkInfo(i.netInfo.ToGRPCMessage().(*netmap.NetworkInfo))
+	}
+
+	return m
+}
+
+func (i *NetworkInfoResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NetworkInfoResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	netInfo := v.GetNetworkInfo()
+	if netInfo == nil {
+		i.netInfo = nil
+	} else {
+		if i.netInfo == nil {
+			i.netInfo = new(NetworkInfo)
+		}
+
+		err = i.netInfo.FromGRPCMessage(netInfo)
+	}
+
+	return err
+}
+
+func (l *NetworkInfoResponse) ToGRPCMessage() grpc.Message {
+	var m *netmap.NetworkInfoResponse
+
+	if l != nil {
+		m = new(netmap.NetworkInfoResponse)
+
+		m.SetBody(l.body.ToGRPCMessage().(*netmap.NetworkInfoResponse_Body))
+		l.ResponseHeaders.ToMessage(m)
+	}
+
+	return m
+}
+
+func (l *NetworkInfoResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NetworkInfoResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	body := v.GetBody()
+	if body == nil {
+		l.body = nil
+	} else {
+		if l.body == nil {
+			l.body = new(NetworkInfoResponseBody)
+		}
+
+		err = l.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return l.ResponseHeaders.FromMessage(v)
 }

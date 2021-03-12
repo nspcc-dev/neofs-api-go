@@ -1,9 +1,9 @@
 package container
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	protoutil "github.com/nspcc-dev/neofs-api-go/util/proto"
 	container "github.com/nspcc-dev/neofs-api-go/v2/container/grpc"
-	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -89,14 +89,7 @@ func (a *Attribute) StableSize() (size int) {
 }
 
 func (a *Attribute) Unmarshal(data []byte) error {
-	m := new(container.Container_Attribute)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*a = *AttributeFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(a, data, new(container.Container_Attribute))
 }
 
 func (c *Container) StableMarshal(buf []byte) ([]byte, error) {
@@ -178,14 +171,7 @@ func (c *Container) StableSize() (size int) {
 }
 
 func (c *Container) Unmarshal(data []byte) error {
-	m := new(container.Container)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*c = *ContainerFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(c, data, new(container.Container))
 }
 
 func (r *PutRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -228,6 +214,10 @@ func (r *PutRequestBody) StableSize() (size int) {
 	return size
 }
 
+func (r *PutRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(container.PutRequest_Body))
+}
+
 func (r *PutResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -257,6 +247,10 @@ func (r *PutResponseBody) StableSize() (size int) {
 	size += protoutil.NestedStructureSize(putRespBodyIDField, r.cid)
 
 	return size
+}
+
+func (r *PutResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(container.PutResponse_Body))
 }
 
 func (r *DeleteRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -299,12 +293,20 @@ func (r *DeleteRequestBody) StableSize() (size int) {
 	return size
 }
 
+func (r *DeleteRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(container.DeleteRequest_Body))
+}
+
 func (r *DeleteResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	return nil, nil
 }
 
 func (r *DeleteResponseBody) StableSize() (size int) {
 	return 0
+}
+
+func (r *DeleteResponseBody) Unmarshal([]byte) error {
+	return nil
 }
 
 func (r *GetRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -334,6 +336,10 @@ func (r *GetRequestBody) StableSize() (size int) {
 	return size
 }
 
+func (r *GetRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(container.GetRequest_Body))
+}
+
 func (r *GetResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -361,6 +367,10 @@ func (r *GetResponseBody) StableSize() (size int) {
 	return size
 }
 
+func (r *GetResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(container.GetResponse_Body))
+}
+
 func (r *ListRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -386,6 +396,10 @@ func (r *ListRequestBody) StableSize() (size int) {
 	size += protoutil.NestedStructureSize(listReqBodyOwnerField, r.ownerID)
 
 	return size
+}
+
+func (r *ListRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(container.ListRequest_Body))
 }
 
 func (r *ListResponseBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -424,6 +438,10 @@ func (r *ListResponseBody) StableSize() (size int) {
 	}
 
 	return size
+}
+
+func (r *ListResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(container.ListResponse_Body))
 }
 
 func (r *SetExtendedACLRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -466,12 +484,20 @@ func (r *SetExtendedACLRequestBody) StableSize() (size int) {
 	return size
 }
 
+func (r *SetExtendedACLRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(container.SetExtendedACLRequest_Body))
+}
+
 func (r *SetExtendedACLResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	return nil, nil
 }
 
 func (r *SetExtendedACLResponseBody) StableSize() (size int) {
 	return 0
+}
+
+func (r *SetExtendedACLResponseBody) Unmarshal([]byte) error {
+	return nil
 }
 
 func (r *GetExtendedACLRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -499,6 +525,10 @@ func (r *GetExtendedACLRequestBody) StableSize() (size int) {
 	size += protoutil.NestedStructureSize(getEACLReqBodyIDField, r.cid)
 
 	return size
+}
+
+func (r *GetExtendedACLRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(container.GetExtendedACLRequest_Body))
 }
 
 func (r *GetExtendedACLResponseBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -539,6 +569,10 @@ func (r *GetExtendedACLResponseBody) StableSize() (size int) {
 	size += protoutil.NestedStructureSize(getEACLRespBodySignatureField, r.sig)
 
 	return size
+}
+
+func (r *GetExtendedACLResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(container.GetExtendedACLResponse_Body))
 }
 
 func (a *UsedSpaceAnnouncement) StableMarshal(buf []byte) ([]byte, error) {
@@ -590,14 +624,7 @@ func (a *UsedSpaceAnnouncement) StableSize() (size int) {
 }
 
 func (a *UsedSpaceAnnouncement) Unmarshal(data []byte) error {
-	m := new(container.AnnounceUsedSpaceRequest_Body_Announcement)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*a = *UsedSpaceAnnouncementFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(a, data, new(container.AnnounceUsedSpaceRequest_Body_Announcement))
 }
 
 func (r *AnnounceUsedSpaceRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -638,10 +665,18 @@ func (r *AnnounceUsedSpaceRequestBody) StableSize() (size int) {
 	return size
 }
 
+func (r *AnnounceUsedSpaceRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(container.AnnounceUsedSpaceRequest_Body))
+}
+
 func (r *AnnounceUsedSpaceResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	return nil, nil
 }
 
 func (r *AnnounceUsedSpaceResponseBody) StableSize() (size int) {
 	return 0
+}
+
+func (r *AnnounceUsedSpaceResponseBody) Unmarshal([]byte) error {
+	return nil
 }

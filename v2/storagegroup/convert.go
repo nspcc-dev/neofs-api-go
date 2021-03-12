@@ -1,48 +1,57 @@
 package storagegroup
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 	sg "github.com/nspcc-dev/neofs-api-go/v2/storagegroup/grpc"
 )
 
-// StorageGroupToGRPCMessage converts unified proto structure into grpc structure.
-func StorageGroupToGRPCMessage(s *StorageGroup) *sg.StorageGroup {
-	if s == nil {
-		return nil
-	}
-
+func (s *StorageGroup) ToGRPCMessage() grpc.Message {
 	m := new(sg.StorageGroup)
 
-	m.SetValidationDataSize(s.GetValidationDataSize())
-	m.SetValidationHash(
-		refs.ChecksumToGRPCMessage(s.GetValidationHash()),
-	)
-	m.SetExpirationEpoch(s.GetExpirationEpoch())
+	if s != nil {
+		m = new(sg.StorageGroup)
 
-	m.SetMembers(
-		refs.ObjectIDListToGRPCMessage(s.GetMembers()),
-	)
+		m.SetMembers(refs.ObjectIDListToGRPCMessage(s.members))
+		m.SetExpirationEpoch(s.exp)
+		m.SetValidationDataSize(s.size)
+		m.SetValidationHash(s.hash.ToGRPCMessage().(*refsGRPC.Checksum))
+	}
 
 	return m
 }
 
-// StorageGroupFromGRPCMessage converts grpc structure into unified proto structure.
-func StorageGroupFromGRPCMessage(m *sg.StorageGroup) *StorageGroup {
-	if m == nil {
-		return nil
+func (s *StorageGroup) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*sg.StorageGroup)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	s := new(StorageGroup)
+	var err error
 
-	s.SetValidationDataSize(m.GetValidationDataSize())
-	s.SetValidationHash(
-		refs.ChecksumFromGRPCMessage(m.GetValidationHash()),
-	)
-	s.SetExpirationEpoch(m.GetExpirationEpoch())
+	hash := v.GetValidationHash()
+	if hash == nil {
+		s.hash = nil
+	} else {
+		if s.hash == nil {
+			s.hash = new(refs.Checksum)
+		}
 
-	s.SetMembers(
-		refs.ObjectIDListFromGRPCMessage(m.GetMembers()),
-	)
+		err = s.hash.FromGRPCMessage(hash)
+		if err != nil {
+			return err
+		}
+	}
 
-	return s
+	s.members, err = refs.ObjectIDListFromGRPCMessage(v.GetMembers())
+	if err != nil {
+		return err
+	}
+
+	s.exp = v.GetExpirationEpoch()
+	s.size = v.GetValidationDataSize()
+
+	return nil
 }

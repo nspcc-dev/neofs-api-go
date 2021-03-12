@@ -1,9 +1,9 @@
 package tombstone
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 	tombstone "github.com/nspcc-dev/neofs-api-go/v2/tombstone/grpc"
-	goproto "google.golang.org/protobuf/proto"
 )
 
 const (
@@ -72,12 +72,5 @@ func (s *Tombstone) StableSize() (size int) {
 
 // Unmarshal unmarshal tombstone message from its binary representation.
 func (s *Tombstone) Unmarshal(data []byte) error {
-	m := new(tombstone.Tombstone)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*s = *TombstoneFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(s, data, new(tombstone.Tombstone))
 }

@@ -1,221 +1,278 @@
 package refs
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
-func OwnerIDToGRPCMessage(o *OwnerID) *refs.OwnerID {
-	if o == nil {
-		return nil
+func (o *OwnerID) ToGRPCMessage() grpc.Message {
+	var m *refs.OwnerID
+
+	if o != nil {
+		m = new(refs.OwnerID)
+
+		m.SetValue(o.val)
 	}
-
-	m := new(refs.OwnerID)
-
-	m.SetValue(o.GetValue())
 
 	return m
 }
 
-func OwnerIDFromGRPCMessage(m *refs.OwnerID) *OwnerID {
-	if m == nil {
-		return nil
+func (o *OwnerID) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*refs.OwnerID)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	o := new(OwnerID)
+	o.val = v.GetValue()
 
-	o.SetValue(m.GetValue())
-
-	return o
+	return nil
 }
 
-func ContainerIDToGRPCMessage(c *ContainerID) *refs.ContainerID {
-	if c == nil {
-		return nil
+func (c *ContainerID) ToGRPCMessage() grpc.Message {
+	var m *refs.ContainerID
+
+	if c != nil {
+		m = new(refs.ContainerID)
+
+		m.SetValue(c.val)
 	}
-
-	m := new(refs.ContainerID)
-
-	m.SetValue(c.GetValue())
 
 	return m
 }
 
-func ContainerIDFromGRPCMessage(m *refs.ContainerID) *ContainerID {
-	if m == nil {
-		return nil
+func (c *ContainerID) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*refs.ContainerID)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	c := new(ContainerID)
+	c.val = v.GetValue()
 
-	c.SetValue(m.GetValue())
-
-	return c
+	return nil
 }
 
-func ObjectIDToGRPCMessage(o *ObjectID) *refs.ObjectID {
-	if o == nil {
-		return nil
+func ContainerIDsToGRPCMessage(ids []*ContainerID) (res []*refs.ContainerID) {
+	if ids != nil {
+		res = make([]*refs.ContainerID, 0, len(ids))
+
+		for i := range ids {
+			res = append(res, ids[i].ToGRPCMessage().(*refs.ContainerID))
+		}
 	}
 
-	m := new(refs.ObjectID)
+	return
+}
 
-	m.SetValue(o.GetValue())
+func ContainerIDsFromGRPCMessage(idsV2 []*refs.ContainerID) (res []*ContainerID, err error) {
+	if idsV2 != nil {
+		res = make([]*ContainerID, 0, len(idsV2))
+
+		for i := range idsV2 {
+			var id *ContainerID
+
+			if idsV2[i] != nil {
+				id = new(ContainerID)
+
+				err = id.FromGRPCMessage(idsV2[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, id)
+		}
+	}
+
+	return
+}
+
+func (o *ObjectID) ToGRPCMessage() grpc.Message {
+	var m *refs.ObjectID
+
+	if o != nil {
+		m = new(refs.ObjectID)
+
+		m.SetValue(o.val)
+	}
 
 	return m
 }
 
-func ObjectIDFromGRPCMessage(m *refs.ObjectID) *ObjectID {
-	if m == nil {
-		return nil
+func (o *ObjectID) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*refs.ObjectID)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	o := new(ObjectID)
+	o.val = v.GetValue()
 
-	o.SetValue(m.GetValue())
-
-	return o
+	return nil
 }
 
-func ObjectIDListToGRPCMessage(ids []*ObjectID) []*refs.ObjectID {
-	if ids == nil {
-		return nil
+func ObjectIDListToGRPCMessage(ids []*ObjectID) (res []*refs.ObjectID) {
+	if ids != nil {
+		res = make([]*refs.ObjectID, 0, len(ids))
+
+		for i := range ids {
+			res = append(res, ids[i].ToGRPCMessage().(*refs.ObjectID))
+		}
 	}
 
-	idsV2 := make([]*refs.ObjectID, 0, len(ids))
-
-	for i := range ids {
-		idsV2 = append(idsV2, ObjectIDToGRPCMessage(ids[i]))
-	}
-
-	return idsV2
+	return
 }
 
-func ObjectIDListFromGRPCMessage(idsV2 []*refs.ObjectID) []*ObjectID {
-	if idsV2 == nil {
-		return nil
+func ObjectIDListFromGRPCMessage(idsV2 []*refs.ObjectID) (res []*ObjectID, err error) {
+	if idsV2 != nil {
+		res = make([]*ObjectID, 0, len(idsV2))
+
+		for i := range idsV2 {
+			var id *ObjectID
+
+			if idsV2[i] != nil {
+				id = new(ObjectID)
+
+				err = id.FromGRPCMessage(idsV2[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, id)
+		}
 	}
 
-	ids := make([]*ObjectID, 0, len(idsV2))
-
-	for i := range idsV2 {
-		ids = append(ids, ObjectIDFromGRPCMessage(idsV2[i]))
-	}
-
-	return ids
+	return
 }
 
-func AddressToGRPCMessage(a *Address) *refs.Address {
-	if a == nil {
-		return nil
+func (a *Address) ToGRPCMessage() grpc.Message {
+	var m *refs.Address
+
+	if a != nil {
+		m = new(refs.Address)
+
+		m.SetContainerId(a.cid.ToGRPCMessage().(*refs.ContainerID))
+		m.SetObjectId(a.oid.ToGRPCMessage().(*refs.ObjectID))
 	}
-
-	m := new(refs.Address)
-
-	m.SetContainerId(
-		ContainerIDToGRPCMessage(a.GetContainerID()),
-	)
-
-	m.SetObjectId(
-		ObjectIDToGRPCMessage(a.GetObjectID()),
-	)
 
 	return m
 }
 
-func AddressFromGRPCMessage(m *refs.Address) *Address {
-	if m == nil {
-		return nil
+func (a *Address) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*refs.Address)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	a := new(Address)
+	var err error
 
-	a.SetContainerID(
-		ContainerIDFromGRPCMessage(m.GetContainerId()),
-	)
+	cid := v.GetContainerId()
+	if cid == nil {
+		a.cid = nil
+	} else {
+		if a.cid == nil {
+			a.cid = new(ContainerID)
+		}
 
-	a.SetObjectID(
-		ObjectIDFromGRPCMessage(m.GetObjectId()),
-	)
+		err = a.cid.FromGRPCMessage(cid)
+		if err != nil {
+			return err
+		}
+	}
 
-	return a
+	oid := v.GetObjectId()
+	if oid == nil {
+		a.oid = nil
+	} else {
+		if a.oid == nil {
+			a.oid = new(ObjectID)
+		}
+
+		err = a.oid.FromGRPCMessage(oid)
+	}
+
+	return err
 }
 
-func ChecksumToGRPCMessage(c *Checksum) *refs.Checksum {
-	if c == nil {
-		return nil
+func ChecksumTypeToGRPC(t ChecksumType) refs.ChecksumType {
+	return refs.ChecksumType(t)
+}
+
+func ChecksumTypeFromGRPC(t refs.ChecksumType) ChecksumType {
+	return ChecksumType(t)
+}
+
+func (c *Checksum) ToGRPCMessage() grpc.Message {
+	var m *refs.Checksum
+
+	if c != nil {
+		m = new(refs.Checksum)
+
+		m.SetChecksumType(ChecksumTypeToGRPC(c.typ))
+		m.SetSum(c.sum)
 	}
-
-	m := new(refs.Checksum)
-
-	m.SetChecksumType(refs.ChecksumType(c.GetType()))
-
-	m.SetSum(c.GetSum())
 
 	return m
 }
 
-func ChecksumFromGRPCMessage(m *refs.Checksum) *Checksum {
-	if m == nil {
-		return nil
+func (c *Checksum) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*refs.Checksum)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	c := new(Checksum)
+	c.typ = ChecksumTypeFromGRPC(v.GetType())
+	c.sum = v.GetSum()
 
-	c.SetType(ChecksumType(m.GetType()))
-
-	c.SetSum(m.GetSum())
-
-	return c
+	return nil
 }
 
-func VersionToGRPCMessage(v *Version) *refs.Version {
-	if v == nil {
-		return nil
+func (v *Version) ToGRPCMessage() grpc.Message {
+	var m *refs.Version
+
+	if v != nil {
+		m = new(refs.Version)
+
+		m.SetMajor(v.major)
+		m.SetMinor(v.minor)
 	}
-
-	msg := new(refs.Version)
-
-	msg.SetMajor(v.GetMajor())
-	msg.SetMinor(v.GetMinor())
-
-	return msg
-}
-
-func VersionFromGRPCMessage(m *refs.Version) *Version {
-	if m == nil {
-		return nil
-	}
-
-	v := new(Version)
-
-	v.SetMajor(m.GetMajor())
-	v.SetMinor(m.GetMinor())
-
-	return v
-}
-
-func SignatureToGRPCMessage(s *Signature) *refs.Signature {
-	if s == nil {
-		return nil
-	}
-
-	m := new(refs.Signature)
-
-	m.SetKey(s.GetKey())
-	m.SetSign(s.GetSign())
 
 	return m
 }
 
-func SignatureFromGRPCMessage(m *refs.Signature) *Signature {
-	if m == nil {
-		return nil
+func (v *Version) FromGRPCMessage(m grpc.Message) error {
+	ver, ok := m.(*refs.Version)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	s := new(Signature)
+	v.major = ver.GetMajor()
+	v.minor = ver.GetMinor()
 
-	s.SetKey(m.GetKey())
-	s.SetSign(m.GetSign())
+	return nil
+}
 
-	return s
+func (s *Signature) ToGRPCMessage() grpc.Message {
+	var m *refs.Signature
+
+	if s != nil {
+		m = new(refs.Signature)
+
+		m.SetKey(s.key)
+		m.SetSign(s.sign)
+	}
+
+	return m
+}
+
+func (s *Signature) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*refs.Signature)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, s)
+	}
+
+	s.key = v.GetKey()
+	s.sign = v.GetSign()
+
+	return nil
 }

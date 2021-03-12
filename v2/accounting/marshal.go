@@ -1,9 +1,9 @@
 package accounting
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	protoutil "github.com/nspcc-dev/neofs-api-go/util/proto"
 	accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting/grpc"
-	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -56,14 +56,7 @@ func (d *Decimal) StableSize() (size int) {
 }
 
 func (d *Decimal) Unmarshal(data []byte) error {
-	m := new(accounting.Decimal)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*d = *DecimalFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(d, data, new(accounting.Decimal))
 }
 
 func (b *BalanceRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -93,6 +86,10 @@ func (b *BalanceRequestBody) StableSize() (size int) {
 	return size
 }
 
+func (b *BalanceRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(b, data, new(accounting.BalanceRequest_Body))
+}
+
 func (br *BalanceResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if br == nil {
 		return []byte{}, nil
@@ -118,4 +115,8 @@ func (br *BalanceResponseBody) StableSize() (size int) {
 	size = protoutil.NestedStructureSize(balanceRespBodyDecimalField, br.bal)
 
 	return size
+}
+
+func (br *BalanceResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(br, data, new(accounting.BalanceResponse_Body))
 }

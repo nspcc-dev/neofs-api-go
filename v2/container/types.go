@@ -30,9 +30,20 @@ type PutRequestBody struct {
 
 	sig *refs.Signature
 }
+type PutRequest struct {
+	body *PutRequestBody
+
+	session.RequestHeaders
+}
 
 type PutResponseBody struct {
 	cid *refs.ContainerID
+}
+
+type PutResponse struct {
+	body *PutResponseBody
+
+	session.ResponseHeaders
 }
 
 type GetRequestBody struct {
@@ -42,9 +53,7 @@ type GetRequestBody struct {
 type GetRequest struct {
 	body *GetRequestBody
 
-	metaHeader *session.RequestMetaHeader
-
-	verifyHeader *session.RequestVerificationHeader
+	session.RequestHeaders
 }
 
 type GetResponseBody struct {
@@ -54,9 +63,7 @@ type GetResponseBody struct {
 type GetResponse struct {
 	body *GetResponseBody
 
-	metaHeader *session.ResponseMetaHeader
-
-	verifyHeader *session.ResponseVerificationHeader
+	session.ResponseHeaders
 }
 
 type DeleteRequestBody struct {
@@ -65,14 +72,38 @@ type DeleteRequestBody struct {
 	sig *refs.Signature
 }
 
+type DeleteRequest struct {
+	body *DeleteRequestBody
+
+	session.RequestHeaders
+}
+
 type DeleteResponseBody struct{}
+
+type DeleteResponse struct {
+	body *DeleteResponseBody
+
+	session.ResponseHeaders
+}
 
 type ListRequestBody struct {
 	ownerID *refs.OwnerID
 }
 
+type ListRequest struct {
+	body *ListRequestBody
+
+	session.RequestHeaders
+}
+
 type ListResponseBody struct {
 	cidList []*refs.ContainerID
+}
+
+type ListResponse struct {
+	body *ListResponseBody
+
+	session.ResponseHeaders
 }
 
 type SetExtendedACLRequestBody struct {
@@ -81,16 +112,40 @@ type SetExtendedACLRequestBody struct {
 	sig *refs.Signature
 }
 
+type SetExtendedACLRequest struct {
+	body *SetExtendedACLRequestBody
+
+	session.RequestHeaders
+}
+
 type SetExtendedACLResponseBody struct{}
+
+type SetExtendedACLResponse struct {
+	body *SetExtendedACLResponseBody
+
+	session.ResponseHeaders
+}
 
 type GetExtendedACLRequestBody struct {
 	cid *refs.ContainerID
+}
+
+type GetExtendedACLRequest struct {
+	body *GetExtendedACLRequestBody
+
+	session.RequestHeaders
 }
 
 type GetExtendedACLResponseBody struct {
 	eacl *acl.Table
 
 	sig *refs.Signature
+}
+
+type GetExtendedACLResponse struct {
+	body *GetExtendedACLResponseBody
+
+	session.ResponseHeaders
 }
 
 type UsedSpaceAnnouncement struct {
@@ -105,7 +160,19 @@ type AnnounceUsedSpaceRequestBody struct {
 	announcements []*UsedSpaceAnnouncement
 }
 
+type AnnounceUsedSpaceRequest struct {
+	body *AnnounceUsedSpaceRequestBody
+
+	session.RequestHeaders
+}
+
 type AnnounceUsedSpaceResponseBody struct{}
+
+type AnnounceUsedSpaceResponse struct {
+	body *AnnounceUsedSpaceResponseBody
+
+	session.ResponseHeaders
+}
 
 func (a *Attribute) GetKey() string {
 	if a != nil {
@@ -261,34 +328,6 @@ func (r *PutRequest) SetBody(v *PutRequestBody) {
 	}
 }
 
-func (r *PutRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *PutRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *PutRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *PutRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 func (r *PutResponseBody) GetContainerID() *refs.ContainerID {
 	if r != nil {
 		return r.cid
@@ -314,34 +353,6 @@ func (r *PutResponse) GetBody() *PutResponseBody {
 func (r *PutResponse) SetBody(v *PutResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *PutResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *PutResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *PutResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *PutResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -373,34 +384,6 @@ func (r *GetRequest) SetBody(v *GetRequestBody) {
 	}
 }
 
-func (r *GetRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *GetRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *GetRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *GetRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 func (r *GetResponseBody) GetContainer() *Container {
 	if r != nil {
 		return r.cnr
@@ -426,34 +409,6 @@ func (r *GetResponse) GetBody() *GetResponseBody {
 func (r *GetResponse) SetBody(v *GetResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *GetResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *GetResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *GetResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *GetResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -499,34 +454,6 @@ func (r *DeleteRequest) SetBody(v *DeleteRequestBody) {
 	}
 }
 
-func (r *DeleteRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *DeleteRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *DeleteRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *DeleteRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 func (r *DeleteResponse) GetBody() *DeleteResponseBody {
 	if r != nil {
 		return r.body
@@ -538,34 +465,6 @@ func (r *DeleteResponse) GetBody() *DeleteResponseBody {
 func (r *DeleteResponse) SetBody(v *DeleteResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *DeleteResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *DeleteResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *DeleteResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *DeleteResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -597,34 +496,6 @@ func (r *ListRequest) SetBody(v *ListRequestBody) {
 	}
 }
 
-func (r *ListRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *ListRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *ListRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *ListRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 func (r *ListResponseBody) GetContainerIDs() []*refs.ContainerID {
 	if r != nil {
 		return r.cidList
@@ -650,34 +521,6 @@ func (r *ListResponse) GetBody() *ListResponseBody {
 func (r *ListResponse) SetBody(v *ListResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *ListResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *ListResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *ListResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *ListResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -723,34 +566,6 @@ func (r *SetExtendedACLRequest) SetBody(v *SetExtendedACLRequestBody) {
 	}
 }
 
-func (r *SetExtendedACLRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *SetExtendedACLRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *SetExtendedACLRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *SetExtendedACLRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 func (r *SetExtendedACLResponse) GetBody() *SetExtendedACLResponseBody {
 	if r != nil {
 		return r.body
@@ -762,34 +577,6 @@ func (r *SetExtendedACLResponse) GetBody() *SetExtendedACLResponseBody {
 func (r *SetExtendedACLResponse) SetBody(v *SetExtendedACLResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *SetExtendedACLResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *SetExtendedACLResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *SetExtendedACLResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *SetExtendedACLResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -818,34 +605,6 @@ func (r *GetExtendedACLRequest) GetBody() *GetExtendedACLRequestBody {
 func (r *GetExtendedACLRequest) SetBody(v *GetExtendedACLRequestBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *GetExtendedACLRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *GetExtendedACLRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *GetExtendedACLRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *GetExtendedACLRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -888,34 +647,6 @@ func (r *GetExtendedACLResponse) GetBody() *GetExtendedACLResponseBody {
 func (r *GetExtendedACLResponse) SetBody(v *GetExtendedACLResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *GetExtendedACLResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *GetExtendedACLResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *GetExtendedACLResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *GetExtendedACLResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -989,34 +720,6 @@ func (r *AnnounceUsedSpaceRequest) SetBody(v *AnnounceUsedSpaceRequestBody) {
 	}
 }
 
-func (r *AnnounceUsedSpaceRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *AnnounceUsedSpaceRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *AnnounceUsedSpaceRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *AnnounceUsedSpaceRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 func (r *AnnounceUsedSpaceResponse) GetBody() *AnnounceUsedSpaceResponseBody {
 	if r != nil {
 		return r.body
@@ -1028,33 +731,5 @@ func (r *AnnounceUsedSpaceResponse) GetBody() *AnnounceUsedSpaceResponseBody {
 func (r *AnnounceUsedSpaceResponse) SetBody(v *AnnounceUsedSpaceResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *AnnounceUsedSpaceResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *AnnounceUsedSpaceResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *AnnounceUsedSpaceResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *AnnounceUsedSpaceResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }

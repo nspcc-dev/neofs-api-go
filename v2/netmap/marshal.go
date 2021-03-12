@@ -1,9 +1,9 @@
 package netmap
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	protoutil "github.com/nspcc-dev/neofs-api-go/util/proto"
 	netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
-	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -107,14 +107,7 @@ func (f *Filter) StableSize() (size int) {
 }
 
 func (f *Filter) Unmarshal(data []byte) error {
-	m := new(netmap.Filter)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*f = *FilterFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(f, data, new(netmap.Filter))
 }
 
 func (s *Selector) StableMarshal(buf []byte) ([]byte, error) {
@@ -178,14 +171,7 @@ func (s *Selector) StableSize() (size int) {
 }
 
 func (s *Selector) Unmarshal(data []byte) error {
-	m := new(netmap.Selector)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*s = *SelectorFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(s, data, new(netmap.Selector))
 }
 
 func (r *Replica) StableMarshal(buf []byte) ([]byte, error) {
@@ -225,14 +211,7 @@ func (r *Replica) StableSize() (size int) {
 }
 
 func (r *Replica) Unmarshal(data []byte) error {
-	m := new(netmap.Replica)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*r = *ReplicaFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(r, data, new(netmap.Replica))
 }
 
 func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
@@ -305,14 +284,7 @@ func (p *PlacementPolicy) StableSize() (size int) {
 }
 
 func (p *PlacementPolicy) Unmarshal(data []byte) error {
-	m := new(netmap.PlacementPolicy)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*p = *PlacementPolicyFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(p, data, new(netmap.PlacementPolicy))
 }
 
 func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
@@ -371,14 +343,7 @@ func (a *Attribute) StableSize() (size int) {
 }
 
 func (a *Attribute) Unmarshal(data []byte) error {
-	m := new(netmap.NodeInfo_Attribute)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*a = *AttributeFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(a, data, new(netmap.NodeInfo_Attribute))
 }
 
 func (ni *NodeInfo) StableMarshal(buf []byte) ([]byte, error) {
@@ -443,14 +408,7 @@ func (ni *NodeInfo) StableSize() (size int) {
 }
 
 func (ni *NodeInfo) Unmarshal(data []byte) error {
-	m := new(netmap.NodeInfo)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*ni = *NodeInfoFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(ni, data, new(netmap.NodeInfo))
 }
 
 func (l *LocalNodeInfoRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -459,6 +417,10 @@ func (l *LocalNodeInfoRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 
 func (l *LocalNodeInfoRequestBody) StableSize() (size int) {
 	return 0
+}
+
+func (l *LocalNodeInfoRequestBody) Unmarshal([]byte) error {
+	return nil
 }
 
 func (l *LocalNodeInfoResponseBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -499,6 +461,10 @@ func (l *LocalNodeInfoResponseBody) StableSize() (size int) {
 	size += protoutil.NestedStructureSize(nodeInfoResponseBodyField, l.nodeInfo)
 
 	return size
+}
+
+func (l *LocalNodeInfoResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(l, data, new(netmap.LocalNodeInfoResponse_Body))
 }
 
 const (
@@ -548,14 +514,7 @@ func (i *NetworkInfo) StableSize() (size int) {
 }
 
 func (i *NetworkInfo) Unmarshal(data []byte) error {
-	m := new(netmap.NetworkInfo)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*i = *NetworkInfoFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(i, data, new(netmap.NetworkInfo))
 }
 
 func (l *NetworkInfoRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -564,6 +523,10 @@ func (l *NetworkInfoRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 
 func (l *NetworkInfoRequestBody) StableSize() (size int) {
 	return 0
+}
+
+func (l *NetworkInfoRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(l, data, new(netmap.NetworkInfoRequest_Body))
 }
 
 const (
@@ -596,4 +559,8 @@ func (i *NetworkInfoResponseBody) StableSize() (size int) {
 	size += protoutil.NestedStructureSize(netInfoRespBodyNetInfoFNum, i.netInfo)
 
 	return size
+}
+
+func (i *NetworkInfoResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(i, data, new(netmap.NetworkInfoResponse_Body))
 }

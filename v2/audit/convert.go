@@ -1,94 +1,94 @@
 package audit
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	audit "github.com/nspcc-dev/neofs-api-go/v2/audit/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
-// DataAuditResultToGRPCMessage converts unified DataAuditResult structure
-// into gRPC DataAuditResult message.
-func DataAuditResultToGRPCMessage(a *DataAuditResult) *audit.DataAuditResult {
-	if a == nil {
-		return nil
+func (a *DataAuditResult) ToGRPCMessage() grpc.Message {
+	var m *audit.DataAuditResult
+
+	if a != nil {
+		m = new(audit.DataAuditResult)
+
+		m.SetAuditEpoch(a.auditEpoch)
+		m.SetPublicKey(a.pubKey)
+		m.SetContainerId(a.cid.ToGRPCMessage().(*refsGRPC.ContainerID))
+		m.SetComplete(a.complete)
+		m.SetVersion(a.version.ToGRPCMessage().(*refsGRPC.Version))
+		m.SetPassNodes(a.passNodes)
+		m.SetFailNodes(a.failNodes)
+		m.SetRetries(a.retries)
+		m.SetRequests(a.requests)
+		m.SetHit(a.hit)
+		m.SetMiss(a.miss)
+		m.SetFail(a.fail)
+		m.SetPassSg(refs.ObjectIDListToGRPCMessage(a.passSG))
+		m.SetFailSg(refs.ObjectIDListToGRPCMessage(a.failSG))
 	}
-
-	m := new(audit.DataAuditResult)
-
-	m.SetVersion(
-		refs.VersionToGRPCMessage(a.GetVersion()),
-	)
-
-	m.SetAuditEpoch(a.GetAuditEpoch())
-
-	m.SetContainerId(
-		refs.ContainerIDToGRPCMessage(a.GetContainerID()),
-	)
-
-	m.SetPublicKey(a.GetPublicKey())
-
-	m.SetComplete(a.GetComplete())
-
-	m.SetPassSg(
-		refs.ObjectIDListToGRPCMessage(a.GetPassSG()),
-	)
-
-	m.SetFailSg(
-		refs.ObjectIDListToGRPCMessage(a.GetFailSG()),
-	)
-
-	m.SetRequests(a.GetRequests())
-	m.SetRetries(a.GetRetries())
-
-	m.SetHit(a.GetHit())
-	m.SetMiss(a.GetMiss())
-	m.SetFail(a.GetFail())
-
-	m.SetPassNodes(a.GetPassNodes())
-	m.SetFailNodes(a.GetFailNodes())
 
 	return m
 }
 
-// DataAuditResultFromGRPCMessage converts gRPC message DataAuditResult
-// into unified DataAuditResult structure.
-func DataAuditResultFromGRPCMessage(m *audit.DataAuditResult) *DataAuditResult {
-	if m == nil {
-		return nil
+func (a *DataAuditResult) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*audit.DataAuditResult)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	a := new(DataAuditResult)
+	var err error
 
-	a.SetVersion(
-		refs.VersionFromGRPCMessage(m.GetVersion()),
-	)
+	cid := v.GetContainerId()
+	if cid == nil {
+		a.cid = nil
+	} else {
+		if a.cid == nil {
+			a.cid = new(refs.ContainerID)
+		}
 
-	a.SetAuditEpoch(m.GetAuditEpoch())
+		err = a.cid.FromGRPCMessage(cid)
+		if err != nil {
+			return err
+		}
+	}
 
-	a.SetContainerID(
-		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
-	)
+	version := v.GetVersion()
+	if version == nil {
+		a.version = nil
+	} else {
+		if a.version == nil {
+			a.version = new(refs.Version)
+		}
 
-	a.SetPublicKey(m.GetPublicKey())
+		err = a.version.FromGRPCMessage(version)
+		if err != nil {
+			return err
+		}
+	}
 
-	a.SetComplete(m.GetComplete())
+	a.passSG, err = refs.ObjectIDListFromGRPCMessage(v.GetPassSg())
+	if err != nil {
+		return err
+	}
 
-	a.SetPassSG(
-		refs.ObjectIDListFromGRPCMessage(m.GetPassSg()),
-	)
+	a.failSG, err = refs.ObjectIDListFromGRPCMessage(v.GetFailSg())
+	if err != nil {
+		return err
+	}
 
-	a.SetFailSG(
-		refs.ObjectIDListFromGRPCMessage(m.GetFailSg()),
-	)
+	a.auditEpoch = v.GetAuditEpoch()
+	a.pubKey = v.GetPublicKey()
+	a.complete = v.GetComplete()
+	a.passNodes = v.GetPassNodes()
+	a.failNodes = v.GetFailNodes()
+	a.retries = v.GetRetries()
+	a.requests = v.GetRequests()
+	a.hit = v.GetHit()
+	a.miss = v.GetMiss()
+	a.fail = v.GetFail()
 
-	a.SetRequests(m.GetRequests())
-	a.SetRetries(m.GetRetries())
-
-	a.SetHit(m.GetHit())
-	a.SetMiss(m.GetMiss())
-	a.SetFail(m.GetFail())
-
-	a.SetPassNodes(m.GetPassNodes())
-	a.SetFailNodes(m.GetFailNodes())
-
-	return a
+	return err
 }

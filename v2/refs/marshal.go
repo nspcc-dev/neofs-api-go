@@ -1,9 +1,9 @@
 package refs
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
-	goproto "google.golang.org/protobuf/proto"
 )
 
 const (
@@ -52,14 +52,7 @@ func (o *OwnerID) StableSize() int {
 }
 
 func (o *OwnerID) Unmarshal(data []byte) error {
-	m := new(refs.OwnerID)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*o = *OwnerIDFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(o, data, new(refs.OwnerID))
 }
 
 func (c *ContainerID) StableMarshal(buf []byte) ([]byte, error) {
@@ -88,14 +81,7 @@ func (c *ContainerID) StableSize() int {
 }
 
 func (c *ContainerID) Unmarshal(data []byte) error {
-	m := new(refs.ContainerID)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*c = *ContainerIDFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(c, data, new(refs.ContainerID))
 }
 
 func (o *ObjectID) StableMarshal(buf []byte) ([]byte, error) {
@@ -151,14 +137,7 @@ func ObjectIDNestedListMarshal(fNum int64, buf []byte, ids []*ObjectID) (off int
 }
 
 func (o *ObjectID) Unmarshal(data []byte) error {
-	m := new(refs.ObjectID)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*o = *ObjectIDFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(o, data, new(refs.ObjectID))
 }
 
 func (a *Address) StableMarshal(buf []byte) ([]byte, error) {
@@ -203,14 +182,7 @@ func (a *Address) StableSize() (size int) {
 }
 
 func (a *Address) Unmarshal(data []byte) error {
-	addrGRPC := new(refs.Address)
-	if err := goproto.Unmarshal(data, addrGRPC); err != nil {
-		return err
-	}
-
-	*a = *AddressFromGRPCMessage(addrGRPC)
-
-	return nil
+	return message.Unmarshal(a, data, new(refs.Address))
 }
 
 func (c *Checksum) StableMarshal(buf []byte) ([]byte, error) {
@@ -254,14 +226,7 @@ func (c *Checksum) StableSize() (size int) {
 }
 
 func (c *Checksum) Unmarshal(data []byte) error {
-	m := new(refs.Checksum)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*c = *ChecksumFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(c, data, new(refs.Checksum))
 }
 
 func (s *Signature) StableMarshal(buf []byte) ([]byte, error) {
@@ -305,14 +270,7 @@ func (s *Signature) StableSize() (size int) {
 }
 
 func (s *Signature) Unmarshal(data []byte) error {
-	m := new(refs.Signature)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*s = *SignatureFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(s, data, new(refs.Signature))
 }
 
 func (v *Version) StableMarshal(buf []byte) ([]byte, error) {
@@ -356,12 +314,5 @@ func (v *Version) StableSize() (size int) {
 }
 
 func (v *Version) Unmarshal(data []byte) error {
-	m := new(refs.Version)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*v = *VersionFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(v, data, new(refs.Version))
 }

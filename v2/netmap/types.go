@@ -5,6 +5,32 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
 )
 
+type LocalNodeInfoRequest struct {
+	body *LocalNodeInfoRequestBody
+
+	session.RequestHeaders
+}
+
+type LocalNodeInfoResponse struct {
+	body *LocalNodeInfoResponseBody
+
+	session.ResponseHeaders
+}
+
+// NetworkInfoRequest is a structure of NetworkInfo request.
+type NetworkInfoRequest struct {
+	body *NetworkInfoRequestBody
+
+	session.RequestHeaders
+}
+
+// NetworkInfoResponse is a structure of NetworkInfo response.
+type NetworkInfoResponse struct {
+	body *NetworkInfoResponseBody
+
+	session.ResponseHeaders
+}
+
 type Filter struct {
 	name    string
 	key     string
@@ -443,32 +469,6 @@ func (l *LocalNodeInfoRequest) SetBody(body *LocalNodeInfoRequestBody) {
 	}
 }
 
-func (l *LocalNodeInfoRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if l != nil {
-		return l.metaHeader
-	}
-	return nil
-}
-
-func (l *LocalNodeInfoRequest) SetMetaHeader(metaHeader *session.RequestMetaHeader) {
-	if l != nil {
-		l.metaHeader = metaHeader
-	}
-}
-
-func (l *LocalNodeInfoRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if l != nil {
-		return l.verifyHeader
-	}
-	return nil
-}
-
-func (l *LocalNodeInfoRequest) SetVerificationHeader(verifyHeader *session.RequestVerificationHeader) {
-	if l != nil {
-		l.verifyHeader = verifyHeader
-	}
-}
-
 func (l *LocalNodeInfoResponse) GetBody() *LocalNodeInfoResponseBody {
 	if l != nil {
 		return l.body
@@ -479,32 +479,6 @@ func (l *LocalNodeInfoResponse) GetBody() *LocalNodeInfoResponseBody {
 func (l *LocalNodeInfoResponse) SetBody(body *LocalNodeInfoResponseBody) {
 	if l != nil {
 		l.body = body
-	}
-}
-
-func (l *LocalNodeInfoResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if l != nil {
-		return l.metaHeader
-	}
-	return nil
-}
-
-func (l *LocalNodeInfoResponse) SetMetaHeader(metaHeader *session.ResponseMetaHeader) {
-	if l != nil {
-		l.metaHeader = metaHeader
-	}
-}
-
-func (l *LocalNodeInfoResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if l != nil {
-		return l.verifyHeader
-	}
-	return nil
-}
-
-func (l *LocalNodeInfoResponse) SetVerificationHeader(verifyHeader *session.ResponseVerificationHeader) {
-	if l != nil {
-		l.verifyHeader = verifyHeader
 	}
 }
 
@@ -583,32 +557,6 @@ func (l *NetworkInfoRequest) SetBody(body *NetworkInfoRequestBody) {
 	}
 }
 
-func (l *NetworkInfoRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if l != nil {
-		return l.metaHeader
-	}
-	return nil
-}
-
-func (l *NetworkInfoRequest) SetMetaHeader(metaHeader *session.RequestMetaHeader) {
-	if l != nil {
-		l.metaHeader = metaHeader
-	}
-}
-
-func (l *NetworkInfoRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if l != nil {
-		return l.verifyHeader
-	}
-	return nil
-}
-
-func (l *NetworkInfoRequest) SetVerificationHeader(verifyHeader *session.RequestVerificationHeader) {
-	if l != nil {
-		l.verifyHeader = verifyHeader
-	}
-}
-
 func (l *NetworkInfoResponse) GetBody() *NetworkInfoResponseBody {
 	if l != nil {
 		return l.body
@@ -619,31 +567,5 @@ func (l *NetworkInfoResponse) GetBody() *NetworkInfoResponseBody {
 func (l *NetworkInfoResponse) SetBody(body *NetworkInfoResponseBody) {
 	if l != nil {
 		l.body = body
-	}
-}
-
-func (l *NetworkInfoResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if l != nil {
-		return l.metaHeader
-	}
-	return nil
-}
-
-func (l *NetworkInfoResponse) SetMetaHeader(metaHeader *session.ResponseMetaHeader) {
-	if l != nil {
-		l.metaHeader = metaHeader
-	}
-}
-
-func (l *NetworkInfoResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if l != nil {
-		return l.verifyHeader
-	}
-	return nil
-}
-
-func (l *NetworkInfoResponse) SetVerificationHeader(verifyHeader *session.ResponseVerificationHeader) {
-	if l != nil {
-		l.verifyHeader = verifyHeader
 	}
 }

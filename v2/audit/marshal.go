@@ -1,10 +1,10 @@
 package audit
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 	audit "github.com/nspcc-dev/neofs-api-go/v2/audit/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	goproto "google.golang.org/protobuf/proto"
 )
 
 const (
@@ -168,12 +168,5 @@ func (a *DataAuditResult) StableSize() (size int) {
 // Unmarshal unmarshals DataAuditResult structure from its protobuf
 // binary representation.
 func (a *DataAuditResult) Unmarshal(data []byte) error {
-	m := new(audit.DataAuditResult)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*a = *DataAuditResultFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(a, data, new(audit.DataAuditResult))
 }

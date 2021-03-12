@@ -1,146 +1,78 @@
 package object
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	object "github.com/nspcc-dev/neofs-api-go/v2/object/grpc"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func (h *ShortHeader) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		ShortHeaderToGRPCMessage(h),
-	)
+	return message.MarshalJSON(h)
 }
 
 func (h *ShortHeader) UnmarshalJSON(data []byte) error {
-	msg := new(object.ShortHeader)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*h = *ShortHeaderFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(h, data, new(object.ShortHeader))
 }
 
 func (a *Attribute) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		AttributeToGRPCMessage(a),
-	)
+	return message.MarshalJSON(a)
 }
 
 func (a *Attribute) UnmarshalJSON(data []byte) error {
-	msg := new(object.Header_Attribute)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*a = *AttributeFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(a, data, new(object.Header_Attribute))
 }
 
 func (h *SplitHeader) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		SplitHeaderToGRPCMessage(h),
-	)
+	return message.MarshalJSON(h)
 }
 
 func (h *SplitHeader) UnmarshalJSON(data []byte) error {
-	msg := new(object.Header_Split)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*h = *SplitHeaderFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(h, data, new(object.Header_Split))
 }
 
 func (h *Header) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		HeaderToGRPCMessage(h),
-	)
+	return message.MarshalJSON(h)
 }
 
 func (h *Header) UnmarshalJSON(data []byte) error {
-	msg := new(object.Header)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*h = *HeaderFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(h, data, new(object.Header))
 }
 
 func (h *HeaderWithSignature) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		HeaderWithSignatureToGRPCMessage(h),
-	)
+	return message.MarshalJSON(h)
 }
 
 func (h *HeaderWithSignature) UnmarshalJSON(data []byte) error {
-	msg := new(object.HeaderWithSignature)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*h = *HeaderWithSignatureFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(h, data, new(object.HeaderWithSignature))
 }
 
 func (o *Object) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		ObjectToGRPCMessage(o),
-	)
+	return message.MarshalJSON(o)
 }
 
 func (o *Object) UnmarshalJSON(data []byte) error {
-	msg := new(object.Object)
+	return message.UnmarshalJSON(o, data, new(object.Object))
+}
 
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
+func (s *SplitInfo) MarshalJSON() ([]byte, error) {
+	return message.MarshalJSON(s)
+}
 
-	*o = *ObjectFromGRPCMessage(msg)
-
-	return nil
+func (s *SplitInfo) UnmarshalJSON(data []byte) error {
+	return message.UnmarshalJSON(s, data, new(object.SplitInfo))
 }
 
 func (f *SearchFilter) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		SearchFilterToGRPCMessage(f),
-	)
+	return message.MarshalJSON(f)
 }
 
 func (f *SearchFilter) UnmarshalJSON(data []byte) error {
-	msg := new(object.SearchRequest_Body_Filter)
+	return message.UnmarshalJSON(f, data, new(object.SearchRequest_Body_Filter))
+}
 
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
+func (r *Range) MarshalJSON() ([]byte, error) {
+	return message.MarshalJSON(r)
+}
 
-	*f = *SearchFilterFromGRPCMessage(msg)
-
-	return nil
+func (r *Range) UnmarshalJSON(data []byte) error {
+	return message.UnmarshalJSON(r, data, new(object.Range))
 }

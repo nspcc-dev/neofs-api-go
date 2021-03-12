@@ -1,146 +1,62 @@
 package refs
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func (a *Address) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		AddressToGRPCMessage(a),
-	)
+	return message.MarshalJSON(a)
 }
 
 func (a *Address) UnmarshalJSON(data []byte) error {
-	msg := new(refs.Address)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*a = *AddressFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(a, data, new(refs.Address))
 }
 
 func (o *ObjectID) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		ObjectIDToGRPCMessage(o),
-	)
+	return message.MarshalJSON(o)
 }
 
 func (o *ObjectID) UnmarshalJSON(data []byte) error {
-	msg := new(refs.ObjectID)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*o = *ObjectIDFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(o, data, new(refs.ObjectID))
 }
 
 func (c *ContainerID) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		ContainerIDToGRPCMessage(c),
-	)
+	return message.MarshalJSON(c)
 }
 
 func (c *ContainerID) UnmarshalJSON(data []byte) error {
-	msg := new(refs.ContainerID)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*c = *ContainerIDFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(c, data, new(refs.ContainerID))
 }
 
 func (o *OwnerID) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		OwnerIDToGRPCMessage(o),
-	)
+	return message.MarshalJSON(o)
 }
 
 func (o *OwnerID) UnmarshalJSON(data []byte) error {
-	msg := new(refs.OwnerID)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*o = *OwnerIDFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(o, data, new(refs.OwnerID))
 }
 
 func (v *Version) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		VersionToGRPCMessage(v),
-	)
+	return message.MarshalJSON(v)
 }
 
 func (v *Version) UnmarshalJSON(data []byte) error {
-	msg := new(refs.Version)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*v = *VersionFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(v, data, new(refs.Version))
 }
 
 func (s *Signature) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		SignatureToGRPCMessage(s),
-	)
+	return message.MarshalJSON(s)
 }
 
 func (s *Signature) UnmarshalJSON(data []byte) error {
-	msg := new(refs.Signature)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*s = *SignatureFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(s, data, new(refs.Signature))
 }
 
 func (c *Checksum) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		ChecksumToGRPCMessage(c),
-	)
+	return message.MarshalJSON(c)
 }
 
 func (c *Checksum) UnmarshalJSON(data []byte) error {
-	msg := new(refs.Checksum)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*c = *ChecksumFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(c, data, new(refs.Checksum))
 }

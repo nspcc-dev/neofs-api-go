@@ -3,537 +3,614 @@ package session
 import (
 	"fmt"
 
+	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
+	aclGRPC "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 	session "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
+	"github.com/pkg/errors"
 )
 
-func CreateRequestBodyToGRPCMessage(c *CreateRequestBody) *session.CreateRequest_Body {
-	if c == nil {
-		return nil
+func (c *CreateRequestBody) ToGRPCMessage() grpc.Message {
+	var m *session.CreateRequest_Body
+
+	if c != nil {
+		m = new(session.CreateRequest_Body)
+
+		m.SetOwnerId(c.ownerID.ToGRPCMessage().(*refsGRPC.OwnerID))
+		m.SetExpiration(c.expiration)
 	}
-
-	m := new(session.CreateRequest_Body)
-
-	m.SetOwnerId(
-		refs.OwnerIDToGRPCMessage(c.GetOwnerID()),
-	)
-
-	m.SetExpiration(c.GetExpiration())
 
 	return m
 }
 
-func CreateRequestBodyFromGRPCMessage(m *session.CreateRequest_Body) *CreateRequestBody {
-	if m == nil {
-		return nil
+func (c *CreateRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.CreateRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	c := new(CreateRequestBody)
+	var err error
 
-	c.SetOwnerID(
-		refs.OwnerIDFromGRPCMessage(m.GetOwnerId()),
-	)
+	ownerID := v.GetOwnerId()
+	if ownerID == nil {
+		c.ownerID = nil
+	} else {
+		if c.ownerID == nil {
+			c.ownerID = new(refs.OwnerID)
+		}
 
-	c.SetExpiration(m.GetExpiration())
+		err = c.ownerID.FromGRPCMessage(ownerID)
+		if err != nil {
+			return err
+		}
+	}
 
-	return c
+	c.expiration = v.GetExpiration()
+
+	return nil
 }
 
-func CreateRequestToGRPCMessage(c *CreateRequest) *session.CreateRequest {
-	if c == nil {
-		return nil
+func (c *CreateRequest) ToGRPCMessage() grpc.Message {
+	var m *session.CreateRequest
+
+	if c != nil {
+		m = new(session.CreateRequest)
+
+		m.SetBody(c.body.ToGRPCMessage().(*session.CreateRequest_Body))
+		c.RequestHeaders.ToMessage(m)
 	}
-
-	m := new(session.CreateRequest)
-
-	m.SetBody(
-		CreateRequestBodyToGRPCMessage(c.GetBody()),
-	)
-
-	RequestHeadersToGRPC(c, m)
 
 	return m
 }
 
-func CreateRequestFromGRPCMessage(m *session.CreateRequest) *CreateRequest {
-	if m == nil {
-		return nil
+func (c *CreateRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.CreateRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	c := new(CreateRequest)
+	var err error
 
-	c.SetBody(
-		CreateRequestBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		c.body = nil
+	} else {
+		if c.body == nil {
+			c.body = new(CreateRequestBody)
+		}
 
-	RequestHeadersFromGRPC(m, c)
+		err = c.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return c
+	return c.RequestHeaders.FromMessage(v)
 }
 
-func CreateResponseBodyToGRPCMessage(c *CreateResponseBody) *session.CreateResponse_Body {
-	if c == nil {
-		return nil
+func (c *CreateResponseBody) ToGRPCMessage() grpc.Message {
+	var m *session.CreateResponse_Body
+
+	if c != nil {
+		m = new(session.CreateResponse_Body)
+
+		m.SetSessionKey(c.sessionKey)
+		m.SetId(c.id)
 	}
-
-	m := new(session.CreateResponse_Body)
-
-	m.SetId(c.GetID())
-	m.SetSessionKey(c.GetSessionKey())
 
 	return m
 }
 
-func CreateResponseBodyFromGRPCMessage(m *session.CreateResponse_Body) *CreateResponseBody {
-	if m == nil {
-		return nil
+func (c *CreateResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.CreateResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	c := new(CreateResponseBody)
+	c.sessionKey = v.GetSessionKey()
+	c.id = v.GetId()
 
-	c.SetID(m.GetId())
-	c.SetSessionKey(m.GetSessionKey())
-
-	return c
+	return nil
 }
 
-func CreateResponseToGRPCMessage(c *CreateResponse) *session.CreateResponse {
-	if c == nil {
-		return nil
+func (c *CreateResponse) ToGRPCMessage() grpc.Message {
+	var m *session.CreateResponse
+
+	if c != nil {
+		m = new(session.CreateResponse)
+
+		m.SetBody(c.body.ToGRPCMessage().(*session.CreateResponse_Body))
+		c.ResponseHeaders.ToMessage(m)
 	}
-
-	m := new(session.CreateResponse)
-
-	m.SetBody(
-		CreateResponseBodyToGRPCMessage(c.GetBody()),
-	)
-
-	ResponseHeadersToGRPC(c, m)
 
 	return m
 }
 
-func CreateResponseFromGRPCMessage(m *session.CreateResponse) *CreateResponse {
-	if m == nil {
-		return nil
+func (c *CreateResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.CreateResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	c := new(CreateResponse)
+	var err error
 
-	c.SetBody(
-		CreateResponseBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		c.body = nil
+	} else {
+		if c.body == nil {
+			c.body = new(CreateResponseBody)
+		}
 
-	ResponseHeadersFromGRPC(m, c)
+		err = c.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return c
+	return c.ResponseHeaders.FromMessage(v)
 }
 
-func TokenLifetimeToGRPCMessage(tl *TokenLifetime) *session.SessionToken_Body_TokenLifetime {
-	if tl == nil {
-		return nil
+func (l *TokenLifetime) ToGRPCMessage() grpc.Message {
+	var m *session.SessionToken_Body_TokenLifetime
+
+	if l != nil {
+		m = new(session.SessionToken_Body_TokenLifetime)
+
+		m.SetExp(l.exp)
+		m.SetIat(l.iat)
+		m.SetNbf(l.nbf)
 	}
-
-	m := new(session.SessionToken_Body_TokenLifetime)
-
-	m.SetExp(tl.GetExp())
-	m.SetNbf(tl.GetNbf())
-	m.SetIat(tl.GetIat())
 
 	return m
 }
 
-func TokenLifetimeFromGRPCMessage(m *session.SessionToken_Body_TokenLifetime) *TokenLifetime {
-	if m == nil {
-		return nil
+func (l *TokenLifetime) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.SessionToken_Body_TokenLifetime)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	tl := new(TokenLifetime)
+	l.exp = v.GetExp()
+	l.iat = v.GetIat()
+	l.nbf = v.GetNbf()
 
-	tl.SetExp(m.GetExp())
-	tl.SetNbf(m.GetNbf())
-	tl.SetIat(m.GetIat())
-
-	return tl
+	return nil
 }
 
-func XHeaderToGRPCMessage(x *XHeader) *session.XHeader {
-	if x == nil {
-		return nil
+func (x *XHeader) ToGRPCMessage() grpc.Message {
+	var m *session.XHeader
+
+	if x != nil {
+		m = new(session.XHeader)
+
+		m.SetKey(x.key)
+		m.SetValue(x.val)
 	}
-
-	m := new(session.XHeader)
-
-	m.SetKey(x.GetKey())
-	m.SetValue(x.GetValue())
 
 	return m
 }
 
-func XHeaderFromGRPCMessage(m *session.XHeader) *XHeader {
-	if m == nil {
-		return nil
+func (x *XHeader) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.XHeader)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	x := new(XHeader)
+	x.key = v.GetKey()
+	x.val = v.GetValue()
 
-	x.SetKey(m.GetKey())
-	x.SetValue(m.GetValue())
-
-	return x
+	return nil
 }
 
-func SessionTokenToGRPCMessage(t *SessionToken) *session.SessionToken {
-	if t == nil {
-		return nil
+func XHeadersToGRPC(xs []*XHeader) (res []*session.XHeader) {
+	if xs != nil {
+		res = make([]*session.XHeader, 0, len(xs))
+
+		for i := range xs {
+			res = append(res, xs[i].ToGRPCMessage().(*session.XHeader))
+		}
 	}
 
-	m := new(session.SessionToken)
+	return
+}
 
-	m.SetBody(
-		SessionTokenBodyToGRPCMessage(t.GetBody()),
-	)
+func XHeadersFromGRPC(xs []*session.XHeader) (res []*XHeader, err error) {
+	if xs != nil {
+		res = make([]*XHeader, 0, len(xs))
 
-	m.SetSignature(
-		refs.SignatureToGRPCMessage(t.GetSignature()),
-	)
+		for i := range xs {
+			var x *XHeader
+
+			if xs[i] != nil {
+				x = new(XHeader)
+
+				err = x.FromGRPCMessage(xs[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, x)
+		}
+	}
+
+	return
+}
+
+func (t *SessionToken) ToGRPCMessage() grpc.Message {
+	var m *session.SessionToken
+
+	if t != nil {
+		m = new(session.SessionToken)
+
+		m.SetBody(t.body.ToGRPCMessage().(*session.SessionToken_Body))
+		m.SetSignature(t.sig.ToGRPCMessage().(*refsGRPC.Signature))
+	}
 
 	return m
 }
 
-func SessionTokenFromGRPCMessage(m *session.SessionToken) *SessionToken {
-	if m == nil {
-		return nil
+func (t *SessionToken) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.SessionToken)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	t := new(SessionToken)
+	var err error
 
-	t.SetBody(
-		SessionTokenBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		t.body = nil
+	} else {
+		if t.body == nil {
+			t.body = new(SessionTokenBody)
+		}
 
-	t.SetSignature(
-		refs.SignatureFromGRPCMessage(m.GetSignature()),
-	)
+		err = t.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return t
+	sig := v.GetSignature()
+	if sig == nil {
+		t.sig = nil
+	} else {
+		if t.sig == nil {
+			t.sig = new(refs.Signature)
+		}
+
+		err = t.sig.FromGRPCMessage(sig)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-func RequestVerificationHeaderToGRPCMessage(r *RequestVerificationHeader) *session.RequestVerificationHeader {
-	if r == nil {
-		return nil
+func (r *RequestVerificationHeader) ToGRPCMessage() grpc.Message {
+	var m *session.RequestVerificationHeader
+
+	if r != nil {
+		m = new(session.RequestVerificationHeader)
+
+		m.SetBodySignature(r.bodySig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetMetaSignature(r.metaSig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetOriginSignature(r.originSig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetOrigin(r.origin.ToGRPCMessage().(*session.RequestVerificationHeader))
 	}
-
-	m := new(session.RequestVerificationHeader)
-
-	m.SetBodySignature(
-		refs.SignatureToGRPCMessage(r.GetBodySignature()),
-	)
-
-	m.SetMetaSignature(
-		refs.SignatureToGRPCMessage(r.GetMetaSignature()),
-	)
-
-	m.SetOriginSignature(
-		refs.SignatureToGRPCMessage(r.GetOriginSignature()),
-	)
-
-	m.SetOrigin(
-		RequestVerificationHeaderToGRPCMessage(r.GetOrigin()),
-	)
 
 	return m
 }
 
-func RequestVerificationHeaderFromGRPCMessage(m *session.RequestVerificationHeader) *RequestVerificationHeader {
-	if m == nil {
-		return nil
+func (r *RequestVerificationHeader) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.RequestVerificationHeader)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(RequestVerificationHeader)
+	var err error
 
-	r.SetBodySignature(
-		refs.SignatureFromGRPCMessage(m.GetBodySignature()),
-	)
+	originSig := v.GetOriginSignature()
+	if originSig == nil {
+		r.originSig = nil
+	} else {
+		if r.originSig == nil {
+			r.originSig = new(refs.Signature)
+		}
 
-	r.SetMetaSignature(
-		refs.SignatureFromGRPCMessage(m.GetMetaSignature()),
-	)
+		err = r.originSig.FromGRPCMessage(originSig)
+		if err != nil {
+			return err
+		}
+	}
 
-	r.SetOriginSignature(
-		refs.SignatureFromGRPCMessage(m.GetOriginSignature()),
-	)
+	metaSig := v.GetMetaSignature()
+	if metaSig == nil {
+		r.metaSig = nil
+	} else {
+		if r.metaSig == nil {
+			r.metaSig = new(refs.Signature)
+		}
 
-	r.SetOrigin(
-		RequestVerificationHeaderFromGRPCMessage(m.GetOrigin()),
-	)
+		err = r.metaSig.FromGRPCMessage(metaSig)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	bodySig := v.GetBodySignature()
+	if bodySig == nil {
+		r.bodySig = nil
+	} else {
+		if r.bodySig == nil {
+			r.bodySig = new(refs.Signature)
+		}
+
+		err = r.bodySig.FromGRPCMessage(bodySig)
+		if err != nil {
+			return err
+		}
+	}
+
+	origin := v.GetOrigin()
+	if origin == nil {
+		r.origin = nil
+	} else {
+		if r.origin == nil {
+			r.origin = new(RequestVerificationHeader)
+		}
+
+		err = r.origin.FromGRPCMessage(origin)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-func RequestMetaHeaderToGRPCMessage(r *RequestMetaHeader) *session.RequestMetaHeader {
-	if r == nil {
-		return nil
+func (r *RequestMetaHeader) ToGRPCMessage() grpc.Message {
+	var m *session.RequestMetaHeader
+
+	if r != nil {
+		m = new(session.RequestMetaHeader)
+
+		m.SetVersion(r.version.ToGRPCMessage().(*refsGRPC.Version))
+		m.SetSessionToken(r.sessionToken.ToGRPCMessage().(*session.SessionToken))
+		m.SetBearerToken(r.bearerToken.ToGRPCMessage().(*aclGRPC.BearerToken))
+		m.SetXHeaders(XHeadersToGRPC(r.xHeaders))
+		m.SetEpoch(r.epoch)
+		m.SetTtl(r.ttl)
+		m.SetOrigin(r.origin.ToGRPCMessage().(*session.RequestMetaHeader))
 	}
-
-	m := new(session.RequestMetaHeader)
-
-	m.SetTtl(r.GetTTL())
-	m.SetEpoch(r.GetEpoch())
-
-	m.SetVersion(
-		refs.VersionToGRPCMessage(r.GetVersion()),
-	)
-
-	m.SetSessionToken(
-		SessionTokenToGRPCMessage(r.GetSessionToken()),
-	)
-
-	m.SetBearerToken(
-		acl.BearerTokenToGRPCMessage(r.GetBearerToken()),
-	)
-
-	m.SetOrigin(
-		RequestMetaHeaderToGRPCMessage(r.GetOrigin()),
-	)
-
-	xHeaders := r.GetXHeaders()
-	xHdrMsg := make([]*session.XHeader, 0, len(xHeaders))
-
-	for i := range xHeaders {
-		xHdrMsg = append(xHdrMsg, XHeaderToGRPCMessage(xHeaders[i]))
-	}
-
-	m.SetXHeaders(xHdrMsg)
 
 	return m
 }
 
-func RequestMetaHeaderFromGRPCMessage(m *session.RequestMetaHeader) *RequestMetaHeader {
-	if m == nil {
-		return nil
+func (r *RequestMetaHeader) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.RequestMetaHeader)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(RequestMetaHeader)
+	var err error
 
-	r.SetTTL(m.GetTtl())
-	r.SetEpoch(m.GetEpoch())
+	version := v.GetVersion()
+	if version == nil {
+		r.version = nil
+	} else {
+		if r.version == nil {
+			r.version = new(refs.Version)
+		}
 
-	r.SetVersion(
-		refs.VersionFromGRPCMessage(m.GetVersion()),
-	)
-
-	r.SetSessionToken(
-		SessionTokenFromGRPCMessage(m.GetSessionToken()),
-	)
-
-	r.SetBearerToken(
-		acl.BearerTokenFromGRPCMessage(m.GetBearerToken()),
-	)
-
-	r.SetOrigin(
-		RequestMetaHeaderFromGRPCMessage(m.GetOrigin()),
-	)
-
-	xHdrMsg := m.GetXHeaders()
-	xHeaders := make([]*XHeader, 0, len(xHdrMsg))
-
-	for i := range xHdrMsg {
-		xHeaders = append(xHeaders, XHeaderFromGRPCMessage(xHdrMsg[i]))
+		err = r.version.FromGRPCMessage(version)
+		if err != nil {
+			return err
+		}
 	}
 
-	r.SetXHeaders(xHeaders)
+	sessionToken := v.GetSessionToken()
+	if sessionToken == nil {
+		r.sessionToken = nil
+	} else {
+		if r.sessionToken == nil {
+			r.sessionToken = new(SessionToken)
+		}
 
-	return r
-}
-
-func RequestHeadersToGRPC(
-	src interface {
-		GetMetaHeader() *RequestMetaHeader
-		GetVerificationHeader() *RequestVerificationHeader
-	},
-	dst interface {
-		SetMetaHeader(*session.RequestMetaHeader)
-		SetVerifyHeader(*session.RequestVerificationHeader)
-	},
-) {
-	dst.SetMetaHeader(
-		RequestMetaHeaderToGRPCMessage(src.GetMetaHeader()),
-	)
-
-	dst.SetVerifyHeader(
-		RequestVerificationHeaderToGRPCMessage(src.GetVerificationHeader()),
-	)
-}
-
-func RequestHeadersFromGRPC(
-	src interface {
-		GetMetaHeader() *session.RequestMetaHeader
-		GetVerifyHeader() *session.RequestVerificationHeader
-	},
-	dst interface {
-		SetMetaHeader(*RequestMetaHeader)
-		SetVerificationHeader(*RequestVerificationHeader)
-	},
-) {
-	dst.SetMetaHeader(
-		RequestMetaHeaderFromGRPCMessage(src.GetMetaHeader()),
-	)
-
-	dst.SetVerificationHeader(
-		RequestVerificationHeaderFromGRPCMessage(src.GetVerifyHeader()),
-	)
-}
-
-func ResponseVerificationHeaderToGRPCMessage(r *ResponseVerificationHeader) *session.ResponseVerificationHeader {
-	if r == nil {
-		return nil
+		err = r.sessionToken.FromGRPCMessage(sessionToken)
+		if err != nil {
+			return err
+		}
 	}
 
-	m := new(session.ResponseVerificationHeader)
+	bearerToken := v.GetBearerToken()
+	if bearerToken == nil {
+		r.bearerToken = nil
+	} else {
+		if r.bearerToken == nil {
+			r.bearerToken = new(acl.BearerToken)
+		}
 
-	m.SetBodySignature(
-		refs.SignatureToGRPCMessage(r.GetBodySignature()),
-	)
+		err = r.bearerToken.FromGRPCMessage(bearerToken)
+		if err != nil {
+			return err
+		}
+	}
 
-	m.SetMetaSignature(
-		refs.SignatureToGRPCMessage(r.GetMetaSignature()),
-	)
+	origin := v.GetOrigin()
+	if origin == nil {
+		r.origin = nil
+	} else {
+		if r.origin == nil {
+			r.origin = new(RequestMetaHeader)
+		}
 
-	m.SetOriginSignature(
-		refs.SignatureToGRPCMessage(r.GetOriginSignature()),
-	)
+		err = r.origin.FromGRPCMessage(origin)
+		if err != nil {
+			return err
+		}
+	}
 
-	m.SetOrigin(
-		ResponseVerificationHeaderToGRPCMessage(r.GetOrigin()),
-	)
+	r.xHeaders, err = XHeadersFromGRPC(v.GetXHeaders())
+	if err != nil {
+		return err
+	}
+
+	r.epoch = v.GetEpoch()
+	r.ttl = v.GetTtl()
+
+	return nil
+}
+
+func (r *ResponseVerificationHeader) ToGRPCMessage() grpc.Message {
+	var m *session.ResponseVerificationHeader
+
+	if r != nil {
+		m = new(session.ResponseVerificationHeader)
+
+		m.SetBodySignature(r.bodySig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetMetaSignature(r.metaSig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetOriginSignature(r.originSig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetOrigin(r.origin.ToGRPCMessage().(*session.ResponseVerificationHeader))
+	}
 
 	return m
 }
 
-func ResponseVerificationHeaderFromGRPCMessage(m *session.ResponseVerificationHeader) *ResponseVerificationHeader {
-	if m == nil {
-		return nil
+func (r *ResponseVerificationHeader) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.ResponseVerificationHeader)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(ResponseVerificationHeader)
+	var err error
 
-	r.SetBodySignature(
-		refs.SignatureFromGRPCMessage(m.GetBodySignature()),
-	)
+	originSig := v.GetOriginSignature()
+	if originSig == nil {
+		r.originSig = nil
+	} else {
+		if r.originSig == nil {
+			r.originSig = new(refs.Signature)
+		}
 
-	r.SetMetaSignature(
-		refs.SignatureFromGRPCMessage(m.GetMetaSignature()),
-	)
+		err = r.originSig.FromGRPCMessage(originSig)
+		if err != nil {
+			return err
+		}
+	}
 
-	r.SetOriginSignature(
-		refs.SignatureFromGRPCMessage(m.GetOriginSignature()),
-	)
+	metaSig := v.GetMetaSignature()
+	if metaSig == nil {
+		r.metaSig = nil
+	} else {
+		if r.metaSig == nil {
+			r.metaSig = new(refs.Signature)
+		}
 
-	r.SetOrigin(
-		ResponseVerificationHeaderFromGRPCMessage(m.GetOrigin()),
-	)
+		err = r.metaSig.FromGRPCMessage(metaSig)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	bodySig := v.GetBodySignature()
+	if bodySig == nil {
+		r.bodySig = nil
+	} else {
+		if r.bodySig == nil {
+			r.bodySig = new(refs.Signature)
+		}
+
+		err = r.bodySig.FromGRPCMessage(bodySig)
+		if err != nil {
+			return err
+		}
+	}
+
+	origin := v.GetOrigin()
+	if origin == nil {
+		r.origin = nil
+	} else {
+		if r.origin == nil {
+			r.origin = new(ResponseVerificationHeader)
+		}
+
+		err = r.origin.FromGRPCMessage(origin)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-func ResponseMetaHeaderToGRPCMessage(r *ResponseMetaHeader) *session.ResponseMetaHeader {
-	if r == nil {
-		return nil
+func (r *ResponseMetaHeader) ToGRPCMessage() grpc.Message {
+	var m *session.ResponseMetaHeader
+
+	if r != nil {
+		m = new(session.ResponseMetaHeader)
+
+		m.SetVersion(r.version.ToGRPCMessage().(*refsGRPC.Version))
+		m.SetXHeaders(XHeadersToGRPC(r.xHeaders))
+		m.SetEpoch(r.epoch)
+		m.SetTtl(r.ttl)
+		m.SetOrigin(r.origin.ToGRPCMessage().(*session.ResponseMetaHeader))
 	}
-
-	m := new(session.ResponseMetaHeader)
-
-	m.SetTtl(r.GetTTL())
-	m.SetEpoch(r.GetEpoch())
-
-	m.SetVersion(
-		refs.VersionToGRPCMessage(r.GetVersion()),
-	)
-
-	m.SetOrigin(
-		ResponseMetaHeaderToGRPCMessage(r.GetOrigin()),
-	)
-
-	xHeaders := r.GetXHeaders()
-	xHdrMsg := make([]*session.XHeader, 0, len(xHeaders))
-
-	for i := range xHeaders {
-		xHdrMsg = append(xHdrMsg, XHeaderToGRPCMessage(xHeaders[i]))
-	}
-
-	m.SetXHeaders(xHdrMsg)
 
 	return m
 }
 
-func ResponseMetaHeaderFromGRPCMessage(m *session.ResponseMetaHeader) *ResponseMetaHeader {
-	if m == nil {
-		return nil
+func (r *ResponseMetaHeader) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.ResponseMetaHeader)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(ResponseMetaHeader)
+	var err error
 
-	r.SetTTL(m.GetTtl())
-	r.SetEpoch(m.GetEpoch())
+	version := v.GetVersion()
+	if version == nil {
+		r.version = nil
+	} else {
+		if r.version == nil {
+			r.version = new(refs.Version)
+		}
 
-	r.SetVersion(
-		refs.VersionFromGRPCMessage(m.GetVersion()),
-	)
-
-	r.SetOrigin(
-		ResponseMetaHeaderFromGRPCMessage(m.GetOrigin()),
-	)
-
-	xHdrMsg := m.GetXHeaders()
-	xHeaders := make([]*XHeader, 0, len(xHdrMsg))
-
-	for i := range xHdrMsg {
-		xHeaders = append(xHeaders, XHeaderFromGRPCMessage(xHdrMsg[i]))
+		err = r.version.FromGRPCMessage(version)
+		if err != nil {
+			return err
+		}
 	}
 
-	r.SetXHeaders(xHeaders)
+	origin := v.GetOrigin()
+	if origin == nil {
+		r.origin = nil
+	} else {
+		if r.origin == nil {
+			r.origin = new(ResponseMetaHeader)
+		}
 
-	return r
-}
+		err = r.origin.FromGRPCMessage(origin)
+		if err != nil {
+			return err
+		}
+	}
 
-func ResponseHeadersToGRPC(
-	src interface {
-		GetMetaHeader() *ResponseMetaHeader
-		GetVerificationHeader() *ResponseVerificationHeader
-	},
-	dst interface {
-		SetMetaHeader(*session.ResponseMetaHeader)
-		SetVerifyHeader(*session.ResponseVerificationHeader)
-	},
-) {
-	dst.SetMetaHeader(
-		ResponseMetaHeaderToGRPCMessage(src.GetMetaHeader()),
-	)
+	r.xHeaders, err = XHeadersFromGRPC(v.GetXHeaders())
+	if err != nil {
+		return err
+	}
 
-	dst.SetVerifyHeader(
-		ResponseVerificationHeaderToGRPCMessage(src.GetVerificationHeader()),
-	)
-}
+	r.epoch = v.GetEpoch()
+	r.ttl = v.GetTtl()
 
-func ResponseHeadersFromGRPC(
-	src interface {
-		GetMetaHeader() *session.ResponseMetaHeader
-		GetVerifyHeader() *session.ResponseVerificationHeader
-	},
-	dst interface {
-		SetMetaHeader(*ResponseMetaHeader)
-		SetVerificationHeader(*ResponseVerificationHeader)
-	},
-) {
-	dst.SetMetaHeader(
-		ResponseMetaHeaderFromGRPCMessage(src.GetMetaHeader()),
-	)
-
-	dst.SetVerificationHeader(
-		ResponseVerificationHeaderFromGRPCMessage(src.GetVerifyHeader()),
-	)
+	return nil
 }
 
 func ObjectSessionVerbToGRPCField(v ObjectSessionVerb) session.ObjectSessionContext_Verb {
@@ -578,102 +655,128 @@ func ObjectSessionVerbFromGRPCField(v session.ObjectSessionContext_Verb) ObjectS
 	}
 }
 
-func ObjectSessionContextToGRPCMessage(c *ObjectSessionContext) *session.ObjectSessionContext {
-	if c == nil {
-		return nil
+func (c *ObjectSessionContext) ToGRPCMessage() grpc.Message {
+	var m *session.ObjectSessionContext
+
+	if c != nil {
+		m = new(session.ObjectSessionContext)
+
+		m.SetVerb(ObjectSessionVerbToGRPCField(c.verb))
+		m.SetAddress(c.addr.ToGRPCMessage().(*refsGRPC.Address))
 	}
-
-	m := new(session.ObjectSessionContext)
-
-	m.SetVerb(
-		ObjectSessionVerbToGRPCField(c.GetVerb()),
-	)
-
-	m.SetAddress(
-		refs.AddressToGRPCMessage(c.GetAddress()),
-	)
 
 	return m
 }
 
-func ObjectSessionContextFromGRPCMessage(m *session.ObjectSessionContext) *ObjectSessionContext {
-	if m == nil {
-		return nil
+func (c *ObjectSessionContext) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.ObjectSessionContext)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	c := new(ObjectSessionContext)
+	var err error
 
-	c.SetVerb(
-		ObjectSessionVerbFromGRPCField(m.GetVerb()),
-	)
+	addr := v.GetAddress()
+	if addr == nil {
+		c.addr = nil
+	} else {
+		if c.addr == nil {
+			c.addr = new(refs.Address)
+		}
 
-	c.SetAddress(
-		refs.AddressFromGRPCMessage(m.GetAddress()),
-	)
+		err = c.addr.FromGRPCMessage(addr)
+		if err != nil {
+			return err
+		}
+	}
 
-	return c
+	c.verb = ObjectSessionVerbFromGRPCField(v.GetVerb())
+
+	return nil
 }
 
-func SessionTokenBodyToGRPCMessage(t *SessionTokenBody) *session.SessionToken_Body {
-	if t == nil {
-		return nil
+func (t *SessionTokenBody) ToGRPCMessage() grpc.Message {
+	var m *session.SessionToken_Body
+
+	if t != nil {
+		m = new(session.SessionToken_Body)
+
+		switch typ := t.ctx.(type) {
+		default:
+			panic(fmt.Sprintf("unknown session context %T", typ))
+		case nil:
+			m.Context = nil
+		case *ObjectSessionContext:
+			m.SetObjectSessionContext(typ.ToGRPCMessage().(*session.ObjectSessionContext))
+		}
+
+		m.SetOwnerId(t.ownerID.ToGRPCMessage().(*refsGRPC.OwnerID))
+		m.SetId(t.id)
+		m.SetSessionKey(t.sessionKey)
+		m.SetLifetime(t.lifetime.ToGRPCMessage().(*session.SessionToken_Body_TokenLifetime))
 	}
 
-	m := new(session.SessionToken_Body)
+	return m
+}
 
-	switch v := t.GetContext(); t := v.(type) {
-	case nil:
-	case *ObjectSessionContext:
-		m.SetObjectSessionContext(
-			ObjectSessionContextToGRPCMessage(t),
-		)
+func (t *SessionTokenBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.SessionToken_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	t.ctx = nil
+
+	switch val := v.GetContext().(type) {
 	default:
-		panic(fmt.Sprintf("unknown session context %T", t))
-	}
-
-	m.SetId(t.GetID())
-
-	m.SetOwnerId(
-		refs.OwnerIDToGRPCMessage(t.GetOwnerID()),
-	)
-
-	m.SetLifetime(
-		TokenLifetimeToGRPCMessage(t.GetLifetime()),
-	)
-
-	m.SetSessionKey(t.GetSessionKey())
-
-	return m
-}
-
-func SessionTokenBodyFromGRPCMessage(m *session.SessionToken_Body) *SessionTokenBody {
-	if m == nil {
-		return nil
-	}
-
-	t := new(SessionTokenBody)
-
-	switch v := m.GetContext().(type) {
+		err = errors.Errorf("unknown session context %T", val)
 	case nil:
 	case *session.SessionToken_Body_Object:
-		t.SetContext(
-			ObjectSessionContextFromGRPCMessage(v.Object),
-		)
-	default:
-		panic(fmt.Sprintf("unknown session context %T", v))
+		ctx, ok := t.ctx.(*ObjectSessionContext)
+		if !ok {
+			ctx = new(ObjectSessionContext)
+			t.ctx = ctx
+		}
+
+		err = ctx.FromGRPCMessage(val.Object)
 	}
 
-	t.SetID(m.GetId())
+	if err != nil {
+		return err
+	}
 
-	t.SetOwnerID(
-		refs.OwnerIDFromGRPCMessage(m.GetOwnerId()),
-	)
+	ownerID := v.GetOwnerId()
+	if ownerID == nil {
+		t.ownerID = nil
+	} else {
+		if t.ownerID == nil {
+			t.ownerID = new(refs.OwnerID)
+		}
 
-	t.SetLifetime(
-		TokenLifetimeFromGRPCMessage(m.GetLifetime()),
-	)
+		err = t.ownerID.FromGRPCMessage(ownerID)
+		if err != nil {
+			return err
+		}
+	}
 
-	t.SetSessionKey(m.GetSessionKey())
+	lifetime := v.GetLifetime()
+	if lifetime == nil {
+		t.lifetime = nil
+	} else {
+		if t.lifetime == nil {
+			t.lifetime = new(TokenLifetime)
+		}
 
-	return t
+		err = t.lifetime.FromGRPCMessage(lifetime)
+		if err != nil {
+			return err
+		}
+	}
+
+	t.id = v.GetId()
+	t.sessionKey = v.GetSessionKey()
+
+	return nil
 }
