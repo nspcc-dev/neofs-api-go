@@ -3,10 +3,14 @@ package object
 import (
 	"fmt"
 
+	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	object "github.com/nspcc-dev/neofs-api-go/v2/object/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
+	sessionGRPC "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
+	"github.com/pkg/errors"
 )
 
 func TypeToGRPCField(t Type) object.ObjectType {
@@ -25,1636 +29,2020 @@ func MatchTypeFromGRPCField(t object.MatchType) MatchType {
 	return MatchType(t)
 }
 
-func ShortHeaderToGRPCMessage(h *ShortHeader) *object.ShortHeader {
-	if h == nil {
-		return nil
-	}
-
-	m := new(object.ShortHeader)
-
-	m.SetVersion(
-		refs.VersionToGRPCMessage(h.GetVersion()),
-	)
-
-	m.SetCreationEpoch(h.GetCreationEpoch())
-
-	m.SetOwnerId(
-		refs.OwnerIDToGRPCMessage(h.GetOwnerID()),
-	)
-
-	m.SetObjectType(
-		TypeToGRPCField(h.GetObjectType()),
-	)
-
-	m.SetPayloadLength(h.GetPayloadLength())
-
-	m.SetPayloadHash(
-		refs.ChecksumToGRPCMessage(h.GetPayloadHash()),
-	)
-
-	m.SetHomomorphicHash(
-		refs.ChecksumToGRPCMessage(h.GetHomomorphicHash()),
-	)
-
-	return m
-}
-
-func ShortHeaderFromGRPCMessage(m *object.ShortHeader) *ShortHeader {
-	if m == nil {
-		return nil
-	}
-
-	h := new(ShortHeader)
-
-	h.SetVersion(
-		refs.VersionFromGRPCMessage(m.GetVersion()),
-	)
-
-	h.SetCreationEpoch(m.GetCreationEpoch())
-
-	h.SetOwnerID(
-		refs.OwnerIDFromGRPCMessage(m.GetOwnerId()),
-	)
-
-	h.SetObjectType(
-		TypeFromGRPCField(m.GetObjectType()),
-	)
-
-	h.SetPayloadLength(m.GetPayloadLength())
-
-	h.SetPayloadHash(
-		refs.ChecksumFromGRPCMessage(m.GetPayloadHash()),
-	)
-
-	h.SetHomomorphicHash(
-		refs.ChecksumFromGRPCMessage(m.GetHomomorphicHash()),
-	)
-
-	return h
-}
-
-func AttributeToGRPCMessage(a *Attribute) *object.Header_Attribute {
-	if a == nil {
-		return nil
-	}
-
-	m := new(object.Header_Attribute)
-
-	m.SetKey(a.GetKey())
-	m.SetValue(a.GetValue())
-
-	return m
-}
-
-func AttributeFromGRPCMessage(m *object.Header_Attribute) *Attribute {
-	if m == nil {
-		return nil
-	}
-
-	h := new(Attribute)
-
-	h.SetKey(m.GetKey())
-	h.SetValue(m.GetValue())
-
-	return h
-}
-
-func SplitHeaderToGRPCMessage(h *SplitHeader) *object.Header_Split {
-	if h == nil {
-		return nil
-	}
-
-	m := new(object.Header_Split)
-
-	m.SetParent(
-		refs.ObjectIDToGRPCMessage(h.GetParent()),
-	)
-
-	m.SetPrevious(
-		refs.ObjectIDToGRPCMessage(h.GetPrevious()),
-	)
-
-	m.SetParentSignature(
-		refs.SignatureToGRPCMessage(h.GetParentSignature()),
-	)
-
-	m.SetParentHeader(
-		HeaderToGRPCMessage(h.GetParentHeader()),
-	)
-
-	children := h.GetChildren()
-	childMsg := make([]*refsGRPC.ObjectID, 0, len(children))
-
-	for i := range children {
-		childMsg = append(childMsg, refs.ObjectIDToGRPCMessage(children[i]))
-	}
-
-	m.SetChildren(childMsg)
-
-	m.SetSplitId(h.GetSplitID())
-
-	return m
-}
-
-func SplitHeaderFromGRPCMessage(m *object.Header_Split) *SplitHeader {
-	if m == nil {
-		return nil
-	}
-
-	h := new(SplitHeader)
-
-	h.SetParent(
-		refs.ObjectIDFromGRPCMessage(m.GetParent()),
-	)
-
-	h.SetPrevious(
-		refs.ObjectIDFromGRPCMessage(m.GetPrevious()),
-	)
-
-	h.SetParentSignature(
-		refs.SignatureFromGRPCMessage(m.GetParentSignature()),
-	)
-
-	h.SetParentHeader(
-		HeaderFromGRPCMessage(m.GetParentHeader()),
-	)
-
-	childMsg := m.GetChildren()
-	children := make([]*refs.ObjectID, 0, len(childMsg))
-
-	for i := range childMsg {
-		children = append(children, refs.ObjectIDFromGRPCMessage(childMsg[i]))
-	}
-
-	h.SetChildren(children)
-
-	h.SetSplitID(m.GetSplitId())
-
-	return h
-}
-
-func HeaderToGRPCMessage(h *Header) *object.Header {
-	if h == nil {
-		return nil
-	}
-
-	m := new(object.Header)
-
-	m.SetVersion(
-		refs.VersionToGRPCMessage(h.GetVersion()),
-	)
-
-	m.SetContainerId(
-		refs.ContainerIDToGRPCMessage(h.GetContainerID()),
-	)
-
-	m.SetOwnerId(
-		refs.OwnerIDToGRPCMessage(h.GetOwnerID()),
-	)
-
-	m.SetCreationEpoch(h.GetCreationEpoch())
-
-	m.SetPayloadLength(h.GetPayloadLength())
-
-	m.SetPayloadHash(
-		refs.ChecksumToGRPCMessage(h.GetPayloadHash()),
-	)
-
-	m.SetHomomorphicHash(
-		refs.ChecksumToGRPCMessage(h.GetHomomorphicHash()),
-	)
-
-	m.SetObjectType(
-		TypeToGRPCField(h.GetObjectType()),
-	)
-
-	m.SetSessionToken(
-		session.SessionTokenToGRPCMessage(h.GetSessionToken()),
-	)
-
-	attr := h.GetAttributes()
-	attrMsg := make([]*object.Header_Attribute, 0, len(attr))
-
-	for i := range attr {
-		attrMsg = append(attrMsg, AttributeToGRPCMessage(attr[i]))
-	}
-
-	m.SetAttributes(attrMsg)
-
-	m.SetSplit(
-		SplitHeaderToGRPCMessage(h.GetSplit()),
-	)
-
-	return m
-}
-
-func HeaderFromGRPCMessage(m *object.Header) *Header {
-	if m == nil {
-		return nil
-	}
-
-	h := new(Header)
-
-	h.SetVersion(
-		refs.VersionFromGRPCMessage(m.GetVersion()),
-	)
-
-	h.SetContainerID(
-		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
-	)
-
-	h.SetOwnerID(
-		refs.OwnerIDFromGRPCMessage(m.GetOwnerId()),
-	)
-
-	h.SetCreationEpoch(m.GetCreationEpoch())
-
-	h.SetPayloadLength(m.GetPayloadLength())
-
-	h.SetPayloadHash(
-		refs.ChecksumFromGRPCMessage(m.GetPayloadHash()),
-	)
-
-	h.SetHomomorphicHash(
-		refs.ChecksumFromGRPCMessage(m.GetHomomorphicHash()),
-	)
-
-	h.SetObjectType(
-		TypeFromGRPCField(m.GetObjectType()),
-	)
-
-	h.SetSessionToken(
-		session.SessionTokenFromGRPCMessage(m.GetSessionToken()),
-	)
-
-	attrMsg := m.GetAttributes()
-	attr := make([]*Attribute, 0, len(attrMsg))
-
-	for i := range attrMsg {
-		attr = append(attr, AttributeFromGRPCMessage(attrMsg[i]))
-	}
-
-	h.SetAttributes(attr)
-
-	h.SetSplit(
-		SplitHeaderFromGRPCMessage(m.GetSplit()),
-	)
-
-	return h
-}
-
-func HeaderWithSignatureToGRPCMessage(h *HeaderWithSignature) *object.HeaderWithSignature {
-	if h == nil {
-		return nil
-	}
-
-	m := new(object.HeaderWithSignature)
-
-	m.SetHeader(
-		HeaderToGRPCMessage(h.GetHeader()),
-	)
-
-	m.SetSignature(
-		refs.SignatureToGRPCMessage(h.GetSignature()),
-	)
-
-	return m
-}
-
-func HeaderWithSignatureFromGRPCMessage(m *object.HeaderWithSignature) *HeaderWithSignature {
-	if m == nil {
-		return nil
-	}
-
-	h := new(HeaderWithSignature)
-
-	h.SetHeader(
-		HeaderFromGRPCMessage(m.GetHeader()),
-	)
-
-	h.SetSignature(
-		refs.SignatureFromGRPCMessage(m.GetSignature()),
-	)
-
-	return h
-}
-
-func ObjectToGRPCMessage(o *Object) *object.Object {
-	if o == nil {
-		return nil
-	}
-
-	m := new(object.Object)
-
-	m.SetObjectId(
-		refs.ObjectIDToGRPCMessage(o.GetObjectID()),
-	)
-
-	m.SetSignature(
-		refs.SignatureToGRPCMessage(o.GetSignature()),
-	)
-
-	m.SetHeader(
-		HeaderToGRPCMessage(o.GetHeader()),
-	)
-
-	m.SetPayload(o.GetPayload())
-
-	return m
-}
-
-func ObjectFromGRPCMessage(m *object.Object) *Object {
-	if m == nil {
-		return nil
-	}
-
-	o := new(Object)
-
-	o.SetObjectID(
-		refs.ObjectIDFromGRPCMessage(m.GetObjectId()),
-	)
-
-	o.SetSignature(
-		refs.SignatureFromGRPCMessage(m.GetSignature()),
-	)
-
-	o.SetHeader(
-		HeaderFromGRPCMessage(m.GetHeader()),
-	)
-
-	o.SetPayload(m.GetPayload())
-
-	return o
-}
-
-func SplitInfoToGRPCMessage(s *SplitInfo) *object.SplitInfo {
-	if s == nil {
-		return nil
-	}
-
-	m := new(object.SplitInfo)
-
-	m.SetSplitId(s.GetSplitID())
-
-	m.SetLastPart(
-		refs.ObjectIDToGRPCMessage(s.GetLastPart()),
-	)
-
-	m.SetLink(
-		refs.ObjectIDToGRPCMessage(s.GetLink()),
-	)
-
-	return m
-}
-
-func SplitInfoFromGRPCMessage(m *object.SplitInfo) *SplitInfo {
-	if m == nil {
-		return nil
-	}
-
-	r := new(SplitInfo)
-
-	r.SetSplitID(m.GetSplitId())
-
-	r.SetLastPart(
-		refs.ObjectIDFromGRPCMessage(m.GetLastPart()),
-	)
-
-	r.SetLink(
-		refs.ObjectIDFromGRPCMessage(m.GetLink()),
-	)
-
-	return r
-}
-
-func GetRequestBodyToGRPCMessage(r *GetRequestBody) *object.GetRequest_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.GetRequest_Body)
-
-	m.SetAddress(
-		refs.AddressToGRPCMessage(r.GetAddress()),
-	)
-
-	m.SetRaw(r.GetRaw())
-
-	return m
-}
-
-func GetRequestBodyFromGRPCMessage(m *object.GetRequest_Body) *GetRequestBody {
-	if m == nil {
-		return nil
-	}
-
-	r := new(GetRequestBody)
-
-	r.SetAddress(
-		refs.AddressFromGRPCMessage(m.GetAddress()),
-	)
-
-	r.SetRaw(m.GetRaw())
-
-	return r
-}
-
-func GetRequestToGRPCMessage(r *GetRequest) *object.GetRequest {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.GetRequest)
-
-	m.SetBody(
-		GetRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
-
-	return m
-}
-
-func GetRequestFromGRPCMessage(m *object.GetRequest) *GetRequest {
-	if m == nil {
-		return nil
-	}
-
-	r := new(GetRequest)
-
-	r.SetBody(
-		GetRequestBodyFromGRPCMessage(m.GetBody()),
-	)
-
-	session.RequestHeadersFromGRPC(m, r)
-
-	return r
-}
-
-func GetObjectPartInitToGRPCMessage(r *GetObjectPartInit) *object.GetResponse_Body_Init {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.GetResponse_Body_Init)
-
-	m.SetObjectId(
-		refs.ObjectIDToGRPCMessage(r.GetObjectID()),
-	)
-
-	m.SetSignature(
-		refs.SignatureToGRPCMessage(r.GetSignature()),
-	)
-
-	m.SetHeader(
-		HeaderToGRPCMessage(r.GetHeader()),
-	)
-
-	return m
-}
-
-func GetObjectPartInitFromGRPCMessage(m *object.GetResponse_Body_Init) *GetObjectPartInit {
-	if m == nil {
-		return nil
-	}
-
-	r := new(GetObjectPartInit)
-
-	r.SetObjectID(
-		refs.ObjectIDFromGRPCMessage(m.GetObjectId()),
-	)
-
-	r.SetSignature(
-		refs.SignatureFromGRPCMessage(m.GetSignature()),
-	)
-
-	r.SetHeader(
-		HeaderFromGRPCMessage(m.GetHeader()),
-	)
-
-	return r
-}
-
-func GetObjectPartChunkToGRPCMessage(r *GetObjectPartChunk) *object.GetResponse_Body_Chunk {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.GetResponse_Body_Chunk)
-
-	m.SetChunk(r.GetChunk())
-
-	return m
-}
-
-func GetObjectPartChunkFromGRPCMessage(m *object.GetResponse_Body_Chunk) *GetObjectPartChunk {
-	if m == nil {
-		return nil
-	}
-
-	r := new(GetObjectPartChunk)
-
-	r.SetChunk(m.GetChunk())
-
-	return r
-}
-
-func GetResponseBodyToGRPCMessage(r *GetResponseBody) *object.GetResponse_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.GetResponse_Body)
-
-	switch v := r.GetObjectPart(); t := v.(type) {
-	case nil:
-	case *GetObjectPartInit:
-		m.SetInit(
-			GetObjectPartInitToGRPCMessage(t),
-		)
-	case *GetObjectPartChunk:
-		m.SetChunk(
-			GetObjectPartChunkToGRPCMessage(t),
-		)
-	case *SplitInfo:
-		m.SetSplitInfo(
-			SplitInfoToGRPCMessage(t),
-		)
-	default:
-		panic(fmt.Sprintf("unknown object part %T", t))
+func (h *ShortHeader) ToGRPCMessage() grpc.Message {
+	var m *object.ShortHeader
+
+	if h != nil {
+		m = new(object.ShortHeader)
+
+		m.SetVersion(h.version.ToGRPCMessage().(*refsGRPC.Version))
+		m.SetOwnerId(h.ownerID.ToGRPCMessage().(*refsGRPC.OwnerID))
+		m.SetHomomorphicHash(h.homoHash.ToGRPCMessage().(*refsGRPC.Checksum))
+		m.SetPayloadHash(h.payloadHash.ToGRPCMessage().(*refsGRPC.Checksum))
+		m.SetObjectType(TypeToGRPCField(h.typ))
+		m.SetCreationEpoch(h.creatEpoch)
+		m.SetPayloadLength(h.payloadLen)
 	}
 
 	return m
 }
 
-func GetResponseBodyFromGRPCMessage(m *object.GetResponse_Body) *GetResponseBody {
-	if m == nil {
-		return nil
+func (h *ShortHeader) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.ShortHeader)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetResponseBody)
+	var err error
 
-	switch v := m.GetObjectPart().(type) {
+	version := v.GetVersion()
+	if version == nil {
+		h.version = nil
+	} else {
+		if h.version == nil {
+			h.version = new(refs.Version)
+		}
+
+		err = h.version.FromGRPCMessage(version)
+		if err != nil {
+			return err
+		}
+	}
+
+	ownerID := v.GetOwnerId()
+	if ownerID == nil {
+		h.ownerID = nil
+	} else {
+		if h.ownerID == nil {
+			h.ownerID = new(refs.OwnerID)
+		}
+
+		err = h.ownerID.FromGRPCMessage(ownerID)
+		if err != nil {
+			return err
+		}
+	}
+
+	homoHash := v.GetHomomorphicHash()
+	if homoHash == nil {
+		h.homoHash = nil
+	} else {
+		if h.homoHash == nil {
+			h.homoHash = new(refs.Checksum)
+		}
+
+		err = h.homoHash.FromGRPCMessage(homoHash)
+		if err != nil {
+			return err
+		}
+	}
+
+	payloadHash := v.GetPayloadHash()
+	if payloadHash == nil {
+		h.payloadHash = nil
+	} else {
+		if h.payloadHash == nil {
+			h.payloadHash = new(refs.Checksum)
+		}
+
+		err = h.payloadHash.FromGRPCMessage(payloadHash)
+		if err != nil {
+			return err
+		}
+	}
+
+	h.typ = TypeFromGRPCField(v.GetObjectType())
+	h.creatEpoch = v.GetCreationEpoch()
+	h.payloadLen = v.GetPayloadLength()
+
+	return nil
+}
+
+func (a *Attribute) ToGRPCMessage() grpc.Message {
+	var m *object.Header_Attribute
+
+	if a != nil {
+		m = new(object.Header_Attribute)
+
+		m.SetKey(a.key)
+		m.SetValue(a.val)
+	}
+
+	return m
+}
+
+func (a *Attribute) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.Header_Attribute)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	a.key = v.GetKey()
+	a.val = v.GetValue()
+
+	return nil
+}
+
+func AttributesToGRPC(xs []*Attribute) (res []*object.Header_Attribute) {
+	if xs != nil {
+		res = make([]*object.Header_Attribute, 0, len(xs))
+
+		for i := range xs {
+			res = append(res, xs[i].ToGRPCMessage().(*object.Header_Attribute))
+		}
+	}
+
+	return
+}
+
+func AttributesFromGRPC(xs []*object.Header_Attribute) (res []*Attribute, err error) {
+	if xs != nil {
+		res = make([]*Attribute, 0, len(xs))
+
+		for i := range xs {
+			var x *Attribute
+
+			if xs[i] != nil {
+				x = new(Attribute)
+
+				err = x.FromGRPCMessage(xs[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, x)
+		}
+	}
+
+	return
+}
+
+func (h *SplitHeader) ToGRPCMessage() grpc.Message {
+	var m *object.Header_Split
+
+	if h != nil {
+		m = new(object.Header_Split)
+
+		m.SetParent(h.par.ToGRPCMessage().(*refsGRPC.ObjectID))
+		m.SetPrevious(h.prev.ToGRPCMessage().(*refsGRPC.ObjectID))
+		m.SetParentHeader(h.parHdr.ToGRPCMessage().(*object.Header))
+		m.SetParentSignature(h.parSig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetChildren(refs.ObjectIDListToGRPCMessage(h.children))
+		m.SetSplitId(h.splitID)
+	}
+
+	return m
+}
+
+func (h *SplitHeader) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.Header_Split)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	par := v.GetParent()
+	if par == nil {
+		h.par = nil
+	} else {
+		if h.par == nil {
+			h.par = new(refs.ObjectID)
+		}
+
+		err = h.par.FromGRPCMessage(par)
+		if err != nil {
+			return err
+		}
+	}
+
+	prev := v.GetPrevious()
+	if prev == nil {
+		h.prev = nil
+	} else {
+		if h.prev == nil {
+			h.prev = new(refs.ObjectID)
+		}
+
+		err = h.prev.FromGRPCMessage(prev)
+		if err != nil {
+			return err
+		}
+	}
+
+	parHdr := v.GetParentHeader()
+	if parHdr == nil {
+		h.parHdr = nil
+	} else {
+		if h.parHdr == nil {
+			h.parHdr = new(Header)
+		}
+
+		err = h.parHdr.FromGRPCMessage(parHdr)
+		if err != nil {
+			return err
+		}
+	}
+
+	parSig := v.GetParentSignature()
+	if parSig == nil {
+		h.parSig = nil
+	} else {
+		if h.parSig == nil {
+			h.parSig = new(refs.Signature)
+		}
+
+		err = h.parSig.FromGRPCMessage(parSig)
+		if err != nil {
+			return err
+		}
+	}
+
+	h.children, err = refs.ObjectIDListFromGRPCMessage(v.GetChildren())
+	if err != nil {
+		return err
+	}
+
+	h.splitID = v.GetSplitId()
+
+	return nil
+}
+
+func (h *Header) ToGRPCMessage() grpc.Message {
+	var m *object.Header
+
+	if h != nil {
+		m = new(object.Header)
+
+		m.SetVersion(h.version.ToGRPCMessage().(*refsGRPC.Version))
+		m.SetPayloadHash(h.payloadHash.ToGRPCMessage().(*refsGRPC.Checksum))
+		m.SetOwnerId(h.ownerID.ToGRPCMessage().(*refsGRPC.OwnerID))
+		m.SetHomomorphicHash(h.homoHash.ToGRPCMessage().(*refsGRPC.Checksum))
+		m.SetContainerId(h.cid.ToGRPCMessage().(*refsGRPC.ContainerID))
+		m.SetSessionToken(h.sessionToken.ToGRPCMessage().(*sessionGRPC.SessionToken))
+		m.SetSplit(h.split.ToGRPCMessage().(*object.Header_Split))
+		m.SetAttributes(AttributesToGRPC(h.attr))
+		m.SetPayloadLength(h.payloadLen)
+		m.SetCreationEpoch(h.creatEpoch)
+		m.SetObjectType(TypeToGRPCField(h.typ))
+	}
+
+	return m
+}
+
+func (h *Header) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.Header)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	version := v.GetVersion()
+	if version == nil {
+		h.version = nil
+	} else {
+		if h.version == nil {
+			h.version = new(refs.Version)
+		}
+
+		err = h.version.FromGRPCMessage(version)
+		if err != nil {
+			return err
+		}
+	}
+
+	payloadHash := v.GetPayloadHash()
+	if payloadHash == nil {
+		h.payloadHash = nil
+	} else {
+		if h.payloadHash == nil {
+			h.payloadHash = new(refs.Checksum)
+		}
+
+		err = h.payloadHash.FromGRPCMessage(payloadHash)
+		if err != nil {
+			return err
+		}
+	}
+
+	ownerID := v.GetOwnerId()
+	if ownerID == nil {
+		h.ownerID = nil
+	} else {
+		if h.ownerID == nil {
+			h.ownerID = new(refs.OwnerID)
+		}
+
+		err = h.ownerID.FromGRPCMessage(ownerID)
+		if err != nil {
+			return err
+		}
+	}
+
+	homoHash := v.GetHomomorphicHash()
+	if homoHash == nil {
+		h.homoHash = nil
+	} else {
+		if h.homoHash == nil {
+			h.homoHash = new(refs.Checksum)
+		}
+
+		err = h.homoHash.FromGRPCMessage(homoHash)
+		if err != nil {
+			return err
+		}
+	}
+
+	cid := v.GetContainerId()
+	if cid == nil {
+		h.cid = nil
+	} else {
+		if h.cid == nil {
+			h.cid = new(refs.ContainerID)
+		}
+
+		err = h.cid.FromGRPCMessage(cid)
+		if err != nil {
+			return err
+		}
+	}
+
+	sessionToken := v.GetSessionToken()
+	if sessionToken == nil {
+		h.sessionToken = nil
+	} else {
+		if h.sessionToken == nil {
+			h.sessionToken = new(session.SessionToken)
+		}
+
+		err = h.sessionToken.FromGRPCMessage(sessionToken)
+		if err != nil {
+			return err
+		}
+	}
+
+	split := v.GetSplit()
+	if split == nil {
+		h.split = nil
+	} else {
+		if h.split == nil {
+			h.split = new(SplitHeader)
+		}
+
+		err = h.split.FromGRPCMessage(split)
+		if err != nil {
+			return err
+		}
+	}
+
+	h.attr, err = AttributesFromGRPC(v.GetAttributes())
+	if err != nil {
+		return err
+	}
+
+	h.payloadLen = v.GetPayloadLength()
+	h.creatEpoch = v.GetCreationEpoch()
+	h.typ = TypeFromGRPCField(v.GetObjectType())
+
+	return nil
+}
+
+func (h *HeaderWithSignature) ToGRPCMessage() grpc.Message {
+	var m *object.HeaderWithSignature
+
+	if h != nil {
+		m = new(object.HeaderWithSignature)
+
+		m.SetSignature(h.signature.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetHeader(h.header.ToGRPCMessage().(*object.Header))
+	}
+
+	return m
+}
+
+func (h *HeaderWithSignature) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.HeaderWithSignature)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	signature := v.GetSignature()
+	if signature == nil {
+		h.signature = nil
+	} else {
+		if h.signature == nil {
+			h.signature = new(refs.Signature)
+		}
+
+		err = h.signature.FromGRPCMessage(signature)
+		if err != nil {
+			return err
+		}
+	}
+
+	header := v.GetHeader()
+	if header == nil {
+		h.header = nil
+	} else {
+		if h.header == nil {
+			h.header = new(Header)
+		}
+
+		err = h.header.FromGRPCMessage(header)
+	}
+
+	return err
+}
+
+func (o *Object) ToGRPCMessage() grpc.Message {
+	var m *object.Object
+
+	if o != nil {
+		m = new(object.Object)
+
+		m.SetObjectId(o.objectID.ToGRPCMessage().(*refsGRPC.ObjectID))
+		m.SetSignature(o.idSig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetHeader(o.header.ToGRPCMessage().(*object.Header))
+		m.SetPayload(o.payload)
+	}
+
+	return m
+}
+
+func (o *Object) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.Object)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	objectID := v.GetObjectId()
+	if objectID == nil {
+		o.objectID = nil
+	} else {
+		if o.objectID == nil {
+			o.objectID = new(refs.ObjectID)
+		}
+
+		err = o.objectID.FromGRPCMessage(objectID)
+		if err != nil {
+			return err
+		}
+	}
+
+	idSig := v.GetSignature()
+	if idSig == nil {
+		o.idSig = nil
+	} else {
+		if o.idSig == nil {
+			o.idSig = new(refs.Signature)
+		}
+
+		err = o.idSig.FromGRPCMessage(idSig)
+		if err != nil {
+			return err
+		}
+	}
+
+	header := v.GetHeader()
+	if header == nil {
+		o.header = nil
+	} else {
+		if o.header == nil {
+			o.header = new(Header)
+		}
+
+		err = o.header.FromGRPCMessage(header)
+		if err != nil {
+			return err
+		}
+	}
+
+	o.payload = v.GetPayload()
+
+	return nil
+}
+
+func (s *SplitInfo) ToGRPCMessage() grpc.Message {
+	var m *object.SplitInfo
+
+	if s != nil {
+		m = new(object.SplitInfo)
+
+		m.SetLastPart(s.lastPart.ToGRPCMessage().(*refsGRPC.ObjectID))
+		m.SetLink(s.link.ToGRPCMessage().(*refsGRPC.ObjectID))
+		m.SetSplitId(s.splitID)
+	}
+
+	return m
+}
+
+func (s *SplitInfo) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.SplitInfo)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	lastPart := v.GetLastPart()
+	if lastPart == nil {
+		s.lastPart = nil
+	} else {
+		if s.lastPart == nil {
+			s.lastPart = new(refs.ObjectID)
+		}
+
+		err = s.lastPart.FromGRPCMessage(lastPart)
+		if err != nil {
+			return err
+		}
+	}
+
+	link := v.GetLink()
+	if link == nil {
+		s.link = nil
+	} else {
+		if s.link == nil {
+			s.link = new(refs.ObjectID)
+		}
+
+		err = s.link.FromGRPCMessage(link)
+		if err != nil {
+			return err
+		}
+	}
+
+	s.splitID = v.GetSplitId()
+
+	return nil
+}
+
+func (r *GetRequestBody) ToGRPCMessage() grpc.Message {
+	var m *object.GetRequest_Body
+
+	if r != nil {
+		m = new(object.GetRequest_Body)
+
+		m.SetAddress(r.addr.ToGRPCMessage().(*refsGRPC.Address))
+		m.SetRaw(r.raw)
+	}
+
+	return m
+}
+
+func (r *GetRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	addr := v.GetAddress()
+	if addr == nil {
+		r.addr = nil
+	} else {
+		if r.addr == nil {
+			r.addr = new(refs.Address)
+		}
+
+		err = r.addr.FromGRPCMessage(addr)
+		if err != nil {
+			return err
+		}
+	}
+
+	r.raw = v.GetRaw()
+
+	return nil
+}
+
+func (r *GetRequest) ToGRPCMessage() grpc.Message {
+	var m *object.GetRequest
+
+	if r != nil {
+		m = new(object.GetRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*object.GetRequest_Body))
+		r.RequestHeaders.ToMessage(m)
+	}
+
+	return m
+}
+
+func (r *GetRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(GetRequestBody)
+		}
+
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return r.RequestHeaders.FromMessage(v)
+}
+
+func (r *GetObjectPartInit) ToGRPCMessage() grpc.Message {
+	var m *object.GetResponse_Body_Init
+
+	if r != nil {
+		m = new(object.GetResponse_Body_Init)
+
+		m.SetObjectId(r.id.ToGRPCMessage().(*refsGRPC.ObjectID))
+		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetHeader(r.hdr.ToGRPCMessage().(*object.Header))
+	}
+
+	return m
+}
+
+func (r *GetObjectPartInit) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetResponse_Body_Init)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	id := v.GetObjectId()
+	if id == nil {
+		r.id = nil
+	} else {
+		if r.id == nil {
+			r.id = new(refs.ObjectID)
+		}
+
+		err = r.id.FromGRPCMessage(id)
+		if err != nil {
+			return err
+		}
+	}
+
+	sig := v.GetSignature()
+	if sig == nil {
+		r.sig = nil
+	} else {
+		if r.sig == nil {
+			r.sig = new(refs.Signature)
+		}
+
+		err = r.sig.FromGRPCMessage(sig)
+		if err != nil {
+			return err
+		}
+	}
+
+	hdr := v.GetHeader()
+	if hdr == nil {
+		r.hdr = nil
+	} else {
+		if r.hdr == nil {
+			r.hdr = new(Header)
+		}
+
+		err = r.hdr.FromGRPCMessage(hdr)
+	}
+
+	return err
+}
+
+func (r *GetObjectPartChunk) ToGRPCMessage() grpc.Message {
+	var m *object.GetResponse_Body_Chunk
+
+	if r != nil {
+		m = new(object.GetResponse_Body_Chunk)
+
+		m.SetChunk(r.chunk)
+	}
+
+	return m
+}
+
+func (r *GetObjectPartChunk) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetResponse_Body_Chunk)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	r.chunk = v.GetChunk()
+
+	return nil
+}
+
+func (r *GetResponseBody) ToGRPCMessage() grpc.Message {
+	var m *object.GetResponse_Body
+
+	if r != nil {
+		m = new(object.GetResponse_Body)
+
+		switch v := r.GetObjectPart(); t := v.(type) {
+		case nil:
+			m.ObjectPart = nil
+		case *GetObjectPartInit:
+			m.SetInit(t.ToGRPCMessage().(*object.GetResponse_Body_Init))
+		case *GetObjectPartChunk:
+			m.SetChunk(t.ToGRPCMessage().(*object.GetResponse_Body_Chunk))
+		case *SplitInfo:
+			m.SetSplitInfo(t.ToGRPCMessage().(*object.SplitInfo))
+		default:
+			panic(fmt.Sprintf("unknown get object part %T", t))
+		}
+	}
+
+	return m
+}
+
+func (r *GetResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	r.objPart = nil
+
+	switch pt := v.GetObjectPart().(type) {
 	case nil:
 	case *object.GetResponse_Body_Init_:
-		r.SetObjectPart(
-			GetObjectPartInitFromGRPCMessage(v.Init),
-		)
+		if pt != nil {
+			partInit := new(GetObjectPartInit)
+			r.objPart = partInit
+			err = partInit.FromGRPCMessage(pt.Init)
+		}
 	case *object.GetResponse_Body_Chunk:
-		r.SetObjectPart(
-			GetObjectPartChunkFromGRPCMessage(v),
-		)
+		if pt != nil {
+			partChunk := new(GetObjectPartChunk)
+			r.objPart = partChunk
+			err = partChunk.FromGRPCMessage(pt)
+		}
 	case *object.GetResponse_Body_SplitInfo:
-		r.SetObjectPart(
-			SplitInfoFromGRPCMessage(v.SplitInfo),
-		)
+		if pt != nil {
+			partSplit := new(SplitInfo)
+			r.objPart = partSplit
+			err = partSplit.FromGRPCMessage(pt.SplitInfo)
+		}
 	default:
-		panic(fmt.Sprintf("unknown object part %T", v))
+		err = errors.Errorf("unknown get object part %T", pt)
 	}
 
-	return r
+	return err
 }
 
-func GetResponseToGRPCMessage(r *GetResponse) *object.GetResponse {
-	if r == nil {
-		return nil
-	}
+func (r *GetResponse) ToGRPCMessage() grpc.Message {
+	var m *object.GetResponse
 
-	m := new(object.GetResponse)
+	if r != nil {
+		m = new(object.GetResponse)
 
-	m.SetBody(
-		GetResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
-
-	return m
-}
-
-func GetResponseFromGRPCMessage(m *object.GetResponse) *GetResponse {
-	if m == nil {
-		return nil
-	}
-
-	r := new(GetResponse)
-
-	r.SetBody(
-		GetResponseBodyFromGRPCMessage(m.GetBody()),
-	)
-
-	session.ResponseHeadersFromGRPC(m, r)
-
-	return r
-}
-
-func PutObjectPartInitToGRPCMessage(r *PutObjectPartInit) *object.PutRequest_Body_Init {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.PutRequest_Body_Init)
-
-	m.SetObjectId(
-		refs.ObjectIDToGRPCMessage(r.GetObjectID()),
-	)
-
-	m.SetSignature(
-		refs.SignatureToGRPCMessage(r.GetSignature()),
-	)
-
-	m.SetHeader(
-		HeaderToGRPCMessage(r.GetHeader()),
-	)
-
-	m.SetCopiesNumber(r.GetCopiesNumber())
-
-	return m
-}
-
-func PutObjectPartInitFromGRPCMessage(m *object.PutRequest_Body_Init) *PutObjectPartInit {
-	if m == nil {
-		return nil
-	}
-
-	r := new(PutObjectPartInit)
-
-	r.SetObjectID(
-		refs.ObjectIDFromGRPCMessage(m.GetObjectId()),
-	)
-
-	r.SetSignature(
-		refs.SignatureFromGRPCMessage(m.GetSignature()),
-	)
-
-	r.SetHeader(
-		HeaderFromGRPCMessage(m.GetHeader()),
-	)
-
-	r.SetCopiesNumber(m.GetCopiesNumber())
-
-	return r
-}
-
-func PutObjectPartChunkToGRPCMessage(r *PutObjectPartChunk) *object.PutRequest_Body_Chunk {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.PutRequest_Body_Chunk)
-
-	m.SetChunk(r.GetChunk())
-
-	return m
-}
-
-func PutObjectPartChunkFromGRPCMessage(m *object.PutRequest_Body_Chunk) *PutObjectPartChunk {
-	if m == nil {
-		return nil
-	}
-
-	r := new(PutObjectPartChunk)
-
-	r.SetChunk(m.GetChunk())
-
-	return r
-}
-
-func PutRequestBodyToGRPCMessage(r *PutRequestBody) *object.PutRequest_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.PutRequest_Body)
-
-	switch v := r.GetObjectPart(); t := v.(type) {
-	case nil:
-	case *PutObjectPartInit:
-		m.SetInit(
-			PutObjectPartInitToGRPCMessage(t),
-		)
-	case *PutObjectPartChunk:
-		m.SetChunk(
-			PutObjectPartChunkToGRPCMessage(t),
-		)
-	default:
-		panic(fmt.Sprintf("unknown object part %T", t))
+		m.SetBody(r.body.ToGRPCMessage().(*object.GetResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
 	}
 
 	return m
 }
 
-func PutRequestBodyFromGRPCMessage(m *object.PutRequest_Body) *PutRequestBody {
-	if m == nil {
-		return nil
+func (r *GetResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(PutRequestBody)
+	var err error
 
-	switch v := m.GetObjectPart().(type) {
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(GetResponseBody)
+		}
+
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return r.ResponseHeaders.FromMessage(v)
+}
+
+func (r *PutObjectPartInit) ToGRPCMessage() grpc.Message {
+	var m *object.PutRequest_Body_Init
+
+	if r != nil {
+		m = new(object.PutRequest_Body_Init)
+
+		m.SetObjectId(r.id.ToGRPCMessage().(*refsGRPC.ObjectID))
+		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetHeader(r.hdr.ToGRPCMessage().(*object.Header))
+		m.SetCopiesNumber(r.copyNum)
+	}
+
+	return m
+}
+
+func (r *PutObjectPartInit) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.PutRequest_Body_Init)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	id := v.GetObjectId()
+	if id == nil {
+		r.id = nil
+	} else {
+		if r.id == nil {
+			r.id = new(refs.ObjectID)
+		}
+
+		err = r.id.FromGRPCMessage(id)
+		if err != nil {
+			return err
+		}
+	}
+
+	sig := v.GetSignature()
+	if sig == nil {
+		r.sig = nil
+	} else {
+		if r.sig == nil {
+			r.sig = new(refs.Signature)
+		}
+
+		err = r.sig.FromGRPCMessage(sig)
+		if err != nil {
+			return err
+		}
+	}
+
+	hdr := v.GetHeader()
+	if hdr == nil {
+		r.hdr = nil
+	} else {
+		if r.hdr == nil {
+			r.hdr = new(Header)
+		}
+
+		err = r.hdr.FromGRPCMessage(hdr)
+		if err != nil {
+			return err
+		}
+	}
+
+	r.copyNum = v.GetCopiesNumber()
+
+	return nil
+}
+
+func (r *PutObjectPartChunk) ToGRPCMessage() grpc.Message {
+	var m *object.PutRequest_Body_Chunk
+
+	if r != nil {
+		m = new(object.PutRequest_Body_Chunk)
+
+		m.SetChunk(r.chunk)
+	}
+
+	return m
+}
+
+func (r *PutObjectPartChunk) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.PutRequest_Body_Chunk)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	r.chunk = v.GetChunk()
+
+	return nil
+}
+
+func (r *PutRequestBody) ToGRPCMessage() grpc.Message {
+	var m *object.PutRequest_Body
+
+	if r != nil {
+		m = new(object.PutRequest_Body)
+
+		switch v := r.GetObjectPart(); t := v.(type) {
+		case nil:
+			m.ObjectPart = nil
+		case *PutObjectPartInit:
+			m.SetInit(t.ToGRPCMessage().(*object.PutRequest_Body_Init))
+		case *PutObjectPartChunk:
+			m.SetChunk(t.ToGRPCMessage().(*object.PutRequest_Body_Chunk))
+		default:
+			panic(fmt.Sprintf("unknown put object part %T", t))
+		}
+	}
+
+	return m
+}
+
+func (r *PutRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.PutRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	r.objPart = nil
+
+	switch pt := v.GetObjectPart().(type) {
 	case nil:
 	case *object.PutRequest_Body_Init_:
-		r.SetObjectPart(
-			PutObjectPartInitFromGRPCMessage(v.Init),
-		)
+		if pt != nil {
+			partInit := new(PutObjectPartInit)
+			r.objPart = partInit
+			err = partInit.FromGRPCMessage(pt.Init)
+		}
 	case *object.PutRequest_Body_Chunk:
-		r.SetObjectPart(
-			PutObjectPartChunkFromGRPCMessage(v),
-		)
+		if pt != nil {
+			partChunk := new(PutObjectPartChunk)
+			r.objPart = partChunk
+			err = partChunk.FromGRPCMessage(pt)
+		}
 	default:
-		panic(fmt.Sprintf("unknown object part %T", v))
+		err = errors.Errorf("unknown put object part %T", pt)
 	}
 
-	return r
+	return err
 }
 
-func PutRequestToGRPCMessage(r *PutRequest) *object.PutRequest {
-	if r == nil {
-		return nil
-	}
+func (r *PutRequest) ToGRPCMessage() grpc.Message {
+	var m *object.PutRequest
 
-	m := new(object.PutRequest)
+	if r != nil {
+		m = new(object.PutRequest)
 
-	m.SetBody(
-		PutRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
-
-	return m
-}
-
-func PutRequestFromGRPCMessage(m *object.PutRequest) *PutRequest {
-	if m == nil {
-		return nil
-	}
-
-	r := new(PutRequest)
-
-	r.SetBody(
-		PutRequestBodyFromGRPCMessage(m.GetBody()),
-	)
-
-	session.RequestHeadersFromGRPC(m, r)
-
-	return r
-}
-
-func PutResponseBodyToGRPCMessage(r *PutResponseBody) *object.PutResponse_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.PutResponse_Body)
-
-	m.SetObjectId(
-		refs.ObjectIDToGRPCMessage(r.GetObjectID()),
-	)
-
-	return m
-}
-
-func PutResponseBodyFromGRPCMessage(m *object.PutResponse_Body) *PutResponseBody {
-	if m == nil {
-		return nil
-	}
-
-	r := new(PutResponseBody)
-
-	r.SetObjectID(
-		refs.ObjectIDFromGRPCMessage(m.GetObjectId()),
-	)
-
-	return r
-}
-
-func PutResponseToGRPCMessage(r *PutResponse) *object.PutResponse {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.PutResponse)
-
-	m.SetBody(
-		PutResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
-
-	return m
-}
-
-func PutResponseFromGRPCMessage(m *object.PutResponse) *PutResponse {
-	if m == nil {
-		return nil
-	}
-
-	r := new(PutResponse)
-
-	r.SetBody(
-		PutResponseBodyFromGRPCMessage(m.GetBody()),
-	)
-
-	session.ResponseHeadersFromGRPC(m, r)
-
-	return r
-}
-
-func DeleteRequestBodyToGRPCMessage(r *DeleteRequestBody) *object.DeleteRequest_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.DeleteRequest_Body)
-
-	m.SetAddress(
-		refs.AddressToGRPCMessage(r.GetAddress()),
-	)
-
-	return m
-}
-
-func DeleteRequestBodyFromGRPCMessage(m *object.DeleteRequest_Body) *DeleteRequestBody {
-	if m == nil {
-		return nil
-	}
-
-	r := new(DeleteRequestBody)
-
-	r.SetAddress(
-		refs.AddressFromGRPCMessage(m.GetAddress()),
-	)
-
-	return r
-}
-
-func DeleteRequestToGRPCMessage(r *DeleteRequest) *object.DeleteRequest {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.DeleteRequest)
-
-	m.SetBody(
-		DeleteRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
-
-	return m
-}
-
-func DeleteRequestFromGRPCMessage(m *object.DeleteRequest) *DeleteRequest {
-	if m == nil {
-		return nil
-	}
-
-	r := new(DeleteRequest)
-
-	r.SetBody(
-		DeleteRequestBodyFromGRPCMessage(m.GetBody()),
-	)
-
-	session.RequestHeadersFromGRPC(m, r)
-
-	return r
-}
-
-func DeleteResponseBodyToGRPCMessage(r *DeleteResponseBody) *object.DeleteResponse_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.DeleteResponse_Body)
-	m.SetTombstone(
-		refs.AddressToGRPCMessage(r.GetTombstone()),
-	)
-
-	return m
-}
-
-func DeleteResponseBodyFromGRPCMessage(m *object.DeleteResponse_Body) *DeleteResponseBody {
-	if m == nil {
-		return nil
-	}
-
-	r := new(DeleteResponseBody)
-	r.SetTombstone(
-		refs.AddressFromGRPCMessage(m.GetTombstone()),
-	)
-
-	return r
-}
-
-func DeleteResponseToGRPCMessage(r *DeleteResponse) *object.DeleteResponse {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.DeleteResponse)
-
-	m.SetBody(
-		DeleteResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
-
-	return m
-}
-
-func DeleteResponseFromGRPCMessage(m *object.DeleteResponse) *DeleteResponse {
-	if m == nil {
-		return nil
-	}
-
-	r := new(DeleteResponse)
-
-	r.SetBody(
-		DeleteResponseBodyFromGRPCMessage(m.GetBody()),
-	)
-
-	session.ResponseHeadersFromGRPC(m, r)
-
-	return r
-}
-
-func HeadRequestBodyToGRPCMessage(r *HeadRequestBody) *object.HeadRequest_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.HeadRequest_Body)
-
-	m.SetAddress(
-		refs.AddressToGRPCMessage(r.GetAddress()),
-	)
-
-	m.SetMainOnly(r.GetMainOnly())
-
-	m.SetRaw(r.GetRaw())
-
-	return m
-}
-
-func HeadRequestBodyFromGRPCMessage(m *object.HeadRequest_Body) *HeadRequestBody {
-	if m == nil {
-		return nil
-	}
-
-	r := new(HeadRequestBody)
-
-	r.SetAddress(
-		refs.AddressFromGRPCMessage(m.GetAddress()),
-	)
-
-	r.SetMainOnly(m.GetMainOnly())
-
-	r.SetRaw(m.GetRaw())
-
-	return r
-}
-
-func HeadRequestToGRPCMessage(r *HeadRequest) *object.HeadRequest {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.HeadRequest)
-
-	m.SetBody(
-		HeadRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
-
-	return m
-}
-
-func HeadRequestFromGRPCMessage(m *object.HeadRequest) *HeadRequest {
-	if m == nil {
-		return nil
-	}
-
-	r := new(HeadRequest)
-
-	r.SetBody(
-		HeadRequestBodyFromGRPCMessage(m.GetBody()),
-	)
-
-	session.RequestHeadersFromGRPC(m, r)
-
-	return r
-}
-
-func HeadResponseBodyToGRPCMessage(r *HeadResponseBody) *object.HeadResponse_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.HeadResponse_Body)
-
-	switch v := r.GetHeaderPart(); t := v.(type) {
-	case nil:
-	case *HeaderWithSignature:
-		m.SetHeader(
-			HeaderWithSignatureToGRPCMessage(t),
-		)
-	case *ShortHeader:
-		m.SetShortHeader(
-			ShortHeaderToGRPCMessage(t),
-		)
-	case *SplitInfo:
-		m.SetSplitInfo(
-			SplitInfoToGRPCMessage(t),
-		)
-	default:
-		panic(fmt.Sprintf("unknown header part %T", t))
+		m.SetBody(r.body.ToGRPCMessage().(*object.PutRequest_Body))
+		r.RequestHeaders.ToMessage(m)
 	}
 
 	return m
 }
 
-func HeadResponseBodyFromGRPCMessage(m *object.HeadResponse_Body) *HeadResponseBody {
-	if m == nil {
-		return nil
+func (r *PutRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.PutRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(HeadResponseBody)
+	var err error
 
-	switch v := m.GetHead().(type) {
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(PutRequestBody)
+		}
+
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return r.RequestHeaders.FromMessage(v)
+}
+
+func (r *PutResponseBody) ToGRPCMessage() grpc.Message {
+	var m *object.PutResponse_Body
+
+	if r != nil {
+		m = new(object.PutResponse_Body)
+
+		m.SetObjectId(r.id.ToGRPCMessage().(*refsGRPC.ObjectID))
+	}
+
+	return m
+}
+
+func (r *PutResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.PutResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	id := v.GetObjectId()
+	if id == nil {
+		r.id = nil
+	} else {
+		if r.id == nil {
+			r.id = new(refs.ObjectID)
+		}
+
+		err = r.id.FromGRPCMessage(id)
+	}
+
+	return err
+}
+
+func (r *PutResponse) ToGRPCMessage() grpc.Message {
+	var m *object.PutResponse
+
+	if r != nil {
+		m = new(object.PutResponse)
+
+		m.SetBody(r.body.ToGRPCMessage().(*object.PutResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
+	}
+
+	return m
+}
+
+func (r *PutResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.PutResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(PutResponseBody)
+		}
+
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return r.ResponseHeaders.FromMessage(v)
+}
+
+func (r *DeleteRequestBody) ToGRPCMessage() grpc.Message {
+	var m *object.DeleteRequest_Body
+
+	if r != nil {
+		m = new(object.DeleteRequest_Body)
+
+		m.SetAddress(r.addr.ToGRPCMessage().(*refsGRPC.Address))
+	}
+
+	return m
+}
+
+func (r *DeleteRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.DeleteRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	addr := v.GetAddress()
+	if addr == nil {
+		r.addr = nil
+	} else {
+		if r.addr == nil {
+			r.addr = new(refs.Address)
+		}
+
+		err = r.addr.FromGRPCMessage(addr)
+	}
+
+	return err
+}
+
+func (r *DeleteRequest) ToGRPCMessage() grpc.Message {
+	var m *object.DeleteRequest
+
+	if r != nil {
+		m = new(object.DeleteRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*object.DeleteRequest_Body))
+		r.RequestHeaders.ToMessage(m)
+	}
+
+	return m
+}
+
+func (r *DeleteRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.DeleteRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(DeleteRequestBody)
+		}
+
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return r.RequestHeaders.FromMessage(v)
+}
+
+func (r *DeleteResponseBody) ToGRPCMessage() grpc.Message {
+	var m *object.DeleteResponse_Body
+
+	if r != nil {
+		m = new(object.DeleteResponse_Body)
+
+		m.SetTombstone(r.tombstone.ToGRPCMessage().(*refsGRPC.Address))
+	}
+
+	return m
+}
+
+func (r *DeleteResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.DeleteResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	tombstone := v.GetTombstone()
+	if tombstone == nil {
+		r.tombstone = nil
+	} else {
+		if r.tombstone == nil {
+			r.tombstone = new(refs.Address)
+		}
+
+		err = r.tombstone.FromGRPCMessage(tombstone)
+	}
+
+	return err
+}
+
+func (r *DeleteResponse) ToGRPCMessage() grpc.Message {
+	var m *object.DeleteResponse
+
+	if r != nil {
+		m = new(object.DeleteResponse)
+
+		m.SetBody(r.body.ToGRPCMessage().(*object.DeleteResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
+	}
+
+	return m
+}
+
+func (r *DeleteResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.DeleteResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(DeleteResponseBody)
+		}
+
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return r.ResponseHeaders.FromMessage(v)
+}
+
+func (r *HeadRequestBody) ToGRPCMessage() grpc.Message {
+	var m *object.HeadRequest_Body
+
+	if r != nil {
+		m = new(object.HeadRequest_Body)
+
+		m.SetAddress(r.addr.ToGRPCMessage().(*refsGRPC.Address))
+		m.SetRaw(r.raw)
+		m.SetMainOnly(r.mainOnly)
+	}
+
+	return m
+}
+
+func (r *HeadRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.HeadRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	addr := v.GetAddress()
+	if addr == nil {
+		r.addr = nil
+	} else {
+		if r.addr == nil {
+			r.addr = new(refs.Address)
+		}
+
+		err = r.addr.FromGRPCMessage(addr)
+		if err != nil {
+			return err
+		}
+	}
+
+	r.raw = v.GetRaw()
+	r.mainOnly = v.GetMainOnly()
+
+	return nil
+}
+
+func (r *HeadRequest) ToGRPCMessage() grpc.Message {
+	var m *object.HeadRequest
+
+	if r != nil {
+		m = new(object.HeadRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*object.HeadRequest_Body))
+		r.RequestHeaders.ToMessage(m)
+	}
+
+	return m
+}
+
+func (r *HeadRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.HeadRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(HeadRequestBody)
+		}
+
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return r.RequestHeaders.FromMessage(v)
+}
+
+func (r *HeadResponseBody) ToGRPCMessage() grpc.Message {
+	var m *object.HeadResponse_Body
+
+	if r != nil {
+		m = new(object.HeadResponse_Body)
+
+		switch v := r.hdrPart.(type) {
+		case nil:
+			m.Head = nil
+		case *HeaderWithSignature:
+			m.SetHeader(v.ToGRPCMessage().(*object.HeaderWithSignature))
+		case *ShortHeader:
+			m.SetShortHeader(v.ToGRPCMessage().(*object.ShortHeader))
+		case *SplitInfo:
+			m.SetSplitInfo(v.ToGRPCMessage().(*object.SplitInfo))
+		default:
+			panic(fmt.Sprintf("unknown head part %T", v))
+		}
+	}
+
+	return m
+}
+
+func (r *HeadResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.HeadResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	r.hdrPart = nil
+
+	switch pt := v.GetHead().(type) {
 	case nil:
 	case *object.HeadResponse_Body_Header:
-		r.SetHeaderPart(
-			HeaderWithSignatureFromGRPCMessage(v.Header),
-		)
+		if pt != nil {
+			partHdr := new(HeaderWithSignature)
+			r.hdrPart = partHdr
+			err = partHdr.FromGRPCMessage(pt.Header)
+		}
 	case *object.HeadResponse_Body_ShortHeader:
-		r.SetHeaderPart(
-			ShortHeaderFromGRPCMessage(v.ShortHeader),
-		)
+		if pt != nil {
+			partShort := new(ShortHeader)
+			r.hdrPart = partShort
+			err = partShort.FromGRPCMessage(pt.ShortHeader)
+		}
 	case *object.HeadResponse_Body_SplitInfo:
-		r.SetHeaderPart(
-			SplitInfoFromGRPCMessage(v.SplitInfo),
-		)
+		if pt != nil {
+			partSplit := new(SplitInfo)
+			r.hdrPart = partSplit
+			err = partSplit.FromGRPCMessage(pt.SplitInfo)
+		}
 	default:
-		panic(fmt.Sprintf("unknown header part %T", v))
+		err = errors.Errorf("unknown head part %T", pt)
 	}
 
-	return r
+	return err
 }
 
-func HeadResponseToGRPCMessage(r *HeadResponse) *object.HeadResponse {
-	if r == nil {
-		return nil
-	}
+func (r *HeadResponse) ToGRPCMessage() grpc.Message {
+	var m *object.HeadResponse
 
-	m := new(object.HeadResponse)
+	if r != nil {
+		m = new(object.HeadResponse)
 
-	m.SetBody(
-		HeadResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
-
-	return m
-}
-
-func HeadResponseFromGRPCMessage(m *object.HeadResponse) *HeadResponse {
-	if m == nil {
-		return nil
-	}
-
-	r := new(HeadResponse)
-
-	r.SetBody(
-		HeadResponseBodyFromGRPCMessage(m.GetBody()),
-	)
-
-	session.ResponseHeadersFromGRPC(m, r)
-
-	return r
-}
-
-func SearchFilterToGRPCMessage(f *SearchFilter) *object.SearchRequest_Body_Filter {
-	if f == nil {
-		return nil
-	}
-
-	m := new(object.SearchRequest_Body_Filter)
-
-	m.SetMatchType(
-		MatchTypeToGRPCField(f.GetMatchType()),
-	)
-
-	m.SetKey(f.GetKey())
-
-	m.SetValue(f.GetValue())
-
-	return m
-}
-
-func SearchFilterFromGRPCMessage(m *object.SearchRequest_Body_Filter) *SearchFilter {
-	if m == nil {
-		return nil
-	}
-
-	f := new(SearchFilter)
-
-	f.SetMatchType(
-		MatchTypeFromGRPCField(m.GetMatchType()),
-	)
-
-	f.SetKey(m.GetKey())
-
-	f.SetValue(m.GetValue())
-
-	return f
-}
-
-func SearchRequestBodyToGRPCMessage(r *SearchRequestBody) *object.SearchRequest_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.SearchRequest_Body)
-
-	m.SetContainerId(
-		refs.ContainerIDToGRPCMessage(r.GetContainerID()),
-	)
-
-	m.SetVersion(r.GetVersion())
-
-	filters := r.GetFilters()
-	filterMsg := make([]*object.SearchRequest_Body_Filter, 0, len(filters))
-
-	for i := range filters {
-		filterMsg = append(filterMsg, SearchFilterToGRPCMessage(filters[i]))
-	}
-
-	m.SetFilters(filterMsg)
-
-	return m
-}
-
-func SearchRequestBodyFromGRPCMessage(m *object.SearchRequest_Body) *SearchRequestBody {
-	if m == nil {
-		return nil
-	}
-
-	r := new(SearchRequestBody)
-
-	r.SetContainerID(
-		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
-	)
-
-	r.SetVersion(m.GetVersion())
-
-	filterMsg := m.GetFilters()
-	filters := make([]*SearchFilter, 0, len(filterMsg))
-
-	for i := range filterMsg {
-		filters = append(filters, SearchFilterFromGRPCMessage(filterMsg[i]))
-	}
-
-	r.SetFilters(filters)
-
-	return r
-}
-
-func SearchRequestToGRPCMessage(r *SearchRequest) *object.SearchRequest {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.SearchRequest)
-
-	m.SetBody(
-		SearchRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
-
-	return m
-}
-
-func SearchRequestFromGRPCMessage(m *object.SearchRequest) *SearchRequest {
-	if m == nil {
-		return nil
-	}
-
-	r := new(SearchRequest)
-
-	r.SetBody(
-		SearchRequestBodyFromGRPCMessage(m.GetBody()),
-	)
-
-	session.RequestHeadersFromGRPC(m, r)
-
-	return r
-}
-
-func SearchResponseBodyToGRPCMessage(r *SearchResponseBody) *object.SearchResponse_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.SearchResponse_Body)
-
-	m.SetIdList(
-		refs.ObjectIDListToGRPCMessage(r.GetIDList()),
-	)
-
-	return m
-}
-
-func SearchResponseBodyFromGRPCMessage(m *object.SearchResponse_Body) *SearchResponseBody {
-	if m == nil {
-		return nil
-	}
-
-	r := new(SearchResponseBody)
-
-	r.SetIDList(
-		refs.ObjectIDListFromGRPCMessage(m.GetIdList()),
-	)
-
-	return r
-}
-
-func SearchResponseToGRPCMessage(r *SearchResponse) *object.SearchResponse {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.SearchResponse)
-
-	m.SetBody(
-		SearchResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
-
-	return m
-}
-
-func SearchResponseFromGRPCMessage(m *object.SearchResponse) *SearchResponse {
-	if m == nil {
-		return nil
-	}
-
-	r := new(SearchResponse)
-
-	r.SetBody(
-		SearchResponseBodyFromGRPCMessage(m.GetBody()),
-	)
-
-	session.ResponseHeadersFromGRPC(m, r)
-
-	return r
-}
-
-func RangeToGRPCMessage(r *Range) *object.Range {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.Range)
-
-	m.SetOffset(r.GetOffset())
-	m.SetLength(r.GetLength())
-
-	return m
-}
-
-func RangeFromGRPCMessage(m *object.Range) *Range {
-	if m == nil {
-		return nil
-	}
-
-	r := new(Range)
-
-	r.SetOffset(m.GetOffset())
-	r.SetLength(m.GetLength())
-
-	return r
-}
-
-func GetRangeRequestBodyToGRPCMessage(r *GetRangeRequestBody) *object.GetRangeRequest_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.GetRangeRequest_Body)
-
-	m.SetAddress(
-		refs.AddressToGRPCMessage(r.GetAddress()),
-	)
-
-	m.SetRange(
-		RangeToGRPCMessage(r.GetRange()),
-	)
-
-	m.SetRaw(r.GetRaw())
-
-	return m
-}
-
-func GetRangeRequestBodyFromGRPCMessage(m *object.GetRangeRequest_Body) *GetRangeRequestBody {
-	if m == nil {
-		return nil
-	}
-
-	r := new(GetRangeRequestBody)
-
-	r.SetAddress(
-		refs.AddressFromGRPCMessage(m.GetAddress()),
-	)
-
-	r.SetRange(
-		RangeFromGRPCMessage(m.GetRange()),
-	)
-
-	r.SetRaw(m.GetRaw())
-
-	return r
-}
-
-func GetRangeRequestToGRPCMessage(r *GetRangeRequest) *object.GetRangeRequest {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.GetRangeRequest)
-
-	m.SetBody(
-		GetRangeRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
-
-	return m
-}
-
-func GetRangeRequestFromGRPCMessage(m *object.GetRangeRequest) *GetRangeRequest {
-	if m == nil {
-		return nil
-	}
-
-	r := new(GetRangeRequest)
-
-	r.SetBody(
-		GetRangeRequestBodyFromGRPCMessage(m.GetBody()),
-	)
-
-	session.RequestHeadersFromGRPC(m, r)
-
-	return r
-}
-
-func GetRangePartChunkToGRPCMessage(r *GetRangePartChunk) *object.GetRangeResponse_Body_Chunk {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.GetRangeResponse_Body_Chunk)
-
-	m.SetChunk(r.GetChunk())
-
-	return m
-}
-
-func GetRangePartChunkFromGRPCMessage(m *object.GetRangeResponse_Body_Chunk) *GetRangePartChunk {
-	if m == nil {
-		return nil
-	}
-
-	r := new(GetRangePartChunk)
-
-	r.SetChunk(m.GetChunk())
-
-	return r
-}
-
-func GetRangeResponseBodyToGRPCMessage(r *GetRangeResponseBody) *object.GetRangeResponse_Body {
-	if r == nil {
-		return nil
-	}
-
-	m := new(object.GetRangeResponse_Body)
-
-	switch v := r.GetRangePart(); t := v.(type) {
-	case nil:
-	case *GetRangePartChunk:
-		m.SetChunk(
-			GetRangePartChunkToGRPCMessage(t),
-		)
-	case *SplitInfo:
-		m.SetSplitInfo(
-			SplitInfoToGRPCMessage(t),
-		)
-	default:
-		panic(fmt.Sprintf("unknown get range part %T", t))
+		m.SetBody(r.body.ToGRPCMessage().(*object.HeadResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
 	}
 
 	return m
 }
 
-func GetRangeResponseBodyFromGRPCMessage(m *object.GetRangeResponse_Body) *GetRangeResponseBody {
-	if m == nil {
-		return nil
+func (r *HeadResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.HeadResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetRangeResponseBody)
+	var err error
 
-	switch v := m.GetRangePart().(type) {
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(HeadResponseBody)
+		}
+
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return r.ResponseHeaders.FromMessage(v)
+}
+
+func (f *SearchFilter) ToGRPCMessage() grpc.Message {
+	var m *object.SearchRequest_Body_Filter
+
+	if f != nil {
+		m = new(object.SearchRequest_Body_Filter)
+
+		m.SetKey(f.key)
+		m.SetValue(f.val)
+		m.SetMatchType(MatchTypeToGRPCField(f.matchType))
+	}
+
+	return m
+}
+
+func (f *SearchFilter) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.SearchRequest_Body_Filter)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	f.key = v.GetKey()
+	f.val = v.GetValue()
+	f.matchType = MatchTypeFromGRPCField(v.GetMatchType())
+
+	return nil
+}
+
+func SearchFiltersToGRPC(fs []*SearchFilter) (res []*object.SearchRequest_Body_Filter) {
+	if fs != nil {
+		res = make([]*object.SearchRequest_Body_Filter, 0, len(fs))
+
+		for i := range fs {
+			res = append(res, fs[i].ToGRPCMessage().(*object.SearchRequest_Body_Filter))
+		}
+	}
+
+	return
+}
+
+func SearchFiltersFromGRPC(fs []*object.SearchRequest_Body_Filter) (res []*SearchFilter, err error) {
+	if fs != nil {
+		res = make([]*SearchFilter, 0, len(fs))
+
+		for i := range fs {
+			var x *SearchFilter
+
+			if fs[i] != nil {
+				x = new(SearchFilter)
+
+				err = x.FromGRPCMessage(fs[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, x)
+		}
+	}
+
+	return
+}
+
+func (r *SearchRequestBody) ToGRPCMessage() grpc.Message {
+	var m *object.SearchRequest_Body
+
+	if r != nil {
+		m = new(object.SearchRequest_Body)
+
+		m.SetContainerId(r.cid.ToGRPCMessage().(*refsGRPC.ContainerID))
+		m.SetFilters(SearchFiltersToGRPC(r.filters))
+		m.SetVersion(r.version)
+	}
+
+	return m
+}
+
+func (r *SearchRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.SearchRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	cid := v.GetContainerId()
+	if cid == nil {
+		r.cid = nil
+	} else {
+		if r.cid == nil {
+			r.cid = new(refs.ContainerID)
+		}
+
+		err = r.cid.FromGRPCMessage(cid)
+		if err != nil {
+			return err
+		}
+	}
+
+	r.filters, err = SearchFiltersFromGRPC(v.GetFilters())
+	if err != nil {
+		return err
+	}
+
+	r.version = v.GetVersion()
+
+	return nil
+}
+
+func (r *SearchRequest) ToGRPCMessage() grpc.Message {
+	var m *object.SearchRequest
+
+	if r != nil {
+		m = new(object.SearchRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*object.SearchRequest_Body))
+		r.RequestHeaders.ToMessage(m)
+	}
+
+	return m
+}
+
+func (r *SearchRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.SearchRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(SearchRequestBody)
+		}
+
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return r.RequestHeaders.FromMessage(v)
+}
+
+func (r *SearchResponseBody) ToGRPCMessage() grpc.Message {
+	var m *object.SearchResponse_Body
+
+	if r != nil {
+		m = new(object.SearchResponse_Body)
+
+		m.SetIdList(refs.ObjectIDListToGRPCMessage(r.idList))
+	}
+
+	return m
+}
+
+func (r *SearchResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.SearchResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	r.idList, err = refs.ObjectIDListFromGRPCMessage(v.GetIdList())
+
+	return err
+}
+
+func (r *SearchResponse) ToGRPCMessage() grpc.Message {
+	var m *object.SearchResponse
+
+	if r != nil {
+		m = new(object.SearchResponse)
+
+		m.SetBody(r.body.ToGRPCMessage().(*object.SearchResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
+	}
+
+	return m
+}
+
+func (r *SearchResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.SearchResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(SearchResponseBody)
+		}
+
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return r.ResponseHeaders.FromMessage(v)
+}
+
+func (r *Range) ToGRPCMessage() grpc.Message {
+	var m *object.Range
+
+	if r != nil {
+		m = new(object.Range)
+
+		m.SetLength(r.len)
+		m.SetOffset(r.off)
+	}
+
+	return m
+}
+
+func (r *Range) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.Range)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	r.len = v.GetLength()
+	r.off = v.GetOffset()
+
+	return nil
+}
+
+func RangesToGRPC(rs []*Range) (res []*object.Range) {
+	if rs != nil {
+		res = make([]*object.Range, 0, len(rs))
+
+		for i := range rs {
+			res = append(res, rs[i].ToGRPCMessage().(*object.Range))
+		}
+	}
+
+	return
+}
+
+func RangesFromGRPC(rs []*object.Range) (res []*Range, err error) {
+	if rs != nil {
+		res = make([]*Range, 0, len(rs))
+
+		for i := range rs {
+			var r *Range
+
+			if rs[i] != nil {
+				r = new(Range)
+
+				err = r.FromGRPCMessage(rs[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, r)
+		}
+	}
+
+	return
+}
+
+func (r *GetRangeRequestBody) ToGRPCMessage() grpc.Message {
+	var m *object.GetRangeRequest_Body
+
+	if r != nil {
+		m = new(object.GetRangeRequest_Body)
+
+		m.SetAddress(r.addr.ToGRPCMessage().(*refsGRPC.Address))
+		m.SetRange(r.rng.ToGRPCMessage().(*object.Range))
+		m.SetRaw(r.raw)
+	}
+
+	return m
+}
+
+func (r *GetRangeRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetRangeRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	addr := v.GetAddress()
+	if addr == nil {
+		r.addr = nil
+	} else {
+		if r.addr == nil {
+			r.addr = new(refs.Address)
+		}
+
+		err = r.addr.FromGRPCMessage(addr)
+		if err != nil {
+			return err
+		}
+	}
+
+	rng := v.GetRange()
+	if rng == nil {
+		r.rng = nil
+	} else {
+		if r.rng == nil {
+			r.rng = new(Range)
+		}
+
+		err = r.rng.FromGRPCMessage(rng)
+		if err != nil {
+			return err
+		}
+	}
+
+	r.raw = v.GetRaw()
+
+	return nil
+}
+
+func (r *GetRangeRequest) ToGRPCMessage() grpc.Message {
+	var m *object.GetRangeRequest
+
+	if r != nil {
+		m = new(object.GetRangeRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*object.GetRangeRequest_Body))
+		r.RequestHeaders.ToMessage(m)
+	}
+
+	return m
+}
+
+func (r *GetRangeRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetRangeRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(GetRangeRequestBody)
+		}
+
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return r.RequestHeaders.FromMessage(v)
+}
+
+func (r *GetRangePartChunk) ToGRPCMessage() grpc.Message {
+	var m *object.GetRangeResponse_Body_Chunk
+
+	if r != nil {
+		m = new(object.GetRangeResponse_Body_Chunk)
+
+		m.SetChunk(r.chunk)
+	}
+
+	return m
+}
+
+func (r *GetRangePartChunk) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetRangeResponse_Body_Chunk)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	r.chunk = v.GetChunk()
+
+	return nil
+}
+
+func (r *GetRangeResponseBody) ToGRPCMessage() grpc.Message {
+	var m *object.GetRangeResponse_Body
+
+	if r != nil {
+		m = new(object.GetRangeResponse_Body)
+
+		switch v := r.rngPart.(type) {
+		case nil:
+			m.RangePart = nil
+		case *GetRangePartChunk:
+			m.SetChunk(v.ToGRPCMessage().(*object.GetRangeResponse_Body_Chunk))
+		case *SplitInfo:
+			m.SetSplitInfo(v.ToGRPCMessage().(*object.SplitInfo))
+		default:
+			panic(fmt.Sprintf("unknown get range part %T", v))
+		}
+	}
+
+	return m
+}
+
+func (r *GetRangeResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetRangeResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	r.rngPart = nil
+
+	switch pt := v.GetRangePart().(type) {
 	case nil:
 	case *object.GetRangeResponse_Body_Chunk:
-		r.SetRangePart(
-			GetRangePartChunkFromGRPCMessage(v),
-		)
+		if pt != nil {
+			partChunk := new(GetRangePartChunk)
+			r.rngPart = partChunk
+			err = partChunk.FromGRPCMessage(pt)
+		}
 	case *object.GetRangeResponse_Body_SplitInfo:
-		r.SetRangePart(
-			SplitInfoFromGRPCMessage(v.SplitInfo),
-		)
+		if pt != nil {
+			partSplit := new(SplitInfo)
+			r.rngPart = partSplit
+			err = partSplit.FromGRPCMessage(pt)
+		}
 	default:
-		panic(fmt.Sprintf("unknown get range part %T", v))
+		err = errors.Errorf("unknown get range part %T", pt)
 	}
 
-	return r
+	return err
 }
 
-func GetRangeResponseToGRPCMessage(r *GetRangeResponse) *object.GetRangeResponse {
-	if r == nil {
-		return nil
+func (r *GetRangeResponse) ToGRPCMessage() grpc.Message {
+	var m *object.GetRangeResponse
+
+	if r != nil {
+		m = new(object.GetRangeResponse)
+
+		m.SetBody(r.body.ToGRPCMessage().(*object.GetRangeResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
 	}
-
-	m := new(object.GetRangeResponse)
-
-	m.SetBody(
-		GetRangeResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
 
-func GetRangeResponseFromGRPCMessage(m *object.GetRangeResponse) *GetRangeResponse {
-	if m == nil {
-		return nil
+func (r *GetRangeResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetRangeResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetRangeResponse)
+	var err error
 
-	r.SetBody(
-		GetRangeResponseBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(GetRangeResponseBody)
+		}
 
-	session.ResponseHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.ResponseHeaders.FromMessage(v)
 }
 
-func GetRangeHashRequestBodyToGRPCMessage(r *GetRangeHashRequestBody) *object.GetRangeHashRequest_Body {
-	if r == nil {
-		return nil
+func (r *GetRangeHashRequestBody) ToGRPCMessage() grpc.Message {
+	var m *object.GetRangeHashRequest_Body
+
+	if r != nil {
+		m = new(object.GetRangeHashRequest_Body)
+
+		m.SetAddress(r.addr.ToGRPCMessage().(*refsGRPC.Address))
+		m.SetRanges(RangesToGRPC(r.rngs))
+		m.SetType(refs.ChecksumTypeToGRPC(r.typ))
+		m.SetSalt(r.salt)
 	}
-
-	m := new(object.GetRangeHashRequest_Body)
-
-	m.SetAddress(
-		refs.AddressToGRPCMessage(r.GetAddress()),
-	)
-
-	m.SetSalt(r.GetSalt())
-
-	rngs := r.GetRanges()
-	rngMsg := make([]*object.Range, 0, len(rngs))
-
-	for i := range rngs {
-		rngMsg = append(rngMsg, RangeToGRPCMessage(rngs[i]))
-	}
-
-	m.SetRanges(rngMsg)
-
-	m.SetType(refsGRPC.ChecksumType(r.GetType()))
 
 	return m
 }
 
-func GetRangeHashRequestBodyFromGRPCMessage(m *object.GetRangeHashRequest_Body) *GetRangeHashRequestBody {
-	if m == nil {
-		return nil
+func (r *GetRangeHashRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetRangeHashRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetRangeHashRequestBody)
+	var err error
 
-	r.SetAddress(
-		refs.AddressFromGRPCMessage(m.GetAddress()),
-	)
+	addr := v.GetAddress()
+	if addr == nil {
+		r.addr = nil
+	} else {
+		if r.addr == nil {
+			r.addr = new(refs.Address)
+		}
 
-	r.SetSalt(m.GetSalt())
-
-	rngMsg := m.GetRanges()
-	rngs := make([]*Range, 0, len(rngMsg))
-
-	for i := range rngMsg {
-		rngs = append(rngs, RangeFromGRPCMessage(rngMsg[i]))
+		err = r.addr.FromGRPCMessage(addr)
+		if err != nil {
+			return err
+		}
 	}
 
-	r.SetRanges(rngs)
+	r.rngs, err = RangesFromGRPC(v.GetRanges())
+	if err != nil {
+		return err
+	}
 
-	r.SetType(refs.ChecksumType(m.GetType()))
+	r.typ = refs.ChecksumTypeFromGRPC(v.GetType())
+	r.salt = v.GetSalt()
 
-	return r
+	return nil
 }
 
-func GetRangeHashRequestToGRPCMessage(r *GetRangeHashRequest) *object.GetRangeHashRequest {
-	if r == nil {
-		return nil
+func (r *GetRangeHashRequest) ToGRPCMessage() grpc.Message {
+	var m *object.GetRangeHashRequest
+
+	if r != nil {
+		m = new(object.GetRangeHashRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*object.GetRangeHashRequest_Body))
+		r.RequestHeaders.ToMessage(m)
 	}
-
-	m := new(object.GetRangeHashRequest)
-
-	m.SetBody(
-		GetRangeHashRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
 
-func GetRangeHashRequestFromGRPCMessage(m *object.GetRangeHashRequest) *GetRangeHashRequest {
-	if m == nil {
-		return nil
+func (r *GetRangeHashRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetRangeHashRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetRangeHashRequest)
+	var err error
 
-	r.SetBody(
-		GetRangeHashRequestBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(GetRangeHashRequestBody)
+		}
 
-	session.RequestHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.RequestHeaders.FromMessage(v)
 }
 
-func GetRangeHashResponseBodyToGRPCMessage(r *GetRangeHashResponseBody) *object.GetRangeHashResponse_Body {
-	if r == nil {
-		return nil
+func (r *GetRangeHashResponseBody) ToGRPCMessage() grpc.Message {
+	var m *object.GetRangeHashResponse_Body
+
+	if r != nil {
+		m = new(object.GetRangeHashResponse_Body)
+
+		m.SetType(refs.ChecksumTypeToGRPC(r.typ))
+		m.SetHashList(r.hashList)
 	}
-
-	m := new(object.GetRangeHashResponse_Body)
-
-	m.SetType(refsGRPC.ChecksumType(r.GetType()))
-
-	m.SetHashList(r.GetHashList())
 
 	return m
 }
 
-func GetRangeHashResponseBodyFromGRPCMessage(m *object.GetRangeHashResponse_Body) *GetRangeHashResponseBody {
-	if m == nil {
-		return nil
+func (r *GetRangeHashResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetRangeHashResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetRangeHashResponseBody)
+	r.typ = refs.ChecksumTypeFromGRPC(v.GetType())
+	r.hashList = v.GetHashList()
 
-	r.SetType(refs.ChecksumType(m.GetType()))
-
-	r.SetHashList(m.GetHashList())
-
-	return r
+	return nil
 }
 
-func GetRangeHashResponseToGRPCMessage(r *GetRangeHashResponse) *object.GetRangeHashResponse {
-	if r == nil {
-		return nil
+func (r *GetRangeHashResponse) ToGRPCMessage() grpc.Message {
+	var m *object.GetRangeHashResponse
+
+	if r != nil {
+		m = new(object.GetRangeHashResponse)
+
+		m.SetBody(r.body.ToGRPCMessage().(*object.GetRangeHashResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
 	}
-
-	m := new(object.GetRangeHashResponse)
-
-	m.SetBody(
-		GetRangeHashResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
 
-func GetRangeHashResponseFromGRPCMessage(m *object.GetRangeHashResponse) *GetRangeHashResponse {
-	if m == nil {
-		return nil
+func (r *GetRangeHashResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*object.GetRangeHashResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetRangeHashResponse)
+	var err error
 
-	r.SetBody(
-		GetRangeHashResponseBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(GetRangeHashResponseBody)
+		}
 
-	session.ResponseHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.ResponseHeaders.FromMessage(v)
 }

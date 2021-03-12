@@ -1,153 +1,178 @@
 package accounting
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-api-go/v2/session"
+	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
-func BalanceRequestBodyToGRPCMessage(b *BalanceRequestBody) *accounting.BalanceRequest_Body {
-	if b == nil {
-		return nil
+func (b *BalanceRequestBody) ToGRPCMessage() grpc.Message {
+	var m *accounting.BalanceRequest_Body
+
+	if b != nil {
+		m = new(accounting.BalanceRequest_Body)
+
+		m.SetOwnerId(b.ownerID.ToGRPCMessage().(*refsGRPC.OwnerID))
 	}
-
-	m := new(accounting.BalanceRequest_Body)
-
-	m.SetOwnerId(
-		refs.OwnerIDToGRPCMessage(b.GetOwnerID()),
-	)
 
 	return m
 }
 
-func BalanceRequestBodyFromGRPCMessage(m *accounting.BalanceRequest_Body) *BalanceRequestBody {
-	if m == nil {
-		return nil
+func (b *BalanceRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*accounting.BalanceRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	b := new(BalanceRequestBody)
+	var err error
 
-	b.SetOwnerID(
-		refs.OwnerIDFromGRPCMessage(m.GetOwnerId()),
-	)
+	ownerID := v.GetOwnerId()
+	if ownerID == nil {
+		b.ownerID = nil
+	} else {
+		if b.ownerID == nil {
+			b.ownerID = new(refs.OwnerID)
+		}
 
-	return b
+		err = b.ownerID.FromGRPCMessage(ownerID)
+	}
+
+	return err
 }
 
-func BalanceRequestToGRPCMessage(b *BalanceRequest) *accounting.BalanceRequest {
-	if b == nil {
-		return nil
+func (b *BalanceRequest) ToGRPCMessage() grpc.Message {
+	var m *accounting.BalanceRequest
+
+	if b != nil {
+		m = new(accounting.BalanceRequest)
+
+		m.SetBody(b.body.ToGRPCMessage().(*accounting.BalanceRequest_Body))
+		b.RequestHeaders.ToMessage(m)
 	}
-
-	m := new(accounting.BalanceRequest)
-
-	m.SetBody(
-		BalanceRequestBodyToGRPCMessage(b.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(b, m)
 
 	return m
 }
 
-func BalanceRequestFromGRPCMessage(m *accounting.BalanceRequest) *BalanceRequest {
-	if m == nil {
-		return nil
+func (b *BalanceRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*accounting.BalanceRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	b := new(BalanceRequest)
+	var err error
 
-	b.SetBody(
-		BalanceRequestBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		b.body = nil
+	} else {
+		if b.body == nil {
+			b.body = new(BalanceRequestBody)
+		}
 
-	session.RequestHeadersFromGRPC(m, b)
+		err = b.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return b
+	return b.RequestHeaders.FromMessage(v)
 }
 
-func DecimalToGRPCMessage(d *Decimal) *accounting.Decimal {
-	if d == nil {
-		return nil
+func (d *Decimal) ToGRPCMessage() grpc.Message {
+	var m *accounting.Decimal
+
+	if d != nil {
+		m = new(accounting.Decimal)
+
+		m.SetValue(d.val)
+		m.SetPrecision(d.prec)
 	}
-
-	m := new(accounting.Decimal)
-
-	m.SetValue(d.GetValue())
-	m.SetPrecision(d.GetPrecision())
 
 	return m
 }
 
-func DecimalFromGRPCMessage(m *accounting.Decimal) *Decimal {
-	if m == nil {
-		return nil
+func (d *Decimal) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*accounting.Decimal)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	d := new(Decimal)
+	d.val = v.GetValue()
+	d.prec = v.GetPrecision()
 
-	d.SetValue(m.GetValue())
-	d.SetPrecision(m.GetPrecision())
-
-	return d
+	return nil
 }
 
-func BalanceResponseBodyToGRPCMessage(br *BalanceResponseBody) *accounting.BalanceResponse_Body {
-	if br == nil {
-		return nil
+func (br *BalanceResponseBody) ToGRPCMessage() grpc.Message {
+	var m *accounting.BalanceResponse_Body
+
+	if br != nil {
+		m = new(accounting.BalanceResponse_Body)
+
+		m.SetBalance(br.bal.ToGRPCMessage().(*accounting.Decimal))
 	}
-
-	m := new(accounting.BalanceResponse_Body)
-
-	m.SetBalance(
-		DecimalToGRPCMessage(br.GetBalance()),
-	)
 
 	return m
 }
 
-func BalanceResponseBodyFromGRPCMessage(m *accounting.BalanceResponse_Body) *BalanceResponseBody {
-	if m == nil {
-		return nil
+func (br *BalanceResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*accounting.BalanceResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	br := new(BalanceResponseBody)
+	var err error
 
-	br.SetBalance(
-		DecimalFromGRPCMessage(m.GetBalance()),
-	)
+	bal := v.GetBalance()
+	if bal == nil {
+		br.bal = nil
+	} else {
+		if br.bal == nil {
+			br.bal = new(Decimal)
+		}
 
-	return br
+		err = br.bal.FromGRPCMessage(bal)
+	}
+
+	return err
 }
 
-func BalanceResponseToGRPCMessage(br *BalanceResponse) *accounting.BalanceResponse {
-	if br == nil {
-		return nil
+func (br *BalanceResponse) ToGRPCMessage() grpc.Message {
+	var m *accounting.BalanceResponse
+
+	if br != nil {
+		m = new(accounting.BalanceResponse)
+
+		m.SetBody(br.body.ToGRPCMessage().(*accounting.BalanceResponse_Body))
+		br.ResponseHeaders.ToMessage(m)
 	}
-
-	m := new(accounting.BalanceResponse)
-
-	m.SetBody(
-		BalanceResponseBodyToGRPCMessage(br.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(br, m)
 
 	return m
 }
 
-func BalanceResponseFromGRPCMessage(m *accounting.BalanceResponse) *BalanceResponse {
-	if m == nil {
-		return nil
+func (br *BalanceResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*accounting.BalanceResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	br := new(BalanceResponse)
+	var err error
 
-	br.SetBody(
-		BalanceResponseBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		br.body = nil
+	} else {
+		if br.body == nil {
+			br.body = new(BalanceResponseBody)
+		}
 
-	session.ResponseHeadersFromGRPC(m, br)
+		err = br.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return br
+	return br.ResponseHeaders.FromMessage(v)
 }

@@ -1,10 +1,10 @@
 package storagegroup
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	storagegroup "github.com/nspcc-dev/neofs-api-go/v2/storagegroup/grpc"
-	goproto "google.golang.org/protobuf/proto"
 )
 
 const (
@@ -74,12 +74,5 @@ func (s *StorageGroup) StableSize() (size int) {
 }
 
 func (s *StorageGroup) Unmarshal(data []byte) error {
-	m := new(storagegroup.StorageGroup)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*s = *StorageGroupFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(s, data, new(storagegroup.StorageGroup))
 }

@@ -107,6 +107,12 @@ type GetObjectPartChunk struct {
 	chunk []byte
 }
 
+type GetRequest struct {
+	body *GetRequestBody
+
+	session.RequestHeaders
+}
+
 type GetResponseBody struct {
 	objPart GetObjectPart
 }
@@ -129,20 +135,50 @@ type PutObjectPartChunk struct {
 	chunk []byte
 }
 
+type GetResponse struct {
+	body *GetResponseBody
+
+	session.ResponseHeaders
+}
+
 type PutRequestBody struct {
 	objPart PutObjectPart
+}
+
+type PutRequest struct {
+	body *PutRequestBody
+
+	session.RequestHeaders
 }
 
 type PutResponseBody struct {
 	id *refs.ObjectID
 }
 
+type PutResponse struct {
+	body *PutResponseBody
+
+	session.ResponseHeaders
+}
+
 type DeleteRequestBody struct {
 	addr *refs.Address
 }
 
+type DeleteRequest struct {
+	body *DeleteRequestBody
+
+	session.RequestHeaders
+}
+
 type DeleteResponseBody struct {
 	tombstone *refs.Address
+}
+
+type DeleteResponse struct {
+	body *DeleteResponseBody
+
+	session.ResponseHeaders
 }
 
 type HeadRequestBody struct {
@@ -155,8 +191,20 @@ type GetHeaderPart interface {
 	getHeaderPart()
 }
 
+type HeadRequest struct {
+	body *HeadRequestBody
+
+	session.RequestHeaders
+}
+
 type HeadResponseBody struct {
 	hdrPart GetHeaderPart
+}
+
+type HeadResponse struct {
+	body *HeadResponseBody
+
+	session.ResponseHeaders
 }
 
 type SearchFilter struct {
@@ -173,8 +221,20 @@ type SearchRequestBody struct {
 	filters []*SearchFilter
 }
 
+type SearchRequest struct {
+	body *SearchRequestBody
+
+	session.RequestHeaders
+}
+
 type SearchResponseBody struct {
 	idList []*refs.ObjectID
+}
+
+type SearchResponse struct {
+	body *SearchResponseBody
+
+	session.ResponseHeaders
 }
 
 type Range struct {
@@ -189,6 +249,12 @@ type GetRangeRequestBody struct {
 	raw bool
 }
 
+type GetRangeRequest struct {
+	body *GetRangeRequestBody
+
+	session.RequestHeaders
+}
+
 type GetRangePart interface {
 	getRangePart()
 }
@@ -201,6 +267,12 @@ type GetRangeResponseBody struct {
 	rngPart GetRangePart
 }
 
+type GetRangeResponse struct {
+	body *GetRangeResponseBody
+
+	session.ResponseHeaders
+}
+
 type GetRangeHashRequestBody struct {
 	addr *refs.Address
 
@@ -211,10 +283,22 @@ type GetRangeHashRequestBody struct {
 	typ refs.ChecksumType
 }
 
+type GetRangeHashRequest struct {
+	body *GetRangeHashRequestBody
+
+	session.RequestHeaders
+}
+
 type GetRangeHashResponseBody struct {
 	typ refs.ChecksumType
 
 	hashList [][]byte
+}
+
+type GetRangeHashResponse struct {
+	body *GetRangeHashResponseBody
+
+	session.ResponseHeaders
 }
 
 const (
@@ -772,34 +856,6 @@ func (r *GetRequest) SetBody(v *GetRequestBody) {
 	}
 }
 
-func (r *GetRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *GetRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *GetRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *GetRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 func (r *GetObjectPartInit) GetObjectID() *refs.ObjectID {
 	if r != nil {
 		return r.id
@@ -885,34 +941,6 @@ func (r *GetResponse) GetBody() *GetResponseBody {
 func (r *GetResponse) SetBody(v *GetResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *GetResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *GetResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *GetResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *GetResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -1018,34 +1046,6 @@ func (r *PutRequest) SetBody(v *PutRequestBody) {
 	}
 }
 
-func (r *PutRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *PutRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *PutRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *PutRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 func (r *PutResponseBody) GetObjectID() *refs.ObjectID {
 	if r != nil {
 		return r.id
@@ -1071,34 +1071,6 @@ func (r *PutResponse) GetBody() *PutResponseBody {
 func (r *PutResponse) SetBody(v *PutResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *PutResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *PutResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *PutResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *PutResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -1130,34 +1102,6 @@ func (r *DeleteRequest) SetBody(v *DeleteRequestBody) {
 	}
 }
 
-func (r *DeleteRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *DeleteRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *DeleteRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *DeleteRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 // GetTombstone returns tombstone address.
 func (r *DeleteResponseBody) GetTombstone() *refs.Address {
 	if r != nil {
@@ -1185,34 +1129,6 @@ func (r *DeleteResponse) GetBody() *DeleteResponseBody {
 func (r *DeleteResponse) SetBody(v *DeleteResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *DeleteResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *DeleteResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *DeleteResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *DeleteResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -1272,34 +1188,6 @@ func (r *HeadRequest) SetBody(v *HeadRequestBody) {
 	}
 }
 
-func (r *HeadRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *HeadRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *HeadRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *HeadRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 func (r *HeadResponseBody) GetHeaderPart() GetHeaderPart {
 	if r != nil {
 		return r.hdrPart
@@ -1325,34 +1213,6 @@ func (r *HeadResponse) GetBody() *HeadResponseBody {
 func (r *HeadResponse) SetBody(v *HeadResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *HeadResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *HeadResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *HeadResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *HeadResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -1454,34 +1314,6 @@ func (r *SearchRequest) SetBody(v *SearchRequestBody) {
 	}
 }
 
-func (r *SearchRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *SearchRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *SearchRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *SearchRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 func (r *SearchResponseBody) GetIDList() []*refs.ObjectID {
 	if r != nil {
 		return r.idList
@@ -1507,34 +1339,6 @@ func (r *SearchResponse) GetBody() *SearchResponseBody {
 func (r *SearchResponse) SetBody(v *SearchResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *SearchResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *SearchResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *SearchResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *SearchResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -1622,34 +1426,6 @@ func (r *GetRangeRequest) SetBody(v *GetRangeRequestBody) {
 	}
 }
 
-func (r *GetRangeRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *GetRangeRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *GetRangeRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *GetRangeRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 func (r *GetRangePartChunk) GetChunk() []byte {
 	if r != nil {
 		return r.chunk
@@ -1691,34 +1467,6 @@ func (r *GetRangeResponse) GetBody() *GetRangeResponseBody {
 func (r *GetRangeResponse) SetBody(v *GetRangeResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *GetRangeResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *GetRangeResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *GetRangeResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *GetRangeResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }
 
@@ -1792,34 +1540,6 @@ func (r *GetRangeHashRequest) SetBody(v *GetRangeHashRequestBody) {
 	}
 }
 
-func (r *GetRangeHashRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *GetRangeHashRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *GetRangeHashRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *GetRangeHashRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
-	}
-}
-
 func (r *GetRangeHashResponseBody) GetType() refs.ChecksumType {
 	if r != nil {
 		return r.typ
@@ -1859,33 +1579,5 @@ func (r *GetRangeHashResponse) GetBody() *GetRangeHashResponseBody {
 func (r *GetRangeHashResponse) SetBody(v *GetRangeHashResponseBody) {
 	if r != nil {
 		r.body = v
-	}
-}
-
-func (r *GetRangeHashResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if r != nil {
-		return r.metaHeader
-	}
-
-	return nil
-}
-
-func (r *GetRangeHashResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if r != nil {
-		r.metaHeader = v
-	}
-}
-
-func (r *GetRangeHashResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if r != nil {
-		return r.verifyHeader
-	}
-
-	return nil
-}
-
-func (r *GetRangeHashResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if r != nil {
-		r.verifyHeader = v
 	}
 }

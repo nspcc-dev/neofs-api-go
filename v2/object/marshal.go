@@ -1,10 +1,10 @@
 package object
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 	object "github.com/nspcc-dev/neofs-api-go/v2/object/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	goproto "google.golang.org/protobuf/proto"
 )
 
 const (
@@ -193,14 +193,7 @@ func (h *ShortHeader) StableSize() (size int) {
 }
 
 func (h *ShortHeader) Unmarshal(data []byte) error {
-	m := new(object.ShortHeader)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*h = *ShortHeaderFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(h, data, new(object.ShortHeader))
 }
 
 func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
@@ -244,14 +237,7 @@ func (a *Attribute) StableSize() (size int) {
 }
 
 func (a *Attribute) Unmarshal(data []byte) error {
-	m := new(object.Header_Attribute)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*a = *AttributeFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(a, data, new(object.Header_Attribute))
 }
 
 func (h *SplitHeader) StableMarshal(buf []byte) ([]byte, error) {
@@ -327,14 +313,7 @@ func (h *SplitHeader) StableSize() (size int) {
 }
 
 func (h *SplitHeader) Unmarshal(data []byte) error {
-	m := new(object.Header_Split)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*h = *SplitHeaderFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(h, data, new(object.Header_Split))
 }
 
 func (h *Header) StableMarshal(buf []byte) ([]byte, error) {
@@ -454,14 +433,7 @@ func (h *Header) StableSize() (size int) {
 }
 
 func (h *Header) Unmarshal(data []byte) error {
-	m := new(object.Header)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*h = *HeaderFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(h, data, new(object.Header))
 }
 
 func (h *HeaderWithSignature) StableMarshal(buf []byte) ([]byte, error) {
@@ -505,14 +477,7 @@ func (h *HeaderWithSignature) StableSize() (size int) {
 }
 
 func (h *HeaderWithSignature) Unmarshal(data []byte) error {
-	m := new(object.HeaderWithSignature)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*h = *HeaderWithSignatureFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(h, data, new(object.HeaderWithSignature))
 }
 
 func (o *Object) StableMarshal(buf []byte) ([]byte, error) {
@@ -571,30 +536,8 @@ func (o *Object) StableSize() (size int) {
 	return size
 }
 
-func (o *Object) StableUnmarshal(data []byte) error {
-	if o == nil {
-		return nil
-	}
-
-	objGRPC := new(object.Object)
-	if err := goproto.Unmarshal(data, objGRPC); err != nil {
-		return err
-	}
-
-	*o = *ObjectFromGRPCMessage(objGRPC)
-
-	return nil
-}
-
 func (o *Object) Unmarshal(data []byte) error {
-	m := new(object.Object)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*o = *ObjectFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(o, data, new(object.Object))
 }
 
 func (s *SplitInfo) StableMarshal(buf []byte) ([]byte, error) {
@@ -646,14 +589,7 @@ func (s *SplitInfo) StableSize() (size int) {
 }
 
 func (s *SplitInfo) Unmarshal(data []byte) error {
-	m := new(object.SplitInfo)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*s = *SplitInfoFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(s, data, new(object.SplitInfo))
 }
 
 func (r *GetRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -694,6 +630,10 @@ func (r *GetRequestBody) StableSize() (size int) {
 	size += proto.BoolSize(getReqBodyRawFlagField, r.raw)
 
 	return size
+}
+
+func (r *GetRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.GetRequest_Body))
 }
 
 func (r *GetObjectPartInit) StableMarshal(buf []byte) ([]byte, error) {
@@ -744,6 +684,10 @@ func (r *GetObjectPartInit) StableSize() (size int) {
 	return size
 }
 
+func (r *GetObjectPartInit) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.GetResponse_Body_Init))
+}
+
 func (r *GetResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -753,28 +697,27 @@ func (r *GetResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	if r.objPart != nil {
-		switch v := r.objPart.(type) {
-		case *GetObjectPartInit:
-			_, err := proto.NestedStructureMarshal(getRespBodyInitField, buf, v)
-			if err != nil {
-				return nil, err
-			}
-		case *GetObjectPartChunk:
-			if v != nil {
-				_, err := proto.BytesMarshal(getRespBodyChunkField, buf, v.chunk)
-				if err != nil {
-					return nil, err
-				}
-			}
-		case *SplitInfo:
-			_, err := proto.NestedStructureMarshal(getRespBodySplitInfoField, buf, v)
-			if err != nil {
-				return nil, err
-			}
-		default:
-			panic("unknown one of object get response body type")
+	switch v := r.objPart.(type) {
+	case nil:
+	case *GetObjectPartInit:
+		_, err := proto.NestedStructureMarshal(getRespBodyInitField, buf, v)
+		if err != nil {
+			return nil, err
 		}
+	case *GetObjectPartChunk:
+		if v != nil {
+			_, err := proto.BytesMarshal(getRespBodyChunkField, buf, v.chunk)
+			if err != nil {
+				return nil, err
+			}
+		}
+	case *SplitInfo:
+		_, err := proto.NestedStructureMarshal(getRespBodySplitInfoField, buf, v)
+		if err != nil {
+			return nil, err
+		}
+	default:
+		panic("unknown one of object get response body type")
 	}
 
 	return buf, nil
@@ -785,22 +728,25 @@ func (r *GetResponseBody) StableSize() (size int) {
 		return 0
 	}
 
-	if r.objPart != nil {
-		switch v := r.objPart.(type) {
-		case *GetObjectPartInit:
-			size += proto.NestedStructureSize(getRespBodyInitField, v)
-		case *GetObjectPartChunk:
-			if v != nil {
-				size += proto.BytesSize(getRespBodyChunkField, v.chunk)
-			}
-		case *SplitInfo:
-			size += proto.NestedStructureSize(getRespBodySplitInfoField, v)
-		default:
-			panic("unknown one of object get response body type")
+	switch v := r.objPart.(type) {
+	case nil:
+	case *GetObjectPartInit:
+		size += proto.NestedStructureSize(getRespBodyInitField, v)
+	case *GetObjectPartChunk:
+		if v != nil {
+			size += proto.BytesSize(getRespBodyChunkField, v.chunk)
 		}
+	case *SplitInfo:
+		size += proto.NestedStructureSize(getRespBodySplitInfoField, v)
+	default:
+		panic("unknown one of object get response body type")
 	}
 
-	return size
+	return
+}
+
+func (r *GetResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.GetResponse_Body))
 }
 
 func (r *PutObjectPartInit) StableMarshal(buf []byte) ([]byte, error) {
@@ -859,6 +805,10 @@ func (r *PutObjectPartInit) StableSize() (size int) {
 	return size
 }
 
+func (r *PutObjectPartInit) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.PutRequest_Body_Init))
+}
+
 func (r *PutRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -868,23 +818,22 @@ func (r *PutRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	if r.objPart != nil {
-		switch v := r.objPart.(type) {
-		case *PutObjectPartInit:
-			_, err := proto.NestedStructureMarshal(putReqBodyInitField, buf, v)
+	switch v := r.objPart.(type) {
+	case nil:
+	case *PutObjectPartInit:
+		_, err := proto.NestedStructureMarshal(putReqBodyInitField, buf, v)
+		if err != nil {
+			return nil, err
+		}
+	case *PutObjectPartChunk:
+		if v != nil {
+			_, err := proto.BytesMarshal(putReqBodyChunkField, buf, v.chunk)
 			if err != nil {
 				return nil, err
 			}
-		case *PutObjectPartChunk:
-			if v != nil {
-				_, err := proto.BytesMarshal(putReqBodyChunkField, buf, v.chunk)
-				if err != nil {
-					return nil, err
-				}
-			}
-		default:
-			panic("unknown one of object put request body type")
 		}
+	default:
+		panic("unknown one of object put request body type")
 	}
 
 	return buf, nil
@@ -895,20 +844,23 @@ func (r *PutRequestBody) StableSize() (size int) {
 		return 0
 	}
 
-	if r.objPart != nil {
-		switch v := r.objPart.(type) {
-		case *PutObjectPartInit:
-			size += proto.NestedStructureSize(putReqBodyInitField, v)
-		case *PutObjectPartChunk:
-			if v != nil {
-				size += proto.BytesSize(putReqBodyChunkField, v.chunk)
-			}
-		default:
-			panic("unknown one of object get response body type")
+	switch v := r.objPart.(type) {
+	case nil:
+	case *PutObjectPartInit:
+		size += proto.NestedStructureSize(putReqBodyInitField, v)
+	case *PutObjectPartChunk:
+		if v != nil {
+			size += proto.BytesSize(putReqBodyChunkField, v.chunk)
 		}
+	default:
+		panic("unknown one of object get response body type")
 	}
 
 	return size
+}
+
+func (r *PutRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.PutRequest_Body))
 }
 
 func (r *PutResponseBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -938,6 +890,10 @@ func (r *PutResponseBody) StableSize() (size int) {
 	return size
 }
 
+func (r *PutResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.PutResponse_Body))
+}
+
 func (r *DeleteRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -965,6 +921,10 @@ func (r *DeleteRequestBody) StableSize() (size int) {
 	return size
 }
 
+func (r *DeleteRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.DeleteRequest_Body))
+}
+
 func (r *DeleteResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -990,6 +950,10 @@ func (r *DeleteResponseBody) StableSize() (size int) {
 	size += proto.NestedStructureSize(deleteRespBodyTombstoneFNum, r.tombstone)
 
 	return size
+}
+
+func (r *DeleteResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.DeleteResponse_Body))
 }
 
 func (r *HeadRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -1040,6 +1004,10 @@ func (r *HeadRequestBody) StableSize() (size int) {
 	return size
 }
 
+func (r *HeadRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.HeadRequest_Body))
+}
+
 func (r *HeadResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -1049,32 +1017,31 @@ func (r *HeadResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	if r.hdrPart != nil {
-		switch v := r.hdrPart.(type) {
-		case *HeaderWithSignature:
-			if v != nil {
-				_, err := proto.NestedStructureMarshal(headRespBodyHeaderField, buf, v)
-				if err != nil {
-					return nil, err
-				}
+	switch v := r.hdrPart.(type) {
+	case nil:
+	case *HeaderWithSignature:
+		if v != nil {
+			_, err := proto.NestedStructureMarshal(headRespBodyHeaderField, buf, v)
+			if err != nil {
+				return nil, err
 			}
-		case *ShortHeader:
-			if v != nil {
-				_, err := proto.NestedStructureMarshal(headRespBodyShortHeaderField, buf, v)
-				if err != nil {
-					return nil, err
-				}
-			}
-		case *SplitInfo:
-			if v != nil {
-				_, err := proto.NestedStructureMarshal(headRespBodySplitInfoField, buf, v)
-				if err != nil {
-					return nil, err
-				}
-			}
-		default:
-			panic("unknown one of object put request body type")
 		}
+	case *ShortHeader:
+		if v != nil {
+			_, err := proto.NestedStructureMarshal(headRespBodyShortHeaderField, buf, v)
+			if err != nil {
+				return nil, err
+			}
+		}
+	case *SplitInfo:
+		if v != nil {
+			_, err := proto.NestedStructureMarshal(headRespBodySplitInfoField, buf, v)
+			if err != nil {
+				return nil, err
+			}
+		}
+	default:
+		panic("unknown one of object put request body type")
 	}
 
 	return buf, nil
@@ -1085,26 +1052,29 @@ func (r *HeadResponseBody) StableSize() (size int) {
 		return 0
 	}
 
-	if r.hdrPart != nil {
-		switch v := r.hdrPart.(type) {
-		case *HeaderWithSignature:
-			if v != nil {
-				size += proto.NestedStructureSize(headRespBodyHeaderField, v)
-			}
-		case *ShortHeader:
-			if v != nil {
-				size += proto.NestedStructureSize(headRespBodyShortHeaderField, v)
-			}
-		case *SplitInfo:
-			if v != nil {
-				size += proto.NestedStructureSize(headRespBodySplitInfoField, v)
-			}
-		default:
-			panic("unknown one of object put request body type")
+	switch v := r.hdrPart.(type) {
+	case nil:
+	case *HeaderWithSignature:
+		if v != nil {
+			size += proto.NestedStructureSize(headRespBodyHeaderField, v)
 		}
+	case *ShortHeader:
+		if v != nil {
+			size += proto.NestedStructureSize(headRespBodyShortHeaderField, v)
+		}
+	case *SplitInfo:
+		if v != nil {
+			size += proto.NestedStructureSize(headRespBodySplitInfoField, v)
+		}
+	default:
+		panic("unknown one of object put request body type")
 	}
 
-	return size
+	return
+}
+
+func (r *HeadResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.HeadResponse_Body))
 }
 
 func (f *SearchFilter) StableMarshal(buf []byte) ([]byte, error) {
@@ -1153,6 +1123,10 @@ func (f *SearchFilter) StableSize() (size int) {
 	size += proto.StringSize(searchFilterValueField, f.val)
 
 	return size
+}
+
+func (f *SearchFilter) Unmarshal(data []byte) error {
+	return message.Unmarshal(f, data, new(object.SearchRequest_Body_Filter))
 }
 
 func (r *SearchRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -1210,6 +1184,10 @@ func (r *SearchRequestBody) StableSize() (size int) {
 	return size
 }
 
+func (r *SearchRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.SearchRequest_Body))
+}
+
 func (r *SearchResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -1240,6 +1218,10 @@ func (r *SearchResponseBody) StableSize() (size int) {
 	size += refs.ObjectIDNestedListSize(searchRespBodyObjectIDsField, r.idList)
 
 	return size
+}
+
+func (r *SearchResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.SearchResponse_Body))
 }
 
 func (r *Range) StableMarshal(buf []byte) ([]byte, error) {
@@ -1280,6 +1262,10 @@ func (r *Range) StableSize() (size int) {
 	size += proto.UInt64Size(rangeLengthField, r.len)
 
 	return size
+}
+
+func (r *Range) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.Range))
 }
 
 func (r *GetRangeRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -1330,6 +1316,10 @@ func (r *GetRangeRequestBody) StableSize() (size int) {
 	return size
 }
 
+func (r *GetRangeRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.GetRangeRequest_Body))
+}
+
 func (r *GetRangeResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -1339,25 +1329,24 @@ func (r *GetRangeResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	if r.rngPart != nil {
-		switch v := r.rngPart.(type) {
-		case *GetRangePartChunk:
-			if v != nil {
-				_, err := proto.BytesMarshal(getRangeRespChunkField, buf, v.chunk)
-				if err != nil {
-					return nil, err
-				}
+	switch v := r.rngPart.(type) {
+	case nil:
+	case *GetRangePartChunk:
+		if v != nil {
+			_, err := proto.BytesMarshal(getRangeRespChunkField, buf, v.chunk)
+			if err != nil {
+				return nil, err
 			}
-		case *SplitInfo:
-			if v != nil {
-				_, err := proto.NestedStructureMarshal(getRangeRespSplitInfoField, buf, v)
-				if err != nil {
-					return nil, err
-				}
-			}
-		default:
-			panic("unknown one of object get range request body type")
 		}
+	case *SplitInfo:
+		if v != nil {
+			_, err := proto.NestedStructureMarshal(getRangeRespSplitInfoField, buf, v)
+			if err != nil {
+				return nil, err
+			}
+		}
+	default:
+		panic("unknown one of object get range request body type")
 	}
 
 	return buf, nil
@@ -1368,22 +1357,25 @@ func (r *GetRangeResponseBody) StableSize() (size int) {
 		return 0
 	}
 
-	if r.rngPart != nil {
-		switch v := r.rngPart.(type) {
-		case *GetRangePartChunk:
-			if v != nil {
-				size += proto.BytesSize(getRangeRespChunkField, v.chunk)
-			}
-		case *SplitInfo:
-			if v != nil {
-				size = proto.NestedStructureSize(getRangeRespSplitInfoField, v)
-			}
-		default:
-			panic("unknown one of object get range request body type")
+	switch v := r.rngPart.(type) {
+	case nil:
+	case *GetRangePartChunk:
+		if v != nil {
+			size += proto.BytesSize(getRangeRespChunkField, v.chunk)
 		}
+	case *SplitInfo:
+		if v != nil {
+			size = proto.NestedStructureSize(getRangeRespSplitInfoField, v)
+		}
+	default:
+		panic("unknown one of object get range request body type")
 	}
 
-	return size
+	return
+}
+
+func (r *GetRangeResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.GetRangeResponse_Body))
 }
 
 func (r *GetRangeHashRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -1448,6 +1440,10 @@ func (r *GetRangeHashRequestBody) StableSize() (size int) {
 	return size
 }
 
+func (r *GetRangeHashRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.GetRangeHashRequest_Body))
+}
+
 func (r *GetRangeHashResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -1486,4 +1482,8 @@ func (r *GetRangeHashResponseBody) StableSize() (size int) {
 	size += proto.RepeatedBytesSize(getRangeHashRespBodyHashListField, r.hashList)
 
 	return size
+}
+
+func (r *GetRangeHashResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(r, data, new(object.GetRangeHashResponse_Body))
 }

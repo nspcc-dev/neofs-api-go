@@ -1,146 +1,62 @@
 package acl
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func (f *HeaderFilter) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		HeaderFilterToGRPCMessage(f),
-	)
+	return message.MarshalJSON(f)
 }
 
 func (f *HeaderFilter) UnmarshalJSON(data []byte) error {
-	msg := new(acl.EACLRecord_Filter)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*f = *HeaderFilterFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(f, data, new(acl.EACLRecord_Filter))
 }
 
 func (t *Target) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		TargetToGRPCMessage(t),
-	)
+	return message.MarshalJSON(t)
 }
 
 func (t *Target) UnmarshalJSON(data []byte) error {
-	msg := new(acl.EACLRecord_Target)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*t = *TargetInfoFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(t, data, new(acl.EACLRecord_Target))
 }
 
 func (r *Record) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		RecordToGRPCMessage(r),
-	)
+	return message.MarshalJSON(r)
 }
 
 func (r *Record) UnmarshalJSON(data []byte) error {
-	msg := new(acl.EACLRecord)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*r = *RecordFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(r, data, new(acl.EACLRecord))
 }
 
 func (t *Table) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		TableToGRPCMessage(t),
-	)
+	return message.MarshalJSON(t)
 }
 
 func (t *Table) UnmarshalJSON(data []byte) error {
-	msg := new(acl.EACLTable)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*t = *TableFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(t, data, new(acl.EACLTable))
 }
 
 func (l *TokenLifetime) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		TokenLifetimeToGRPCMessage(l),
-	)
+	return message.MarshalJSON(l)
 }
 
 func (l *TokenLifetime) UnmarshalJSON(data []byte) error {
-	msg := new(acl.BearerToken_Body_TokenLifetime)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*l = *TokenLifetimeFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(l, data, new(acl.BearerToken_Body_TokenLifetime))
 }
 
 func (bt *BearerTokenBody) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		BearerTokenBodyToGRPCMessage(bt),
-	)
+	return message.MarshalJSON(bt)
 }
 
 func (bt *BearerTokenBody) UnmarshalJSON(data []byte) error {
-	msg := new(acl.BearerToken_Body)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*bt = *BearerTokenBodyFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(bt, data, new(acl.BearerToken_Body))
 }
 
 func (bt *BearerToken) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		BearerTokenToGRPCMessage(bt),
-	)
+	return message.MarshalJSON(bt)
 }
 
 func (bt *BearerToken) UnmarshalJSON(data []byte) error {
-	msg := new(acl.BearerToken)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*bt = *BearerTokenFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(bt, data, new(acl.BearerToken))
 }

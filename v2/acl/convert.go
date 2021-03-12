@@ -1,8 +1,11 @@
 package acl
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
 // RoleToGRPCField converts unified role enum into grpc enum.
@@ -149,316 +152,395 @@ func MatchTypeFromGRPCField(t acl.MatchType) MatchType {
 	}
 }
 
-// HeaderFilterToGRPCMessage converts unified header filter struct into grpc struct.
-func HeaderFilterToGRPCMessage(f *HeaderFilter) *acl.EACLRecord_Filter {
-	if f == nil {
-		return nil
+func (f *HeaderFilter) ToGRPCMessage() grpc.Message {
+	var m *acl.EACLRecord_Filter
+
+	if f != nil {
+		m = new(acl.EACLRecord_Filter)
+
+		m.SetKey(f.key)
+		m.SetValue(f.value)
+		m.SetHeader(HeaderTypeToGRPCField(f.hdrType))
+		m.SetMatchType(MatchTypeToGRPCField(f.matchType))
 	}
-
-	m := new(acl.EACLRecord_Filter)
-
-	m.SetHeader(
-		HeaderTypeToGRPCField(f.GetHeaderType()),
-	)
-
-	m.SetMatchType(
-		MatchTypeToGRPCField(f.GetMatchType()),
-	)
-
-	m.SetKey(f.GetKey())
-	m.SetValue(f.GetValue())
 
 	return m
 }
 
-// HeaderFilterFromGRPCMessage converts grpc struct into unified header filter struct.
-func HeaderFilterFromGRPCMessage(m *acl.EACLRecord_Filter) *HeaderFilter {
-	if m == nil {
-		return nil
+func (f *HeaderFilter) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*acl.EACLRecord_Filter)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	f := new(HeaderFilter)
+	f.key = v.GetKey()
+	f.value = v.GetValue()
+	f.hdrType = HeaderTypeFromGRPCField(v.GetHeaderType())
+	f.matchType = MatchTypeFromGRPCField(v.GetMatchType())
 
-	f.SetHeaderType(
-		HeaderTypeFromGRPCField(m.GetHeaderType()),
-	)
-
-	f.SetMatchType(
-		MatchTypeFromGRPCField(m.GetMatchType()),
-	)
-
-	f.SetKey(m.GetKey())
-	f.SetValue(m.GetValue())
-
-	return f
+	return nil
 }
 
-// TargetToGRPCMessage converts unified role info struct into grpc struct.
-func TargetToGRPCMessage(t *Target) *acl.EACLRecord_Target {
-	if t == nil {
-		return nil
+func HeaderFiltersToGRPC(fs []*HeaderFilter) (res []*acl.EACLRecord_Filter) {
+	if fs != nil {
+		res = make([]*acl.EACLRecord_Filter, 0, len(fs))
+
+		for i := range fs {
+			res = append(res, fs[i].ToGRPCMessage().(*acl.EACLRecord_Filter))
+		}
 	}
 
-	m := new(acl.EACLRecord_Target)
+	return
+}
 
-	m.SetRole(
-		RoleToGRPCField(t.GetRole()),
-	)
+func HeaderFiltersFromGRPC(fs []*acl.EACLRecord_Filter) (res []*HeaderFilter, err error) {
+	if fs != nil {
+		res = make([]*HeaderFilter, 0, len(fs))
 
-	m.SetKeys(t.GetKeys())
+		for i := range fs {
+			var x *HeaderFilter
+
+			if fs[i] != nil {
+				x = new(HeaderFilter)
+
+				err = x.FromGRPCMessage(fs[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, x)
+		}
+	}
+
+	return
+}
+
+func (t *Target) ToGRPCMessage() grpc.Message {
+	var m *acl.EACLRecord_Target
+
+	if t != nil {
+		m = new(acl.EACLRecord_Target)
+
+		m.SetRole(RoleToGRPCField(t.role))
+		m.SetKeys(t.keys)
+	}
 
 	return m
 }
 
-// TargetInfoFromGRPCMessage converts grpc struct into unified role info struct.
-func TargetInfoFromGRPCMessage(m *acl.EACLRecord_Target) *Target {
-	if m == nil {
-		return nil
+func (t *Target) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*acl.EACLRecord_Target)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	t := new(Target)
+	t.role = RoleFromGRPCField(v.GetRole())
+	t.keys = v.GetKeys()
 
-	t.SetRole(
-		RoleFromGRPCField(m.GetRole()),
-	)
-
-	t.SetKeys(m.GetKeys())
-
-	return t
+	return nil
 }
 
-// RecordToGRPCMessage converts unified acl record struct into grpc struct.
-func RecordToGRPCMessage(r *Record) *acl.EACLRecord {
-	if r == nil {
-		return nil
+func TargetsToGRPC(ts []*Target) (res []*acl.EACLRecord_Target) {
+	if ts != nil {
+		res = make([]*acl.EACLRecord_Target, 0, len(ts))
+
+		for i := range ts {
+			res = append(res, ts[i].ToGRPCMessage().(*acl.EACLRecord_Target))
+		}
 	}
 
-	m := new(acl.EACLRecord)
+	return
+}
 
-	m.SetOperation(
-		OperationToGRPCField(r.GetOperation()),
-	)
+func TargetsFromGRPC(fs []*acl.EACLRecord_Target) (res []*Target, err error) {
+	if fs != nil {
+		res = make([]*Target, 0, len(fs))
 
-	m.SetAction(
-		ActionToGRPCField(r.GetAction()),
-	)
+		for i := range fs {
+			var x *Target
 
-	filters := r.GetFilters()
-	filterMsg := make([]*acl.EACLRecord_Filter, 0, len(filters))
+			if fs[i] != nil {
+				x = new(Target)
 
-	for i := range filters {
-		filterMsg = append(filterMsg, HeaderFilterToGRPCMessage(filters[i]))
+				err = x.FromGRPCMessage(fs[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, x)
+		}
 	}
 
-	m.SetFilters(filterMsg)
+	return
+}
 
-	targets := r.GetTargets()
-	targetMsg := make([]*acl.EACLRecord_Target, 0, len(targets))
+func (r *Record) ToGRPCMessage() grpc.Message {
+	var m *acl.EACLRecord
 
-	for i := range targets {
-		targetMsg = append(targetMsg, TargetToGRPCMessage(targets[i]))
+	if r != nil {
+		m = new(acl.EACLRecord)
+
+		m.SetOperation(OperationToGRPCField(r.op))
+		m.SetAction(ActionToGRPCField(r.action))
+		m.SetFilters(HeaderFiltersToGRPC(r.filters))
+		m.SetTargets(TargetsToGRPC(r.targets))
 	}
-
-	m.SetTargets(targetMsg)
 
 	return m
 }
 
-// RecordFromGRPCMessage converts grpc struct into unified acl record struct.
-func RecordFromGRPCMessage(m *acl.EACLRecord) *Record {
-	if m == nil {
-		return nil
+func (r *Record) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*acl.EACLRecord)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(Record)
+	var err error
 
-	r.SetOperation(
-		OperationFromGRPCField(m.GetOperation()),
-	)
-
-	r.SetAction(
-		ActionFromGRPCField(m.GetAction()),
-	)
-
-	filterMsg := m.GetFilters()
-	filters := make([]*HeaderFilter, 0, len(filterMsg))
-
-	for i := range filterMsg {
-		filters = append(filters, HeaderFilterFromGRPCMessage(filterMsg[i]))
+	r.filters, err = HeaderFiltersFromGRPC(v.GetFilters())
+	if err != nil {
+		return err
 	}
 
-	r.SetFilters(filters)
-
-	targetMsg := m.GetTargets()
-	targets := make([]*Target, 0, len(targetMsg))
-
-	for i := range targetMsg {
-		targets = append(targets, TargetInfoFromGRPCMessage(targetMsg[i]))
+	r.targets, err = TargetsFromGRPC(v.GetTargets())
+	if err != nil {
+		return err
 	}
 
-	r.SetTargets(targets)
+	r.op = OperationFromGRPCField(v.GetOperation())
+	r.action = ActionFromGRPCField(v.GetAction())
 
-	return r
+	return nil
 }
 
-// TableToGRPCMessage converts unified acl table struct into grpc struct.
-func TableToGRPCMessage(t *Table) *acl.EACLTable {
-	if t == nil {
-		return nil
+func RecordsToGRPC(ts []*Record) (res []*acl.EACLRecord) {
+	if ts != nil {
+		res = make([]*acl.EACLRecord, 0, len(ts))
+
+		for i := range ts {
+			res = append(res, ts[i].ToGRPCMessage().(*acl.EACLRecord))
+		}
 	}
 
-	m := new(acl.EACLTable)
+	return
+}
 
-	m.SetVersion(
-		refs.VersionToGRPCMessage(t.GetVersion()),
-	)
-	m.SetContainerId(
-		refs.ContainerIDToGRPCMessage(t.GetContainerID()),
-	)
+func RecordsFromGRPC(fs []*acl.EACLRecord) (res []*Record, err error) {
+	if fs != nil {
+		res = make([]*Record, 0, len(fs))
 
-	records := t.GetRecords()
-	recordMsg := make([]*acl.EACLRecord, 0, len(records))
+		for i := range fs {
+			var x *Record
 
-	for i := range records {
-		recordMsg = append(recordMsg, RecordToGRPCMessage(records[i]))
+			if fs[i] != nil {
+				x = new(Record)
+
+				err = x.FromGRPCMessage(fs[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, x)
+		}
 	}
 
-	m.SetRecords(recordMsg)
+	return
+}
+
+func (t *Table) ToGRPCMessage() grpc.Message {
+	var m *acl.EACLTable
+
+	if t != nil {
+		m = new(acl.EACLTable)
+
+		m.SetVersion(t.version.ToGRPCMessage().(*refsGRPC.Version))
+		m.SetContainerId(t.cid.ToGRPCMessage().(*refsGRPC.ContainerID))
+		m.SetRecords(RecordsToGRPC(t.records))
+	}
 
 	return m
 }
 
-// TableFromGRPCMessage converts grpc struct into unified acl table struct.
-func TableFromGRPCMessage(m *acl.EACLTable) *Table {
-	if m == nil {
-		return nil
+func (t *Table) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*acl.EACLTable)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	t := new(Table)
+	var err error
 
-	t.SetVersion(
-		refs.VersionFromGRPCMessage(m.GetVersion()),
-	)
-	t.SetContainerID(
-		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
-	)
+	cid := v.GetContainerId()
+	if cid == nil {
+		t.cid = nil
+	} else {
+		if t.cid == nil {
+			t.cid = new(refs.ContainerID)
+		}
 
-	recordMsg := m.GetRecords()
-	records := make([]*Record, 0, len(recordMsg))
-
-	for i := range recordMsg {
-		records = append(records, RecordFromGRPCMessage(recordMsg[i]))
+		err = t.cid.FromGRPCMessage(cid)
+		if err != nil {
+			return err
+		}
 	}
 
-	t.SetRecords(records)
+	version := v.GetVersion()
+	if version == nil {
+		t.version = nil
+	} else {
+		if t.version == nil {
+			t.version = new(refs.Version)
+		}
 
-	return t
+		err = t.version.FromGRPCMessage(version)
+		if err != nil {
+			return err
+		}
+	}
+
+	t.records, err = RecordsFromGRPC(v.GetRecords())
+
+	return err
 }
 
-func TokenLifetimeToGRPCMessage(tl *TokenLifetime) *acl.BearerToken_Body_TokenLifetime {
-	if tl == nil {
-		return nil
+func (l *TokenLifetime) ToGRPCMessage() grpc.Message {
+	var m *acl.BearerToken_Body_TokenLifetime
+
+	if l != nil {
+		m = new(acl.BearerToken_Body_TokenLifetime)
+
+		m.SetExp(l.exp)
+		m.SetIat(l.iat)
+		m.SetNbf(l.nbf)
 	}
-
-	m := new(acl.BearerToken_Body_TokenLifetime)
-
-	m.SetExp(tl.GetExp())
-	m.SetNbf(tl.GetNbf())
-	m.SetIat(tl.GetIat())
 
 	return m
 }
 
-func TokenLifetimeFromGRPCMessage(m *acl.BearerToken_Body_TokenLifetime) *TokenLifetime {
-	if m == nil {
-		return nil
+func (l *TokenLifetime) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*acl.BearerToken_Body_TokenLifetime)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	tl := new(TokenLifetime)
+	l.exp = v.GetExp()
+	l.iat = v.GetIat()
+	l.nbf = v.GetNbf()
 
-	tl.SetExp(m.GetExp())
-	tl.SetNbf(m.GetNbf())
-	tl.SetIat(m.GetIat())
-
-	return tl
+	return nil
 }
 
-func BearerTokenBodyToGRPCMessage(v *BearerTokenBody) *acl.BearerToken_Body {
-	if v == nil {
-		return nil
+func (bt *BearerTokenBody) ToGRPCMessage() grpc.Message {
+	var m *acl.BearerToken_Body
+
+	if bt != nil {
+		m = new(acl.BearerToken_Body)
+
+		m.SetOwnerId(bt.ownerID.ToGRPCMessage().(*refsGRPC.OwnerID))
+		m.SetLifetime(bt.lifetime.ToGRPCMessage().(*acl.BearerToken_Body_TokenLifetime))
+		m.SetEaclTable(bt.eacl.ToGRPCMessage().(*acl.EACLTable))
 	}
-
-	m := new(acl.BearerToken_Body)
-
-	m.SetEaclTable(
-		TableToGRPCMessage(v.GetEACL()),
-	)
-
-	m.SetOwnerId(
-		refs.OwnerIDToGRPCMessage(v.GetOwnerID()),
-	)
-
-	m.SetLifetime(
-		TokenLifetimeToGRPCMessage(v.GetLifetime()),
-	)
 
 	return m
 }
 
-func BearerTokenBodyFromGRPCMessage(m *acl.BearerToken_Body) *BearerTokenBody {
-	if m == nil {
-		return nil
+func (bt *BearerTokenBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*acl.BearerToken_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	bt := new(BearerTokenBody)
+	var err error
 
-	bt.SetEACL(
-		TableFromGRPCMessage(m.GetEaclTable()),
-	)
+	ownerID := v.GetOwnerId()
+	if ownerID == nil {
+		bt.ownerID = nil
+	} else {
+		if bt.ownerID == nil {
+			bt.ownerID = new(refs.OwnerID)
+		}
 
-	bt.SetOwnerID(
-		refs.OwnerIDFromGRPCMessage(m.GetOwnerId()),
-	)
+		err = bt.ownerID.FromGRPCMessage(ownerID)
+		if err != nil {
+			return err
+		}
+	}
 
-	bt.SetLifetime(
-		TokenLifetimeFromGRPCMessage(m.GetLifetime()),
-	)
+	lifetime := v.GetLifetime()
+	if lifetime == nil {
+		bt.lifetime = nil
+	} else {
+		if bt.lifetime == nil {
+			bt.lifetime = new(TokenLifetime)
+		}
 
-	return bt
+		err = bt.lifetime.FromGRPCMessage(lifetime)
+		if err != nil {
+			return err
+		}
+	}
+
+	eacl := v.GetEaclTable()
+	if eacl == nil {
+		bt.eacl = nil
+	} else {
+		if bt.eacl == nil {
+			bt.eacl = new(Table)
+		}
+
+		err = bt.eacl.FromGRPCMessage(eacl)
+	}
+
+	return err
 }
 
-func BearerTokenToGRPCMessage(t *BearerToken) *acl.BearerToken {
-	if t == nil {
-		return nil
+func (bt *BearerToken) ToGRPCMessage() grpc.Message {
+	var m *acl.BearerToken
+
+	if bt != nil {
+		m = new(acl.BearerToken)
+
+		m.SetBody(bt.body.ToGRPCMessage().(*acl.BearerToken_Body))
+		m.SetSignature(bt.sig.ToGRPCMessage().(*refsGRPC.Signature))
 	}
-
-	m := new(acl.BearerToken)
-
-	m.SetBody(
-		BearerTokenBodyToGRPCMessage(t.GetBody()),
-	)
-
-	m.SetSignature(
-		refs.SignatureToGRPCMessage(t.GetSignature()),
-	)
 
 	return m
 }
 
-func BearerTokenFromGRPCMessage(m *acl.BearerToken) *BearerToken {
-	if m == nil {
-		return nil
+func (bt *BearerToken) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*acl.BearerToken)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	bt := new(BearerToken)
+	var err error
 
-	bt.SetBody(
-		BearerTokenBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		bt.body = nil
+	} else {
+		if bt.body == nil {
+			bt.body = new(BearerTokenBody)
+		}
 
-	bt.SetSignature(
-		refs.SignatureFromGRPCMessage(m.GetSignature()),
-	)
+		err = bt.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return bt
+	sig := v.GetSignature()
+	if sig == nil {
+		bt.sig = nil
+	} else {
+		if bt.sig == nil {
+			bt.sig = new(refs.Signature)
+		}
+
+		err = bt.sig.FromGRPCMessage(sig)
+	}
+
+	return err
 }

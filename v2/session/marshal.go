@@ -1,6 +1,7 @@
 package session
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 	session "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
 	goproto "google.golang.org/protobuf/proto"
@@ -97,6 +98,10 @@ func (c *CreateRequestBody) StableSize() (size int) {
 	return size
 }
 
+func (c *CreateRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(c, data, new(session.CreateRequest_Body))
+}
+
 func (c *CreateResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if c == nil {
 		return []byte{}, nil
@@ -135,6 +140,10 @@ func (c *CreateResponseBody) StableSize() (size int) {
 	size += proto.BytesSize(createRespBodyKeyField, c.sessionKey)
 
 	return size
+}
+
+func (c *CreateResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(c, data, new(session.CreateResponse_Body))
 }
 
 func (x *XHeader) StableMarshal(buf []byte) ([]byte, error) {
@@ -183,9 +192,7 @@ func (x *XHeader) Unmarshal(data []byte) error {
 		return err
 	}
 
-	*x = *XHeaderFromGRPCMessage(m)
-
-	return nil
+	return x.FromGRPCMessage(m)
 }
 
 func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
@@ -242,9 +249,7 @@ func (l *TokenLifetime) Unmarshal(data []byte) error {
 		return err
 	}
 
-	*l = *TokenLifetimeFromGRPCMessage(m)
-
-	return nil
+	return l.FromGRPCMessage(m)
 }
 
 func (c *ObjectSessionContext) StableMarshal(buf []byte) ([]byte, error) {
@@ -293,9 +298,7 @@ func (c *ObjectSessionContext) Unmarshal(data []byte) error {
 		return err
 	}
 
-	*c = *ObjectSessionContextFromGRPCMessage(m)
-
-	return nil
+	return c.FromGRPCMessage(m)
 }
 
 func (t *SessionTokenBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -383,9 +386,7 @@ func (t *SessionTokenBody) Unmarshal(data []byte) error {
 		return err
 	}
 
-	*t = *SessionTokenBodyFromGRPCMessage(m)
-
-	return nil
+	return t.FromGRPCMessage(m)
 }
 
 func (t *SessionToken) StableMarshal(buf []byte) ([]byte, error) {
@@ -434,9 +435,7 @@ func (t *SessionToken) Unmarshal(data []byte) error {
 		return err
 	}
 
-	*t = *SessionTokenFromGRPCMessage(m)
-
-	return nil
+	return t.FromGRPCMessage(m)
 }
 
 func (r *RequestMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
@@ -534,9 +533,7 @@ func (r *RequestMetaHeader) Unmarshal(data []byte) error {
 		return err
 	}
 
-	*r = *RequestMetaHeaderFromGRPCMessage(m)
-
-	return nil
+	return r.FromGRPCMessage(m)
 }
 
 func (r *RequestVerificationHeader) StableMarshal(buf []byte) ([]byte, error) {
@@ -601,9 +598,7 @@ func (r *RequestVerificationHeader) Unmarshal(data []byte) error {
 		return err
 	}
 
-	*r = *RequestVerificationHeaderFromGRPCMessage(m)
-
-	return nil
+	return r.FromGRPCMessage(m)
 }
 
 func (r *ResponseMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
@@ -685,9 +680,7 @@ func (r *ResponseMetaHeader) Unmarshal(data []byte) error {
 		return err
 	}
 
-	*r = *ResponseMetaHeaderFromGRPCMessage(m)
-
-	return nil
+	return r.FromGRPCMessage(m)
 }
 
 func (r *ResponseVerificationHeader) StableMarshal(buf []byte) ([]byte, error) {
@@ -752,7 +745,5 @@ func (r *ResponseVerificationHeader) Unmarshal(data []byte) error {
 		return err
 	}
 
-	*r = *ResponseVerificationHeaderFromGRPCMessage(m)
-
-	return nil
+	return r.FromGRPCMessage(m)
 }

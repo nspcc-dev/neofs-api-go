@@ -1,9 +1,9 @@
 package acl
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	protoutil "github.com/nspcc-dev/neofs-api-go/util/proto"
 	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
-	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -95,14 +95,7 @@ func (t *Table) StableSize() (size int) {
 }
 
 func (t *Table) Unmarshal(data []byte) error {
-	m := new(acl.EACLTable)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*t = *TableFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(t, data, new(acl.EACLTable))
 }
 
 // StableMarshal marshals unified acl record structure in a protobuf
@@ -177,14 +170,7 @@ func (r *Record) StableSize() (size int) {
 }
 
 func (r *Record) Unmarshal(data []byte) error {
-	m := new(acl.EACLRecord)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*r = *RecordFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(r, data, new(acl.EACLRecord))
 }
 
 // StableMarshal marshals unified header filter structure in a protobuf
@@ -247,14 +233,7 @@ func (f *HeaderFilter) StableSize() (size int) {
 }
 
 func (f *HeaderFilter) Unmarshal(data []byte) error {
-	m := new(acl.EACLRecord_Filter)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*f = *HeaderFilterFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(f, data, new(acl.EACLRecord_Filter))
 }
 
 // StableMarshal marshals unified role info structure in a protobuf
@@ -301,14 +280,7 @@ func (t *Target) StableSize() (size int) {
 }
 
 func (t *Target) Unmarshal(data []byte) error {
-	m := new(acl.EACLRecord_Target)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*t = *TargetInfoFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(t, data, new(acl.EACLRecord_Target))
 }
 
 func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
@@ -360,14 +332,7 @@ func (l *TokenLifetime) StableSize() (size int) {
 }
 
 func (l *TokenLifetime) Unmarshal(data []byte) error {
-	m := new(acl.BearerToken_Body_TokenLifetime)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*l = *TokenLifetimeFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(l, data, new(acl.BearerToken_Body_TokenLifetime))
 }
 
 func (bt *BearerTokenBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -419,14 +384,7 @@ func (bt *BearerTokenBody) StableSize() (size int) {
 }
 
 func (bt *BearerTokenBody) Unmarshal(data []byte) error {
-	m := new(acl.BearerToken_Body)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*bt = *BearerTokenBodyFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(bt, data, new(acl.BearerToken_Body))
 }
 
 func (bt *BearerToken) StableMarshal(buf []byte) ([]byte, error) {
@@ -470,12 +428,5 @@ func (bt *BearerToken) StableSize() (size int) {
 }
 
 func (bt *BearerToken) Unmarshal(data []byte) error {
-	m := new(acl.BearerToken)
-	if err := proto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	*bt = *BearerTokenFromGRPCMessage(m)
-
-	return nil
+	return message.Unmarshal(bt, data, new(acl.BearerToken))
 }

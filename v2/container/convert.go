@@ -1,1015 +1,1237 @@
 package container
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
+	aclGRPC "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
 	container "github.com/nspcc-dev/neofs-api-go/v2/container/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
+	netmapGRPC "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
-	"github.com/nspcc-dev/neofs-api-go/v2/session"
 )
 
-func AttributeToGRPCMessage(a *Attribute) *container.Container_Attribute {
-	if a == nil {
-		return nil
+func (a *Attribute) ToGRPCMessage() grpc.Message {
+	var m *container.Container_Attribute
+
+	if a != nil {
+		m = new(container.Container_Attribute)
+
+		m.SetKey(a.key)
+		m.SetValue(a.val)
 	}
-
-	m := new(container.Container_Attribute)
-
-	m.SetKey(a.GetKey())
-	m.SetValue(a.GetValue())
 
 	return m
 }
 
-func AttributeFromGRPCMessage(m *container.Container_Attribute) *Attribute {
-	if m == nil {
-		return nil
+func (a *Attribute) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.Container_Attribute)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	a := new(Attribute)
+	a.key = v.GetKey()
+	a.val = v.GetValue()
 
-	a.SetKey(m.GetKey())
-	a.SetValue(m.GetValue())
-
-	return a
+	return nil
 }
 
-func ContainerToGRPCMessage(c *Container) *container.Container {
-	if c == nil {
-		return nil
+func AttributesToGRPC(xs []*Attribute) (res []*container.Container_Attribute) {
+	if xs != nil {
+		res = make([]*container.Container_Attribute, 0, len(xs))
+
+		for i := range xs {
+			res = append(res, xs[i].ToGRPCMessage().(*container.Container_Attribute))
+		}
 	}
 
-	m := new(container.Container)
+	return
+}
 
-	m.SetVersion(
-		refs.VersionToGRPCMessage(c.GetVersion()),
-	)
+func AttributesFromGRPC(xs []*container.Container_Attribute) (res []*Attribute, err error) {
+	if xs != nil {
+		res = make([]*Attribute, 0, len(xs))
 
-	m.SetOwnerId(
-		refs.OwnerIDToGRPCMessage(c.GetOwnerID()),
-	)
+		for i := range xs {
+			var x *Attribute
 
-	m.SetNonce(c.GetNonce())
+			if xs[i] != nil {
+				x = new(Attribute)
 
-	m.SetBasicAcl(c.GetBasicACL())
+				err = x.FromGRPCMessage(xs[i])
+				if err != nil {
+					return
+				}
+			}
 
-	m.SetPlacementPolicy(
-		netmap.PlacementPolicyToGRPCMessage(c.GetPlacementPolicy()),
-	)
-
-	attr := c.GetAttributes()
-	attrMsg := make([]*container.Container_Attribute, 0, len(attr))
-
-	for i := range attr {
-		attrMsg = append(attrMsg, AttributeToGRPCMessage(attr[i]))
+			res = append(res, x)
+		}
 	}
 
-	m.SetAttributes(attrMsg)
+	return
+}
+
+func (c *Container) ToGRPCMessage() grpc.Message {
+	var m *container.Container
+
+	if c != nil {
+		m = new(container.Container)
+
+		m.SetVersion(c.version.ToGRPCMessage().(*refsGRPC.Version))
+		m.SetOwnerId(c.ownerID.ToGRPCMessage().(*refsGRPC.OwnerID))
+		m.SetPlacementPolicy(c.policy.ToGRPCMessage().(*netmapGRPC.PlacementPolicy))
+		m.SetAttributes(AttributesToGRPC(c.attr))
+		m.SetBasicAcl(c.basicACL)
+		m.SetNonce(c.nonce)
+	}
 
 	return m
 }
 
-func ContainerFromGRPCMessage(m *container.Container) *Container {
-	if m == nil {
-		return nil
+func (c *Container) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.Container)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	c := new(Container)
+	var err error
 
-	c.SetVersion(
-		refs.VersionFromGRPCMessage(m.GetVersion()),
-	)
+	version := v.GetVersion()
+	if version == nil {
+		c.version = nil
+	} else {
+		if c.version == nil {
+			c.version = new(refs.Version)
+		}
 
-	c.SetOwnerID(
-		refs.OwnerIDFromGRPCMessage(m.GetOwnerId()),
-	)
-
-	c.SetNonce(m.GetNonce())
-
-	c.SetBasicACL(m.GetBasicAcl())
-
-	c.SetPlacementPolicy(
-		netmap.PlacementPolicyFromGRPCMessage(m.GetPlacementPolicy()),
-	)
-
-	attrMsg := m.GetAttributes()
-	attr := make([]*Attribute, 0, len(attrMsg))
-
-	for i := range attrMsg {
-		attr = append(attr, AttributeFromGRPCMessage(attrMsg[i]))
+		err = c.version.FromGRPCMessage(version)
+		if err != nil {
+			return err
+		}
 	}
 
-	c.SetAttributes(attr)
+	ownerID := v.GetOwnerId()
+	if ownerID == nil {
+		c.ownerID = nil
+	} else {
+		if c.ownerID == nil {
+			c.ownerID = new(refs.OwnerID)
+		}
 
-	return c
+		err = c.ownerID.FromGRPCMessage(ownerID)
+		if err != nil {
+			return err
+		}
+	}
+
+	policy := v.GetPlacementPolicy()
+	if policy == nil {
+		c.policy = nil
+	} else {
+		if c.policy == nil {
+			c.policy = new(netmap.PlacementPolicy)
+		}
+
+		err = c.policy.FromGRPCMessage(policy)
+		if err != nil {
+			return err
+		}
+	}
+
+	c.attr, err = AttributesFromGRPC(v.GetAttributes())
+	if err != nil {
+		return err
+	}
+
+	c.basicACL = v.GetBasicAcl()
+	c.nonce = v.GetNonce()
+
+	return nil
 }
 
-func PutRequestBodyToGRPCMessage(r *PutRequestBody) *container.PutRequest_Body {
-	if r == nil {
-		return nil
+func (r *PutRequestBody) ToGRPCMessage() grpc.Message {
+	var m *container.PutRequest_Body
+
+	if r != nil {
+		m = new(container.PutRequest_Body)
+
+		m.SetContainer(r.cnr.ToGRPCMessage().(*container.Container))
+		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
 	}
-
-	m := new(container.PutRequest_Body)
-
-	m.SetContainer(
-		ContainerToGRPCMessage(r.GetContainer()),
-	)
-
-	m.SetSignature(
-		refs.SignatureToGRPCMessage(r.GetSignature()),
-	)
 
 	return m
 }
 
-func PutRequestBodyFromGRPCMessage(m *container.PutRequest_Body) *PutRequestBody {
-	if m == nil {
-		return nil
+func (r *PutRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.PutRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(PutRequestBody)
+	var err error
 
-	r.SetContainer(
-		ContainerFromGRPCMessage(m.GetContainer()),
-	)
+	cnr := v.GetContainer()
+	if cnr == nil {
+		r.cnr = nil
+	} else {
+		if r.cnr == nil {
+			r.cnr = new(Container)
+		}
 
-	r.SetSignature(
-		refs.SignatureFromGRPCMessage(m.GetSignature()),
-	)
+		err = r.cnr.FromGRPCMessage(cnr)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	sig := v.GetSignature()
+	if sig == nil {
+		r.sig = nil
+	} else {
+		if r.sig == nil {
+			r.sig = new(refs.Signature)
+		}
+
+		err = r.sig.FromGRPCMessage(sig)
+	}
+
+	return err
 }
 
-func PutRequestToGRPCMessage(r *PutRequest) *container.PutRequest {
-	if r == nil {
-		return nil
+func (r *PutRequest) ToGRPCMessage() grpc.Message {
+	var m *container.PutRequest
+
+	if r != nil {
+		m = new(container.PutRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.PutRequest_Body))
+		r.RequestHeaders.ToMessage(m)
 	}
-
-	m := new(container.PutRequest)
-
-	m.SetBody(
-		PutRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
 
-func PutRequestFromGRPCMessage(m *container.PutRequest) *PutRequest {
-	if m == nil {
-		return nil
+func (r *PutRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.PutRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(PutRequest)
+	var err error
 
-	r.SetBody(
-		PutRequestBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(PutRequestBody)
+		}
 
-	session.RequestHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.RequestHeaders.FromMessage(v)
 }
 
-func PutResponseBodyToGRPCMessage(r *PutResponseBody) *container.PutResponse_Body {
-	if r == nil {
-		return nil
+func (r *PutResponseBody) ToGRPCMessage() grpc.Message {
+	var m *container.PutResponse_Body
+
+	if r != nil {
+		m = new(container.PutResponse_Body)
+
+		m.SetContainerId(r.cid.ToGRPCMessage().(*refsGRPC.ContainerID))
 	}
-
-	m := new(container.PutResponse_Body)
-
-	m.SetContainerId(
-		refs.ContainerIDToGRPCMessage(r.GetContainerID()),
-	)
 
 	return m
 }
 
-func PutResponseBodyFromGRPCMessage(m *container.PutResponse_Body) *PutResponseBody {
-	if m == nil {
-		return nil
+func (r *PutResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.PutResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(PutResponseBody)
+	var err error
 
-	r.SetContainerID(
-		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
-	)
+	cid := v.GetContainerId()
+	if cid == nil {
+		r.cid = nil
+	} else {
+		if r.cid == nil {
+			r.cid = new(refs.ContainerID)
+		}
 
-	return r
+		err = r.cid.FromGRPCMessage(cid)
+	}
+
+	return err
 }
 
-func PutResponseToGRPCMessage(r *PutResponse) *container.PutResponse {
-	if r == nil {
-		return nil
+func (r *PutResponse) ToGRPCMessage() grpc.Message {
+	var m *container.PutResponse
+
+	if r != nil {
+		m = new(container.PutResponse)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.PutResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
 	}
-
-	m := new(container.PutResponse)
-
-	m.SetBody(
-		PutResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
 
-func PutResponseFromGRPCMessage(m *container.PutResponse) *PutResponse {
-	if m == nil {
-		return nil
+func (r *PutResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.PutResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(PutResponse)
+	var err error
 
-	r.SetBody(
-		PutResponseBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(PutResponseBody)
+		}
 
-	session.ResponseHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.ResponseHeaders.FromMessage(v)
 }
 
-func GetRequestBodyToGRPCMessage(r *GetRequestBody) *container.GetRequest_Body {
-	if r == nil {
-		return nil
+func (r *GetRequestBody) ToGRPCMessage() grpc.Message {
+	var m *container.GetRequest_Body
+
+	if r != nil {
+		m = new(container.GetRequest_Body)
+
+		m.SetContainerId(r.cid.ToGRPCMessage().(*refsGRPC.ContainerID))
 	}
-
-	m := new(container.GetRequest_Body)
-
-	m.SetContainerId(
-		refs.ContainerIDToGRPCMessage(r.GetContainerID()),
-	)
 
 	return m
 }
 
-func GetRequestBodyFromGRPCMessage(m *container.GetRequest_Body) *GetRequestBody {
-	if m == nil {
-		return nil
+func (r *GetRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.GetRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetRequestBody)
+	var err error
 
-	r.SetContainerID(
-		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
-	)
+	cid := v.GetContainerId()
+	if cid == nil {
+		r.cid = nil
+	} else {
+		if r.cid == nil {
+			r.cid = new(refs.ContainerID)
+		}
 
-	return r
+		err = r.cid.FromGRPCMessage(cid)
+	}
+
+	return err
 }
 
-func GetRequestToGRPCMessage(r *GetRequest) *container.GetRequest {
-	if r == nil {
-		return nil
+func (r *GetRequest) ToGRPCMessage() grpc.Message {
+	var m *container.GetRequest
+
+	if r != nil {
+		m = new(container.GetRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.GetRequest_Body))
+		r.RequestHeaders.ToMessage(m)
 	}
-
-	m := new(container.GetRequest)
-
-	m.SetBody(
-		GetRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
 
-func GetRequestFromGRPCMessage(m *container.GetRequest) *GetRequest {
-	if m == nil {
-		return nil
+func (r *GetRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.GetRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetRequest)
+	var err error
 
-	r.SetBody(
-		GetRequestBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(GetRequestBody)
+		}
 
-	session.RequestHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.RequestHeaders.FromMessage(v)
 }
 
-func GetResponseBodyToGRPCMessage(r *GetResponseBody) *container.GetResponse_Body {
-	if r == nil {
-		return nil
+func (r *GetResponseBody) ToGRPCMessage() grpc.Message {
+	var m *container.GetResponse_Body
+
+	if r != nil {
+		m = new(container.GetResponse_Body)
+
+		m.SetContainer(r.cnr.ToGRPCMessage().(*container.Container))
 	}
-
-	m := new(container.GetResponse_Body)
-
-	m.SetContainer(
-		ContainerToGRPCMessage(r.GetContainer()),
-	)
 
 	return m
 }
 
-func GetResponseBodyFromGRPCMessage(m *container.GetResponse_Body) *GetResponseBody {
-	if m == nil {
-		return nil
+func (r *GetResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.GetResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetResponseBody)
+	var err error
 
-	r.SetContainer(
-		ContainerFromGRPCMessage(m.GetContainer()),
-	)
+	cnr := v.GetContainer()
+	if cnr == nil {
+		r.cnr = nil
+	} else {
+		if r.cnr == nil {
+			r.cnr = new(Container)
+		}
 
-	return r
+		err = r.cnr.FromGRPCMessage(cnr)
+	}
+
+	return err
 }
 
-func GetResponseToGRPCMessage(r *GetResponse) *container.GetResponse {
-	if r == nil {
-		return nil
+func (r *GetResponse) ToGRPCMessage() grpc.Message {
+	var m *container.GetResponse
+
+	if r != nil {
+		m = new(container.GetResponse)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.GetResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
 	}
-
-	m := new(container.GetResponse)
-
-	m.SetBody(
-		GetResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
 
-func GetResponseFromGRPCMessage(m *container.GetResponse) *GetResponse {
-	if m == nil {
-		return nil
+func (r *GetResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.GetResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetResponse)
+	var err error
 
-	r.SetBody(
-		GetResponseBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(GetResponseBody)
+		}
 
-	session.ResponseHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.ResponseHeaders.FromMessage(v)
 }
 
-func DeleteRequestBodyToGRPCMessage(r *DeleteRequestBody) *container.DeleteRequest_Body {
-	if r == nil {
-		return nil
+func (r *DeleteRequestBody) ToGRPCMessage() grpc.Message {
+	var m *container.DeleteRequest_Body
+
+	if r != nil {
+		m = new(container.DeleteRequest_Body)
+
+		m.SetContainerId(r.cid.ToGRPCMessage().(*refsGRPC.ContainerID))
+		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
 	}
-
-	m := new(container.DeleteRequest_Body)
-
-	m.SetContainerId(
-		refs.ContainerIDToGRPCMessage(r.GetContainerID()),
-	)
-
-	m.SetSignature(
-		refs.SignatureToGRPCMessage(r.GetSignature()),
-	)
 
 	return m
 }
 
-func DeleteRequestBodyFromGRPCMessage(m *container.DeleteRequest_Body) *DeleteRequestBody {
-	if m == nil {
-		return nil
+func (r *DeleteRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.DeleteRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(DeleteRequestBody)
+	var err error
 
-	r.SetContainerID(
-		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
-	)
+	cid := v.GetContainerId()
+	if cid == nil {
+		r.cid = nil
+	} else {
+		if r.cid == nil {
+			r.cid = new(refs.ContainerID)
+		}
 
-	r.SetSignature(
-		refs.SignatureFromGRPCMessage(m.GetSignature()),
-	)
+		err = r.cid.FromGRPCMessage(cid)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	sig := v.GetSignature()
+	if sig == nil {
+		r.sig = nil
+	} else {
+		if r.sig == nil {
+			r.sig = new(refs.Signature)
+		}
+
+		err = r.sig.FromGRPCMessage(sig)
+	}
+
+	return err
 }
 
-func DeleteRequestToGRPCMessage(r *DeleteRequest) *container.DeleteRequest {
-	if r == nil {
-		return nil
+func (r *DeleteRequest) ToGRPCMessage() grpc.Message {
+	var m *container.DeleteRequest
+
+	if r != nil {
+		m = new(container.DeleteRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.DeleteRequest_Body))
+		r.RequestHeaders.ToMessage(m)
 	}
-
-	m := new(container.DeleteRequest)
-
-	m.SetBody(
-		DeleteRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
 
-func DeleteRequestFromGRPCMessage(m *container.DeleteRequest) *DeleteRequest {
-	if m == nil {
-		return nil
+func (r *DeleteRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.DeleteRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(DeleteRequest)
+	var err error
 
-	r.SetBody(
-		DeleteRequestBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(DeleteRequestBody)
+		}
 
-	session.RequestHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.RequestHeaders.FromMessage(v)
 }
 
-func DeleteResponseBodyToGRPCMessage(r *DeleteResponseBody) *container.DeleteResponse_Body {
-	if r == nil {
-		return nil
-	}
+func (r *DeleteResponseBody) ToGRPCMessage() grpc.Message {
+	var m *container.DeleteResponse_Body
 
-	m := new(container.DeleteResponse_Body)
+	if r != nil {
+		m = new(container.DeleteResponse_Body)
+	}
 
 	return m
 }
 
-func DeleteResponseBodyFromGRPCMessage(m *container.DeleteResponse_Body) *DeleteResponseBody {
-	if m == nil {
-		return nil
+func (r *DeleteResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.DeleteResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(DeleteResponseBody)
-
-	return r
+	return nil
 }
 
-func DeleteResponseToGRPCMessage(r *DeleteResponse) *container.DeleteResponse {
-	if r == nil {
-		return nil
+func (r *DeleteResponse) ToGRPCMessage() grpc.Message {
+	var m *container.DeleteResponse
+
+	if r != nil {
+		m = new(container.DeleteResponse)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.DeleteResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
 	}
-
-	m := new(container.DeleteResponse)
-
-	m.SetBody(
-		DeleteResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
 
-func DeleteResponseFromGRPCMessage(m *container.DeleteResponse) *DeleteResponse {
-	if m == nil {
-		return nil
+func (r *DeleteResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.DeleteResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(DeleteResponse)
+	var err error
 
-	r.SetBody(
-		DeleteResponseBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(DeleteResponseBody)
+		}
 
-	session.ResponseHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.ResponseHeaders.FromMessage(v)
 }
 
-func ListRequestBodyToGRPCMessage(r *ListRequestBody) *container.ListRequest_Body {
-	if r == nil {
-		return nil
+func (r *ListRequestBody) ToGRPCMessage() grpc.Message {
+	var m *container.ListRequest_Body
+
+	if r != nil {
+		m = new(container.ListRequest_Body)
+
+		m.SetOwnerId(r.ownerID.ToGRPCMessage().(*refsGRPC.OwnerID))
 	}
-
-	m := new(container.ListRequest_Body)
-
-	m.SetOwnerId(
-		refs.OwnerIDToGRPCMessage(r.GetOwnerID()),
-	)
 
 	return m
 }
 
-func ListRequestBodyFromGRPCMessage(m *container.ListRequest_Body) *ListRequestBody {
-	if m == nil {
-		return nil
+func (r *ListRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.ListRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(ListRequestBody)
+	var err error
 
-	r.SetOwnerID(
-		refs.OwnerIDFromGRPCMessage(m.GetOwnerId()),
-	)
+	ownerID := v.GetOwnerId()
+	if ownerID == nil {
+		r.ownerID = nil
+	} else {
+		if r.ownerID == nil {
+			r.ownerID = new(refs.OwnerID)
+		}
 
-	return r
+		err = r.ownerID.FromGRPCMessage(ownerID)
+	}
+
+	return err
 }
 
-func ListRequestToGRPCMessage(r *ListRequest) *container.ListRequest {
-	if r == nil {
-		return nil
+func (r *ListRequest) ToGRPCMessage() grpc.Message {
+	var m *container.ListRequest
+
+	if r != nil {
+		m = new(container.ListRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.ListRequest_Body))
+		r.RequestHeaders.ToMessage(m)
 	}
-
-	m := new(container.ListRequest)
-
-	m.SetBody(
-		ListRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
 
-func ListRequestFromGRPCMessage(m *container.ListRequest) *ListRequest {
-	if m == nil {
-		return nil
+func (r *ListRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.ListRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(ListRequest)
+	var err error
 
-	r.SetBody(
-		ListRequestBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(ListRequestBody)
+		}
 
-	session.RequestHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.RequestHeaders.FromMessage(v)
 }
 
-func ListResponseBodyToGRPCMessage(r *ListResponseBody) *container.ListResponse_Body {
-	if r == nil {
-		return nil
+func (r *ListResponseBody) ToGRPCMessage() grpc.Message {
+	var m *container.ListResponse_Body
+
+	if r != nil {
+		m = new(container.ListResponse_Body)
+
+		m.SetContainerIds(refs.ContainerIDsToGRPCMessage(r.cidList))
 	}
-
-	m := new(container.ListResponse_Body)
-
-	cids := r.GetContainerIDs()
-	cidMsg := make([]*refsGRPC.ContainerID, 0, len(cids))
-
-	for i := range cids {
-		cidMsg = append(cidMsg, refs.ContainerIDToGRPCMessage(cids[i]))
-	}
-
-	m.SetContainerIds(cidMsg)
 
 	return m
 }
 
-func ListResponseBodyFromGRPCMessage(m *container.ListResponse_Body) *ListResponseBody {
-	if m == nil {
-		return nil
+func (r *ListResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.ListResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(ListResponseBody)
+	var err error
 
-	cidMsg := m.GetContainerIds()
-	cids := make([]*refs.ContainerID, 0, len(cidMsg))
+	r.cidList, err = refs.ContainerIDsFromGRPCMessage(v.GetContainerIds())
 
-	for i := range cidMsg {
-		cids = append(cids, refs.ContainerIDFromGRPCMessage(cidMsg[i]))
-	}
-
-	r.SetContainerIDs(cids)
-
-	return r
+	return err
 }
 
-func ListResponseToGRPCMessage(r *ListResponse) *container.ListResponse {
-	if r == nil {
-		return nil
+func (r *ListResponse) ToGRPCMessage() grpc.Message {
+	var m *container.ListResponse
+
+	if r != nil {
+		m = new(container.ListResponse)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.ListResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
 	}
-
-	m := new(container.ListResponse)
-
-	m.SetBody(
-		ListResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
 
-func ListResponseFromGRPCMessage(m *container.ListResponse) *ListResponse {
-	if m == nil {
-		return nil
+func (r *ListResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.ListResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(ListResponse)
+	var err error
 
-	r.SetBody(
-		ListResponseBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(ListResponseBody)
+		}
 
-	session.ResponseHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.ResponseHeaders.FromMessage(v)
 }
 
-func SetExtendedACLRequestBodyToGRPCMessage(r *SetExtendedACLRequestBody) *container.SetExtendedACLRequest_Body {
-	if r == nil {
-		return nil
+func (r *SetExtendedACLRequestBody) ToGRPCMessage() grpc.Message {
+	var m *container.SetExtendedACLRequest_Body
+
+	if r != nil {
+		m = new(container.SetExtendedACLRequest_Body)
+
+		m.SetEacl(r.eacl.ToGRPCMessage().(*aclGRPC.EACLTable))
+		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
 	}
-
-	m := new(container.SetExtendedACLRequest_Body)
-
-	m.SetEacl(
-		acl.TableToGRPCMessage(r.GetEACL()),
-	)
-
-	m.SetSignature(
-		refs.SignatureToGRPCMessage(r.GetSignature()))
 
 	return m
 }
 
-func SetExtendedACLRequestBodyFromGRPCMessage(m *container.SetExtendedACLRequest_Body) *SetExtendedACLRequestBody {
-	if m == nil {
-		return nil
+func (r *SetExtendedACLRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.SetExtendedACLRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(SetExtendedACLRequestBody)
+	var err error
 
-	r.SetEACL(
-		acl.TableFromGRPCMessage(m.GetEacl()),
-	)
+	eacl := v.GetEacl()
+	if eacl == nil {
+		r.eacl = nil
+	} else {
+		if r.eacl == nil {
+			r.eacl = new(acl.Table)
+		}
 
-	r.SetSignature(
-		refs.SignatureFromGRPCMessage(m.GetSignature()),
-	)
+		err = r.eacl.FromGRPCMessage(eacl)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	sig := v.GetSignature()
+	if sig == nil {
+		r.sig = nil
+	} else {
+		if r.sig == nil {
+			r.sig = new(refs.Signature)
+		}
+
+		err = r.sig.FromGRPCMessage(sig)
+	}
+
+	return err
 }
 
-func SetExtendedACLRequestToGRPCMessage(r *SetExtendedACLRequest) *container.SetExtendedACLRequest {
-	if r == nil {
-		return nil
+func (r *SetExtendedACLRequest) ToGRPCMessage() grpc.Message {
+	var m *container.SetExtendedACLRequest
+
+	if r != nil {
+		m = new(container.SetExtendedACLRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.SetExtendedACLRequest_Body))
+		r.RequestHeaders.ToMessage(m)
 	}
-
-	m := new(container.SetExtendedACLRequest)
-
-	m.SetBody(
-		SetExtendedACLRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
 
-func SetExtendedACLRequestFromGRPCMessage(m *container.SetExtendedACLRequest) *SetExtendedACLRequest {
-	if m == nil {
-		return nil
+func (r *SetExtendedACLRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.SetExtendedACLRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(SetExtendedACLRequest)
+	var err error
 
-	r.SetBody(
-		SetExtendedACLRequestBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(SetExtendedACLRequestBody)
+		}
 
-	session.RequestHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.RequestHeaders.FromMessage(v)
 }
 
-func SetExtendedACLResponseBodyToGRPCMessage(r *SetExtendedACLResponseBody) *container.SetExtendedACLResponse_Body {
-	if r == nil {
-		return nil
-	}
+func (r *SetExtendedACLResponseBody) ToGRPCMessage() grpc.Message {
+	var m *container.SetExtendedACLResponse_Body
 
-	m := new(container.SetExtendedACLResponse_Body)
+	if r != nil {
+		m = new(container.SetExtendedACLResponse_Body)
+	}
 
 	return m
 }
 
-func SetExtendedACLResponseBodyFromGRPCMessage(m *container.SetExtendedACLResponse_Body) *SetExtendedACLResponseBody {
-	if m == nil {
-		return nil
+func (r *SetExtendedACLResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.SetExtendedACLResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(SetExtendedACLResponseBody)
-
-	return r
+	return nil
 }
 
-func SetExtendedACLResponseToGRPCMessage(r *SetExtendedACLResponse) *container.SetExtendedACLResponse {
-	if r == nil {
-		return nil
+func (r *SetExtendedACLResponse) ToGRPCMessage() grpc.Message {
+	var m *container.SetExtendedACLResponse
+
+	if r != nil {
+		m = new(container.SetExtendedACLResponse)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.SetExtendedACLResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
 	}
-
-	m := new(container.SetExtendedACLResponse)
-
-	m.SetBody(
-		SetExtendedACLResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
 
-func SetExtendedACLResponseFromGRPCMessage(m *container.SetExtendedACLResponse) *SetExtendedACLResponse {
-	if m == nil {
-		return nil
+func (r *SetExtendedACLResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.SetExtendedACLResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(SetExtendedACLResponse)
+	var err error
 
-	r.SetBody(
-		SetExtendedACLResponseBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(SetExtendedACLResponseBody)
+		}
 
-	session.ResponseHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.ResponseHeaders.FromMessage(v)
 }
 
-func GetExtendedACLRequestBodyToGRPCMessage(r *GetExtendedACLRequestBody) *container.GetExtendedACLRequest_Body {
-	if r == nil {
-		return nil
+func (r *GetExtendedACLRequestBody) ToGRPCMessage() grpc.Message {
+	var m *container.GetExtendedACLRequest_Body
+
+	if r != nil {
+		m = new(container.GetExtendedACLRequest_Body)
+
+		m.SetContainerId(r.cid.ToGRPCMessage().(*refsGRPC.ContainerID))
 	}
-
-	m := new(container.GetExtendedACLRequest_Body)
-
-	m.SetContainerId(
-		refs.ContainerIDToGRPCMessage(r.GetContainerID()),
-	)
 
 	return m
 }
 
-func GetExtendedACLRequestBodyFromGRPCMessage(m *container.GetExtendedACLRequest_Body) *GetExtendedACLRequestBody {
-	if m == nil {
-		return nil
+func (r *GetExtendedACLRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.GetExtendedACLRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetExtendedACLRequestBody)
+	var err error
 
-	r.SetContainerID(
-		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
-	)
+	cid := v.GetContainerId()
+	if cid == nil {
+		r.cid = nil
+	} else {
+		if r.cid == nil {
+			r.cid = new(refs.ContainerID)
+		}
 
-	return r
+		err = r.cid.FromGRPCMessage(cid)
+	}
+
+	return err
 }
 
-func GetExtendedACLRequestToGRPCMessage(r *GetExtendedACLRequest) *container.GetExtendedACLRequest {
-	if r == nil {
-		return nil
+func (r *GetExtendedACLRequest) ToGRPCMessage() grpc.Message {
+	var m *container.GetExtendedACLRequest
+
+	if r != nil {
+		m = new(container.GetExtendedACLRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.GetExtendedACLRequest_Body))
+		r.RequestHeaders.ToMessage(m)
 	}
-
-	m := new(container.GetExtendedACLRequest)
-
-	m.SetBody(
-		GetExtendedACLRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
 
-func GetExtendedACLRequestFromGRPCMessage(m *container.GetExtendedACLRequest) *GetExtendedACLRequest {
-	if m == nil {
-		return nil
+func (r *GetExtendedACLRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.GetExtendedACLRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetExtendedACLRequest)
+	var err error
 
-	r.SetBody(
-		GetExtendedACLRequestBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(GetExtendedACLRequestBody)
+		}
 
-	session.RequestHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.RequestHeaders.FromMessage(v)
 }
 
-func GetExtendedACLResponseBodyToGRPCMessage(r *GetExtendedACLResponseBody) *container.GetExtendedACLResponse_Body {
-	if r == nil {
-		return nil
+func (r *GetExtendedACLResponseBody) ToGRPCMessage() grpc.Message {
+	var m *container.GetExtendedACLResponse_Body
+
+	if r != nil {
+		m = new(container.GetExtendedACLResponse_Body)
+
+		m.SetEacl(r.eacl.ToGRPCMessage().(*aclGRPC.EACLTable))
+		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
 	}
-
-	m := new(container.GetExtendedACLResponse_Body)
-
-	m.SetEacl(
-		acl.TableToGRPCMessage(r.GetEACL()),
-	)
-
-	m.SetSignature(
-		refs.SignatureToGRPCMessage(r.GetSignature()),
-	)
 
 	return m
 }
 
-func GetExtendedACLResponseBodyFromGRPCMessage(m *container.GetExtendedACLResponse_Body) *GetExtendedACLResponseBody {
-	if m == nil {
-		return nil
+func (r *GetExtendedACLResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.GetExtendedACLResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetExtendedACLResponseBody)
+	var err error
 
-	r.SetEACL(
-		acl.TableFromGRPCMessage(m.GetEacl()),
-	)
+	eacl := v.GetEacl()
+	if eacl == nil {
+		r.eacl = nil
+	} else {
+		if r.eacl == nil {
+			r.eacl = new(acl.Table)
+		}
 
-	r.SetSignature(
-		refs.SignatureFromGRPCMessage(m.GetSignature()),
-	)
+		err = r.eacl.FromGRPCMessage(eacl)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	sig := v.GetSignature()
+	if sig == nil {
+		r.sig = nil
+	} else {
+		if r.sig == nil {
+			r.sig = new(refs.Signature)
+		}
+
+		err = r.sig.FromGRPCMessage(sig)
+	}
+
+	return err
 }
 
-func GetExtendedACLResponseToGRPCMessage(r *GetExtendedACLResponse) *container.GetExtendedACLResponse {
-	if r == nil {
-		return nil
+func (r *GetExtendedACLResponse) ToGRPCMessage() grpc.Message {
+	var m *container.GetExtendedACLResponse
+
+	if r != nil {
+		m = new(container.GetExtendedACLResponse)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.GetExtendedACLResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
 	}
-
-	m := new(container.GetExtendedACLResponse)
-
-	m.SetBody(
-		GetExtendedACLResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
 
-func GetExtendedACLResponseFromGRPCMessage(m *container.GetExtendedACLResponse) *GetExtendedACLResponse {
-	if m == nil {
-		return nil
+func (r *GetExtendedACLResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.GetExtendedACLResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(GetExtendedACLResponse)
+	var err error
 
-	r.SetBody(
-		GetExtendedACLResponseBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(GetExtendedACLResponseBody)
+		}
 
-	session.ResponseHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.ResponseHeaders.FromMessage(v)
 }
 
-func UsedSpaceAnnouncementToGRPCMessage(a *UsedSpaceAnnouncement) *container.AnnounceUsedSpaceRequest_Body_Announcement {
-	if a == nil {
-		return nil
+func (a *UsedSpaceAnnouncement) ToGRPCMessage() grpc.Message {
+	var m *container.AnnounceUsedSpaceRequest_Body_Announcement
+
+	if a != nil {
+		m = new(container.AnnounceUsedSpaceRequest_Body_Announcement)
+
+		m.SetContainerId(a.cid.ToGRPCMessage().(*refsGRPC.ContainerID))
+		m.SetEpoch(a.epoch)
+		m.SetUsedSpace(a.usedSpace)
 	}
-
-	m := new(container.AnnounceUsedSpaceRequest_Body_Announcement)
-
-	m.SetEpoch(a.GetEpoch())
-
-	m.SetContainerId(
-		refs.ContainerIDToGRPCMessage(a.GetContainerID()),
-	)
-
-	m.SetUsedSpace(a.GetUsedSpace())
 
 	return m
 }
 
-func UsedSpaceAnnouncementFromGRPCMessage(m *container.AnnounceUsedSpaceRequest_Body_Announcement) *UsedSpaceAnnouncement {
-	if m == nil {
-		return nil
+func (a *UsedSpaceAnnouncement) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.AnnounceUsedSpaceRequest_Body_Announcement)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	a := new(UsedSpaceAnnouncement)
+	var err error
 
-	a.SetEpoch(m.GetEpoch())
+	cid := v.GetContainerId()
+	if cid == nil {
+		a.cid = nil
+	} else {
+		if a.cid == nil {
+			a.cid = new(refs.ContainerID)
+		}
 
-	a.SetContainerID(
-		refs.ContainerIDFromGRPCMessage(m.GetContainerId()),
-	)
+		err = a.cid.FromGRPCMessage(cid)
+		if err != nil {
+			return err
+		}
+	}
 
-	a.SetUsedSpace(m.GetUsedSpace())
+	a.epoch = v.GetEpoch()
+	a.usedSpace = v.GetUsedSpace()
 
-	return a
+	return nil
 }
 
-func AnnounceUsedSpaceRequestBodyToGRPCMessage(r *AnnounceUsedSpaceRequestBody) *container.AnnounceUsedSpaceRequest_Body {
-	if r == nil {
-		return nil
+func UsedSpaceAnnouncementsToGRPCMessage(
+	ids []*UsedSpaceAnnouncement,
+) (res []*container.AnnounceUsedSpaceRequest_Body_Announcement) {
+	if ids != nil {
+		res = make([]*container.AnnounceUsedSpaceRequest_Body_Announcement, 0, len(ids))
+
+		for i := range ids {
+			res = append(res, ids[i].ToGRPCMessage().(*container.AnnounceUsedSpaceRequest_Body_Announcement))
+		}
 	}
 
-	m := new(container.AnnounceUsedSpaceRequest_Body)
+	return
+}
 
-	announcements := r.GetAnnouncements()
-	msgAnnouncements := make([]*container.AnnounceUsedSpaceRequest_Body_Announcement, 0, len(announcements))
+func UsedSpaceAnnouncementssFromGRPCMessage(
+	asV2 []*container.AnnounceUsedSpaceRequest_Body_Announcement,
+) (res []*UsedSpaceAnnouncement, err error) {
+	if asV2 != nil {
+		res = make([]*UsedSpaceAnnouncement, 0, len(asV2))
 
-	for i := range announcements {
-		msgAnnouncements = append(
-			msgAnnouncements,
-			UsedSpaceAnnouncementToGRPCMessage(announcements[i]),
-		)
+		for i := range asV2 {
+			var a *UsedSpaceAnnouncement
+
+			if asV2[i] != nil {
+				a = new(UsedSpaceAnnouncement)
+
+				err = a.FromGRPCMessage(asV2[i])
+				if err != nil {
+					return
+				}
+			}
+
+			res = append(res, a)
+		}
 	}
 
-	m.SetAnnouncements(msgAnnouncements)
+	return
+}
+
+func (r *AnnounceUsedSpaceRequestBody) ToGRPCMessage() grpc.Message {
+	var m *container.AnnounceUsedSpaceRequest_Body
+
+	if r != nil {
+		m = new(container.AnnounceUsedSpaceRequest_Body)
+
+		m.SetAnnouncements(UsedSpaceAnnouncementsToGRPCMessage(r.announcements))
+	}
 
 	return m
 }
 
-func AnnounceUsedSpaceRequestBodyFromGRPCMessage(m *container.AnnounceUsedSpaceRequest_Body) *AnnounceUsedSpaceRequestBody {
-	if m == nil {
-		return nil
+func (r *AnnounceUsedSpaceRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.AnnounceUsedSpaceRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(AnnounceUsedSpaceRequestBody)
+	var err error
 
-	msgAnnouncements := m.GetAnnouncements()
-	announcements := make([]*UsedSpaceAnnouncement, 0, len(msgAnnouncements))
+	r.announcements, err = UsedSpaceAnnouncementssFromGRPCMessage(v.GetAnnouncements())
 
-	for i := range msgAnnouncements {
-		announcements = append(
-			announcements,
-			UsedSpaceAnnouncementFromGRPCMessage(msgAnnouncements[i]),
-		)
-	}
-
-	r.SetAnnouncements(announcements)
-
-	return r
+	return err
 }
 
-func AnnounceUsedSpaceRequestToGRPCMessage(r *AnnounceUsedSpaceRequest) *container.AnnounceUsedSpaceRequest {
-	if r == nil {
-		return nil
+func (r *AnnounceUsedSpaceRequest) ToGRPCMessage() grpc.Message {
+	var m *container.AnnounceUsedSpaceRequest
+
+	if r != nil {
+		m = new(container.AnnounceUsedSpaceRequest)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.AnnounceUsedSpaceRequest_Body))
+		r.RequestHeaders.ToMessage(m)
 	}
-
-	m := new(container.AnnounceUsedSpaceRequest)
-
-	m.SetBody(
-		AnnounceUsedSpaceRequestBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.RequestHeadersToGRPC(r, m)
 
 	return m
 }
 
-func AnnounceUsedSpaceRequestFromGRPCMessage(m *container.AnnounceUsedSpaceRequest) *AnnounceUsedSpaceRequest {
-	if m == nil {
-		return nil
+func (r *AnnounceUsedSpaceRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.AnnounceUsedSpaceRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(AnnounceUsedSpaceRequest)
+	var err error
 
-	r.SetBody(
-		AnnounceUsedSpaceRequestBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(AnnounceUsedSpaceRequestBody)
+		}
 
-	session.RequestHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.RequestHeaders.FromMessage(v)
 }
 
-func AnnounceUsedSpaceResponseBodyToGRPCMessage(r *AnnounceUsedSpaceResponseBody) *container.AnnounceUsedSpaceResponse_Body {
-	if r == nil {
-		return nil
-	}
+func (r *AnnounceUsedSpaceResponseBody) ToGRPCMessage() grpc.Message {
+	var m *container.AnnounceUsedSpaceResponse_Body
 
-	m := new(container.AnnounceUsedSpaceResponse_Body)
+	if r != nil {
+		m = new(container.AnnounceUsedSpaceResponse_Body)
+	}
 
 	return m
 }
 
-func AnnounceUsedSpaceResponseBodyFromGRPCMessage(m *container.AnnounceUsedSpaceResponse_Body) *AnnounceUsedSpaceResponseBody {
-	if m == nil {
-		return nil
+func (r *AnnounceUsedSpaceResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.AnnounceUsedSpaceResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(AnnounceUsedSpaceResponseBody)
-
-	return r
+	return nil
 }
 
-func AnnounceUsedSpaceResponseToGRPCMessage(r *AnnounceUsedSpaceResponse) *container.AnnounceUsedSpaceResponse {
-	if r == nil {
-		return nil
+func (r *AnnounceUsedSpaceResponse) ToGRPCMessage() grpc.Message {
+	var m *container.AnnounceUsedSpaceResponse
+
+	if r != nil {
+		m = new(container.AnnounceUsedSpaceResponse)
+
+		m.SetBody(r.body.ToGRPCMessage().(*container.AnnounceUsedSpaceResponse_Body))
+		r.ResponseHeaders.ToMessage(m)
 	}
-
-	m := new(container.AnnounceUsedSpaceResponse)
-
-	m.SetBody(
-		AnnounceUsedSpaceResponseBodyToGRPCMessage(r.GetBody()),
-	)
-
-	session.ResponseHeadersToGRPC(r, m)
 
 	return m
 }
 
-func AnnounceUsedSpaceResponseFromGRPCMessage(m *container.AnnounceUsedSpaceResponse) *AnnounceUsedSpaceResponse {
-	if m == nil {
-		return nil
+func (r *AnnounceUsedSpaceResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*container.AnnounceUsedSpaceResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	r := new(AnnounceUsedSpaceResponse)
+	var err error
 
-	r.SetBody(
-		AnnounceUsedSpaceResponseBodyFromGRPCMessage(m.GetBody()),
-	)
+	body := v.GetBody()
+	if body == nil {
+		r.body = nil
+	} else {
+		if r.body == nil {
+			r.body = new(AnnounceUsedSpaceResponseBody)
+		}
 
-	session.ResponseHeadersFromGRPC(m, r)
+		err = r.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
 
-	return r
+	return r.ResponseHeaders.FromMessage(v)
 }

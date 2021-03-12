@@ -19,6 +19,18 @@ type Decimal struct {
 	prec uint32
 }
 
+type BalanceRequest struct {
+	body *BalanceRequestBody
+
+	session.RequestHeaders
+}
+
+type BalanceResponse struct {
+	body *BalanceResponseBody
+
+	session.ResponseHeaders
+}
+
 func (b *BalanceRequestBody) GetOwnerID() *refs.OwnerID {
 	if b != nil {
 		return b.ownerID
@@ -44,34 +56,6 @@ func (b *BalanceRequest) GetBody() *BalanceRequestBody {
 func (b *BalanceRequest) SetBody(v *BalanceRequestBody) {
 	if b != nil {
 		b.body = v
-	}
-}
-
-func (b *BalanceRequest) GetMetaHeader() *session.RequestMetaHeader {
-	if b != nil {
-		return b.metaHeader
-	}
-
-	return nil
-}
-
-func (b *BalanceRequest) SetMetaHeader(v *session.RequestMetaHeader) {
-	if b != nil {
-		b.metaHeader = v
-	}
-}
-
-func (b *BalanceRequest) GetVerificationHeader() *session.RequestVerificationHeader {
-	if b != nil {
-		return b.verifyHeader
-	}
-
-	return nil
-}
-
-func (b *BalanceRequest) SetVerificationHeader(v *session.RequestVerificationHeader) {
-	if b != nil {
-		b.verifyHeader = v
 	}
 }
 
@@ -128,33 +112,5 @@ func (br *BalanceResponse) GetBody() *BalanceResponseBody {
 func (br *BalanceResponse) SetBody(v *BalanceResponseBody) {
 	if br != nil {
 		br.body = v
-	}
-}
-
-func (br *BalanceResponse) GetMetaHeader() *session.ResponseMetaHeader {
-	if br != nil {
-		return br.metaHeader
-	}
-
-	return nil
-}
-
-func (br *BalanceResponse) SetMetaHeader(v *session.ResponseMetaHeader) {
-	if br != nil {
-		br.metaHeader = v
-	}
-}
-
-func (br *BalanceResponse) GetVerificationHeader() *session.ResponseVerificationHeader {
-	if br != nil {
-		return br.verifyHeader
-	}
-
-	return nil
-}
-
-func (br *BalanceResponse) SetVerificationHeader(v *session.ResponseVerificationHeader) {
-	if br != nil {
-		br.verifyHeader = v
 	}
 }

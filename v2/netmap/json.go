@@ -1,146 +1,62 @@
 package netmap
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func (p *PlacementPolicy) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		PlacementPolicyToGRPCMessage(p),
-	)
+	return message.MarshalJSON(p)
 }
 
 func (p *PlacementPolicy) UnmarshalJSON(data []byte) error {
-	msg := new(netmap.PlacementPolicy)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*p = *PlacementPolicyFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(p, data, new(netmap.PlacementPolicy))
 }
 
 func (f *Filter) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		FilterToGRPCMessage(f),
-	)
+	return message.MarshalJSON(f)
 }
 
 func (f *Filter) UnmarshalJSON(data []byte) error {
-	msg := new(netmap.Filter)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*f = *FilterFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(f, data, new(netmap.Filter))
 }
 
 func (s *Selector) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		SelectorToGRPCMessage(s),
-	)
+	return message.MarshalJSON(s)
 }
 
 func (s *Selector) UnmarshalJSON(data []byte) error {
-	msg := new(netmap.Selector)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*s = *SelectorFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(s, data, new(netmap.Selector))
 }
 
 func (r *Replica) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		ReplicaToGRPCMessage(r),
-	)
+	return message.MarshalJSON(r)
 }
 
 func (r *Replica) UnmarshalJSON(data []byte) error {
-	msg := new(netmap.Replica)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*r = *ReplicaFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(r, data, new(netmap.Replica))
 }
 
 func (a *Attribute) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		AttributeToGRPCMessage(a),
-	)
+	return message.MarshalJSON(a)
 }
 
 func (a *Attribute) UnmarshalJSON(data []byte) error {
-	msg := new(netmap.NodeInfo_Attribute)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*a = *AttributeFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(a, data, new(netmap.NodeInfo_Attribute))
 }
 
 func (ni *NodeInfo) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		NodeInfoToGRPCMessage(ni),
-	)
+	return message.MarshalJSON(ni)
 }
 
 func (ni *NodeInfo) UnmarshalJSON(data []byte) error {
-	msg := new(netmap.NodeInfo)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*ni = *NodeInfoFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(ni, data, new(netmap.NodeInfo))
 }
 
 func (i *NetworkInfo) MarshalJSON() ([]byte, error) {
-	return protojson.MarshalOptions{
-		EmitUnpopulated: true,
-	}.Marshal(
-		NetworkInfoToGRPCMessage(i),
-	)
+	return message.MarshalJSON(i)
 }
 
 func (i *NetworkInfo) UnmarshalJSON(data []byte) error {
-	msg := new(netmap.NetworkInfo)
-
-	if err := protojson.Unmarshal(data, msg); err != nil {
-		return err
-	}
-
-	*i = *NetworkInfoFromGRPCMessage(msg)
-
-	return nil
+	return message.UnmarshalJSON(i, data, new(netmap.NetworkInfo))
 }

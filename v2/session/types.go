@@ -11,10 +11,22 @@ type CreateRequestBody struct {
 	expiration uint64
 }
 
+type CreateRequest struct {
+	body *CreateRequestBody
+
+	RequestHeaders
+}
+
 type CreateResponseBody struct {
 	id []byte
 
 	sessionKey []byte
+}
+
+type CreateResponse struct {
+	body *CreateResponseBody
+
+	ResponseHeaders
 }
 
 type XHeader struct {
