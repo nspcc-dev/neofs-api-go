@@ -15,6 +15,28 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Container contains methods related to container and ACL.
+type Container interface {
+	// PutContainer creates new container in the NeoFS network.
+	PutContainer(context.Context, *container.Container, ...CallOption) (*container.ID, error)
+	// GetContainer returns container by ID.
+	GetContainer(context.Context, *container.ID, ...CallOption) (*container.Container, error)
+	// ListContainers return container list with the provided owner.
+	ListContainers(context.Context, *owner.ID, ...CallOption) ([]*container.ID, error)
+	// ListSelfContainers is similar to ListContainers but uses client's key to deduce owner ID.
+	ListSelfContainers(context.Context, ...CallOption) ([]*container.ID, error)
+	// DeleteContainer removes container from NeoFS network.
+	DeleteContainer(context.Context, *container.ID, ...CallOption) error
+	// GetEACL returns extended ACL for a given container.
+	GetEACL(context.Context, *container.ID, ...CallOption) (*eacl.Table, error)
+	// GetEACLWithSignature is similar to GetEACL but returns signed ACL.
+	GetEACLWithSignature(context.Context, *container.ID, ...CallOption) (*EACLWithSignature, error)
+	// SetEACL sets extended ACL.
+	SetEACL(context.Context, *eacl.Table, ...CallOption) error
+	// AnnounceContainerUsedSpace announces amount of space which is taken by stored objects.
+	AnnounceContainerUsedSpace(context.Context, []container.UsedSpaceAnnouncement, ...CallOption) error
+}
+
 type delContainerSignWrapper struct {
 	body *v2container.DeleteRequestBody
 }
@@ -46,7 +68,7 @@ func (e EACLWithSignature) Signature() *pkg.Signature {
 	return e.sig
 }
 
-func (c Client) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
+func (c clientImpl) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
 	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.putContainerV2(ctx, cnr, opts...)
@@ -58,7 +80,7 @@ func (c Client) PutContainer(ctx context.Context, cnr *container.Container, opts
 // GetContainer receives container structure through NeoFS API call.
 //
 // Returns error if container structure is received but does not meet NeoFS API specification.
-func (c Client) GetContainer(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
+func (c clientImpl) GetContainer(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
 	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.getContainerV2(ctx, id, opts...)
@@ -71,7 +93,7 @@ func (c Client) GetContainer(ctx context.Context, id *container.ID, opts ...Call
 // which checks if the structure of the resulting container matches its identifier.
 //
 // Returns container.ErrIDMismatch if container does not match the identifier.
-func GetVerifiedContainerStructure(ctx context.Context, c *Client, id *container.ID, opts ...CallOption) (*container.Container, error) {
+func GetVerifiedContainerStructure(ctx context.Context, c Client, id *container.ID, opts ...CallOption) (*container.Container, error) {
 	cnr, err := c.GetContainer(ctx, id, opts...)
 	if err != nil {
 		return nil, err
@@ -84,7 +106,7 @@ func GetVerifiedContainerStructure(ctx context.Context, c *Client, id *container
 	return cnr, nil
 }
 
-func (c Client) ListContainers(ctx context.Context, owner *owner.ID, opts ...CallOption) ([]*container.ID, error) {
+func (c clientImpl) ListContainers(ctx context.Context, owner *owner.ID, opts ...CallOption) ([]*container.ID, error) {
 	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.listContainerV2(ctx, owner, opts...)
@@ -93,11 +115,11 @@ func (c Client) ListContainers(ctx context.Context, owner *owner.ID, opts ...Cal
 	}
 }
 
-func (c Client) ListSelfContainers(ctx context.Context, opts ...CallOption) ([]*container.ID, error) {
+func (c clientImpl) ListSelfContainers(ctx context.Context, opts ...CallOption) ([]*container.ID, error) {
 	return c.ListContainers(ctx, nil, opts...)
 }
 
-func (c Client) DeleteContainer(ctx context.Context, id *container.ID, opts ...CallOption) error {
+func (c clientImpl) DeleteContainer(ctx context.Context, id *container.ID, opts ...CallOption) error {
 	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.delContainerV2(ctx, id, opts...)
@@ -106,7 +128,7 @@ func (c Client) DeleteContainer(ctx context.Context, id *container.ID, opts ...C
 	}
 }
 
-func (c Client) GetEACL(ctx context.Context, id *container.ID, opts ...CallOption) (*eacl.Table, error) {
+func (c clientImpl) GetEACL(ctx context.Context, id *container.ID, opts ...CallOption) (*eacl.Table, error) {
 	v, err := c.getEACL(ctx, id, true, opts...)
 	if err != nil {
 		return nil, err
@@ -115,11 +137,11 @@ func (c Client) GetEACL(ctx context.Context, id *container.ID, opts ...CallOptio
 	return v.table, nil
 }
 
-func (c Client) GetEACLWithSignature(ctx context.Context, id *container.ID, opts ...CallOption) (*EACLWithSignature, error) {
+func (c clientImpl) GetEACLWithSignature(ctx context.Context, id *container.ID, opts ...CallOption) (*EACLWithSignature, error) {
 	return c.getEACL(ctx, id, false, opts...)
 }
 
-func (c Client) getEACL(ctx context.Context, id *container.ID, verify bool, opts ...CallOption) (*EACLWithSignature, error) {
+func (c clientImpl) getEACL(ctx context.Context, id *container.ID, verify bool, opts ...CallOption) (*EACLWithSignature, error) {
 	switch c.remoteNode.Version.Major() {
 	case 2:
 		resp, err := c.getEACLV2(ctx, id, verify, opts...)
@@ -136,7 +158,7 @@ func (c Client) getEACL(ctx context.Context, id *container.ID, verify bool, opts
 	}
 }
 
-func (c Client) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
+func (c clientImpl) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
 	switch c.remoteNode.Version.Major() {
 	case 2:
 		return c.setEACLV2(ctx, eacl, opts...)
@@ -147,7 +169,7 @@ func (c Client) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...CallOptio
 
 // AnnounceContainerUsedSpace used by storage nodes to estimate their container
 // sizes during lifetime. Use it only in storage node applications.
-func (c Client) AnnounceContainerUsedSpace(
+func (c clientImpl) AnnounceContainerUsedSpace(
 	ctx context.Context,
 	announce []container.UsedSpaceAnnouncement,
 	opts ...CallOption) error {
@@ -159,7 +181,7 @@ func (c Client) AnnounceContainerUsedSpace(
 	}
 }
 
-func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
+func (c clientImpl) putContainerV2(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -231,7 +253,7 @@ func (c Client) putContainerV2(ctx context.Context, cnr *container.Container, op
 	}
 }
 
-func (c Client) getContainerV2(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
+func (c clientImpl) getContainerV2(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -274,7 +296,7 @@ func (c Client) getContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 	}
 }
 
-func (c Client) listContainerV2(ctx context.Context, ownerID *owner.ID, opts ...CallOption) ([]*container.ID, error) {
+func (c clientImpl) listContainerV2(ctx context.Context, ownerID *owner.ID, opts ...CallOption) ([]*container.ID, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -332,7 +354,7 @@ func (c Client) listContainerV2(ctx context.Context, ownerID *owner.ID, opts ...
 	}
 }
 
-func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...CallOption) error {
+func (c clientImpl) delContainerV2(ctx context.Context, id *container.ID, opts ...CallOption) error {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -391,7 +413,7 @@ func (c Client) delContainerV2(ctx context.Context, id *container.ID, opts ...Ca
 	}
 }
 
-func (c Client) getEACLV2(ctx context.Context, id *container.ID, verify bool, opts ...CallOption) (*v2container.GetExtendedACLResponseBody, error) {
+func (c clientImpl) getEACLV2(ctx context.Context, id *container.ID, verify bool, opts ...CallOption) (*v2container.GetExtendedACLResponseBody, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -455,7 +477,7 @@ func (c Client) getEACLV2(ctx context.Context, id *container.ID, verify bool, op
 	}
 }
 
-func (c Client) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
+func (c clientImpl) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -511,7 +533,7 @@ func (c Client) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOpt
 	}
 }
 
-func (c Client) announceContainerUsedSpaceV2(
+func (c clientImpl) announceContainerUsedSpaceV2(
 	ctx context.Context,
 	announce []container.UsedSpaceAnnouncement,
 	opts ...CallOption) error {

@@ -11,11 +11,19 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c Client) GetSelfBalance(ctx context.Context, opts ...CallOption) (*accounting.Decimal, error) {
+// Accounting contains methods related to balance querying.
+type Accounting interface {
+	// GetSelfBalance returns balance of the account deduced from client's key.
+	GetSelfBalance(context.Context, ...CallOption) (*accounting.Decimal, error)
+	// GetBalance returns balance of provided account.
+	GetBalance(context.Context, *owner.ID, ...CallOption) (*accounting.Decimal, error)
+}
+
+func (c clientImpl) GetSelfBalance(ctx context.Context, opts ...CallOption) (*accounting.Decimal, error) {
 	return c.GetBalance(ctx, nil, opts...)
 }
 
-func (c Client) GetBalance(ctx context.Context, owner *owner.ID, opts ...CallOption) (*accounting.Decimal, error) {
+func (c clientImpl) GetBalance(ctx context.Context, owner *owner.ID, opts ...CallOption) (*accounting.Decimal, error) {
 	// check remote node version
 	switch c.remoteNode.Version.Major() {
 	case 2:
@@ -25,7 +33,7 @@ func (c Client) GetBalance(ctx context.Context, owner *owner.ID, opts ...CallOpt
 	}
 }
 
-func (c Client) getBalanceV2(ctx context.Context, ownerID *owner.ID, opts ...CallOption) (*accounting.Decimal, error) {
+func (c clientImpl) getBalanceV2(ctx context.Context, ownerID *owner.ID, opts ...CallOption) (*accounting.Decimal, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
