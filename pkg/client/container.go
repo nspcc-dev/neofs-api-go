@@ -7,10 +7,11 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
+	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 	"github.com/nspcc-dev/neofs-api-go/util/signature"
-	"github.com/nspcc-dev/neofs-api-go/v2/client"
 	v2container "github.com/nspcc-dev/neofs-api-go/v2/container"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
 	"github.com/pkg/errors"
 )
@@ -23,14 +24,10 @@ type Container interface {
 	GetContainer(context.Context, *container.ID, ...CallOption) (*container.Container, error)
 	// ListContainers return container list with the provided owner.
 	ListContainers(context.Context, *owner.ID, ...CallOption) ([]*container.ID, error)
-	// ListSelfContainers is similar to ListContainers but uses client's key to deduce owner ID.
-	ListSelfContainers(context.Context, ...CallOption) ([]*container.ID, error)
 	// DeleteContainer removes container from NeoFS network.
 	DeleteContainer(context.Context, *container.ID, ...CallOption) error
 	// GetEACL returns extended ACL for a given container.
-	GetEACL(context.Context, *container.ID, ...CallOption) (*eacl.Table, error)
-	// GetEACLWithSignature is similar to GetEACL but returns signed ACL.
-	GetEACLWithSignature(context.Context, *container.ID, ...CallOption) (*EACLWithSignature, error)
+	GetEACL(context.Context, *container.ID, ...CallOption) (*EACLWithSignature, error)
 	// SetEACL sets extended ACL.
 	SetEACL(context.Context, *eacl.Table, ...CallOption) error
 	// AnnounceContainerUsedSpace announces amount of space which is taken by stored objects.
@@ -47,8 +44,6 @@ type EACLWithSignature struct {
 
 	sig *pkg.Signature
 }
-
-var errNilReponseBody = errors.New("response body is nil")
 
 func (c delContainerSignWrapper) ReadSignedData(bytes []byte) ([]byte, error) {
 	return c.body.GetContainerID().GetValue(), nil
@@ -68,129 +63,16 @@ func (e EACLWithSignature) Signature() *pkg.Signature {
 	return e.sig
 }
 
-func (c clientImpl) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
-	switch c.remoteNode.Version.Major() {
-	case 2:
-		return c.putContainerV2(ctx, cnr, opts...)
-	default:
-		return nil, errUnsupportedProtocol
-	}
-}
-
-// GetContainer receives container structure through NeoFS API call.
-//
-// Returns error if container structure is received but does not meet NeoFS API specification.
-func (c clientImpl) GetContainer(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
-	switch c.remoteNode.Version.Major() {
-	case 2:
-		return c.getContainerV2(ctx, id, opts...)
-	default:
-		return nil, errUnsupportedProtocol
-	}
-}
-
-// GetVerifiedContainerStructure is a wrapper over Client.GetContainer method
-// which checks if the structure of the resulting container matches its identifier.
-//
-// Returns container.ErrIDMismatch if container does not match the identifier.
-func GetVerifiedContainerStructure(ctx context.Context, c Client, id *container.ID, opts ...CallOption) (*container.Container, error) {
-	cnr, err := c.GetContainer(ctx, id, opts...)
-	if err != nil {
-		return nil, err
-	}
-
-	if !container.CalculateID(cnr).Equal(id) {
-		return nil, container.ErrIDMismatch
-	}
-
-	return cnr, nil
-}
-
-func (c clientImpl) ListContainers(ctx context.Context, owner *owner.ID, opts ...CallOption) ([]*container.ID, error) {
-	switch c.remoteNode.Version.Major() {
-	case 2:
-		return c.listContainerV2(ctx, owner, opts...)
-	default:
-		return nil, errUnsupportedProtocol
-	}
-}
-
-func (c clientImpl) ListSelfContainers(ctx context.Context, opts ...CallOption) ([]*container.ID, error) {
-	return c.ListContainers(ctx, nil, opts...)
-}
-
-func (c clientImpl) DeleteContainer(ctx context.Context, id *container.ID, opts ...CallOption) error {
-	switch c.remoteNode.Version.Major() {
-	case 2:
-		return c.delContainerV2(ctx, id, opts...)
-	default:
-		return errUnsupportedProtocol
-	}
-}
-
-func (c clientImpl) GetEACL(ctx context.Context, id *container.ID, opts ...CallOption) (*eacl.Table, error) {
-	v, err := c.getEACL(ctx, id, true, opts...)
-	if err != nil {
-		return nil, err
-	}
-
-	return v.table, nil
-}
-
-func (c clientImpl) GetEACLWithSignature(ctx context.Context, id *container.ID, opts ...CallOption) (*EACLWithSignature, error) {
-	return c.getEACL(ctx, id, false, opts...)
-}
-
-func (c clientImpl) getEACL(ctx context.Context, id *container.ID, verify bool, opts ...CallOption) (*EACLWithSignature, error) {
-	switch c.remoteNode.Version.Major() {
-	case 2:
-		resp, err := c.getEACLV2(ctx, id, verify, opts...)
-		if err != nil {
-			return nil, err
-		}
-
-		return &EACLWithSignature{
-			table: eacl.NewTableFromV2(resp.GetEACL()),
-			sig:   pkg.NewSignatureFromV2(resp.GetSignature()),
-		}, nil
-	default:
-		return nil, errUnsupportedProtocol
-	}
-}
-
-func (c clientImpl) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
-	switch c.remoteNode.Version.Major() {
-	case 2:
-		return c.setEACLV2(ctx, eacl, opts...)
-	default:
-		return errUnsupportedProtocol
-	}
-}
-
-// AnnounceContainerUsedSpace used by storage nodes to estimate their container
-// sizes during lifetime. Use it only in storage node applications.
-func (c clientImpl) AnnounceContainerUsedSpace(
-	ctx context.Context,
-	announce []container.UsedSpaceAnnouncement,
-	opts ...CallOption) error {
-	switch c.remoteNode.Version.Major() {
-	case 2:
-		return c.announceContainerUsedSpaceV2(ctx, announce, opts...)
-	default:
-		return errUnsupportedProtocol
-	}
-}
-
-func (c clientImpl) putContainerV2(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
+func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
 	for i := range opts {
-		opts[i].apply(&callOptions)
+		opts[i](callOptions)
 	}
 
 	// set transport version
-	cnr.SetVersion(c.remoteNode.Version)
+	cnr.SetVersion(pkg.SDKVersion())
 
 	// if container owner is not set, then use client key as owner
 	if cnr.OwnerID() == nil {
@@ -230,35 +112,28 @@ func (c clientImpl) putContainerV2(ctx context.Context, cnr *container.Container
 		return nil, err
 	}
 
-	switch c.remoteNode.Protocol {
-	case GRPC:
-		cli, err := v2ContainerClientFromOptions(c.opts)
-		if err != nil {
-			return nil, errors.Wrap(err, "can't create grpc client")
-		}
-
-		resp, err := cli.Put(ctx, req)
-		if err != nil {
-			return nil, errors.Wrap(err, "transport error")
-		}
-
-		err = v2signature.VerifyServiceMessage(resp)
-		if err != nil {
-			return nil, errors.Wrap(err, "can't verify response message")
-		}
-
-		return container.NewIDFromV2(resp.GetBody().GetContainerID()), nil
-	default:
-		return nil, errUnsupportedProtocol
+	resp, err := rpcapi.PutContainer(c.Raw(), req, client.WithContext(ctx))
+	if err != nil {
+		return nil, err
 	}
+
+	err = v2signature.VerifyServiceMessage(resp)
+	if err != nil {
+		return nil, errors.Wrap(err, "can't verify response message")
+	}
+
+	return container.NewIDFromV2(resp.GetBody().GetContainerID()), nil
 }
 
-func (c clientImpl) getContainerV2(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
+// GetContainer receives container structure through NeoFS API call.
+//
+// Returns error if container structure is received but does not meet NeoFS API specification.
+func (c *clientImpl) GetContainer(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
 	for i := range opts {
-		opts[i].apply(&callOptions)
+		opts[i](callOptions)
 	}
 
 	reqBody := new(v2container.GetRequestBody)
@@ -273,35 +148,42 @@ func (c clientImpl) getContainerV2(ctx context.Context, id *container.ID, opts .
 		return nil, err
 	}
 
-	switch c.remoteNode.Protocol {
-	case GRPC:
-		cli, err := v2ContainerClientFromOptions(c.opts)
-		if err != nil {
-			return nil, errors.Wrap(err, "can't create grpc client")
-		}
-
-		resp, err := cli.Get(ctx, req)
-		if err != nil {
-			return nil, errors.Wrap(err, "transport error")
-		}
-
-		err = v2signature.VerifyServiceMessage(resp)
-		if err != nil {
-			return nil, errors.Wrap(err, "can't verify response message")
-		}
-
-		return container.NewVerifiedFromV2(resp.GetBody().GetContainer())
-	default:
-		return nil, errUnsupportedProtocol
+	resp, err := rpcapi.GetContainer(c.Raw(), req, client.WithContext(ctx))
+	if err != nil {
+		return nil, errors.Wrap(err, "transport error")
 	}
+
+	err = v2signature.VerifyServiceMessage(resp)
+	if err != nil {
+		return nil, errors.Wrap(err, "can't verify response message")
+	}
+
+	return container.NewVerifiedFromV2(resp.GetBody().GetContainer())
 }
 
-func (c clientImpl) listContainerV2(ctx context.Context, ownerID *owner.ID, opts ...CallOption) ([]*container.ID, error) {
+// GetVerifiedContainerStructure is a wrapper over Client.GetContainer method
+// which checks if the structure of the resulting container matches its identifier.
+//
+// Returns container.ErrIDMismatch if container does not match the identifier.
+func GetVerifiedContainerStructure(ctx context.Context, c Client, id *container.ID, opts ...CallOption) (*container.Container, error) {
+	cnr, err := c.GetContainer(ctx, id, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	if !container.CalculateID(cnr).Equal(id) {
+		return nil, container.ErrIDMismatch
+	}
+
+	return cnr, nil
+}
+
+func (c *clientImpl) ListContainers(ctx context.Context, ownerID *owner.ID, opts ...CallOption) ([]*container.ID, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
 	for i := range opts {
-		opts[i].apply(&callOptions)
+		opts[i](callOptions)
 	}
 
 	if ownerID == nil {
@@ -326,40 +208,31 @@ func (c clientImpl) listContainerV2(ctx context.Context, ownerID *owner.ID, opts
 		return nil, err
 	}
 
-	switch c.remoteNode.Protocol {
-	case GRPC:
-		cli, err := v2ContainerClientFromOptions(c.opts)
-		if err != nil {
-			return nil, errors.Wrap(err, "can't create grpc client")
-		}
-
-		resp, err := cli.List(ctx, req)
-		if err != nil {
-			return nil, errors.Wrap(err, "transport error")
-		}
-
-		err = v2signature.VerifyServiceMessage(resp)
-		if err != nil {
-			return nil, errors.Wrap(err, "can't verify response message")
-		}
-
-		result := make([]*container.ID, 0, len(resp.GetBody().GetContainerIDs()))
-		for _, cidV2 := range resp.GetBody().GetContainerIDs() {
-			result = append(result, container.NewIDFromV2(cidV2))
-		}
-
-		return result, nil
-	default:
-		return nil, errUnsupportedProtocol
+	resp, err := rpcapi.ListContainers(c.Raw(), req, client.WithContext(ctx))
+	if err != nil {
+		return nil, errors.Wrap(err, "transport error")
 	}
+
+	err = v2signature.VerifyServiceMessage(resp)
+	if err != nil {
+		return nil, errors.Wrap(err, "can't verify response message")
+	}
+
+	result := make([]*container.ID, 0, len(resp.GetBody().GetContainerIDs()))
+	for _, cidV2 := range resp.GetBody().GetContainerIDs() {
+		result = append(result, container.NewIDFromV2(cidV2))
+	}
+
+	return result, nil
+
 }
 
-func (c clientImpl) delContainerV2(ctx context.Context, id *container.ID, opts ...CallOption) error {
+func (c *clientImpl) DeleteContainer(ctx context.Context, id *container.ID, opts ...CallOption) error {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
 	for i := range opts {
-		opts[i].apply(&callOptions)
+		opts[i](callOptions)
 	}
 
 	reqBody := new(v2container.DeleteRequestBody)
@@ -390,35 +263,20 @@ func (c clientImpl) delContainerV2(ctx context.Context, id *container.ID, opts .
 		return err
 	}
 
-	switch c.remoteNode.Protocol {
-	case GRPC:
-		cli, err := v2ContainerClientFromOptions(c.opts)
-		if err != nil {
-			return errors.Wrap(err, "can't create grpc client")
-		}
-
-		resp, err := cli.Delete(ctx, req)
-		if err != nil {
-			return errors.Wrap(err, "transport error")
-		}
-
-		err = v2signature.VerifyServiceMessage(resp)
-		if err != nil {
-			return errors.Wrap(err, "can't verify response message")
-		}
-
-		return nil
-	default:
-		return errUnsupportedProtocol
+	resp, err := rpcapi.DeleteContainer(c.Raw(), req, client.WithContext(ctx))
+	if err != nil {
+		return errors.Wrap(err, "transport error")
 	}
+
+	return errors.Wrap(v2signature.VerifyServiceMessage(resp), "can't verify response message")
 }
 
-func (c clientImpl) getEACLV2(ctx context.Context, id *container.ID, verify bool, opts ...CallOption) (*v2container.GetExtendedACLResponseBody, error) {
+func (c *clientImpl) GetEACL(ctx context.Context, id *container.ID, opts ...CallOption) (*EACLWithSignature, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
 	for i := range opts {
-		opts[i].apply(&callOptions)
+		opts[i](callOptions)
 	}
 
 	reqBody := new(v2container.GetExtendedACLRequestBody)
@@ -433,61 +291,35 @@ func (c clientImpl) getEACLV2(ctx context.Context, id *container.ID, verify bool
 		return nil, err
 	}
 
-	switch c.remoteNode.Protocol {
-	case GRPC:
-		cli, err := v2ContainerClientFromOptions(c.opts)
-		if err != nil {
-			return nil, errors.Wrap(err, "can't create grpc client")
-		}
-
-		resp, err := cli.GetExtendedACL(ctx, req)
-		if err != nil {
-			return nil, errors.Wrap(err, "transport error")
-		}
-
-		err = v2signature.VerifyServiceMessage(resp)
-		if err != nil {
-			return nil, errors.Wrap(err, "can't verify response message")
-		}
-
-		body := resp.GetBody()
-		if body == nil {
-			return nil, errNilReponseBody
-		}
-
-		if verify {
-			if err := signature.VerifyDataWithSource(
-				v2signature.StableMarshalerWrapper{
-					SM: body.GetEACL(),
-				},
-				func() (key, sig []byte) {
-					s := body.GetSignature()
-
-					return s.GetKey(), s.GetSign()
-				},
-				signature.SignWithRFC6979(),
-			); err != nil {
-				return nil, errors.Wrap(err, "incorrect signature")
-			}
-		}
-
-		return body, nil
-	default:
-		return nil, errUnsupportedProtocol
+	resp, err := rpcapi.GetEACL(c.Raw(), req, client.WithContext(ctx))
+	if err != nil {
+		return nil, errors.Wrap(err, "transport error")
 	}
+
+	err = v2signature.VerifyServiceMessage(resp)
+	if err != nil {
+		return nil, errors.Wrap(err, "can't verify response message")
+	}
+
+	body := resp.GetBody()
+
+	return &EACLWithSignature{
+		table: eacl.NewTableFromV2(body.GetEACL()),
+		sig:   pkg.NewSignatureFromV2(body.GetSignature()),
+	}, nil
 }
 
-func (c clientImpl) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
+func (c *clientImpl) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
 	for i := range opts {
-		opts[i].apply(&callOptions)
+		opts[i](callOptions)
 	}
 
 	reqBody := new(v2container.SetExtendedACLRequestBody)
 	reqBody.SetEACL(eacl.ToV2())
-	reqBody.GetEACL().SetVersion(c.remoteNode.Version.ToV2())
+	reqBody.GetEACL().SetVersion(pkg.SDKVersion().ToV2())
 
 	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetEACL()}
 
@@ -510,37 +342,29 @@ func (c clientImpl) setEACLV2(ctx context.Context, eacl *eacl.Table, opts ...Cal
 		return err
 	}
 
-	switch c.remoteNode.Protocol {
-	case GRPC:
-		cli, err := v2ContainerClientFromOptions(c.opts)
-		if err != nil {
-			return errors.Wrap(err, "can't create grpc client")
-		}
-
-		resp, err := cli.SetExtendedACL(ctx, req)
-		if err != nil {
-			return errors.Wrap(err, "transport error")
-		}
-
-		err = v2signature.VerifyServiceMessage(resp)
-		if err != nil {
-			return errors.Wrap(err, "can't verify response message")
-		}
-
-		return nil
-	default:
-		return errUnsupportedProtocol
+	resp, err := rpcapi.SetEACL(c.Raw(), req, client.WithContext(ctx))
+	if err != nil {
+		return errors.Wrap(err, "transport error")
 	}
+
+	err = v2signature.VerifyServiceMessage(resp)
+	if err != nil {
+		return errors.Wrap(err, "can't verify response message")
+	}
+
+	return nil
 }
 
-func (c clientImpl) announceContainerUsedSpaceV2(
+// AnnounceContainerUsedSpace used by storage nodes to estimate their container
+// sizes during lifetime. Use it only in storage node applications.
+func (c *clientImpl) AnnounceContainerUsedSpace(
 	ctx context.Context,
 	announce []container.UsedSpaceAnnouncement,
 	opts ...CallOption) error {
 	callOptions := c.defaultCallOptions() // apply all available options
 
 	for i := range opts {
-		opts[i].apply(&callOptions)
+		opts[i](callOptions)
 	}
 
 	// convert list of SDK announcement structures into NeoFS-API v2 list
@@ -563,57 +387,15 @@ func (c clientImpl) announceContainerUsedSpaceV2(
 		return err
 	}
 
-	// choose underline transport protocol and send message over it
-	switch c.remoteNode.Protocol {
-	case GRPC:
-		cli, err := v2ContainerClientFromOptions(c.opts)
-		if err != nil {
-			return errors.Wrap(err, "can't create grpc client")
-		}
-
-		resp, err := cli.AnnounceUsedSpace(ctx, req)
-		if err != nil {
-			return errors.Wrap(err, "transport error")
-		}
-
-		err = v2signature.VerifyServiceMessage(resp)
-		if err != nil {
-			return errors.Wrap(err, "can't verify response message")
-		}
-
-		return nil
-	default:
-		return errUnsupportedProtocol
-	}
-}
-
-func v2ContainerClientFromOptions(opts *clientOptions) (cli *v2container.Client, err error) {
-	switch {
-	case opts.grpcOpts.v2ContainerClient != nil:
-		// return value from client cache
-		return opts.grpcOpts.v2ContainerClient, nil
-
-	case opts.grpcOpts.conn != nil:
-		cli, err = v2container.NewClient(v2container.WithGlobalOpts(
-			client.WithGRPCConn(opts.grpcOpts.conn)),
-		)
-
-	case opts.addr != "":
-		cli, err = v2container.NewClient(v2container.WithGlobalOpts(
-			client.WithNetworkAddress(opts.addr),
-			client.WithDialTimeout(opts.dialTimeout),
-		))
-
-	default:
-		return nil, errOptionsLack("Container")
-	}
-
-	// check if client correct and save in cache
+	resp, err := rpcapi.AnnounceUsedSpace(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return nil, err
+		return errors.Wrap(err, "transport error")
 	}
 
-	opts.grpcOpts.v2ContainerClient = cli
+	err = v2signature.VerifyServiceMessage(resp)
+	if err != nil {
+		return errors.Wrap(err, "can't verify response message")
+	}
 
-	return cli, nil
+	return nil
 }

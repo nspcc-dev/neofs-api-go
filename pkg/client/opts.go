@@ -2,29 +2,20 @@ package client
 
 import (
 	"crypto/ecdsa"
-	"fmt"
 	"time"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
-	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/pkg/token"
-	v2accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting"
-	v2container "github.com/nspcc-dev/neofs-api-go/v2/container"
-	v2netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap"
-	v2object "github.com/nspcc-dev/neofs-api-go/v2/object"
+	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	v2session "github.com/nspcc-dev/neofs-api-go/v2/session"
 	"google.golang.org/grpc"
 )
 
 type (
-	CallOption interface {
-		apply(*callOptions)
-	}
+	CallOption func(*callOptions)
 
-	Option interface {
-		apply(*clientOptions)
-	}
+	Option func(*clientOptions)
 
 	callOptions struct {
 		version  *pkg.Version
@@ -37,21 +28,9 @@ type (
 	}
 
 	clientOptions struct {
-		addr string
+		key *ecdsa.PrivateKey
 
-		dialTimeout time.Duration
-
-		grpcOpts *grpcOptions
-	}
-
-	grpcOptions struct {
-		conn               *grpc.ClientConn
-		v2ContainerClient  *v2container.Client
-		v2AccountingClient *v2accounting.Client
-		v2SessionClient    *v2session.Client
-		v2NetmapClient     *v2netmap.Client
-
-		objectClientV2 *v2object.Client
+		rawOpts []client.Option
 	}
 
 	v2SessionReqInfo struct {
@@ -62,74 +41,52 @@ type (
 	}
 )
 
-type errOptionsLack string
-
-func (e errOptionsLack) Error() string {
-	return fmt.Sprintf("lack of sdk client options to create %s client", string(e))
-}
-
-func (c clientImpl) defaultCallOptions() callOptions {
-	return callOptions{
-		ttl:     2,
+func (c *clientImpl) defaultCallOptions() *callOptions {
+	return &callOptions{
 		version: pkg.SDKVersion(),
-		key:     c.key,
-		session: c.sessionToken,
-		bearer:  c.bearerToken,
-	}
-}
-
-type funcCallOption struct {
-	f func(*callOptions)
-}
-
-func (fco *funcCallOption) apply(co *callOptions) {
-	fco.f(co)
-}
-
-func newFuncCallOption(f func(option *callOptions)) *funcCallOption {
-	return &funcCallOption{
-		f: f,
+		ttl:     2,
+		key:     c.opts.key,
 	}
 }
 
 func WithXHeader(x *pkg.XHeader) CallOption {
-	return newFuncCallOption(func(option *callOptions) {
-		option.xHeaders = append(option.xHeaders, x)
-	})
+	return func(opts *callOptions) {
+		opts.xHeaders = append(opts.xHeaders, x)
+	}
 }
 
 func WithTTL(ttl uint32) CallOption {
-	return newFuncCallOption(func(option *callOptions) {
-		option.ttl = ttl
-	})
+	return func(opts *callOptions) {
+		opts.ttl = ttl
+	}
 }
 
 // WithKey sets client's key for the next request.
 func WithKey(key *ecdsa.PrivateKey) CallOption {
-	return newFuncCallOption(func(option *callOptions) {
-		option.key = key
-	})
+	return func(opts *callOptions) {
+		opts.key = key
+	}
 }
 
 func WithEpoch(epoch uint64) CallOption {
-	return newFuncCallOption(func(option *callOptions) {
-		option.epoch = epoch
-	})
+	return func(opts *callOptions) {
+		opts.epoch = epoch
+	}
 }
 
 func WithSession(token *token.SessionToken) CallOption {
-	return newFuncCallOption(func(option *callOptions) {
-		option.session = token
-	})
+	return func(opts *callOptions) {
+		opts.session = token
+	}
 }
 
 func WithBearer(token *token.BearerToken) CallOption {
-	return newFuncCallOption(func(option *callOptions) {
-		option.bearer = token
-	})
+	return func(opts *callOptions) {
+		opts.bearer = token
+	}
 }
 
-func v2MetaHeaderFromOpts(options callOptions) *v2session.RequestMetaHeader {
+func v2MetaHeaderFromOpts(options *callOptions) *v2session.RequestMetaHeader {
 	meta := new(v2session.RequestMetaHeader)
 	meta.SetVersion(options.version.ToV2())
 	meta.SetTTL(options.ttl)
@@ -153,50 +110,33 @@ func v2MetaHeaderFromOpts(options callOptions) *v2session.RequestMetaHeader {
 
 func defaultClientOptions() *clientOptions {
 	return &clientOptions{
-		grpcOpts: new(grpcOptions),
-	}
-}
-
-type funcClientOption struct {
-	f func(*clientOptions)
-}
-
-func (fco *funcClientOption) apply(co *clientOptions) {
-	fco.f(co)
-}
-
-func newFuncClientOption(f func(option *clientOptions)) *funcClientOption {
-	return &funcClientOption{
-		f: f,
+		rawOpts: make([]client.Option, 0, 3),
 	}
 }
 
 func WithAddress(addr string) Option {
-	return newFuncClientOption(func(option *clientOptions) {
-		option.addr = addr
-	})
+	return func(opts *clientOptions) {
+		opts.rawOpts = append(opts.rawOpts, client.WithNetworkAddress(addr))
+	}
 }
 
 func WithGRPCConnection(grpcConn *grpc.ClientConn) Option {
-	return newFuncClientOption(func(option *clientOptions) {
-		option.grpcOpts.conn = grpcConn
-	})
+	return func(opts *clientOptions) {
+		opts.rawOpts = append(opts.rawOpts, client.WithGRPCConn(grpcConn))
+	}
 }
 
 // WithDialTimeout returns option to set connection timeout to the remote node.
 func WithDialTimeout(dur time.Duration) Option {
-	return newFuncClientOption(func(option *clientOptions) {
-		option.dialTimeout = dur
-	})
+	return func(opts *clientOptions) {
+		opts.rawOpts = append(opts.rawOpts, client.WithDialTimeout(dur))
+	}
 }
 
-func newOwnerIDFromKey(key *ecdsa.PublicKey) (*owner.ID, error) {
-	w, err := owner.NEO3WalletFromPublicKey(key)
-	if err != nil {
-		return nil, err
+// WithDefaultPrivateKey returns option to set default private key
+// used for the work.
+func WithDefaultPrivateKey(key *ecdsa.PrivateKey) Option {
+	return func(opts *clientOptions) {
+		opts.key = key
 	}
-
-	ownerID := new(owner.ID)
-	ownerID.SetNeo3Wallet(w)
-	return ownerID, nil
 }
