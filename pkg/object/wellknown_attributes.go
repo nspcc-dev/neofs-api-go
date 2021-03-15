@@ -12,4 +12,8 @@ const (
 	// AttributeTimestamp is an attribute key that is commonly used to denote
 	// user-defined local time of object creation in Unix Timestamp format.
 	AttributeTimestamp = "Timestamp"
+
+	// AttributeTimestamp is an attribute key that is commonly used to denote
+	// MIME Content Type of object's payload.
+	AttributeContentType = "Content-Type"
 )
