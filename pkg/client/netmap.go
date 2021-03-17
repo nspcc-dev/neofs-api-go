@@ -18,6 +18,7 @@ type Netmap interface {
 	// in client constructor via address or open connection. This can be used as a
 	// health check to see if node is alive and responses to requests.
 	EndpointInfo(context.Context, ...CallOption) (*EndpointInfo, error)
+
 	// NetworkInfo returns information about the NeoFS network of which the remote server is a part.
 	NetworkInfo(context.Context, ...CallOption) (*netmap.NetworkInfo, error)
 }
