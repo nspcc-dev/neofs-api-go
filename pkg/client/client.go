@@ -13,6 +13,9 @@ type Client interface {
 	Netmap
 	Object
 	Session
+
+	// Raw must return underlying raw protobuf client.
+	Raw() *client.Client
 }
 
 type clientImpl struct {
