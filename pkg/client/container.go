@@ -20,16 +20,22 @@ import (
 type Container interface {
 	// PutContainer creates new container in the NeoFS network.
 	PutContainer(context.Context, *container.Container, ...CallOption) (*container.ID, error)
+
 	// GetContainer returns container by ID.
 	GetContainer(context.Context, *container.ID, ...CallOption) (*container.Container, error)
+
 	// ListContainers return container list with the provided owner.
 	ListContainers(context.Context, *owner.ID, ...CallOption) ([]*container.ID, error)
+
 	// DeleteContainer removes container from NeoFS network.
 	DeleteContainer(context.Context, *container.ID, ...CallOption) error
+
 	// GetEACL returns extended ACL for a given container.
 	GetEACL(context.Context, *container.ID, ...CallOption) (*EACLWithSignature, error)
+
 	// SetEACL sets extended ACL.
 	SetEACL(context.Context, *eacl.Table, ...CallOption) error
+
 	// AnnounceContainerUsedSpace announces amount of space which is taken by stored objects.
 	AnnounceContainerUsedSpace(context.Context, []container.UsedSpaceAnnouncement, ...CallOption) error
 }

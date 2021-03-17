@@ -24,18 +24,25 @@ import (
 type Object interface {
 	// PutObject puts new object to NeoFS.
 	PutObject(context.Context, *PutObjectParams, ...CallOption) (*object.ID, error)
+
 	// DeleteObject deletes object to NeoFS.
 	DeleteObject(context.Context, *DeleteObjectParams, ...CallOption) error
+
 	// GetObject returns object stored in NeoFS.
 	GetObject(context.Context, *GetObjectParams, ...CallOption) (*object.Object, error)
+
 	// GetObjectHeader returns object header.
 	GetObjectHeader(context.Context, *ObjectHeaderParams, ...CallOption) (*object.Object, error)
+
 	// ObjectPayloadRangeData returns range of object payload.
 	ObjectPayloadRangeData(context.Context, *RangeDataParams, ...CallOption) ([]byte, error)
+
 	// ObjectPayloadRangeSHA256 returns sha-256 hashes of object sub-ranges from NeoFS.
 	ObjectPayloadRangeSHA256(context.Context, *RangeChecksumParams, ...CallOption) ([][sha256.Size]byte, error)
+
 	// ObjectPayloadRangeTZ returns homomorphic hashes of object sub-ranges from NeoFS.
 	ObjectPayloadRangeTZ(context.Context, *RangeChecksumParams, ...CallOption) ([][TZSize]byte, error)
+
 	// SearchObject searches for objects in NeoFS using provided parameters.
 	SearchObject(context.Context, *SearchObjectParams, ...CallOption) ([]*object.ID, error)
 }
