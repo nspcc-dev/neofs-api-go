@@ -10,7 +10,7 @@ import (
 // Version represents v2-compatible version.
 type Version refs.Version
 
-const sdkMjr, sdkMnr = 2, 1
+const sdkMjr, sdkMnr = 2, 4
 
 // NewVersionFromV2 wraps v2 Version message to Version.
 func NewVersionFromV2(v *refs.Version) *Version {
@@ -69,18 +69,13 @@ func (v *Version) String() string {
 
 // IsSupportedVersion returns error if v is not supported by current SDK.
 func IsSupportedVersion(v *Version) error {
-	switch mjr := v.Major(); mjr {
-	case 2:
-		switch mnr := v.Minor(); mnr {
-		case 0, 1:
-			return nil
-		}
+	mjr, mnr := v.Major(), v.Minor()
+
+	if mjr != 2 || mnr > sdkMnr {
+		return errors.Errorf("unsupported version %d.%d", mjr, mnr)
 	}
 
-	return errors.Errorf("unsupported version %d.%d",
-		v.Major(),
-		v.Minor(),
-	)
+	return nil
 }
 
 // Marshal marshals Version into a protobuf binary form.
