@@ -46,12 +46,12 @@ func TestIsSupportedVersion(t *testing.T) {
 	}{
 		{
 			mjr:    2,
-			maxMnr: 1,
+			maxMnr: sdkMnr,
 		},
 	} {
 		v.SetMajor(item.mjr)
 
-		for i := uint32(0); i < item.maxMnr; i++ {
+		for i := uint32(0); i <= item.maxMnr; i++ {
 			v.SetMinor(i)
 
 			require.NoError(t, IsSupportedVersion(v))
