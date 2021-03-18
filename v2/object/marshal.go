@@ -112,6 +112,62 @@ const (
 	getRangeHashRespBodyHashListField = 2
 )
 
+func (h *ShortHeader) MarshalStream(s proto.Stream) (int, error) {
+	if h == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(shortHdrVersionField, h.version)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt64Marshal(shortHdrEpochField, h.creatEpoch)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(shortHdrOwnerField, h.ownerID)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.EnumMarshal(shortHdrObjectTypeField, int32(h.typ))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt64Marshal(shortHdrPayloadLength, h.payloadLen)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(shortHdrHashField, h.payloadHash)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(shortHdrHomoHashField, h.homoHash)
+	return offset + n, err
+}
+
 func (h *ShortHeader) StableMarshal(buf []byte) ([]byte, error) {
 	if h == nil {
 		return []byte{}, nil
@@ -196,6 +252,27 @@ func (h *ShortHeader) Unmarshal(data []byte) error {
 	return message.Unmarshal(h, data, new(object.ShortHeader))
 }
 
+func (a *Attribute) MarshalStream(s proto.Stream) (int, error) {
+	if a == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.StringMarshal(attributeKeyField, a.key)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.StringMarshal(attributeValueField, a.val)
+	return offset + n, err
+}
+
 func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
 	if a == nil {
 		return []byte{}, nil
@@ -238,6 +315,55 @@ func (a *Attribute) StableSize() (size int) {
 
 func (a *Attribute) Unmarshal(data []byte) error {
 	return message.Unmarshal(a, data, new(object.Header_Attribute))
+}
+
+func (h *SplitHeader) MarshalStream(s proto.Stream) (int, error) {
+	if h == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(splitHdrParentField, h.par)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(splitHdrPreviousField, h.prev)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(splitHdrParentSignatureField, h.parSig)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(splitHdrParentHeaderField, h.parHdr)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = refs.ObjectIDNestedListMarshalStream(splitHdrChildrenField, s, h.children)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	_, err = s.BytesMarshal(splitHdrSplitIDField, h.splitID)
+	return offset + n, err
 }
 
 func (h *SplitHeader) StableMarshal(buf []byte) ([]byte, error) {
@@ -314,6 +440,92 @@ func (h *SplitHeader) StableSize() (size int) {
 
 func (h *SplitHeader) Unmarshal(data []byte) error {
 	return message.Unmarshal(h, data, new(object.Header_Split))
+}
+
+func (h *Header) MarshalStream(s proto.Stream) (int, error) {
+	if h == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(hdrVersionField, h.version)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(hdrContainerIDField, h.cid)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(hdrOwnerIDField, h.ownerID)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt64Marshal(hdrEpochField, h.creatEpoch)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt64Marshal(hdrPayloadLengthField, h.payloadLen)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(hdrPayloadHashField, h.payloadHash)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.EnumMarshal(hdrObjectTypeField, int32(h.typ))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(hdrHomomorphicHashField, h.homoHash)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(hdrSessionTokenField, h.sessionToken)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	for i := range h.attr {
+		n, err = s.NestedStructureMarshal(hdrAttributesField, h.attr[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	n, err = s.NestedStructureMarshal(hdrSplitField, h.split)
+	return offset + n, err
 }
 
 func (h *Header) StableMarshal(buf []byte) ([]byte, error) {
@@ -436,6 +648,27 @@ func (h *Header) Unmarshal(data []byte) error {
 	return message.Unmarshal(h, data, new(object.Header))
 }
 
+func (h *HeaderWithSignature) MarshalStream(s proto.Stream) (int, error) {
+	if h == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(hdrWithSigHeaderField, h.header)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(hdrWithSigSignatureField, h.signature)
+	return offset + n, err
+}
+
 func (h *HeaderWithSignature) StableMarshal(buf []byte) ([]byte, error) {
 	if h == nil {
 		return []byte{}, nil
@@ -540,6 +773,34 @@ func (o *Object) Unmarshal(data []byte) error {
 	return message.Unmarshal(o, data, new(object.Object))
 }
 
+func (s *SplitInfo) MarshalStream(ss proto.Stream) (int, error) {
+	if s == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = ss.BytesMarshal(splitInfoSplitIDField, s.splitID)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = ss.NestedStructureMarshal(splitInfoLastPartField, s.lastPart)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = ss.NestedStructureMarshal(splitInfoLinkField, s.link)
+	return offset + n, err
+}
+
 func (s *SplitInfo) StableMarshal(buf []byte) ([]byte, error) {
 	if s == nil {
 		return []byte{}, nil
@@ -592,6 +853,27 @@ func (s *SplitInfo) Unmarshal(data []byte) error {
 	return message.Unmarshal(s, data, new(object.SplitInfo))
 }
 
+func (r *GetRequestBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(getReqBodyAddressField, r.addr)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.BoolMarshal(getReqBodyRawFlagField, r.raw)
+	return offset + n, err
+}
+
 func (r *GetRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -634,6 +916,34 @@ func (r *GetRequestBody) StableSize() (size int) {
 
 func (r *GetRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.GetRequest_Body))
+}
+
+func (r *GetObjectPartInit) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(getRespInitObjectIDField, r.id)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(getRespInitSignatureField, r.sig)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(getRespInitHeaderField, r.hdr)
+	return offset + n, err
 }
 
 func (r *GetObjectPartInit) StableMarshal(buf []byte) ([]byte, error) {
@@ -686,6 +996,28 @@ func (r *GetObjectPartInit) StableSize() (size int) {
 
 func (r *GetObjectPartInit) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.GetResponse_Body_Init))
+}
+
+func (r *GetResponseBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	switch v := r.objPart.(type) {
+	case nil:
+	case *GetObjectPartInit:
+		return s.NestedStructureMarshal(getRespBodyInitField, v)
+	case *GetObjectPartChunk:
+		if v != nil {
+			return s.BytesMarshal(getRespBodyChunkField, v.chunk)
+		}
+	case *SplitInfo:
+		return s.NestedStructureMarshal(getRespBodySplitInfoField, v)
+	default:
+		panic("unknown one of object get response body type")
+	}
+
+	return 0, nil
 }
 
 func (r *GetResponseBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -749,6 +1081,41 @@ func (r *GetResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.GetResponse_Body))
 }
 
+func (r *PutObjectPartInit) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(putReqInitObjectIDField, r.id)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(putReqInitSignatureField, r.sig)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(putReqInitHeaderField, r.hdr)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt32Marshal(putReqInitCopiesNumField, r.copyNum)
+	return offset + n, err
+}
+
 func (r *PutObjectPartInit) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -809,6 +1176,25 @@ func (r *PutObjectPartInit) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.PutRequest_Body_Init))
 }
 
+func (r *PutRequestBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	switch v := r.objPart.(type) {
+	case nil:
+	case *PutObjectPartInit:
+		return s.NestedStructureMarshal(putReqBodyInitField, v)
+	case *PutObjectPartChunk:
+		if v != nil {
+			return s.BytesMarshal(putReqBodyChunkField, v.chunk)
+		}
+	default:
+		panic("unknown one of object put request body type")
+	}
+	return 0, nil
+}
+
 func (r *PutRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -863,6 +1249,14 @@ func (r *PutRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.PutRequest_Body))
 }
 
+func (r *PutResponseBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	return s.NestedStructureMarshal(putRespBodyObjectIDField, r.id)
+}
+
 func (r *PutResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -892,6 +1286,14 @@ func (r *PutResponseBody) StableSize() (size int) {
 
 func (r *PutResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.PutResponse_Body))
+}
+
+func (r *DeleteRequestBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	return s.NestedStructureMarshal(deleteReqBodyAddressField, r.addr)
 }
 
 func (r *DeleteRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -925,6 +1327,14 @@ func (r *DeleteRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.DeleteRequest_Body))
 }
 
+func (r *DeleteResponseBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	return s.NestedStructureMarshal(deleteRespBodyTombstoneFNum, r.tombstone)
+}
+
 func (r *DeleteResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -954,6 +1364,34 @@ func (r *DeleteResponseBody) StableSize() (size int) {
 
 func (r *DeleteResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.DeleteResponse_Body))
+}
+
+func (r *HeadRequestBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(headReqBodyAddressField, r.addr)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.BoolMarshal(headReqBodyMainFlagField, r.mainOnly)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.BoolMarshal(headReqBodyRawFlagField, r.raw)
+	return offset + n, nil
 }
 
 func (r *HeadRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -1006,6 +1444,32 @@ func (r *HeadRequestBody) StableSize() (size int) {
 
 func (r *HeadRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.HeadRequest_Body))
+}
+
+func (r *HeadResponseBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	switch v := r.hdrPart.(type) {
+	case nil:
+	case *HeaderWithSignature:
+		if v != nil {
+			return s.NestedStructureMarshal(headRespBodyHeaderField, v)
+		}
+	case *ShortHeader:
+		if v != nil {
+			return s.NestedStructureMarshal(headRespBodyShortHeaderField, v)
+		}
+	case *SplitInfo:
+		if v != nil {
+			return s.NestedStructureMarshal(headRespBodySplitInfoField, v)
+		}
+	default:
+		panic("unknown one of object put request body type")
+	}
+
+	return 0, nil
 }
 
 func (r *HeadResponseBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -1077,6 +1541,34 @@ func (r *HeadResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.HeadResponse_Body))
 }
 
+func (f *SearchFilter) MarshalStream(s proto.Stream) (int, error) {
+	if f == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.EnumMarshal(searchFilterMatchField, int32(f.matchType))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.StringMarshal(searchFilterNameField, f.key)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.StringMarshal(searchFilterValueField, f.val)
+	return offset + n, err
+}
+
 func (f *SearchFilter) StableMarshal(buf []byte) ([]byte, error) {
 	if f == nil {
 		return []byte{}, nil
@@ -1127,6 +1619,42 @@ func (f *SearchFilter) StableSize() (size int) {
 
 func (f *SearchFilter) Unmarshal(data []byte) error {
 	return message.Unmarshal(f, data, new(object.SearchRequest_Body_Filter))
+}
+
+func (r *SearchRequestBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(searchReqBodyContainerIDField, r.cid)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt32Marshal(searchReqBodyVersionField, r.version)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	for i := range r.filters {
+		n, err = s.NestedStructureMarshal(searchReqBodyFiltersField, r.filters[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	return offset, nil
 }
 
 func (r *SearchRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -1188,6 +1716,14 @@ func (r *SearchRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.SearchRequest_Body))
 }
 
+func (r *SearchResponseBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	return refs.ObjectIDNestedListMarshalStream(searchRespBodyObjectIDsField, s, r.idList)
+}
+
 func (r *SearchResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -1222,6 +1758,27 @@ func (r *SearchResponseBody) StableSize() (size int) {
 
 func (r *SearchResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.SearchResponse_Body))
+}
+
+func (r *Range) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.UInt64Marshal(rangeOffsetField, r.off)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt64Marshal(rangeLengthField, r.len)
+	return offset + n, nil
 }
 
 func (r *Range) StableMarshal(buf []byte) ([]byte, error) {
@@ -1266,6 +1823,33 @@ func (r *Range) StableSize() (size int) {
 
 func (r *Range) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.Range))
+}
+
+func (r *GetRangeRequestBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(getRangeReqBodyAddressField, r.addr)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(getRangeReqBodyRangeField, r.rng)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+	n, err = s.BoolMarshal(getRangeReqBodyRawField, r.raw)
+	return offset + n, err
 }
 
 func (r *GetRangeRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -1318,6 +1902,28 @@ func (r *GetRangeRequestBody) StableSize() (size int) {
 
 func (r *GetRangeRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.GetRangeRequest_Body))
+}
+
+func (r *GetRangeResponseBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	switch v := r.rngPart.(type) {
+	case nil:
+	case *GetRangePartChunk:
+		if v != nil {
+			return s.BytesMarshal(getRangeRespChunkField, v.chunk)
+		}
+	case *SplitInfo:
+		if v != nil {
+			return s.NestedStructureMarshal(getRangeRespSplitInfoField, v)
+		}
+	default:
+		panic("unknown one of object get range request body type")
+	}
+
+	return 0, nil
 }
 
 func (r *GetRangeResponseBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -1376,6 +1982,43 @@ func (r *GetRangeResponseBody) StableSize() (size int) {
 
 func (r *GetRangeResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.GetRangeResponse_Body))
+}
+
+func (r *GetRangeHashRequestBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(getRangeHashReqBodyAddressField, r.addr)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	for i := range r.rngs {
+		n, err = s.NestedStructureMarshal(getRangeHashReqBodyRangesField, r.rngs[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	n, err = s.BytesMarshal(getRangeHashReqBodySaltField, r.salt)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.EnumMarshal(getRangeHashReqBodyTypeField, int32(r.typ))
+	return offset + n, err
 }
 
 func (r *GetRangeHashRequestBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -1442,6 +2085,27 @@ func (r *GetRangeHashRequestBody) StableSize() (size int) {
 
 func (r *GetRangeHashRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.GetRangeHashRequest_Body))
+}
+
+func (r *GetRangeHashResponseBody) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.EnumMarshal(getRangeHashRespBodyTypeField, int32(r.typ))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.RepeatedBytesMarshal(getRangeHashRespBodyHashListField, r.hashList)
+	return offset + n, nil
 }
 
 func (r *GetRangeHashResponseBody) StableMarshal(buf []byte) ([]byte, error) {

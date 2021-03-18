@@ -115,16 +115,15 @@ func CalculateAndSetSignature(key *ecdsa.PrivateKey, obj *RawObject) error {
 	return nil
 }
 
-func VerifyIDSignature(obj *Object) error {
-	return signature.VerifyDataWithSource(
+func VerifyIDSignature(obj *Object, opts ...signature.SignOption) error {
+	sig := obj.Signature()
+	return signature.VerifyData(
 		signatureV2.StableMarshalerWrapper{
 			SM: obj.ID().ToV2(),
 		},
-		func() ([]byte, []byte) {
-			sig := obj.Signature()
-
-			return sig.Key(), sig.Sign()
-		},
+		sig.Key(),
+		sig.Sign(),
+		opts...,
 	)
 }
 
@@ -149,8 +148,8 @@ func SetVerificationFields(key *ecdsa.PrivateKey, obj *RawObject) error {
 }
 
 // CheckVerificationFields checks all verification fields of the object.
-func CheckVerificationFields(obj *Object) error {
-	if err := CheckHeaderVerificationFields(obj); err != nil {
+func CheckVerificationFields(obj *Object, opts ...signature.SignOption) error {
+	if err := CheckHeaderVerificationFields(obj, opts...); err != nil {
 		return errors.Wrap(err, "invalid header structure")
 	}
 
@@ -162,8 +161,8 @@ func CheckVerificationFields(obj *Object) error {
 }
 
 // CheckHeaderVerificationFields checks all verification fields except payload.
-func CheckHeaderVerificationFields(obj *Object) error {
-	if err := VerifyIDSignature(obj); err != nil {
+func CheckHeaderVerificationFields(obj *Object, opts ...signature.SignOption) error {
+	if err := VerifyIDSignature(obj, opts...); err != nil {
 		return errors.Wrap(err, "invalid signature")
 	}
 

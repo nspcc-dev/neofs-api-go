@@ -58,6 +58,27 @@ const (
 	respVerifHeaderOriginField          = 4
 )
 
+func (c *CreateRequestBody) MarshalStream(s proto.Stream) (int, error) {
+	if c == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(createReqBodyOwnerField, c.ownerID)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	_, err = s.UInt64Marshal(createReqBodyExpirationField, c.expiration)
+	return offset + n, err
+}
+
 func (c *CreateRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if c == nil {
 		return []byte{}, nil
@@ -102,6 +123,27 @@ func (c *CreateRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(c, data, new(session.CreateRequest_Body))
 }
 
+func (c *CreateResponseBody) MarshalStream(s proto.Stream) (int, error) {
+	if c == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.BytesMarshal(createRespBodyIDField, c.id)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.BytesMarshal(createRespBodyKeyField, c.sessionKey)
+	return offset + n, err
+}
+
 func (c *CreateResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if c == nil {
 		return []byte{}, nil
@@ -144,6 +186,27 @@ func (c *CreateResponseBody) StableSize() (size int) {
 
 func (c *CreateResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(c, data, new(session.CreateResponse_Body))
+}
+
+func (x *XHeader) MarshalStream(s proto.Stream) (int, error) {
+	if x == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.StringMarshal(xheaderKeyField, x.key)
+	if err != nil {
+		return offset, err
+	}
+
+	offset += n
+
+	n, err = s.StringMarshal(xheaderValueField, x.val)
+	return offset + n, err
 }
 
 func (x *XHeader) StableMarshal(buf []byte) ([]byte, error) {
@@ -193,6 +256,34 @@ func (x *XHeader) Unmarshal(data []byte) error {
 	}
 
 	return x.FromGRPCMessage(m)
+}
+
+func (l *TokenLifetime) MarshalStream(s proto.Stream) (int, error) {
+	if l == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.UInt64Marshal(lifetimeExpirationField, l.exp)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt64Marshal(lifetimeNotValidBeforeField, l.nbf)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	_, err = s.UInt64Marshal(lifetimeIssuedAtField, l.iat)
+	return offset + n, err
 }
 
 func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
@@ -252,6 +343,27 @@ func (l *TokenLifetime) Unmarshal(data []byte) error {
 	return l.FromGRPCMessage(m)
 }
 
+func (c *ObjectSessionContext) MarshalStream(s proto.Stream) (int, error) {
+	if c == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.EnumMarshal(objectCtxVerbField, int32(c.verb))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(objectCtxAddressField, c.addr)
+	return offset + n, err
+}
+
 func (c *ObjectSessionContext) StableMarshal(buf []byte) ([]byte, error) {
 	if c == nil {
 		return []byte{}, nil
@@ -299,6 +411,60 @@ func (c *ObjectSessionContext) Unmarshal(data []byte) error {
 	}
 
 	return c.FromGRPCMessage(m)
+}
+
+func (t *SessionTokenBody) MarshalStream(s proto.Stream) (int, error) {
+	if t == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.BytesMarshal(sessionTokenBodyIDField, t.id)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(sessionTokenBodyOwnerField, t.ownerID)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(sessionTokenBodyLifetimeField, t.lifetime)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.BytesMarshal(sessionTokenBodyKeyField, t.sessionKey)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	if t.ctx != nil {
+		switch v := t.ctx.(type) {
+		case *ObjectSessionContext:
+			n, err = s.NestedStructureMarshal(sessionTokenBodyObjectCtxField, v)
+			if err != nil {
+				return offset + n, err
+			}
+			offset += n
+		default:
+			panic("cannot marshal unknown session token context")
+		}
+	}
+
+	return offset, nil
 }
 
 func (t *SessionTokenBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -389,6 +555,27 @@ func (t *SessionTokenBody) Unmarshal(data []byte) error {
 	return t.FromGRPCMessage(m)
 }
 
+func (t *SessionToken) MarshalStream(s proto.Stream) (int, error) {
+	if t == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(sessionTokenBodyField, t.body)
+	if err != nil {
+		return n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(sessionTokenSignatureField, t.sig)
+	return offset + n, err
+}
+
 func (t *SessionToken) StableMarshal(buf []byte) ([]byte, error) {
 	if t == nil {
 		return []byte{}, nil
@@ -436,6 +623,63 @@ func (t *SessionToken) Unmarshal(data []byte) error {
 	}
 
 	return t.FromGRPCMessage(m)
+}
+
+func (r *RequestMetaHeader) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(reqMetaHeaderVersionField, r.version)
+	if err != nil {
+		return offset, err
+	}
+
+	offset += n
+
+	n, err = s.UInt64Marshal(reqMetaHeaderEpochField, r.epoch)
+	if err != nil {
+		return offset, err
+	}
+
+	offset += n
+
+	n, err = s.UInt32Marshal(reqMetaHeaderTTLField, r.ttl)
+	if err != nil {
+		return offset, err
+	}
+
+	offset += n
+
+	for i := range r.xHeaders {
+		n, err = s.NestedStructureMarshal(reqMetaHeaderXHeadersField, r.xHeaders[i])
+		if err != nil {
+			return offset, err
+		}
+
+		offset += n
+	}
+
+	n, err = s.NestedStructureMarshal(reqMetaHeaderSessionTokenField, r.sessionToken)
+	if err != nil {
+		return offset, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(reqMetaHeaderBearerTokenField, r.bearerToken)
+	if err != nil {
+		return offset, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(reqMetaHeaderOriginField, r.origin)
+	return offset + n, err
 }
 
 func (r *RequestMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
@@ -536,6 +780,41 @@ func (r *RequestMetaHeader) Unmarshal(data []byte) error {
 	return r.FromGRPCMessage(m)
 }
 
+func (r *RequestVerificationHeader) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(reqVerifHeaderBodySignatureField, r.bodySig)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(reqVerifHeaderMetaSignatureField, r.metaSig)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(reqVerifHeaderOriginSignatureField, r.originSig)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(reqVerifHeaderOriginField, r.origin)
+	return offset + n, err
+}
+
 func (r *RequestVerificationHeader) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -599,6 +878,50 @@ func (r *RequestVerificationHeader) Unmarshal(data []byte) error {
 	}
 
 	return r.FromGRPCMessage(m)
+}
+
+func (r *ResponseMetaHeader) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(respMetaHeaderVersionField, r.version)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt64Marshal(respMetaHeaderEpochField, r.epoch)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt32Marshal(respMetaHeaderTTLField, r.ttl)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	for i := range r.xHeaders {
+		n, err = s.NestedStructureMarshal(respMetaHeaderXHeadersField, r.xHeaders[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	n, err = s.NestedStructureMarshal(respMetaHeaderOriginField, r.origin)
+	return offset + n, err
 }
 
 func (r *ResponseMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
@@ -681,6 +1004,41 @@ func (r *ResponseMetaHeader) Unmarshal(data []byte) error {
 	}
 
 	return r.FromGRPCMessage(m)
+}
+
+func (r *ResponseVerificationHeader) MarshalStream(s proto.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(respVerifHeaderBodySignatureField, r.bodySig)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(respVerifHeaderMetaSignatureField, r.metaSig)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(respVerifHeaderOriginSignatureField, r.originSig)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(respVerifHeaderOriginField, r.origin)
+	return offset + n, err
 }
 
 func (r *ResponseVerificationHeader) StableMarshal(buf []byte) ([]byte, error) {

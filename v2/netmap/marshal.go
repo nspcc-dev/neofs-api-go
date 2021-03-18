@@ -40,6 +40,56 @@ const (
 	nodeInfoResponseBodyField    = 2
 )
 
+func (f *Filter) MarshalStream(s protoutil.Stream) (int, error) {
+	if f == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.StringMarshal(nameFilterField, f.name)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.StringMarshal(keyFilterField, f.key)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.EnumMarshal(opFilterField, int32(f.op))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.StringMarshal(valueFilterField, f.value)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	for i := range f.filters {
+		n, err = s.NestedStructureMarshal(filtersFilterField, f.filters[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	return offset, nil
+}
+
 func (f *Filter) StableMarshal(buf []byte) ([]byte, error) {
 	if f == nil {
 		return []byte{}, nil
@@ -110,6 +160,48 @@ func (f *Filter) Unmarshal(data []byte) error {
 	return message.Unmarshal(f, data, new(netmap.Filter))
 }
 
+func (s *Selector) MarshalStream(ss protoutil.Stream) (int, error) {
+	if s == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = ss.StringMarshal(nameSelectorField, s.name)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = ss.UInt32Marshal(countSelectorField, s.count)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = ss.EnumMarshal(clauseSelectorField, int32(s.clause))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = ss.StringMarshal(attributeSelectorField, s.attribute)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = ss.StringMarshal(filterSelectorField, s.filter)
+	return offset + n, err
+}
+
 func (s *Selector) StableMarshal(buf []byte) ([]byte, error) {
 	if s == nil {
 		return []byte{}, nil
@@ -174,6 +266,27 @@ func (s *Selector) Unmarshal(data []byte) error {
 	return message.Unmarshal(s, data, new(netmap.Selector))
 }
 
+func (r *Replica) MarshalStream(s protoutil.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.UInt32Marshal(countReplicaField, r.count)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.StringMarshal(selectorReplicaField, r.selector)
+	return offset + n, err
+}
+
 func (r *Replica) StableMarshal(buf []byte) ([]byte, error) {
 	if r == nil {
 		return []byte{}, nil
@@ -212,6 +325,53 @@ func (r *Replica) StableSize() (size int) {
 
 func (r *Replica) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(netmap.Replica))
+}
+
+func (p *PlacementPolicy) MarshalStream(s protoutil.Stream) (int, error) {
+	if p == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	for i := range p.replicas {
+		n, err = s.NestedStructureMarshal(replicasPolicyField, p.replicas[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	n, err = s.UInt32Marshal(backupPolicyField, p.backupFactor)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	for i := range p.selectors {
+		n, err = s.NestedStructureMarshal(selectorsPolicyField, p.selectors[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	for i := range p.filters {
+		n, err = s.NestedStructureMarshal(filtersPolicyField, p.filters[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	return offset, nil
 }
 
 func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
@@ -287,6 +447,42 @@ func (p *PlacementPolicy) Unmarshal(data []byte) error {
 	return message.Unmarshal(p, data, new(netmap.PlacementPolicy))
 }
 
+func (a *Attribute) MarshalStream(s protoutil.Stream) (int, error) {
+	if a == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.StringMarshal(keyAttributeField, a.key)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.StringMarshal(valueAttributeField, a.value)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	for i := range a.parents {
+		n, err = s.StringMarshal(parentsAttributeField, a.parents[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	return offset, nil
+}
+
 func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
 	if a == nil {
 		return []byte{}, nil
@@ -344,6 +540,43 @@ func (a *Attribute) StableSize() (size int) {
 
 func (a *Attribute) Unmarshal(data []byte) error {
 	return message.Unmarshal(a, data, new(netmap.NodeInfo_Attribute))
+}
+
+func (ni *NodeInfo) MarshalStream(s protoutil.Stream) (int, error) {
+	if ni == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.BytesMarshal(keyNodeInfoField, ni.publicKey)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.StringMarshal(addressNodeInfoField, ni.address)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	for i := range ni.attributes {
+		n, err = s.NestedStructureMarshal(attributesNodeInfoField, ni.attributes[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	_, err = s.EnumMarshal(stateNodeInfoField, int32(ni.state))
+	return offset + n, err
 }
 
 func (ni *NodeInfo) StableMarshal(buf []byte) ([]byte, error) {
@@ -411,6 +644,10 @@ func (ni *NodeInfo) Unmarshal(data []byte) error {
 	return message.Unmarshal(ni, data, new(netmap.NodeInfo))
 }
 
+func (l *LocalNodeInfoRequestBody) MarshalStream(protoutil.Stream) (int, error) {
+	return 0, nil
+}
+
 func (l *LocalNodeInfoRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	return nil, nil
 }
@@ -421,6 +658,27 @@ func (l *LocalNodeInfoRequestBody) StableSize() (size int) {
 
 func (l *LocalNodeInfoRequestBody) Unmarshal([]byte) error {
 	return nil
+}
+
+func (l *LocalNodeInfoResponseBody) MarshalStream(s protoutil.Stream) (int, error) {
+	if l == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(versionInfoResponseBodyField, l.version)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(nodeInfoResponseBodyField, l.nodeInfo)
+	return offset + n, nil
 }
 
 func (l *LocalNodeInfoResponseBody) StableMarshal(buf []byte) ([]byte, error) {
@@ -473,6 +731,27 @@ const (
 	netInfoMagicNumFNum
 )
 
+func (i *NetworkInfo) MarshalStream(s protoutil.Stream) (int, error) {
+	if i == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.UInt64Marshal(netInfoCurEpochFNum, i.curEpoch)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt64Marshal(netInfoMagicNumFNum, i.magicNum)
+	return offset + n, nil
+}
+
 func (i *NetworkInfo) StableMarshal(buf []byte) ([]byte, error) {
 	if i == nil {
 		return []byte{}, nil
@@ -517,6 +796,10 @@ func (i *NetworkInfo) Unmarshal(data []byte) error {
 	return message.Unmarshal(i, data, new(netmap.NetworkInfo))
 }
 
+func (l *NetworkInfoRequestBody) MarshalStream(s protoutil.Stream) (int, error) {
+	return 0, nil
+}
+
 func (l *NetworkInfoRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	return nil, nil
 }
@@ -533,6 +816,14 @@ const (
 	_ = iota
 	netInfoRespBodyNetInfoFNum
 )
+
+func (i *NetworkInfoResponseBody) MarshalStream(s protoutil.Stream) (int, error) {
+	if i == nil {
+		return 0, nil
+	}
+
+	return s.NestedStructureMarshal(netInfoRespBodyNetInfoFNum, i.netInfo)
+}
 
 func (i *NetworkInfoResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	if i == nil {

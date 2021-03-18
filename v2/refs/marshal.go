@@ -26,6 +26,14 @@ const (
 	versionMinorField = 2
 )
 
+func (o *OwnerID) MarshalStream(s proto.Stream) (int, error) {
+	if o == nil {
+		return 0, nil
+	}
+
+	return s.BytesMarshal(ownerIDValField, o.val)
+}
+
 func (o *OwnerID) StableMarshal(buf []byte) ([]byte, error) {
 	if o == nil {
 		return []byte{}, nil
@@ -55,6 +63,14 @@ func (o *OwnerID) Unmarshal(data []byte) error {
 	return message.Unmarshal(o, data, new(refs.OwnerID))
 }
 
+func (c *ContainerID) MarshalStream(s proto.Stream) (int, error) {
+	if c == nil {
+		return 0, nil
+	}
+
+	return s.BytesMarshal(containerIDValField, c.val)
+}
+
 func (c *ContainerID) StableMarshal(buf []byte) ([]byte, error) {
 	if c == nil {
 		return []byte{}, nil
@@ -82,6 +98,14 @@ func (c *ContainerID) StableSize() int {
 
 func (c *ContainerID) Unmarshal(data []byte) error {
 	return message.Unmarshal(c, data, new(refs.ContainerID))
+}
+
+func (o *ObjectID) MarshalStream(s proto.Stream) (int, error) {
+	if o == nil {
+		return 0, nil
+	}
+
+	return s.BytesMarshal(objectIDValField, o.val)
 }
 
 func (o *ObjectID) StableMarshal(buf []byte) ([]byte, error) {
@@ -136,8 +160,44 @@ func ObjectIDNestedListMarshal(fNum int64, buf []byte, ids []*ObjectID) (off int
 	return
 }
 
+func ObjectIDNestedListMarshalStream(fNum int64, s proto.Stream, ids []*ObjectID) (off int, err error) {
+	for i := range ids {
+		var n int
+
+		n, err = s.NestedStructureMarshal(fNum, ids[i])
+		if err != nil {
+			return
+		}
+
+		off += n
+	}
+
+	return
+}
+
 func (o *ObjectID) Unmarshal(data []byte) error {
 	return message.Unmarshal(o, data, new(refs.ObjectID))
+}
+
+func (a *Address) MarshalStream(s proto.Stream) (int, error) {
+	if a == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(addressContainerField, a.cid)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(addressObjectField, a.oid)
+	return offset + n, err
 }
 
 func (a *Address) StableMarshal(buf []byte) ([]byte, error) {
@@ -185,6 +245,27 @@ func (a *Address) Unmarshal(data []byte) error {
 	return message.Unmarshal(a, data, new(refs.Address))
 }
 
+func (c *Checksum) MarshalStream(s proto.Stream) (int, error) {
+	if c == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.EnumMarshal(checksumTypeField, int32(c.typ))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	_, err = s.BytesMarshal(checksumValueField, c.sum)
+	return offset + n, err
+}
+
 func (c *Checksum) StableMarshal(buf []byte) ([]byte, error) {
 	if c == nil {
 		return []byte{}, nil
@@ -229,6 +310,27 @@ func (c *Checksum) Unmarshal(data []byte) error {
 	return message.Unmarshal(c, data, new(refs.Checksum))
 }
 
+func (s *Signature) MarshalStream(st proto.Stream) (int, error) {
+	if s == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = st.BytesMarshal(signatureKeyField, s.key)
+	if err != nil {
+		return n, err
+	}
+
+	offset += n
+
+	n, err = st.BytesMarshal(signatureValueField, s.sign)
+	return offset + n, err
+}
+
 func (s *Signature) StableMarshal(buf []byte) ([]byte, error) {
 	if s == nil {
 		return []byte{}, nil
@@ -271,6 +373,27 @@ func (s *Signature) StableSize() (size int) {
 
 func (s *Signature) Unmarshal(data []byte) error {
 	return message.Unmarshal(s, data, new(refs.Signature))
+}
+
+func (v *Version) MarshalStream(s proto.Stream) (int, error) {
+	if v == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.UInt32Marshal(versionMajorField, v.major)
+	if err != nil {
+		return n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt32Marshal(versionMinorField, v.minor)
+	return offset + n, err
 }
 
 func (v *Version) StableMarshal(buf []byte) ([]byte, error) {

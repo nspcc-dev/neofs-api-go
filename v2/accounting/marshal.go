@@ -15,6 +15,27 @@ const (
 	balanceRespBodyDecimalField = 1
 )
 
+func (d *Decimal) MarshalStream(s protoutil.Stream) (int, error) {
+	if d == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.Int64Marshal(decimalValueField, d.val)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt32Marshal(decimalPrecisionField, d.prec)
+	return offset + n, err
+}
+
 func (d *Decimal) StableMarshal(buf []byte) ([]byte, error) {
 	if d == nil {
 		return []byte{}, nil
@@ -59,6 +80,14 @@ func (d *Decimal) Unmarshal(data []byte) error {
 	return message.Unmarshal(d, data, new(accounting.Decimal))
 }
 
+func (b *BalanceRequestBody) MarshalStream(s protoutil.Stream) (int, error) {
+	if b == nil {
+		return 0, nil
+	}
+
+	return s.NestedStructureMarshal(balanceReqBodyOwnerField, b.ownerID)
+}
+
 func (b *BalanceRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if b == nil {
 		return []byte{}, nil
@@ -88,6 +117,14 @@ func (b *BalanceRequestBody) StableSize() (size int) {
 
 func (b *BalanceRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(b, data, new(accounting.BalanceRequest_Body))
+}
+
+func (br *BalanceResponseBody) MarshalStream(s protoutil.Stream) (int, error) {
+	if br == nil {
+		return 0, nil
+	}
+
+	return s.NestedStructureMarshal(balanceRespBodyDecimalField, br.bal)
 }
 
 func (br *BalanceResponseBody) StableMarshal(buf []byte) ([]byte, error) {

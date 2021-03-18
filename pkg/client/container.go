@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"io"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
@@ -51,8 +52,8 @@ type EACLWithSignature struct {
 	sig *pkg.Signature
 }
 
-func (c delContainerSignWrapper) ReadSignedData(bytes []byte) ([]byte, error) {
-	return c.body.GetContainerID().GetValue(), nil
+func (c delContainerSignWrapper) WriteSignedDataTo(w io.Writer) (int, error) {
+	return w.Write(c.body.GetContainerID().GetValue())
 }
 
 func (c delContainerSignWrapper) SignedDataSize() int {

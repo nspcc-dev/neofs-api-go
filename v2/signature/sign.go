@@ -3,7 +3,9 @@ package signature
 import (
 	"crypto/ecdsa"
 	"fmt"
+	"io"
 
+	"github.com/nspcc-dev/neofs-api-go/util/proto"
 	"github.com/nspcc-dev/neofs-api-go/util/signature"
 	"github.com/nspcc-dev/neofs-api-go/v2/accounting"
 	"github.com/nspcc-dev/neofs-api-go/v2/container"
@@ -27,7 +29,7 @@ type serviceResponse interface {
 }
 
 type stableMarshaler interface {
-	StableMarshal([]byte) ([]byte, error)
+	MarshalStream(s proto.Stream) (int, error)
 	StableSize() int
 }
 
@@ -114,32 +116,18 @@ func (r *responseVerificationHeader) setOrigin(m stableMarshaler) {
 	}
 }
 
-func (s StableMarshalerWrapper) ReadSignedData(buf []byte) ([]byte, error) {
+func (s StableMarshalerWrapper) WriteSignedDataTo(w io.Writer) (int, error) {
 	if s.SM != nil {
-		return s.SM.StableMarshal(buf)
+		ss := proto.NewStream(w)
+		return s.SM.MarshalStream(ss)
 	}
-
-	return nil, nil
-}
-
-func (s StableMarshalerWrapper) SignedDataSize() int {
-	if s.SM != nil {
-		return s.SM.StableSize()
-	}
-
-	return 0
+	return 0, nil
 }
 
 func keySignatureHandler(s *refs.Signature) signature.KeySignatureHandler {
 	return func(key []byte, sig []byte) {
 		s.SetKey(key)
 		s.SetSign(sig)
-	}
-}
-
-func keySignatureSource(s *refs.Signature) signature.KeySignatureSource {
-	return func() ([]byte, []byte) {
-		return s.GetKey(), s.GetSign()
 	}
 }
 
@@ -256,18 +244,18 @@ func VerifyServiceMessage(msg interface{}) error {
 }
 
 func verifyMatryoshkaLevel(body stableMarshaler, meta metaHeader, verify verificationHeader) error {
-	if err := verifyServiceMessagePart(meta, verify.GetMetaSignature); err != nil {
+	if err := verifyServiceMessagePart(meta, verify.GetMetaSignature()); err != nil {
 		return errors.Wrap(err, "could not verify meta header")
 	}
 
 	origin := verify.getOrigin()
 
-	if err := verifyServiceMessagePart(origin, verify.GetOriginSignature); err != nil {
+	if err := verifyServiceMessagePart(origin, verify.GetOriginSignature()); err != nil {
 		return errors.Wrap(err, "could not verify origin of verification header")
 	}
 
 	if origin == nil {
-		if err := verifyServiceMessagePart(body, verify.GetBodySignature); err != nil {
+		if err := verifyServiceMessagePart(body, verify.GetBodySignature()); err != nil {
 			return errors.Wrap(err, "could not verify body")
 		}
 
@@ -281,11 +269,8 @@ func verifyMatryoshkaLevel(body stableMarshaler, meta metaHeader, verify verific
 	return verifyMatryoshkaLevel(body, meta.getOrigin(), origin)
 }
 
-func verifyServiceMessagePart(part stableMarshaler, sigRdr func() *refs.Signature) error {
-	return signature.VerifyDataWithSource(
-		&StableMarshalerWrapper{part},
-		keySignatureSource(sigRdr()),
-	)
+func verifyServiceMessagePart(part stableMarshaler, sig *refs.Signature) error {
+	return signature.VerifyData(&StableMarshalerWrapper{part}, sig.GetKey(), sig.GetSign())
 }
 
 func serviceMessageBody(req interface{}) stableMarshaler {

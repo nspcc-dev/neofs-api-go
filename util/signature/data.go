@@ -2,13 +2,13 @@ package signature
 
 import (
 	"crypto/ecdsa"
+	"io"
 
 	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
 type DataSource interface {
-	ReadSignedData([]byte) ([]byte, error)
-	SignedDataSize() int
+	WriteSignedDataTo(w io.Writer) (int, error)
 }
 
 type DataWithSignature interface {
@@ -28,19 +28,13 @@ func DataSignature(key *ecdsa.PrivateKey, src DataSource, opts ...SignOption) ([
 		return nil, crypto.ErrEmptyPrivateKey
 	}
 
-	data, err := dataForSignature(src)
-	if err != nil {
-		return nil, err
-	}
-	defer bytesPool.Put(data)
-
 	cfg := defaultCfg()
 
 	for i := range opts {
 		opts[i](cfg)
 	}
 
-	return cfg.signFunc(key, data)
+	return cfg.signFunc(key, src)
 }
 
 func SignDataWithHandler(key *ecdsa.PrivateKey, src DataSource, handler KeySignatureHandler, opts ...SignOption) error {
@@ -54,32 +48,16 @@ func SignDataWithHandler(key *ecdsa.PrivateKey, src DataSource, handler KeySigna
 	return nil
 }
 
-func VerifyDataWithSource(dataSrc DataSource, sigSrc KeySignatureSource, opts ...SignOption) error {
-	data, err := dataForSignature(dataSrc)
-	if err != nil {
-		return err
-	}
-	defer bytesPool.Put(data)
-
+func VerifyData(dataSrc DataSource, pub []byte, sig []byte, opts ...SignOption) error {
 	cfg := defaultCfg()
 
 	for i := range opts {
 		opts[i](cfg)
 	}
 
-	key, sig := sigSrc()
-
 	return cfg.verifyFunc(
-		crypto.UnmarshalPublicKey(key),
-		data,
+		crypto.UnmarshalPublicKey(pub),
+		dataSrc,
 		sig,
 	)
-}
-
-func SignData(key *ecdsa.PrivateKey, v DataWithSignature, opts ...SignOption) error {
-	return SignDataWithHandler(key, v, v.SetSignatureWithKey, opts...)
-}
-
-func VerifyData(src DataWithSignature, opts ...SignOption) error {
-	return VerifyDataWithSource(src, src.GetSignatureWithKey, opts...)
 }

@@ -737,13 +737,12 @@ func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams,
 		hdr = hdrWithSig.GetHeader()
 		idSig = hdrWithSig.GetSignature()
 
-		if err := signer.VerifyDataWithSource(
+		if err := signer.VerifyData(
 			signature.StableMarshalerWrapper{
 				SM: p.addr.ObjectID().ToV2(),
 			},
-			func() (key, sig []byte) {
-				return idSig.GetKey(), idSig.GetSign()
-			},
+			idSig.GetKey(),
+			idSig.GetSign(),
 		); err != nil {
 			return nil, errors.Wrap(err, "incorrect object header signature")
 		}

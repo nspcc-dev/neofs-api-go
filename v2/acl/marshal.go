@@ -38,6 +38,44 @@ const (
 
 // StableMarshal marshals unified acl table structure in a protobuf
 // compatible way without field order shuffle.
+func (t *Table) MarshalStream(s protoutil.Stream) (int, error) {
+	if t == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(tableVersionField, t.version)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(tableContainerIDField, t.cid)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	for i := range t.records {
+		n, err = s.NestedStructureMarshal(tableRecordsField, t.records[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	return offset, nil
+}
+
+// StableMarshal marshals unified acl table structure in a protobuf
+// compatible way without field order shuffle.
 func (t *Table) StableMarshal(buf []byte) ([]byte, error) {
 	if t == nil {
 		return []byte{}, nil
@@ -96,6 +134,53 @@ func (t *Table) StableSize() (size int) {
 
 func (t *Table) Unmarshal(data []byte) error {
 	return message.Unmarshal(t, data, new(acl.EACLTable))
+}
+
+// StableMarshal marshals unified acl record structure in a protobuf
+// compatible way without field order shuffle.
+func (r *Record) MarshalStream(s protoutil.Stream) (int, error) {
+	if r == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.EnumMarshal(recordOperationField, int32(r.op))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.EnumMarshal(recordActionField, int32(r.action))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	for i := range r.filters {
+		n, err = s.NestedStructureMarshal(recordFiltersField, r.filters[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	for i := range r.targets {
+		n, err = s.NestedStructureMarshal(recordTargetsField, r.targets[i])
+		if err != nil {
+			return offset + n, err
+		}
+
+		offset += n
+	}
+
+	return offset, nil
 }
 
 // StableMarshal marshals unified acl record structure in a protobuf
@@ -175,6 +260,43 @@ func (r *Record) Unmarshal(data []byte) error {
 
 // StableMarshal marshals unified header filter structure in a protobuf
 // compatible way without field order shuffle.
+func (f *HeaderFilter) MarshalStream(s protoutil.Stream) (int, error) {
+	if f == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.EnumMarshal(filterHeaderTypeField, int32(f.hdrType))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.EnumMarshal(filterMatchTypeField, int32(f.matchType))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.StringMarshal(filterNameField, f.key)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.StringMarshal(filterValueField, f.value)
+	return offset + n, err
+}
+
+// StableMarshal marshals unified header filter structure in a protobuf
+// compatible way without field order shuffle.
 func (f *HeaderFilter) StableMarshal(buf []byte) ([]byte, error) {
 	if f == nil {
 		return []byte{}, nil
@@ -238,6 +360,29 @@ func (f *HeaderFilter) Unmarshal(data []byte) error {
 
 // StableMarshal marshals unified role info structure in a protobuf
 // compatible way without field order shuffle.
+func (t *Target) MarshalStream(s protoutil.Stream) (int, error) {
+	if t == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.EnumMarshal(targetTypeField, int32(t.role))
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.RepeatedBytesMarshal(targetKeysField, t.keys)
+	return offset + n, err
+}
+
+// StableMarshal marshals unified role info structure in a protobuf
+// compatible way without field order shuffle.
 func (t *Target) StableMarshal(buf []byte) ([]byte, error) {
 	if t == nil {
 		return []byte{}, nil
@@ -281,6 +426,34 @@ func (t *Target) StableSize() (size int) {
 
 func (t *Target) Unmarshal(data []byte) error {
 	return message.Unmarshal(t, data, new(acl.EACLRecord_Target))
+}
+
+func (l *TokenLifetime) MarshalStream(s protoutil.Stream) (int, error) {
+	if l == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.UInt64Marshal(lifetimeExpirationField, l.exp)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt64Marshal(lifetimeNotValidBeforeField, l.nbf)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.UInt64Marshal(lifetimeIssuedAtField, l.iat)
+	return offset + n, err
 }
 
 func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
@@ -335,6 +508,34 @@ func (l *TokenLifetime) Unmarshal(data []byte) error {
 	return message.Unmarshal(l, data, new(acl.BearerToken_Body_TokenLifetime))
 }
 
+func (bt *BearerTokenBody) MarshalStream(s protoutil.Stream) (int, error) {
+	if bt == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(bearerTokenBodyACLField, bt.eacl)
+	if err != nil {
+		return n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(bearerTokenBodyOwnerField, bt.ownerID)
+	if err != nil {
+		return offset + n, err
+	}
+
+	offset += n
+
+	n, err = s.NestedStructureMarshal(bearerTokenBodyLifetimeField, bt.lifetime)
+	return offset + n, err
+}
+
 func (bt *BearerTokenBody) StableMarshal(buf []byte) ([]byte, error) {
 	if bt == nil {
 		return []byte{}, nil
@@ -385,6 +586,27 @@ func (bt *BearerTokenBody) StableSize() (size int) {
 
 func (bt *BearerTokenBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(bt, data, new(acl.BearerToken_Body))
+}
+
+func (bt *BearerToken) MarshalStream(s protoutil.Stream) (int, error) {
+	if bt == nil {
+		return 0, nil
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = s.NestedStructureMarshal(bearerTokenBodyField, bt.body)
+	if err != nil {
+		return n, err
+	}
+
+	offset += n
+
+	_, err = s.NestedStructureMarshal(bearerTokenSignatureField, bt.sig)
+	return offset + n, err
 }
 
 func (bt *BearerToken) StableMarshal(buf []byte) ([]byte, error) {
