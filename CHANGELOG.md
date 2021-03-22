@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.25.0] - 2021-03-22 - Jebudo (제부도, 濟扶島)
+
+Raw client and support of NeoFS API v2.5.0 "Jebudo" release.
+
+### Added
+
+- Raw client for peer to peer communication.
+- `client.WithKey` option to sign messages with different keys within single 
+  client.
+- `Content-Type` well-known object attribute constant.
+
+### Changed
+
+- Refactored `v2` sub-packages to support single raw client in all RPC methods.
+- Client constructor returns `Client` interface instead of structure.
+
 ## [1.24.0] - 2021-02-26 - Ganghwado (강화도, 江華島)
 
 Support changes from NeoFS API v2.4.0 "Ganghwado" release.
@@ -568,3 +584,4 @@ Initial public release
 [1.22.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.22.1...v1.22.2
 [1.23.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.22.2...v1.23.0
 [1.24.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.23.0...v1.24.0
+[1.25.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.24.0...v1.25.0
