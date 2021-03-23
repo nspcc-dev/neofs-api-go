@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"io"
+	"sync"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
@@ -218,6 +219,10 @@ func (p *PutObjectParams) PayloadReader() io.Reader {
 	return nil
 }
 
+var chunksPool = sync.Pool{
+	New: func() interface{} { return make([]byte, chunkSize) },
+}
+
 func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...CallOption) (*object.ID, error) {
 	callOpts := c.defaultCallOptions()
 
@@ -299,8 +304,10 @@ func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...
 
 	r := &putObjectV2Reader{r: rPayload}
 
-	// copy payload from reader to stream writer
-	_, err = io.CopyBuffer(w, r, make([]byte, chunkSize))
+	// copy payload from to stream writer
+	ch := chunksPool.Get().([]byte)
+	defer chunksPool.Put(ch)
+	_, err = io.CopyBuffer(w, r, ch)
 	if err != nil && !errors.Is(errors.Cause(err), io.EOF) {
 		return nil, errors.Wrap(err, "payload streaming failed")
 	}
