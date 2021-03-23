@@ -7,8 +7,10 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
+	"github.com/nspcc-dev/neofs-api-go/util/signature"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	v2session "github.com/nspcc-dev/neofs-api-go/v2/session"
+	crypto "github.com/nspcc-dev/neofs-crypto"
 	"google.golang.org/grpc"
 )
 
@@ -25,6 +27,9 @@ type (
 		key      *ecdsa.PrivateKey
 		session  *token.SessionToken
 		bearer   *token.BearerToken
+		// unmarshalPublic is the function to be used for public key unmarshaling.
+		// See also https://github.com/nspcc-dev/neofs-api/issues/55 .
+		unmarshalPublic func([]byte) *ecdsa.PublicKey
 	}
 
 	clientOptions struct {
@@ -43,9 +48,10 @@ type (
 
 func (c *clientImpl) defaultCallOptions() *callOptions {
 	return &callOptions{
-		version: pkg.SDKVersion(),
-		ttl:     2,
-		key:     c.opts.key,
+		version:         pkg.SDKVersion(),
+		ttl:             2,
+		key:             c.opts.key,
+		unmarshalPublic: crypto.UnmarshalPublicKey,
 	}
 }
 
@@ -83,6 +89,19 @@ func WithSession(token *token.SessionToken) CallOption {
 func WithBearer(token *token.BearerToken) CallOption {
 	return func(opts *callOptions) {
 		opts.bearer = token
+	}
+}
+
+// WithUnmarshalPublic sets options to be passed to sign/verify-related functions.
+func WithUnmarshalPublic(f func([]byte) *ecdsa.PublicKey) CallOption {
+	return func(opts *callOptions) {
+		opts.unmarshalPublic = f
+	}
+}
+
+func (c *callOptions) signOpts() []signature.SignOption {
+	return []signature.SignOption{
+		signature.WithUnmarshalPublicKey(c.unmarshalPublic),
 	}
 }
 

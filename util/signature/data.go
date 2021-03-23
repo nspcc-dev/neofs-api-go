@@ -17,7 +17,7 @@ type DataWithSignature interface {
 	SetSignatureWithKey(key, sig []byte)
 }
 
-type SignOption func(*cfg)
+type SignOption func(*Options)
 
 type KeySignatureHandler func(key []byte, sig []byte)
 
@@ -28,13 +28,13 @@ func DataSignature(key *ecdsa.PrivateKey, src DataSource, opts ...SignOption) ([
 		return nil, crypto.ErrEmptyPrivateKey
 	}
 
-	cfg := defaultCfg()
+	cfg := DefaultOptions()
 
 	for i := range opts {
 		opts[i](cfg)
 	}
 
-	return cfg.signFunc(key, src)
+	return cfg.SignFunc(key, src)
 }
 
 func SignDataWithHandler(key *ecdsa.PrivateKey, src DataSource, handler KeySignatureHandler, opts ...SignOption) error {
@@ -49,14 +49,14 @@ func SignDataWithHandler(key *ecdsa.PrivateKey, src DataSource, handler KeySigna
 }
 
 func VerifyData(dataSrc DataSource, pub []byte, sig []byte, opts ...SignOption) error {
-	cfg := defaultCfg()
+	cfg := DefaultOptions()
 
 	for i := range opts {
 		opts[i](cfg)
 	}
 
-	return cfg.verifyFunc(
-		crypto.UnmarshalPublicKey(pub),
+	return cfg.VerifyFunc(
+		cfg.UnmarshalPublic(pub),
 		dataSrc,
 		sig,
 	)

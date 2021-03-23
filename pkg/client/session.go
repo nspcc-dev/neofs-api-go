@@ -54,7 +54,7 @@ func (c *clientImpl) CreateSession(ctx context.Context, expiration uint64, opts 
 		return nil, errors.Wrap(err, "transport error")
 	}
 
-	err = v2signature.VerifyServiceMessage(resp)
+	err = v2signature.VerifyServiceMessage(resp, callOptions.signOpts()...)
 	if err != nil {
 		return nil, errors.Wrap(err, "can't verify response message")
 	}

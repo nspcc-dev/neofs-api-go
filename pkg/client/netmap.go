@@ -67,7 +67,7 @@ func (c *clientImpl) EndpointInfo(ctx context.Context, opts ...CallOption) (*End
 		return nil, errors.Wrap(err, "transport error")
 	}
 
-	err = v2signature.VerifyServiceMessage(resp)
+	err = v2signature.VerifyServiceMessage(resp, callOptions.signOpts()...)
 	if err != nil {
 		return nil, errors.Wrap(err, "can't verify response message")
 	}
@@ -105,7 +105,7 @@ func (c *clientImpl) NetworkInfo(ctx context.Context, opts ...CallOption) (*netm
 		return nil, errors.Wrap(err, "v2 NetworkInfo RPC failure")
 	}
 
-	err = v2signature.VerifyServiceMessage(resp)
+	err = v2signature.VerifyServiceMessage(resp, callOptions.signOpts()...)
 	if err != nil {
 		return nil, errors.Wrap(err, "response message verification failed")
 	}

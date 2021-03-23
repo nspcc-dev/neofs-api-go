@@ -8,22 +8,32 @@ import (
 	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
-type cfg struct {
-	signFunc   func(key *ecdsa.PrivateKey, stream DataSource) ([]byte, error)
-	verifyFunc func(key *ecdsa.PublicKey, stream DataSource, sig []byte) error
+type Options struct {
+	SignFunc        func(key *ecdsa.PrivateKey, stream DataSource) ([]byte, error)
+	VerifyFunc      func(key *ecdsa.PublicKey, stream DataSource, sig []byte) error
+	UnmarshalPublic func([]byte) *ecdsa.PublicKey
 }
 
-func defaultCfg() *cfg {
-	return &cfg{
-		signFunc:   cryptoSign,
-		verifyFunc: cryptoVerify,
+// DefaultOptions represents default set of options.
+func DefaultOptions() *Options {
+	return &Options{
+		SignFunc:        cryptoSign,
+		VerifyFunc:      cryptoVerify,
+		UnmarshalPublic: crypto.UnmarshalPublicKey,
 	}
 }
 
 func SignWithRFC6979() SignOption {
-	return func(c *cfg) {
-		c.signFunc = rfc6979Sign
-		c.verifyFunc = rfc6979Verify
+	return func(c *Options) {
+		c.SignFunc = rfc6979Sign
+		c.VerifyFunc = rfc6979Verify
+	}
+}
+
+// WithUnmarshalPublicKey sets f as a function for unmarshaling public keys.
+func WithUnmarshalPublicKey(f func([]byte) *ecdsa.PublicKey) SignOption {
+	return func(c *Options) {
+		c.UnmarshalPublic = f
 	}
 }
 
