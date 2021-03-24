@@ -13,6 +13,7 @@ type Client interface {
 	Netmap
 	Object
 	Session
+	Reputation
 
 	// Raw must return underlying raw protobuf client.
 	Raw() *client.Client
