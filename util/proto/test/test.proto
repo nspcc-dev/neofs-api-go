@@ -13,6 +13,7 @@ message Primitives {
     int64 field_f  = 203;
     uint64 field_g = 204;
     fixed64 field_i = 205;
+    double field_j = 206;
 
     enum SomeEnum {
         UNKNOWN = 0;

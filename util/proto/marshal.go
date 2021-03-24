@@ -8,6 +8,7 @@ package proto
 
 import (
 	"encoding/binary"
+	"math"
 	"math/bits"
 	"reflect"
 )
@@ -352,6 +353,29 @@ func Fixed64Marshal(field int, buf []byte, v uint64) (int, error) {
 }
 
 func Fixed64Size(fNum int, v uint64) int {
+	if v == 0 {
+		return 0
+	}
+
+	prefix := fNum<<3 | 1
+
+	return VarUIntSize(uint64(prefix)) + 8
+}
+
+func Float64Marshal(field int, buf []byte, v float64) (int, error) {
+	if v == 0 {
+		return 0, nil
+	}
+
+	prefix := field<<3 | 1
+
+	i := binary.PutUvarint(buf, uint64(prefix))
+	binary.LittleEndian.PutUint64(buf[i:], math.Float64bits(v))
+
+	return i + 8, nil
+}
+
+func Float64Size(fNum int, v float64) int {
 	if v == 0 {
 		return 0
 	}

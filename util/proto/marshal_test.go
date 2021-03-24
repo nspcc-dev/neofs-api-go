@@ -23,6 +23,7 @@ type stablePrimitives struct {
 	FieldG uint64
 	FieldH SomeEnum
 	FieldI uint64 // fixed64
+	FieldJ float64
 }
 
 type stableRepPrimitives struct {
@@ -133,6 +134,16 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	}
 	i += offset
 
+	fieldNum = 206
+	if wrongField {
+		fieldNum++
+	}
+	offset, err = proto.Float64Marshal(fieldNum, buf, s.FieldJ)
+	if err != nil {
+		return nil, errors.Wrap(err, "can't marshal field J")
+	}
+	i += offset
+
 	fieldNum = 300
 	if wrongField {
 		fieldNum++
@@ -155,6 +166,7 @@ func (s *stablePrimitives) stableSize() int {
 		proto.Int64Size(203, s.FieldF) +
 		proto.UInt64Size(204, s.FieldG) +
 		proto.Fixed64Size(205, s.FieldI) +
+		proto.Float64Size(206, s.FieldJ) +
 		proto.EnumSize(300, int32(s.FieldH))
 }
 
@@ -453,6 +465,19 @@ func TestFixed64Marshal(t *testing.T) {
 	})
 }
 
+func TestFloat64Marshal(t *testing.T) {
+	t.Run("zero", func(t *testing.T) {
+		testFloat64Marshal(t, 0, false)
+	})
+
+	t.Run("non zero", func(t *testing.T) {
+		f := math.Float64frombits(12345677890)
+
+		testFloat64Marshal(t, f, false)
+		testFloat64Marshal(t, f, true)
+	})
+}
+
 func testMarshal(t *testing.T, c stablePrimitives, tr test.Primitives, wrongField bool) *test.Primitives {
 	var (
 		wire []byte
@@ -586,6 +611,21 @@ func testUInt64Marshal(t *testing.T, n uint64, wrongField bool) {
 		require.Equal(t, n, result.FieldG)
 	} else {
 		require.EqualValues(t, 0, result.FieldG)
+	}
+}
+
+func testFloat64Marshal(t *testing.T, n float64, wrongField bool) {
+	var (
+		custom    = stablePrimitives{FieldJ: n}
+		transport = test.Primitives{FieldJ: n}
+	)
+
+	result := testMarshal(t, custom, transport, wrongField)
+
+	if !wrongField {
+		require.Equal(t, n, result.FieldJ)
+	} else {
+		require.EqualValues(t, 0, result.FieldJ)
 	}
 }
 
