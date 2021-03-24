@@ -10,6 +10,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	"github.com/nspcc-dev/neofs-api-go/v2/reputation"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/pkg/errors"
 )
@@ -373,6 +374,12 @@ func serviceMessageBody(req interface{}) stableMarshaler {
 	case *netmap.NetworkInfoRequest:
 		return v.GetBody()
 	case *netmap.NetworkInfoResponse:
+		return v.GetBody()
+
+		/* Reputation */
+	case *reputation.SendLocalTrustRequest:
+		return v.GetBody()
+	case *reputation.SendLocalTrustResponse:
 		return v.GetBody()
 	}
 }
