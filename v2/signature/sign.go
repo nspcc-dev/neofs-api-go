@@ -381,5 +381,9 @@ func serviceMessageBody(req interface{}) stableMarshaler {
 		return v.GetBody()
 	case *reputation.SendLocalTrustResponse:
 		return v.GetBody()
+	case *reputation.SendIntermediateResultRequest:
+		return v.GetBody()
+	case *reputation.SendIntermediateResultResponse:
+		return v.GetBody()
 	}
 }
