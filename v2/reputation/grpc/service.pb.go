@@ -170,6 +170,146 @@ func (x *SendLocalTrustResponse) GetVerifyHeader() *grpc.ResponseVerificationHea
 	return nil
 }
 
+// Request to send intermediate global trust.
+type SendIntermediateResultRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Body of the request message.
+	Body *SendIntermediateResultRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
+	// Carries request meta information. Header data is used only to regulate
+	// message transport and does not affect request execution.
+	MetaHeader *grpc.RequestMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
+	// Carries request verification information. This header is used to
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
+	VerifyHeader *grpc.RequestVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
+}
+
+func (x *SendIntermediateResultRequest) Reset() {
+	*x = SendIntermediateResultRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_reputation_grpc_service_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SendIntermediateResultRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendIntermediateResultRequest) ProtoMessage() {}
+
+func (x *SendIntermediateResultRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_reputation_grpc_service_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendIntermediateResultRequest.ProtoReflect.Descriptor instead.
+func (*SendIntermediateResultRequest) Descriptor() ([]byte, []int) {
+	return file_v2_reputation_grpc_service_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SendIntermediateResultRequest) GetBody() *SendIntermediateResultRequest_Body {
+	if x != nil {
+		return x.Body
+	}
+	return nil
+}
+
+func (x *SendIntermediateResultRequest) GetMetaHeader() *grpc.RequestMetaHeader {
+	if x != nil {
+		return x.MetaHeader
+	}
+	return nil
+}
+
+func (x *SendIntermediateResultRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
+	if x != nil {
+		return x.VerifyHeader
+	}
+	return nil
+}
+
+// Response to request to send intermediate global trust.
+type SendIntermediateResultResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Body of the response message.
+	Body *SendIntermediateResultResponse_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
+	// Carries response meta information. Header data is used only to regulate
+	// message transport and does not affect request execution.
+	MetaHeader *grpc.ResponseMetaHeader `protobuf:"bytes,2,opt,name=meta_header,json=metaHeader,proto3" json:"meta_header,omitempty"`
+	// Carries response verification information. This header is used to
+	// authenticate the nodes of the message route and check the correctness of
+	// transmission.
+	VerifyHeader *grpc.ResponseVerificationHeader `protobuf:"bytes,3,opt,name=verify_header,json=verifyHeader,proto3" json:"verify_header,omitempty"`
+}
+
+func (x *SendIntermediateResultResponse) Reset() {
+	*x = SendIntermediateResultResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_reputation_grpc_service_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SendIntermediateResultResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendIntermediateResultResponse) ProtoMessage() {}
+
+func (x *SendIntermediateResultResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_reputation_grpc_service_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendIntermediateResultResponse.ProtoReflect.Descriptor instead.
+func (*SendIntermediateResultResponse) Descriptor() ([]byte, []int) {
+	return file_v2_reputation_grpc_service_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *SendIntermediateResultResponse) GetBody() *SendIntermediateResultResponse_Body {
+	if x != nil {
+		return x.Body
+	}
+	return nil
+}
+
+func (x *SendIntermediateResultResponse) GetMetaHeader() *grpc.ResponseMetaHeader {
+	if x != nil {
+		return x.MetaHeader
+	}
+	return nil
+}
+
+func (x *SendIntermediateResultResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
+	if x != nil {
+		return x.VerifyHeader
+	}
+	return nil
+}
+
 // Request body structure.
 type SendLocalTrustRequest_Body struct {
 	state         protoimpl.MessageState
@@ -187,7 +327,7 @@ type SendLocalTrustRequest_Body struct {
 func (x *SendLocalTrustRequest_Body) Reset() {
 	*x = SendLocalTrustRequest_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_reputation_grpc_service_proto_msgTypes[2]
+		mi := &file_v2_reputation_grpc_service_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -200,7 +340,7 @@ func (x *SendLocalTrustRequest_Body) String() string {
 func (*SendLocalTrustRequest_Body) ProtoMessage() {}
 
 func (x *SendLocalTrustRequest_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_reputation_grpc_service_proto_msgTypes[2]
+	mi := &file_v2_reputation_grpc_service_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -240,7 +380,7 @@ type SendLocalTrustResponse_Body struct {
 func (x *SendLocalTrustResponse_Body) Reset() {
 	*x = SendLocalTrustResponse_Body{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_reputation_grpc_service_proto_msgTypes[3]
+		mi := &file_v2_reputation_grpc_service_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -253,7 +393,7 @@ func (x *SendLocalTrustResponse_Body) String() string {
 func (*SendLocalTrustResponse_Body) ProtoMessage() {}
 
 func (x *SendLocalTrustResponse_Body) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_reputation_grpc_service_proto_msgTypes[3]
+	mi := &file_v2_reputation_grpc_service_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -267,6 +407,103 @@ func (x *SendLocalTrustResponse_Body) ProtoReflect() protoreflect.Message {
 // Deprecated: Use SendLocalTrustResponse_Body.ProtoReflect.Descriptor instead.
 func (*SendLocalTrustResponse_Body) Descriptor() ([]byte, []int) {
 	return file_v2_reputation_grpc_service_proto_rawDescGZIP(), []int{1, 0}
+}
+
+// Request body structure.
+type SendIntermediateResultRequest_Body struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Sequence number of the iteration.
+	Iteration uint32 `protobuf:"varint,1,opt,name=iteration,proto3" json:"iteration,omitempty"`
+	// Current global trust value computed at the specified iteration.
+	Trust *Trust `protobuf:"bytes,2,opt,name=trust,proto3" json:"trust,omitempty"`
+}
+
+func (x *SendIntermediateResultRequest_Body) Reset() {
+	*x = SendIntermediateResultRequest_Body{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_reputation_grpc_service_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SendIntermediateResultRequest_Body) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendIntermediateResultRequest_Body) ProtoMessage() {}
+
+func (x *SendIntermediateResultRequest_Body) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_reputation_grpc_service_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendIntermediateResultRequest_Body.ProtoReflect.Descriptor instead.
+func (*SendIntermediateResultRequest_Body) Descriptor() ([]byte, []int) {
+	return file_v2_reputation_grpc_service_proto_rawDescGZIP(), []int{2, 0}
+}
+
+func (x *SendIntermediateResultRequest_Body) GetIteration() uint32 {
+	if x != nil {
+		return x.Iteration
+	}
+	return 0
+}
+
+func (x *SendIntermediateResultRequest_Body) GetTrust() *Trust {
+	if x != nil {
+		return x.Trust
+	}
+	return nil
+}
+
+// Response body structure.
+type SendIntermediateResultResponse_Body struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *SendIntermediateResultResponse_Body) Reset() {
+	*x = SendIntermediateResultResponse_Body{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_reputation_grpc_service_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SendIntermediateResultResponse_Body) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendIntermediateResultResponse_Body) ProtoMessage() {}
+
+func (x *SendIntermediateResultResponse_Body) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_reputation_grpc_service_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendIntermediateResultResponse_Body.ProtoReflect.Descriptor instead.
+func (*SendIntermediateResultResponse_Body) Descriptor() ([]byte, []int) {
+	return file_v2_reputation_grpc_service_proto_rawDescGZIP(), []int{3, 0}
 }
 
 var File_v2_reputation_grpc_service_proto protoreflect.FileDescriptor
@@ -316,22 +553,70 @@ var file_v2_reputation_grpc_service_proto_rawDesc = []byte{
 	0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
 	0x56, 0x65, 0x72, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x48, 0x65, 0x61, 0x64,
 	0x65, 0x72, 0x52, 0x0c, 0x76, 0x65, 0x72, 0x69, 0x66, 0x79, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72,
-	0x1a, 0x06, 0x0a, 0x04, 0x42, 0x6f, 0x64, 0x79, 0x32, 0x80, 0x01, 0x0a, 0x11, 0x52, 0x65, 0x70,
-	0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x6b,
-	0x0a, 0x0e, 0x53, 0x65, 0x6e, 0x64, 0x4c, 0x6f, 0x63, 0x61, 0x6c, 0x54, 0x72, 0x75, 0x73, 0x74,
-	0x12, 0x2b, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x70,
-	0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x4c, 0x6f, 0x63, 0x61,
-	0x6c, 0x54, 0x72, 0x75, 0x73, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2c, 0x2e,
-	0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61,
-	0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x4c, 0x6f, 0x63, 0x61, 0x6c, 0x54, 0x72,
-	0x75, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x62, 0x5a, 0x3f, 0x67,
-	0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6e, 0x73, 0x70, 0x63, 0x63, 0x2d,
-	0x64, 0x65, 0x76, 0x2f, 0x6e, 0x65, 0x6f, 0x66, 0x73, 0x2d, 0x61, 0x70, 0x69, 0x2d, 0x67, 0x6f,
-	0x2f, 0x76, 0x32, 0x2f, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2f, 0x67,
-	0x72, 0x70, 0x63, 0x3b, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0xaa, 0x02,
-	0x1e, 0x4e, 0x65, 0x6f, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65,
-	0x2e, 0x41, 0x50, 0x49, 0x2e, 0x52, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x1a, 0x06, 0x0a, 0x04, 0x42, 0x6f, 0x64, 0x79, 0x22, 0xe0, 0x02, 0x0a, 0x1d, 0x53, 0x65, 0x6e,
+	0x64, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x6d, 0x65, 0x64, 0x69, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73,
+	0x75, 0x6c, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x4c, 0x0a, 0x04, 0x62, 0x6f,
+	0x64, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x38, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66,
+	0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e,
+	0x53, 0x65, 0x6e, 0x64, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x6d, 0x65, 0x64, 0x69, 0x61, 0x74, 0x65,
+	0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x42, 0x6f,
+	0x64, 0x79, 0x52, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x12, 0x45, 0x0a, 0x0b, 0x6d, 0x65, 0x74, 0x61,
+	0x5f, 0x68, 0x65, 0x61, 0x64, 0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x24, 0x2e,
+	0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x73, 0x65, 0x73, 0x73, 0x69, 0x6f,
+	0x6e, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x4d, 0x65, 0x74, 0x61, 0x48, 0x65, 0x61,
+	0x64, 0x65, 0x72, 0x52, 0x0a, 0x6d, 0x65, 0x74, 0x61, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x12,
+	0x51, 0x0a, 0x0d, 0x76, 0x65, 0x72, 0x69, 0x66, 0x79, 0x5f, 0x68, 0x65, 0x61, 0x64, 0x65, 0x72,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x2c, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e,
+	0x76, 0x32, 0x2e, 0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x56, 0x65, 0x72, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x48, 0x65,
+	0x61, 0x64, 0x65, 0x72, 0x52, 0x0c, 0x76, 0x65, 0x72, 0x69, 0x66, 0x79, 0x48, 0x65, 0x61, 0x64,
+	0x65, 0x72, 0x1a, 0x57, 0x0a, 0x04, 0x42, 0x6f, 0x64, 0x79, 0x12, 0x1c, 0x0a, 0x09, 0x69, 0x74,
+	0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x09, 0x69,
+	0x74, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x31, 0x0a, 0x05, 0x74, 0x72, 0x75, 0x73,
+	0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73,
+	0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x54,
+	0x72, 0x75, 0x73, 0x74, 0x52, 0x05, 0x74, 0x72, 0x75, 0x73, 0x74, 0x22, 0x93, 0x02, 0x0a, 0x1e,
+	0x53, 0x65, 0x6e, 0x64, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x6d, 0x65, 0x64, 0x69, 0x61, 0x74, 0x65,
+	0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x4d,
+	0x0a, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x39, 0x2e, 0x6e,
+	0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x49, 0x6e, 0x74, 0x65, 0x72, 0x6d, 0x65, 0x64,
+	0x69, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x2e, 0x42, 0x6f, 0x64, 0x79, 0x52, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x12, 0x46, 0x0a,
+	0x0b, 0x6d, 0x65, 0x74, 0x61, 0x5f, 0x68, 0x65, 0x61, 0x64, 0x65, 0x72, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x25, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x73,
+	0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x4d,
+	0x65, 0x74, 0x61, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x52, 0x0a, 0x6d, 0x65, 0x74, 0x61, 0x48,
+	0x65, 0x61, 0x64, 0x65, 0x72, 0x12, 0x52, 0x0a, 0x0d, 0x76, 0x65, 0x72, 0x69, 0x66, 0x79, 0x5f,
+	0x68, 0x65, 0x61, 0x64, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x2d, 0x2e, 0x6e,
+	0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e,
+	0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x56, 0x65, 0x72, 0x69, 0x66, 0x69, 0x63,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x52, 0x0c, 0x76, 0x65, 0x72,
+	0x69, 0x66, 0x79, 0x48, 0x65, 0x61, 0x64, 0x65, 0x72, 0x1a, 0x06, 0x0a, 0x04, 0x42, 0x6f, 0x64,
+	0x79, 0x32, 0x86, 0x02, 0x0a, 0x11, 0x52, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x6b, 0x0a, 0x0e, 0x53, 0x65, 0x6e, 0x64, 0x4c,
+	0x6f, 0x63, 0x61, 0x6c, 0x54, 0x72, 0x75, 0x73, 0x74, 0x12, 0x2b, 0x2e, 0x6e, 0x65, 0x6f, 0x2e,
+	0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x2e, 0x53, 0x65, 0x6e, 0x64, 0x4c, 0x6f, 0x63, 0x61, 0x6c, 0x54, 0x72, 0x75, 0x73, 0x74, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x2c, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e,
+	0x76, 0x32, 0x2e, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x53, 0x65,
+	0x6e, 0x64, 0x4c, 0x6f, 0x63, 0x61, 0x6c, 0x54, 0x72, 0x75, 0x73, 0x74, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x83, 0x01, 0x0a, 0x16, 0x53, 0x65, 0x6e, 0x64, 0x49, 0x6e, 0x74,
+	0x65, 0x72, 0x6d, 0x65, 0x64, 0x69, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12,
+	0x33, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x70, 0x75,
+	0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x53, 0x65, 0x6e, 0x64, 0x49, 0x6e, 0x74, 0x65, 0x72,
+	0x6d, 0x65, 0x64, 0x69, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x34, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32,
+	0x2e, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x53, 0x65, 0x6e, 0x64,
+	0x49, 0x6e, 0x74, 0x65, 0x72, 0x6d, 0x65, 0x64, 0x69, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x75,
+	0x6c, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x62, 0x5a, 0x3f, 0x67, 0x69,
+	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6e, 0x73, 0x70, 0x63, 0x63, 0x2d, 0x64,
+	0x65, 0x76, 0x2f, 0x6e, 0x65, 0x6f, 0x66, 0x73, 0x2d, 0x61, 0x70, 0x69, 0x2d, 0x67, 0x6f, 0x2f,
+	0x76, 0x32, 0x2f, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2f, 0x67, 0x72,
+	0x70, 0x63, 0x3b, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0xaa, 0x02, 0x1e,
+	0x4e, 0x65, 0x6f, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x2e,
+	0x41, 0x50, 0x49, 0x2e, 0x52, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -346,33 +631,46 @@ func file_v2_reputation_grpc_service_proto_rawDescGZIP() []byte {
 	return file_v2_reputation_grpc_service_proto_rawDescData
 }
 
-var file_v2_reputation_grpc_service_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_v2_reputation_grpc_service_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_v2_reputation_grpc_service_proto_goTypes = []interface{}{
-	(*SendLocalTrustRequest)(nil),           // 0: neo.fs.v2.reputation.SendLocalTrustRequest
-	(*SendLocalTrustResponse)(nil),          // 1: neo.fs.v2.reputation.SendLocalTrustResponse
-	(*SendLocalTrustRequest_Body)(nil),      // 2: neo.fs.v2.reputation.SendLocalTrustRequest.Body
-	(*SendLocalTrustResponse_Body)(nil),     // 3: neo.fs.v2.reputation.SendLocalTrustResponse.Body
-	(*grpc.RequestMetaHeader)(nil),          // 4: neo.fs.v2.session.RequestMetaHeader
-	(*grpc.RequestVerificationHeader)(nil),  // 5: neo.fs.v2.session.RequestVerificationHeader
-	(*grpc.ResponseMetaHeader)(nil),         // 6: neo.fs.v2.session.ResponseMetaHeader
-	(*grpc.ResponseVerificationHeader)(nil), // 7: neo.fs.v2.session.ResponseVerificationHeader
-	(*Trust)(nil),                           // 8: neo.fs.v2.reputation.Trust
+	(*SendLocalTrustRequest)(nil),               // 0: neo.fs.v2.reputation.SendLocalTrustRequest
+	(*SendLocalTrustResponse)(nil),              // 1: neo.fs.v2.reputation.SendLocalTrustResponse
+	(*SendIntermediateResultRequest)(nil),       // 2: neo.fs.v2.reputation.SendIntermediateResultRequest
+	(*SendIntermediateResultResponse)(nil),      // 3: neo.fs.v2.reputation.SendIntermediateResultResponse
+	(*SendLocalTrustRequest_Body)(nil),          // 4: neo.fs.v2.reputation.SendLocalTrustRequest.Body
+	(*SendLocalTrustResponse_Body)(nil),         // 5: neo.fs.v2.reputation.SendLocalTrustResponse.Body
+	(*SendIntermediateResultRequest_Body)(nil),  // 6: neo.fs.v2.reputation.SendIntermediateResultRequest.Body
+	(*SendIntermediateResultResponse_Body)(nil), // 7: neo.fs.v2.reputation.SendIntermediateResultResponse.Body
+	(*grpc.RequestMetaHeader)(nil),              // 8: neo.fs.v2.session.RequestMetaHeader
+	(*grpc.RequestVerificationHeader)(nil),      // 9: neo.fs.v2.session.RequestVerificationHeader
+	(*grpc.ResponseMetaHeader)(nil),             // 10: neo.fs.v2.session.ResponseMetaHeader
+	(*grpc.ResponseVerificationHeader)(nil),     // 11: neo.fs.v2.session.ResponseVerificationHeader
+	(*Trust)(nil),                               // 12: neo.fs.v2.reputation.Trust
 }
 var file_v2_reputation_grpc_service_proto_depIdxs = []int32{
-	2, // 0: neo.fs.v2.reputation.SendLocalTrustRequest.body:type_name -> neo.fs.v2.reputation.SendLocalTrustRequest.Body
-	4, // 1: neo.fs.v2.reputation.SendLocalTrustRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
-	5, // 2: neo.fs.v2.reputation.SendLocalTrustRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
-	3, // 3: neo.fs.v2.reputation.SendLocalTrustResponse.body:type_name -> neo.fs.v2.reputation.SendLocalTrustResponse.Body
-	6, // 4: neo.fs.v2.reputation.SendLocalTrustResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
-	7, // 5: neo.fs.v2.reputation.SendLocalTrustResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
-	8, // 6: neo.fs.v2.reputation.SendLocalTrustRequest.Body.trusts:type_name -> neo.fs.v2.reputation.Trust
-	0, // 7: neo.fs.v2.reputation.ReputationService.SendLocalTrust:input_type -> neo.fs.v2.reputation.SendLocalTrustRequest
-	1, // 8: neo.fs.v2.reputation.ReputationService.SendLocalTrust:output_type -> neo.fs.v2.reputation.SendLocalTrustResponse
-	8, // [8:9] is the sub-list for method output_type
-	7, // [7:8] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	4,  // 0: neo.fs.v2.reputation.SendLocalTrustRequest.body:type_name -> neo.fs.v2.reputation.SendLocalTrustRequest.Body
+	8,  // 1: neo.fs.v2.reputation.SendLocalTrustRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
+	9,  // 2: neo.fs.v2.reputation.SendLocalTrustRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
+	5,  // 3: neo.fs.v2.reputation.SendLocalTrustResponse.body:type_name -> neo.fs.v2.reputation.SendLocalTrustResponse.Body
+	10, // 4: neo.fs.v2.reputation.SendLocalTrustResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
+	11, // 5: neo.fs.v2.reputation.SendLocalTrustResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
+	6,  // 6: neo.fs.v2.reputation.SendIntermediateResultRequest.body:type_name -> neo.fs.v2.reputation.SendIntermediateResultRequest.Body
+	8,  // 7: neo.fs.v2.reputation.SendIntermediateResultRequest.meta_header:type_name -> neo.fs.v2.session.RequestMetaHeader
+	9,  // 8: neo.fs.v2.reputation.SendIntermediateResultRequest.verify_header:type_name -> neo.fs.v2.session.RequestVerificationHeader
+	7,  // 9: neo.fs.v2.reputation.SendIntermediateResultResponse.body:type_name -> neo.fs.v2.reputation.SendIntermediateResultResponse.Body
+	10, // 10: neo.fs.v2.reputation.SendIntermediateResultResponse.meta_header:type_name -> neo.fs.v2.session.ResponseMetaHeader
+	11, // 11: neo.fs.v2.reputation.SendIntermediateResultResponse.verify_header:type_name -> neo.fs.v2.session.ResponseVerificationHeader
+	12, // 12: neo.fs.v2.reputation.SendLocalTrustRequest.Body.trusts:type_name -> neo.fs.v2.reputation.Trust
+	12, // 13: neo.fs.v2.reputation.SendIntermediateResultRequest.Body.trust:type_name -> neo.fs.v2.reputation.Trust
+	0,  // 14: neo.fs.v2.reputation.ReputationService.SendLocalTrust:input_type -> neo.fs.v2.reputation.SendLocalTrustRequest
+	2,  // 15: neo.fs.v2.reputation.ReputationService.SendIntermediateResult:input_type -> neo.fs.v2.reputation.SendIntermediateResultRequest
+	1,  // 16: neo.fs.v2.reputation.ReputationService.SendLocalTrust:output_type -> neo.fs.v2.reputation.SendLocalTrustResponse
+	3,  // 17: neo.fs.v2.reputation.ReputationService.SendIntermediateResult:output_type -> neo.fs.v2.reputation.SendIntermediateResultResponse
+	16, // [16:18] is the sub-list for method output_type
+	14, // [14:16] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_v2_reputation_grpc_service_proto_init() }
@@ -407,7 +705,7 @@ func file_v2_reputation_grpc_service_proto_init() {
 			}
 		}
 		file_v2_reputation_grpc_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SendLocalTrustRequest_Body); i {
+			switch v := v.(*SendIntermediateResultRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -419,7 +717,55 @@ func file_v2_reputation_grpc_service_proto_init() {
 			}
 		}
 		file_v2_reputation_grpc_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SendIntermediateResultResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_reputation_grpc_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SendLocalTrustRequest_Body); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_reputation_grpc_service_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SendLocalTrustResponse_Body); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_reputation_grpc_service_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SendIntermediateResultRequest_Body); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_reputation_grpc_service_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SendIntermediateResultResponse_Body); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -437,7 +783,7 @@ func file_v2_reputation_grpc_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_v2_reputation_grpc_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -465,6 +811,9 @@ const _ = grpc1.SupportPackageIsVersion6
 type ReputationServiceClient interface {
 	// Sends local client trust to any peer from NeoFS network.
 	SendLocalTrust(ctx context.Context, in *SendLocalTrustRequest, opts ...grpc1.CallOption) (*SendLocalTrustResponse, error)
+	// Sends the intermediate result of the iterative algorithm
+	// for calculating the global reputation of the node.
+	SendIntermediateResult(ctx context.Context, in *SendIntermediateResultRequest, opts ...grpc1.CallOption) (*SendIntermediateResultResponse, error)
 }
 
 type reputationServiceClient struct {
@@ -484,10 +833,22 @@ func (c *reputationServiceClient) SendLocalTrust(ctx context.Context, in *SendLo
 	return out, nil
 }
 
+func (c *reputationServiceClient) SendIntermediateResult(ctx context.Context, in *SendIntermediateResultRequest, opts ...grpc1.CallOption) (*SendIntermediateResultResponse, error) {
+	out := new(SendIntermediateResultResponse)
+	err := c.cc.Invoke(ctx, "/neo.fs.v2.reputation.ReputationService/SendIntermediateResult", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReputationServiceServer is the server API for ReputationService service.
 type ReputationServiceServer interface {
 	// Sends local client trust to any peer from NeoFS network.
 	SendLocalTrust(context.Context, *SendLocalTrustRequest) (*SendLocalTrustResponse, error)
+	// Sends the intermediate result of the iterative algorithm
+	// for calculating the global reputation of the node.
+	SendIntermediateResult(context.Context, *SendIntermediateResultRequest) (*SendIntermediateResultResponse, error)
 }
 
 // UnimplementedReputationServiceServer can be embedded to have forward compatible implementations.
@@ -496,6 +857,9 @@ type UnimplementedReputationServiceServer struct {
 
 func (*UnimplementedReputationServiceServer) SendLocalTrust(context.Context, *SendLocalTrustRequest) (*SendLocalTrustResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendLocalTrust not implemented")
+}
+func (*UnimplementedReputationServiceServer) SendIntermediateResult(context.Context, *SendIntermediateResultRequest) (*SendIntermediateResultResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendIntermediateResult not implemented")
 }
 
 func RegisterReputationServiceServer(s *grpc1.Server, srv ReputationServiceServer) {
@@ -520,6 +884,24 @@ func _ReputationService_SendLocalTrust_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReputationService_SendIntermediateResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc1.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendIntermediateResultRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReputationServiceServer).SendIntermediateResult(ctx, in)
+	}
+	info := &grpc1.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/neo.fs.v2.reputation.ReputationService/SendIntermediateResult",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReputationServiceServer).SendIntermediateResult(ctx, req.(*SendIntermediateResultRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _ReputationService_serviceDesc = grpc1.ServiceDesc{
 	ServiceName: "neo.fs.v2.reputation.ReputationService",
 	HandlerType: (*ReputationServiceServer)(nil),
@@ -527,6 +909,10 @@ var _ReputationService_serviceDesc = grpc1.ServiceDesc{
 		{
 			MethodName: "SendLocalTrust",
 			Handler:    _ReputationService_SendLocalTrust_Handler,
+		},
+		{
+			MethodName: "SendIntermediateResult",
+			Handler:    _ReputationService_SendIntermediateResult_Handler,
 		},
 	},
 	Streams:  []grpc1.StreamDesc{},
