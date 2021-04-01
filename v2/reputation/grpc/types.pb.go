@@ -8,6 +8,7 @@ package reputation
 
 import (
 	proto "github.com/golang/protobuf/proto"
+	grpc "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -25,6 +26,67 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
+// NeoFS unique peer identifier.
+//
+// `PeerID` is a 33 byte long compressed public key of the node
+// stored in network map.
+//
+// String presentation is
+// [base58](https://tools.ietf.org/html/draft-msporny-base58-02) encoded string.
+//
+// JSON value will be the data encoded as a string using standard base64
+// encoding with paddings. Either
+// [standard](https://tools.ietf.org/html/rfc4648#section-4) or
+// [URL-safe](https://tools.ietf.org/html/rfc4648#section-5) base64 encoding
+// with/without paddings are accepted.
+type PeerID struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Peer identifier in a binary format.
+	Value []byte `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+}
+
+func (x *PeerID) Reset() {
+	*x = PeerID{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_reputation_grpc_types_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PeerID) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PeerID) ProtoMessage() {}
+
+func (x *PeerID) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_reputation_grpc_types_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PeerID.ProtoReflect.Descriptor instead.
+func (*PeerID) Descriptor() ([]byte, []int) {
+	return file_v2_reputation_grpc_types_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *PeerID) GetValue() []byte {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
 // Trust value to NeoFS network peer.
 type Trust struct {
 	state         protoimpl.MessageState
@@ -32,10 +94,7 @@ type Trust struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Identifier of the trusted peer.
-	//
-	// For storage nodes, it is the node's public key
-	// fixed in the network map.
-	Peer []byte `protobuf:"bytes,1,opt,name=peer,proto3" json:"peer,omitempty"`
+	Peer *PeerID `protobuf:"bytes,1,opt,name=peer,proto3" json:"peer,omitempty"`
 	// Trust value.
 	Value float64 `protobuf:"fixed64,2,opt,name=value,proto3" json:"value,omitempty"`
 }
@@ -43,7 +102,7 @@ type Trust struct {
 func (x *Trust) Reset() {
 	*x = Trust{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_v2_reputation_grpc_types_proto_msgTypes[0]
+		mi := &file_v2_reputation_grpc_types_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -56,7 +115,7 @@ func (x *Trust) String() string {
 func (*Trust) ProtoMessage() {}
 
 func (x *Trust) ProtoReflect() protoreflect.Message {
-	mi := &file_v2_reputation_grpc_types_proto_msgTypes[0]
+	mi := &file_v2_reputation_grpc_types_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -69,10 +128,10 @@ func (x *Trust) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Trust.ProtoReflect.Descriptor instead.
 func (*Trust) Descriptor() ([]byte, []int) {
-	return file_v2_reputation_grpc_types_proto_rawDescGZIP(), []int{0}
+	return file_v2_reputation_grpc_types_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Trust) GetPeer() []byte {
+func (x *Trust) GetPeer() *PeerID {
 	if x != nil {
 		return x.Peer
 	}
@@ -86,23 +145,173 @@ func (x *Trust) GetValue() float64 {
 	return 0
 }
 
+// Global trust value to NeoFS network peer.
+type GlobalTrust struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Message format version. Effectively the version of API library used to create
+	// the message.
+	Version *grpc.Version `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	// Message body.
+	Body *GlobalTrust_Body `protobuf:"bytes,2,opt,name=body,proto3" json:"body,omitempty"`
+	// Signature of the binary `body` field by the manager.
+	Signature *grpc.Signature `protobuf:"bytes,3,opt,name=signature,proto3" json:"signature,omitempty"`
+}
+
+func (x *GlobalTrust) Reset() {
+	*x = GlobalTrust{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_reputation_grpc_types_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GlobalTrust) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GlobalTrust) ProtoMessage() {}
+
+func (x *GlobalTrust) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_reputation_grpc_types_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GlobalTrust.ProtoReflect.Descriptor instead.
+func (*GlobalTrust) Descriptor() ([]byte, []int) {
+	return file_v2_reputation_grpc_types_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GlobalTrust) GetVersion() *grpc.Version {
+	if x != nil {
+		return x.Version
+	}
+	return nil
+}
+
+func (x *GlobalTrust) GetBody() *GlobalTrust_Body {
+	if x != nil {
+		return x.Body
+	}
+	return nil
+}
+
+func (x *GlobalTrust) GetSignature() *grpc.Signature {
+	if x != nil {
+		return x.Signature
+	}
+	return nil
+}
+
+// Message body structure.
+type GlobalTrust_Body struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Node manager ID.
+	Manager *PeerID `protobuf:"bytes,1,opt,name=manager,proto3" json:"manager,omitempty"`
+	// Global trust value.
+	Trust *Trust `protobuf:"bytes,2,opt,name=trust,proto3" json:"trust,omitempty"`
+}
+
+func (x *GlobalTrust_Body) Reset() {
+	*x = GlobalTrust_Body{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_v2_reputation_grpc_types_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GlobalTrust_Body) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GlobalTrust_Body) ProtoMessage() {}
+
+func (x *GlobalTrust_Body) ProtoReflect() protoreflect.Message {
+	mi := &file_v2_reputation_grpc_types_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GlobalTrust_Body.ProtoReflect.Descriptor instead.
+func (*GlobalTrust_Body) Descriptor() ([]byte, []int) {
+	return file_v2_reputation_grpc_types_proto_rawDescGZIP(), []int{2, 0}
+}
+
+func (x *GlobalTrust_Body) GetManager() *PeerID {
+	if x != nil {
+		return x.Manager
+	}
+	return nil
+}
+
+func (x *GlobalTrust_Body) GetTrust() *Trust {
+	if x != nil {
+		return x.Trust
+	}
+	return nil
+}
+
 var File_v2_reputation_grpc_types_proto protoreflect.FileDescriptor
 
 var file_v2_reputation_grpc_types_proto_rawDesc = []byte{
 	0x0a, 0x1e, 0x76, 0x32, 0x2f, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2f,
 	0x67, 0x72, 0x70, 0x63, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x12, 0x14, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x70, 0x75,
-	0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x31, 0x0a, 0x05, 0x54, 0x72, 0x75, 0x73, 0x74, 0x12,
-	0x12, 0x0a, 0x04, 0x70, 0x65, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x70,
-	0x65, 0x65, 0x72, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x01, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x42, 0x62, 0x5a, 0x3f, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6e, 0x73, 0x70, 0x63, 0x63, 0x2d, 0x64, 0x65,
-	0x76, 0x2f, 0x6e, 0x65, 0x6f, 0x66, 0x73, 0x2d, 0x61, 0x70, 0x69, 0x2d, 0x67, 0x6f, 0x2f, 0x76,
-	0x32, 0x2f, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2f, 0x67, 0x72, 0x70,
-	0x63, 0x3b, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0xaa, 0x02, 0x1e, 0x4e,
-	0x65, 0x6f, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x2e, 0x41,
-	0x50, 0x49, 0x2e, 0x52, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x1a, 0x18, 0x76, 0x32, 0x2f, 0x72, 0x65, 0x66, 0x73, 0x2f,
+	0x67, 0x72, 0x70, 0x63, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x22, 0x1e, 0x0a, 0x06, 0x50, 0x65, 0x65, 0x72, 0x49, 0x44, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x22, 0x4f, 0x0a, 0x05, 0x54, 0x72, 0x75, 0x73, 0x74, 0x12, 0x30, 0x0a, 0x04, 0x70, 0x65, 0x65,
+	0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1c, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73,
+	0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x50,
+	0x65, 0x65, 0x72, 0x49, 0x44, 0x52, 0x04, 0x70, 0x65, 0x65, 0x72, 0x12, 0x14, 0x0a, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x01, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75,
+	0x65, 0x22, 0xa8, 0x02, 0x0a, 0x0b, 0x47, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x54, 0x72, 0x75, 0x73,
+	0x74, 0x12, 0x31, 0x0a, 0x07, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x17, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72,
+	0x65, 0x66, 0x73, 0x2e, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x07, 0x76, 0x65, 0x72,
+	0x73, 0x69, 0x6f, 0x6e, 0x12, 0x3a, 0x0a, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x26, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72,
+	0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x47, 0x6c, 0x6f, 0x62, 0x61, 0x6c,
+	0x54, 0x72, 0x75, 0x73, 0x74, 0x2e, 0x42, 0x6f, 0x64, 0x79, 0x52, 0x04, 0x62, 0x6f, 0x64, 0x79,
+	0x12, 0x37, 0x0a, 0x09, 0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e,
+	0x72, 0x65, 0x66, 0x73, 0x2e, 0x53, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x52, 0x09,
+	0x73, 0x69, 0x67, 0x6e, 0x61, 0x74, 0x75, 0x72, 0x65, 0x1a, 0x71, 0x0a, 0x04, 0x42, 0x6f, 0x64,
+	0x79, 0x12, 0x36, 0x0a, 0x07, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x1c, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66, 0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72,
+	0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x50, 0x65, 0x65, 0x72, 0x49, 0x44,
+	0x52, 0x07, 0x6d, 0x61, 0x6e, 0x61, 0x67, 0x65, 0x72, 0x12, 0x31, 0x0a, 0x05, 0x74, 0x72, 0x75,
+	0x73, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x6e, 0x65, 0x6f, 0x2e, 0x66,
+	0x73, 0x2e, 0x76, 0x32, 0x2e, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e,
+	0x54, 0x72, 0x75, 0x73, 0x74, 0x52, 0x05, 0x74, 0x72, 0x75, 0x73, 0x74, 0x42, 0x62, 0x5a, 0x3f,
+	0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6e, 0x73, 0x70, 0x63, 0x63,
+	0x2d, 0x64, 0x65, 0x76, 0x2f, 0x6e, 0x65, 0x6f, 0x66, 0x73, 0x2d, 0x61, 0x70, 0x69, 0x2d, 0x67,
+	0x6f, 0x2f, 0x76, 0x32, 0x2f, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2f,
+	0x67, 0x72, 0x70, 0x63, 0x3b, 0x72, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0xaa,
+	0x02, 0x1e, 0x4e, 0x65, 0x6f, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x53, 0x74, 0x6f, 0x72, 0x61, 0x67,
+	0x65, 0x2e, 0x41, 0x50, 0x49, 0x2e, 0x52, 0x65, 0x70, 0x75, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -117,16 +326,27 @@ func file_v2_reputation_grpc_types_proto_rawDescGZIP() []byte {
 	return file_v2_reputation_grpc_types_proto_rawDescData
 }
 
-var file_v2_reputation_grpc_types_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_v2_reputation_grpc_types_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_v2_reputation_grpc_types_proto_goTypes = []interface{}{
-	(*Trust)(nil), // 0: neo.fs.v2.reputation.Trust
+	(*PeerID)(nil),           // 0: neo.fs.v2.reputation.PeerID
+	(*Trust)(nil),            // 1: neo.fs.v2.reputation.Trust
+	(*GlobalTrust)(nil),      // 2: neo.fs.v2.reputation.GlobalTrust
+	(*GlobalTrust_Body)(nil), // 3: neo.fs.v2.reputation.GlobalTrust.Body
+	(*grpc.Version)(nil),     // 4: neo.fs.v2.refs.Version
+	(*grpc.Signature)(nil),   // 5: neo.fs.v2.refs.Signature
 }
 var file_v2_reputation_grpc_types_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: neo.fs.v2.reputation.Trust.peer:type_name -> neo.fs.v2.reputation.PeerID
+	4, // 1: neo.fs.v2.reputation.GlobalTrust.version:type_name -> neo.fs.v2.refs.Version
+	3, // 2: neo.fs.v2.reputation.GlobalTrust.body:type_name -> neo.fs.v2.reputation.GlobalTrust.Body
+	5, // 3: neo.fs.v2.reputation.GlobalTrust.signature:type_name -> neo.fs.v2.refs.Signature
+	0, // 4: neo.fs.v2.reputation.GlobalTrust.Body.manager:type_name -> neo.fs.v2.reputation.PeerID
+	1, // 5: neo.fs.v2.reputation.GlobalTrust.Body.trust:type_name -> neo.fs.v2.reputation.Trust
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_v2_reputation_grpc_types_proto_init() }
@@ -136,7 +356,43 @@ func file_v2_reputation_grpc_types_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_v2_reputation_grpc_types_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*PeerID); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_reputation_grpc_types_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Trust); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_reputation_grpc_types_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GlobalTrust); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_v2_reputation_grpc_types_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GlobalTrust_Body); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -154,7 +410,7 @@ func file_v2_reputation_grpc_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_v2_reputation_grpc_types_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
