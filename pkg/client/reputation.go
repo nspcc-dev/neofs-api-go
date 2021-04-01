@@ -15,6 +15,10 @@ import (
 type Reputation interface {
 	// SendLocalTrust sends local trust values of local peer.
 	SendLocalTrust(context.Context, SendLocalTrustPrm, ...CallOption) (*SendLocalTrustRes, error)
+
+	// SendIntermediateTrust sends the intermediate result of the iterative algorithm for calculating
+	// the global reputation of the node.
+	SendIntermediateTrust(context.Context, SendIntermediateTrustPrm, ...CallOption) (*SendIntermediateTrustRes, error)
 }
 
 // SendLocalTrustPrm groups parameters of SendLocalTrust operation.
@@ -79,4 +83,68 @@ func (c *clientImpl) SendLocalTrust(ctx context.Context, prm SendLocalTrustPrm, 
 	}
 
 	return new(SendLocalTrustRes), nil
+}
+
+// SendIntermediateTrustPrm groups parameters of SendIntermediateTrust operation.
+type SendIntermediateTrustPrm struct {
+	iter uint32
+
+	trust *reputation.Trust
+}
+
+// Iteration returns sequence number of the iteration.
+func (x SendIntermediateTrustPrm) Iteration() uint32 {
+	return x.iter
+}
+
+// SetIteration sets sequence number of the iteration.
+func (x *SendIntermediateTrustPrm) SetIteration(iter uint32) {
+	x.iter = iter
+}
+
+// Trust returns current global trust value computed at the specified iteration.
+func (x SendIntermediateTrustPrm) Trust() *reputation.Trust {
+	return x.trust
+}
+
+// SetTrust sets current global trust value computed at the specified iteration.
+func (x *SendIntermediateTrustPrm) SetTrust(trust *reputation.Trust) {
+	x.trust = trust
+}
+
+// SendIntermediateTrustRes groups results of SendIntermediateTrust operation.
+type SendIntermediateTrustRes struct{}
+
+func (c *clientImpl) SendIntermediateTrust(ctx context.Context, prm SendIntermediateTrustPrm, opts ...CallOption) (*SendIntermediateTrustRes, error) {
+	// apply all available options
+	callOptions := c.defaultCallOptions()
+
+	for i := range opts {
+		opts[i](callOptions)
+	}
+
+	reqBody := new(v2reputation.SendIntermediateResultRequestBody)
+	reqBody.SetIteration(prm.Iteration())
+	reqBody.SetTrust(prm.Trust().ToV2())
+
+	req := new(v2reputation.SendIntermediateResultRequest)
+	req.SetBody(reqBody)
+	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
+
+	err := v2signature.SignServiceMessage(callOptions.key, req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := rpcapi.SendIntermediateResult(c.Raw(), req, client.WithContext(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	err = v2signature.VerifyServiceMessage(resp)
+	if err != nil {
+		return nil, errors.Wrap(err, "can't verify response message")
+	}
+
+	return new(SendIntermediateTrustRes), nil
 }
