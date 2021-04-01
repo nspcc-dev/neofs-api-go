@@ -15,5 +15,15 @@ func TestMessageConvert(t *testing.T) {
 		func(empty bool) message.Message { return reputationtest.GenerateSendLocalTrustRequest(empty) },
 		func(empty bool) message.Message { return reputationtest.GenerateSendLocalTrustResponseBody(empty) },
 		func(empty bool) message.Message { return reputationtest.GenerateSendLocalTrustResponse(empty) },
+		func(empty bool) message.Message {
+			return reputationtest.GenerateSendIntermediateResultRequestBody(empty)
+		},
+		func(empty bool) message.Message { return reputationtest.GenerateSendIntermediateResultRequest(empty) },
+		func(empty bool) message.Message {
+			return reputationtest.GenerateSendIntermediateResultResponseBody(empty)
+		},
+		func(empty bool) message.Message { return reputationtest.GenerateSendIntermediateResultResponse(empty) },
+		func(empty bool) message.Message { return reputationtest.GenerateGlobalTrustBody(empty) },
+		func(empty bool) message.Message { return reputationtest.GenerateGlobalTrust(empty) },
 	)
 }
