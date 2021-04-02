@@ -1,7 +1,13 @@
 package reputation
 
 import (
+	"crypto/ecdsa"
+
+	"github.com/nspcc-dev/neofs-api-go/pkg"
+	"github.com/nspcc-dev/neofs-api-go/util/signature"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-api-go/v2/reputation"
+	signatureV2 "github.com/nspcc-dev/neofs-api-go/v2/signature"
 )
 
 // Trust represents peer's trust compatible with NeoFS API v2.
@@ -91,5 +97,158 @@ func (x *Trust) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON decodes Trust from protobuf JSON format.
 func (x *Trust) UnmarshalJSON(data []byte) error {
 	return (*reputation.Trust)(x).
+		UnmarshalJSON(data)
+}
+
+// GlobalTrust represents peer's global trust compatible with NeoFS API v2.
+type GlobalTrust reputation.GlobalTrust
+
+// NewGlobalTrust creates and returns blank GlobalTrust.
+//
+// Version is initialized to current library version.
+func NewGlobalTrust() *GlobalTrust {
+	gt := GlobalTrustFromV2(new(reputation.GlobalTrust))
+	gt.SetVersion(pkg.SDKVersion())
+
+	return gt
+}
+
+// GlobalTrustFromV2 converts NeoFS API v2
+// reputation.GlobalTrust message structure to GlobalTrust.
+func GlobalTrustFromV2(t *reputation.GlobalTrust) *GlobalTrust {
+	return (*GlobalTrust)(t)
+}
+
+// ToV2 converts GlobalTrust to NeoFS API v2
+// reputation.GlobalTrust message structure.
+func (x *GlobalTrust) ToV2() *reputation.GlobalTrust {
+	return (*reputation.GlobalTrust)(x)
+}
+
+// SetVersion sets GlobalTrust's protocol version.
+func (x *GlobalTrust) SetVersion(version *pkg.Version) {
+	(*reputation.GlobalTrust)(x).
+		SetVersion(version.ToV2())
+}
+
+// Version returns GlobalTrust's protocol version.
+func (x *GlobalTrust) Version() *pkg.Version {
+	return pkg.NewVersionFromV2(
+		(*reputation.GlobalTrust)(x).
+			GetVersion(),
+	)
+}
+
+func (x *GlobalTrust) setBodyField(setter func(*reputation.GlobalTrustBody)) {
+	if x != nil {
+		v2 := (*reputation.GlobalTrust)(x)
+
+		body := v2.GetBody()
+		if body == nil {
+			body = new(reputation.GlobalTrustBody)
+			v2.SetBody(body)
+		}
+
+		setter(body)
+	}
+}
+
+// SetManager sets node manager ID.
+func (x *GlobalTrust) SetManager(id *PeerID) {
+	x.setBodyField(func(body *reputation.GlobalTrustBody) {
+		body.SetManager(id.ToV2())
+	})
+}
+
+// Manager returns node manager ID.
+func (x *GlobalTrust) Manager() *PeerID {
+	return PeerIDFromV2(
+		(*reputation.GlobalTrust)(x).
+			GetBody().
+			GetManager(),
+	)
+}
+
+// SetTrust sets global trust value.
+func (x *GlobalTrust) SetTrust(trust *Trust) {
+	x.setBodyField(func(body *reputation.GlobalTrustBody) {
+		body.SetTrust(trust.ToV2())
+	})
+}
+
+// Trust returns global trust value.
+func (x *GlobalTrust) Trust() *Trust {
+	return TrustFromV2(
+		(*reputation.GlobalTrust)(x).
+			GetBody().
+			GetTrust(),
+	)
+}
+
+// Sign signs global trust value with key.
+func (x *GlobalTrust) Sign(key *ecdsa.PrivateKey) error {
+	v2 := (*reputation.GlobalTrust)(x)
+
+	sigV2 := v2.GetSignature()
+	if sigV2 == nil {
+		sigV2 = new(refs.Signature)
+		v2.SetSignature(sigV2)
+	}
+
+	return signature.SignDataWithHandler(
+		key,
+		signatureV2.StableMarshalerWrapper{SM: v2.GetBody()},
+		func(key, sig []byte) {
+			sigV2.SetKey(key)
+			sigV2.SetSign(sig)
+		},
+	)
+}
+
+// VerifySignature verifies global trust signature.
+func (x *GlobalTrust) VerifySignature() error {
+	v2 := (*reputation.GlobalTrust)(x)
+
+	sigV2 := v2.GetSignature()
+	if sigV2 == nil {
+		sigV2 = new(refs.Signature)
+	}
+
+	return signature.VerifyDataWithSource(
+		signatureV2.StableMarshalerWrapper{SM: v2.GetBody()},
+		func() ([]byte, []byte) {
+			return sigV2.GetKey(), sigV2.GetSign()
+		},
+	)
+}
+
+// Marshal marshals GlobalTrust into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (x *GlobalTrust) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*reputation.GlobalTrust)(x).StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of GlobalTrust.
+func (x *GlobalTrust) Unmarshal(data []byte) error {
+	return (*reputation.GlobalTrust)(x).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes GlobalTrust to protobuf JSON format.
+func (x *GlobalTrust) MarshalJSON() ([]byte, error) {
+	return (*reputation.GlobalTrust)(x).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes GlobalTrust from protobuf JSON format.
+func (x *GlobalTrust) UnmarshalJSON(data []byte) error {
+	return (*reputation.GlobalTrust)(x).
 		UnmarshalJSON(data)
 }
