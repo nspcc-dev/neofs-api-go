@@ -8,7 +8,11 @@ import (
 
 func GeneratePeerID() *reputation.PeerID {
 	v := reputation.NewPeerID()
-	v.SetBytes(crypto.MarshalPublicKey(&test.DecodeKey(-1).PublicKey))
+
+	key := [crypto.PublicKeyCompressedSize]byte{}
+	copy(key[:], crypto.MarshalPublicKey(&test.DecodeKey(-1).PublicKey))
+
+	v.SetPublicKey(key)
 
 	return v
 }
