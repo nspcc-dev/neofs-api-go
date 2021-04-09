@@ -28,6 +28,15 @@ func GenerateTrust(empty bool) *reputation.Trust {
 	return m
 }
 
+func GeneratePeerToPeerTrust(empty bool) *reputation.PeerToPeerTrust {
+	m := new(reputation.PeerToPeerTrust)
+
+	m.SetTrustingPeer(GeneratePeerID(empty))
+	m.SetTrust(GenerateTrust(empty))
+
+	return m
+}
+
 func GenerateGlobalTrustBody(empty bool) *reputation.GlobalTrustBody {
 	m := new(reputation.GlobalTrustBody)
 
@@ -103,7 +112,7 @@ func GenerateSendIntermediateResultRequestBody(empty bool) *reputation.SendInter
 		m.SetIteration(564)
 	}
 
-	m.SetTrust(GenerateTrust(empty))
+	m.SetTrust(GeneratePeerToPeerTrust(empty))
 
 	return m
 }

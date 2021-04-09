@@ -25,6 +25,20 @@ func (x *Trust) SetValue(v float64) {
 	}
 }
 
+// SetTrustingPeer sets trusting peer ID.
+func (x *PeerToPeerTrust) SetTrustingPeer(v *PeerID) {
+	if x != nil {
+		x.TrustingPeer = v
+	}
+}
+
+// SetTrust sets trust value of trusting peer to the trusted one.
+func (x *PeerToPeerTrust) SetTrust(v *Trust) {
+	if x != nil {
+		x.Trust = v
+	}
+}
+
 // SetManager sets manager ID.
 func (x *GlobalTrust_Body) SetManager(v *PeerID) {
 	if x != nil {
