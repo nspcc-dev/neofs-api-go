@@ -100,6 +100,86 @@ func (x *Trust) UnmarshalJSON(data []byte) error {
 		UnmarshalJSON(data)
 }
 
+// PeerToPeerTrust represents directed peer-to-peer trust
+// compatible with NeoFS API v2.
+type PeerToPeerTrust reputation.PeerToPeerTrust
+
+// NewPeerToPeerTrust creates and returns blank PeerToPeerTrust.
+func NewPeerToPeerTrust() *PeerToPeerTrust {
+	return PeerToPeerTrustFromV2(new(reputation.PeerToPeerTrust))
+}
+
+// PeerToPeerTrustFromV2 converts NeoFS API v2
+// reputation.PeerToPeerTrust message structure to PeerToPeerTrust.
+func PeerToPeerTrustFromV2(t *reputation.PeerToPeerTrust) *PeerToPeerTrust {
+	return (*PeerToPeerTrust)(t)
+}
+
+// ToV2 converts PeerToPeerTrust to NeoFS API v2
+// reputation.PeerToPeerTrust message structure.
+func (x *PeerToPeerTrust) ToV2() *reputation.PeerToPeerTrust {
+	return (*reputation.PeerToPeerTrust)(x)
+}
+
+// SetTrustingPeer sets trusting peer ID.
+func (x *PeerToPeerTrust) SetTrustingPeer(id *PeerID) {
+	(*reputation.PeerToPeerTrust)(x).
+		SetTrustingPeer(id.ToV2())
+}
+
+// TrustingPeer returns trusting peer ID.
+func (x *PeerToPeerTrust) TrustingPeer() *PeerID {
+	return PeerIDFromV2(
+		(*reputation.PeerToPeerTrust)(x).
+			GetTrustingPeer(),
+	)
+}
+
+// SetTrust sets trust value of the trusting peer to the trusted one.
+func (x *PeerToPeerTrust) SetTrust(t *Trust) {
+	(*reputation.PeerToPeerTrust)(x).
+		SetTrust(t.ToV2())
+}
+
+// Trust returns trust value of the trusting peer to the trusted one.
+func (x *PeerToPeerTrust) Trust() *Trust {
+	return TrustFromV2(
+		(*reputation.PeerToPeerTrust)(x).
+			GetTrust(),
+	)
+}
+
+// Marshal marshals PeerToPeerTrust into a protobuf binary form.
+//
+// Buffer is allocated when the argument is empty.
+// Otherwise, the first buffer is used.
+func (x *PeerToPeerTrust) Marshal(b ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(b) > 0 {
+		buf = b[0]
+	}
+
+	return (*reputation.PeerToPeerTrust)(x).StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of PeerToPeerTrust.
+func (x *PeerToPeerTrust) Unmarshal(data []byte) error {
+	return (*reputation.PeerToPeerTrust)(x).
+		Unmarshal(data)
+}
+
+// MarshalJSON encodes PeerToPeerTrust to protobuf JSON format.
+func (x *PeerToPeerTrust) MarshalJSON() ([]byte, error) {
+	return (*reputation.PeerToPeerTrust)(x).
+		MarshalJSON()
+}
+
+// UnmarshalJSON decodes PeerToPeerTrust from protobuf JSON format.
+func (x *PeerToPeerTrust) UnmarshalJSON(data []byte) error {
+	return (*reputation.PeerToPeerTrust)(x).
+		UnmarshalJSON(data)
+}
+
 // GlobalTrust represents peer's global trust compatible with NeoFS API v2.
 type GlobalTrust reputation.GlobalTrust
 

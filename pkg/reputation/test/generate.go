@@ -28,6 +28,14 @@ func GenerateTrust() *reputation.Trust {
 	return v
 }
 
+func GeneratePeerToPeerTrust() *reputation.PeerToPeerTrust {
+	v := reputation.NewPeerToPeerTrust()
+	v.SetTrustingPeer(GeneratePeerID())
+	v.SetTrust(GenerateTrust())
+
+	return v
+}
+
 func GenerateGlobalTrust() *reputation.GlobalTrust {
 	v := reputation.NewGlobalTrust()
 	v.SetManager(GeneratePeerID())
