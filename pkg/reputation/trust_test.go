@@ -42,6 +42,53 @@ func TestTrust(t *testing.T) {
 	})
 }
 
+func TestPeerToPeerTrust(t *testing.T) {
+	t.Run("v2", func(t *testing.T) {
+		p2ptV2 := reputationtestV2.GeneratePeerToPeerTrust(false)
+
+		p2pt := reputation.PeerToPeerTrustFromV2(p2ptV2)
+
+		require.Equal(t, p2ptV2, p2pt.ToV2())
+	})
+
+	t.Run("getters+setters", func(t *testing.T) {
+		p2pt := reputation.NewPeerToPeerTrust()
+
+		require.Nil(t, p2pt.TrustingPeer())
+		require.Nil(t, p2pt.Trust())
+
+		trusting := reputationtest.GeneratePeerID()
+		p2pt.SetTrustingPeer(trusting)
+		require.Equal(t, trusting, p2pt.TrustingPeer())
+
+		trust := reputationtest.GenerateTrust()
+		p2pt.SetTrust(trust)
+		require.Equal(t, trust, p2pt.Trust())
+	})
+
+	t.Run("encoding", func(t *testing.T) {
+		p2pt := reputationtest.GeneratePeerToPeerTrust()
+
+		t.Run("binary", func(t *testing.T) {
+			data, err := p2pt.Marshal()
+			require.NoError(t, err)
+
+			p2pt2 := reputation.NewPeerToPeerTrust()
+			require.NoError(t, p2pt2.Unmarshal(data))
+			require.Equal(t, p2pt, p2pt2)
+		})
+
+		t.Run("JSON", func(t *testing.T) {
+			data, err := p2pt.MarshalJSON()
+			require.NoError(t, err)
+
+			p2pt2 := reputation.NewPeerToPeerTrust()
+			require.NoError(t, p2pt2.UnmarshalJSON(data))
+			require.Equal(t, p2pt, p2pt2)
+		})
+	})
+}
+
 func TestGlobalTrust(t *testing.T) {
 	t.Run("v2", func(t *testing.T) {
 		gtV2 := reputationtestV2.GenerateGlobalTrust(false)
