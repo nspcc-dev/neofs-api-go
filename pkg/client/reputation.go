@@ -89,7 +89,7 @@ func (c *clientImpl) SendLocalTrust(ctx context.Context, prm SendLocalTrustPrm, 
 type SendIntermediateTrustPrm struct {
 	iter uint32
 
-	trust *reputation.Trust
+	trust *reputation.PeerToPeerTrust
 }
 
 // Iteration returns sequence number of the iteration.
@@ -103,12 +103,12 @@ func (x *SendIntermediateTrustPrm) SetIteration(iter uint32) {
 }
 
 // Trust returns current global trust value computed at the specified iteration.
-func (x SendIntermediateTrustPrm) Trust() *reputation.Trust {
+func (x SendIntermediateTrustPrm) Trust() *reputation.PeerToPeerTrust {
 	return x.trust
 }
 
 // SetTrust sets current global trust value computed at the specified iteration.
-func (x *SendIntermediateTrustPrm) SetTrust(trust *reputation.Trust) {
+func (x *SendIntermediateTrustPrm) SetTrust(trust *reputation.PeerToPeerTrust) {
 	x.trust = trust
 }
 
