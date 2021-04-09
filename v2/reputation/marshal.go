@@ -86,6 +86,45 @@ func (x *Trust) Unmarshal(data []byte) error {
 
 const (
 	_ = iota
+	p2pTrustTrustingFNum
+	p2pTrustValueFNum
+)
+
+func (x *PeerToPeerTrust) StableMarshal(buf []byte) ([]byte, error) {
+	if x == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, x.StableSize())
+	}
+
+	offset, err := protoutil.NestedStructureMarshal(p2pTrustTrustingFNum, buf, x.trusting)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = protoutil.NestedStructureMarshal(p2pTrustValueFNum, buf[offset:], x.trust)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (x *PeerToPeerTrust) StableSize() (size int) {
+	size += protoutil.NestedStructureSize(p2pTrustTrustingFNum, x.trusting)
+	size += protoutil.NestedStructureSize(p2pTrustValueFNum, x.trust)
+
+	return
+}
+
+func (x *PeerToPeerTrust) Unmarshal(data []byte) error {
+	return message.Unmarshal(x, data, new(reputation.PeerToPeerTrust))
+}
+
+const (
+	_ = iota
 	globalTrustBodyManagerFNum
 	globalTrustBodyValueFNum
 )

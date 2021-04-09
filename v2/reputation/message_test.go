@@ -25,5 +25,6 @@ func TestMessageConvert(t *testing.T) {
 		func(empty bool) message.Message { return reputationtest.GenerateSendIntermediateResultResponse(empty) },
 		func(empty bool) message.Message { return reputationtest.GenerateGlobalTrustBody(empty) },
 		func(empty bool) message.Message { return reputationtest.GenerateGlobalTrust(empty) },
+		func(empty bool) message.Message { return reputationtest.GeneratePeerToPeerTrust(empty) },
 	)
 }

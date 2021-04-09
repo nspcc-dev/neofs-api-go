@@ -67,6 +67,46 @@ func (x *Trust) SetValue(v float64) {
 	}
 }
 
+// PeerToPeerTrust represents reputation.PeerToPeerTrust message
+// from NeoFS API v2.
+type PeerToPeerTrust struct {
+	trusting *PeerID
+
+	trust *Trust
+}
+
+// GetTrustingPeer returns trusting peer ID.
+func (x *PeerToPeerTrust) GetTrustingPeer() *PeerID {
+	if x != nil {
+		return x.trusting
+	}
+
+	return nil
+}
+
+// SetTrustingPeer sets trusting peer ID.
+func (x *PeerToPeerTrust) SetTrustingPeer(v *PeerID) {
+	if x != nil {
+		x.trusting = v
+	}
+}
+
+// GetTrust returns trust value of trusting peer to the trusted one.
+func (x *PeerToPeerTrust) GetTrust() *Trust {
+	if x != nil {
+		return x.trust
+	}
+
+	return nil
+}
+
+// SetTrust sets trust value of trusting peer to the trusted one.
+func (x *PeerToPeerTrust) SetTrust(v *Trust) {
+	if x != nil {
+		x.trust = v
+	}
+}
+
 // GlobalTrustBody represents reputation.GlobalTrust.Body message
 // from NeoFS API v2.
 type GlobalTrustBody struct {
@@ -259,7 +299,7 @@ func (x *SendLocalTrustResponse) SetBody(v *SendLocalTrustResponseBody) {
 type SendIntermediateResultRequestBody struct {
 	iter uint32
 
-	trust *Trust
+	trust *PeerToPeerTrust
 }
 
 // GetIteration returns sequence number of the iteration.
@@ -279,7 +319,7 @@ func (x *SendIntermediateResultRequestBody) SetIteration(v uint32) {
 }
 
 // GetTrust returns current global trust value.
-func (x *SendIntermediateResultRequestBody) GetTrust() *Trust {
+func (x *SendIntermediateResultRequestBody) GetTrust() *PeerToPeerTrust {
 	if x != nil {
 		return x.trust
 	}
@@ -288,7 +328,7 @@ func (x *SendIntermediateResultRequestBody) GetTrust() *Trust {
 }
 
 // SetTrust sets current global trust value.
-func (x *SendIntermediateResultRequestBody) SetTrust(v *Trust) {
+func (x *SendIntermediateResultRequestBody) SetTrust(v *PeerToPeerTrust) {
 	if x != nil {
 		x.trust = v
 	}

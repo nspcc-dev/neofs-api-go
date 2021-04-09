@@ -81,6 +81,61 @@ func (x *Trust) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
+// ToGRPCMessage converts PeerToPeerTrust to gRPC-generated
+// reputation.PeerToPeerTrust message.
+func (x *PeerToPeerTrust) ToGRPCMessage() grpc.Message {
+	var m *reputation.PeerToPeerTrust
+
+	if x != nil {
+		m = new(reputation.PeerToPeerTrust)
+
+		m.SetTrustingPeer(x.trusting.ToGRPCMessage().(*reputation.PeerID))
+		m.SetTrust(x.trust.ToGRPCMessage().(*reputation.Trust))
+	}
+
+	return m
+}
+
+// FromGRPCMessage tries to restore PeerToPeerTrust from grpc.Message.
+//
+// Returns message.ErrUnexpectedMessageType if m is not
+// a gRPC-generated reputation.PeerToPeerTrust message.
+func (x *PeerToPeerTrust) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*reputation.PeerToPeerTrust)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	trusting := v.GetTrustingPeer()
+	if trusting == nil {
+		x.trusting = nil
+	} else {
+		if x.trusting == nil {
+			x.trusting = new(PeerID)
+		}
+
+		err = x.trusting.FromGRPCMessage(trusting)
+		if err != nil {
+			return err
+		}
+	}
+
+	trust := v.GetTrust()
+	if trust == nil {
+		x.trust = nil
+	} else {
+		if x.trust == nil {
+			x.trust = new(Trust)
+		}
+
+		err = x.trust.FromGRPCMessage(trust)
+	}
+
+	return err
+}
+
 // TrustsToGRPC converts slice of Trust structures
 // to slice of gRPC-generated Trust messages.
 func TrustsToGRPC(xs []*Trust) (res []*reputation.Trust) {
@@ -404,7 +459,7 @@ func (x *SendIntermediateResultRequestBody) ToGRPCMessage() grpc.Message {
 		m = new(reputation.SendIntermediateResultRequest_Body)
 
 		m.SetIteration(x.iter)
-		m.SetTrust(x.trust.ToGRPCMessage().(*reputation.Trust))
+		m.SetTrust(x.trust.ToGRPCMessage().(*reputation.PeerToPeerTrust))
 	}
 
 	return m

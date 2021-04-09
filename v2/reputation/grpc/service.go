@@ -68,7 +68,7 @@ func (x *SendIntermediateResultRequest_Body) SetIteration(v uint32) {
 }
 
 // SetTrust sets current global trust value.
-func (x *SendIntermediateResultRequest_Body) SetTrust(v *Trust) {
+func (x *SendIntermediateResultRequest_Body) SetTrust(v *PeerToPeerTrust) {
 	if x != nil {
 		x.Trust = v
 	}
