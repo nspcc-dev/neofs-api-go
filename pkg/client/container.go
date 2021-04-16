@@ -230,7 +230,6 @@ func (c *clientImpl) ListContainers(ctx context.Context, ownerID *owner.ID, opts
 	}
 
 	return result, nil
-
 }
 
 func (c *clientImpl) DeleteContainer(ctx context.Context, id *container.ID, opts ...CallOption) error {
