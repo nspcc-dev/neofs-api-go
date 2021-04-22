@@ -87,9 +87,19 @@ func (c *clientImpl) SendLocalTrust(ctx context.Context, prm SendLocalTrustPrm, 
 
 // SendIntermediateTrustPrm groups parameters of SendIntermediateTrust operation.
 type SendIntermediateTrustPrm struct {
+	epoch uint64
+
 	iter uint32
 
 	trust *reputation.PeerToPeerTrust
+}
+
+func (x *SendIntermediateTrustPrm) Epoch() uint64 {
+	return x.epoch
+}
+
+func (x *SendIntermediateTrustPrm) SetEpoch(epoch uint64) {
+	x.epoch = epoch
 }
 
 // Iteration returns sequence number of the iteration.
@@ -124,6 +134,7 @@ func (c *clientImpl) SendIntermediateTrust(ctx context.Context, prm SendIntermed
 	}
 
 	reqBody := new(v2reputation.SendIntermediateResultRequestBody)
+	reqBody.SetEpoch(prm.Epoch())
 	reqBody.SetIteration(prm.Iteration())
 	reqBody.SetTrust(prm.Trust().ToV2())
 
