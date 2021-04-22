@@ -458,6 +458,7 @@ func (x *SendIntermediateResultRequestBody) ToGRPCMessage() grpc.Message {
 	if x != nil {
 		m = new(reputation.SendIntermediateResultRequest_Body)
 
+		m.SetEpoch(x.epoch)
 		m.SetIteration(x.iter)
 		m.SetTrust(x.trust.ToGRPCMessage().(*reputation.PeerToPeerTrust))
 	}
@@ -480,6 +481,7 @@ func (x *SendIntermediateResultRequestBody) FromGRPCMessage(m grpc.Message) erro
 		return err
 	}
 
+	x.epoch = v.GetEpoch()
 	x.iter = v.GetIteration()
 
 	return nil

@@ -297,9 +297,27 @@ func (x *SendLocalTrustResponse) SetBody(v *SendLocalTrustResponseBody) {
 
 // SendIntermediateResultRequestBody is a structure of SendIntermediateResult request body.
 type SendIntermediateResultRequestBody struct {
+	epoch uint64
+
 	iter uint32
 
 	trust *PeerToPeerTrust
+}
+
+// GetEpoch returns epoch number in which the intermediate trust was assessed.
+func (x *SendIntermediateResultRequestBody) GetEpoch() uint64 {
+	if x != nil {
+		return x.epoch
+	}
+
+	return 0
+}
+
+// SetEpoch sets epoch number in which the intermediate trust was assessed.
+func (x *SendIntermediateResultRequestBody) SetEpoch(v uint64) {
+	if x != nil {
+		x.epoch = v
+	}
 }
 
 // GetIteration returns sequence number of the iteration.
