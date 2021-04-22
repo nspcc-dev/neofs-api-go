@@ -60,6 +60,13 @@ func (x *SendLocalTrustResponse) SetVerifyHeader(v *session.ResponseVerification
 	}
 }
 
+// SetEpoch sets epoch in which the intermediate trust was assessed.
+func (x *SendIntermediateResultRequest_Body) SetEpoch(v uint64) {
+	if x != nil {
+		x.Epoch = v
+	}
+}
+
 // SetIteration sets sequence number of the iteration.
 func (x *SendIntermediateResultRequest_Body) SetIteration(v uint32) {
 	if x != nil {
