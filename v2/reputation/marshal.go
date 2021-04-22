@@ -277,6 +277,7 @@ func (x *SendLocalTrustResponseBody) Unmarshal(data []byte) error {
 
 const (
 	_ = iota
+	sendInterResBodyEpochFNum
 	sendInterResBodyIterFNum
 	sendInterResBodyTrustFNum
 )
@@ -290,10 +291,24 @@ func (x *SendIntermediateResultRequestBody) StableMarshal(buf []byte) ([]byte, e
 		buf = make([]byte, x.StableSize())
 	}
 
-	offset, err := protoutil.UInt32Marshal(sendInterResBodyIterFNum, buf, x.iter)
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = protoutil.UInt64Marshal(sendInterResBodyEpochFNum, buf, x.epoch)
 	if err != nil {
 		return nil, err
 	}
+
+	offset += n
+
+	n, err = protoutil.UInt32Marshal(sendInterResBodyIterFNum, buf[offset:], x.iter)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
 
 	_, err = protoutil.NestedStructureMarshal(sendInterResBodyTrustFNum, buf[offset:], x.trust)
 	if err != nil {
@@ -304,6 +319,7 @@ func (x *SendIntermediateResultRequestBody) StableMarshal(buf []byte) ([]byte, e
 }
 
 func (x *SendIntermediateResultRequestBody) StableSize() (size int) {
+	size += protoutil.UInt64Size(sendInterResBodyEpochFNum, x.epoch)
 	size += protoutil.UInt32Size(sendInterResBodyIterFNum, x.iter)
 	size += protoutil.NestedStructureSize(sendInterResBodyTrustFNum, x.trust)
 

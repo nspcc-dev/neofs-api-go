@@ -109,6 +109,7 @@ func GenerateSendIntermediateResultRequestBody(empty bool) *reputation.SendInter
 	m := new(reputation.SendIntermediateResultRequestBody)
 
 	if !empty {
+		m.SetEpoch(123)
 		m.SetIteration(564)
 	}
 
