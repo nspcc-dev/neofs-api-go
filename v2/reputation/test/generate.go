@@ -111,9 +111,8 @@ func GenerateSendIntermediateResultRequestBody(empty bool) *reputation.SendInter
 	if !empty {
 		m.SetEpoch(123)
 		m.SetIteration(564)
+		m.SetTrust(GeneratePeerToPeerTrust(empty))
 	}
-
-	m.SetTrust(GeneratePeerToPeerTrust(empty))
 
 	return m
 }
