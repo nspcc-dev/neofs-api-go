@@ -476,9 +476,18 @@ func (x *SendIntermediateResultRequestBody) FromGRPCMessage(m grpc.Message) erro
 		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	err := x.trust.FromGRPCMessage(v.GetTrust())
-	if err != nil {
-		return err
+	trust := v.GetTrust()
+	if trust == nil {
+		x.trust = nil
+	} else {
+		if x.trust == nil {
+			x.trust = new(PeerToPeerTrust)
+		}
+
+		err := x.trust.FromGRPCMessage(trust)
+		if err != nil {
+			return err
+		}
 	}
 
 	x.epoch = v.GetEpoch()
