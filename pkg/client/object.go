@@ -874,7 +874,7 @@ func (c *clientImpl) ObjectPayloadRangeData(ctx context.Context, p *RangeDataPar
 
 	var payload []byte
 	if p.w != nil {
-		payload = make([]byte, p.r.GetLength())
+		payload = make([]byte, 0, p.r.GetLength())
 	}
 
 	resp := new(v2object.GetRangeResponse)
