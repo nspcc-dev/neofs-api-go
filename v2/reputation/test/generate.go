@@ -10,7 +10,7 @@ func GeneratePeerID(empty bool) *reputation.PeerID {
 	m := new(reputation.PeerID)
 
 	if !empty {
-		m.SetValue([]byte{1, 2, 3})
+		m.SetPublicKey([]byte{1, 2, 3})
 	}
 
 	return m
@@ -67,8 +67,8 @@ func GenerateTrusts(empty bool) (res []*reputation.Trust) {
 	return
 }
 
-func GenerateSendLocalTrustRequestBody(empty bool) *reputation.SendLocalTrustRequestBody {
-	m := new(reputation.SendLocalTrustRequestBody)
+func GenerateAnnounceLocalTrustRequestBody(empty bool) *reputation.AnnounceLocalTrustRequestBody {
+	m := new(reputation.AnnounceLocalTrustRequestBody)
 
 	if !empty {
 		m.SetEpoch(13)
@@ -79,34 +79,34 @@ func GenerateSendLocalTrustRequestBody(empty bool) *reputation.SendLocalTrustReq
 	return m
 }
 
-func GenerateSendLocalTrustRequest(empty bool) *reputation.SendLocalTrustRequest {
-	m := new(reputation.SendLocalTrustRequest)
+func GenerateAnnounceLocalTrustRequest(empty bool) *reputation.AnnounceLocalTrustRequest {
+	m := new(reputation.AnnounceLocalTrustRequest)
 
-	m.SetBody(GenerateSendLocalTrustRequestBody(empty))
+	m.SetBody(GenerateAnnounceLocalTrustRequestBody(empty))
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
 	return m
 }
 
-func GenerateSendLocalTrustResponseBody(empty bool) *reputation.SendLocalTrustResponseBody {
-	m := new(reputation.SendLocalTrustResponseBody)
+func GenerateAnnounceLocalTrustResponseBody(empty bool) *reputation.AnnounceLocalTrustResponseBody {
+	m := new(reputation.AnnounceLocalTrustResponseBody)
 
 	return m
 }
 
-func GenerateSendLocalTrustResponse(empty bool) *reputation.SendLocalTrustResponse {
-	m := new(reputation.SendLocalTrustResponse)
+func GenerateAnnounceLocalTrustResponse(empty bool) *reputation.AnnounceLocalTrustResponse {
+	m := new(reputation.AnnounceLocalTrustResponse)
 
-	m.SetBody(GenerateSendLocalTrustResponseBody(empty))
+	m.SetBody(GenerateAnnounceLocalTrustResponseBody(empty))
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
 	return m
 }
 
-func GenerateSendIntermediateResultRequestBody(empty bool) *reputation.SendIntermediateResultRequestBody {
-	m := new(reputation.SendIntermediateResultRequestBody)
+func GenerateAnnounceIntermediateResultRequestBody(empty bool) *reputation.AnnounceIntermediateResultRequestBody {
+	m := new(reputation.AnnounceIntermediateResultRequestBody)
 
 	if !empty {
 		m.SetEpoch(123)
@@ -117,26 +117,26 @@ func GenerateSendIntermediateResultRequestBody(empty bool) *reputation.SendInter
 	return m
 }
 
-func GenerateSendIntermediateResultRequest(empty bool) *reputation.SendIntermediateResultRequest {
-	m := new(reputation.SendIntermediateResultRequest)
+func GenerateAnnounceIntermediateResultRequest(empty bool) *reputation.AnnounceIntermediateResultRequest {
+	m := new(reputation.AnnounceIntermediateResultRequest)
 
-	m.SetBody(GenerateSendIntermediateResultRequestBody(empty))
+	m.SetBody(GenerateAnnounceIntermediateResultRequestBody(empty))
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
 	return m
 }
 
-func GenerateSendIntermediateResultResponseBody(empty bool) *reputation.SendIntermediateResultResponseBody {
-	m := new(reputation.SendIntermediateResultResponseBody)
+func GenerateAnnounceIntermediateResultResponseBody(empty bool) *reputation.AnnounceIntermediateResultResponseBody {
+	m := new(reputation.AnnounceIntermediateResultResponseBody)
 
 	return m
 }
 
-func GenerateSendIntermediateResultResponse(empty bool) *reputation.SendIntermediateResultResponse {
-	m := new(reputation.SendIntermediateResultResponse)
+func GenerateAnnounceIntermediateResultResponse(empty bool) *reputation.AnnounceIntermediateResultResponse {
+	m := new(reputation.AnnounceIntermediateResultResponse)
 
-	m.SetBody(GenerateSendIntermediateResultResponseBody(empty))
+	m.SetBody(GenerateAnnounceIntermediateResultResponseBody(empty))
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 

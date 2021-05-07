@@ -8,22 +8,22 @@ import (
 // PeerID represents reputation.PeerID message
 // from NeoFS API v2.
 type PeerID struct {
-	val []byte
+	publicKey []byte
 }
 
-// GetValue returns peer's binary ID.
-func (x *PeerID) GetValue() []byte {
+// GetPublicKey returns peer's binary public key of ID.
+func (x *PeerID) GetPublicKey() []byte {
 	if x != nil {
-		return x.val
+		return x.publicKey
 	}
 
 	return nil
 }
 
-// SetValue sets peer's binary ID.
-func (x *PeerID) SetValue(v []byte) {
+// SetPublicKey sets peer's binary public key of ID.
+func (x *PeerID) SetPublicKey(v []byte) {
 	if x != nil {
-		x.val = v
+		x.publicKey = v
 	}
 }
 
@@ -205,15 +205,15 @@ func (x *GlobalTrust) SetSignature(v *refs.Signature) {
 	}
 }
 
-// SendLocalTrustRequestBody is a structure of SendLocalTrust request body.
-type SendLocalTrustRequestBody struct {
+// AnnounceLocalTrustRequestBody is a structure of AnnounceLocalTrust request body.
+type AnnounceLocalTrustRequestBody struct {
 	epoch uint64
 
 	trusts []*Trust
 }
 
 // GetEpoch returns epoch in which the trust was assessed.
-func (x *SendLocalTrustRequestBody) GetEpoch() uint64 {
+func (x *AnnounceLocalTrustRequestBody) GetEpoch() uint64 {
 	if x != nil {
 		return x.epoch
 	}
@@ -222,14 +222,14 @@ func (x *SendLocalTrustRequestBody) GetEpoch() uint64 {
 }
 
 // SetEpoch sets epoch in which the trust was assessed.
-func (x *SendLocalTrustRequestBody) SetEpoch(v uint64) {
+func (x *AnnounceLocalTrustRequestBody) SetEpoch(v uint64) {
 	if x != nil {
 		x.epoch = v
 	}
 }
 
 // GetTrusts returns list of normalized trust values.
-func (x *SendLocalTrustRequestBody) GetTrusts() []*Trust {
+func (x *AnnounceLocalTrustRequestBody) GetTrusts() []*Trust {
 	if x != nil {
 		return x.trusts
 	}
@@ -238,25 +238,25 @@ func (x *SendLocalTrustRequestBody) GetTrusts() []*Trust {
 }
 
 // SetTrusts sets list of normalized trust values.
-func (x *SendLocalTrustRequestBody) SetTrusts(v []*Trust) {
+func (x *AnnounceLocalTrustRequestBody) SetTrusts(v []*Trust) {
 	if x != nil {
 		x.trusts = v
 	}
 }
 
-// SendLocalTrustResponseBody is a structure of SendLocalTrust response body.
-type SendLocalTrustResponseBody struct{}
+// AnnounceLocalTrustResponseBody is a structure of AnnounceLocalTrust response body.
+type AnnounceLocalTrustResponseBody struct{}
 
-// SendLocalTrustRequest represents reputation.SendLocalTrustRequest
+// AnnounceLocalTrustRequest represents reputation.AnnounceLocalTrustRequest
 // message from NeoFS API v2.
-type SendLocalTrustRequest struct {
-	body *SendLocalTrustRequestBody
+type AnnounceLocalTrustRequest struct {
+	body *AnnounceLocalTrustRequestBody
 
 	session.RequestHeaders
 }
 
 // GetBody returns request body.
-func (x *SendLocalTrustRequest) GetBody() *SendLocalTrustRequestBody {
+func (x *AnnounceLocalTrustRequest) GetBody() *AnnounceLocalTrustRequestBody {
 	if x != nil {
 		return x.body
 	}
@@ -265,22 +265,22 @@ func (x *SendLocalTrustRequest) GetBody() *SendLocalTrustRequestBody {
 }
 
 // SetBody sets request body.
-func (x *SendLocalTrustRequest) SetBody(v *SendLocalTrustRequestBody) {
+func (x *AnnounceLocalTrustRequest) SetBody(v *AnnounceLocalTrustRequestBody) {
 	if x != nil {
 		x.body = v
 	}
 }
 
-// SendLocalTrustResponse represents reputation.SendLocalTrustResponse
+// AnnounceLocalTrustResponse represents reputation.AnnounceLocalTrustResponse
 // message from NeoFS API v2.
-type SendLocalTrustResponse struct {
-	body *SendLocalTrustResponseBody
+type AnnounceLocalTrustResponse struct {
+	body *AnnounceLocalTrustResponseBody
 
 	session.ResponseHeaders
 }
 
 // GetBody returns response body.
-func (x *SendLocalTrustResponse) GetBody() *SendLocalTrustResponseBody {
+func (x *AnnounceLocalTrustResponse) GetBody() *AnnounceLocalTrustResponseBody {
 	if x != nil {
 		return x.body
 	}
@@ -289,14 +289,14 @@ func (x *SendLocalTrustResponse) GetBody() *SendLocalTrustResponseBody {
 }
 
 // SetBody sets response body.
-func (x *SendLocalTrustResponse) SetBody(v *SendLocalTrustResponseBody) {
+func (x *AnnounceLocalTrustResponse) SetBody(v *AnnounceLocalTrustResponseBody) {
 	if x != nil {
 		x.body = v
 	}
 }
 
-// SendIntermediateResultRequestBody is a structure of SendIntermediateResult request body.
-type SendIntermediateResultRequestBody struct {
+// AnnounceIntermediateResultRequestBody is a structure of AnnounceIntermediateResult request body.
+type AnnounceIntermediateResultRequestBody struct {
 	epoch uint64
 
 	iter uint32
@@ -305,7 +305,7 @@ type SendIntermediateResultRequestBody struct {
 }
 
 // GetEpoch returns epoch number in which the intermediate trust was assessed.
-func (x *SendIntermediateResultRequestBody) GetEpoch() uint64 {
+func (x *AnnounceIntermediateResultRequestBody) GetEpoch() uint64 {
 	if x != nil {
 		return x.epoch
 	}
@@ -314,14 +314,14 @@ func (x *SendIntermediateResultRequestBody) GetEpoch() uint64 {
 }
 
 // SetEpoch sets epoch number in which the intermediate trust was assessed.
-func (x *SendIntermediateResultRequestBody) SetEpoch(v uint64) {
+func (x *AnnounceIntermediateResultRequestBody) SetEpoch(v uint64) {
 	if x != nil {
 		x.epoch = v
 	}
 }
 
 // GetIteration returns sequence number of the iteration.
-func (x *SendIntermediateResultRequestBody) GetIteration() uint32 {
+func (x *AnnounceIntermediateResultRequestBody) GetIteration() uint32 {
 	if x != nil {
 		return x.iter
 	}
@@ -330,14 +330,14 @@ func (x *SendIntermediateResultRequestBody) GetIteration() uint32 {
 }
 
 // SetIteration sets sequence number of the iteration.
-func (x *SendIntermediateResultRequestBody) SetIteration(v uint32) {
+func (x *AnnounceIntermediateResultRequestBody) SetIteration(v uint32) {
 	if x != nil {
 		x.iter = v
 	}
 }
 
 // GetTrust returns current global trust value.
-func (x *SendIntermediateResultRequestBody) GetTrust() *PeerToPeerTrust {
+func (x *AnnounceIntermediateResultRequestBody) GetTrust() *PeerToPeerTrust {
 	if x != nil {
 		return x.trust
 	}
@@ -346,25 +346,25 @@ func (x *SendIntermediateResultRequestBody) GetTrust() *PeerToPeerTrust {
 }
 
 // SetTrust sets current global trust value.
-func (x *SendIntermediateResultRequestBody) SetTrust(v *PeerToPeerTrust) {
+func (x *AnnounceIntermediateResultRequestBody) SetTrust(v *PeerToPeerTrust) {
 	if x != nil {
 		x.trust = v
 	}
 }
 
-// SendLocalTrustResponseBody is a structure of SendIntermediateResult response body.
-type SendIntermediateResultResponseBody struct{}
+// AnnounceIntermediateResultResponseBody is a structure of AnnounceIntermediateResult response body.
+type AnnounceIntermediateResultResponseBody struct{}
 
-// SendIntermediateResultRequest represents reputation.SendIntermediateResult
+// AnnounceIntermediateResultRequest represents reputation.AnnounceIntermediateResult
 // message from NeoFS API v2.
-type SendIntermediateResultRequest struct {
-	body *SendIntermediateResultRequestBody
+type AnnounceIntermediateResultRequest struct {
+	body *AnnounceIntermediateResultRequestBody
 
 	session.RequestHeaders
 }
 
 // GetBody returns request body.
-func (x *SendIntermediateResultRequest) GetBody() *SendIntermediateResultRequestBody {
+func (x *AnnounceIntermediateResultRequest) GetBody() *AnnounceIntermediateResultRequestBody {
 	if x != nil {
 		return x.body
 	}
@@ -373,22 +373,22 @@ func (x *SendIntermediateResultRequest) GetBody() *SendIntermediateResultRequest
 }
 
 // SetBody sets request body.
-func (x *SendIntermediateResultRequest) SetBody(v *SendIntermediateResultRequestBody) {
+func (x *AnnounceIntermediateResultRequest) SetBody(v *AnnounceIntermediateResultRequestBody) {
 	if x != nil {
 		x.body = v
 	}
 }
 
-// SendIntermediateResultResponse represents reputation.SendIntermediateResultResponse
+// AnnounceIntermediateResultResponse represents reputation.AnnounceIntermediateResultResponse
 // message from NeoFS API v2.
-type SendIntermediateResultResponse struct {
-	body *SendIntermediateResultResponseBody
+type AnnounceIntermediateResultResponse struct {
+	body *AnnounceIntermediateResultResponseBody
 
 	session.ResponseHeaders
 }
 
 // GetBody returns response body.
-func (x *SendIntermediateResultResponse) GetBody() *SendIntermediateResultResponseBody {
+func (x *AnnounceIntermediateResultResponse) GetBody() *AnnounceIntermediateResultResponseBody {
 	if x != nil {
 		return x.body
 	}
@@ -397,7 +397,7 @@ func (x *SendIntermediateResultResponse) GetBody() *SendIntermediateResultRespon
 }
 
 // SetBody sets response body.
-func (x *SendIntermediateResultResponse) SetBody(v *SendIntermediateResultResponseBody) {
+func (x *AnnounceIntermediateResultResponse) SetBody(v *AnnounceIntermediateResultResponseBody) {
 	if x != nil {
 		x.body = v
 	}
