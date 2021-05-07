@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.26.0] - 2021-05-07 - Daecheongdo (대청도, 大靑島)
+
+### Added
+
+- Implementation of `v2/reputation` package.
+- Implementation of reputation methods in `pkg/client`.
+- Float64 stable marshaling wrappers in `util/proto`.
+
 ## [1.25.0] - 2021-03-22 - Jebudo (제부도, 濟扶島)
 
 Raw client and support of NeoFS API v2.5.0 "Jebudo" release.
@@ -585,3 +593,4 @@ Initial public release
 [1.23.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.22.2...v1.23.0
 [1.24.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.23.0...v1.24.0
 [1.25.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.24.0...v1.25.0
+[1.26.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.25.0...v1.26.0
