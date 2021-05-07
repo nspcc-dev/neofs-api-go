@@ -28,6 +28,7 @@ versions and SDK layer working with all of them in a handy way.
 |v1.23.x|[v2.3.0](https://github.com/nspcc-dev/neofs-api/releases/tag/v2.3.0)|
 |v1.24.x|[v2.4.0](https://github.com/nspcc-dev/neofs-api/releases/tag/v2.4.0)|
 |v1.25.x|[v2.5.0](https://github.com/nspcc-dev/neofs-api/releases/tag/v2.5.0)|
+|v1.26.x|[v2.6.0](https://github.com/nspcc-dev/neofs-api/releases/tag/v2.6.0)|
 
 
 ## Contributing
