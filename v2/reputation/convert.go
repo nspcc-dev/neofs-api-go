@@ -16,7 +16,7 @@ func (x *PeerID) ToGRPCMessage() grpc.Message {
 	if x != nil {
 		m = new(reputation.PeerID)
 
-		m.SetValue(x.val)
+		m.SetPublicKey(x.publicKey)
 	}
 
 	return m
@@ -32,7 +32,7 @@ func (x *PeerID) FromGRPCMessage(m grpc.Message) error {
 		return message.NewUnexpectedMessageType(m, v)
 	}
 
-	x.val = v.GetValue()
+	x.publicKey = v.GetPublicKey()
 
 	return nil
 }
@@ -300,13 +300,13 @@ func (x *GlobalTrust) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-// ToGRPCMessage converts SendLocalTrustRequestBody to gRPC-generated
-// reputation.SendLocalTrustRequest_Body message.
-func (x *SendLocalTrustRequestBody) ToGRPCMessage() grpc.Message {
-	var m *reputation.SendLocalTrustRequest_Body
+// ToGRPCMessage converts AnnounceLocalTrustRequestBody to gRPC-generated
+// reputation.AnnounceLocalTrustRequest_Body message.
+func (x *AnnounceLocalTrustRequestBody) ToGRPCMessage() grpc.Message {
+	var m *reputation.AnnounceLocalTrustRequest_Body
 
 	if x != nil {
-		m = new(reputation.SendLocalTrustRequest_Body)
+		m = new(reputation.AnnounceLocalTrustRequest_Body)
 
 		m.SetEpoch(x.epoch)
 		m.SetTrusts(TrustsToGRPC(x.trusts))
@@ -315,12 +315,12 @@ func (x *SendLocalTrustRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-// FromGRPCMessage tries to restore SendLocalTrustRequestBody from grpc.Message.
+// FromGRPCMessage tries to restore AnnounceLocalTrustRequestBody from grpc.Message.
 //
 // Returns message.ErrUnexpectedMessageType if m is not
-// a gRPC-generated reputation.SendLocalTrustRequest_Body message.
-func (x *SendLocalTrustRequestBody) FromGRPCMessage(m grpc.Message) error {
-	v, ok := m.(*reputation.SendLocalTrustRequest_Body)
+// a gRPC-generated reputation.AnnounceLocalTrustRequest_Body message.
+func (x *AnnounceLocalTrustRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*reputation.AnnounceLocalTrustRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
 	}
@@ -337,27 +337,27 @@ func (x *SendLocalTrustRequestBody) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-// ToGRPCMessage converts SendLocalTrustRequest to gRPC-generated
-// reputation.SendLocalTrustRequest message.
-func (x *SendLocalTrustRequest) ToGRPCMessage() grpc.Message {
-	var m *reputation.SendLocalTrustRequest
+// ToGRPCMessage converts AnnounceLocalTrustRequest to gRPC-generated
+// reputation.AnnounceLocalTrustRequest message.
+func (x *AnnounceLocalTrustRequest) ToGRPCMessage() grpc.Message {
+	var m *reputation.AnnounceLocalTrustRequest
 
 	if x != nil {
-		m = new(reputation.SendLocalTrustRequest)
+		m = new(reputation.AnnounceLocalTrustRequest)
 
-		m.SetBody(x.body.ToGRPCMessage().(*reputation.SendLocalTrustRequest_Body))
+		m.SetBody(x.body.ToGRPCMessage().(*reputation.AnnounceLocalTrustRequest_Body))
 		x.RequestHeaders.ToMessage(m)
 	}
 
 	return m
 }
 
-// FromGRPCMessage tries to restore SendLocalTrustRequest from grpc.Message.
+// FromGRPCMessage tries to restore AnnounceLocalTrustRequest from grpc.Message.
 //
 // Returns message.ErrUnexpectedMessageType if m is not
-// a gRPC-generated reputation.SendLocalTrustRequest message.
-func (x *SendLocalTrustRequest) FromGRPCMessage(m grpc.Message) error {
-	v, ok := m.(*reputation.SendLocalTrustRequest)
+// a gRPC-generated reputation.AnnounceLocalTrustRequest message.
+func (x *AnnounceLocalTrustRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*reputation.AnnounceLocalTrustRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
 	}
@@ -369,7 +369,7 @@ func (x *SendLocalTrustRequest) FromGRPCMessage(m grpc.Message) error {
 		x.body = nil
 	} else {
 		if x.body == nil {
-			x.body = new(SendLocalTrustRequestBody)
+			x.body = new(AnnounceLocalTrustRequestBody)
 		}
 
 		err = x.body.FromGRPCMessage(body)
@@ -381,24 +381,24 @@ func (x *SendLocalTrustRequest) FromGRPCMessage(m grpc.Message) error {
 	return x.RequestHeaders.FromMessage(v)
 }
 
-// ToGRPCMessage converts SendLocalTrustResponseBody to gRPC-generated
-// reputation.SendLocalTrustResponse_Body message.
-func (x *SendLocalTrustResponseBody) ToGRPCMessage() grpc.Message {
-	var m *reputation.SendLocalTrustResponse_Body
+// ToGRPCMessage converts AnnounceLocalTrustResponseBody to gRPC-generated
+// reputation.AnnounceLocalTrustResponse_Body message.
+func (x *AnnounceLocalTrustResponseBody) ToGRPCMessage() grpc.Message {
+	var m *reputation.AnnounceLocalTrustResponse_Body
 
 	if x != nil {
-		m = new(reputation.SendLocalTrustResponse_Body)
+		m = new(reputation.AnnounceLocalTrustResponse_Body)
 	}
 
 	return m
 }
 
-// FromGRPCMessage tries to restore SendLocalTrustResponseBody from grpc.Message.
+// FromGRPCMessage tries to restore AnnounceLocalTrustResponseBody from grpc.Message.
 //
 // Returns message.ErrUnexpectedMessageType if m is not
-// a gRPC-generated reputation.SendLocalTrustResponse_Body message.
-func (x *SendLocalTrustResponseBody) FromGRPCMessage(m grpc.Message) error {
-	v, ok := m.(*reputation.SendLocalTrustResponse_Body)
+// a gRPC-generated reputation.AnnounceLocalTrustResponse_Body message.
+func (x *AnnounceLocalTrustResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*reputation.AnnounceLocalTrustResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
 	}
@@ -406,27 +406,27 @@ func (x *SendLocalTrustResponseBody) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-// ToGRPCMessage converts SendLocalTrustResponse to gRPC-generated
-// reputation.SendLocalTrustResponse message.
-func (x *SendLocalTrustResponse) ToGRPCMessage() grpc.Message {
-	var m *reputation.SendLocalTrustResponse
+// ToGRPCMessage converts AnnounceLocalTrustResponse to gRPC-generated
+// reputation.AnnounceLocalTrustResponse message.
+func (x *AnnounceLocalTrustResponse) ToGRPCMessage() grpc.Message {
+	var m *reputation.AnnounceLocalTrustResponse
 
 	if x != nil {
-		m = new(reputation.SendLocalTrustResponse)
+		m = new(reputation.AnnounceLocalTrustResponse)
 
-		m.SetBody(x.body.ToGRPCMessage().(*reputation.SendLocalTrustResponse_Body))
+		m.SetBody(x.body.ToGRPCMessage().(*reputation.AnnounceLocalTrustResponse_Body))
 		x.ResponseHeaders.ToMessage(m)
 	}
 
 	return m
 }
 
-// FromGRPCMessage tries to restore SendLocalTrustResponse from grpc.Message.
+// FromGRPCMessage tries to restore AnnounceLocalTrustResponse from grpc.Message.
 //
 // Returns message.ErrUnexpectedMessageType if m is not
-// a gRPC-generated reputation.SendLocalTrustResponse message.
-func (x *SendLocalTrustResponse) FromGRPCMessage(m grpc.Message) error {
-	v, ok := m.(*reputation.SendLocalTrustResponse)
+// a gRPC-generated reputation.AnnounceLocalTrustResponse message.
+func (x *AnnounceLocalTrustResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*reputation.AnnounceLocalTrustResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
 	}
@@ -438,7 +438,7 @@ func (x *SendLocalTrustResponse) FromGRPCMessage(m grpc.Message) error {
 		x.body = nil
 	} else {
 		if x.body == nil {
-			x.body = new(SendLocalTrustResponseBody)
+			x.body = new(AnnounceLocalTrustResponseBody)
 		}
 
 		err = x.body.FromGRPCMessage(body)
@@ -450,13 +450,13 @@ func (x *SendLocalTrustResponse) FromGRPCMessage(m grpc.Message) error {
 	return x.ResponseHeaders.FromMessage(v)
 }
 
-// ToGRPCMessage converts SendIntermediateResultRequestBody to gRPC-generated
-// reputation.SendIntermediateResultRequest_Body message.
-func (x *SendIntermediateResultRequestBody) ToGRPCMessage() grpc.Message {
-	var m *reputation.SendIntermediateResultRequest_Body
+// ToGRPCMessage converts AnnounceIntermediateResultRequestBody to gRPC-generated
+// reputation.AnnounceIntermediateResultRequest_Body message.
+func (x *AnnounceIntermediateResultRequestBody) ToGRPCMessage() grpc.Message {
+	var m *reputation.AnnounceIntermediateResultRequest_Body
 
 	if x != nil {
-		m = new(reputation.SendIntermediateResultRequest_Body)
+		m = new(reputation.AnnounceIntermediateResultRequest_Body)
 
 		m.SetEpoch(x.epoch)
 		m.SetIteration(x.iter)
@@ -466,12 +466,12 @@ func (x *SendIntermediateResultRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-// FromGRPCMessage tries to restore SendIntermediateResultRequestBody from grpc.Message.
+// FromGRPCMessage tries to restore AnnounceIntermediateResultRequestBody from grpc.Message.
 //
 // Returns message.ErrUnexpectedMessageType if m is not
-// a gRPC-generated reputation.SendIntermediateResultRequest_Body message.
-func (x *SendIntermediateResultRequestBody) FromGRPCMessage(m grpc.Message) error {
-	v, ok := m.(*reputation.SendIntermediateResultRequest_Body)
+// a gRPC-generated reputation.AnnounceIntermediateResultRequest_Body message.
+func (x *AnnounceIntermediateResultRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*reputation.AnnounceIntermediateResultRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
 	}
@@ -496,27 +496,27 @@ func (x *SendIntermediateResultRequestBody) FromGRPCMessage(m grpc.Message) erro
 	return nil
 }
 
-// ToGRPCMessage converts SendIntermediateResultRequest to gRPC-generated
-// reputation.SendIntermediateResultRequest message.
-func (x *SendIntermediateResultRequest) ToGRPCMessage() grpc.Message {
-	var m *reputation.SendIntermediateResultRequest
+// ToGRPCMessage converts AnnounceIntermediateResultRequest to gRPC-generated
+// reputation.AnnounceIntermediateResultRequest message.
+func (x *AnnounceIntermediateResultRequest) ToGRPCMessage() grpc.Message {
+	var m *reputation.AnnounceIntermediateResultRequest
 
 	if x != nil {
-		m = new(reputation.SendIntermediateResultRequest)
+		m = new(reputation.AnnounceIntermediateResultRequest)
 
-		m.SetBody(x.body.ToGRPCMessage().(*reputation.SendIntermediateResultRequest_Body))
+		m.SetBody(x.body.ToGRPCMessage().(*reputation.AnnounceIntermediateResultRequest_Body))
 		x.RequestHeaders.ToMessage(m)
 	}
 
 	return m
 }
 
-// FromGRPCMessage tries to restore SendIntermediateResultRequest from grpc.Message.
+// FromGRPCMessage tries to restore AnnounceIntermediateResultRequest from grpc.Message.
 //
 // Returns message.ErrUnexpectedMessageType if m is not
-// a gRPC-generated reputation.SendIntermediateResultRequest message.
-func (x *SendIntermediateResultRequest) FromGRPCMessage(m grpc.Message) error {
-	v, ok := m.(*reputation.SendIntermediateResultRequest)
+// a gRPC-generated reputation.AnnounceIntermediateResultRequest message.
+func (x *AnnounceIntermediateResultRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*reputation.AnnounceIntermediateResultRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
 	}
@@ -528,7 +528,7 @@ func (x *SendIntermediateResultRequest) FromGRPCMessage(m grpc.Message) error {
 		x.body = nil
 	} else {
 		if x.body == nil {
-			x.body = new(SendIntermediateResultRequestBody)
+			x.body = new(AnnounceIntermediateResultRequestBody)
 		}
 
 		err = x.body.FromGRPCMessage(body)
@@ -540,24 +540,24 @@ func (x *SendIntermediateResultRequest) FromGRPCMessage(m grpc.Message) error {
 	return x.RequestHeaders.FromMessage(v)
 }
 
-// ToGRPCMessage converts SendIntermediateResultResponseBody to gRPC-generated
-// reputation.SendIntermediateResultResponse_Body message.
-func (x *SendIntermediateResultResponseBody) ToGRPCMessage() grpc.Message {
-	var m *reputation.SendIntermediateResultResponse_Body
+// ToGRPCMessage converts AnnounceIntermediateResultResponseBody to gRPC-generated
+// reputation.AnnounceIntermediateResultResponse_Body message.
+func (x *AnnounceIntermediateResultResponseBody) ToGRPCMessage() grpc.Message {
+	var m *reputation.AnnounceIntermediateResultResponse_Body
 
 	if x != nil {
-		m = new(reputation.SendIntermediateResultResponse_Body)
+		m = new(reputation.AnnounceIntermediateResultResponse_Body)
 	}
 
 	return m
 }
 
-// FromGRPCMessage tries to restore SendIntermediateResultResponseBody from grpc.Message.
+// FromGRPCMessage tries to restore AnnounceIntermediateResultResponseBody from grpc.Message.
 //
 // Returns message.ErrUnexpectedMessageType if m is not
-// a gRPC-generated reputation.SendIntermediateResultResponse_Body message.
-func (x *SendIntermediateResultResponseBody) FromGRPCMessage(m grpc.Message) error {
-	v, ok := m.(*reputation.SendIntermediateResultResponse_Body)
+// a gRPC-generated reputation.AnnounceIntermediateResultResponse_Body message.
+func (x *AnnounceIntermediateResultResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*reputation.AnnounceIntermediateResultResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
 	}
@@ -565,27 +565,27 @@ func (x *SendIntermediateResultResponseBody) FromGRPCMessage(m grpc.Message) err
 	return nil
 }
 
-// ToGRPCMessage converts SendIntermediateResultResponse to gRPC-generated
-// reputation.SendIntermediateResultResponse message.
-func (x *SendIntermediateResultResponse) ToGRPCMessage() grpc.Message {
-	var m *reputation.SendIntermediateResultResponse
+// ToGRPCMessage converts AnnounceIntermediateResultResponse to gRPC-generated
+// reputation.AnnounceIntermediateResultResponse message.
+func (x *AnnounceIntermediateResultResponse) ToGRPCMessage() grpc.Message {
+	var m *reputation.AnnounceIntermediateResultResponse
 
 	if x != nil {
-		m = new(reputation.SendIntermediateResultResponse)
+		m = new(reputation.AnnounceIntermediateResultResponse)
 
-		m.SetBody(x.body.ToGRPCMessage().(*reputation.SendIntermediateResultResponse_Body))
+		m.SetBody(x.body.ToGRPCMessage().(*reputation.AnnounceIntermediateResultResponse_Body))
 		x.ResponseHeaders.ToMessage(m)
 	}
 
 	return m
 }
 
-// FromGRPCMessage tries to restore SendIntermediateResultResponse from grpc.Message.
+// FromGRPCMessage tries to restore AnnounceIntermediateResultResponse from grpc.Message.
 //
 // Returns message.ErrUnexpectedMessageType if m is not
-// a gRPC-generated reputation.SendIntermediateResultResponse message.
-func (x *SendIntermediateResultResponse) FromGRPCMessage(m grpc.Message) error {
-	v, ok := m.(*reputation.SendIntermediateResultResponse)
+// a gRPC-generated reputation.AnnounceIntermediateResultResponse message.
+func (x *AnnounceIntermediateResultResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*reputation.AnnounceIntermediateResultResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
 	}
@@ -597,7 +597,7 @@ func (x *SendIntermediateResultResponse) FromGRPCMessage(m grpc.Message) error {
 		x.body = nil
 	} else {
 		if x.body == nil {
-			x.body = new(SendIntermediateResultResponseBody)
+			x.body = new(AnnounceIntermediateResultResponseBody)
 		}
 
 		err = x.body.FromGRPCMessage(body)

@@ -9,19 +9,19 @@ import (
 const serviceReputation = serviceNamePrefix + "reputation.ReputationService"
 
 const (
-	rpcReputationSendLocalTrust         = "SendLocalTrust"
-	rpcReputationSendIntermediateResult = "SendIntermediateResult"
+	rpcReputationAnnounceLocalTrust         = "AnnounceLocalTrust"
+	rpcReputationAnnounceIntermediateResult = "AnnounceIntermediateResult"
 )
 
-// SendLocalTrust executes ReputationService.SendLocalTrust RPC.
-func SendLocalTrust(
+// AnnounceLocalTrust executes ReputationService.AnnounceLocalTrust RPC.
+func AnnounceLocalTrust(
 	cli *client.Client,
-	req *reputation.SendLocalTrustRequest,
+	req *reputation.AnnounceLocalTrustRequest,
 	opts ...client.CallOption,
-) (*reputation.SendLocalTrustResponse, error) {
-	resp := new(reputation.SendLocalTrustResponse)
+) (*reputation.AnnounceLocalTrustResponse, error) {
+	resp := new(reputation.AnnounceLocalTrustResponse)
 
-	err := client.SendUnary(cli, common.CallMethodInfoUnary(serviceReputation, rpcReputationSendLocalTrust), req, resp, opts...)
+	err := client.SendUnary(cli, common.CallMethodInfoUnary(serviceReputation, rpcReputationAnnounceLocalTrust), req, resp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -29,15 +29,15 @@ func SendLocalTrust(
 	return resp, nil
 }
 
-// SendIntermediateResult executes ReputationService.SendIntermediateResult RPC.
-func SendIntermediateResult(
+// AnnounceIntermediateResult executes ReputationService.AnnounceIntermediateResult RPC.
+func AnnounceIntermediateResult(
 	cli *client.Client,
-	req *reputation.SendIntermediateResultRequest,
+	req *reputation.AnnounceIntermediateResultRequest,
 	opts ...client.CallOption,
-) (*reputation.SendIntermediateResultRequest, error) {
-	resp := new(reputation.SendIntermediateResultRequest)
+) (*reputation.AnnounceIntermediateResultRequest, error) {
+	resp := new(reputation.AnnounceIntermediateResultRequest)
 
-	err := client.SendUnary(cli, common.CallMethodInfoUnary(serviceReputation, rpcReputationSendIntermediateResult), req, resp, opts...)
+	err := client.SendUnary(cli, common.CallMethodInfoUnary(serviceReputation, rpcReputationAnnounceIntermediateResult), req, resp, opts...)
 	if err != nil {
 		return nil, err
 	}

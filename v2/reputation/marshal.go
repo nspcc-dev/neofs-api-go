@@ -8,7 +8,7 @@ import (
 
 const (
 	_ = iota
-	peerIDValFNum
+	peerIDPubKeyFNum
 )
 
 func (x *PeerID) StableMarshal(buf []byte) ([]byte, error) {
@@ -20,7 +20,7 @@ func (x *PeerID) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, x.StableSize())
 	}
 
-	_, err := protoutil.BytesMarshal(peerIDValFNum, buf, x.val)
+	_, err := protoutil.BytesMarshal(peerIDPubKeyFNum, buf, x.publicKey)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func (x *PeerID) StableMarshal(buf []byte) ([]byte, error) {
 }
 
 func (x *PeerID) StableSize() (size int) {
-	size += protoutil.BytesSize(peerIDValFNum, x.val)
+	size += protoutil.BytesSize(peerIDPubKeyFNum, x.publicKey)
 
 	return
 }
@@ -212,11 +212,11 @@ func (x *GlobalTrust) Unmarshal(data []byte) error {
 
 const (
 	_ = iota
-	sendLocalTrustBodyEpochFNum
-	sendLocalTrustBodyTrustsFNum
+	announceLocalTrustBodyEpochFNum
+	announceLocalTrustBodyTrustsFNum
 )
 
-func (x *SendLocalTrustRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+func (x *AnnounceLocalTrustRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if x == nil {
 		return []byte{}, nil
 	}
@@ -230,7 +230,7 @@ func (x *SendLocalTrustRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = protoutil.UInt64Marshal(sendLocalTrustBodyEpochFNum, buf[offset:], x.epoch)
+	n, err = protoutil.UInt64Marshal(announceLocalTrustBodyEpochFNum, buf[offset:], x.epoch)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +238,7 @@ func (x *SendLocalTrustRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range x.trusts {
-		n, err = protoutil.NestedStructureMarshal(sendLocalTrustBodyTrustsFNum, buf[offset:], x.trusts[i])
+		n, err = protoutil.NestedStructureMarshal(announceLocalTrustBodyTrustsFNum, buf[offset:], x.trusts[i])
 		if err != nil {
 			return nil, err
 		}
@@ -249,40 +249,40 @@ func (x *SendLocalTrustRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	return buf, nil
 }
 
-func (x *SendLocalTrustRequestBody) StableSize() (size int) {
-	size += protoutil.UInt64Size(sendLocalTrustBodyEpochFNum, x.epoch)
+func (x *AnnounceLocalTrustRequestBody) StableSize() (size int) {
+	size += protoutil.UInt64Size(announceLocalTrustBodyEpochFNum, x.epoch)
 
 	for i := range x.trusts {
-		size += protoutil.NestedStructureSize(sendLocalTrustBodyTrustsFNum, x.trusts[i])
+		size += protoutil.NestedStructureSize(announceLocalTrustBodyTrustsFNum, x.trusts[i])
 	}
 
 	return
 }
 
-func (x *SendLocalTrustRequestBody) Unmarshal(data []byte) error {
-	return message.Unmarshal(x, data, new(reputation.SendLocalTrustRequest_Body))
+func (x *AnnounceLocalTrustRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(x, data, new(reputation.AnnounceLocalTrustRequest_Body))
 }
 
-func (x *SendLocalTrustResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+func (x *AnnounceLocalTrustResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	return buf, nil
 }
 
-func (x *SendLocalTrustResponseBody) StableSize() int {
+func (x *AnnounceLocalTrustResponseBody) StableSize() int {
 	return 0
 }
 
-func (x *SendLocalTrustResponseBody) Unmarshal(data []byte) error {
-	return message.Unmarshal(x, data, new(reputation.SendLocalTrustResponse_Body))
+func (x *AnnounceLocalTrustResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(x, data, new(reputation.AnnounceLocalTrustResponse_Body))
 }
 
 const (
 	_ = iota
-	sendInterResBodyEpochFNum
-	sendInterResBodyIterFNum
-	sendInterResBodyTrustFNum
+	announceInterResBodyEpochFNum
+	announceInterResBodyIterFNum
+	announceInterResBodyTrustFNum
 )
 
-func (x *SendIntermediateResultRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+func (x *AnnounceIntermediateResultRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	if x == nil {
 		return []byte{}, nil
 	}
@@ -296,21 +296,21 @@ func (x *SendIntermediateResultRequestBody) StableMarshal(buf []byte) ([]byte, e
 		err       error
 	)
 
-	n, err = protoutil.UInt64Marshal(sendInterResBodyEpochFNum, buf, x.epoch)
+	n, err = protoutil.UInt64Marshal(announceInterResBodyEpochFNum, buf, x.epoch)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	n, err = protoutil.UInt32Marshal(sendInterResBodyIterFNum, buf[offset:], x.iter)
+	n, err = protoutil.UInt32Marshal(announceInterResBodyIterFNum, buf[offset:], x.iter)
 	if err != nil {
 		return nil, err
 	}
 
 	offset += n
 
-	_, err = protoutil.NestedStructureMarshal(sendInterResBodyTrustFNum, buf[offset:], x.trust)
+	_, err = protoutil.NestedStructureMarshal(announceInterResBodyTrustFNum, buf[offset:], x.trust)
 	if err != nil {
 		return nil, err
 	}
@@ -318,26 +318,26 @@ func (x *SendIntermediateResultRequestBody) StableMarshal(buf []byte) ([]byte, e
 	return buf, nil
 }
 
-func (x *SendIntermediateResultRequestBody) StableSize() (size int) {
-	size += protoutil.UInt64Size(sendInterResBodyEpochFNum, x.epoch)
-	size += protoutil.UInt32Size(sendInterResBodyIterFNum, x.iter)
-	size += protoutil.NestedStructureSize(sendInterResBodyTrustFNum, x.trust)
+func (x *AnnounceIntermediateResultRequestBody) StableSize() (size int) {
+	size += protoutil.UInt64Size(announceInterResBodyEpochFNum, x.epoch)
+	size += protoutil.UInt32Size(announceInterResBodyIterFNum, x.iter)
+	size += protoutil.NestedStructureSize(announceInterResBodyTrustFNum, x.trust)
 
 	return
 }
 
-func (x *SendIntermediateResultRequestBody) Unmarshal(data []byte) error {
-	return message.Unmarshal(x, data, new(reputation.SendIntermediateResultRequest_Body))
+func (x *AnnounceIntermediateResultRequestBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(x, data, new(reputation.AnnounceIntermediateResultRequest_Body))
 }
 
-func (x *SendIntermediateResultResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+func (x *AnnounceIntermediateResultResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	return buf, nil
 }
 
-func (x *SendIntermediateResultResponseBody) StableSize() int {
+func (x *AnnounceIntermediateResultResponseBody) StableSize() int {
 	return 0
 }
 
-func (x *SendIntermediateResultResponseBody) Unmarshal(data []byte) error {
-	return message.Unmarshal(x, data, new(reputation.SendIntermediateResultResponse_Body))
+func (x *AnnounceIntermediateResultResponseBody) Unmarshal(data []byte) error {
+	return message.Unmarshal(x, data, new(reputation.AnnounceIntermediateResultResponse_Body))
 }

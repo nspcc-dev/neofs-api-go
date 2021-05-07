@@ -11,18 +11,22 @@ import (
 func TestMessageConvert(t *testing.T) {
 	messagetest.TestRPCMessage(t,
 		func(empty bool) message.Message { return reputationtest.GenerateTrust(empty) },
-		func(empty bool) message.Message { return reputationtest.GenerateSendLocalTrustRequestBody(empty) },
-		func(empty bool) message.Message { return reputationtest.GenerateSendLocalTrustRequest(empty) },
-		func(empty bool) message.Message { return reputationtest.GenerateSendLocalTrustResponseBody(empty) },
-		func(empty bool) message.Message { return reputationtest.GenerateSendLocalTrustResponse(empty) },
+		func(empty bool) message.Message { return reputationtest.GenerateAnnounceLocalTrustRequestBody(empty) },
+		func(empty bool) message.Message { return reputationtest.GenerateAnnounceLocalTrustRequest(empty) },
+		func(empty bool) message.Message { return reputationtest.GenerateAnnounceLocalTrustResponseBody(empty) },
+		func(empty bool) message.Message { return reputationtest.GenerateAnnounceLocalTrustResponse(empty) },
 		func(empty bool) message.Message {
-			return reputationtest.GenerateSendIntermediateResultRequestBody(empty)
+			return reputationtest.GenerateAnnounceIntermediateResultRequestBody(empty)
 		},
-		func(empty bool) message.Message { return reputationtest.GenerateSendIntermediateResultRequest(empty) },
 		func(empty bool) message.Message {
-			return reputationtest.GenerateSendIntermediateResultResponseBody(empty)
+			return reputationtest.GenerateAnnounceIntermediateResultRequest(empty)
 		},
-		func(empty bool) message.Message { return reputationtest.GenerateSendIntermediateResultResponse(empty) },
+		func(empty bool) message.Message {
+			return reputationtest.GenerateAnnounceIntermediateResultResponseBody(empty)
+		},
+		func(empty bool) message.Message {
+			return reputationtest.GenerateAnnounceIntermediateResultResponse(empty)
+		},
 		func(empty bool) message.Message { return reputationtest.GenerateGlobalTrustBody(empty) },
 		func(empty bool) message.Message { return reputationtest.GenerateGlobalTrust(empty) },
 		func(empty bool) message.Message { return reputationtest.GeneratePeerToPeerTrust(empty) },

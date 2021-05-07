@@ -4,10 +4,10 @@ import (
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
-// SetValue sets binary ID.
-func (x *PeerID) SetValue(v []byte) {
+// SetPublicKey sets binary public key of ID.
+func (x *PeerID) SetPublicKey(v []byte) {
 	if x != nil {
-		x.Value = v
+		x.PublicKey = v
 	}
 }
 

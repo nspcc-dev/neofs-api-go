@@ -24,7 +24,7 @@ func PeerIDFromV2(id *reputation.PeerID) *PeerID {
 // SetPublicKey sets peer ID as a compressed public key.
 func (x *PeerID) SetPublicKey(v [crypto.PublicKeyCompressedSize]byte) {
 	(*reputation.PeerID)(x).
-		SetValue(v[:])
+		SetPublicKey(v[:])
 }
 
 // ToV2 converts PeerID to NeoFS API v2 reputation.PeerID message.
@@ -35,8 +35,8 @@ func (x *PeerID) ToV2() *reputation.PeerID {
 // Equal returns true if identifiers are identical.
 func (x *PeerID) Equal(x2 *PeerID) bool {
 	return bytes.Equal(
-		(*reputation.PeerID)(x).GetValue(),
-		(*reputation.PeerID)(x2).GetValue(),
+		(*reputation.PeerID)(x).GetPublicKey(),
+		(*reputation.PeerID)(x2).GetPublicKey(),
 	)
 }
 
@@ -47,7 +47,7 @@ func (x *PeerID) Parse(s string) error {
 		return err
 	}
 
-	(*reputation.PeerID)(x).SetValue(data)
+	(*reputation.PeerID)(x).SetPublicKey(data)
 
 	return nil
 }
@@ -56,7 +56,7 @@ func (x *PeerID) Parse(s string) error {
 func (x *PeerID) String() string {
 	return base58.Encode(
 		(*reputation.PeerID)(x).
-			GetValue(),
+			GetPublicKey(),
 	)
 }
 
