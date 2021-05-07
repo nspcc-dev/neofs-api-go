@@ -10,7 +10,7 @@ import (
 // Version represents v2-compatible version.
 type Version refs.Version
 
-const sdkMjr, sdkMnr = 2, 4
+const sdkMjr, sdkMnr = 2, 6
 
 // NewVersionFromV2 wraps v2 Version message to Version.
 func NewVersionFromV2(v *refs.Version) *Version {
