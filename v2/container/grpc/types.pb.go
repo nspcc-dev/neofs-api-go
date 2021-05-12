@@ -134,11 +134,32 @@ func (x *Container) GetPlacementPolicy() *grpc1.PlacementPolicy {
 // empty. Containers with duplicated attribute names or attributes with empty
 // values will be considered invalid.
 //
-// There are some "well-known" attributes affecting system behaviour:
+// There are some "well-known" attributes affecting system behaviour.
+//
+// Attributes for sub networks:
 //
 // * __NEOFS__SUBNET \
 //   String ID of container's storage subnet. Container can be attached to
 //   only one subnet.
+//
+// NeoFS provides native support of container ownership transfer with
+// Non-Fungible Tokens (NFT). Requests signed by NFT owner are considered as
+// requests from container owner by storage nodes. Inner ring nodes use NFT
+// owner address to make settlements and allow NFT owner to change
+// extended ACL rules.
+// To enable ownership transfer, set these container attributes:
+//
+// * __NEOFS__NFT-ID \
+//   String of token ID associated with the container
+// * __NEOFS__NFT-Address \
+//   Address of the contract that produced NFT, encoded in LittleEndian
+// * __NEOFS__NFT-Type \
+//   (Optional) Type of NFT. NeoFS supports only "NEP-11" NFT (default value)
+// * __NEOFS__NFT-Chain \
+//   (Optional) NFT blockchain. NeoFS supports only "N3" main net
+//   (default value)
+// * __NEOFS__NFT-Options \
+//   (Optional) Additional data for later use
 //
 // And some well-known attributes used by applications only:
 //

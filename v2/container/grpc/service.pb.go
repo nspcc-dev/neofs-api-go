@@ -2667,15 +2667,20 @@ type ContainerServiceClient interface {
 	// `Delete` invokes `Container` smart contract's `Delete` method and returns
 	// response immediately. After a new block is issued in sidechain, request is
 	// verified by Inner Ring nodes. After one more block in sidechain, container
-	// is added into smart contract storage.
+	// is removed from smart contract storage. Only container owner has permission
+	// to perform this operation. If container has NFT-related attributes, then
+	// NFT owner is considered as container owner.
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc3.CallOption) (*DeleteResponse, error)
 	// Returns container structure from `Container` smart contract storage.
 	Get(ctx context.Context, in *GetRequest, opts ...grpc3.CallOption) (*GetResponse, error)
 	// Returns all owner's containers from 'Container` smart contract' storage.
 	List(ctx context.Context, in *ListRequest, opts ...grpc3.CallOption) (*ListResponse, error)
 	// Invokes 'SetEACL' method of 'Container` smart contract and returns response
-	// immediately. After one more block in sidechain, Extended ACL changes are
-	// added into smart contract storage.
+	// immediately. After a new block is issued in sidechain, request is verified
+	// by Inner Ring nodes. After one more block in sidechain, Extended ACL
+	// changes are added into smart contract storage. Only container owner has
+	// permission to perform this operation. If container has NFT-related
+	// attributes then NFT owner is considered as container owner.
 	SetExtendedACL(ctx context.Context, in *SetExtendedACLRequest, opts ...grpc3.CallOption) (*SetExtendedACLResponse, error)
 	// Returns Extended ACL table and signature from `Container` smart contract
 	// storage.
@@ -2765,15 +2770,20 @@ type ContainerServiceServer interface {
 	// `Delete` invokes `Container` smart contract's `Delete` method and returns
 	// response immediately. After a new block is issued in sidechain, request is
 	// verified by Inner Ring nodes. After one more block in sidechain, container
-	// is added into smart contract storage.
+	// is removed from smart contract storage. Only container owner has permission
+	// to perform this operation. If container has NFT-related attributes, then
+	// NFT owner is considered as container owner.
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	// Returns container structure from `Container` smart contract storage.
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	// Returns all owner's containers from 'Container` smart contract' storage.
 	List(context.Context, *ListRequest) (*ListResponse, error)
 	// Invokes 'SetEACL' method of 'Container` smart contract and returns response
-	// immediately. After one more block in sidechain, Extended ACL changes are
-	// added into smart contract storage.
+	// immediately. After a new block is issued in sidechain, request is verified
+	// by Inner Ring nodes. After one more block in sidechain, Extended ACL
+	// changes are added into smart contract storage. Only container owner has
+	// permission to perform this operation. If container has NFT-related
+	// attributes then NFT owner is considered as container owner.
 	SetExtendedACL(context.Context, *SetExtendedACLRequest) (*SetExtendedACLResponse, error)
 	// Returns Extended ACL table and signature from `Container` smart contract
 	// storage.
