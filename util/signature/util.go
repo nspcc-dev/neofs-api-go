@@ -1,9 +1,8 @@
 package signature
 
 import (
+	"errors"
 	"sync"
-
-	"github.com/pkg/errors"
 )
 
 var bytesPool = sync.Pool{

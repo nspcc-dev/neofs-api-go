@@ -2,11 +2,11 @@ package messagetest
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/rpc/message"
-	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )
 

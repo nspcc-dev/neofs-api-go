@@ -1,12 +1,12 @@
 package owner
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/mr-tron/base58"
 	"github.com/nspcc-dev/neo-go/pkg/encoding/address"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/pkg/errors"
 )
 
 // ID represents v2-compatible owner identifier.
@@ -61,7 +61,7 @@ func NewIDFromNeo3Wallet(v *NEO3Wallet) *ID {
 func (id *ID) Parse(s string) error {
 	data, err := base58.Decode(s)
 	if err != nil {
-		return errors.Wrap(err, "could not parse owner.ID from string")
+		return fmt.Errorf("could not parse owner.ID from string: %w", err)
 	} else if len(data) != NEO3WalletSize {
 		return errInvalidIDString
 	}

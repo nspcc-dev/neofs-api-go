@@ -10,7 +10,6 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 	session "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
-	"github.com/pkg/errors"
 )
 
 func (c *CreateRequestBody) ToGRPCMessage() grpc.Message {
@@ -731,7 +730,7 @@ func (t *SessionTokenBody) FromGRPCMessage(m grpc.Message) error {
 
 	switch val := v.GetContext().(type) {
 	default:
-		err = errors.Errorf("unknown session context %T", val)
+		err = fmt.Errorf("unknown session context %T", val)
 	case nil:
 	case *session.SessionToken_Body_Object:
 		ctx, ok := t.ctx.(*ObjectSessionContext)

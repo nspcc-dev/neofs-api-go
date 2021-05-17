@@ -2,13 +2,13 @@ package client
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/reputation"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 	v2reputation "github.com/nspcc-dev/neofs-api-go/v2/reputation"
 	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
-	"github.com/pkg/errors"
 )
 
 // Reputation contains methods for working with Reputation system values.
@@ -79,7 +79,7 @@ func (c *clientImpl) AnnounceLocalTrust(ctx context.Context, prm AnnounceLocalTr
 
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't verify response message")
+		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
 
 	return new(AnnounceLocalTrustRes), nil
@@ -154,7 +154,7 @@ func (c *clientImpl) AnnounceIntermediateTrust(ctx context.Context, prm Announce
 
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't verify response message")
+		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
 
 	return new(AnnounceIntermediateTrustRes), nil

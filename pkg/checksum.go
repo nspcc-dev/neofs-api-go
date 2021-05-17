@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/pkg/errors"
 )
 
 // Checksum represents v2-compatible checksum.
@@ -130,7 +130,7 @@ func (c *Checksum) Parse(s string) error {
 
 	switch ln := len(data); ln {
 	default:
-		return errors.Errorf("unsupported checksum length %d", ln)
+		return fmt.Errorf("unsupported checksum length %d", ln)
 	case sha256.Size:
 		typ = refs.SHA256
 	case 64:

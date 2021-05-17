@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/accounting"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
@@ -9,7 +10,6 @@ import (
 	v2accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting"
 	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
-	"github.com/pkg/errors"
 )
 
 // Accounting contains methods related to balance querying.
@@ -40,12 +40,12 @@ func (c *clientImpl) GetBalance(ctx context.Context, owner *owner.ID, opts ...Ca
 
 	resp, err := rpcapi.Balance(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return nil, errors.Wrap(err, "transport error")
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't verify response message")
+		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
 
 	return accounting.NewDecimalFromV2(resp.GetBody().GetBalance()), nil

@@ -2,6 +2,7 @@ package signature
 
 import (
 	"crypto/ecdsa"
+	"errors"
 	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/util/signature"
@@ -12,7 +13,6 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-api-go/v2/reputation"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
-	"github.com/pkg/errors"
 )
 
 type serviceRequest interface {
@@ -183,18 +183,18 @@ func SignServiceMessage(key *ecdsa.PrivateKey, msg interface{}) error {
 	if verifyOrigin == nil {
 		// sign session message body
 		if err := signServiceMessagePart(key, body, verifyHdr.SetBodySignature); err != nil {
-			return errors.Wrap(err, "could not sign body")
+			return fmt.Errorf("could not sign body: %w", err)
 		}
 	}
 
 	// sign meta header
 	if err := signServiceMessagePart(key, meta, verifyHdr.SetMetaSignature); err != nil {
-		return errors.Wrap(err, "could not sign meta header")
+		return fmt.Errorf("could not sign meta header: %w", err)
 	}
 
 	// sign verification header origin
 	if err := signServiceMessagePart(key, verifyOrigin, verifyHdr.SetOriginSignature); err != nil {
-		return errors.Wrap(err, "could not sign origin of verification header")
+		return fmt.Errorf("could not sign origin of verification header: %w", err)
 	}
 
 	// wrap origin verification header
@@ -258,18 +258,18 @@ func VerifyServiceMessage(msg interface{}) error {
 
 func verifyMatryoshkaLevel(body stableMarshaler, meta metaHeader, verify verificationHeader) error {
 	if err := verifyServiceMessagePart(meta, verify.GetMetaSignature); err != nil {
-		return errors.Wrap(err, "could not verify meta header")
+		return fmt.Errorf("could not verify meta header: %w", err)
 	}
 
 	origin := verify.getOrigin()
 
 	if err := verifyServiceMessagePart(origin, verify.GetOriginSignature); err != nil {
-		return errors.Wrap(err, "could not verify origin of verification header")
+		return fmt.Errorf("could not verify origin of verification header: %w", err)
 	}
 
 	if origin == nil {
 		if err := verifyServiceMessagePart(body, verify.GetBodySignature); err != nil {
-			return errors.Wrap(err, "could not verify body")
+			return fmt.Errorf("could not verify body: %w", err)
 		}
 
 		return nil
