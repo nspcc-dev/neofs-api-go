@@ -10,7 +10,6 @@ import (
 	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	sessionGRPC "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
-	"github.com/pkg/errors"
 )
 
 func TypeToGRPCField(t Type) object.ObjectType {
@@ -802,7 +801,7 @@ func (r *GetResponseBody) FromGRPCMessage(m grpc.Message) error {
 			err = partSplit.FromGRPCMessage(pt.SplitInfo)
 		}
 	default:
-		err = errors.Errorf("unknown get object part %T", pt)
+		err = fmt.Errorf("unknown get object part %T", pt)
 	}
 
 	return err
@@ -985,7 +984,7 @@ func (r *PutRequestBody) FromGRPCMessage(m grpc.Message) error {
 			err = partChunk.FromGRPCMessage(pt)
 		}
 	default:
-		err = errors.Errorf("unknown put object part %T", pt)
+		err = fmt.Errorf("unknown put object part %T", pt)
 	}
 
 	return err
@@ -1379,7 +1378,7 @@ func (r *HeadResponseBody) FromGRPCMessage(m grpc.Message) error {
 			err = partSplit.FromGRPCMessage(pt.SplitInfo)
 		}
 	default:
-		err = errors.Errorf("unknown head part %T", pt)
+		err = fmt.Errorf("unknown head part %T", pt)
 	}
 
 	return err
@@ -1854,7 +1853,7 @@ func (r *GetRangeResponseBody) FromGRPCMessage(m grpc.Message) error {
 			err = partSplit.FromGRPCMessage(pt)
 		}
 	default:
-		err = errors.Errorf("unknown get range part %T", pt)
+		err = fmt.Errorf("unknown get range part %T", pt)
 	}
 
 	return err

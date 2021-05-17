@@ -2,6 +2,8 @@ package client
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/pkg/token"
@@ -9,7 +11,6 @@ import (
 	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
 	v2session "github.com/nspcc-dev/neofs-api-go/v2/session"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
-	"github.com/pkg/errors"
 )
 
 // Session contains session-related methods.
@@ -51,12 +52,12 @@ func (c *clientImpl) CreateSession(ctx context.Context, expiration uint64, opts 
 
 	resp, err := rpcapi.CreateSession(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return nil, errors.Wrap(err, "transport error")
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't verify response message")
+		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
 
 	body := resp.GetBody()

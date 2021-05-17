@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
@@ -9,7 +10,6 @@ import (
 	v2netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap"
 	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
-	"github.com/pkg/errors"
 )
 
 // Netmap contains methods related to netmap.
@@ -64,12 +64,12 @@ func (c *clientImpl) EndpointInfo(ctx context.Context, opts ...CallOption) (*End
 
 	resp, err := rpcapi.LocalNodeInfo(c.Raw(), req)
 	if err != nil {
-		return nil, errors.Wrap(err, "transport error")
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't verify response message")
+		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
 
 	body := resp.GetBody()
@@ -102,12 +102,12 @@ func (c *clientImpl) NetworkInfo(ctx context.Context, opts ...CallOption) (*netm
 
 	resp, err := rpcapi.NetworkInfo(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return nil, errors.Wrap(err, "v2 NetworkInfo RPC failure")
+		return nil, fmt.Errorf("v2 NetworkInfo RPC failure: %w", err)
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
-		return nil, errors.Wrap(err, "response message verification failed")
+		return nil, fmt.Errorf("response message verification failed: %w", err)
 	}
 
 	return netmap.NewNetworkInfoFromV2(resp.GetBody().GetNetworkInfo()), nil

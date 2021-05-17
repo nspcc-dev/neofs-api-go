@@ -1,9 +1,10 @@
 package container
 
 import (
+	"fmt"
+
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/v2/container"
-	"github.com/pkg/errors"
 )
 
 // NewVerifiedFromV2 constructs Container from NeoFS API V2 Container message.
@@ -20,7 +21,7 @@ func NewVerifiedFromV2(cnrV2 *container.Container) (*Container, error) {
 
 	// check nonce format
 	if _, err := cnr.NonceUUID(); err != nil {
-		return nil, errors.Wrap(err, "invalid nonce")
+		return nil, fmt.Errorf("invalid nonce: %w", err)
 	}
 
 	return cnr, nil

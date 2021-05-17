@@ -1,12 +1,12 @@
 package proto_test
 
 import (
+	"fmt"
 	"math"
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/util/proto"
 	"github.com/nspcc-dev/neofs-api-go/util/proto/test"
-	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 	goproto "google.golang.org/protobuf/proto"
 )
@@ -60,7 +60,7 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	}
 	offset, err := proto.BytesMarshal(fieldNum, buf, s.FieldA)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field a")
+		return nil, fmt.Errorf("can't marshal field a: %w", err)
 	}
 	i += offset
 
@@ -70,7 +70,7 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	}
 	offset, err = proto.StringMarshal(fieldNum, buf, s.FieldB)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field b")
+		return nil, fmt.Errorf("can't marshal field b: %w", err)
 	}
 	i += offset
 
@@ -80,7 +80,7 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	}
 	offset, err = proto.BoolMarshal(fieldNum, buf, s.FieldC)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field c")
+		return nil, fmt.Errorf("can't marshal field c: %w", err)
 	}
 	i += offset
 
@@ -90,7 +90,7 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	}
 	offset, err = proto.Int32Marshal(fieldNum, buf, s.FieldD)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field d")
+		return nil, fmt.Errorf("can't marshal field d: %w", err)
 	}
 	i += offset
 
@@ -100,7 +100,7 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	}
 	offset, err = proto.UInt32Marshal(fieldNum, buf, s.FieldE)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field e")
+		return nil, fmt.Errorf("can't marshal field e: %w", err)
 	}
 	i += offset
 
@@ -110,7 +110,7 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	}
 	offset, err = proto.Int64Marshal(fieldNum, buf, s.FieldF)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field f")
+		return nil, fmt.Errorf("can't marshal field f: %w", err)
 	}
 	i += offset
 
@@ -120,7 +120,7 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	}
 	offset, err = proto.UInt64Marshal(fieldNum, buf, s.FieldG)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field g")
+		return nil, fmt.Errorf("can't marshal field g: %w", err)
 	}
 	i += offset
 
@@ -130,7 +130,7 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	}
 	offset, err = proto.Fixed64Marshal(fieldNum, buf, s.FieldI)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field I")
+		return nil, fmt.Errorf("can't marshal field I: %w", err)
 	}
 	i += offset
 
@@ -140,7 +140,7 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	}
 	offset, err = proto.Float64Marshal(fieldNum, buf, s.FieldJ)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field J")
+		return nil, fmt.Errorf("can't marshal field J: %w", err)
 	}
 	i += offset
 
@@ -150,7 +150,7 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	}
 	offset, err = proto.EnumMarshal(fieldNum, buf, int32(s.FieldH))
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field h")
+		return nil, fmt.Errorf("can't marshal field h: %w", err)
 	}
 	i += offset
 
@@ -189,7 +189,7 @@ func (s *stableRepPrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte
 	}
 	offset, err := proto.RepeatedBytesMarshal(fieldNum, buf, s.FieldA)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field a")
+		return nil, fmt.Errorf("can't marshal field a: %w", err)
 	}
 	i += offset
 
@@ -199,7 +199,7 @@ func (s *stableRepPrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte
 	}
 	offset, err = proto.RepeatedStringMarshal(fieldNum, buf, s.FieldB)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field b")
+		return nil, fmt.Errorf("can't marshal field b: %w", err)
 	}
 	i += offset
 
@@ -209,7 +209,7 @@ func (s *stableRepPrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte
 	}
 	offset, err = proto.RepeatedInt32Marshal(fieldNum, buf, s.FieldC)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field c")
+		return nil, fmt.Errorf("can't marshal field c: %w", err)
 	}
 	i += offset
 
@@ -219,7 +219,7 @@ func (s *stableRepPrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte
 	}
 	offset, err = proto.RepeatedUInt32Marshal(fieldNum, buf, s.FieldD)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field d")
+		return nil, fmt.Errorf("can't marshal field d: %w", err)
 	}
 	i += offset
 
@@ -229,7 +229,7 @@ func (s *stableRepPrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte
 	}
 	offset, err = proto.RepeatedInt64Marshal(fieldNum, buf, s.FieldE)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field e")
+		return nil, fmt.Errorf("can't marshal field e: %w", err)
 	}
 	i += offset
 
@@ -239,7 +239,7 @@ func (s *stableRepPrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte
 	}
 	offset, err = proto.RepeatedUInt64Marshal(fieldNum, buf, s.FieldF)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't marshal field f")
+		return nil, fmt.Errorf("can't marshal field f: %w", err)
 	}
 	i += offset
 

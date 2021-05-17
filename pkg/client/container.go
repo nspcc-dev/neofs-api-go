@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
@@ -13,7 +14,6 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
-	"github.com/pkg/errors"
 )
 
 // Container contains methods related to container and ACL.
@@ -125,7 +125,7 @@ func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container,
 
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't verify response message")
+		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
 
 	return container.NewIDFromV2(resp.GetBody().GetContainerID()), nil
@@ -156,12 +156,12 @@ func (c *clientImpl) GetContainer(ctx context.Context, id *container.ID, opts ..
 
 	resp, err := rpcapi.GetContainer(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return nil, errors.Wrap(err, "transport error")
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't verify response message")
+		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
 
 	return container.NewVerifiedFromV2(resp.GetBody().GetContainer())
@@ -216,12 +216,12 @@ func (c *clientImpl) ListContainers(ctx context.Context, ownerID *owner.ID, opts
 
 	resp, err := rpcapi.ListContainers(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return nil, errors.Wrap(err, "transport error")
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't verify response message")
+		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
 
 	result := make([]*container.ID, 0, len(resp.GetBody().GetContainerIDs()))
@@ -270,10 +270,14 @@ func (c *clientImpl) DeleteContainer(ctx context.Context, id *container.ID, opts
 
 	resp, err := rpcapi.DeleteContainer(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return errors.Wrap(err, "transport error")
+		return fmt.Errorf("transport error: %w", err)
 	}
 
-	return errors.Wrap(v2signature.VerifyServiceMessage(resp), "can't verify response message")
+	if err := v2signature.VerifyServiceMessage(resp); err != nil {
+		return fmt.Errorf("can't verify response message: %w", err)
+	}
+
+	return nil
 }
 
 func (c *clientImpl) GetEACL(ctx context.Context, id *container.ID, opts ...CallOption) (*EACLWithSignature, error) {
@@ -298,12 +302,12 @@ func (c *clientImpl) GetEACL(ctx context.Context, id *container.ID, opts ...Call
 
 	resp, err := rpcapi.GetEACL(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return nil, errors.Wrap(err, "transport error")
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
-		return nil, errors.Wrap(err, "can't verify response message")
+		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
 
 	body := resp.GetBody()
@@ -349,12 +353,12 @@ func (c *clientImpl) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...Call
 
 	resp, err := rpcapi.SetEACL(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return errors.Wrap(err, "transport error")
+		return fmt.Errorf("transport error: %w", err)
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
-		return errors.Wrap(err, "can't verify response message")
+		return fmt.Errorf("can't verify response message: %w", err)
 	}
 
 	return nil
@@ -394,12 +398,12 @@ func (c *clientImpl) AnnounceContainerUsedSpace(
 
 	resp, err := rpcapi.AnnounceUsedSpace(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return errors.Wrap(err, "transport error")
+		return fmt.Errorf("transport error: %w", err)
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
-		return errors.Wrap(err, "can't verify response message")
+		return fmt.Errorf("can't verify response message: %w", err)
 	}
 
 	return nil

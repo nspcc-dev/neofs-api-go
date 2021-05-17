@@ -2,11 +2,11 @@ package owner
 
 import (
 	"crypto/ecdsa"
+	"fmt"
 
 	"github.com/mr-tron/base58"
 	"github.com/nspcc-dev/neo-go/pkg/crypto/keys"
 	crypto "github.com/nspcc-dev/neofs-crypto"
-	"github.com/pkg/errors"
 )
 
 // NEO3Wallet represents NEO3 wallet address.
@@ -28,7 +28,7 @@ func NEO3WalletFromPublicKey(key *ecdsa.PublicKey) (*NEO3Wallet, error) {
 
 	d, err := base58.Decode(neoPublicKey.Address())
 	if err != nil {
-		return nil, errors.Wrap(err, "can't decode neo3 address from key")
+		return nil, fmt.Errorf("can't decode neo3 address from key: %w", err)
 	}
 
 	w := new(NEO3Wallet)

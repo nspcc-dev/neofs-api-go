@@ -1,12 +1,12 @@
 package client
 
 import (
+	"errors"
 	"io"
 	"sync"
 
 	"github.com/nspcc-dev/neofs-api-go/rpc/common"
 	"github.com/nspcc-dev/neofs-api-go/rpc/message"
-	"github.com/pkg/errors"
 )
 
 // SendUnary initializes communication session by RPC info, performs unary RPC

@@ -3,11 +3,12 @@ package object
 import (
 	"crypto/ecdsa"
 	"crypto/sha256"
+	"errors"
+	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/util/signature"
 	signatureV2 "github.com/nspcc-dev/neofs-api-go/v2/signature"
-	"github.com/pkg/errors"
 )
 
 var errCheckSumMismatch = errors.New("payload checksum mismatch")
@@ -131,11 +132,11 @@ func VerifyIDSignature(obj *Object) error {
 // SetIDWithSignature sets object identifier and signature.
 func SetIDWithSignature(key *ecdsa.PrivateKey, obj *RawObject) error {
 	if err := CalculateAndSetID(obj); err != nil {
-		return errors.Wrap(err, "could not set identifier")
+		return fmt.Errorf("could not set identifier: %w", err)
 	}
 
 	if err := CalculateAndSetSignature(key, obj); err != nil {
-		return errors.Wrap(err, "could not set signature")
+		return fmt.Errorf("could not set signature: %w", err)
 	}
 
 	return nil
@@ -151,11 +152,11 @@ func SetVerificationFields(key *ecdsa.PrivateKey, obj *RawObject) error {
 // CheckVerificationFields checks all verification fields of the object.
 func CheckVerificationFields(obj *Object) error {
 	if err := CheckHeaderVerificationFields(obj); err != nil {
-		return errors.Wrap(err, "invalid header structure")
+		return fmt.Errorf("invalid header structure: %w", err)
 	}
 
 	if err := VerifyPayloadChecksum(obj); err != nil {
-		return errors.Wrap(err, "invalid payload checksum")
+		return fmt.Errorf("invalid payload checksum: %w", err)
 	}
 
 	return nil
@@ -164,11 +165,11 @@ func CheckVerificationFields(obj *Object) error {
 // CheckHeaderVerificationFields checks all verification fields except payload.
 func CheckHeaderVerificationFields(obj *Object) error {
 	if err := VerifyIDSignature(obj); err != nil {
-		return errors.Wrap(err, "invalid signature")
+		return fmt.Errorf("invalid signature: %w", err)
 	}
 
 	if err := VerifyID(obj); err != nil {
-		return errors.Wrap(err, "invalid identifier")
+		return fmt.Errorf("invalid identifier: %w", err)
 	}
 
 	return nil

@@ -3,10 +3,11 @@ package object
 import (
 	"bytes"
 	"crypto/sha256"
+	"errors"
+	"fmt"
 
 	"github.com/mr-tron/base58"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/pkg/errors"
 )
 
 // ID represents v2-compatible object identifier.
@@ -48,7 +49,7 @@ func (id *ID) ToV2() *refs.ObjectID {
 func (id *ID) Parse(s string) error {
 	data, err := base58.Decode(s)
 	if err != nil {
-		return errors.Wrap(err, "could not parse object.ID from string")
+		return fmt.Errorf("could not parse object.ID from string: %w", err)
 	} else if len(data) != sha256.Size {
 		return errInvalidIDString
 	}

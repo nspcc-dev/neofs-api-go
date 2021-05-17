@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"io"
 
@@ -17,7 +18,6 @@ import (
 	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
 	v2session "github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/nspcc-dev/neofs-api-go/v2/signature"
-	"github.com/pkg/errors"
 )
 
 // Object contains methods for working with objects.
@@ -176,11 +176,11 @@ func (w *putObjectV2Writer) Write(p []byte) (int, error) {
 	w.req.SetVerificationHeader(nil)
 
 	if err := signature.SignServiceMessage(w.key, w.req); err != nil {
-		return 0, errors.Wrap(err, "could not sign chunk request message")
+		return 0, fmt.Errorf("could not sign chunk request message: %w", err)
 	}
 
 	if err := w.stream.Write(w.req); err != nil {
-		return 0, errors.Wrap(err, "could not send chunk request message")
+		return 0, fmt.Errorf("could not send chunk request message: %w", err)
 	}
 
 	return len(p), nil
@@ -245,7 +245,7 @@ func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...
 		addr: v2Addr,
 		verb: v2session.ObjectVerbPut,
 	}); err != nil {
-		return nil, errors.Wrap(err, "could not attach session token")
+		return nil, fmt.Errorf("could not attach session token: %w", err)
 	}
 
 	req.SetMetaHeader(meta)
@@ -263,7 +263,7 @@ func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...
 
 	// sign the request
 	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
-		return nil, errors.Wrapf(err, "signing the request failed")
+		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// open stream
@@ -271,13 +271,13 @@ func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...
 
 	stream, err := rpcapi.PutObject(c.Raw(), resp, client.WithContext(ctx))
 	if err != nil {
-		return nil, errors.Wrap(err, "stream opening failed")
+		return nil, fmt.Errorf("stream opening failed: %w", err)
 	}
 
 	// send init part
 	err = stream.Write(req)
 	if err != nil {
-		return nil, errors.Wrap(err, "sending the initial message to stream failed")
+		return nil, fmt.Errorf("sending the initial message to stream failed: %w", err)
 	}
 
 	// create payload bytes reader
@@ -301,19 +301,19 @@ func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...
 
 	// copy payload from reader to stream writer
 	_, err = io.CopyBuffer(w, r, make([]byte, chunkSize))
-	if err != nil && !errors.Is(errors.Cause(err), io.EOF) {
-		return nil, errors.Wrap(err, "payload streaming failed")
+	if err != nil && !errors.Is(err, io.EOF) {
+		return nil, fmt.Errorf("payload streaming failed: %w", err)
 	}
 
 	// close object stream and receive response from remote node
 	err = stream.Close()
 	if err != nil {
-		return nil, errors.Wrap(err, "closing the stream failed")
+		return nil, fmt.Errorf("closing the stream failed: %w", err)
 	}
 
 	// verify response structure
 	if err := signature.VerifyServiceMessage(resp); err != nil {
-		return nil, errors.Wrap(err, "response verification failed")
+		return nil, fmt.Errorf("response verification failed: %w", err)
 	}
 
 	// convert object identifier
@@ -396,7 +396,7 @@ func (c *clientImpl) DeleteObject(ctx context.Context, p *DeleteObjectParams, op
 		addr: p.addr.ToV2(),
 		verb: v2session.ObjectVerbDelete,
 	}); err != nil {
-		return errors.Wrap(err, "could not attach session token")
+		return fmt.Errorf("could not attach session token: %w", err)
 	}
 
 	req.SetMetaHeader(meta)
@@ -406,18 +406,18 @@ func (c *clientImpl) DeleteObject(ctx context.Context, p *DeleteObjectParams, op
 
 	// sign the request
 	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
-		return errors.Wrap(err, "signing the request failed")
+		return fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// send request
 	resp, err := rpcapi.DeleteObject(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return errors.Wrap(err, "sending the request failed")
+		return fmt.Errorf("sending the request failed: %w", err)
 	}
 
 	// verify response structure
 	if err := signature.VerifyServiceMessage(resp); err != nil {
-		return errors.Wrap(err, "response verification failed")
+		return fmt.Errorf("response verification failed: %w", err)
 	}
 
 	if p.tombTgt != nil {
@@ -500,7 +500,7 @@ func (c *clientImpl) GetObject(ctx context.Context, p *GetObjectParams, opts ...
 		addr: p.addr.ToV2(),
 		verb: v2session.ObjectVerbGet,
 	}); err != nil {
-		return nil, errors.Wrap(err, "could not attach session token")
+		return nil, fmt.Errorf("could not attach session token: %w", err)
 	}
 
 	req.SetMetaHeader(meta)
@@ -511,13 +511,13 @@ func (c *clientImpl) GetObject(ctx context.Context, p *GetObjectParams, opts ...
 
 	// sign the request
 	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
-		return nil, errors.Wrap(err, "signing the request failed")
+		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// open stream
 	stream, err := rpcapi.GetObject(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return nil, errors.Wrap(err, "stream opening failed")
+		return nil, fmt.Errorf("stream opening failed: %w", err)
 	}
 
 	var (
@@ -531,7 +531,7 @@ func (c *clientImpl) GetObject(ctx context.Context, p *GetObjectParams, opts ...
 		// receive message from server stream
 		err := stream.Read(resp)
 		if err != nil {
-			if errors.Is(errors.Cause(err), io.EOF) {
+			if errors.Is(err, io.EOF) {
 				if !headWas {
 					return nil, io.ErrUnexpectedEOF
 				}
@@ -539,17 +539,17 @@ func (c *clientImpl) GetObject(ctx context.Context, p *GetObjectParams, opts ...
 				break
 			}
 
-			return nil, errors.Wrap(err, "reading the response failed")
+			return nil, fmt.Errorf("reading the response failed: %w", err)
 		}
 
 		// verify response structure
 		if err := signature.VerifyServiceMessage(resp); err != nil {
-			return nil, errors.Wrap(err, "response verification failed")
+			return nil, fmt.Errorf("response verification failed: %w", err)
 		}
 
 		switch v := resp.GetBody().GetObjectPart().(type) {
 		default:
-			return nil, errors.Errorf("unexpected object part %T", v)
+			return nil, fmt.Errorf("unexpected object part %T", v)
 		case *v2object.GetObjectPartInit:
 			if headWas {
 				return nil, errWrongMessageSeq
@@ -573,7 +573,7 @@ func (c *clientImpl) GetObject(ctx context.Context, p *GetObjectParams, opts ...
 
 			if p.w != nil {
 				if _, err := p.w.Write(v.GetChunk()); err != nil {
-					return nil, errors.Wrap(err, "could not write payload chunk")
+					return nil, fmt.Errorf("could not write payload chunk: %w", err)
 				}
 			} else {
 				payload = append(payload, v.GetChunk()...)
@@ -671,7 +671,7 @@ func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams,
 		addr: p.addr.ToV2(),
 		verb: v2session.ObjectVerbHead,
 	}); err != nil {
-		return nil, errors.Wrap(err, "could not attach session token")
+		return nil, fmt.Errorf("could not attach session token: %w", err)
 	}
 
 	req.SetMetaHeader(meta)
@@ -683,18 +683,18 @@ func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams,
 
 	// sign the request
 	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
-		return nil, errors.Wrap(err, "signing the request failed")
+		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// send Head request
 	resp, err := rpcapi.HeadObject(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return nil, errors.Wrap(err, "sending the request failed")
+		return nil, fmt.Errorf("sending the request failed: %w", err)
 	}
 
 	// verify response structure
 	if err := signature.VerifyServiceMessage(resp); err != nil {
-		return nil, errors.Wrap(err, "response verification failed")
+		return nil, fmt.Errorf("response verification failed: %w", err)
 	}
 
 	var (
@@ -704,10 +704,10 @@ func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams,
 
 	switch v := resp.GetBody().GetHeaderPart().(type) {
 	case nil:
-		return nil, errors.Errorf("unexpected header type %T", v)
+		return nil, fmt.Errorf("unexpected header type %T", v)
 	case *v2object.ShortHeader:
 		if !p.short {
-			return nil, errors.Errorf("wrong header part type: expected %T, received %T",
+			return nil, fmt.Errorf("wrong header part type: expected %T, received %T",
 				(*v2object.ShortHeader)(nil), (*v2object.HeaderWithSignature)(nil),
 			)
 		}
@@ -724,7 +724,7 @@ func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams,
 		hdr.SetHomomorphicHash(h.GetHomomorphicHash())
 	case *v2object.HeaderWithSignature:
 		if p.short {
-			return nil, errors.Errorf("wrong header part type: expected %T, received %T",
+			return nil, fmt.Errorf("wrong header part type: expected %T, received %T",
 				(*v2object.HeaderWithSignature)(nil), (*v2object.ShortHeader)(nil),
 			)
 		}
@@ -745,7 +745,7 @@ func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams,
 				return idSig.GetKey(), idSig.GetSign()
 			},
 		); err != nil {
-			return nil, errors.Wrap(err, "incorrect object header signature")
+			return nil, fmt.Errorf("incorrect object header signature: %w", err)
 		}
 	case *v2object.SplitInfo:
 		si := object.NewSplitInfoFromV2(v)
@@ -851,7 +851,7 @@ func (c *clientImpl) ObjectPayloadRangeData(ctx context.Context, p *RangeDataPar
 		addr: p.addr.ToV2(),
 		verb: v2session.ObjectVerbRange,
 	}); err != nil {
-		return nil, errors.Wrap(err, "could not attach session token")
+		return nil, fmt.Errorf("could not attach session token: %w", err)
 	}
 
 	req.SetMetaHeader(meta)
@@ -863,13 +863,13 @@ func (c *clientImpl) ObjectPayloadRangeData(ctx context.Context, p *RangeDataPar
 
 	// sign the request
 	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
-		return nil, errors.Wrapf(err, "signing the request failed")
+		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// open stream
 	stream, err := rpcapi.GetObjectRange(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return nil, errors.Wrap(err, "could not create Get payload range stream")
+		return nil, fmt.Errorf("could not create Get payload range stream: %w", err)
 	}
 
 	var payload []byte
@@ -883,25 +883,25 @@ func (c *clientImpl) ObjectPayloadRangeData(ctx context.Context, p *RangeDataPar
 		// receive message from server stream
 		err := stream.Read(resp)
 		if err != nil {
-			if errors.Is(errors.Cause(err), io.EOF) {
+			if errors.Is(err, io.EOF) {
 				break
 			}
 
-			return nil, errors.Wrap(err, "reading the response failed")
+			return nil, fmt.Errorf("reading the response failed: %w", err)
 		}
 
 		// verify response structure
 		if err := signature.VerifyServiceMessage(resp); err != nil {
-			return nil, errors.Wrapf(err, "could not verify %T", resp)
+			return nil, fmt.Errorf("could not verify %T: %w", resp, err)
 		}
 
 		switch v := resp.GetBody().GetRangePart().(type) {
 		case nil:
-			return nil, errors.Errorf("unexpected range type %T", v)
+			return nil, fmt.Errorf("unexpected range type %T", v)
 		case *v2object.GetRangePartChunk:
 			if p.w != nil {
 				if _, err = p.w.Write(v.GetChunk()); err != nil {
-					return nil, errors.Wrap(err, "could not write payload chunk")
+					return nil, fmt.Errorf("could not write payload chunk: %w", err)
 				}
 			} else {
 				payload = append(payload, v.GetChunk()...)
@@ -1013,7 +1013,7 @@ func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksu
 		addr: p.addr.ToV2(),
 		verb: v2session.ObjectVerbRangeHash,
 	}); err != nil {
-		return nil, errors.Wrap(err, "could not attach session token")
+		return nil, fmt.Errorf("could not attach session token: %w", err)
 	}
 
 	req.SetMetaHeader(meta)
@@ -1030,18 +1030,18 @@ func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksu
 
 	// sign the request
 	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
-		return nil, errors.Wrapf(err, "signing the request failed")
+		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// send request
 	resp, err := rpcapi.HashObjectRange(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return nil, errors.Wrap(err, "sending the request failed")
+		return nil, fmt.Errorf("sending the request failed: %w", err)
 	}
 
 	// verify response structure
 	if err := signature.VerifyServiceMessage(resp); err != nil {
-		return nil, errors.Wrap(err, "response verification failed")
+		return nil, fmt.Errorf("response verification failed: %w", err)
 	}
 
 	respBody := resp.GetBody()
@@ -1049,9 +1049,9 @@ func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksu
 	respHashes := respBody.GetHashList()
 
 	if t := p.typ.toV2(); respType != t {
-		return nil, errors.Errorf("invalid checksum type: expected %v, received %v", t, respType)
+		return nil, fmt.Errorf("invalid checksum type: expected %v, received %v", t, respType)
 	} else if reqLn, respLn := len(rsV2), len(respHashes); reqLn != respLn {
-		return nil, errors.Errorf("wrong checksum number: expected %d, received %d", reqLn, respLn)
+		return nil, fmt.Errorf("wrong checksum number: expected %d, received %d", reqLn, respLn)
 	}
 
 	var res interface{}
@@ -1062,7 +1062,7 @@ func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksu
 
 		for i := range respHashes {
 			if ln := len(respHashes[i]); ln != sha256.Size {
-				return nil, errors.Errorf("invalid checksum length: expected %d, received %d", sha256.Size, ln)
+				return nil, fmt.Errorf("invalid checksum length: expected %d, received %d", sha256.Size, ln)
 			}
 
 			cs := [sha256.Size]byte{}
@@ -1077,7 +1077,7 @@ func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksu
 
 		for i := range respHashes {
 			if ln := len(respHashes[i]); ln != TZSize {
-				return nil, errors.Errorf("invalid checksum length: expected %d, received %d", TZSize, ln)
+				return nil, fmt.Errorf("invalid checksum length: expected %d, received %d", TZSize, ln)
 			}
 
 			cs := [TZSize]byte{}
@@ -1150,7 +1150,7 @@ func (c *clientImpl) SearchObject(ctx context.Context, p *SearchObjectParams, op
 		addr: v2Addr,
 		verb: v2session.ObjectVerbSearch,
 	}); err != nil {
-		return nil, errors.Wrap(err, "could not attach session token")
+		return nil, fmt.Errorf("could not attach session token: %w", err)
 	}
 
 	req.SetMetaHeader(meta)
@@ -1162,13 +1162,13 @@ func (c *clientImpl) SearchObject(ctx context.Context, p *SearchObjectParams, op
 
 	// sign the request
 	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
-		return nil, errors.Wrapf(err, "signing the request failed")
+		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// create search stream
 	stream, err := rpcapi.SearchObjects(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
-		return nil, errors.Wrap(err, "stream opening failed")
+		return nil, fmt.Errorf("stream opening failed: %w", err)
 	}
 
 	var (
@@ -1180,16 +1180,16 @@ func (c *clientImpl) SearchObject(ctx context.Context, p *SearchObjectParams, op
 		// receive message from server stream
 		err := stream.Read(resp)
 		if err != nil {
-			if errors.Is(errors.Cause(err), io.EOF) {
+			if errors.Is(err, io.EOF) {
 				break
 			}
 
-			return nil, errors.Wrap(err, "reading the response failed")
+			return nil, fmt.Errorf("reading the response failed: %w", err)
 		}
 
 		// verify response structure
 		if err := signature.VerifyServiceMessage(resp); err != nil {
-			return nil, errors.Wrapf(err, "could not verify %T", resp)
+			return nil, fmt.Errorf("could not verify %T: %w", resp, err)
 		}
 
 		chunk := resp.GetBody().GetIDList()
