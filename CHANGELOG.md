@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.26.1] - 2021-05-19
+
+### Changed
+
+- Updated neo-go to v0.95.0 release.
+
+### Removed
+
+- `pkg/errors` dependency (stdlib errors used instead).
+
 ## [1.26.0] - 2021-05-07 - Daecheongdo (대청도, 大靑島)
 
 ### Added
@@ -594,3 +604,4 @@ Initial public release
 [1.24.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.23.0...v1.24.0
 [1.25.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.24.0...v1.25.0
 [1.26.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.25.0...v1.26.0
+[1.26.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.26.0...v1.26.1
