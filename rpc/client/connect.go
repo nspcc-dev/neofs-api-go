@@ -6,6 +6,7 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 	grpcstd "google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 func (c *Client) createGRPCClient() (err error) {
@@ -33,8 +34,17 @@ func (c *Client) openGRPCConn() error {
 
 	var err error
 
+	var credOpt grpcstd.DialOption
+
+	if c.tlsCfg != nil {
+		creds := credentials.NewTLS(c.tlsCfg)
+		credOpt = grpcstd.WithTransportCredentials(creds)
+	} else {
+		credOpt = grpcstd.WithInsecure()
+	}
+
 	dialCtx, cancel := context.WithTimeout(context.Background(), c.dialTimeout)
-	c.conn, err = grpcstd.DialContext(dialCtx, c.addr, grpcstd.WithInsecure())
+	c.conn, err = grpcstd.DialContext(dialCtx, c.addr, credOpt)
 	cancel()
 
 	return err
