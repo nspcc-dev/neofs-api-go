@@ -2,6 +2,7 @@ package client
 
 import (
 	"crypto/ecdsa"
+	"crypto/tls"
 	"time"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
@@ -110,7 +111,7 @@ func v2MetaHeaderFromOpts(options *callOptions) *v2session.RequestMetaHeader {
 
 func defaultClientOptions() *clientOptions {
 	return &clientOptions{
-		rawOpts: make([]client.Option, 0, 3),
+		rawOpts: make([]client.Option, 0, 4),
 	}
 }
 
@@ -130,6 +131,13 @@ func WithGRPCConnection(grpcConn *grpc.ClientConn) Option {
 func WithDialTimeout(dur time.Duration) Option {
 	return func(opts *clientOptions) {
 		opts.rawOpts = append(opts.rawOpts, client.WithDialTimeout(dur))
+	}
+}
+
+// WithTLSConfig returns option to set connection's TLS config to the remote node.
+func WithTLSConfig(cfg *tls.Config) Option {
+	return func(opts *clientOptions) {
+		opts.rawOpts = append(opts.rawOpts, client.WithTLSCfg(cfg))
 	}
 }
 

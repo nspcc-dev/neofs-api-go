@@ -1,6 +1,7 @@
 package client
 
 import (
+	"crypto/tls"
 	"time"
 
 	"google.golang.org/grpc"
@@ -13,6 +14,8 @@ type cfg struct {
 	addr string
 
 	dialTimeout time.Duration
+
+	tlsCfg *tls.Config
 
 	conn *grpc.ClientConn
 }
@@ -45,6 +48,18 @@ func WithDialTimeout(v time.Duration) Option {
 	return func(c *cfg) {
 		if v > 0 {
 			c.dialTimeout = v
+		}
+	}
+}
+
+// WithTLSCfg returns option to specify
+// TLS configuration.
+//
+// Ignored if WithGRPCConn is provided.
+func WithTLSCfg(v *tls.Config) Option {
+	return func(c *cfg) {
+		if v != nil {
+			c.tlsCfg = v
 		}
 	}
 }
