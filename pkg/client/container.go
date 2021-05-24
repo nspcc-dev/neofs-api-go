@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
@@ -170,7 +171,7 @@ func (c *clientImpl) GetContainer(ctx context.Context, id *container.ID, opts ..
 // GetVerifiedContainerStructure is a wrapper over Client.GetContainer method
 // which checks if the structure of the resulting container matches its identifier.
 //
-// Returns container.ErrIDMismatch if container does not match the identifier.
+// Returns an error if container does not match the identifier.
 func GetVerifiedContainerStructure(ctx context.Context, c Client, id *container.ID, opts ...CallOption) (*container.Container, error) {
 	cnr, err := c.GetContainer(ctx, id, opts...)
 	if err != nil {
@@ -178,7 +179,7 @@ func GetVerifiedContainerStructure(ctx context.Context, c Client, id *container.
 	}
 
 	if !container.CalculateID(cnr).Equal(id) {
-		return nil, container.ErrIDMismatch
+		return nil, errors.New("container structure does not match the identifier")
 	}
 
 	return cnr, nil
