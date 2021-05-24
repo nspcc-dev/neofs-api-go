@@ -77,14 +77,14 @@ func (m *SessionToken_Body) SetObjectSessionContext(v *ObjectSessionContext) {
 	}
 }
 
-// SetObjectAddressContext sets object context of the session token.
+// SetAddress sets address of the object related to the session.
 func (m *ObjectSessionContext) SetAddress(v *refs.Address) {
 	if m != nil {
 		m.Address = v
 	}
 }
 
-// SetObjectAddressContext sets object context of the session token.
+// SetVerb sets type of request for which the token is issued.
 func (m *ObjectSessionContext) SetVerb(v ObjectSessionContext_Verb) {
 	if m != nil {
 		m.Verb = v
