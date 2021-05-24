@@ -7,14 +7,14 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
-	"github.com/nspcc-dev/neofs-api-go/pkg/token"
+	"github.com/nspcc-dev/neofs-api-go/pkg/session"
 	"github.com/nspcc-dev/neofs-api-go/v2/container"
 )
 
 type Container struct {
 	v2 container.Container
 
-	token *token.SessionToken
+	token *session.Token
 
 	sig *pkg.Signature
 }
@@ -159,13 +159,13 @@ func (c *Container) SetPlacementPolicy(v *netmap.PlacementPolicy) {
 
 // SessionToken returns token of the session within
 // which container was created.
-func (c Container) SessionToken() *token.SessionToken {
+func (c Container) SessionToken() *session.Token {
 	return c.token
 }
 
 // SetSessionToken sets token of the session within
 // which container was created.
-func (c *Container) SetSessionToken(t *token.SessionToken) {
+func (c *Container) SetSessionToken(t *session.Token) {
 	c.token = t
 }
 
