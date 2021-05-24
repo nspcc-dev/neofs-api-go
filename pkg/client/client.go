@@ -35,7 +35,6 @@ func New(opts ...Option) (Client, error) {
 	}
 
 	return &clientImpl{
-		raw:  client.New(),
 		opts: clientOptions,
 	}, nil
 }
