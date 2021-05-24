@@ -105,6 +105,8 @@ func GenerateGetResponseBody(empty bool) *container.GetResponseBody {
 	m := new(container.GetResponseBody)
 
 	m.SetContainer(GenerateContainer(empty))
+	m.SetSignature(refstest.GenerateSignature(empty))
+	m.SetSessionToken(sessiontest.GenerateSessionToken(empty))
 
 	return m
 }
@@ -248,6 +250,7 @@ func GenerateGetExtendedACLResponseBody(empty bool) *container.GetExtendedACLRes
 
 	m.SetEACL(acltest.GenerateTable(empty))
 	m.SetSignature(refstest.GenerateSignature(empty))
+	m.SetSessionToken(sessiontest.GenerateSessionToken(empty))
 
 	return m
 }
