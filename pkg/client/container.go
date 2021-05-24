@@ -112,7 +112,11 @@ func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container,
 
 	req := new(v2container.PutRequest)
 	req.SetBody(reqBody)
-	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
+
+	meta := v2MetaHeaderFromOpts(callOptions)
+	meta.SetSessionToken(cnr.SessionToken().ToV2())
+
+	req.SetMetaHeader(meta)
 
 	err = v2signature.SignServiceMessage(callOptions.key, req)
 	if err != nil {
