@@ -28,6 +28,8 @@ const (
 	getReqBodyIDField = 1
 
 	getRespBodyContainerField = 1
+	getRespBodySignatureField = 2
+	getRespBodyTokenField     = 3
 
 	listReqBodyOwnerField = 1
 
@@ -40,6 +42,7 @@ const (
 
 	getEACLRespBodyTableField     = 1
 	getEACLRespBodySignatureField = 2
+	getEACLRespBodyTokenField     = 3
 
 	usedSpaceAnnounceEpochField     = 1
 	usedSpaceAnnounceCIDField       = 2
@@ -349,7 +352,17 @@ func (r *GetResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	_, err := protoutil.NestedStructureMarshal(getRespBodyContainerField, buf, r.cnr)
+	offset, err := protoutil.NestedStructureMarshal(getRespBodyContainerField, buf, r.cnr)
+	if err != nil {
+		return nil, err
+	}
+
+	n, err := protoutil.NestedStructureMarshal(getRespBodySignatureField, buf[offset:], r.sig)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = protoutil.NestedStructureMarshal(getRespBodyTokenField, buf[offset+n:], r.token)
 	if err != nil {
 		return nil, err
 	}
@@ -363,6 +376,8 @@ func (r *GetResponseBody) StableSize() (size int) {
 	}
 
 	size += protoutil.NestedStructureSize(getRespBodyContainerField, r.cnr)
+	size += protoutil.NestedStructureSize(getRespBodySignatureField, r.sig)
+	size += protoutil.NestedStructureSize(getRespBodyTokenField, r.token)
 
 	return size
 }
@@ -552,7 +567,14 @@ func (r *GetExtendedACLResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = protoutil.NestedStructureMarshal(getEACLRespBodySignatureField, buf[offset:], r.sig)
+	n, err = protoutil.NestedStructureMarshal(getEACLRespBodySignatureField, buf[offset:], r.sig)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = protoutil.NestedStructureMarshal(getEACLRespBodyTokenField, buf[offset:], r.token)
 	if err != nil {
 		return nil, err
 	}
@@ -567,6 +589,7 @@ func (r *GetExtendedACLResponseBody) StableSize() (size int) {
 
 	size += protoutil.NestedStructureSize(getEACLRespBodyTableField, r.eacl)
 	size += protoutil.NestedStructureSize(getEACLRespBodySignatureField, r.sig)
+	size += protoutil.NestedStructureSize(getEACLRespBodyTokenField, r.token)
 
 	return size
 }
