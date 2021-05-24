@@ -49,8 +49,6 @@ type delContainerSignWrapper struct {
 // EACLWithSignature represents eACL table/signature pair.
 type EACLWithSignature struct {
 	table *eacl.Table
-
-	sig *pkg.Signature
 }
 
 func (c delContainerSignWrapper) ReadSignedData(bytes []byte) ([]byte, error) {
@@ -67,8 +65,10 @@ func (e EACLWithSignature) EACL() *eacl.Table {
 }
 
 // Signature returns table signature.
+//
+// Deprecated: use EACL().Signature() instead.
 func (e EACLWithSignature) Signature() *pkg.Signature {
-	return e.sig
+	return e.table.Signature()
 }
 
 func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
@@ -333,9 +333,18 @@ func (c *clientImpl) GetEACL(ctx context.Context, id *container.ID, opts ...Call
 
 	body := resp.GetBody()
 
+	table := eacl.NewTableFromV2(body.GetEACL())
+
+	table.SetSessionToken(
+		session.NewTokenFromV2(body.GetSessionToken()),
+	)
+
+	table.SetSignature(
+		pkg.NewSignatureFromV2(body.GetSignature()),
+	)
+
 	return &EACLWithSignature{
-		table: eacl.NewTableFromV2(body.GetEACL()),
-		sig:   pkg.NewSignatureFromV2(body.GetSignature()),
+		table: table,
 	}, nil
 }
 
