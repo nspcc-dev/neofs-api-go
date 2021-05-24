@@ -365,7 +365,11 @@ func (c *clientImpl) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...Call
 
 	req := new(v2container.SetExtendedACLRequest)
 	req.SetBody(reqBody)
-	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
+
+	meta := v2MetaHeaderFromOpts(callOptions)
+	meta.SetSessionToken(eacl.SessionToken().ToV2())
+
+	req.SetMetaHeader(meta)
 
 	err = v2signature.SignServiceMessage(callOptions.key, req)
 	if err != nil {
