@@ -77,6 +77,15 @@ func (m *SessionToken_Body) SetObjectSessionContext(v *ObjectSessionContext) {
 	}
 }
 
+// SetContainerSessionContext sets container context of the session token.
+func (m *SessionToken_Body) SetContainerSessionContext(v *ContainerSessionContext) {
+	if m != nil {
+		m.Context = &SessionToken_Body_Container{
+			Container: v,
+		}
+	}
+}
+
 // SetAddress sets address of the object related to the session.
 func (m *ObjectSessionContext) SetAddress(v *refs.Address) {
 	if m != nil {
@@ -88,6 +97,27 @@ func (m *ObjectSessionContext) SetAddress(v *refs.Address) {
 func (m *ObjectSessionContext) SetVerb(v ObjectSessionContext_Verb) {
 	if m != nil {
 		m.Verb = v
+	}
+}
+
+// SetVerb sets type of request for which the token is issued.
+func (x *ContainerSessionContext) SetVerb(v ContainerSessionContext_Verb) {
+	if x != nil {
+		x.Verb = v
+	}
+}
+
+// SetWildcard sets wildcard flag of the container session.
+func (x *ContainerSessionContext) SetWildcard(v bool) {
+	if x != nil {
+		x.Wildcard = v
+	}
+}
+
+// SetContainerId sets identifier of the container related to the session.
+func (x *ContainerSessionContext) SetContainerId(v *refs.ContainerID) {
+	if x != nil {
+		x.ContainerId = v
 	}
 }
 
