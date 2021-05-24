@@ -9,6 +9,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
+	"github.com/nspcc-dev/neofs-api-go/pkg/session"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 	"github.com/nspcc-dev/neofs-api-go/util/signature"
 	v2container "github.com/nspcc-dev/neofs-api-go/v2/container"
@@ -169,7 +170,22 @@ func (c *clientImpl) GetContainer(ctx context.Context, id *container.ID, opts ..
 		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
 
-	return container.NewVerifiedFromV2(resp.GetBody().GetContainer())
+	body := resp.GetBody()
+
+	cnr, err := container.NewVerifiedFromV2(body.GetContainer())
+	if err != nil {
+		return nil, err
+	}
+
+	cnr.SetSessionToken(
+		session.NewTokenFromV2(body.GetSessionToken()),
+	)
+
+	cnr.SetSignature(
+		pkg.NewSignatureFromV2(body.GetSignature()),
+	)
+
+	return cnr, nil
 }
 
 // GetVerifiedContainerStructure is a wrapper over Client.GetContainer method
