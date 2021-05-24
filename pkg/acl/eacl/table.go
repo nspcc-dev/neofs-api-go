@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
-	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 )
 
@@ -13,17 +13,17 @@ import (
 // Table is compatible with v2 acl.EACLTable message.
 type Table struct {
 	version pkg.Version
-	cid     *container.ID
+	cid     *cid.ID
 	records []*Record
 }
 
 // CID returns identifier of the container that should use given access control rules.
-func (t Table) CID() *container.ID {
+func (t Table) CID() *cid.ID {
 	return t.cid
 }
 
 // SetCID sets identifier of the container that should use given access control rules.
-func (t *Table) SetCID(cid *container.ID) {
+func (t *Table) SetCID(cid *cid.ID) {
 	t.cid = cid
 }
 
@@ -77,7 +77,7 @@ func NewTable() *Table {
 }
 
 // CreateTable creates, initializes with parameters and returns Table instance.
-func CreateTable(cid container.ID) *Table {
+func CreateTable(cid cid.ID) *Table {
 	t := NewTable()
 	t.SetCID(&cid)
 
@@ -102,14 +102,14 @@ func NewTableFromV2(table *v2acl.Table) *Table {
 	}
 
 	// set container id
-	if cid := table.GetContainerID(); cid != nil {
+	if id := table.GetContainerID(); id != nil {
 		if t.cid == nil {
-			t.cid = new(container.ID)
+			t.cid = new(cid.ID)
 		}
 
 		var h [sha256.Size]byte
 
-		copy(h[:], table.GetContainerID().GetValue())
+		copy(h[:], id.GetValue())
 		t.cid.SetSHA256(h)
 	}
 
