@@ -158,6 +158,21 @@ func (m *GetResponse_Body) SetContainer(v *Container) {
 	}
 }
 
+// SetSessionToken sets token of the session within which requested
+// container was created.
+func (m *GetResponse_Body) SetSessionToken(v *session.SessionToken) {
+	if m != nil {
+		m.SessionToken = v
+	}
+}
+
+// SetSignature sets signature of the requested container.
+func (m *GetResponse_Body) SetSignature(v *refs.Signature) {
+	if m != nil {
+		m.Signature = v
+	}
+}
+
 // SetBody sets body of the response.
 func (m *GetResponse) SetBody(v *GetResponse_Body) {
 	if m != nil {
@@ -330,6 +345,14 @@ func (m *GetExtendedACLResponse_Body) SetEacl(v *acl.EACLTable) {
 func (m *GetExtendedACLResponse_Body) SetSignature(v *refs.Signature) {
 	if m != nil {
 		m.Signature = v
+	}
+}
+
+// SetSessionToken sets token of the session within which requested
+// eACl table was set.
+func (m *GetExtendedACLResponse_Body) SetSessionToken(v *session.SessionToken) {
+	if m != nil {
+		m.SessionToken = v
 	}
 }
 
