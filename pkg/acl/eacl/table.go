@@ -5,6 +5,7 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
+	"github.com/nspcc-dev/neofs-api-go/pkg/session"
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 )
 
@@ -14,6 +15,8 @@ import (
 type Table struct {
 	version pkg.Version
 	cid     *cid.ID
+	token   *session.Token
+	sig     *pkg.Signature
 	records []*Record
 }
 
@@ -47,6 +50,28 @@ func (t *Table) AddRecord(r *Record) {
 	if r != nil {
 		t.records = append(t.records, r)
 	}
+}
+
+// SessionToken returns token of the session
+// within which Table was set.
+func (t Table) SessionToken() *session.Token {
+	return t.token
+}
+
+// SetSessionToken sets token of the session
+// within which Table was set.
+func (t *Table) SetSessionToken(tok *session.Token) {
+	t.token = tok
+}
+
+// Signature returns Table signature.
+func (t Table) Signature() *pkg.Signature {
+	return t.sig
+}
+
+// SetSignature sets Table signature.
+func (t *Table) SetSignature(sig *pkg.Signature) {
+	t.sig = sig
 }
 
 // ToV2 converts Table to v2 acl.EACLTable message.

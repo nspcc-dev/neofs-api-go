@@ -7,6 +7,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	sessiontest "github.com/nspcc-dev/neofs-api-go/pkg/session/test"
 	"github.com/stretchr/testify/require"
 )
 
@@ -90,4 +91,24 @@ func TestRecordEncoding(t *testing.T) {
 
 		require.Equal(t, tab, r2)
 	})
+}
+
+func TestTable_SessionToken(t *testing.T) {
+	tok := sessiontest.Generate()
+
+	table := eacl.NewTable()
+	table.SetSessionToken(tok)
+
+	require.Equal(t, tok, table.SessionToken())
+}
+
+func TestTable_Signature(t *testing.T) {
+	sig := pkg.NewSignature()
+	sig.SetKey([]byte{1, 2, 3})
+	sig.SetSign([]byte{4, 5, 6})
+
+	table := eacl.NewTable()
+	table.SetSignature(sig)
+
+	require.Equal(t, sig, table.Signature())
 }
