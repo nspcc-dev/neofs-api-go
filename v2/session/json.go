@@ -119,3 +119,11 @@ func (r *ResponseVerificationHeader) UnmarshalJSON(data []byte) error {
 
 	return r.FromGRPCMessage(msg)
 }
+
+func (x *ContainerSessionContext) MarshalJSON() ([]byte, error) {
+	return message.MarshalJSON(x)
+}
+
+func (x *ContainerSessionContext) UnmarshalJSON(data []byte) error {
+	return message.UnmarshalJSON(x, data, new(session.ContainerSessionContext))
+}

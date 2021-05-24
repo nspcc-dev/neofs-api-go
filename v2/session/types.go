@@ -735,3 +735,81 @@ func (t *SessionToken) SetSignature(v *refs.Signature) {
 		t.sig = v
 	}
 }
+
+// ContainerSessionVerb represents NeoFS API v2
+// session.ContainerSessionContext.Verb enumeration.
+type ContainerSessionVerb uint32
+
+const (
+	// ContainerVerbUnknown corresponds to VERB_UNSPECIFIED enum value.
+	ContainerVerbUnknown ContainerSessionVerb = iota
+
+	// ContainerVerbPut corresponds to PUT enum value.
+	ContainerVerbPut
+
+	// ContainerVerbDelete corresponds to DELETE enum value.
+	ContainerVerbDelete
+
+	// ContainerVerbSetEACL corresponds to SETEACL enum value.
+	ContainerVerbSetEACL
+)
+
+// ContainerSessionContext represents structure of the
+// NeoFS API v2 session.ContainerSessionContext message.
+type ContainerSessionContext struct {
+	verb ContainerSessionVerb
+
+	wildcard bool
+
+	cid *refs.ContainerID
+}
+
+func (x *ContainerSessionContext) sessionTokenContext() {}
+
+// Verb returns type of request for which the token is issued.
+func (x *ContainerSessionContext) Verb() ContainerSessionVerb {
+	if x != nil {
+		return x.verb
+	}
+
+	return ContainerVerbUnknown
+}
+
+// SetVerb sets type of request for which the token is issued.
+func (x *ContainerSessionContext) SetVerb(v ContainerSessionVerb) {
+	if x != nil {
+		x.verb = v
+	}
+}
+
+// Wildcard returns wildcard flag of the container session.
+func (x *ContainerSessionContext) Wildcard() bool {
+	if x != nil {
+		return x.wildcard
+	}
+
+	return false
+}
+
+// SetWildcard sets wildcard flag of the container session.
+func (x *ContainerSessionContext) SetWildcard(v bool) {
+	if x != nil {
+		x.wildcard = v
+	}
+}
+
+// ContainerID returns identifier of the container related to the session.
+func (x *ContainerSessionContext) ContainerID() *refs.ContainerID {
+	if x != nil {
+		return x.cid
+	}
+
+	return nil
+}
+
+// SetContainerID sets identifier of the container related to the session.
+func (x *ContainerSessionContext) SetContainerID(v *refs.ContainerID) {
+	if x != nil {
+		x.cid = v
+	}
+}

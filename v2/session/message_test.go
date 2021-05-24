@@ -22,5 +22,6 @@ func TestMessageConvert(t *testing.T) {
 		func(empty bool) message.Message { return sessiontest.GenerateRequestVerificationHeader(empty) },
 		func(empty bool) message.Message { return sessiontest.GenerateResponseMetaHeader(empty) },
 		func(empty bool) message.Message { return sessiontest.GenerateResponseVerificationHeader(empty) },
+		func(empty bool) message.Message { return sessiontest.GenerateContainerSessionContext(empty) },
 	)
 }

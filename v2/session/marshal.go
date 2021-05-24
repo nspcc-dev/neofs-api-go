@@ -29,6 +29,7 @@ const (
 	sessionTokenBodyLifetimeField  = 3
 	sessionTokenBodyKeyField       = 4
 	sessionTokenBodyObjectCtxField = 5
+	sessionTokenBodyCnrCtxField    = 6
 
 	sessionTokenBodyField      = 1
 	sessionTokenSignatureField = 2
@@ -301,6 +302,65 @@ func (c *ObjectSessionContext) Unmarshal(data []byte) error {
 	return c.FromGRPCMessage(m)
 }
 
+const (
+	_ = iota
+	cnrCtxVerbFNum
+	cnrCtxWildcardFNum
+	cnrCtxCidFNum
+)
+
+func (x *ContainerSessionContext) StableMarshal(buf []byte) ([]byte, error) {
+	if x == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, x.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = proto.EnumMarshal(cnrCtxVerbFNum, buf[offset:], int32(ContainerSessionVerbToGRPCField(x.verb)))
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = proto.BoolMarshal(cnrCtxWildcardFNum, buf[offset:], x.wildcard)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.NestedStructureMarshal(cnrCtxCidFNum, buf[offset:], x.cid)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (x *ContainerSessionContext) StableSize() (size int) {
+	if x == nil {
+		return 0
+	}
+
+	size += proto.EnumSize(cnrCtxVerbFNum, int32(ContainerSessionVerbToGRPCField(x.verb)))
+	size += proto.BoolSize(cnrCtxWildcardFNum, x.wildcard)
+	size += proto.NestedStructureSize(cnrCtxCidFNum, x.cid)
+
+	return size
+}
+
+func (x *ContainerSessionContext) Unmarshal(data []byte) error {
+	return message.Unmarshal(x, data, new(session.ContainerSessionContext))
+}
+
 func (t *SessionTokenBody) StableMarshal(buf []byte) ([]byte, error) {
 	if t == nil {
 		return []byte{}, nil
@@ -350,6 +410,11 @@ func (t *SessionTokenBody) StableMarshal(buf []byte) ([]byte, error) {
 			if err != nil {
 				return nil, err
 			}
+		case *ContainerSessionContext:
+			_, err = proto.NestedStructureMarshal(sessionTokenBodyCnrCtxField, buf[offset:], v)
+			if err != nil {
+				return nil, err
+			}
 		default:
 			panic("cannot marshal unknown session token context")
 		}
@@ -372,6 +437,8 @@ func (t *SessionTokenBody) StableSize() (size int) {
 		switch v := t.ctx.(type) {
 		case *ObjectSessionContext:
 			size += proto.NestedStructureSize(sessionTokenBodyObjectCtxField, v)
+		case *ContainerSessionContext:
+			size += proto.NestedStructureSize(sessionTokenBodyCnrCtxField, v)
 		default:
 			panic("cannot marshal unknown session token context")
 		}

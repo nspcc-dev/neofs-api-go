@@ -179,6 +179,19 @@ func GenerateObjectSessionContext(empty bool) *session.ObjectSessionContext {
 	return m
 }
 
+func GenerateContainerSessionContext(empty bool) *session.ContainerSessionContext {
+	m := new(session.ContainerSessionContext)
+
+	if !empty {
+		m.SetVerb(session.ContainerVerbDelete)
+		m.SetWildcard(true)
+	}
+
+	m.SetContainerID(refstest.GenerateContainerID(empty))
+
+	return m
+}
+
 func GenerateXHeader(empty bool) *session.XHeader {
 	m := new(session.XHeader)
 

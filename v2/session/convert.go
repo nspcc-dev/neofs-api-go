@@ -707,6 +707,8 @@ func (t *SessionTokenBody) ToGRPCMessage() grpc.Message {
 			m.Context = nil
 		case *ObjectSessionContext:
 			m.SetObjectSessionContext(typ.ToGRPCMessage().(*session.ObjectSessionContext))
+		case *ContainerSessionContext:
+			m.SetContainerSessionContext(typ.ToGRPCMessage().(*session.ContainerSessionContext))
 		}
 
 		m.SetOwnerId(t.ownerID.ToGRPCMessage().(*refsGRPC.OwnerID))
@@ -740,6 +742,14 @@ func (t *SessionTokenBody) FromGRPCMessage(m grpc.Message) error {
 		}
 
 		err = ctx.FromGRPCMessage(val.Object)
+	case *session.SessionToken_Body_Container:
+		ctx, ok := t.ctx.(*ContainerSessionContext)
+		if !ok {
+			ctx = new(ContainerSessionContext)
+			t.ctx = ctx
+		}
+
+		err = ctx.FromGRPCMessage(val.Container)
 	}
 
 	if err != nil {
@@ -776,6 +786,90 @@ func (t *SessionTokenBody) FromGRPCMessage(m grpc.Message) error {
 
 	t.id = v.GetId()
 	t.sessionKey = v.GetSessionKey()
+
+	return nil
+}
+
+// ContainerSessionVerbToGRPCField converts ContainerSessionVerb
+// to gRPC-generated session.ContainerSessionContext_Verb.
+//
+// If v is outside of the ContainerSessionVerb enum,
+// session.ContainerSessionContext_VERB_UNSPECIFIED is returned.
+func ContainerSessionVerbToGRPCField(v ContainerSessionVerb) session.ContainerSessionContext_Verb {
+	switch v {
+	default:
+		return session.ContainerSessionContext_VERB_UNSPECIFIED
+	case ContainerVerbPut:
+		return session.ContainerSessionContext_PUT
+	case ContainerVerbDelete:
+		return session.ContainerSessionContext_DELETE
+	case ContainerVerbSetEACL:
+		return session.ContainerSessionContext_SETEACL
+	}
+}
+
+// ContainerSessionVerbFromGRPCField converts gRPC-generated
+// session.ContainerSessionContext_Verb to ContainerSessionVerb.
+//
+// If v is outside of the session.ContainerSessionContext_Verb enum,
+// ContainerVerbUnknown is returned.
+func ContainerSessionVerbFromGRPCField(v session.ContainerSessionContext_Verb) ContainerSessionVerb {
+	switch v {
+	default:
+		return ContainerVerbUnknown
+	case session.ContainerSessionContext_PUT:
+		return ContainerVerbPut
+	case session.ContainerSessionContext_DELETE:
+		return ContainerVerbDelete
+	case session.ContainerSessionContext_SETEACL:
+		return ContainerVerbSetEACL
+	}
+}
+
+// ToGRPCMessage converts ContainerSessionContext to gRPC-generated
+// session.ContainerSessionContext message.
+func (x *ContainerSessionContext) ToGRPCMessage() grpc.Message {
+	var m *session.ContainerSessionContext
+
+	if x != nil {
+		m = new(session.ContainerSessionContext)
+
+		m.SetVerb(ContainerSessionVerbToGRPCField(x.verb))
+		m.SetWildcard(x.wildcard)
+		m.SetContainerId(x.cid.ToGRPCMessage().(*refsGRPC.ContainerID))
+	}
+
+	return m
+}
+
+// FromGRPCMessage tries to restore ContainerSessionContext from grpc.Message.
+//
+// Returns message.ErrUnexpectedMessageType if m is not
+// a gRPC-generated session.ContainerSessionContext message.
+func (x *ContainerSessionContext) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*session.ContainerSessionContext)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	cid := v.GetContainerId()
+	if cid == nil {
+		x.cid = nil
+	} else {
+		if x.cid == nil {
+			x.cid = new(refs.ContainerID)
+		}
+
+		err = x.cid.FromGRPCMessage(cid)
+		if err != nil {
+			return err
+		}
+	}
+
+	x.verb = ContainerSessionVerbFromGRPCField(v.GetVerb())
+	x.wildcard = v.GetWildcard()
 
 	return nil
 }
