@@ -10,6 +10,8 @@ import (
 	netmapGRPC "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
+	sessionGRPC "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
 )
 
 func (a *Attribute) ToGRPCMessage() grpc.Message {
@@ -388,6 +390,8 @@ func (r *GetResponseBody) ToGRPCMessage() grpc.Message {
 		m = new(container.GetResponse_Body)
 
 		m.SetContainer(r.cnr.ToGRPCMessage().(*container.Container))
+		m.SetSessionToken(r.token.ToGRPCMessage().(*sessionGRPC.SessionToken))
+		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
 	}
 
 	return m
@@ -410,6 +414,28 @@ func (r *GetResponseBody) FromGRPCMessage(m grpc.Message) error {
 		}
 
 		err = r.cnr.FromGRPCMessage(cnr)
+	}
+
+	sig := v.GetSignature()
+	if sig == nil {
+		r.sig = nil
+	} else {
+		if r.sig == nil {
+			r.sig = new(refs.Signature)
+		}
+
+		err = r.sig.FromGRPCMessage(sig)
+	}
+
+	token := v.GetSessionToken()
+	if token == nil {
+		r.token = nil
+	} else {
+		if r.token == nil {
+			r.token = new(session.SessionToken)
+		}
+
+		err = r.token.FromGRPCMessage(token)
 	}
 
 	return err
@@ -956,6 +982,7 @@ func (r *GetExtendedACLResponseBody) ToGRPCMessage() grpc.Message {
 
 		m.SetEacl(r.eacl.ToGRPCMessage().(*aclGRPC.EACLTable))
 		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetSessionToken(r.token.ToGRPCMessage().(*sessionGRPC.SessionToken))
 	}
 
 	return m
@@ -992,6 +1019,17 @@ func (r *GetExtendedACLResponseBody) FromGRPCMessage(m grpc.Message) error {
 		}
 
 		err = r.sig.FromGRPCMessage(sig)
+	}
+
+	token := v.GetSessionToken()
+	if token == nil {
+		r.token = nil
+	} else {
+		if r.token == nil {
+			r.token = new(session.SessionToken)
+		}
+
+		err = r.token.FromGRPCMessage(token)
 	}
 
 	return err
