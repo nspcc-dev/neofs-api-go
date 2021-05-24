@@ -10,6 +10,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
+	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
@@ -94,4 +95,26 @@ func TestContainerEncoding(t *testing.T) {
 
 		require.Equal(t, c, c2)
 	})
+}
+
+func TestContainer_SessionToken(t *testing.T) {
+	tok := token.NewSessionToken()
+	tok.SetID([]byte{1, 2, 3})
+
+	cnr := container.New()
+
+	cnr.SetSessionToken(tok)
+
+	require.Equal(t, tok, cnr.SessionToken())
+}
+
+func TestContainer_Signature(t *testing.T) {
+	sig := pkg.NewSignature()
+	sig.SetKey([]byte{1, 2, 3})
+	sig.SetSign([]byte{4, 5, 6})
+
+	cnr := container.New()
+	cnr.SetSignature(sig)
+
+	require.Equal(t, sig, cnr.Signature())
 }

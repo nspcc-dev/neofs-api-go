@@ -7,11 +7,16 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
+	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 	"github.com/nspcc-dev/neofs-api-go/v2/container"
 )
 
 type Container struct {
 	v2 container.Container
+
+	token *token.SessionToken
+
+	sig *pkg.Signature
 }
 
 func New(opts ...NewOption) *Container {
@@ -150,6 +155,28 @@ func (c *Container) PlacementPolicy() *netmap.PlacementPolicy {
 
 func (c *Container) SetPlacementPolicy(v *netmap.PlacementPolicy) {
 	c.v2.SetPlacementPolicy(v.ToV2())
+}
+
+// SessionToken returns token of the session within
+// which container was created.
+func (c Container) SessionToken() *token.SessionToken {
+	return c.token
+}
+
+// SetSessionToken sets token of the session within
+// which container was created.
+func (c *Container) SetSessionToken(t *token.SessionToken) {
+	c.token = t
+}
+
+// Signature returns signature of the marshaled container.
+func (c Container) Signature() *pkg.Signature {
+	return c.sig
+}
+
+// SetSignature sets signature of the marshaled container.
+func (c *Container) SetSignature(sig *pkg.Signature) {
+	c.sig = sig
 }
 
 // Marshal marshals Container into a protobuf binary form.
