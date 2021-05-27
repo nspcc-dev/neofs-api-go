@@ -119,4 +119,22 @@ func TestTable_ToV2(t *testing.T) {
 
 		require.Nil(t, x.ToV2())
 	})
+
+	t.Run("default values", func(t *testing.T) {
+		table := eacl.NewTable()
+
+		// check initial values
+		require.Equal(t, *pkg.SDKVersion(), table.Version())
+		require.Nil(t, table.Records())
+		require.Nil(t, table.CID())
+		require.Nil(t, table.SessionToken())
+		require.Nil(t, table.Signature())
+
+		// convert to v2 message
+		tableV2 := table.ToV2()
+
+		require.Equal(t, pkg.SDKVersion().ToV2(), tableV2.GetVersion())
+		require.Nil(t, tableV2.GetRecords())
+		require.Nil(t, tableV2.GetContainerID())
+	})
 }
