@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"testing"
 
+	"github.com/nspcc-dev/neofs-api-go/v2/acl"
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/nspcc-dev/neofs-crypto/test"
@@ -67,5 +68,19 @@ func TestTarget_ToV2(t *testing.T) {
 		var x *Target
 
 		require.Nil(t, x.ToV2())
+	})
+
+	t.Run("default values", func(t *testing.T) {
+		target := NewTarget()
+
+		// check initial values
+		require.Equal(t, RoleUnknown, target.Role())
+		require.Nil(t, target.BinaryKeys())
+
+		// convert to v2 message
+		targetV2 := target.ToV2()
+
+		require.Equal(t, acl.RoleUnknown, targetV2.GetRole())
+		require.Nil(t, targetV2.GetKeys())
 	})
 }
