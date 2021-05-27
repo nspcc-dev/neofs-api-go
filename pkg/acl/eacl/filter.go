@@ -108,6 +108,12 @@ func (k filterKey) String() string {
 }
 
 // NewFilter creates, initializes and returns blank Filter instance.
+//
+// Defaults:
+//  - header type: HeaderTypeUnknown;
+//  - matcher: MatchUnknown;
+//  - key: "";
+//  - value: "".
 func NewFilter() *Filter {
 	return NewFilterFromV2(new(v2acl.HeaderFilter))
 }

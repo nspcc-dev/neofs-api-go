@@ -3,6 +3,7 @@ package eacl
 import (
 	"testing"
 
+	"github.com/nspcc-dev/neofs-api-go/v2/acl"
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 	"github.com/stretchr/testify/require"
 )
@@ -65,5 +66,23 @@ func TestFilter_ToV2(t *testing.T) {
 		var x *Filter
 
 		require.Nil(t, x.ToV2())
+	})
+
+	t.Run("default values", func(t *testing.T) {
+		filter := NewFilter()
+
+		// check initial values
+		require.Empty(t, filter.Key())
+		require.Empty(t, filter.Value())
+		require.Equal(t, HeaderTypeUnknown, filter.From())
+		require.Equal(t, MatchUnknown, filter.Matcher())
+
+		// convert to v2 message
+		filterV2 := filter.ToV2()
+
+		require.Empty(t, filterV2.GetKey())
+		require.Empty(t, filterV2.GetValue())
+		require.Equal(t, acl.HeaderTypeUnknown, filterV2.GetHeaderType())
+		require.Equal(t, acl.MatchTypeUnknown, filterV2.GetMatchType())
 	})
 }
