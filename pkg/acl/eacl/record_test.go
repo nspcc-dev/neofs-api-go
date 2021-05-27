@@ -126,4 +126,22 @@ func TestRecord_ToV2(t *testing.T) {
 
 		require.Nil(t, x.ToV2())
 	})
+
+	t.Run("default values", func(t *testing.T) {
+		record := NewRecord()
+
+		// check initial values
+		require.Equal(t, OperationUnknown, record.Operation())
+		require.Equal(t, ActionUnknown, record.Action())
+		require.Nil(t, record.Targets())
+		require.Nil(t, record.Filters())
+
+		// convert to v2 message
+		recordV2 := record.ToV2()
+
+		require.Equal(t, v2acl.OperationUnknown, recordV2.GetOperation())
+		require.Equal(t, v2acl.ActionUnknown, recordV2.GetAction())
+		require.Nil(t, recordV2.GetTargets())
+		require.Nil(t, recordV2.GetFilters())
+	})
 }
