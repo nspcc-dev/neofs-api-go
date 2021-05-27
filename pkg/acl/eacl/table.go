@@ -75,7 +75,13 @@ func (t *Table) SetSignature(sig *pkg.Signature) {
 }
 
 // ToV2 converts Table to v2 acl.EACLTable message.
+//
+// Nil Table converts to nil.
 func (t *Table) ToV2() *v2acl.Table {
+	if t == nil {
+		return nil
+	}
+
 	v2 := new(v2acl.Table)
 
 	if t.cid != nil {

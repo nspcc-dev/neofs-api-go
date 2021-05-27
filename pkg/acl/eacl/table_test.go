@@ -112,3 +112,11 @@ func TestTable_Signature(t *testing.T) {
 
 	require.Equal(t, sig, table.Signature())
 }
+
+func TestTable_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *eacl.Table
+
+		require.Nil(t, x.ToV2())
+	})
+}
