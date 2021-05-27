@@ -88,13 +88,16 @@ func (t *Table) ToV2() *v2acl.Table {
 		v2.SetContainerID(t.cid.ToV2())
 	}
 
-	records := make([]*v2acl.Record, 0, len(t.records))
-	for _, record := range t.records {
-		records = append(records, record.ToV2())
+	if t.records != nil {
+		records := make([]*v2acl.Record, 0, len(t.records))
+		for _, record := range t.records {
+			records = append(records, record.ToV2())
+		}
+
+		v2.SetRecords(records)
 	}
 
 	v2.SetVersion(t.version.ToV2())
-	v2.SetRecords(records)
 
 	return v2
 }
