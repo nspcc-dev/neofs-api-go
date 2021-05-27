@@ -135,22 +135,28 @@ func (r *Record) ToV2() *v2acl.Record {
 		return nil
 	}
 
-	targets := make([]*v2acl.Target, 0, len(r.targets))
-	for _, target := range r.targets {
-		targets = append(targets, target.ToV2())
-	}
-
-	filters := make([]*v2acl.HeaderFilter, 0, len(r.filters))
-	for _, filter := range r.filters {
-		filters = append(filters, filter.ToV2())
-	}
-
 	v2 := new(v2acl.Record)
+
+	if r.targets != nil {
+		targets := make([]*v2acl.Target, 0, len(r.targets))
+		for _, target := range r.targets {
+			targets = append(targets, target.ToV2())
+		}
+
+		v2.SetTargets(targets)
+	}
+
+	if r.filters != nil {
+		filters := make([]*v2acl.HeaderFilter, 0, len(r.filters))
+		for _, filter := range r.filters {
+			filters = append(filters, filter.ToV2())
+		}
+
+		v2.SetFilters(filters)
+	}
 
 	v2.SetAction(r.action.ToV2())
 	v2.SetOperation(r.operation.ToV2())
-	v2.SetTargets(targets)
-	v2.SetFilters(filters)
 
 	return v2
 }
