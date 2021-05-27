@@ -124,6 +124,10 @@ func (t *Target) ToV2() *v2acl.Target {
 }
 
 // NewTarget creates, initializes and returns blank Target instance.
+//
+// Defaults:
+//  - role: RoleUnknown;
+//  - keys: nil.
 func NewTarget() *Target {
 	return NewTargetFromV2(new(v2acl.Target))
 }
