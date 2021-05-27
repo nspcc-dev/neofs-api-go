@@ -115,19 +115,19 @@ func defaultClientOptions() *clientOptions {
 	}
 }
 
+// WithAddress returns option to specify
+// network address of the remote server.
+//
+// Ignored if WithGRPCConnection is provided.
 func WithAddress(addr string) Option {
 	return func(opts *clientOptions) {
 		opts.rawOpts = append(opts.rawOpts, client.WithNetworkAddress(addr))
 	}
 }
 
-func WithGRPCConnection(grpcConn *grpc.ClientConn) Option {
-	return func(opts *clientOptions) {
-		opts.rawOpts = append(opts.rawOpts, client.WithGRPCConn(grpcConn))
-	}
-}
-
 // WithDialTimeout returns option to set connection timeout to the remote node.
+//
+// Ignored if WithGRPCConn is provided.
 func WithDialTimeout(dur time.Duration) Option {
 	return func(opts *clientOptions) {
 		opts.rawOpts = append(opts.rawOpts, client.WithDialTimeout(dur))
@@ -135,6 +135,8 @@ func WithDialTimeout(dur time.Duration) Option {
 }
 
 // WithTLSConfig returns option to set connection's TLS config to the remote node.
+//
+// Ignored if WithGRPCConnection is provided.
 func WithTLSConfig(cfg *tls.Config) Option {
 	return func(opts *clientOptions) {
 		opts.rawOpts = append(opts.rawOpts, client.WithTLSCfg(cfg))
@@ -146,5 +148,39 @@ func WithTLSConfig(cfg *tls.Config) Option {
 func WithDefaultPrivateKey(key *ecdsa.PrivateKey) Option {
 	return func(opts *clientOptions) {
 		opts.key = key
+	}
+}
+
+// WithURIAddress returns option to specify
+// network address of a remote server and connection
+// scheme for it.
+//
+// Format of the URI:
+//
+//		[scheme://]host:port
+//
+// Supported schemes:
+//  - grpc;
+//  - grpcs.
+//
+// tls.Cfg second argument is optional and is taken into
+// account only in case of `grpcs` scheme.
+//
+// Falls back to WithNetworkAddress if address is not a valid URI.
+//
+// Do not use along with WithAddress and WithTLSConfig.
+//
+// Ignored if WithGRPCConnection is provided.
+func WithURIAddress(addr string, tlsCfg *tls.Config) Option {
+	return func(opts *clientOptions) {
+		opts.rawOpts = append(opts.rawOpts, client.WithNetworkURIAddress(addr, tlsCfg)...)
+	}
+}
+
+// WithGRPCConnection returns option to set GRPC connection to
+// the remote node.
+func WithGRPCConnection(grpcConn *grpc.ClientConn) Option {
+	return func(opts *clientOptions) {
+		opts.rawOpts = append(opts.rawOpts, client.WithGRPCConn(grpcConn))
 	}
 }
