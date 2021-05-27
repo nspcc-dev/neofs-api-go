@@ -119,3 +119,11 @@ func TestRecordEncoding(t *testing.T) {
 		require.Equal(t, r, r2)
 	})
 }
+
+func TestRecord_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *Record
+
+		require.Nil(t, x.ToV2())
+	})
+}
