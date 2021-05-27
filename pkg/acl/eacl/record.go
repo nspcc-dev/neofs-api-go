@@ -128,7 +128,13 @@ func (r *Record) AddObjectOwnerIDFilter(m Match, id *owner.ID) {
 // TODO: add remaining filters after neofs-api#72
 
 // ToV2 converts Record to v2 acl.EACLRecord message.
+//
+// Nil Record converts to nil.
 func (r *Record) ToV2() *v2acl.Record {
+	if r == nil {
+		return nil
+	}
+
 	targets := make([]*v2acl.Target, 0, len(r.targets))
 	for _, target := range r.targets {
 		targets = append(targets, target.ToV2())
