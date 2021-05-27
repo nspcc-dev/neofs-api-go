@@ -59,3 +59,11 @@ func TestFilterEncoding(t *testing.T) {
 		require.Equal(t, f, d2)
 	})
 }
+
+func TestFilter_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *Filter
+
+		require.Nil(t, x.ToV2())
+	})
+}

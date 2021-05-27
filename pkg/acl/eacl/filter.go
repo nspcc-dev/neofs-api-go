@@ -66,7 +66,13 @@ func (f Filter) From() FilterHeaderType {
 }
 
 // ToV2 converts Filter to v2 acl.EACLRecord.Filter message.
+//
+// Nil Filter converts to nil.
 func (f *Filter) ToV2() *v2acl.HeaderFilter {
+	if f == nil {
+		return nil
+	}
+
 	filter := new(v2acl.HeaderFilter)
 	filter.SetValue(f.value.String())
 	filter.SetKey(f.key.String())
