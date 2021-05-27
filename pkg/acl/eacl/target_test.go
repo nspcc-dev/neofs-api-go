@@ -61,3 +61,11 @@ func TestTargetEncoding(t *testing.T) {
 		require.Equal(t, tar, tar2)
 	})
 }
+
+func TestTarget_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *Target
+
+		require.Nil(t, x.ToV2())
+	})
+}

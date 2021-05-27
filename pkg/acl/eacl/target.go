@@ -108,7 +108,13 @@ func (t Target) Role() Role {
 }
 
 // ToV2 converts Target to v2 acl.EACLRecord.Target message.
+//
+// Nil Target converts to nil.
 func (t *Target) ToV2() *v2acl.Target {
+	if t == nil {
+		return nil
+	}
+
 	target := new(v2acl.Target)
 
 	target.SetRole(t.role.ToV2())
