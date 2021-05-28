@@ -135,6 +135,50 @@ func (t *Token) Signature() *pkg.Signature {
 	)
 }
 
+// SetContext sets context of the Token.
+//
+// Supported contexts:
+//  - *ContainerContext.
+//
+// Resets context if it is not supported.
+func (t *Token) SetContext(v interface{}) {
+	var cV2 session.SessionTokenContext
+
+	switch c := v.(type) {
+	case *ContainerContext:
+		cV2 = c.ToV2()
+	}
+
+	t.setBodyField(func(body *session.SessionTokenBody) {
+		body.SetContext(cV2)
+	})
+}
+
+// Context returns context of the Token.
+//
+// Supports same contexts as SetContext.
+//
+// Returns nil if context is not supported.
+func (t *Token) Context() interface{} {
+	switch v := (*session.SessionToken)(t).
+		GetBody().
+		GetContext(); c := v.(type) {
+	default:
+		return nil
+	case *session.ContainerSessionContext:
+		return ContainerContextFromV2(c)
+	}
+}
+
+// GetContainerContext is a helper function that casts
+// Token context to ContainerContext.
+//
+// Returns nil if context is not a ContainerContext.
+func GetContainerContext(t *Token) *ContainerContext {
+	c, _ := t.Context().(*ContainerContext)
+	return c
+}
+
 // Marshal marshals Token into a protobuf binary form.
 //
 // Buffer is allocated when the argument is empty.

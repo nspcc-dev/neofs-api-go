@@ -86,3 +86,55 @@ func TestToken_VerifySignature(t *testing.T) {
 		require.True(t, tok.VerifySignature())
 	})
 }
+
+var unsupportedContexts = []interface{}{
+	123,
+	true,
+	session.NewToken(),
+}
+
+var nonContainerContexts = unsupportedContexts
+
+func TestToken_Context(t *testing.T) {
+	tok := session.NewToken()
+
+	for _, item := range []struct {
+		ctx      interface{}
+		v2assert func(interface{})
+	}{
+		{
+			ctx: sessiontest.ContainerContext(),
+			v2assert: func(c interface{}) {
+				require.Equal(t, c.(*session.ContainerContext).ToV2(), tok.ToV2().GetBody().GetContext())
+			},
+		},
+	} {
+		tok.SetContext(item.ctx)
+
+		require.Equal(t, item.ctx, tok.Context())
+
+		item.v2assert(item.ctx)
+	}
+
+	for _, c := range unsupportedContexts {
+		tok.SetContext(c)
+
+		require.Nil(t, tok.Context())
+	}
+}
+
+func TestGetContainerContext(t *testing.T) {
+	tok := session.NewToken()
+
+	c := sessiontest.ContainerContext()
+
+	tok.SetContext(c)
+
+	require.Equal(t, c, session.GetContainerContext(tok))
+
+	for _, c := range nonContainerContexts {
+		tok.SetContext(c)
+
+		require.Nil(t, session.GetContainerContext(tok))
+	}
+}
