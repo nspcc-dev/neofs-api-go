@@ -1,6 +1,7 @@
 package owner
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 
@@ -38,6 +39,16 @@ func (id *ID) ToV2() *refs.OwnerID {
 
 func (id *ID) String() string {
 	return base58.Encode((*refs.OwnerID)(id).GetValue())
+}
+
+// Equal defines a comparison relation on ID's.
+//
+// ID's are equal if they have the same binary representation.
+func (id *ID) Equal(id2 *ID) bool {
+	return bytes.Equal(
+		(*refs.ObjectID)(id).GetValue(),
+		(*refs.ObjectID)(id2).GetValue(),
+	)
 }
 
 func ScriptHashBE(id fmt.Stringer) ([]byte, error) {

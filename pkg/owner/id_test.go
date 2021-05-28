@@ -1,4 +1,4 @@
-package owner
+package owner_test
 
 import (
 	"crypto/rand"
@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/mr-tron/base58"
+	. "github.com/nspcc-dev/neofs-api-go/pkg/owner"
+	ownertest "github.com/nspcc-dev/neofs-api-go/pkg/owner/test"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
@@ -92,4 +94,22 @@ func TestIDEncoding(t *testing.T) {
 
 		require.Equal(t, id, a2)
 	})
+}
+
+func TestID_Equal(t *testing.T) {
+	var (
+		data1 = []byte{1, 2, 3}
+		data2 = data1
+		data3 = append(data1, 255)
+	)
+
+	id1 := ownertest.GenerateFromBytes(data1)
+
+	require.True(t, id1.Equal(
+		ownertest.GenerateFromBytes(data2),
+	))
+
+	require.False(t, id1.Equal(
+		ownertest.GenerateFromBytes(data3),
+	))
 }
