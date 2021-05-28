@@ -66,3 +66,23 @@ func TestSessionTokenEncoding(t *testing.T) {
 		require.Equal(t, tok, tok2)
 	})
 }
+
+func TestToken_VerifySignature(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var tok *session.Token
+
+		require.False(t, tok.VerifySignature())
+	})
+
+	t.Run("unsigned", func(t *testing.T) {
+		tok := sessiontest.Generate()
+
+		require.False(t, tok.VerifySignature())
+	})
+
+	t.Run("signed", func(t *testing.T) {
+		tok := sessiontest.GenerateSigned()
+
+		require.True(t, tok.VerifySignature())
+	})
+}

@@ -11,6 +11,8 @@ import (
 )
 
 // Generate returns random session.Token.
+//
+// Resulting token is unsigned.
 func Generate() *session.Token {
 	tok := session.NewToken()
 
@@ -30,6 +32,20 @@ func Generate() *session.Token {
 	tok.SetID(uid)
 	tok.SetOwnerID(ownerID)
 	tok.SetSessionKey(keyBin)
+
+	return tok
+}
+
+// GenerateSigned returns signed random session.Token.
+//
+// Panics if token could not be signed (actually unexpected).
+func GenerateSigned() *session.Token {
+	tok := Generate()
+
+	err := tok.Sign(test.DecodeKey(0))
+	if err != nil {
+		panic(err)
+	}
 
 	return tok
 }
