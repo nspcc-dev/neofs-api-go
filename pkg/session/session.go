@@ -1,9 +1,14 @@
 package session
 
 import (
+	"crypto/ecdsa"
+
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
+	"github.com/nspcc-dev/neofs-api-go/util/signature"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
+	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
 )
 
 // Token represents NeoFS API v2-compatible
@@ -82,6 +87,44 @@ func (t *Token) SetSessionKey(v []byte) {
 	t.setBodyField(func(body *session.SessionTokenBody) {
 		body.SetSessionKey(v)
 	})
+}
+
+// Sign calculates and writes signature of the Token data.
+//
+// Returns signature calculation errors.
+func (t *Token) Sign(key *ecdsa.PrivateKey) error {
+	tV2 := (*session.SessionToken)(t)
+
+	signedData := v2signature.StableMarshalerWrapper{
+		SM: tV2.GetBody(),
+	}
+
+	return signature.SignDataWithHandler(key, signedData, func(key, sig []byte) {
+		tSig := tV2.GetSignature()
+		if tSig == nil {
+			tSig = new(refs.Signature)
+		}
+
+		tSig.SetKey(key)
+		tSig.SetSign(sig)
+
+		tV2.SetSignature(tSig)
+	})
+}
+
+// VerifySignature checks if token signature is
+// presented and valid.
+func (t *Token) VerifySignature() bool {
+	tV2 := (*session.SessionToken)(t)
+
+	signedData := v2signature.StableMarshalerWrapper{
+		SM: tV2.GetBody(),
+	}
+
+	return signature.VerifyDataWithSource(signedData, func() (key, sig []byte) {
+		tSig := tV2.GetSignature()
+		return tSig.GetKey(), tSig.GetSign()
+	}) == nil
 }
 
 // Signature returns Token signature.
