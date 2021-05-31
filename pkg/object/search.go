@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
-	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	v2object "github.com/nspcc-dev/neofs-api-go/v2/object"
 )
@@ -199,7 +199,7 @@ func (f *SearchFilters) AddObjectVersionFilter(op SearchMatchType, v *pkg.Versio
 	f.addReservedFilter(op, fKeyVersion, v)
 }
 
-func (f *SearchFilters) AddObjectContainerIDFilter(m SearchMatchType, id *container.ID) {
+func (f *SearchFilters) AddObjectContainerIDFilter(m SearchMatchType, id *cid.ID) {
 	f.addReservedFilter(m, fKeyContainerID, id)
 }
 

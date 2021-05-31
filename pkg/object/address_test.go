@@ -4,19 +4,18 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
 	"github.com/stretchr/testify/require"
 )
 
 func TestAddress_SetContainerID(t *testing.T) {
 	a := NewAddress()
 
-	cid := container.NewID()
-	cid.SetSHA256(randSHA256Checksum(t))
+	id := cidtest.Generate()
 
-	a.SetContainerID(cid)
+	a.SetContainerID(id)
 
-	require.Equal(t, cid, a.ContainerID())
+	require.Equal(t, id, a.ContainerID())
 }
 
 func TestAddress_SetObjectID(t *testing.T) {
@@ -30,8 +29,7 @@ func TestAddress_SetObjectID(t *testing.T) {
 }
 
 func TestAddress_Parse(t *testing.T) {
-	cid := container.NewID()
-	cid.SetSHA256(randSHA256Checksum(t))
+	cid := cidtest.Generate()
 
 	oid := NewID()
 	oid.SetSHA256(randSHA256Checksum(t))
@@ -64,7 +62,7 @@ func TestAddress_Parse(t *testing.T) {
 func TestAddressEncoding(t *testing.T) {
 	a := NewAddress()
 	a.SetObjectID(randID(t))
-	a.SetContainerID(randCID(t))
+	a.SetContainerID(cidtest.Generate())
 
 	t.Run("binary", func(t *testing.T) {
 		data, err := a.Marshal()

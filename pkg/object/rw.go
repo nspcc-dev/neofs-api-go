@@ -2,9 +2,9 @@ package object
 
 import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
-	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
-	"github.com/nspcc-dev/neofs-api-go/pkg/token"
+	"github.com/nspcc-dev/neofs-api-go/pkg/session"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 )
@@ -108,15 +108,15 @@ func (o *rwObject) setPayloadSize(v uint64) {
 }
 
 // ContainerID returns identifier of the related container.
-func (o *rwObject) ContainerID() *container.ID {
-	return container.NewIDFromV2(
+func (o *rwObject) ContainerID() *cid.ID {
+	return cid.NewFromV2(
 		(*object.Object)(o).
 			GetHeader().
 			GetContainerID(),
 	)
 }
 
-func (o *rwObject) setContainerID(v *container.ID) {
+func (o *rwObject) setContainerID(v *cid.ID) {
 	o.setHeaderField(func(h *object.Header) {
 		h.SetContainerID(v.ToV2())
 	})
@@ -327,15 +327,15 @@ func (o *rwObject) resetRelations() {
 
 // SessionToken returns token of the session
 // within which object was created.
-func (o *rwObject) SessionToken() *token.SessionToken {
-	return token.NewSessionTokenFromV2(
+func (o *rwObject) SessionToken() *session.Token {
+	return session.NewTokenFromV2(
 		(*object.Object)(o).
 			GetHeader().
 			GetSessionToken(),
 	)
 }
 
-func (o *rwObject) setSessionToken(v *token.SessionToken) {
+func (o *rwObject) setSessionToken(v *session.Token) {
 	o.setHeaderField(func(h *object.Header) {
 		h.SetSessionToken(v.ToV2())
 	})

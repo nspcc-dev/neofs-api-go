@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
+	"github.com/nspcc-dev/neofs-api-go/pkg/session"
 	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
@@ -24,7 +25,7 @@ type (
 		ttl      uint32
 		epoch    uint64
 		key      *ecdsa.PrivateKey
-		session  *token.SessionToken
+		session  *session.Token
 		bearer   *token.BearerToken
 	}
 
@@ -75,7 +76,7 @@ func WithEpoch(epoch uint64) CallOption {
 	}
 }
 
-func WithSession(token *token.SessionToken) CallOption {
+func WithSession(token *session.Token) CallOption {
 	return func(opts *callOptions) {
 		opts.session = token
 	}

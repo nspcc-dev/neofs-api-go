@@ -10,7 +10,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
-	"github.com/nspcc-dev/neofs-api-go/pkg/token"
+	sessiontest "github.com/nspcc-dev/neofs-api-go/pkg/session/test"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
@@ -98,8 +98,7 @@ func TestContainerEncoding(t *testing.T) {
 }
 
 func TestContainer_SessionToken(t *testing.T) {
-	tok := token.NewSessionToken()
-	tok.SetID([]byte{1, 2, 3})
+	tok := sessiontest.Generate()
 
 	cnr := container.New()
 

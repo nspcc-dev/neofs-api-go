@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 )
 
@@ -36,14 +36,14 @@ func (a *Address) ToV2() *refs.Address {
 }
 
 // ContainerID returns container identifier.
-func (a *Address) ContainerID() *container.ID {
-	return container.NewIDFromV2(
+func (a *Address) ContainerID() *cid.ID {
+	return cid.NewFromV2(
 		(*refs.Address)(a).GetContainerID(),
 	)
 }
 
 // SetContainerID sets container identifier.
-func (a *Address) SetContainerID(id *container.ID) {
+func (a *Address) SetContainerID(id *cid.ID) {
 	(*refs.Address)(a).SetContainerID(id.ToV2())
 }
 
@@ -64,20 +64,20 @@ func (a *Address) Parse(s string) error {
 	var (
 		err   error
 		oid   = NewID()
-		cid   = container.NewID()
+		id    = cid.New()
 		parts = strings.Split(s, addressSeparator)
 	)
 
 	if len(parts) != addressParts {
 		return errInvalidAddressString
-	} else if err = cid.Parse(parts[0]); err != nil {
+	} else if err = id.Parse(parts[0]); err != nil {
 		return err
 	} else if err = oid.Parse(parts[1]); err != nil {
 		return err
 	}
 
 	a.SetObjectID(oid)
-	a.SetContainerID(cid)
+	a.SetContainerID(id)
 
 	return nil
 }

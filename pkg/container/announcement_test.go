@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
+	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
 )
@@ -12,18 +14,17 @@ import (
 func TestAnnouncement(t *testing.T) {
 	const epoch, usedSpace uint64 = 10, 100
 
-	cidValue := [32]byte{1, 2, 3}
-	cid := container.NewID()
-	cid.SetSHA256(cidValue)
+	cidValue := [sha256.Size]byte{1, 2, 3}
+	id := cidtest.GenerateWithChecksum(cidValue)
 
 	a := container.NewAnnouncement()
 	a.SetEpoch(epoch)
-	a.SetContainerID(cid)
+	a.SetContainerID(id)
 	a.SetUsedSpace(usedSpace)
 
 	require.Equal(t, epoch, a.Epoch())
 	require.Equal(t, usedSpace, a.UsedSpace())
-	require.Equal(t, cid, a.ContainerID())
+	require.Equal(t, id, a.ContainerID())
 
 	t.Run("test v2", func(t *testing.T) {
 		const newEpoch, newUsedSpace uint64 = 20, 200
@@ -45,7 +46,7 @@ func TestAnnouncement(t *testing.T) {
 
 		require.Equal(t, newEpoch, newA.Epoch())
 		require.Equal(t, newUsedSpace, newA.UsedSpace())
-		require.Equal(t, container.NewIDFromV2(newCID), newA.ContainerID())
+		require.Equal(t, cid.NewFromV2(newCID), newA.ContainerID())
 	})
 }
 
@@ -54,8 +55,7 @@ func TestUsedSpaceEncoding(t *testing.T) {
 	a.SetUsedSpace(13)
 	a.SetEpoch(666)
 
-	id := container.NewID()
-	id.SetSHA256([sha256.Size]byte{1, 2, 3})
+	id := cidtest.Generate()
 
 	a.SetContainerID(id)
 

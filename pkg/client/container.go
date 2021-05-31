@@ -8,6 +8,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/pkg/session"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
@@ -21,19 +22,19 @@ import (
 // Container contains methods related to container and ACL.
 type Container interface {
 	// PutContainer creates new container in the NeoFS network.
-	PutContainer(context.Context, *container.Container, ...CallOption) (*container.ID, error)
+	PutContainer(context.Context, *container.Container, ...CallOption) (*cid.ID, error)
 
 	// GetContainer returns container by ID.
-	GetContainer(context.Context, *container.ID, ...CallOption) (*container.Container, error)
+	GetContainer(context.Context, *cid.ID, ...CallOption) (*container.Container, error)
 
 	// ListContainers return container list with the provided owner.
-	ListContainers(context.Context, *owner.ID, ...CallOption) ([]*container.ID, error)
+	ListContainers(context.Context, *owner.ID, ...CallOption) ([]*cid.ID, error)
 
 	// DeleteContainer removes container from NeoFS network.
-	DeleteContainer(context.Context, *container.ID, ...CallOption) error
+	DeleteContainer(context.Context, *cid.ID, ...CallOption) error
 
 	// GetEACL returns extended ACL for a given container.
-	GetEACL(context.Context, *container.ID, ...CallOption) (*EACLWithSignature, error)
+	GetEACL(context.Context, *cid.ID, ...CallOption) (*EACLWithSignature, error)
 
 	// SetEACL sets extended ACL.
 	SetEACL(context.Context, *eacl.Table, ...CallOption) error
@@ -71,7 +72,7 @@ func (e EACLWithSignature) Signature() *pkg.Signature {
 	return e.table.Signature()
 }
 
-func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*container.ID, error) {
+func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*cid.ID, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -134,13 +135,13 @@ func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container,
 		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
 
-	return container.NewIDFromV2(resp.GetBody().GetContainerID()), nil
+	return cid.NewFromV2(resp.GetBody().GetContainerID()), nil
 }
 
 // GetContainer receives container structure through NeoFS API call.
 //
 // Returns error if container structure is received but does not meet NeoFS API specification.
-func (c *clientImpl) GetContainer(ctx context.Context, id *container.ID, opts ...CallOption) (*container.Container, error) {
+func (c *clientImpl) GetContainer(ctx context.Context, id *cid.ID, opts ...CallOption) (*container.Container, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -192,7 +193,7 @@ func (c *clientImpl) GetContainer(ctx context.Context, id *container.ID, opts ..
 // which checks if the structure of the resulting container matches its identifier.
 //
 // Returns an error if container does not match the identifier.
-func GetVerifiedContainerStructure(ctx context.Context, c Client, id *container.ID, opts ...CallOption) (*container.Container, error) {
+func GetVerifiedContainerStructure(ctx context.Context, c Client, id *cid.ID, opts ...CallOption) (*container.Container, error) {
 	cnr, err := c.GetContainer(ctx, id, opts...)
 	if err != nil {
 		return nil, err
@@ -205,7 +206,7 @@ func GetVerifiedContainerStructure(ctx context.Context, c Client, id *container.
 	return cnr, nil
 }
 
-func (c *clientImpl) ListContainers(ctx context.Context, ownerID *owner.ID, opts ...CallOption) ([]*container.ID, error) {
+func (c *clientImpl) ListContainers(ctx context.Context, ownerID *owner.ID, opts ...CallOption) ([]*cid.ID, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -245,15 +246,15 @@ func (c *clientImpl) ListContainers(ctx context.Context, ownerID *owner.ID, opts
 		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
 
-	result := make([]*container.ID, 0, len(resp.GetBody().GetContainerIDs()))
+	result := make([]*cid.ID, 0, len(resp.GetBody().GetContainerIDs()))
 	for _, cidV2 := range resp.GetBody().GetContainerIDs() {
-		result = append(result, container.NewIDFromV2(cidV2))
+		result = append(result, cid.NewFromV2(cidV2))
 	}
 
 	return result, nil
 }
 
-func (c *clientImpl) DeleteContainer(ctx context.Context, id *container.ID, opts ...CallOption) error {
+func (c *clientImpl) DeleteContainer(ctx context.Context, id *cid.ID, opts ...CallOption) error {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -301,7 +302,7 @@ func (c *clientImpl) DeleteContainer(ctx context.Context, id *container.ID, opts
 	return nil
 }
 
-func (c *clientImpl) GetEACL(ctx context.Context, id *container.ID, opts ...CallOption) (*EACLWithSignature, error) {
+func (c *clientImpl) GetEACL(ctx context.Context, id *cid.ID, opts ...CallOption) (*EACLWithSignature, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 

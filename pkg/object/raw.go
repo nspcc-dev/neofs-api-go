@@ -2,9 +2,9 @@ package object
 
 import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
-	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
-	"github.com/nspcc-dev/neofs-api-go/pkg/token"
+	"github.com/nspcc-dev/neofs-api-go/pkg/session"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 )
 
@@ -71,7 +71,7 @@ func (o *RawObject) SetPayloadSize(v uint64) {
 }
 
 // SetContainerID sets identifier of the related container.
-func (o *RawObject) SetContainerID(v *container.ID) {
+func (o *RawObject) SetContainerID(v *cid.ID) {
 	o.setContainerID(v)
 }
 
@@ -127,7 +127,7 @@ func (o *RawObject) SetParent(v *Object) {
 
 // SetSessionToken sets token of the session
 // within which object was created.
-func (o *RawObject) SetSessionToken(v *token.SessionToken) {
+func (o *RawObject) SetSessionToken(v *session.Token) {
 	o.setSessionToken(v)
 }
 

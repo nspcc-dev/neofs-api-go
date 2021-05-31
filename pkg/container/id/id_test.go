@@ -16,11 +16,9 @@ func randSHA256Checksum() (cs [sha256.Size]byte) {
 }
 
 func TestID_ToV2(t *testing.T) {
-	id := cid.New()
-
 	checksum := randSHA256Checksum()
 
-	id.SetSHA256(checksum)
+	id := cidtest.GenerateWithChecksum(checksum)
 
 	idV2 := id.ToV2()
 

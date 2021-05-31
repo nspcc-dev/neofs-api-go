@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/nspcc-dev/neofs-api-go/pkg"
+	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/pkg/session"
@@ -63,13 +64,13 @@ func NewContainerFromV2(c *container.Container) *Container {
 
 // CalculateID calculates container identifier
 // based on its structure.
-func CalculateID(c *Container) *ID {
+func CalculateID(c *Container) *cid.ID {
 	data, err := c.ToV2().StableMarshal(nil)
 	if err != nil {
 		panic(err)
 	}
 
-	id := NewID()
+	id := cid.New()
 	id.SetSHA256(sha256.Sum256(data))
 
 	return id
