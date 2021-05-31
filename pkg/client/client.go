@@ -1,6 +1,7 @@
 package client
 
 import (
+	"io"
 	"sync"
 
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
@@ -17,6 +18,12 @@ type Client interface {
 
 	// Raw must return underlying raw protobuf client.
 	Raw() *client.Client
+
+	// Conn must return underlying connection.
+	//
+	// Must return a non-nil result after the first RPC call
+	// completed without a connection error.
+	Conn() io.Closer
 }
 
 type clientImpl struct {
