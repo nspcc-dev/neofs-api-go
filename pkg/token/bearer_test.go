@@ -27,7 +27,7 @@ func TestBearerToken_Issuer(t *testing.T) {
 
 		bearerToken.SetEACLTable(eacl.NewTable())
 		require.NoError(t, bearerToken.SignToken(key))
-		require.Equal(t, bearerToken.Issuer().String(), ownerID.String())
+		require.True(t, ownerID.Equal(bearerToken.Issuer()))
 	})
 }
 

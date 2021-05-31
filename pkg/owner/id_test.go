@@ -1,7 +1,6 @@
 package owner_test
 
 import (
-	"crypto/rand"
 	"strconv"
 	"testing"
 
@@ -12,21 +11,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func randID(t *testing.T) *ID {
-	id := NewID()
-
-	wallet := new(NEO3Wallet)
-
-	_, err := rand.Read(wallet.Bytes())
-	require.NoError(t, err)
-
-	id.SetNeo3Wallet(wallet)
-
-	return id
-}
-
 func TestIDV2(t *testing.T) {
-	id := randID(t)
+	id := ownertest.Generate()
 
 	idV2 := id.ToV2()
 
@@ -73,7 +59,7 @@ func TestID_Parse(t *testing.T) {
 }
 
 func TestIDEncoding(t *testing.T) {
-	id := randID(t)
+	id := ownertest.Generate()
 
 	t.Run("binary", func(t *testing.T) {
 		data, err := id.Marshal()

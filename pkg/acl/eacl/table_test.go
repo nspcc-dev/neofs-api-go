@@ -6,26 +6,25 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
-	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
 	sessiontest "github.com/nspcc-dev/neofs-api-go/pkg/session/test"
 	"github.com/stretchr/testify/require"
 )
 
 func TestTable(t *testing.T) {
 	var (
-		v   pkg.Version
-		cid container.ID
+		v pkg.Version
 	)
 
 	sha := sha256.Sum256([]byte("container id"))
-	cid.SetSHA256(sha)
+	id := cidtest.GenerateWithChecksum(sha)
 
 	v.SetMajor(3)
 	v.SetMinor(2)
 
 	table := eacl.NewTable()
 	table.SetVersion(v)
-	table.SetCID(&cid)
+	table.SetCID(id)
 	table.AddRecord(eacl.CreateRecord(eacl.ActionAllow, eacl.OperationPut))
 
 	v2 := table.ToV2()
@@ -43,11 +42,10 @@ func TestTable(t *testing.T) {
 	})
 
 	t.Run("create table", func(t *testing.T) {
-		var cid = new(container.ID)
-		cid.SetSHA256(sha256.Sum256([]byte("container id")))
+		id := cidtest.Generate()
 
-		table := eacl.CreateTable(*cid)
-		require.Equal(t, cid, table.CID())
+		table := eacl.CreateTable(*id)
+		require.Equal(t, id, table.CID())
 		require.Equal(t, *pkg.SDKVersion(), table.Version())
 	})
 }

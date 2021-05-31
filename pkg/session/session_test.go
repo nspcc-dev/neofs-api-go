@@ -1,10 +1,9 @@
 package session_test
 
 import (
-	"crypto/rand"
 	"testing"
 
-	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
+	ownertest "github.com/nspcc-dev/neofs-api-go/pkg/owner/test"
 	"github.com/nspcc-dev/neofs-api-go/pkg/session"
 	sessiontest "github.com/nspcc-dev/neofs-api-go/pkg/session/test"
 	"github.com/stretchr/testify/require"
@@ -22,12 +21,7 @@ func TestSessionToken_SetID(t *testing.T) {
 func TestSessionToken_SetOwnerID(t *testing.T) {
 	token := session.NewToken()
 
-	w := new(owner.NEO3Wallet)
-	_, err := rand.Read(w.Bytes())
-	require.NoError(t, err)
-
-	ownerID := owner.NewID()
-	ownerID.SetNeo3Wallet(w)
+	ownerID := ownertest.Generate()
 
 	token.SetOwnerID(ownerID)
 

@@ -6,22 +6,15 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
-	"github.com/nspcc-dev/neofs-api-go/pkg/container"
-	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
-	"github.com/nspcc-dev/neofs-api-go/pkg/token"
+	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
+	ownertest "github.com/nspcc-dev/neofs-api-go/pkg/owner/test"
+	sessiontest "github.com/nspcc-dev/neofs-api-go/pkg/session/test"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/stretchr/testify/require"
 )
 
 func randID(t *testing.T) *ID {
 	id := NewID()
-	id.SetSHA256(randSHA256Checksum(t))
-
-	return id
-}
-
-func randCID(t *testing.T) *container.ID {
-	id := container.NewID()
 	id.SetSHA256(randSHA256Checksum(t))
 
 	return id
@@ -98,10 +91,7 @@ func TestRawObject_SetPayloadSize(t *testing.T) {
 func TestRawObject_SetContainerID(t *testing.T) {
 	obj := NewRaw()
 
-	checksum := randSHA256Checksum(t)
-
-	cid := container.NewID()
-	cid.SetSHA256(checksum)
+	cid := cidtest.Generate()
 
 	obj.SetContainerID(cid)
 
@@ -111,11 +101,7 @@ func TestRawObject_SetContainerID(t *testing.T) {
 func TestRawObject_SetOwnerID(t *testing.T) {
 	obj := NewRaw()
 
-	w := new(owner.NEO3Wallet)
-	_, _ = rand.Read(w.Bytes())
-
-	ownerID := owner.NewID()
-	ownerID.SetNeo3Wallet(w)
+	ownerID := ownertest.Generate()
 
 	obj.SetOwnerID(ownerID)
 
@@ -208,7 +194,7 @@ func TestRawObject_SetParent(t *testing.T) {
 
 	par := NewRaw()
 	par.SetID(randID(t))
-	par.SetContainerID(container.NewID())
+	par.SetContainerID(cidtest.Generate())
 	par.SetSignature(pkg.NewSignature())
 
 	parObj := par.Object()
@@ -230,8 +216,7 @@ func TestRawObject_ToV2(t *testing.T) {
 func TestRawObject_SetSessionToken(t *testing.T) {
 	obj := NewRaw()
 
-	tok := token.NewSessionToken()
-	tok.SetID([]byte{1, 2, 3})
+	tok := sessiontest.Generate()
 
 	obj.SetSessionToken(tok)
 

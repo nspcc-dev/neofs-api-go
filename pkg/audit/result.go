@@ -2,7 +2,7 @@ package audit
 
 import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
-	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/audit"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
@@ -87,15 +87,15 @@ func (r *Result) SetAuditEpoch(epoch uint64) {
 }
 
 // ContainerID returns container under audit.
-func (r *Result) ContainerID() *container.ID {
-	return container.NewIDFromV2(
+func (r *Result) ContainerID() *cid.ID {
+	return cid.NewFromV2(
 		(*audit.DataAuditResult)(r).
 			GetContainerID(),
 	)
 }
 
 // SetContainerID sets container under audit.
-func (r *Result) SetContainerID(id *container.ID) {
+func (r *Result) SetContainerID(id *cid.ID) {
 	(*audit.DataAuditResult)(r).
 		SetContainerID(id.ToV2())
 }

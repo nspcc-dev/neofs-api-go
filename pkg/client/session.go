@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
-	"github.com/nspcc-dev/neofs-api-go/pkg/token"
+	"github.com/nspcc-dev/neofs-api-go/pkg/session"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
 	v2session "github.com/nspcc-dev/neofs-api-go/v2/session"
@@ -16,12 +16,12 @@ import (
 // Session contains session-related methods.
 type Session interface {
 	// CreateSession creates session using provided expiration time.
-	CreateSession(context.Context, uint64, ...CallOption) (*token.SessionToken, error)
+	CreateSession(context.Context, uint64, ...CallOption) (*session.Token, error)
 }
 
 var errMalformedResponseBody = errors.New("malformed response body")
 
-func (c *clientImpl) CreateSession(ctx context.Context, expiration uint64, opts ...CallOption) (*token.SessionToken, error) {
+func (c *clientImpl) CreateSession(ctx context.Context, expiration uint64, opts ...CallOption) (*session.Token, error) {
 	// apply all available options
 	callOptions := c.defaultCallOptions()
 
@@ -65,7 +65,7 @@ func (c *clientImpl) CreateSession(ctx context.Context, expiration uint64, opts 
 		return nil, errMalformedResponseBody
 	}
 
-	sessionToken := token.NewSessionToken()
+	sessionToken := session.NewToken()
 	sessionToken.SetID(body.GetID())
 	sessionToken.SetSessionKey(body.GetSessionKey())
 	sessionToken.SetOwnerID(ownerID)

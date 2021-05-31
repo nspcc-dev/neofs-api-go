@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 	signer "github.com/nspcc-dev/neofs-api-go/util/signature"
@@ -106,7 +106,7 @@ type RangeChecksumParams struct {
 }
 
 type SearchObjectParams struct {
-	cid *container.ID
+	cid *cid.ID
 
 	filters object.SearchFilters
 }
@@ -1092,7 +1092,7 @@ func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksu
 	return res, nil
 }
 
-func (p *SearchObjectParams) WithContainerID(v *container.ID) *SearchObjectParams {
+func (p *SearchObjectParams) WithContainerID(v *cid.ID) *SearchObjectParams {
 	if p != nil {
 		p.cid = v
 	}
@@ -1100,7 +1100,7 @@ func (p *SearchObjectParams) WithContainerID(v *container.ID) *SearchObjectParam
 	return p
 }
 
-func (p *SearchObjectParams) ContainerID() *container.ID {
+func (p *SearchObjectParams) ContainerID() *cid.ID {
 	if p != nil {
 		return p.cid
 	}
