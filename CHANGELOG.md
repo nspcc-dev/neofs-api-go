@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.27.0] - 2021-06-03 - Seongmodo (석모도, 席毛島)
+
+### Added
+
+- Message structures related to Container service sessions in `v2` and `pkg`.
+- `session.Token` and `Signature` to `pkg/container.Container` and `pkg/acl/eacl.Table`.
+- `Conn` method of clients to get the underlying connection.
+- `WithTLSConfig` client option to specify TLS configuration.
+- `WithNetworkURIAddress` client option to specify URI of the remote server.
+- Generators of random container IDs, owner IDs and session tokens (for testing).
+
+### Replaced
+
+- `pkg/token.SessionToken` type to `pkg/session` package as `Token`. Old type is deprecated.
+- `pkg/container.ID` type to `pkg/container/id` package. Old type is deprecated.
+
+### Updated
+
+- NEO Go library to v0.95.1.
+
 ## [1.26.1] - 2021-05-19
 
 ### Changed
@@ -605,3 +625,4 @@ Initial public release
 [1.25.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.24.0...v1.25.0
 [1.26.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.25.0...v1.26.0
 [1.26.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.26.0...v1.26.1
+[1.27.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.26.1...v1.27.0
