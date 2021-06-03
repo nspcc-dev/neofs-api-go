@@ -215,7 +215,7 @@ func (x *ObjectSessionContext) GetAddress() *grpc.Address {
 	return nil
 }
 
-// Context information for Session Tokens related to ContainerService requests
+// Context information for Session Tokens related to ContainerService requests.
 type ContainerSessionContext struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -224,11 +224,9 @@ type ContainerSessionContext struct {
 	// Type of request for which the token is issued
 	Verb ContainerSessionContext_Verb `protobuf:"varint,1,opt,name=verb,proto3,enum=neo.fs.v2.session.ContainerSessionContext_Verb" json:"verb,omitempty"`
 	// Spreads the action to all owner containers.
-	//
 	// If set, container_id field is ignored.
 	Wildcard bool `protobuf:"varint,2,opt,name=wildcard,proto3" json:"wildcard,omitempty"`
 	// Particular container to which the action applies.
-	//
 	// Ignored if wildcard flag is set.
 	ContainerId *grpc.ContainerID `protobuf:"bytes,3,opt,name=container_id,json=containerID,proto3" json:"container_id,omitempty"`
 }
