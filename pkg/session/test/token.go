@@ -32,6 +32,9 @@ func Generate() *session.Token {
 	tok.SetID(uid)
 	tok.SetOwnerID(ownerID)
 	tok.SetSessionKey(keyBin)
+	tok.SetExp(11)
+	tok.SetNbf(22)
+	tok.SetIat(33)
 
 	return tok
 }
