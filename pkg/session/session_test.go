@@ -132,3 +132,33 @@ func TestGetContainerContext(t *testing.T) {
 		require.Nil(t, session.GetContainerContext(tok))
 	}
 }
+
+func TestToken_Exp(t *testing.T) {
+	tok := session.NewToken()
+
+	const exp = 11
+
+	tok.SetExp(exp)
+
+	require.EqualValues(t, exp, tok.Exp())
+}
+
+func TestToken_Nbf(t *testing.T) {
+	tok := session.NewToken()
+
+	const nbf = 22
+
+	tok.SetNbf(nbf)
+
+	require.EqualValues(t, nbf, tok.Nbf())
+}
+
+func TestToken_Iat(t *testing.T) {
+	tok := session.NewToken()
+
+	const iat = 33
+
+	tok.SetIat(iat)
+
+	require.EqualValues(t, iat, tok.Iat())
+}
