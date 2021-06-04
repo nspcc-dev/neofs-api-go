@@ -89,6 +89,63 @@ func (t *Token) SetSessionKey(v []byte) {
 	})
 }
 
+func (t *Token) setLifetimeField(f func(*session.TokenLifetime)) {
+	t.setBodyField(func(body *session.SessionTokenBody) {
+		lt := body.GetLifetime()
+		if lt == nil {
+			lt = new(session.TokenLifetime)
+			body.SetLifetime(lt)
+		}
+
+		f(lt)
+	})
+}
+
+// Exp returns epoch number of the token expiration.
+func (t *Token) Exp() uint64 {
+	return (*session.SessionToken)(t).
+		GetBody().
+		GetLifetime().
+		GetExp()
+}
+
+// SetExp sets epoch number of the token expiration.
+func (t *Token) SetExp(exp uint64) {
+	t.setLifetimeField(func(lt *session.TokenLifetime) {
+		lt.SetExp(exp)
+	})
+}
+
+// Nbf returns starting epoch number of the token.
+func (t *Token) Nbf() uint64 {
+	return (*session.SessionToken)(t).
+		GetBody().
+		GetLifetime().
+		GetNbf()
+}
+
+// SetNbf sets starting epoch number of the token.
+func (t *Token) SetNbf(nbf uint64) {
+	t.setLifetimeField(func(lt *session.TokenLifetime) {
+		lt.SetNbf(nbf)
+	})
+}
+
+// Iat returns starting epoch number of the token.
+func (t *Token) Iat() uint64 {
+	return (*session.SessionToken)(t).
+		GetBody().
+		GetLifetime().
+		GetIat()
+}
+
+// SetIat sets the number of the epoch in which the token was issued.
+func (t *Token) SetIat(iat uint64) {
+	t.setLifetimeField(func(lt *session.TokenLifetime) {
+		lt.SetIat(iat)
+	})
+}
+
 // Sign calculates and writes signature of the Token data.
 //
 // Returns signature calculation errors.
