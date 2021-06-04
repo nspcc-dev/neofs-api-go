@@ -82,7 +82,7 @@ func (t *Token) SessionKey() []byte {
 }
 
 // SetSessionKey sets public key of the session
-// // in a binary format.
+// in a binary format.
 func (t *Token) SetSessionKey(v []byte) {
 	t.setBodyField(func(body *session.SessionTokenBody) {
 		body.SetSessionKey(v)
