@@ -37,3 +37,9 @@ func (o *Object) ToV2() *object.Object {
 
 	return nil
 }
+
+// MarshalHeaderJSON marshals object's header
+// into JSON format.
+func (o *Object) MarshalHeaderJSON() ([]byte, error) {
+	return (*object.Object)(o.rwObject).GetHeader().MarshalJSON()
+}
