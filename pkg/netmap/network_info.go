@@ -16,6 +16,10 @@ func NewNetworkInfoFromV2(iV2 *netmap.NetworkInfo) *NetworkInfo {
 }
 
 // NewNetworkInfo creates and initializes blank NetworkInfo.
+//
+// Defaults:
+//  - curEpoch: 0;
+//  - magicNum: 0.
 func NewNetworkInfo() *NetworkInfo {
 	return NewNetworkInfoFromV2(new(netmap.NetworkInfo))
 }
