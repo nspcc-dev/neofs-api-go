@@ -20,6 +20,9 @@ func NewFromV2(idV2 *refs.ContainerID) *ID {
 }
 
 // New creates and initializes blank ID.
+//
+// Defaults:
+//  - value: nil.
 func New() *ID {
 	return NewFromV2(new(refs.ContainerID))
 }
@@ -31,7 +34,7 @@ func (id *ID) SetSHA256(v [sha256.Size]byte) {
 
 // ToV2 returns the v2 container ID message.
 //
-// Nil Result converts to nil.
+// Nil ID converts to nil.
 func (id *ID) ToV2() *refs.ContainerID {
 	return (*refs.ContainerID)(id)
 }
