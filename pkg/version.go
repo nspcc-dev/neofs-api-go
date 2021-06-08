@@ -9,7 +9,7 @@ import (
 // Version represents v2-compatible version.
 type Version refs.Version
 
-const sdkMjr, sdkMnr = 2, 6
+const sdkMjr, sdkMnr = 2, 7
 
 // NewVersionFromV2 wraps v2 Version message to Version.
 //
