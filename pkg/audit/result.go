@@ -19,6 +19,17 @@ func NewResultFromV2(aV2 *audit.DataAuditResult) *Result {
 }
 
 // New creates and initializes blank Result.
+//
+// Defaults:
+//  - version: pkg.SDKVersion();
+//  - complete: false;
+//  - cid: nil;
+//  - pubKey: nil;
+//  - passSG, failSG: nil;
+//  - failNodes, passNodes: nil;
+//  - hit, miss, fail: 0;
+//  - requests, retries: 0;
+//  - auditEpoch: 0.
 func NewResult() *Result {
 	r := NewResultFromV2(new(audit.DataAuditResult))
 	r.SetVersion(pkg.SDKVersion())

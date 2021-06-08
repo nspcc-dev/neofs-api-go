@@ -99,6 +99,50 @@ func TestResult_ToV2(t *testing.T) {
 
 		require.Nil(t, x.ToV2())
 	})
+
+	t.Run("default values", func(t *testing.T) {
+		result := audit.NewResult()
+
+		// check initial values
+		require.Equal(t, pkg.SDKVersion(), result.Version())
+
+		require.False(t, result.Complete())
+
+		require.Nil(t, result.ContainerID())
+		require.Nil(t, result.PublicKey())
+		require.Nil(t, result.PassSG())
+		require.Nil(t, result.FailSG())
+		require.Nil(t, result.PassNodes())
+		require.Nil(t, result.FailNodes())
+
+		require.Zero(t, result.Hit())
+		require.Zero(t, result.Miss())
+		require.Zero(t, result.Fail())
+		require.Zero(t, result.Requests())
+		require.Zero(t, result.Retries())
+		require.Zero(t, result.AuditEpoch())
+
+		// convert to v2 message
+		resultV2 := result.ToV2()
+
+		require.Equal(t, pkg.SDKVersion().ToV2(), resultV2.GetVersion())
+
+		require.False(t, resultV2.GetComplete())
+
+		require.Nil(t, resultV2.GetContainerID())
+		require.Nil(t, resultV2.GetPublicKey())
+		require.Nil(t, resultV2.GetPassSG())
+		require.Nil(t, resultV2.GetFailSG())
+		require.Nil(t, resultV2.GetPassNodes())
+		require.Nil(t, resultV2.GetFailNodes())
+
+		require.Zero(t, resultV2.GetHit())
+		require.Zero(t, resultV2.GetMiss())
+		require.Zero(t, resultV2.GetFail())
+		require.Zero(t, resultV2.GetRequests())
+		require.Zero(t, resultV2.GetRetries())
+		require.Zero(t, resultV2.GetAuditEpoch())
+	})
 }
 
 func TestNewResultFromV2(t *testing.T) {
