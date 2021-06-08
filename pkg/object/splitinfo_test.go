@@ -68,3 +68,21 @@ func TestSplitInfo_ToV2(t *testing.T) {
 		require.Nil(t, x.ToV2())
 	})
 }
+
+func TestNewSplitInfo(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		si := object.NewSplitInfo()
+
+		// check initial values
+		require.Nil(t, si.SplitID())
+		require.Nil(t, si.LastPart())
+		require.Nil(t, si.Link())
+
+		// convert to v2 message
+		siV2 := si.ToV2()
+
+		require.Nil(t, siV2.GetSplitID())
+		require.Nil(t, siV2.GetLastPart())
+		require.Nil(t, siV2.GetLink())
+	})
+}
