@@ -20,6 +20,17 @@ type Container struct {
 	sig *pkg.Signature
 }
 
+// New creates, initializes and returns blank Container instance.
+//
+// Defaults:
+//  - token: nil;
+//  - sig: nil;
+//  - basicACL: acl.PrivateBasicRule;
+//  - version: nil;
+//  - nonce: random UUID;
+//  - attr: nil;
+//  - policy: nil;
+//  - ownerID: nil.
 func New(opts ...NewOption) *Container {
 	cnrOptions := defaultContainerOptions()
 
