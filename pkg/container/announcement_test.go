@@ -7,6 +7,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
 	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
+	containertest "github.com/nspcc-dev/neofs-api-go/pkg/container/test"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
 )
@@ -51,13 +52,7 @@ func TestAnnouncement(t *testing.T) {
 }
 
 func TestUsedSpaceEncoding(t *testing.T) {
-	a := container.NewAnnouncement()
-	a.SetUsedSpace(13)
-	a.SetEpoch(666)
-
-	id := cidtest.Generate()
-
-	a.SetContainerID(id)
+	a := containertest.UsedSpaceAnnouncement()
 
 	t.Run("binary", func(t *testing.T) {
 		data, err := a.Marshal()
