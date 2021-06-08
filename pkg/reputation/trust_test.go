@@ -199,3 +199,52 @@ func TestGlobalTrust_ToV2(t *testing.T) {
 		require.Nil(t, x.ToV2())
 	})
 }
+
+func TestNewTrust(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		trust := reputation.NewTrust()
+
+		// check initial values
+		require.Zero(t, trust.Value())
+		require.Nil(t, trust.Peer())
+
+		// convert to v2 message
+		trustV2 := trust.ToV2()
+
+		require.Zero(t, trustV2.GetValue())
+		require.Nil(t, trustV2.GetPeer())
+	})
+}
+
+func TestNewPeerToPeerTrust(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		trust := reputation.NewPeerToPeerTrust()
+
+		// check initial values
+		require.Nil(t, trust.Trust())
+		require.Nil(t, trust.TrustingPeer())
+
+		// convert to v2 message
+		trustV2 := trust.ToV2()
+
+		require.Nil(t, trustV2.GetTrust())
+		require.Nil(t, trustV2.GetTrustingPeer())
+	})
+}
+
+func TestNewGlobalTrust(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		trust := reputation.NewGlobalTrust()
+
+		// check initial values
+		require.Nil(t, trust.Manager())
+		require.Nil(t, trust.Trust())
+
+		require.Equal(t, pkg.SDKVersion().String(), trust.Version().String())
+
+		// convert to v2 message
+		trustV2 := trust.ToV2()
+
+		require.Nil(t, trustV2.GetBody())
+	})
+}
