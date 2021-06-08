@@ -13,11 +13,15 @@ func NewPlacementPolicy() *PlacementPolicy {
 }
 
 // NewPlacementPolicyFromV2 converts v2 PlacementPolicy to PlacementPolicy.
+//
+// Nil netmap.PlacementPolicy converts to nil.
 func NewPlacementPolicyFromV2(f *netmap.PlacementPolicy) *PlacementPolicy {
 	return (*PlacementPolicy)(f)
 }
 
 // ToV2 converts PlacementPolicy to v2 PlacementPolicy.
+//
+// Nil PlacementPolicy converts to nil.
 func (p *PlacementPolicy) ToV2() *netmap.PlacementPolicy {
 	return (*netmap.PlacementPolicy)(p)
 }
