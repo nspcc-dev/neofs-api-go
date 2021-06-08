@@ -5,6 +5,7 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/audit"
+	audittest "github.com/nspcc-dev/neofs-api-go/pkg/audit/test"
 	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
 	objecttest "github.com/nspcc-dev/neofs-api-go/pkg/object/test"
@@ -38,11 +39,11 @@ func TestResult(t *testing.T) {
 	r.SetRetries(retries)
 	require.Equal(t, retries, r.Retries())
 
-	passSG := []*object.ID{objecttest.GenerateID(), objecttest.GenerateID()}
+	passSG := []*object.ID{objecttest.ID(), objecttest.ID()}
 	r.SetPassSG(passSG)
 	require.Equal(t, passSG, r.PassSG())
 
-	failSG := []*object.ID{objecttest.GenerateID(), objecttest.GenerateID()}
+	failSG := []*object.ID{objecttest.ID(), objecttest.ID()}
 	r.SetFailSG(failSG)
 	require.Equal(t, failSG, r.FailSG())
 
@@ -68,19 +69,7 @@ func TestResult(t *testing.T) {
 }
 
 func TestStorageGroupEncoding(t *testing.T) {
-	r := audit.NewResult()
-	r.SetAuditEpoch(13)
-	r.SetContainerID(cidtest.Generate())
-	r.SetPublicKey([]byte{1, 2, 3})
-	r.SetPassSG([]*object.ID{objecttest.GenerateID(), objecttest.GenerateID()})
-	r.SetFailSG([]*object.ID{objecttest.GenerateID(), objecttest.GenerateID()})
-	r.SetRequests(3)
-	r.SetRetries(2)
-	r.SetHit(1)
-	r.SetMiss(2)
-	r.SetFail(3)
-	r.SetPassNodes([][]byte{{1}, {2}})
-	r.SetFailNodes([][]byte{{3}, {4}})
+	r := audittest.Generate()
 
 	t.Run("binary", func(t *testing.T) {
 		data, err := r.Marshal()
