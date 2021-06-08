@@ -64,3 +64,19 @@ func TestAttribute_ToV2(t *testing.T) {
 		require.Nil(t, x.ToV2())
 	})
 }
+
+func TestNewAttribute(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		a := NewAttribute()
+
+		// check initial values
+		require.Empty(t, a.Key())
+		require.Empty(t, a.Value())
+
+		// convert to v2 message
+		aV2 := a.ToV2()
+
+		require.Empty(t, aV2.GetKey())
+		require.Empty(t, aV2.GetValue())
+	})
+}
