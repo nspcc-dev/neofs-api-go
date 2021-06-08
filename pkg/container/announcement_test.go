@@ -72,6 +72,22 @@ func TestUsedSpaceAnnouncement_ToV2(t *testing.T) {
 
 		require.Nil(t, x.ToV2())
 	})
+
+	t.Run("default values", func(t *testing.T) {
+		announcement := container.NewAnnouncement()
+
+		// check initial values
+		require.Zero(t, announcement.Epoch())
+		require.Zero(t, announcement.UsedSpace())
+		require.Nil(t, announcement.ContainerID())
+
+		// convert to v2 message
+		announcementV2 := announcement.ToV2()
+
+		require.Zero(t, announcementV2.GetEpoch())
+		require.Zero(t, announcementV2.GetUsedSpace())
+		require.Nil(t, announcementV2.GetContainerID())
+	})
 }
 
 func TestNewAnnouncementFromV2(t *testing.T) {
