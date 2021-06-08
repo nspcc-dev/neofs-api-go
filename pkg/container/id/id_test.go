@@ -33,6 +33,14 @@ func TestID_ToV2(t *testing.T) {
 
 		require.Nil(t, x.ToV2())
 	})
+
+	t.Run("default values", func(t *testing.T) {
+		cid := cid.New()
+
+		// convert to v2 message
+		cidV2 := cid.ToV2()
+		require.Nil(t, cidV2.GetValue())
+	})
 }
 
 func TestID_Equal(t *testing.T) {
@@ -49,11 +57,19 @@ func TestID_Equal(t *testing.T) {
 }
 
 func TestID_String(t *testing.T) {
-	id := cidtest.Generate()
-	id2 := cid.New()
+	t.Run("Parse/String", func(t *testing.T) {
+		id := cidtest.Generate()
+		id2 := cid.New()
 
-	require.NoError(t, id2.Parse(id.String()))
-	require.Equal(t, id, id2)
+		require.NoError(t, id2.Parse(id.String()))
+		require.Equal(t, id, id2)
+	})
+
+	t.Run("nil", func(t *testing.T) {
+		id := cid.New()
+
+		require.Empty(t, id.String())
+	})
 }
 
 func TestContainerIDEncoding(t *testing.T) {
