@@ -179,3 +179,24 @@ func TestToken_ToV2(t *testing.T) {
 		require.Nil(t, x.ToV2())
 	})
 }
+
+func TestNewToken(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		token := session.NewToken()
+
+		// check initial values
+		require.Nil(t, token.Signature())
+		require.Nil(t, token.OwnerID())
+		require.Nil(t, token.SessionKey())
+		require.Nil(t, token.ID())
+		require.Zero(t, token.Exp())
+		require.Zero(t, token.Iat())
+		require.Zero(t, token.Nbf())
+
+		// convert to v2 message
+		tokenV2 := token.ToV2()
+
+		require.Nil(t, tokenV2.GetSignature())
+		require.Nil(t, tokenV2.GetBody())
+	})
+}

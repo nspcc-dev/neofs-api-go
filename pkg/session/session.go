@@ -24,6 +24,15 @@ func NewTokenFromV2(tV2 *session.SessionToken) *Token {
 }
 
 // NewToken creates and returns blank Token.
+//
+// Defaults:
+//  - body: nil;
+//  - id: nil;
+//  - ownerId: nil;
+//  - sessionKey: nil;
+//  - exp: 0;
+//  - iat: 0;
+//  - nbf: 0;
 func NewToken() *Token {
 	return NewTokenFromV2(new(session.SessionToken))
 }
