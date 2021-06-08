@@ -3,6 +3,7 @@ package pkg
 import (
 	"testing"
 
+	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/stretchr/testify/require"
 )
 
@@ -22,4 +23,20 @@ func TestXHeader(t *testing.T) {
 
 	require.Equal(t, key, xV2.GetKey())
 	require.Equal(t, val, xV2.GetValue())
+}
+
+func TestNewXHeaderFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *session.XHeader
+
+		require.Nil(t, NewXHeaderFromV2(x))
+	})
+}
+
+func TestXHeader_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *XHeader
+
+		require.Nil(t, x.ToV2())
+	})
 }
