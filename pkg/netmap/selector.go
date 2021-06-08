@@ -156,6 +156,13 @@ func (c *Context) getSelectionBase(s *Selector) []nodeAttrPair {
 }
 
 // NewSelector creates and returns new Selector instance.
+//
+// Defaults:
+//  - name: "";
+//  - attribute: "";
+//  - filter: "";
+//  - clause: ClauseUnspecified;
+//  - count: 0.
 func NewSelector() *Selector {
 	return NewSelectorFromV2(new(netmap.Selector))
 }
