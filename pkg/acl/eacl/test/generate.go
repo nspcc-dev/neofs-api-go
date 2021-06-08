@@ -4,7 +4,6 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
 	ownertest "github.com/nspcc-dev/neofs-api-go/pkg/owner/test"
-	sessiontest "github.com/nspcc-dev/neofs-api-go/pkg/session/test"
 	refstest "github.com/nspcc-dev/neofs-api-go/pkg/test"
 )
 
@@ -38,11 +37,9 @@ func Table() *eacl.Table {
 	x := eacl.NewTable()
 
 	x.SetCID(cidtest.Generate())
-	x.SetSessionToken(sessiontest.Generate())
 	x.AddRecord(Record())
 	x.AddRecord(Record())
 	x.SetVersion(*refstest.Version())
-	x.SetSignature(refstest.Signature())
 
 	return x
 }
