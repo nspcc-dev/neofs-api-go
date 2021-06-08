@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
+	testv2 "github.com/nspcc-dev/neofs-api-go/v2/netmap/test"
 	"github.com/stretchr/testify/require"
 )
 
@@ -16,13 +17,19 @@ func testReplica() *Replica {
 }
 
 func TestReplicaFromV2(t *testing.T) {
-	rV2 := new(netmap.Replica)
-	rV2.SetCount(3)
-	rV2.SetSelector("selector")
+	t.Run("from nil", func(t *testing.T) {
+		var x *netmap.Replica
 
-	r := NewReplicaFromV2(rV2)
+		require.Nil(t, NewReplicaFromV2(x))
+	})
 
-	require.Equal(t, rV2, r.ToV2())
+	t.Run("from non-nil", func(t *testing.T) {
+		rV2 := testv2.GenerateReplica(false)
+
+		r := NewReplicaFromV2(rV2)
+
+		require.Equal(t, rV2, r.ToV2())
+	})
 }
 
 func TestReplica_Count(t *testing.T) {
@@ -64,5 +71,13 @@ func TestReplicaEncoding(t *testing.T) {
 		require.NoError(t, r2.UnmarshalJSON(data))
 
 		require.Equal(t, r, r2)
+	})
+}
+
+func TestReplica_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *Replica
+
+		require.Nil(t, x.ToV2())
 	})
 }
