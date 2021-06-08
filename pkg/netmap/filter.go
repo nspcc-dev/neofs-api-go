@@ -153,11 +153,15 @@ func NewFilter() *Filter {
 }
 
 // NewFilterFromV2 converts v2 Filter to Filter.
+//
+// Nil netmap.Filter converts to nil.
 func NewFilterFromV2(f *netmap.Filter) *Filter {
 	return (*Filter)(f)
 }
 
 // ToV2 converts Filter to v2 Filter.
+//
+// Nil Filter converts to nil.
 func (f *Filter) ToV2() *netmap.Filter {
 	return (*netmap.Filter)(f)
 }

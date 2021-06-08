@@ -213,6 +213,18 @@ func testFilter() *Filter {
 }
 
 func TestFilterFromV2(t *testing.T) {
+	t.Run("nil from V2", func(t *testing.T) {
+		var x *netmap.Filter
+
+		require.Nil(t, NewFilterFromV2(x))
+	})
+
+	t.Run("nil to V2", func(t *testing.T) {
+		var x *Filter
+
+		require.Nil(t, x.ToV2())
+	})
+
 	fV2 := new(netmap.Filter)
 	fV2.SetOp(netmap.GE)
 	fV2.SetName("name")
