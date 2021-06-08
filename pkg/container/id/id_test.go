@@ -7,6 +7,7 @@ import (
 
 	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
 )
 
@@ -16,13 +17,22 @@ func randSHA256Checksum() (cs [sha256.Size]byte) {
 }
 
 func TestID_ToV2(t *testing.T) {
-	checksum := randSHA256Checksum()
+	t.Run("non-nil", func(t *testing.T) {
+		checksum := randSHA256Checksum()
 
-	id := cidtest.GenerateWithChecksum(checksum)
+		id := cidtest.GenerateWithChecksum(checksum)
 
-	idV2 := id.ToV2()
+		idV2 := id.ToV2()
 
-	require.Equal(t, id, cid.NewFromV2(idV2))
+		require.Equal(t, id, cid.NewFromV2(idV2))
+		require.Equal(t, checksum[:], idV2.GetValue())
+	})
+
+	t.Run("nil", func(t *testing.T) {
+		var x *cid.ID
+
+		require.Nil(t, x.ToV2())
+	})
 }
 
 func TestID_Equal(t *testing.T) {
@@ -67,5 +77,13 @@ func TestContainerIDEncoding(t *testing.T) {
 		require.NoError(t, a2.UnmarshalJSON(data))
 
 		require.Equal(t, id, a2)
+	})
+}
+
+func TestNewFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *refs.ContainerID
+
+		require.Nil(t, cid.NewFromV2(x))
 	})
 }
