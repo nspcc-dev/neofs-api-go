@@ -7,6 +7,7 @@ import (
 	"github.com/mr-tron/base58"
 	. "github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	ownertest "github.com/nspcc-dev/neofs-api-go/pkg/owner/test"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
@@ -98,4 +99,20 @@ func TestID_Equal(t *testing.T) {
 	require.False(t, id1.Equal(
 		ownertest.GenerateFromBytes(data3),
 	))
+}
+
+func TestNewIDFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *refs.OwnerID
+
+		require.Nil(t, NewIDFromV2(x))
+	})
+}
+
+func TestID_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *ID
+
+		require.Nil(t, x.ToV2())
+	})
 }
