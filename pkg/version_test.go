@@ -3,10 +3,11 @@ package pkg
 import (
 	"testing"
 
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewVersionFromV2(t *testing.T) {
+func TestNewVersion(t *testing.T) {
 	v := NewVersion()
 
 	var mjr, mnr uint32 = 1, 2
@@ -86,5 +87,21 @@ func TestVersionEncoding(t *testing.T) {
 		require.NoError(t, v2.UnmarshalJSON(data))
 
 		require.Equal(t, v, v2)
+	})
+}
+
+func TestNewVersionFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *refs.Version
+
+		require.Nil(t, NewVersionFromV2(x))
+	})
+}
+
+func TestVersion_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *Version
+
+		require.Nil(t, x.ToV2())
 	})
 }
