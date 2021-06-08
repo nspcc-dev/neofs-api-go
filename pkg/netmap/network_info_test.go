@@ -51,3 +51,17 @@ func TestNetworkInfoEncoding(t *testing.T) {
 		require.Equal(t, i, i2)
 	})
 }
+
+func TestNewNetworkInfoFromV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		require.Nil(t, NewNetworkInfoFromV2(nil))
+	})
+}
+
+func TestNetworkInfo_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *NetworkInfo
+
+		require.Nil(t, x.ToV2())
+	})
+}
