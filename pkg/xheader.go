@@ -8,6 +8,8 @@ import (
 type XHeader session.XHeader
 
 // NewXHeaderFromV2 wraps v2 XHeader message to XHeader.
+//
+// Nil session.XHeader converts to nil.
 func NewXHeaderFromV2(v *session.XHeader) *XHeader {
 	return (*XHeader)(v)
 }
@@ -18,6 +20,8 @@ func NewXHeader() *XHeader {
 }
 
 // ToV2 converts XHeader to v2 XHeader message.
+//
+// Nil XHeader converts to nil.
 func (x *XHeader) ToV2() *session.XHeader {
 	return (*session.XHeader)(x)
 }
