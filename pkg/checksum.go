@@ -34,9 +34,13 @@ func NewChecksumFromV2(cV2 *refs.Checksum) *Checksum {
 	return (*Checksum)(cV2)
 }
 
-// NewVersion creates and initializes blank Version.
+// NewChecksum creates and initializes blank Checksum.
 //
-// Works similar as NewVersionFromV2(new(Version)).
+// Works similar as NewChecksumFromV2(new(Checksum)).
+//
+// Defaults:
+//  - sum: nil;
+//  - type: ChecksumUnknown.
 func NewChecksum() *Checksum {
 	return NewChecksumFromV2(new(refs.Checksum))
 }

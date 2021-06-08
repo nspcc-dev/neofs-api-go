@@ -115,3 +115,19 @@ func TestChecksum_ToV2(t *testing.T) {
 		require.Nil(t, x.ToV2())
 	})
 }
+
+func TestNewChecksum(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		chs := NewChecksum()
+
+		// check initial values
+		require.Equal(t, ChecksumUnknown, chs.Type())
+		require.Nil(t, chs.Sum())
+
+		// convert to v2 message
+		chsV2 := chs.ToV2()
+
+		require.Equal(t, refs.UnknownChecksum, chsV2.GetType())
+		require.Nil(t, chsV2.GetSum())
+	})
+}
