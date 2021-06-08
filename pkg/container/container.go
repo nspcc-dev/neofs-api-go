@@ -44,7 +44,14 @@ func New(opts ...NewOption) *Container {
 	return cnr
 }
 
+// ToV2 returns the v2 Container message.
+//
+// Nil Container converts to nil.
 func (c *Container) ToV2() *container.Container {
+	if c == nil {
+		return nil
+	}
+
 	return &c.v2
 }
 

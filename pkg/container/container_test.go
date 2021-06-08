@@ -91,3 +91,11 @@ func TestContainer_Signature(t *testing.T) {
 
 	require.Equal(t, sig, cnr.Signature())
 }
+
+func TestContainer_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *container.Container
+
+		require.Nil(t, x.ToV2())
+	})
+}
