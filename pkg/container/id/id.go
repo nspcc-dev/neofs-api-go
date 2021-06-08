@@ -13,6 +13,8 @@ import (
 type ID refs.ContainerID
 
 // NewFromV2 wraps v2 ContainerID message to ID.
+//
+// Nil refs.ContainerID converts to nil.
 func NewFromV2(idV2 *refs.ContainerID) *ID {
 	return (*ID)(idV2)
 }
@@ -28,6 +30,8 @@ func (id *ID) SetSHA256(v [sha256.Size]byte) {
 }
 
 // ToV2 returns the v2 container ID message.
+//
+// Nil Result converts to nil.
 func (id *ID) ToV2() *refs.ContainerID {
 	return (*refs.ContainerID)(id)
 }
