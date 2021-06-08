@@ -116,3 +116,22 @@ func TestID_ToV2(t *testing.T) {
 		require.Nil(t, x.ToV2())
 	})
 }
+
+func TestID_String(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		id := NewID()
+
+		require.Empty(t, id.String())
+	})
+}
+
+func TestNewID(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		id := NewID()
+
+		// convert to v2 message
+		idV2 := id.ToV2()
+
+		require.Nil(t, idV2.GetValue())
+	})
+}
