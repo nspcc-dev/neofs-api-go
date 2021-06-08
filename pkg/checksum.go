@@ -28,6 +28,8 @@ const (
 )
 
 // NewChecksumFromV2 wraps v2 Checksum message to Checksum.
+//
+// Nil refs.Checksum converts to nil.
 func NewChecksumFromV2(cV2 *refs.Checksum) *Checksum {
 	return (*Checksum)(cV2)
 }
@@ -72,6 +74,9 @@ func (c *Checksum) SetTillichZemor(v [64]byte) {
 	checksum.SetSum(v[:])
 }
 
+// ToV2 converts Checksum to v2 Checksum message.
+//
+// Nil Checksum converts to nil.
 func (c *Checksum) ToV2() *refs.Checksum {
 	return (*refs.Checksum)(c)
 }
