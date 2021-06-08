@@ -8,6 +8,8 @@ import (
 type Attribute object.Attribute
 
 // NewAttributeFromV2 wraps v2 Attribute message to Attribute.
+//
+// Nil object.Attribute converts to nil.
 func NewAttributeFromV2(aV2 *object.Attribute) *Attribute {
 	return (*Attribute)(aV2)
 }
@@ -40,6 +42,8 @@ func (a *Attribute) SetValue(v string) {
 }
 
 // ToV2 converts Attribute to v2 Attribute message.
+//
+// Nil Attribute converts to nil.
 func (a *Attribute) ToV2() *object.Attribute {
 	return (*object.Attribute)(a)
 }
