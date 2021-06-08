@@ -28,6 +28,10 @@ func NewAddressFromV2(aV2 *refs.Address) *Address {
 // NewAddress creates and initializes blank Address.
 //
 // Works similar as NewAddressFromV2(new(Address)).
+//
+// Defaults:
+// 	- cid: nil;
+//	- oid: nil.
 func NewAddress() *Address {
 	return NewAddressFromV2(new(refs.Address))
 }

@@ -101,3 +101,19 @@ func TestAddress_ToV2(t *testing.T) {
 		require.Nil(t, x.ToV2())
 	})
 }
+
+func TestNewAddress(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		a := NewAddress()
+
+		// check initial values
+		require.Nil(t, a.ContainerID())
+		require.Nil(t, a.ObjectID())
+
+		// convert to v2 message
+		aV2 := a.ToV2()
+
+		require.Nil(t, aV2.GetContainerID())
+		require.Nil(t, aV2.GetObjectID())
+	})
+}
