@@ -6,6 +6,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/pkg/token"
+	tokentest "github.com/nspcc-dev/neofs-api-go/pkg/token/test"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
@@ -32,8 +33,7 @@ func TestBearerToken_Issuer(t *testing.T) {
 }
 
 func TestFilterEncoding(t *testing.T) {
-	f := token.NewBearerToken()
-	f.SetLifetime(1, 2, 3)
+	f := tokentest.Generate()
 
 	t.Run("binary", func(t *testing.T) {
 		data, err := f.Marshal()
