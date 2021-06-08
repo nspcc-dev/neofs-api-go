@@ -8,6 +8,8 @@ import (
 type Signature refs.Signature
 
 // NewSignatureFromV2 wraps v2 Signature message to Signature.
+//
+// Nil refs.Signature converts to nil.
 func NewSignatureFromV2(sV2 *refs.Signature) *Signature {
 	return (*Signature)(sV2)
 }
@@ -39,6 +41,9 @@ func (s *Signature) SetSign(v []byte) {
 	(*refs.Signature)(s).SetSign(v)
 }
 
+// ToV2 converts Signature to v2 Signature message.
+//
+// Nil Signature converts to nil.
 func (s *Signature) ToV2() *refs.Signature {
 	return (*refs.Signature)(s)
 }

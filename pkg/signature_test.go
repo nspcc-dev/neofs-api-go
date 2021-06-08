@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -29,5 +30,21 @@ func TestSignatureEncoding(t *testing.T) {
 		require.NoError(t, s2.UnmarshalJSON(data))
 
 		require.Equal(t, s, s2)
+	})
+}
+
+func TestNewSignatureFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *refs.Signature
+
+		require.Nil(t, NewSignatureFromV2(x))
+	})
+}
+
+func TestSignature_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *Signature
+
+		require.Nil(t, x.ToV2())
 	})
 }
