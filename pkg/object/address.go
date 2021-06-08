@@ -19,6 +19,8 @@ const (
 )
 
 // NewAddressFromV2 converts v2 Address message to Address.
+//
+// Nil refs.Address converts to nil.
 func NewAddressFromV2(aV2 *refs.Address) *Address {
 	return (*Address)(aV2)
 }
@@ -31,6 +33,8 @@ func NewAddress() *Address {
 }
 
 // ToV2 converts Address to v2 Address message.
+//
+// Nil Address converts to nil.
 func (a *Address) ToV2() *refs.Address {
 	return (*refs.Address)(a)
 }

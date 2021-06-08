@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
 )
 
@@ -82,5 +83,21 @@ func TestAddressEncoding(t *testing.T) {
 		require.NoError(t, a2.UnmarshalJSON(data))
 
 		require.Equal(t, a, a2)
+	})
+}
+
+func TestNewAddressFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *refs.Address
+
+		require.Nil(t, NewAddressFromV2(x))
+	})
+}
+
+func TestAddress_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *Address
+
+		require.Nil(t, x.ToV2())
 	})
 }
