@@ -16,6 +16,8 @@ type ID refs.ObjectID
 var errInvalidIDString = errors.New("incorrect format of the string object ID")
 
 // NewIDFromV2 wraps v2 ObjectID message to ID.
+//
+// Nil refs.ObjectID converts to nil.
 func NewIDFromV2(idV2 *refs.ObjectID) *ID {
 	return (*ID)(idV2)
 }
@@ -41,6 +43,8 @@ func (id *ID) Equal(id2 *ID) bool {
 }
 
 // ToV2 converts ID to v2 ObjectID message.
+//
+// Nil ID converts to nil.
 func (id *ID) ToV2() *refs.ObjectID {
 	return (*refs.ObjectID)(id)
 }

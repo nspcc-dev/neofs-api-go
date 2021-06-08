@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/mr-tron/base58"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
 )
 
@@ -105,5 +106,21 @@ func TestObjectIDEncoding(t *testing.T) {
 		require.NoError(t, a2.UnmarshalJSON(data))
 
 		require.Equal(t, id, a2)
+	})
+}
+
+func TestNewIDFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *refs.ObjectID
+
+		require.Nil(t, NewIDFromV2(x))
+	})
+}
+
+func TestID_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *ID
+
+		require.Nil(t, x.ToV2())
 	})
 }
