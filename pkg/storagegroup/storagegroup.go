@@ -18,6 +18,12 @@ func NewFromV2(aV2 *storagegroup.StorageGroup) *StorageGroup {
 }
 
 // New creates and initializes blank StorageGroup.
+//
+// Defaults:
+//  - size: 0;
+//  - exp: 0;
+//  - members: nil;
+//  - hash: nil.
 func New() *StorageGroup {
 	return NewFromV2(new(storagegroup.StorageGroup))
 }

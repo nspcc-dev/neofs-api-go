@@ -71,3 +71,23 @@ func TestStorageGroup_ToV2(t *testing.T) {
 		require.Nil(t, x.ToV2())
 	})
 }
+
+func TestNew(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		sg := storagegroup.New()
+
+		// check initial values
+		require.Nil(t, sg.Members())
+		require.Nil(t, sg.ValidationDataHash())
+		require.Zero(t, sg.ExpirationEpoch())
+		require.Zero(t, sg.ValidationDataSize())
+
+		// convert to v2 message
+		sgV2 := sg.ToV2()
+
+		require.Nil(t, sgV2.GetMembers())
+		require.Nil(t, sgV2.GetValidationHash())
+		require.Zero(t, sgV2.GetExpirationEpoch())
+		require.Zero(t, sgV2.GetValidationDataSize())
+	})
+}
