@@ -8,6 +8,7 @@ import (
 	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
 	containertest "github.com/nspcc-dev/neofs-api-go/pkg/container/test"
+	containerv2 "github.com/nspcc-dev/neofs-api-go/v2/container"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
 )
@@ -62,5 +63,21 @@ func TestUsedSpaceEncoding(t *testing.T) {
 		require.NoError(t, a2.Unmarshal(data))
 
 		require.Equal(t, a, a2)
+	})
+}
+
+func TestUsedSpaceAnnouncement_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *container.UsedSpaceAnnouncement
+
+		require.Nil(t, x.ToV2())
+	})
+}
+
+func TestNewAnnouncementFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *containerv2.UsedSpaceAnnouncement
+
+		require.Nil(t, container.NewAnnouncementFromV2(x))
 	})
 }
