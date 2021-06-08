@@ -9,6 +9,11 @@ type (
 	Attributes []*Attribute
 )
 
+// NewAttribute creates and initializes blank Attribute.
+//
+// Defaults:
+//  - key: "";
+//  - value: "".
 func NewAttribute() *Attribute {
 	return NewAttributeFromV2(new(container.Attribute))
 }
