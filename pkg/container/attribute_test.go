@@ -15,6 +15,19 @@ func TestAttribute(t *testing.T) {
 		require.Nil(t, x.ToV2())
 	})
 
+	t.Run("default values", func(t *testing.T) {
+		attr := container.NewAttribute()
+
+		// check initial values
+		require.Empty(t, attr.Key())
+		require.Empty(t, attr.Value())
+
+		// convert to v2 message
+		attrV2 := attr.ToV2()
+		require.Empty(t, attrV2.GetKey())
+		require.Empty(t, attrV2.GetValue())
+	})
+
 	const (
 		key   = "key"
 		value = "value"
