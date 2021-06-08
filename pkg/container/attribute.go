@@ -29,10 +29,17 @@ func (a *Attribute) Value() string {
 	return (*container.Attribute)(a).GetValue()
 }
 
+// NewAttributeFromV2 wraps protocol dependent version of
+// Attribute message.
+//
+// Nil container.Attribute converts to nil.
 func NewAttributeFromV2(v *container.Attribute) *Attribute {
 	return (*Attribute)(v)
 }
 
+// ToV2 converts Attribute to v2 Attribute message.
+//
+// Nil Attribute converts to nil.
 func (a *Attribute) ToV2() *container.Attribute {
 	return (*container.Attribute)(a)
 }

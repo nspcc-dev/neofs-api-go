@@ -4,10 +4,17 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
+	containerv2 "github.com/nspcc-dev/neofs-api-go/v2/container"
 	"github.com/stretchr/testify/require"
 )
 
 func TestAttribute(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *container.Attribute
+
+		require.Nil(t, x.ToV2())
+	})
+
 	const (
 		key   = "key"
 		value = "value"
@@ -80,5 +87,13 @@ func TestAttributes(t *testing.T) {
 			require.Equal(t, keys[i]+postfix, newAttrs[i].Key())
 			require.Equal(t, vals[i]+postfix, newAttrs[i].Value())
 		}
+	})
+}
+
+func TestNewAttributeFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *containerv2.Attribute
+
+		require.Nil(t, container.NewAttributeFromV2(x))
 	})
 }
