@@ -3,6 +3,7 @@ package object
 import (
 	"testing"
 
+	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/stretchr/testify/require"
 )
 
@@ -45,5 +46,21 @@ func TestAttributeEncoding(t *testing.T) {
 		require.NoError(t, a2.UnmarshalJSON(data))
 
 		require.Equal(t, a, a2)
+	})
+}
+
+func TestNewAttributeFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *object.Attribute
+
+		require.Nil(t, NewAttributeFromV2(x))
+	})
+}
+
+func TestAttribute_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *Attribute
+
+		require.Nil(t, x.ToV2())
 	})
 }
