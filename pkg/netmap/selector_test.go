@@ -507,3 +507,25 @@ func TestNewSelectorFromV2(t *testing.T) {
 		require.Equal(t, sV2, s.ToV2())
 	})
 }
+
+func TestNewSelector(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		s := NewSelector()
+
+		// check initial values
+		require.Zero(t, s.Count())
+		require.Equal(t, ClauseUnspecified, s.Clause())
+		require.Empty(t, s.Attribute())
+		require.Empty(t, s.Name())
+		require.Empty(t, s.Filter())
+
+		// convert to v2 message
+		sV2 := s.ToV2()
+
+		require.Zero(t, sV2.GetCount())
+		require.Equal(t, netmap.UnspecifiedClause, sV2.GetClause())
+		require.Empty(t, sV2.GetAttribute())
+		require.Empty(t, sV2.GetName())
+		require.Empty(t, sV2.GetFilter())
+	})
+}
