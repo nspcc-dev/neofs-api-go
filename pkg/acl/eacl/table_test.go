@@ -65,7 +65,7 @@ func TestTable_AddRecord(t *testing.T) {
 	require.Equal(t, records, table.Records())
 }
 
-func TestRecordEncoding(t *testing.T) {
+func TestTableEncoding(t *testing.T) {
 	tab := eacltest.Table()
 
 	t.Run("binary", func(t *testing.T) {
@@ -75,17 +75,19 @@ func TestRecordEncoding(t *testing.T) {
 		tab2 := eacl.NewTable()
 		require.NoError(t, tab2.Unmarshal(data))
 
-		require.Equal(t, tab, tab2)
+		// FIXME: we compare v2 messages because
+		//  Filter contains fmt.Stringer interface
+		require.Equal(t, tab.ToV2(), tab2.ToV2())
 	})
 
 	t.Run("json", func(t *testing.T) {
 		data, err := tab.MarshalJSON()
 		require.NoError(t, err)
 
-		r2 := eacl.NewTable()
-		require.NoError(t, r2.UnmarshalJSON(data))
+		tab2 := eacl.NewTable()
+		require.NoError(t, tab2.UnmarshalJSON(data))
 
-		require.Equal(t, tab, r2)
+		require.Equal(t, tab.ToV2(), tab2.ToV2())
 	})
 }
 
