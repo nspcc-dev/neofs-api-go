@@ -99,6 +99,15 @@ func (b *BearerToken) Issuer() *owner.ID {
 	return owner.NewIDFromNeo3Wallet(wallet)
 }
 
+// NewBearerToken creates and initializes blank BearerToken.
+//
+// Defaults:
+//  - signature: nil;
+//  - eacl: nil;
+//  - ownerID: nil;
+//  - exp: 0;
+//  - nbf: 0;
+//  - iat: 0.
 func NewBearerToken() *BearerToken {
 	b := new(BearerToken)
 	b.token = acl.BearerToken{}

@@ -63,3 +63,20 @@ func TestBearerToken_ToV2(t *testing.T) {
 		require.Nil(t, x.ToV2())
 	})
 }
+
+func TestNewBearerToken(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		tkn := token.NewBearerToken()
+
+		// convert to v2 message
+		tknV2 := tkn.ToV2()
+
+		require.NotNil(t, tknV2.GetBody())
+		require.Zero(t, tknV2.GetBody().GetLifetime().GetExp())
+		require.Zero(t, tknV2.GetBody().GetLifetime().GetNbf())
+		require.Zero(t, tknV2.GetBody().GetLifetime().GetIat())
+		require.Nil(t, tknV2.GetBody().GetEACL())
+		require.Nil(t, tknV2.GetBody().GetOwnerID())
+		require.Nil(t, tknV2.GetSignature())
+	})
+}
