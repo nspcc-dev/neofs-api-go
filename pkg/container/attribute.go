@@ -50,6 +50,10 @@ func (a *Attribute) ToV2() *container.Attribute {
 }
 
 func NewAttributesFromV2(v []*container.Attribute) Attributes {
+	if v == nil {
+		return nil
+	}
+
 	attrs := make(Attributes, 0, len(v))
 	for i := range v {
 		attrs = append(attrs, NewAttributeFromV2(v[i]))
@@ -59,6 +63,10 @@ func NewAttributesFromV2(v []*container.Attribute) Attributes {
 }
 
 func (a Attributes) ToV2() []*container.Attribute {
+	if a == nil {
+		return nil
+	}
+
 	attrs := make([]*container.Attribute, 0, len(a))
 	for i := range a {
 		attrs = append(attrs, a[i].ToV2())
