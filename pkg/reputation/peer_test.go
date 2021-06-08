@@ -24,16 +24,24 @@ func TestPeerID_ToV2(t *testing.T) {
 }
 
 func TestPeerID_String(t *testing.T) {
-	id := reputationtest.GeneratePeerID()
+	t.Run("Parse/String", func(t *testing.T) {
+		id := reputationtest.GeneratePeerID()
 
-	strID := id.String()
+		strID := id.String()
 
-	id2 := reputation.NewPeerID()
+		id2 := reputation.NewPeerID()
 
-	err := id2.Parse(strID)
-	require.NoError(t, err)
+		err := id2.Parse(strID)
+		require.NoError(t, err)
 
-	require.Equal(t, id, id2)
+		require.Equal(t, id, id2)
+	})
+
+	t.Run("nil", func(t *testing.T) {
+		id := reputation.NewPeerID()
+
+		require.Empty(t, id.String())
+	})
 }
 
 func TestPeerIDEncoding(t *testing.T) {
@@ -65,5 +73,16 @@ func TestPeerIDFromV2(t *testing.T) {
 		var x *reputationV2.PeerID
 
 		require.Nil(t, reputation.PeerIDFromV2(x))
+	})
+}
+
+func TestNewPeerID(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		id := reputation.NewPeerID()
+
+		// convert to v2 message
+		idV2 := id.ToV2()
+
+		require.Nil(t, idV2.GetPublicKey())
 	})
 }
