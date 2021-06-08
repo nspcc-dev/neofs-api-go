@@ -188,6 +188,11 @@ func (s NodeState) String() string {
 }
 
 // NewNodeAttribute creates and returns new NodeAttribute instance.
+//
+// Defaults:
+//  - key: "";
+//  - value: "";
+//  - parents: nil.
 func NewNodeAttribute() *NodeAttribute {
 	return NewNodeAttributeFromV2(new(netmap.Attribute))
 }
@@ -275,6 +280,12 @@ func (a *NodeAttribute) UnmarshalJSON(data []byte) error {
 }
 
 // NewNodeInfo creates and returns new NodeInfo instance.
+//
+// Defaults:
+//  - publicKey: nil;
+//  - address: "";
+//  - attributes nil;
+//  - state: 0.
 func NewNodeInfo() *NodeInfo {
 	return NewNodeInfoFromV2(new(netmap.NodeInfo))
 }
@@ -319,8 +330,16 @@ func (i *NodeInfo) SetAddress(addr string) {
 
 // Attributes returns list of the node attributes.
 func (i *NodeInfo) Attributes() []*NodeAttribute {
+	if i == nil {
+		return nil
+	}
+
 	as := (*netmap.NodeInfo)(i).
 		GetAttributes()
+
+	if as == nil {
+		return nil
+	}
 
 	res := make([]*NodeAttribute, 0, len(as))
 
