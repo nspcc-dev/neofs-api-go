@@ -15,6 +15,10 @@ func NewRangeFromV2(rV2 *object.Range) *Range {
 }
 
 // NewRange creates and initializes blank Range.
+//
+// Defaults:
+//  - offset: 0;
+//  - length: 0.
 func NewRange() *Range {
 	return NewRangeFromV2(new(object.Range))
 }
