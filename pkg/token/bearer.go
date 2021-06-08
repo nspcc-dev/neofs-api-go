@@ -23,7 +23,14 @@ type BearerToken struct {
 	token acl.BearerToken
 }
 
-func (b BearerToken) ToV2() *acl.BearerToken {
+// ToV2 converts BearerToken to v2 BearerToken message.
+//
+// Nil BearerToken converts to nil.
+func (b *BearerToken) ToV2() *acl.BearerToken {
+	if b == nil {
+		return nil
+	}
+
 	return &b.token
 }
 
@@ -100,6 +107,7 @@ func NewBearerToken() *BearerToken {
 	return b
 }
 
+// ToV2 converts BearerToken to v2 BearerToken message.
 func NewBearerTokenFromV2(v2 *acl.BearerToken) *BearerToken {
 	if v2 == nil {
 		v2 = new(acl.BearerToken)
