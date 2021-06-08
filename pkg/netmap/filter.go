@@ -148,6 +148,13 @@ func (c *Context) matchKeyValue(f *Filter, b *Node) bool {
 }
 
 // NewFilter creates and returns new Filter instance.
+//
+// Defaults:
+//  - name: "";
+//  - key: "";
+//  - value: "";
+//  - operation: 0;
+//  - filters: nil.
 func NewFilter() *Filter {
 	return NewFilterFromV2(new(netmap.Filter))
 }
@@ -217,6 +224,10 @@ func (f *Filter) SetOperation(op Operation) {
 }
 
 func filtersFromV2(fs []*netmap.Filter) []*Filter {
+	if fs == nil {
+		return nil
+	}
+
 	res := make([]*Filter, 0, len(fs))
 
 	for i := range fs {

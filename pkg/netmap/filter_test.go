@@ -307,3 +307,25 @@ func TestFilterEncoding(t *testing.T) {
 		require.Equal(t, f, f2)
 	})
 }
+
+func TestNewFilter(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		filter := NewFilter()
+
+		// check initial values
+		require.Empty(t, filter.Name())
+		require.Empty(t, filter.Key())
+		require.Empty(t, filter.Value())
+		require.Zero(t, filter.Operation())
+		require.Nil(t, filter.InnerFilters())
+
+		// convert to v2 message
+		filterV2 := filter.ToV2()
+
+		require.Empty(t, filterV2.GetName())
+		require.Empty(t, filterV2.GetKey())
+		require.Empty(t, filterV2.GetValue())
+		require.Equal(t, netmap.UnspecifiedOperation, filterV2.GetOp())
+		require.Nil(t, filterV2.GetFilters())
+	})
+}
