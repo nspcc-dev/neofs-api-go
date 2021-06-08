@@ -13,6 +13,12 @@ func NewSplitInfoFromV2(v2 *object.SplitInfo) *SplitInfo {
 	return (*SplitInfo)(v2)
 }
 
+// NewSplitInfo creates and initializes blank SplitInfo.
+//
+// Defaults:
+//  - splitID: nil;
+//  - lastPart nil;
+//  - link: nil.
 func NewSplitInfo() *SplitInfo {
 	return NewSplitInfoFromV2(new(object.SplitInfo))
 }
