@@ -98,4 +98,37 @@ func TestContainer_ToV2(t *testing.T) {
 
 		require.Nil(t, x.ToV2())
 	})
+
+	t.Run("default values", func(t *testing.T) {
+		cnt := container.New()
+
+		// check initial values
+		require.Nil(t, cnt.SessionToken())
+		require.Nil(t, cnt.Signature())
+		require.Nil(t, cnt.Version())
+		require.Nil(t, cnt.Attributes())
+		require.Nil(t, cnt.PlacementPolicy())
+		require.Nil(t, cnt.OwnerID())
+
+		require.EqualValues(t, acl.PrivateBasicRule, cnt.BasicACL())
+
+		nonce, err := cnt.NonceUUID()
+		require.NoError(t, err)
+		require.NotNil(t, nonce)
+
+		// convert to v2 message
+		cntV2 := cnt.ToV2()
+
+		nonceV2, err := uuid.FromBytes(cntV2.GetNonce())
+		require.NoError(t, err)
+
+		require.Equal(t, nonce.String(), nonceV2.String())
+
+		require.Nil(t, cntV2.GetVersion())
+		require.Nil(t, cntV2.GetAttributes())
+		require.Nil(t, cntV2.GetPlacementPolicy())
+		require.Nil(t, cntV2.GetOwnerID())
+
+		require.Equal(t, uint32(acl.PrivateBasicRule), cntV2.GetBasicACL())
+	})
 }
