@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
+	objv2 "github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/stretchr/testify/require"
 )
 
@@ -50,4 +51,20 @@ func generateID() *object.ID {
 	id.SetSHA256(buf)
 
 	return id
+}
+
+func TestNewSplitInfoFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *objv2.SplitInfo
+
+		require.Nil(t, object.NewSplitInfoFromV2(x))
+	})
+}
+
+func TestSplitInfo_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *object.SplitInfo
+
+		require.Nil(t, x.ToV2())
+	})
 }
