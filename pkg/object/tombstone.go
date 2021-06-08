@@ -16,8 +16,20 @@ func NewTombstoneFromV2(tV2 *tombstone.Tombstone) *Tombstone {
 }
 
 // NewTombstone creates and initializes blank Tombstone.
+//
+// Defaults:
+//  - exp: 0;
+//  - splitID: nil;
+//  - members: nil.
 func NewTombstone() *Tombstone {
 	return NewTombstoneFromV2(new(tombstone.Tombstone))
+}
+
+// ToV2 converts Tombstone to v2 Tombstone message.
+//
+// Nil Tombstone converts to nil.
+func (ts *Tombstone) ToV2() *tombstone.Tombstone {
+	return (*tombstone.Tombstone)(ts)
 }
 
 // ExpirationEpoch return number of tombstone expiration epoch.
