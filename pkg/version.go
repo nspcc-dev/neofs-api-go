@@ -12,6 +12,8 @@ type Version refs.Version
 const sdkMjr, sdkMnr = 2, 6
 
 // NewVersionFromV2 wraps v2 Version message to Version.
+//
+// Nil refs.Version converts to nil.
 func NewVersionFromV2(v *refs.Version) *Version {
 	return (*Version)(v)
 }
@@ -58,6 +60,8 @@ func (v *Version) SetMinor(val uint32) {
 }
 
 // ToV2 converts Version to v2 Version message.
+//
+// Nil Version converts to nil.
 func (v *Version) ToV2() *refs.Version {
 	return (*refs.Version)(v)
 }
