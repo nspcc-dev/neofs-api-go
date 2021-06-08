@@ -65,3 +65,17 @@ func TestNetworkInfo_ToV2(t *testing.T) {
 		require.Nil(t, x.ToV2())
 	})
 }
+
+func TestNewNetworkInfo(t *testing.T) {
+	ni := NewNetworkInfo()
+
+	// check initial values
+	require.Zero(t, ni.CurrentEpoch())
+	require.Zero(t, ni.MagicNumber())
+
+	// convert to v2 message
+	niV2 := ni.ToV2()
+
+	require.Zero(t, niV2.GetCurrentEpoch())
+	require.Zero(t, niV2.GetMagicNumber())
+}
