@@ -6,6 +6,7 @@ import (
 	ownertest "github.com/nspcc-dev/neofs-api-go/pkg/owner/test"
 	"github.com/nspcc-dev/neofs-api-go/pkg/session"
 	sessiontest "github.com/nspcc-dev/neofs-api-go/pkg/session/test"
+	sessionv2 "github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/stretchr/testify/require"
 )
 
@@ -161,4 +162,20 @@ func TestToken_Iat(t *testing.T) {
 	tok.SetIat(iat)
 
 	require.EqualValues(t, iat, tok.Iat())
+}
+
+func TestNewTokenFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *sessionv2.SessionToken
+
+		require.Nil(t, session.NewTokenFromV2(x))
+	})
+}
+
+func TestToken_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *session.Token
+
+		require.Nil(t, x.ToV2())
+	})
 }

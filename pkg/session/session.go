@@ -17,6 +17,8 @@ type Token session.SessionToken
 
 // NewTokenFromV2 wraps session.SessionToken message structure
 // into Token.
+//
+// Nil session.SessionToken converts to nil.
 func NewTokenFromV2(tV2 *session.SessionToken) *Token {
 	return (*Token)(tV2)
 }
@@ -27,6 +29,8 @@ func NewToken() *Token {
 }
 
 // ToV2 converts Token to session.SessionToken message structure.
+//
+// Nil Token converts to nil.
 func (t *Token) ToV2() *session.SessionToken {
 	return (*session.SessionToken)(t)
 }
