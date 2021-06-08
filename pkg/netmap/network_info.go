@@ -9,6 +9,8 @@ import (
 type NetworkInfo netmap.NetworkInfo
 
 // NewNetworkInfoFromV2 wraps v2 NetworkInfo message to NetworkInfo.
+//
+// Nil netmap.NetworkInfo converts to nil.
 func NewNetworkInfoFromV2(iV2 *netmap.NetworkInfo) *NetworkInfo {
 	return (*NetworkInfo)(iV2)
 }
@@ -19,6 +21,8 @@ func NewNetworkInfo() *NetworkInfo {
 }
 
 // ToV2 converts NetworkInfo to v2 NetworkInfo.
+//
+// Nil NetworkInfo converts to nil.
 func (i *NetworkInfo) ToV2() *netmap.NetworkInfo {
 	return (*netmap.NetworkInfo)(i)
 }
