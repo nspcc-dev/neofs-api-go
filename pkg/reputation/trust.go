@@ -14,6 +14,10 @@ import (
 type Trust reputation.Trust
 
 // NewTrust creates and returns blank Trust.
+//
+// Defaults:
+//  - value: 0;
+//  - PeerID: nil.
 func NewTrust() *Trust {
 	return TrustFromV2(new(reputation.Trust))
 }
@@ -109,6 +113,10 @@ func (x *Trust) UnmarshalJSON(data []byte) error {
 type PeerToPeerTrust reputation.PeerToPeerTrust
 
 // NewPeerToPeerTrust creates and returns blank PeerToPeerTrust.
+//
+// Defaults:
+//  - trusting: nil;
+//  - trust: nil.
 func NewPeerToPeerTrust() *PeerToPeerTrust {
 	return PeerToPeerTrustFromV2(new(reputation.PeerToPeerTrust))
 }
@@ -193,7 +201,10 @@ type GlobalTrust reputation.GlobalTrust
 
 // NewGlobalTrust creates and returns blank GlobalTrust.
 //
-// Version is initialized to current library version.
+// Defaults:
+// 	- version: pkg.SDKVersion();
+//  - manager: nil;
+//  - trust: nil.
 func NewGlobalTrust() *GlobalTrust {
 	gt := GlobalTrustFromV2(new(reputation.GlobalTrust))
 	gt.SetVersion(pkg.SDKVersion())
