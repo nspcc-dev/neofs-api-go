@@ -99,3 +99,19 @@ func TestChecksumEncoding(t *testing.T) {
 		require.Equal(t, cs, cs2)
 	})
 }
+
+func TestNewChecksumFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *refs.Checksum
+
+		require.Nil(t, NewChecksumFromV2(x))
+	})
+}
+
+func TestChecksum_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *Checksum
+
+		require.Nil(t, x.ToV2())
+	})
+}
