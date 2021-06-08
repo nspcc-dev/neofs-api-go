@@ -55,3 +55,11 @@ func TestFilterEncoding(t *testing.T) {
 		require.Equal(t, f, d2)
 	})
 }
+
+func TestBearerToken_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *token.BearerToken
+
+		require.Nil(t, x.ToV2())
+	})
+}
