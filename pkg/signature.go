@@ -17,6 +17,10 @@ func NewSignatureFromV2(sV2 *refs.Signature) *Signature {
 // NewSignature creates and initializes blank Signature.
 //
 // Works similar as NewSignatureFromV2(new(Signature)).
+//
+// Defaults:
+//  - key: nil;
+//  - signature: nil.
 func NewSignature() *Signature {
 	return NewSignatureFromV2(new(refs.Signature))
 }
