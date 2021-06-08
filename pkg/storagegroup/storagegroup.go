@@ -11,6 +11,8 @@ import (
 type StorageGroup storagegroup.StorageGroup
 
 // NewFromV2 wraps v2 StorageGroup message to StorageGroup.
+//
+// Nil storagegroup.StorageGroup converts to nil.
 func NewFromV2(aV2 *storagegroup.StorageGroup) *StorageGroup {
 	return (*StorageGroup)(aV2)
 }
@@ -110,6 +112,8 @@ func (sg *StorageGroup) SetMembers(members []*object.ID) {
 }
 
 // ToV2 converts StorageGroup to v2 StorageGroup message.
+//
+// Nil StorageGroup converts to nil.
 func (sg *StorageGroup) ToV2() *storagegroup.StorageGroup {
 	return (*storagegroup.StorageGroup)(sg)
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg/storagegroup"
 	storagegrouptest "github.com/nspcc-dev/neofs-api-go/pkg/storagegroup/test"
 	refstest "github.com/nspcc-dev/neofs-api-go/pkg/test"
+	storagegroupV2 "github.com/nspcc-dev/neofs-api-go/v2/storagegroup"
 	"github.com/stretchr/testify/require"
 )
 
@@ -52,5 +53,21 @@ func TestStorageGroupEncoding(t *testing.T) {
 		require.NoError(t, sg2.UnmarshalJSON(data))
 
 		require.Equal(t, sg, sg2)
+	})
+}
+
+func TestNewFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *storagegroupV2.StorageGroup
+
+		require.Nil(t, storagegroup.NewFromV2(x))
+	})
+}
+
+func TestStorageGroup_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *storagegroup.StorageGroup
+
+		require.Nil(t, x.ToV2())
 	})
 }
