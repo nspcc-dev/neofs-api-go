@@ -12,6 +12,8 @@ import (
 type Result audit.DataAuditResult
 
 // NewFromV2 wraps v2 DataAuditResult message to Result.
+//
+// Nil audit.DataAuditResult converts to nil.
 func NewResultFromV2(aV2 *audit.DataAuditResult) *Result {
 	return (*Result)(aV2)
 }
@@ -25,6 +27,8 @@ func NewResult() *Result {
 }
 
 // ToV2 converts Result to v2 DataAuditResult message.
+//
+// Nil Result converts to nil.
 func (r *Result) ToV2() *audit.DataAuditResult {
 	return (*audit.DataAuditResult)(r)
 }
