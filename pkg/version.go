@@ -21,6 +21,10 @@ func NewVersionFromV2(v *refs.Version) *Version {
 // NewVersion creates and initializes blank Version.
 //
 // Works similar as NewVersionFromV2(new(Version)).
+//
+// Defaults:
+//  - major: 0;
+//  - minor: 0.
 func NewVersion() *Version {
 	return NewVersionFromV2(new(refs.Version))
 }

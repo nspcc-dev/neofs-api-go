@@ -8,20 +8,36 @@ import (
 )
 
 func TestNewVersion(t *testing.T) {
-	v := NewVersion()
+	t.Run("default values", func(t *testing.T) {
+		v := NewVersion()
 
-	var mjr, mnr uint32 = 1, 2
+		// check initial values
+		require.Zero(t, v.Major())
+		require.Zero(t, v.Minor())
 
-	v.SetMajor(mjr)
-	v.SetMinor(mnr)
+		// convert to v2 message
+		vV2 := v.ToV2()
 
-	require.Equal(t, mjr, v.Major())
-	require.Equal(t, mnr, v.Minor())
+		require.Empty(t, vV2.GetMajor())
+		require.Empty(t, vV2.GetMinor())
+	})
 
-	ver := v.ToV2()
+	t.Run("setting values", func(t *testing.T) {
+		v := NewVersion()
 
-	require.Equal(t, mjr, ver.GetMajor())
-	require.Equal(t, mnr, ver.GetMinor())
+		var mjr, mnr uint32 = 1, 2
+
+		v.SetMajor(mjr)
+		v.SetMinor(mnr)
+
+		require.Equal(t, mjr, v.Major())
+		require.Equal(t, mnr, v.Minor())
+
+		ver := v.ToV2()
+
+		require.Equal(t, mjr, ver.GetMajor())
+		require.Equal(t, mnr, ver.GetMinor())
+	})
 }
 
 func TestSDKVersion(t *testing.T) {
