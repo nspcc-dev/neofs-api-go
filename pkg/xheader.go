@@ -15,6 +15,10 @@ func NewXHeaderFromV2(v *session.XHeader) *XHeader {
 }
 
 // NewXHeader creates, initializes and returns blank XHeader instance.
+//
+// Defaults:
+//  - key: "";
+//  - value: "".
 func NewXHeader() *XHeader {
 	return NewXHeaderFromV2(new(session.XHeader))
 }
