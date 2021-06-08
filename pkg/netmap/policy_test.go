@@ -144,3 +144,19 @@ func TestPlacementPolicyEncoding(t *testing.T) {
 		require.Equal(t, p, p2)
 	})
 }
+
+func TestNewPlacementPolicy(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *PlacementPolicy
+
+		require.Nil(t, x.ToV2())
+	})
+}
+
+func TestNewPlacementPolicyFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *netmap.PlacementPolicy
+
+		require.Nil(t, NewPlacementPolicyFromV2(x))
+	})
+}
