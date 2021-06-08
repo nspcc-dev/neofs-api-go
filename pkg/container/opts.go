@@ -28,8 +28,8 @@ func defaultContainerOptions() containerOptions {
 	}
 
 	return containerOptions{
-		acl:        acl.PrivateBasicRule,
-		nonce:      rand,
+		acl:   acl.PrivateBasicRule,
+		nonce: rand,
 	}
 }
 

@@ -61,6 +61,14 @@ func TestAttribute(t *testing.T) {
 }
 
 func TestAttributes(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x container.Attributes
+
+		require.Nil(t, x.ToV2())
+
+		require.Nil(t, container.NewAttributesFromV2(nil))
+	})
+
 	var (
 		keys = []string{"key1", "key2", "key3"}
 		vals = []string{"val1", "val2", "val3"}
