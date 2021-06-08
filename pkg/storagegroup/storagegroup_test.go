@@ -7,6 +7,7 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
+	objecttest "github.com/nspcc-dev/neofs-api-go/pkg/object/test"
 	"github.com/nspcc-dev/neofs-api-go/pkg/storagegroup"
 	"github.com/stretchr/testify/require"
 )
@@ -21,13 +22,6 @@ func testChecksum() *pkg.Checksum {
 	h.SetSHA256(testSHA256())
 
 	return h
-}
-
-func testOID() *object.ID {
-	id := object.NewID()
-	id.SetSHA256(testSHA256())
-
-	return id
 }
 
 func TestStorageGroup(t *testing.T) {
@@ -45,7 +39,7 @@ func TestStorageGroup(t *testing.T) {
 	sg.SetExpirationEpoch(exp)
 	require.Equal(t, exp, sg.ExpirationEpoch())
 
-	members := []*object.ID{testOID(), testOID()}
+	members := []*object.ID{objecttest.GenerateID(), objecttest.GenerateID()}
 	sg.SetMembers(members)
 	require.Equal(t, members, sg.Members())
 }
@@ -55,7 +49,7 @@ func TestStorageGroupEncoding(t *testing.T) {
 	sg.SetValidationDataSize(13)
 	sg.SetValidationDataHash(testChecksum())
 	sg.SetExpirationEpoch(33)
-	sg.SetMembers([]*object.ID{testOID(), testOID()})
+	sg.SetMembers([]*object.ID{objecttest.GenerateID(), objecttest.GenerateID()})
 
 	t.Run("binary", func(t *testing.T) {
 		data, err := sg.Marshal()

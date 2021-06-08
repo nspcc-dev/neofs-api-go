@@ -1,28 +1,15 @@
 package audit_test
 
 import (
-	"crypto/rand"
-	"crypto/sha256"
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/audit"
 	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
+	objecttest "github.com/nspcc-dev/neofs-api-go/pkg/object/test"
 	"github.com/stretchr/testify/require"
 )
-
-func testSHA256() (cs [sha256.Size]byte) {
-	_, _ = rand.Read(cs[:])
-	return
-}
-
-func testOID() *object.ID {
-	id := object.NewID()
-	id.SetSHA256(testSHA256())
-
-	return id
-}
 
 func TestResult(t *testing.T) {
 	r := audit.NewResult()
@@ -51,11 +38,11 @@ func TestResult(t *testing.T) {
 	r.SetRetries(retries)
 	require.Equal(t, retries, r.Retries())
 
-	passSG := []*object.ID{testOID(), testOID()}
+	passSG := []*object.ID{objecttest.GenerateID(), objecttest.GenerateID()}
 	r.SetPassSG(passSG)
 	require.Equal(t, passSG, r.PassSG())
 
-	failSG := []*object.ID{testOID(), testOID()}
+	failSG := []*object.ID{objecttest.GenerateID(), objecttest.GenerateID()}
 	r.SetFailSG(failSG)
 	require.Equal(t, failSG, r.FailSG())
 
@@ -85,8 +72,8 @@ func TestStorageGroupEncoding(t *testing.T) {
 	r.SetAuditEpoch(13)
 	r.SetContainerID(cidtest.Generate())
 	r.SetPublicKey([]byte{1, 2, 3})
-	r.SetPassSG([]*object.ID{testOID(), testOID()})
-	r.SetFailSG([]*object.ID{testOID(), testOID()})
+	r.SetPassSG([]*object.ID{objecttest.GenerateID(), objecttest.GenerateID()})
+	r.SetFailSG([]*object.ID{objecttest.GenerateID(), objecttest.GenerateID()})
 	r.SetRequests(3)
 	r.SetRetries(2)
 	r.SetHit(1)
