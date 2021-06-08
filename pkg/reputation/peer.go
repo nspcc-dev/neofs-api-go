@@ -12,6 +12,9 @@ import (
 type PeerID reputation.PeerID
 
 // NewPeerID creates and returns blank PeerID.
+//
+// Defaults:
+//  - publicKey: nil.
 func NewPeerID() *PeerID {
 	return PeerIDFromV2(new(reputation.PeerID))
 }
