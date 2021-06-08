@@ -16,6 +16,8 @@ type ID refs.OwnerID
 var errInvalidIDString = errors.New("incorrect format of the string owner ID")
 
 // NewIDFromV2 wraps v2 OwnerID message to ID.
+//
+// Nil refs.OwnerID converts to nil.
 func NewIDFromV2(idV2 *refs.OwnerID) *ID {
 	return (*ID)(idV2)
 }
@@ -33,6 +35,8 @@ func (id *ID) SetNeo3Wallet(v *NEO3Wallet) {
 }
 
 // ToV2 returns the v2 owner ID message.
+//
+// Nil ID converts to nil.
 func (id *ID) ToV2() *refs.OwnerID {
 	return (*refs.OwnerID)(id)
 }
