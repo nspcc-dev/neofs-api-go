@@ -4,6 +4,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
 	ownertest "github.com/nspcc-dev/neofs-api-go/pkg/owner/test"
+	sessiontest "github.com/nspcc-dev/neofs-api-go/pkg/session/test"
 )
 
 // Target returns random eacl.Target.
@@ -28,6 +29,17 @@ func Record() *eacl.Record {
 	x.SetTargets(Target(), Target())
 	x.AddObjectContainerIDFilter(eacl.MatchStringEqual, cidtest.Generate())
 	x.AddObjectOwnerIDFilter(eacl.MatchStringNotEqual, ownertest.Generate())
+
+	return x
+}
+
+func Table() *eacl.Table {
+	x := eacl.NewTable()
+
+	x.SetCID(cidtest.Generate())
+	x.SetSessionToken(sessiontest.Generate())
+	x.AddRecord(Record())
+	x.AddRecord(Record())
 
 	return x
 }
