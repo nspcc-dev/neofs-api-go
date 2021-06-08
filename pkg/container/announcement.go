@@ -16,6 +16,8 @@ func NewAnnouncement() *UsedSpaceAnnouncement {
 
 // NewAnnouncementFromV2 wraps protocol dependent version of
 // UsedSpaceAnnouncement message.
+//
+// Nil container.UsedSpaceAnnouncement converts to nil.
 func NewAnnouncementFromV2(v *container.UsedSpaceAnnouncement) *UsedSpaceAnnouncement {
 	return (*UsedSpaceAnnouncement)(v)
 }
@@ -53,6 +55,8 @@ func (a *UsedSpaceAnnouncement) SetUsedSpace(value uint64) {
 }
 
 // ToV2 returns protocol dependent version of UsedSpaceAnnouncement message.
+//
+// Nil UsedSpaceAnnouncement converts to nil.
 func (a *UsedSpaceAnnouncement) ToV2() *container.UsedSpaceAnnouncement {
 	return (*container.UsedSpaceAnnouncement)(a)
 }
