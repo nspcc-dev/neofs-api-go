@@ -1,17 +1,16 @@
 package container_test
 
 import (
-	"strconv"
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
-	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
-	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
+	containertest "github.com/nspcc-dev/neofs-api-go/pkg/container/test"
+	netmaptest "github.com/nspcc-dev/neofs-api-go/pkg/netmap/test"
+	ownertest "github.com/nspcc-dev/neofs-api-go/pkg/owner/test"
 	sessiontest "github.com/nspcc-dev/neofs-api-go/pkg/session/test"
-	"github.com/nspcc-dev/neofs-crypto/test"
+	refstest "github.com/nspcc-dev/neofs-api-go/pkg/test"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,24 +19,26 @@ func TestNewContainer(t *testing.T) {
 
 	nonce := uuid.New()
 
-	wallet, err := owner.NEO3WalletFromPublicKey(&test.DecodeKey(1).PublicKey)
-	require.NoError(t, err)
-
-	ownerID := owner.NewIDFromNeo3Wallet(wallet)
-	policy := generatePlacementPolicy()
+	ownerID := ownertest.Generate()
+	policy := netmaptest.PlacementPolicy()
 
 	c.SetBasicACL(acl.PublicBasicRule)
-	c.SetAttributes(generateAttributes(5))
+
+	attrs := containertest.Attributes()
+	c.SetAttributes(attrs)
+
 	c.SetPlacementPolicy(policy)
 	c.SetNonceUUID(nonce)
 	c.SetOwnerID(ownerID)
-	c.SetVersion(pkg.SDKVersion())
+
+	ver := refstest.Version()
+	c.SetVersion(ver)
 
 	v2 := c.ToV2()
 	newContainer := container.NewContainerFromV2(v2)
 
 	require.EqualValues(t, newContainer.PlacementPolicy(), policy)
-	require.EqualValues(t, newContainer.Attributes(), generateAttributes(5))
+	require.EqualValues(t, newContainer.Attributes(), attrs)
 	require.EqualValues(t, newContainer.BasicACL(), acl.PublicBasicRule)
 
 	newNonce, err := newContainer.NonceUUID()
@@ -45,36 +46,11 @@ func TestNewContainer(t *testing.T) {
 
 	require.EqualValues(t, newNonce, nonce)
 	require.EqualValues(t, newContainer.OwnerID(), ownerID)
-	require.EqualValues(t, newContainer.Version(), pkg.SDKVersion())
-}
-
-func generateAttributes(n int) container.Attributes {
-	attrs := make(container.Attributes, 0, n)
-
-	for i := 0; i < n; i++ {
-		strN := strconv.Itoa(n)
-
-		attr := container.NewAttribute()
-		attr.SetKey("key" + strN)
-		attr.SetValue("val" + strN)
-
-		attrs = append(attrs, attr)
-	}
-
-	return attrs
-}
-
-func generatePlacementPolicy() *netmap.PlacementPolicy {
-	p := new(netmap.PlacementPolicy)
-	p.SetContainerBackupFactor(10)
-
-	return p
+	require.EqualValues(t, newContainer.Version(), ver)
 }
 
 func TestContainerEncoding(t *testing.T) {
-	c := container.New(
-		container.WithAttribute("key", "value"),
-	)
+	c := containertest.Container()
 
 	t.Run("binary", func(t *testing.T) {
 		data, err := c.Marshal()
@@ -108,9 +84,7 @@ func TestContainer_SessionToken(t *testing.T) {
 }
 
 func TestContainer_Signature(t *testing.T) {
-	sig := pkg.NewSignature()
-	sig.SetKey([]byte{1, 2, 3})
-	sig.SetSign([]byte{4, 5, 6})
+	sig := refstest.Signature()
 
 	cnr := container.New()
 	cnr.SetSignature(sig)
