@@ -10,6 +10,11 @@ import (
 type UsedSpaceAnnouncement container.UsedSpaceAnnouncement
 
 // NewAnnouncement initialize empty UsedSpaceAnnouncement message.
+//
+// Defaults:
+//  - epoch: 0;
+//  - usedSpace: 0;
+//  - cid: nil.
 func NewAnnouncement() *UsedSpaceAnnouncement {
 	return NewAnnouncementFromV2(new(container.UsedSpaceAnnouncement))
 }
