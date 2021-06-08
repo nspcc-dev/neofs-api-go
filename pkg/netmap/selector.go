@@ -161,11 +161,15 @@ func NewSelector() *Selector {
 }
 
 // NewSelectorFromV2 converts v2 Selector to Selector.
+//
+// Nil netmap.Selector converts to nil.
 func NewSelectorFromV2(f *netmap.Selector) *Selector {
 	return (*Selector)(f)
 }
 
 // ToV2 converts Selector to v2 Selector.
+//
+// Nil Selector converts to nil.
 func (s *Selector) ToV2() *netmap.Selector {
 	return (*netmap.Selector)(s)
 }
