@@ -151,6 +151,24 @@ func TestNewPlacementPolicy(t *testing.T) {
 
 		require.Nil(t, x.ToV2())
 	})
+
+	t.Run("default values", func(t *testing.T) {
+		pp := NewPlacementPolicy()
+
+		// check initial values
+		require.Nil(t, pp.Replicas())
+		require.Nil(t, pp.Filters())
+		require.Nil(t, pp.Selectors())
+		require.Zero(t, pp.ContainerBackupFactor())
+
+		// convert to v2 message
+		ppV2 := pp.ToV2()
+
+		require.Nil(t, ppV2.GetReplicas())
+		require.Nil(t, ppV2.GetFilters())
+		require.Nil(t, ppV2.GetSelectors())
+		require.Zero(t, ppV2.GetContainerBackupFactor())
+	})
 }
 
 func TestNewPlacementPolicyFromV2(t *testing.T) {

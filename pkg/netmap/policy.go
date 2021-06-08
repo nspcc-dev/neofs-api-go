@@ -8,6 +8,12 @@ import (
 type PlacementPolicy netmap.PlacementPolicy
 
 // NewPlacementPolicy creates and returns new PlacementPolicy instance.
+//
+// Defaults:
+//  - backupFactor: 0;
+//  - replicas nil;
+//  - selectors nil;
+//  - filters nil.
 func NewPlacementPolicy() *PlacementPolicy {
 	return NewPlacementPolicyFromV2(new(netmap.PlacementPolicy))
 }
@@ -30,6 +36,10 @@ func (p *PlacementPolicy) ToV2() *netmap.PlacementPolicy {
 func (p *PlacementPolicy) Replicas() []*Replica {
 	rs := (*netmap.PlacementPolicy)(p).
 		GetReplicas()
+
+	if rs == nil {
+		return nil
+	}
 
 	res := make([]*Replica, 0, len(rs))
 
@@ -72,6 +82,10 @@ func (p *PlacementPolicy) SetContainerBackupFactor(f uint32) {
 func (p *PlacementPolicy) Selectors() []*Selector {
 	rs := (*netmap.PlacementPolicy)(p).
 		GetSelectors()
+
+	if rs == nil {
+		return nil
+	}
 
 	res := make([]*Selector, 0, len(rs))
 
