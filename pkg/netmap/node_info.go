@@ -193,11 +193,15 @@ func NewNodeAttribute() *NodeAttribute {
 }
 
 // NodeAttributeFromV2 converts v2 node Attribute to NodeAttribute.
+//
+// Nil netmap.Attribute converts to nil.
 func NewNodeAttributeFromV2(a *netmap.Attribute) *NodeAttribute {
 	return (*NodeAttribute)(a)
 }
 
 // ToV2 converts NodeAttribute to v2 node Attribute.
+//
+// Nil NodeAttribute converts to nil.
 func (a *NodeAttribute) ToV2() *netmap.Attribute {
 	return (*netmap.Attribute)(a)
 }
@@ -276,11 +280,15 @@ func NewNodeInfo() *NodeInfo {
 }
 
 // NewNodeInfoFromV2 converts v2 NodeInfo to NodeInfo.
+//
+// Nil netmap.NodeInfo converts to nil.
 func NewNodeInfoFromV2(i *netmap.NodeInfo) *NodeInfo {
 	return (*NodeInfo)(i)
 }
 
 // ToV2 converts NodeInfo to v2 NodeInfo.
+//
+// Nil NodeInfo converts to nil.
 func (i *NodeInfo) ToV2() *netmap.NodeInfo {
 	return (*netmap.NodeInfo)(i)
 }

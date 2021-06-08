@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
+	testv2 "github.com/nspcc-dev/neofs-api-go/v2/netmap/test"
 	"github.com/stretchr/testify/require"
 )
 
@@ -31,14 +32,27 @@ func TestNodeStateFromV2(t *testing.T) {
 }
 
 func TestNodeAttributeFromV2(t *testing.T) {
-	aV2 := new(netmap.Attribute)
-	aV2.SetKey("key")
-	aV2.SetValue("value")
-	aV2.SetParents([]string{"par1", "par2"})
+	t.Run("from nil", func(t *testing.T) {
+		var x *netmap.Attribute
 
-	a := NewNodeAttributeFromV2(aV2)
+		require.Nil(t, NewNodeAttributeFromV2(x))
+	})
 
-	require.Equal(t, aV2, a.ToV2())
+	t.Run("from non-nil", func(t *testing.T) {
+		aV2 := testv2.GenerateAttribute(false)
+
+		a := NewNodeAttributeFromV2(aV2)
+
+		require.Equal(t, aV2, a.ToV2())
+	})
+}
+
+func TestNodeAttribute_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *NodeAttribute
+
+		require.Nil(t, x.ToV2())
+	})
 }
 
 func TestNodeAttribute_Key(t *testing.T) {
@@ -78,18 +92,27 @@ func testNodeAttribute() *NodeAttribute {
 }
 
 func TestNodeInfoFromV2(t *testing.T) {
-	iV2 := new(netmap.NodeInfo)
-	iV2.SetPublicKey([]byte{1, 2, 3})
-	iV2.SetAddress("456")
-	iV2.SetState(netmap.Online)
-	iV2.SetAttributes([]*netmap.Attribute{
-		testNodeAttribute().ToV2(),
-		testNodeAttribute().ToV2(),
+	t.Run("from nil", func(t *testing.T) {
+		var x *netmap.NodeInfo
+
+		require.Nil(t, NewNodeInfoFromV2(x))
 	})
 
-	i := NewNodeInfoFromV2(iV2)
+	t.Run("from non-nil", func(t *testing.T) {
+		iV2 := testv2.GenerateNodeInfo(false)
 
-	require.Equal(t, iV2, i.ToV2())
+		i := NewNodeInfoFromV2(iV2)
+
+		require.Equal(t, iV2, i.ToV2())
+	})
+}
+
+func TestNodeInfo_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *NodeInfo
+
+		require.Nil(t, x.ToV2())
+	})
 }
 
 func TestNodeInfo_PublicKey(t *testing.T) {
