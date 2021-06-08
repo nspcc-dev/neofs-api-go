@@ -81,3 +81,19 @@ func TestReplica_ToV2(t *testing.T) {
 		require.Nil(t, x.ToV2())
 	})
 }
+
+func TestNewReplica(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		r := NewReplica()
+
+		// check initial values
+		require.Zero(t, r.Count())
+		require.Empty(t, r.Selector())
+
+		// convert to v2 message
+		rV2 := r.ToV2()
+
+		require.Zero(t, rV2.GetCount())
+		require.Empty(t, rV2.GetSelector())
+	})
+}

@@ -8,6 +8,10 @@ import (
 type Replica netmap.Replica
 
 // NewReplica creates and returns new Replica instance.
+//
+// Defaults:
+//  - count: 0;
+//  - selector: "".
 func NewReplica() *Replica {
 	return NewReplicaFromV2(new(netmap.Replica))
 }
