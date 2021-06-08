@@ -72,3 +72,21 @@ func TestNewTombstoneFromV2(t *testing.T) {
 		require.Nil(t, NewTombstoneFromV2(x))
 	})
 }
+
+func TestNewTombstone(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		ts := NewTombstone()
+
+		// check initial values
+		require.Nil(t, ts.SplitID())
+		require.Nil(t, ts.Members())
+		require.Zero(t, ts.ExpirationEpoch())
+
+		// convert to v2 message
+		tsV2 := ts.ToV2()
+
+		require.Nil(t, tsV2.GetSplitID())
+		require.Nil(t, tsV2.GetMembers())
+		require.Zero(t, tsV2.GetExpirationEpoch())
+	})
+}
