@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
+	testv2 "github.com/nspcc-dev/neofs-api-go/v2/netmap/test"
 	"github.com/stretchr/testify/require"
 )
 
@@ -414,19 +415,6 @@ func testSelector() *Selector {
 	return s
 }
 
-func TestSelectorFromV2(t *testing.T) {
-	sV2 := new(netmap.Selector)
-	sV2.SetName("name")
-	sV2.SetCount(3)
-	sV2.SetClause(netmap.Distinct)
-	sV2.SetAttribute("attribute")
-	sV2.SetFilter("filter")
-
-	s := NewSelectorFromV2(sV2)
-
-	require.Equal(t, sV2, s.ToV2())
-}
-
 func TestSelector_Name(t *testing.T) {
 	s := NewSelector()
 	name := "some name"
@@ -493,5 +481,29 @@ func TestSelectorEncoding(t *testing.T) {
 		require.NoError(t, s2.UnmarshalJSON(data))
 
 		require.Equal(t, s, s2)
+	})
+}
+
+func TestSelector_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *Selector
+
+		require.Nil(t, x.ToV2())
+	})
+}
+
+func TestNewSelectorFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *netmap.Selector
+
+		require.Nil(t, NewSelectorFromV2(x))
+	})
+
+	t.Run("from non-nil", func(t *testing.T) {
+		sV2 := testv2.GenerateSelector(false)
+
+		s := NewSelectorFromV2(sV2)
+
+		require.Equal(t, sV2, s.ToV2())
 	})
 }
