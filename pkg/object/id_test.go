@@ -71,6 +71,11 @@ func TestID_Parse(t *testing.T) {
 }
 
 func TestID_String(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		id := NewID()
+		require.Empty(t, id.String())
+	})
+
 	t.Run("should be equal", func(t *testing.T) {
 		for i := 0; i < 10; i++ {
 			t.Run(strconv.Itoa(i), func(t *testing.T) {
@@ -122,5 +127,16 @@ func TestID_ToV2(t *testing.T) {
 		var x *ID
 
 		require.Nil(t, x.ToV2())
+	})
+}
+
+func TestNewID(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		id := NewID()
+
+		// convert to v2 message
+		idV2 := id.ToV2()
+
+		require.Nil(t, idV2.GetValue())
 	})
 }

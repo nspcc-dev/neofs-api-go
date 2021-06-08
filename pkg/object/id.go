@@ -25,6 +25,9 @@ func NewIDFromV2(idV2 *refs.ObjectID) *ID {
 // NewID creates and initializes blank ID.
 //
 // Works similar as NewIDFromV2(new(ObjectID)).
+//
+// Defaults:
+// 	- value: nil.
 func NewID() *ID {
 	return NewIDFromV2(new(refs.ObjectID))
 }
