@@ -20,12 +20,16 @@ func NewTrust() *Trust {
 
 // TrustFromV2 converts NeoFS API v2
 // reputation.Trust message structure to Trust.
+//
+// Nil reputation.Trust converts to nil.
 func TrustFromV2(t *reputation.Trust) *Trust {
 	return (*Trust)(t)
 }
 
 // ToV2 converts Trust to NeoFS API v2
 // reputation.Trust message structure.
+//
+// Nil Trust converts to nil.
 func (x *Trust) ToV2() *reputation.Trust {
 	return (*reputation.Trust)(x)
 }
@@ -111,12 +115,16 @@ func NewPeerToPeerTrust() *PeerToPeerTrust {
 
 // PeerToPeerTrustFromV2 converts NeoFS API v2
 // reputation.PeerToPeerTrust message structure to PeerToPeerTrust.
+//
+// Nil reputation.PeerToPeerTrust converts to nil.
 func PeerToPeerTrustFromV2(t *reputation.PeerToPeerTrust) *PeerToPeerTrust {
 	return (*PeerToPeerTrust)(t)
 }
 
 // ToV2 converts PeerToPeerTrust to NeoFS API v2
 // reputation.PeerToPeerTrust message structure.
+//
+// Nil PeerToPeerTrust converts to nil.
 func (x *PeerToPeerTrust) ToV2() *reputation.PeerToPeerTrust {
 	return (*reputation.PeerToPeerTrust)(x)
 }
@@ -195,12 +203,16 @@ func NewGlobalTrust() *GlobalTrust {
 
 // GlobalTrustFromV2 converts NeoFS API v2
 // reputation.GlobalTrust message structure to GlobalTrust.
+//
+// Nil reputation.GlobalTrust converts to nil.
 func GlobalTrustFromV2(t *reputation.GlobalTrust) *GlobalTrust {
 	return (*GlobalTrust)(t)
 }
 
 // ToV2 converts GlobalTrust to NeoFS API v2
 // reputation.GlobalTrust message structure.
+//
+// Nil GlobalTrust converts to nil.
 func (x *GlobalTrust) ToV2() *reputation.GlobalTrust {
 	return (*reputation.GlobalTrust)(x)
 }

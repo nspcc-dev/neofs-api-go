@@ -6,6 +6,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/reputation"
 	reputationtest "github.com/nspcc-dev/neofs-api-go/pkg/reputation/test"
+	reputationV2 "github.com/nspcc-dev/neofs-api-go/v2/reputation"
 	reputationtestV2 "github.com/nspcc-dev/neofs-api-go/v2/reputation/test"
 	"github.com/stretchr/testify/require"
 )
@@ -148,5 +149,53 @@ func TestGlobalTrust(t *testing.T) {
 			require.NoError(t, gt2.UnmarshalJSON(data))
 			require.Equal(t, gt, gt2)
 		})
+	})
+}
+
+func TestTrustFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *reputationV2.Trust
+
+		require.Nil(t, reputation.TrustFromV2(x))
+	})
+}
+
+func TestPeerToPeerTrustFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *reputationV2.PeerToPeerTrust
+
+		require.Nil(t, reputation.PeerToPeerTrustFromV2(x))
+	})
+}
+
+func TestGlobalTrustFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *reputationV2.GlobalTrust
+
+		require.Nil(t, reputation.GlobalTrustFromV2(x))
+	})
+}
+
+func TestTrust_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *reputation.Trust
+
+		require.Nil(t, x.ToV2())
+	})
+}
+
+func TestPeerToPeerTrust_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *reputation.PeerToPeerTrust
+
+		require.Nil(t, x.ToV2())
+	})
+}
+
+func TestGlobalTrust_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *reputation.GlobalTrust
+
+		require.Nil(t, x.ToV2())
 	})
 }
