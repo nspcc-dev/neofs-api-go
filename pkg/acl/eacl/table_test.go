@@ -6,6 +6,7 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
+	eacltest "github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl/test"
 	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
 	sessiontest "github.com/nspcc-dev/neofs-api-go/pkg/session/test"
 	"github.com/stretchr/testify/require"
@@ -65,10 +66,7 @@ func TestTable_AddRecord(t *testing.T) {
 }
 
 func TestRecordEncoding(t *testing.T) {
-	tab := eacl.NewTable()
-	tab.AddRecord(
-		eacl.CreateRecord(eacl.ActionDeny, eacl.OperationHead),
-	)
+	tab := eacltest.Table()
 
 	t.Run("binary", func(t *testing.T) {
 		data, err := tab.Marshal()
