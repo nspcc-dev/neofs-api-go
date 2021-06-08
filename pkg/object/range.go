@@ -8,6 +8,8 @@ import (
 type Range object.Range
 
 // NewRangeFromV2 wraps v2 Range message to Range.
+//
+// Nil object.Range converts to nil.
 func NewRangeFromV2(rV2 *object.Range) *Range {
 	return (*Range)(rV2)
 }
@@ -18,6 +20,8 @@ func NewRange() *Range {
 }
 
 // ToV2 converts Range to v2 Range message.
+//
+// Nil Range converts to nil.
 func (r *Range) ToV2() *object.Range {
 	return (*object.Range)(r)
 }
