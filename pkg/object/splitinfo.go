@@ -6,6 +6,9 @@ import (
 
 type SplitInfo object.SplitInfo
 
+// NewSplitInfoFromV2 wraps v2 SplitInfo message to SplitInfo.
+//
+// Nil object.SplitInfo converts to nil.
 func NewSplitInfoFromV2(v2 *object.SplitInfo) *SplitInfo {
 	return (*SplitInfo)(v2)
 }
@@ -14,6 +17,9 @@ func NewSplitInfo() *SplitInfo {
 	return NewSplitInfoFromV2(new(object.SplitInfo))
 }
 
+// ToV2 converts SplitInfo to v2 SplitInfo message.
+//
+// Nil SplitInfo converts to nil.
 func (s *SplitInfo) ToV2() *object.SplitInfo {
 	return (*object.SplitInfo)(s)
 }
