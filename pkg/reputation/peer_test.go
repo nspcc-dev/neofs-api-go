@@ -5,13 +5,22 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/reputation"
 	reputationtest "github.com/nspcc-dev/neofs-api-go/pkg/reputation/test"
+	reputationV2 "github.com/nspcc-dev/neofs-api-go/v2/reputation"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPeerID_ToV2(t *testing.T) {
-	peerID := reputationtest.GeneratePeerID()
+	t.Run("nil", func(t *testing.T) {
+		var x *reputation.PeerID
 
-	require.Equal(t, peerID, reputation.PeerIDFromV2(peerID.ToV2()))
+		require.Nil(t, x.ToV2())
+	})
+
+	t.Run("nil", func(t *testing.T) {
+		peerID := reputationtest.GeneratePeerID()
+
+		require.Equal(t, peerID, reputation.PeerIDFromV2(peerID.ToV2()))
+	})
 }
 
 func TestPeerID_String(t *testing.T) {
@@ -48,5 +57,13 @@ func TestPeerIDEncoding(t *testing.T) {
 		require.NoError(t, id2.UnmarshalJSON(data))
 
 		require.Equal(t, id, id2)
+	})
+}
+
+func TestPeerIDFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *reputationV2.PeerID
+
+		require.Nil(t, reputation.PeerIDFromV2(x))
 	})
 }

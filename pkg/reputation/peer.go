@@ -17,6 +17,8 @@ func NewPeerID() *PeerID {
 }
 
 // PeerIDFromV2 converts NeoFS API v2 reputation.PeerID message to PeerID.
+//
+// Nil reputation.PeerID converts to nil.
 func PeerIDFromV2(id *reputation.PeerID) *PeerID {
 	return (*PeerID)(id)
 }
@@ -28,6 +30,8 @@ func (x *PeerID) SetPublicKey(v [crypto.PublicKeyCompressedSize]byte) {
 }
 
 // ToV2 converts PeerID to NeoFS API v2 reputation.PeerID message.
+//
+// Nil PeerID converts to nil.
 func (x *PeerID) ToV2() *reputation.PeerID {
 	return (*reputation.PeerID)(x)
 }
