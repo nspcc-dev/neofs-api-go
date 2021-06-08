@@ -13,11 +13,15 @@ func NewReplica() *Replica {
 }
 
 // NewReplicaFromV2 converts v2 Replica to Replica.
+//
+// Nil netmap.Replica converts to nil.
 func NewReplicaFromV2(f *netmap.Replica) *Replica {
 	return (*Replica)(f)
 }
 
 // ToV2 converts Replica to v2 Replica.
+//
+// Nil Replica converts to nil.
 func (r *Replica) ToV2() *netmap.Replica {
 	return (*netmap.Replica)(r)
 }
