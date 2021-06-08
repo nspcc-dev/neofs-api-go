@@ -9,6 +9,8 @@ import (
 type Tombstone tombstone.Tombstone
 
 // NewTombstoneFromV2 wraps v2 Tombstone message to Tombstone.
+//
+// Nil tombstone.Tombstone converts to nil.
 func NewTombstoneFromV2(tV2 *tombstone.Tombstone) *Tombstone {
 	return (*Tombstone)(tV2)
 }

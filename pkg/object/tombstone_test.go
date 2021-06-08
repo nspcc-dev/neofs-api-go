@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"testing"
 
+	"github.com/nspcc-dev/neofs-api-go/v2/tombstone"
 	"github.com/stretchr/testify/require"
 )
 
@@ -61,5 +62,13 @@ func TestTombstoneEncoding(t *testing.T) {
 		require.NoError(t, ts2.UnmarshalJSON(data))
 
 		require.Equal(t, ts, ts2)
+	})
+}
+
+func TestNewTombstoneFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *tombstone.Tombstone
+
+		require.Nil(t, NewTombstoneFromV2(x))
 	})
 }
