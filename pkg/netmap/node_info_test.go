@@ -202,3 +202,41 @@ func TestNodeInfoEncoding(t *testing.T) {
 		require.Equal(t, i, i2)
 	})
 }
+
+func TestNewNodeAttribute(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		attr := NewNodeAttribute()
+
+		// check initial values
+		require.Empty(t, attr.Key())
+		require.Empty(t, attr.Value())
+		require.Nil(t, attr.ParentKeys())
+
+		// convert to v2 message
+		attrV2 := attr.ToV2()
+
+		require.Empty(t, attrV2.GetKey())
+		require.Empty(t, attrV2.GetValue())
+		require.Nil(t, attrV2.GetParents())
+	})
+}
+
+func TestNewNodeInfo(t *testing.T) {
+	t.Run("default values", func(t *testing.T) {
+		ni := NewNodeInfo()
+
+		// check initial values
+		require.Nil(t, ni.PublicKey())
+		require.Empty(t, ni.Address())
+		require.Nil(t, ni.Attributes())
+		require.Zero(t, ni.State())
+
+		// convert to v2 message
+		niV2 := ni.ToV2()
+
+		require.Nil(t, niV2.GetPublicKey())
+		require.Empty(t, niV2.GetAddress())
+		require.Nil(t, niV2.GetAttributes())
+		require.EqualValues(t, netmap.UnspecifiedState, niV2.GetState())
+	})
+}
