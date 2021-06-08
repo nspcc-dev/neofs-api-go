@@ -9,6 +9,7 @@ import (
 	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
 	objecttest "github.com/nspcc-dev/neofs-api-go/pkg/object/test"
+	auditv2 "github.com/nspcc-dev/neofs-api-go/v2/audit"
 	"github.com/stretchr/testify/require"
 )
 
@@ -89,5 +90,21 @@ func TestStorageGroupEncoding(t *testing.T) {
 		require.NoError(t, r2.UnmarshalJSON(data))
 
 		require.Equal(t, r, r2)
+	})
+}
+
+func TestResult_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *audit.Result
+
+		require.Nil(t, x.ToV2())
+	})
+}
+
+func TestNewResultFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x *auditv2.DataAuditResult
+
+		require.Nil(t, audit.NewResultFromV2(x))
 	})
 }
