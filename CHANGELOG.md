@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.27.1] - 2021-06-10
+
+### Fixed
+
+- SDK version was updated (actualized) to `2.7`.
+
+### Changed
+
+- `pkg` wrappers' `ToV2` methods return `nil` if called on `nil`.
+- `pkg` wrappers' `NewFromV2` functions constructs `nil` if called with `nil` argument.
+
+### Added
+
+- Getters and setters for lifetime fields of `pkg/session.Token`.
+- `MarshalHeaderJSON` method to `pkg/object.Object`.
+- Generators for types from `pkg` (for testing).
+- Descriptions of default fields for `pkg` wrappers and unit tests for its constructors.
+- Unit tests for `ToV2` methods and `NewFromV2` functions.
+
 ## [1.27.0] - 2021-06-03 - Seongmodo (석모도, 席毛島)
 
 ### Added
@@ -626,3 +645,4 @@ Initial public release
 [1.26.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.25.0...v1.26.0
 [1.26.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.26.0...v1.26.1
 [1.27.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.26.1...v1.27.0
+[1.27.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.27.0...v1.27.1
