@@ -18,7 +18,13 @@ func NewSplitID() *SplitID {
 
 // NewSplitIDFromV2 returns parsed UUID from bytes.
 // If v is invalid UUIDv4 byte sequence, then function returns nil.
+//
+// Nil converts to nil.
 func NewSplitIDFromV2(v []byte) *SplitID {
+	if v == nil {
+		return nil
+	}
+
 	id := uuid.New()
 
 	err := id.UnmarshalBinary(v)
@@ -58,6 +64,8 @@ func (id *SplitID) SetUUID(v uuid.UUID) {
 }
 
 // ToV2 converts SplitID to a representation of SplitID in neofs-api v2.
+//
+// Nil SplitID converts to nil.
 func (id *SplitID) ToV2() []byte {
 	if id == nil {
 		return nil

@@ -46,3 +46,18 @@ func TestSplitID(t *testing.T) {
 	})
 }
 
+func TestSplitID_ToV2(t *testing.T) {
+	t.Run("nil", func(t *testing.T) {
+		var x *object.SplitID
+
+		require.Nil(t, x.ToV2())
+	})
+}
+
+func TestNewIDFromV2(t *testing.T) {
+	t.Run("from nil", func(t *testing.T) {
+		var x []byte
+
+		require.Nil(t, object.NewSplitIDFromV2(x))
+	})
+}
