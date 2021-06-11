@@ -21,9 +21,8 @@ func GenerateTrust(empty bool) *reputation.Trust {
 
 	if !empty {
 		m.SetValue(1)
+		m.SetPeer(GeneratePeerID(false))
 	}
-
-	m.SetPeer(GeneratePeerID(empty))
 
 	return m
 }
@@ -31,8 +30,10 @@ func GenerateTrust(empty bool) *reputation.Trust {
 func GeneratePeerToPeerTrust(empty bool) *reputation.PeerToPeerTrust {
 	m := new(reputation.PeerToPeerTrust)
 
-	m.SetTrustingPeer(GeneratePeerID(empty))
-	m.SetTrust(GenerateTrust(empty))
+	if !empty {
+		m.SetTrustingPeer(GeneratePeerID(false))
+		m.SetTrust(GenerateTrust(false))
+	}
 
 	return m
 }
@@ -40,8 +41,10 @@ func GeneratePeerToPeerTrust(empty bool) *reputation.PeerToPeerTrust {
 func GenerateGlobalTrustBody(empty bool) *reputation.GlobalTrustBody {
 	m := new(reputation.GlobalTrustBody)
 
-	m.SetManager(GeneratePeerID(empty))
-	m.SetTrust(GenerateTrust(empty))
+	if !empty {
+		m.SetManager(GeneratePeerID(false))
+		m.SetTrust(GenerateTrust(false))
+	}
 
 	return m
 }
@@ -49,14 +52,18 @@ func GenerateGlobalTrustBody(empty bool) *reputation.GlobalTrustBody {
 func GenerateGlobalTrust(empty bool) *reputation.GlobalTrust {
 	m := new(reputation.GlobalTrust)
 
-	m.SetVersion(refstest.GenerateVersion(empty))
-	m.SetBody(GenerateGlobalTrustBody(empty))
-	m.SetSignature(refstest.GenerateSignature(empty))
+	if !empty {
+		m.SetVersion(refstest.GenerateVersion(false))
+		m.SetBody(GenerateGlobalTrustBody(false))
+		m.SetSignature(refstest.GenerateSignature(empty))
+	}
 
 	return m
 }
 
-func GenerateTrusts(empty bool) (res []*reputation.Trust) {
+func GenerateTrusts(empty bool) []*reputation.Trust {
+	var res []*reputation.Trust
+
 	if !empty {
 		res = append(res,
 			GenerateTrust(false),
@@ -64,7 +71,7 @@ func GenerateTrusts(empty bool) (res []*reputation.Trust) {
 		)
 	}
 
-	return
+	return res
 }
 
 func GenerateAnnounceLocalTrustRequestBody(empty bool) *reputation.AnnounceLocalTrustRequestBody {
@@ -72,9 +79,8 @@ func GenerateAnnounceLocalTrustRequestBody(empty bool) *reputation.AnnounceLocal
 
 	if !empty {
 		m.SetEpoch(13)
+		m.SetTrusts(GenerateTrusts(false))
 	}
-
-	m.SetTrusts(GenerateTrusts(empty))
 
 	return m
 }
@@ -82,9 +88,11 @@ func GenerateAnnounceLocalTrustRequestBody(empty bool) *reputation.AnnounceLocal
 func GenerateAnnounceLocalTrustRequest(empty bool) *reputation.AnnounceLocalTrustRequest {
 	m := new(reputation.AnnounceLocalTrustRequest)
 
-	m.SetBody(GenerateAnnounceLocalTrustRequestBody(empty))
-	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
-	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
+	if !empty {
+		m.SetBody(GenerateAnnounceLocalTrustRequestBody(false))
+		m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
+		m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
+	}
 
 	return m
 }
@@ -98,9 +106,11 @@ func GenerateAnnounceLocalTrustResponseBody(empty bool) *reputation.AnnounceLoca
 func GenerateAnnounceLocalTrustResponse(empty bool) *reputation.AnnounceLocalTrustResponse {
 	m := new(reputation.AnnounceLocalTrustResponse)
 
-	m.SetBody(GenerateAnnounceLocalTrustResponseBody(empty))
-	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
-	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
+	if !empty {
+		m.SetBody(GenerateAnnounceLocalTrustResponseBody(false))
+		m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
+		m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
+	}
 
 	return m
 }
@@ -111,7 +121,7 @@ func GenerateAnnounceIntermediateResultRequestBody(empty bool) *reputation.Annou
 	if !empty {
 		m.SetEpoch(123)
 		m.SetIteration(564)
-		m.SetTrust(GeneratePeerToPeerTrust(empty))
+		m.SetTrust(GeneratePeerToPeerTrust(false))
 	}
 
 	return m
@@ -120,7 +130,10 @@ func GenerateAnnounceIntermediateResultRequestBody(empty bool) *reputation.Annou
 func GenerateAnnounceIntermediateResultRequest(empty bool) *reputation.AnnounceIntermediateResultRequest {
 	m := new(reputation.AnnounceIntermediateResultRequest)
 
-	m.SetBody(GenerateAnnounceIntermediateResultRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateAnnounceIntermediateResultRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -136,7 +149,10 @@ func GenerateAnnounceIntermediateResultResponseBody(empty bool) *reputation.Anno
 func GenerateAnnounceIntermediateResultResponse(empty bool) *reputation.AnnounceIntermediateResultResponse {
 	m := new(reputation.AnnounceIntermediateResultResponse)
 
-	m.SetBody(GenerateAnnounceIntermediateResultResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateAnnounceIntermediateResultResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
