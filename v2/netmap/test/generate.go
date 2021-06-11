@@ -30,7 +30,9 @@ func generateFilter(empty, withSub bool) *netmap.Filter {
 	return m
 }
 
-func GenerateFilters(empty bool) (res []*netmap.Filter) {
+func GenerateFilters(empty bool) []*netmap.Filter {
+	var res []*netmap.Filter
+
 	if !empty {
 		res = append(res,
 			GenerateFilter(false),
@@ -38,7 +40,7 @@ func GenerateFilters(empty bool) (res []*netmap.Filter) {
 		)
 	}
 
-	return
+	return res
 }
 
 func GenerateSelector(empty bool) *netmap.Selector {
@@ -55,7 +57,9 @@ func GenerateSelector(empty bool) *netmap.Selector {
 	return m
 }
 
-func GenerateSelectors(empty bool) (res []*netmap.Selector) {
+func GenerateSelectors(empty bool) []*netmap.Selector {
+	var res []*netmap.Selector
+
 	if !empty {
 		res = append(res,
 			GenerateSelector(false),
@@ -63,7 +67,7 @@ func GenerateSelectors(empty bool) (res []*netmap.Selector) {
 		)
 	}
 
-	return
+	return res
 }
 
 func GenerateReplica(empty bool) *netmap.Replica {
@@ -77,7 +81,9 @@ func GenerateReplica(empty bool) *netmap.Replica {
 	return m
 }
 
-func GenerateReplicas(empty bool) (res []*netmap.Replica) {
+func GenerateReplicas(empty bool) []*netmap.Replica {
+	var res []*netmap.Replica
+
 	if !empty {
 		res = append(res,
 			GenerateReplica(false),
@@ -85,7 +91,7 @@ func GenerateReplicas(empty bool) (res []*netmap.Replica) {
 		)
 	}
 
-	return
+	return res
 }
 
 func GeneratePlacementPolicy(empty bool) *netmap.PlacementPolicy {
@@ -93,11 +99,10 @@ func GeneratePlacementPolicy(empty bool) *netmap.PlacementPolicy {
 
 	if !empty {
 		m.SetContainerBackupFactor(322)
+		m.SetFilters(GenerateFilters(false))
+		m.SetSelectors(GenerateSelectors(false))
+		m.SetReplicas(GenerateReplicas(false))
 	}
-
-	m.SetFilters(GenerateFilters(empty))
-	m.SetSelectors(GenerateSelectors(empty))
-	m.SetReplicas(GenerateReplicas(empty))
 
 	return m
 }
@@ -113,7 +118,9 @@ func GenerateAttribute(empty bool) *netmap.Attribute {
 	return m
 }
 
-func GenerateAttributes(empty bool) (res []*netmap.Attribute) {
+func GenerateAttributes(empty bool) []*netmap.Attribute {
+	var res []*netmap.Attribute
+
 	if !empty {
 		res = append(res,
 			GenerateAttribute(false),
@@ -121,7 +128,7 @@ func GenerateAttributes(empty bool) (res []*netmap.Attribute) {
 		)
 	}
 
-	return
+	return res
 }
 
 func GenerateNodeInfo(empty bool) *netmap.NodeInfo {
@@ -131,9 +138,8 @@ func GenerateNodeInfo(empty bool) *netmap.NodeInfo {
 		m.SetAddress("node address")
 		m.SetPublicKey([]byte{1, 2, 3})
 		m.SetState(33)
+		m.SetAttributes(GenerateAttributes(empty))
 	}
-
-	m.SetAttributes(GenerateAttributes(empty))
 
 	return m
 }
@@ -147,7 +153,10 @@ func GenerateLocalNodeInfoRequestBody(empty bool) *netmap.LocalNodeInfoRequestBo
 func GenerateLocalNodeInfoRequest(empty bool) *netmap.LocalNodeInfoRequest {
 	m := new(netmap.LocalNodeInfoRequest)
 
-	m.SetBody(GenerateLocalNodeInfoRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateLocalNodeInfoRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -157,8 +166,11 @@ func GenerateLocalNodeInfoRequest(empty bool) *netmap.LocalNodeInfoRequest {
 func GenerateLocalNodeInfoResponseBody(empty bool) *netmap.LocalNodeInfoResponseBody {
 	m := new(netmap.LocalNodeInfoResponseBody)
 
+	if !empty {
+		m.SetNodeInfo(GenerateNodeInfo(false))
+	}
+
 	m.SetVersion(refstest.GenerateVersion(empty))
-	m.SetNodeInfo(GenerateNodeInfo(empty))
 
 	return m
 }
@@ -166,7 +178,10 @@ func GenerateLocalNodeInfoResponseBody(empty bool) *netmap.LocalNodeInfoResponse
 func GenerateLocalNodeInfoResponse(empty bool) *netmap.LocalNodeInfoResponse {
 	m := new(netmap.LocalNodeInfoResponse)
 
-	m.SetBody(GenerateLocalNodeInfoResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateLocalNodeInfoResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -193,7 +208,10 @@ func GenerateNetworkInfoRequestBody(empty bool) *netmap.NetworkInfoRequestBody {
 func GenerateNetworkInfoRequest(empty bool) *netmap.NetworkInfoRequest {
 	m := new(netmap.NetworkInfoRequest)
 
-	m.SetBody(GenerateNetworkInfoRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateNetworkInfoRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -203,7 +221,9 @@ func GenerateNetworkInfoRequest(empty bool) *netmap.NetworkInfoRequest {
 func GenerateNetworkInfoResponseBody(empty bool) *netmap.NetworkInfoResponseBody {
 	m := new(netmap.NetworkInfoResponseBody)
 
-	m.SetNetworkInfo(GenerateNetworkInfo(empty))
+	if !empty {
+		m.SetNetworkInfo(GenerateNetworkInfo(false))
+	}
 
 	return m
 }
@@ -211,7 +231,10 @@ func GenerateNetworkInfoResponseBody(empty bool) *netmap.NetworkInfoResponseBody
 func GenerateNetworkInfoResponse(empty bool) *netmap.NetworkInfoResponse {
 	m := new(netmap.NetworkInfoResponse)
 
-	m.SetBody(GenerateNetworkInfoResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateNetworkInfoResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
