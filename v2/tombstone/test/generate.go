@@ -11,9 +11,8 @@ func GenerateTombstone(empty bool) *tombstone.Tombstone {
 	if !empty {
 		m.SetExpirationEpoch(89)
 		m.SetSplitID([]byte{3, 2, 1})
+		m.SetMembers(refstest.GenerateObjectIDs(false))
 	}
-
-	m.SetMembers(refstest.GenerateObjectIDs(empty))
 
 	return m
 }
