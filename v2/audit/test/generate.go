@@ -19,12 +19,11 @@ func GenerateDataAuditResult(empty bool) *audit.DataAuditResult {
 		m.SetFailNodes([][]byte{{3}, {4}})
 		m.SetRequests(666)
 		m.SetRetries(777)
+		m.SetVersion(refstest.GenerateVersion(false))
+		m.SetContainerID(refstest.GenerateContainerID(false))
+		m.SetPassSG(refstest.GenerateObjectIDs(false))
+		m.SetFailSG(refstest.GenerateObjectIDs(false))
 	}
-
-	m.SetVersion(refstest.GenerateVersion(empty))
-	m.SetContainerID(refstest.GenerateContainerID(empty))
-	m.SetPassSG(refstest.GenerateObjectIDs(empty))
-	m.SetFailSG(refstest.GenerateObjectIDs(empty))
 
 	return m
 }
