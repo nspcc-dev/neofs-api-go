@@ -28,8 +28,10 @@ func GenerateOwnerID(empty bool) *refs.OwnerID {
 func GenerateAddress(empty bool) *refs.Address {
 	m := new(refs.Address)
 
-	m.SetObjectID(GenerateObjectID(empty))
-	m.SetContainerID(GenerateContainerID(empty))
+	if !empty {
+		m.SetObjectID(GenerateObjectID(false))
+		m.SetContainerID(GenerateContainerID(false))
+	}
 
 	return m
 }
@@ -45,7 +47,7 @@ func GenerateObjectID(empty bool) *refs.ObjectID {
 }
 
 func GenerateObjectIDs(empty bool) []*refs.ObjectID {
-	ids := make([]*refs.ObjectID, 0)
+	var ids []*refs.ObjectID
 
 	if !empty {
 		ids = append(ids,
@@ -67,7 +69,9 @@ func GenerateContainerID(empty bool) *refs.ContainerID {
 	return m
 }
 
-func GenerateContainerIDs(empty bool) (res []*refs.ContainerID) {
+func GenerateContainerIDs(empty bool) []*refs.ContainerID {
+	var res []*refs.ContainerID
+
 	if !empty {
 		res = append(res,
 			GenerateContainerID(false),
@@ -75,7 +79,7 @@ func GenerateContainerIDs(empty bool) (res []*refs.ContainerID) {
 		)
 	}
 
-	return
+	return res
 }
 
 func GenerateSignature(empty bool) *refs.Signature {
