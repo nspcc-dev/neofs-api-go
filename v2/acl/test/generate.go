@@ -8,7 +8,10 @@ import (
 func GenerateBearerToken(empty bool) *acl.BearerToken {
 	m := new(acl.BearerToken)
 
-	m.SetBody(GenerateBearerTokenBody(empty))
+	if !empty {
+		m.SetBody(GenerateBearerTokenBody(false))
+	}
+
 	m.SetSignature(accountingtest.GenerateSignature(empty))
 
 	return m
@@ -17,9 +20,11 @@ func GenerateBearerToken(empty bool) *acl.BearerToken {
 func GenerateBearerTokenBody(empty bool) *acl.BearerTokenBody {
 	m := new(acl.BearerTokenBody)
 
-	m.SetOwnerID(accountingtest.GenerateOwnerID(empty))
-	m.SetEACL(GenerateTable(empty))
-	m.SetLifetime(GenerateTokenLifetime(empty))
+	if !empty {
+		m.SetOwnerID(accountingtest.GenerateOwnerID(false))
+		m.SetEACL(GenerateTable(false))
+		m.SetLifetime(GenerateTokenLifetime(false))
+	}
 
 	return m
 }
@@ -27,15 +32,18 @@ func GenerateBearerTokenBody(empty bool) *acl.BearerTokenBody {
 func GenerateTable(empty bool) *acl.Table {
 	m := new(acl.Table)
 
-	m.SetRecords(GenerateRecords(empty))
-	m.SetContainerID(accountingtest.GenerateContainerID(empty))
+	if !empty {
+		m.SetRecords(GenerateRecords(false))
+		m.SetContainerID(accountingtest.GenerateContainerID(false))
+	}
+
 	m.SetVersion(accountingtest.GenerateVersion(empty))
 
 	return m
 }
 
 func GenerateRecords(empty bool) []*acl.Record {
-	rs := make([]*acl.Record, 0)
+	var rs []*acl.Record
 
 	if !empty {
 		rs = append(rs,
@@ -53,16 +61,15 @@ func GenerateRecord(empty bool) *acl.Record {
 	if !empty {
 		m.SetAction(acl.ActionAllow)
 		m.SetOperation(acl.OperationGet)
+		m.SetFilters(GenerateFilters(false))
+		m.SetTargets(GenerateTargets(false))
 	}
-
-	m.SetFilters(GenerateFilters(empty))
-	m.SetTargets(GenerateTargets(empty))
 
 	return m
 }
 
 func GenerateFilters(empty bool) []*acl.HeaderFilter {
-	fs := make([]*acl.HeaderFilter, 0)
+	var fs []*acl.HeaderFilter
 
 	if !empty {
 		fs = append(fs,
@@ -88,7 +95,7 @@ func GenerateFilter(empty bool) *acl.HeaderFilter {
 }
 
 func GenerateTargets(empty bool) []*acl.Target {
-	ts := make([]*acl.Target, 0)
+	var ts []*acl.Target
 
 	if !empty {
 		ts = append(ts,
