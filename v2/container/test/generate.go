@@ -19,7 +19,9 @@ func GenerateAttribute(empty bool) *container.Attribute {
 	return m
 }
 
-func GenerateAttributes(empty bool) (res []*container.Attribute) {
+func GenerateAttributes(empty bool) []*container.Attribute {
+	var res []*container.Attribute
+
 	if !empty {
 		res = append(res,
 			GenerateAttribute(false),
@@ -27,7 +29,7 @@ func GenerateAttributes(empty bool) (res []*container.Attribute) {
 		)
 	}
 
-	return
+	return res
 }
 
 func GenerateContainer(empty bool) *container.Container {
@@ -36,12 +38,12 @@ func GenerateContainer(empty bool) *container.Container {
 	if !empty {
 		m.SetBasicACL(12)
 		m.SetNonce([]byte{1, 2, 3})
+		m.SetOwnerID(refstest.GenerateOwnerID(false))
+		m.SetAttributes(GenerateAttributes(false))
+		m.SetPlacementPolicy(netmaptest.GeneratePlacementPolicy(false))
 	}
 
-	m.SetOwnerID(refstest.GenerateOwnerID(empty))
 	m.SetVersion(refstest.GenerateVersion(empty))
-	m.SetAttributes(GenerateAttributes(empty))
-	m.SetPlacementPolicy(netmaptest.GeneratePlacementPolicy(empty))
 
 	return m
 }
@@ -49,7 +51,10 @@ func GenerateContainer(empty bool) *container.Container {
 func GeneratePutRequestBody(empty bool) *container.PutRequestBody {
 	m := new(container.PutRequestBody)
 
-	m.SetContainer(GenerateContainer(empty))
+	if !empty {
+		m.SetContainer(GenerateContainer(false))
+	}
+
 	m.SetSignature(refstest.GenerateSignature(empty))
 
 	return m
@@ -58,7 +63,10 @@ func GeneratePutRequestBody(empty bool) *container.PutRequestBody {
 func GeneratePutRequest(empty bool) *container.PutRequest {
 	m := new(container.PutRequest)
 
-	m.SetBody(GeneratePutRequestBody(empty))
+	if !empty {
+		m.SetBody(GeneratePutRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -68,7 +76,9 @@ func GeneratePutRequest(empty bool) *container.PutRequest {
 func GeneratePutResponseBody(empty bool) *container.PutResponseBody {
 	m := new(container.PutResponseBody)
 
-	m.SetContainerID(refstest.GenerateContainerID(empty))
+	if !empty {
+		m.SetContainerID(refstest.GenerateContainerID(false))
+	}
 
 	return m
 }
@@ -76,7 +86,10 @@ func GeneratePutResponseBody(empty bool) *container.PutResponseBody {
 func GeneratePutResponse(empty bool) *container.PutResponse {
 	m := new(container.PutResponse)
 
-	m.SetBody(GeneratePutResponseBody(empty))
+	if !empty {
+		m.SetBody(GeneratePutResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -86,7 +99,9 @@ func GeneratePutResponse(empty bool) *container.PutResponse {
 func GenerateGetRequestBody(empty bool) *container.GetRequestBody {
 	m := new(container.GetRequestBody)
 
-	m.SetContainerID(refstest.GenerateContainerID(empty))
+	if !empty {
+		m.SetContainerID(refstest.GenerateContainerID(false))
+	}
 
 	return m
 }
@@ -94,7 +109,10 @@ func GenerateGetRequestBody(empty bool) *container.GetRequestBody {
 func GenerateGetRequest(empty bool) *container.GetRequest {
 	m := new(container.GetRequest)
 
-	m.SetBody(GenerateGetRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateGetRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -104,7 +122,10 @@ func GenerateGetRequest(empty bool) *container.GetRequest {
 func GenerateGetResponseBody(empty bool) *container.GetResponseBody {
 	m := new(container.GetResponseBody)
 
-	m.SetContainer(GenerateContainer(empty))
+	if !empty {
+		m.SetContainer(GenerateContainer(false))
+	}
+
 	m.SetSignature(refstest.GenerateSignature(empty))
 	m.SetSessionToken(sessiontest.GenerateSessionToken(empty))
 
@@ -114,7 +135,10 @@ func GenerateGetResponseBody(empty bool) *container.GetResponseBody {
 func GenerateGetResponse(empty bool) *container.GetResponse {
 	m := new(container.GetResponse)
 
-	m.SetBody(GenerateGetResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateGetResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -124,7 +148,10 @@ func GenerateGetResponse(empty bool) *container.GetResponse {
 func GenerateDeleteRequestBody(empty bool) *container.DeleteRequestBody {
 	m := new(container.DeleteRequestBody)
 
-	m.SetContainerID(refstest.GenerateContainerID(empty))
+	if !empty {
+		m.SetContainerID(refstest.GenerateContainerID(false))
+	}
+
 	m.SetSignature(refstest.GenerateSignature(empty))
 
 	return m
@@ -133,7 +160,10 @@ func GenerateDeleteRequestBody(empty bool) *container.DeleteRequestBody {
 func GenerateDeleteRequest(empty bool) *container.DeleteRequest {
 	m := new(container.DeleteRequest)
 
-	m.SetBody(GenerateDeleteRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateDeleteRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -149,7 +179,10 @@ func GenerateDeleteResponseBody(empty bool) *container.DeleteResponseBody {
 func GenerateDeleteResponse(empty bool) *container.DeleteResponse {
 	m := new(container.DeleteResponse)
 
-	m.SetBody(GenerateDeleteResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateDeleteResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -159,7 +192,9 @@ func GenerateDeleteResponse(empty bool) *container.DeleteResponse {
 func GenerateListRequestBody(empty bool) *container.ListRequestBody {
 	m := new(container.ListRequestBody)
 
-	m.SetOwnerID(refstest.GenerateOwnerID(empty))
+	if !empty {
+		m.SetOwnerID(refstest.GenerateOwnerID(false))
+	}
 
 	return m
 }
@@ -167,7 +202,10 @@ func GenerateListRequestBody(empty bool) *container.ListRequestBody {
 func GenerateListRequest(empty bool) *container.ListRequest {
 	m := new(container.ListRequest)
 
-	m.SetBody(GenerateListRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateListRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -177,7 +215,9 @@ func GenerateListRequest(empty bool) *container.ListRequest {
 func GenerateListResponseBody(empty bool) *container.ListResponseBody {
 	m := new(container.ListResponseBody)
 
-	m.SetContainerIDs(refstest.GenerateContainerIDs(empty))
+	if !empty {
+		m.SetContainerIDs(refstest.GenerateContainerIDs(false))
+	}
 
 	return m
 }
@@ -185,7 +225,10 @@ func GenerateListResponseBody(empty bool) *container.ListResponseBody {
 func GenerateListResponse(empty bool) *container.ListResponse {
 	m := new(container.ListResponse)
 
-	m.SetBody(GenerateListResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateListResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -195,7 +238,10 @@ func GenerateListResponse(empty bool) *container.ListResponse {
 func GenerateSetExtendedACLRequestBody(empty bool) *container.SetExtendedACLRequestBody {
 	m := new(container.SetExtendedACLRequestBody)
 
-	m.SetEACL(acltest.GenerateTable(empty))
+	if !empty {
+		m.SetEACL(acltest.GenerateTable(false))
+	}
+
 	m.SetSignature(refstest.GenerateSignature(empty))
 
 	return m
@@ -204,7 +250,10 @@ func GenerateSetExtendedACLRequestBody(empty bool) *container.SetExtendedACLRequ
 func GenerateSetExtendedACLRequest(empty bool) *container.SetExtendedACLRequest {
 	m := new(container.SetExtendedACLRequest)
 
-	m.SetBody(GenerateSetExtendedACLRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateSetExtendedACLRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -220,7 +269,10 @@ func GenerateSetExtendedACLResponseBody(empty bool) *container.SetExtendedACLRes
 func GenerateSetExtendedACLResponse(empty bool) *container.SetExtendedACLResponse {
 	m := new(container.SetExtendedACLResponse)
 
-	m.SetBody(GenerateSetExtendedACLResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateSetExtendedACLResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -230,7 +282,9 @@ func GenerateSetExtendedACLResponse(empty bool) *container.SetExtendedACLRespons
 func GenerateGetExtendedACLRequestBody(empty bool) *container.GetExtendedACLRequestBody {
 	m := new(container.GetExtendedACLRequestBody)
 
-	m.SetContainerID(refstest.GenerateContainerID(empty))
+	if !empty {
+		m.SetContainerID(refstest.GenerateContainerID(false))
+	}
 
 	return m
 }
@@ -238,7 +292,10 @@ func GenerateGetExtendedACLRequestBody(empty bool) *container.GetExtendedACLRequ
 func GenerateGetExtendedACLRequest(empty bool) *container.GetExtendedACLRequest {
 	m := new(container.GetExtendedACLRequest)
 
-	m.SetBody(GenerateGetExtendedACLRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateGetExtendedACLRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -248,7 +305,10 @@ func GenerateGetExtendedACLRequest(empty bool) *container.GetExtendedACLRequest 
 func GenerateGetExtendedACLResponseBody(empty bool) *container.GetExtendedACLResponseBody {
 	m := new(container.GetExtendedACLResponseBody)
 
-	m.SetEACL(acltest.GenerateTable(empty))
+	if !empty {
+		m.SetEACL(acltest.GenerateTable(false))
+	}
+
 	m.SetSignature(refstest.GenerateSignature(empty))
 	m.SetSessionToken(sessiontest.GenerateSessionToken(empty))
 
@@ -258,7 +318,10 @@ func GenerateGetExtendedACLResponseBody(empty bool) *container.GetExtendedACLRes
 func GenerateGetExtendedACLResponse(empty bool) *container.GetExtendedACLResponse {
 	m := new(container.GetExtendedACLResponse)
 
-	m.SetBody(GenerateGetExtendedACLResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateGetExtendedACLResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -268,14 +331,18 @@ func GenerateGetExtendedACLResponse(empty bool) *container.GetExtendedACLRespons
 func GenerateUsedSpaceAnnouncement(empty bool) *container.UsedSpaceAnnouncement {
 	m := new(container.UsedSpaceAnnouncement)
 
-	m.SetContainerID(refstest.GenerateContainerID(empty))
-	m.SetEpoch(1)
-	m.SetUsedSpace(2)
+	if !empty {
+		m.SetContainerID(refstest.GenerateContainerID(false))
+		m.SetEpoch(1)
+		m.SetUsedSpace(2)
+	}
 
 	return m
 }
 
-func GenerateUsedSpaceAnnouncements(empty bool) (res []*container.UsedSpaceAnnouncement) {
+func GenerateUsedSpaceAnnouncements(empty bool) []*container.UsedSpaceAnnouncement {
+	var res []*container.UsedSpaceAnnouncement
+
 	if !empty {
 		res = append(res,
 			GenerateUsedSpaceAnnouncement(false),
@@ -283,13 +350,15 @@ func GenerateUsedSpaceAnnouncements(empty bool) (res []*container.UsedSpaceAnnou
 		)
 	}
 
-	return
+	return res
 }
 
 func GenerateAnnounceUsedSpaceRequestBody(empty bool) *container.AnnounceUsedSpaceRequestBody {
 	m := new(container.AnnounceUsedSpaceRequestBody)
 
-	m.SetAnnouncements(GenerateUsedSpaceAnnouncements(empty))
+	if !empty {
+		m.SetAnnouncements(GenerateUsedSpaceAnnouncements(false))
+	}
 
 	return m
 }
@@ -297,7 +366,10 @@ func GenerateAnnounceUsedSpaceRequestBody(empty bool) *container.AnnounceUsedSpa
 func GenerateAnnounceUsedSpaceRequest(empty bool) *container.AnnounceUsedSpaceRequest {
 	m := new(container.AnnounceUsedSpaceRequest)
 
-	m.SetBody(GenerateAnnounceUsedSpaceRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateAnnounceUsedSpaceRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -313,7 +385,10 @@ func GenerateAnnounceUsedSpaceResponseBody(empty bool) *container.AnnounceUsedSp
 func GenerateAnnounceUsedSpaceResponse(empty bool) *container.AnnounceUsedSpaceResponse {
 	m := new(container.AnnounceUsedSpaceResponse)
 
-	m.SetBody(GenerateAnnounceUsedSpaceResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateAnnounceUsedSpaceResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
