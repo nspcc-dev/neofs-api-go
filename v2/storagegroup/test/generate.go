@@ -11,10 +11,10 @@ func GenerateStorageGroup(empty bool) *storagegroup.StorageGroup {
 	if !empty {
 		m.SetValidationDataSize(44)
 		m.SetExpirationEpoch(55)
+		m.SetMembers(refstest.GenerateObjectIDs(false))
 	}
 
 	m.SetValidationHash(refstest.GenerateChecksum(empty))
-	m.SetMembers(refstest.GenerateObjectIDs(empty))
 
 	return m
 }
