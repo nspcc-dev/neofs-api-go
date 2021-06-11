@@ -11,9 +11,8 @@ func GenerateCreateRequestBody(empty bool) *session.CreateRequestBody {
 
 	if !empty {
 		m.SetExpiration(555)
+		m.SetOwnerID(refstest.GenerateOwnerID(false))
 	}
-
-	m.SetOwnerID(refstest.GenerateOwnerID(empty))
 
 	return m
 }
@@ -21,7 +20,10 @@ func GenerateCreateRequestBody(empty bool) *session.CreateRequestBody {
 func GenerateCreateRequest(empty bool) *session.CreateRequest {
 	m := new(session.CreateRequest)
 
-	m.SetBody(GenerateCreateRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateCreateRequestBody(false))
+	}
+
 	m.SetMetaHeader(GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(GenerateRequestVerificationHeader(empty))
 
@@ -42,7 +44,10 @@ func GenerateCreateResponseBody(empty bool) *session.CreateResponseBody {
 func GenerateCreateResponse(empty bool) *session.CreateResponse {
 	m := new(session.CreateResponse)
 
-	m.SetBody(GenerateCreateResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateCreateResponseBody(false))
+	}
+
 	m.SetMetaHeader(GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(GenerateResponseVerificationHeader(empty))
 
@@ -56,7 +61,10 @@ func GenerateResponseVerificationHeader(empty bool) *session.ResponseVerificatio
 func generateResponseVerificationHeader(empty, withOrigin bool) *session.ResponseVerificationHeader {
 	m := new(session.ResponseVerificationHeader)
 
-	m.SetBodySignature(refstest.GenerateSignature(empty))
+	if !empty {
+		m.SetBodySignature(refstest.GenerateSignature(false))
+	}
+
 	m.SetMetaSignature(refstest.GenerateSignature(empty))
 	m.SetOriginSignature(refstest.GenerateSignature(empty))
 
@@ -96,7 +104,10 @@ func GenerateRequestVerificationHeader(empty bool) *session.RequestVerificationH
 func generateRequestVerificationHeader(empty, withOrigin bool) *session.RequestVerificationHeader {
 	m := new(session.RequestVerificationHeader)
 
-	m.SetBodySignature(refstest.GenerateSignature(empty))
+	if !empty {
+		m.SetBodySignature(refstest.GenerateSignature(false))
+	}
+
 	m.SetMetaSignature(refstest.GenerateSignature(empty))
 	m.SetOriginSignature(refstest.GenerateSignature(empty))
 
@@ -134,7 +145,10 @@ func generateRequestMetaHeader(empty, withOrigin bool) *session.RequestMetaHeade
 func GenerateSessionToken(empty bool) *session.SessionToken {
 	m := new(session.SessionToken)
 
-	m.SetBody(GenerateSessionTokenBody(empty))
+	if !empty {
+		m.SetBody(GenerateSessionTokenBody(false))
+	}
+
 	m.SetSignature(refstest.GenerateSignature(empty))
 
 	return m
@@ -146,11 +160,10 @@ func GenerateSessionTokenBody(empty bool) *session.SessionTokenBody {
 	if !empty {
 		m.SetID([]byte{1})
 		m.SetSessionKey([]byte{2})
+		m.SetOwnerID(refstest.GenerateOwnerID(false))
+		m.SetLifetime(GenerateTokenLifetime(false))
+		m.SetContext(GenerateObjectSessionContext(false))
 	}
-
-	m.SetOwnerID(refstest.GenerateOwnerID(empty))
-	m.SetLifetime(GenerateTokenLifetime(empty))
-	m.SetContext(GenerateObjectSessionContext(empty))
 
 	return m
 }
@@ -172,9 +185,8 @@ func GenerateObjectSessionContext(empty bool) *session.ObjectSessionContext {
 
 	if !empty {
 		m.SetVerb(session.ObjectVerbHead)
+		m.SetAddress(refstest.GenerateAddress(false))
 	}
-
-	m.SetAddress(refstest.GenerateAddress(empty))
 
 	return m
 }
@@ -185,9 +197,8 @@ func GenerateContainerSessionContext(empty bool) *session.ContainerSessionContex
 	if !empty {
 		m.SetVerb(session.ContainerVerbDelete)
 		m.SetWildcard(true)
+		m.SetContainerID(refstest.GenerateContainerID(false))
 	}
-
-	m.SetContainerID(refstest.GenerateContainerID(empty))
 
 	return m
 }
@@ -204,7 +215,7 @@ func GenerateXHeader(empty bool) *session.XHeader {
 }
 
 func GenerateXHeaders(empty bool) []*session.XHeader {
-	xs := make([]*session.XHeader, 0)
+	var xs []*session.XHeader
 
 	if !empty {
 		xs = append(xs,
