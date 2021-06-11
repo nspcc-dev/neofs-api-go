@@ -13,10 +13,10 @@ func GenerateShortHeader(empty bool) *object.ShortHeader {
 		m.SetObjectType(13)
 		m.SetCreationEpoch(100)
 		m.SetPayloadLength(12321)
+		m.SetOwnerID(refstest.GenerateOwnerID(false))
 	}
 
 	m.SetVersion(refstest.GenerateVersion(empty))
-	m.SetOwnerID(refstest.GenerateOwnerID(empty))
 	m.SetHomomorphicHash(refstest.GenerateChecksum(empty))
 	m.SetPayloadHash(refstest.GenerateChecksum(empty))
 
@@ -34,7 +34,9 @@ func GenerateAttribute(empty bool) *object.Attribute {
 	return m
 }
 
-func GenerateAttributes(empty bool) (res []*object.Attribute) {
+func GenerateAttributes(empty bool) []*object.Attribute {
+	var res []*object.Attribute
+
 	if !empty {
 		res = append(res,
 			GenerateAttribute(false),
@@ -42,7 +44,7 @@ func GenerateAttributes(empty bool) (res []*object.Attribute) {
 		)
 	}
 
-	return
+	return res
 }
 
 func GenerateSplitHeader(empty bool) *object.SplitHeader {
@@ -54,12 +56,12 @@ func generateSplitHeader(empty, withPar bool) *object.SplitHeader {
 
 	if !empty {
 		m.SetSplitID([]byte{1, 3, 5})
+		m.SetParent(refstest.GenerateObjectID(false))
+		m.SetPrevious(refstest.GenerateObjectID(false))
+		m.SetChildren(refstest.GenerateObjectIDs(false))
 	}
 
-	m.SetParent(refstest.GenerateObjectID(empty))
-	m.SetPrevious(refstest.GenerateObjectID(empty))
 	m.SetParentSignature(refstest.GenerateSignature(empty))
-	m.SetChildren(refstest.GenerateObjectIDs(empty))
 
 	if withPar {
 		m.SetParentHeader(generateHeader(empty, false))
@@ -79,15 +81,15 @@ func generateHeader(empty, withSplit bool) *object.Header {
 		m.SetPayloadLength(777)
 		m.SetCreationEpoch(432)
 		m.SetObjectType(111)
+		m.SetOwnerID(refstest.GenerateOwnerID(false))
+		m.SetContainerID(refstest.GenerateContainerID(false))
+		m.SetAttributes(GenerateAttributes(false))
 	}
 
 	m.SetVersion(refstest.GenerateVersion(empty))
 	m.SetPayloadHash(refstest.GenerateChecksum(empty))
-	m.SetOwnerID(refstest.GenerateOwnerID(empty))
 	m.SetHomomorphicHash(refstest.GenerateChecksum(empty))
-	m.SetContainerID(refstest.GenerateContainerID(empty))
 	m.SetSessionToken(sessiontest.GenerateSessionToken(empty))
-	m.SetAttributes(GenerateAttributes(empty))
 
 	if withSplit {
 		m.SetSplit(generateSplitHeader(empty, false))
@@ -110,9 +112,9 @@ func GenerateObject(empty bool) *object.Object {
 
 	if !empty {
 		m.SetPayload([]byte{7, 8, 9})
+		m.SetObjectID(refstest.GenerateObjectID(false))
 	}
 
-	m.SetObjectID(refstest.GenerateObjectID(empty))
 	m.SetSignature(refstest.GenerateSignature(empty))
 	m.SetHeader(GenerateHeader(empty))
 
@@ -124,10 +126,9 @@ func GenerateSplitInfo(empty bool) *object.SplitInfo {
 
 	if !empty {
 		m.SetSplitID([]byte("splitID"))
+		m.SetLastPart(refstest.GenerateObjectID(false))
+		m.SetLink(refstest.GenerateObjectID(false))
 	}
-
-	m.SetLastPart(refstest.GenerateObjectID(empty))
-	m.SetLink(refstest.GenerateObjectID(empty))
 
 	return m
 }
@@ -137,9 +138,8 @@ func GenerateGetRequestBody(empty bool) *object.GetRequestBody {
 
 	if !empty {
 		m.SetRaw(true)
+		m.SetAddress(refstest.GenerateAddress(false))
 	}
-
-	m.SetAddress(refstest.GenerateAddress(empty))
 
 	return m
 }
@@ -147,7 +147,10 @@ func GenerateGetRequestBody(empty bool) *object.GetRequestBody {
 func GenerateGetRequest(empty bool) *object.GetRequest {
 	m := new(object.GetRequest)
 
-	m.SetBody(GenerateGetRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateGetRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -157,7 +160,10 @@ func GenerateGetRequest(empty bool) *object.GetRequest {
 func GenerateGetObjectPartInit(empty bool) *object.GetObjectPartInit {
 	m := new(object.GetObjectPartInit)
 
-	m.SetObjectID(refstest.GenerateObjectID(empty))
+	if !empty {
+		m.SetObjectID(refstest.GenerateObjectID(false))
+	}
+
 	m.SetSignature(refstest.GenerateSignature(empty))
 	m.SetHeader(GenerateHeader(empty))
 
@@ -177,7 +183,9 @@ func GenerateGetObjectPartChunk(empty bool) *object.GetObjectPartChunk {
 func GenerateGetResponseBody(empty bool) *object.GetResponseBody {
 	m := new(object.GetResponseBody)
 
-	m.SetObjectPart(GenerateGetObjectPartInit(empty))
+	if !empty {
+		m.SetObjectPart(GenerateGetObjectPartInit(false))
+	}
 
 	return m
 }
@@ -185,7 +193,10 @@ func GenerateGetResponseBody(empty bool) *object.GetResponseBody {
 func GenerateGetResponse(empty bool) *object.GetResponse {
 	m := new(object.GetResponse)
 
-	m.SetBody(GenerateGetResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateGetResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -197,9 +208,9 @@ func GeneratePutObjectPartInit(empty bool) *object.PutObjectPartInit {
 
 	if !empty {
 		m.SetCopiesNumber(234)
+		m.SetObjectID(refstest.GenerateObjectID(false))
 	}
 
-	m.SetObjectID(refstest.GenerateObjectID(empty))
 	m.SetSignature(refstest.GenerateSignature(empty))
 	m.SetHeader(GenerateHeader(empty))
 
@@ -219,7 +230,9 @@ func GeneratePutObjectPartChunk(empty bool) *object.PutObjectPartChunk {
 func GeneratePutRequestBody(empty bool) *object.PutRequestBody {
 	m := new(object.PutRequestBody)
 
-	m.SetObjectPart(GeneratePutObjectPartInit(empty))
+	if !empty {
+		m.SetObjectPart(GeneratePutObjectPartInit(false))
+	}
 
 	return m
 }
@@ -227,7 +240,10 @@ func GeneratePutRequestBody(empty bool) *object.PutRequestBody {
 func GeneratePutRequest(empty bool) *object.PutRequest {
 	m := new(object.PutRequest)
 
-	m.SetBody(GeneratePutRequestBody(empty))
+	if !empty {
+		m.SetBody(GeneratePutRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -237,7 +253,9 @@ func GeneratePutRequest(empty bool) *object.PutRequest {
 func GeneratePutResponseBody(empty bool) *object.PutResponseBody {
 	m := new(object.PutResponseBody)
 
-	m.SetObjectID(refstest.GenerateObjectID(empty))
+	if !empty {
+		m.SetObjectID(refstest.GenerateObjectID(false))
+	}
 
 	return m
 }
@@ -245,7 +263,10 @@ func GeneratePutResponseBody(empty bool) *object.PutResponseBody {
 func GeneratePutResponse(empty bool) *object.PutResponse {
 	m := new(object.PutResponse)
 
-	m.SetBody(GeneratePutResponseBody(empty))
+	if !empty {
+		m.SetBody(GeneratePutResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -255,7 +276,9 @@ func GeneratePutResponse(empty bool) *object.PutResponse {
 func GenerateDeleteRequestBody(empty bool) *object.DeleteRequestBody {
 	m := new(object.DeleteRequestBody)
 
-	m.SetAddress(refstest.GenerateAddress(empty))
+	if !empty {
+		m.SetAddress(refstest.GenerateAddress(false))
+	}
 
 	return m
 }
@@ -263,7 +286,10 @@ func GenerateDeleteRequestBody(empty bool) *object.DeleteRequestBody {
 func GenerateDeleteRequest(empty bool) *object.DeleteRequest {
 	m := new(object.DeleteRequest)
 
-	m.SetBody(GenerateDeleteRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateDeleteRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -273,7 +299,9 @@ func GenerateDeleteRequest(empty bool) *object.DeleteRequest {
 func GenerateDeleteResponseBody(empty bool) *object.DeleteResponseBody {
 	m := new(object.DeleteResponseBody)
 
-	m.SetTombstone(refstest.GenerateAddress(empty))
+	if !empty {
+		m.SetTombstone(refstest.GenerateAddress(false))
+	}
 
 	return m
 }
@@ -281,7 +309,10 @@ func GenerateDeleteResponseBody(empty bool) *object.DeleteResponseBody {
 func GenerateDeleteResponse(empty bool) *object.DeleteResponse {
 	m := new(object.DeleteResponse)
 
-	m.SetBody(GenerateDeleteResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateDeleteResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -294,9 +325,8 @@ func GenerateHeadRequestBody(empty bool) *object.HeadRequestBody {
 	if !empty {
 		m.SetRaw(true)
 		m.SetMainOnly(true)
+		m.SetAddress(refstest.GenerateAddress(false))
 	}
-
-	m.SetAddress(refstest.GenerateAddress(empty))
 
 	return m
 }
@@ -304,7 +334,10 @@ func GenerateHeadRequestBody(empty bool) *object.HeadRequestBody {
 func GenerateHeadRequest(empty bool) *object.HeadRequest {
 	m := new(object.HeadRequest)
 
-	m.SetBody(GenerateHeadRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateHeadRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -314,7 +347,9 @@ func GenerateHeadRequest(empty bool) *object.HeadRequest {
 func GenerateHeadResponseBody(empty bool) *object.HeadResponseBody {
 	m := new(object.HeadResponseBody)
 
-	m.SetHeaderPart(GenerateHeaderWithSignature(empty))
+	if !empty {
+		m.SetHeaderPart(GenerateHeaderWithSignature(false))
+	}
 
 	return m
 }
@@ -322,7 +357,10 @@ func GenerateHeadResponseBody(empty bool) *object.HeadResponseBody {
 func GenerateHeadResponse(empty bool) *object.HeadResponse {
 	m := new(object.HeadResponse)
 
-	m.SetBody(GenerateHeadResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateHeadResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -341,7 +379,9 @@ func GenerateSearchFilter(empty bool) *object.SearchFilter {
 	return m
 }
 
-func GenerateSearchFilters(empty bool) (res []*object.SearchFilter) {
+func GenerateSearchFilters(empty bool) []*object.SearchFilter {
+	var res []*object.SearchFilter
+
 	if !empty {
 		res = append(res,
 			GenerateSearchFilter(false),
@@ -349,7 +389,7 @@ func GenerateSearchFilters(empty bool) (res []*object.SearchFilter) {
 		)
 	}
 
-	return
+	return res
 }
 
 func GenerateSearchRequestBody(empty bool) *object.SearchRequestBody {
@@ -357,10 +397,9 @@ func GenerateSearchRequestBody(empty bool) *object.SearchRequestBody {
 
 	if !empty {
 		m.SetVersion(555)
+		m.SetContainerID(refstest.GenerateContainerID(false))
+		m.SetFilters(GenerateSearchFilters(false))
 	}
-
-	m.SetContainerID(refstest.GenerateContainerID(empty))
-	m.SetFilters(GenerateSearchFilters(empty))
 
 	return m
 }
@@ -368,7 +407,10 @@ func GenerateSearchRequestBody(empty bool) *object.SearchRequestBody {
 func GenerateSearchRequest(empty bool) *object.SearchRequest {
 	m := new(object.SearchRequest)
 
-	m.SetBody(GenerateSearchRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateSearchRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -378,7 +420,9 @@ func GenerateSearchRequest(empty bool) *object.SearchRequest {
 func GenerateSearchResponseBody(empty bool) *object.SearchResponseBody {
 	m := new(object.SearchResponseBody)
 
-	m.SetIDList(refstest.GenerateObjectIDs(empty))
+	if !empty {
+		m.SetIDList(refstest.GenerateObjectIDs(false))
+	}
 
 	return m
 }
@@ -386,7 +430,10 @@ func GenerateSearchResponseBody(empty bool) *object.SearchResponseBody {
 func GenerateSearchResponse(empty bool) *object.SearchResponse {
 	m := new(object.SearchResponse)
 
-	m.SetBody(GenerateSearchResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateSearchResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -404,7 +451,9 @@ func GenerateRange(empty bool) *object.Range {
 	return m
 }
 
-func GenerateRanges(empty bool) (res []*object.Range) {
+func GenerateRanges(empty bool) []*object.Range {
+	var res []*object.Range
+
 	if !empty {
 		res = append(res,
 			GenerateRange(false),
@@ -412,7 +461,7 @@ func GenerateRanges(empty bool) (res []*object.Range) {
 		)
 	}
 
-	return
+	return res
 }
 
 func GenerateGetRangeRequestBody(empty bool) *object.GetRangeRequestBody {
@@ -420,10 +469,9 @@ func GenerateGetRangeRequestBody(empty bool) *object.GetRangeRequestBody {
 
 	if !empty {
 		m.SetRaw(true)
+		m.SetAddress(refstest.GenerateAddress(empty))
+		m.SetRange(GenerateRange(empty))
 	}
-
-	m.SetAddress(refstest.GenerateAddress(empty))
-	m.SetRange(GenerateRange(empty))
 
 	return m
 }
@@ -431,7 +479,10 @@ func GenerateGetRangeRequestBody(empty bool) *object.GetRangeRequestBody {
 func GenerateGetRangeRequest(empty bool) *object.GetRangeRequest {
 	m := new(object.GetRangeRequest)
 
-	m.SetBody(GenerateGetRangeRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateGetRangeRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -451,7 +502,9 @@ func GenerateGetRangePartChunk(empty bool) *object.GetRangePartChunk {
 func GenerateGetRangeResponseBody(empty bool) *object.GetRangeResponseBody {
 	m := new(object.GetRangeResponseBody)
 
-	m.SetRangePart(GenerateGetRangePartChunk(empty))
+	if !empty {
+		m.SetRangePart(GenerateGetRangePartChunk(false))
+	}
 
 	return m
 }
@@ -459,7 +512,10 @@ func GenerateGetRangeResponseBody(empty bool) *object.GetRangeResponseBody {
 func GenerateGetRangeResponse(empty bool) *object.GetRangeResponse {
 	m := new(object.GetRangeResponse)
 
-	m.SetBody(GenerateGetRangeResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateGetRangeResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -472,10 +528,9 @@ func GenerateGetRangeHashRequestBody(empty bool) *object.GetRangeHashRequestBody
 	if !empty {
 		m.SetSalt([]byte("range hash salt"))
 		m.SetType(455)
+		m.SetAddress(refstest.GenerateAddress(false))
+		m.SetRanges(GenerateRanges(false))
 	}
-
-	m.SetAddress(refstest.GenerateAddress(empty))
-	m.SetRanges(GenerateRanges(empty))
 
 	return m
 }
@@ -483,7 +538,10 @@ func GenerateGetRangeHashRequestBody(empty bool) *object.GetRangeHashRequestBody
 func GenerateGetRangeHashRequest(empty bool) *object.GetRangeHashRequest {
 	m := new(object.GetRangeHashRequest)
 
-	m.SetBody(GenerateGetRangeHashRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateGetRangeHashRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -504,7 +562,10 @@ func GenerateGetRangeHashResponseBody(empty bool) *object.GetRangeHashResponseBo
 func GenerateGetRangeHashResponse(empty bool) *object.GetRangeHashResponse {
 	m := new(object.GetRangeHashResponse)
 
-	m.SetBody(GenerateGetRangeHashResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateGetRangeHashResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
