@@ -9,7 +9,10 @@ import (
 func GenerateBalanceRequest(empty bool) *accounting.BalanceRequest {
 	m := new(accounting.BalanceRequest)
 
-	m.SetBody(GenerateBalanceRequestBody(empty))
+	if !empty {
+		m.SetBody(GenerateBalanceRequestBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
 
@@ -19,7 +22,9 @@ func GenerateBalanceRequest(empty bool) *accounting.BalanceRequest {
 func GenerateBalanceRequestBody(empty bool) *accounting.BalanceRequestBody {
 	m := new(accounting.BalanceRequestBody)
 
-	m.SetOwnerID(accountingtest.GenerateOwnerID(empty))
+	if !empty {
+		m.SetOwnerID(accountingtest.GenerateOwnerID(false))
+	}
 
 	return m
 }
@@ -27,7 +32,10 @@ func GenerateBalanceRequestBody(empty bool) *accounting.BalanceRequestBody {
 func GenerateBalanceResponse(empty bool) *accounting.BalanceResponse {
 	m := new(accounting.BalanceResponse)
 
-	m.SetBody(GenerateBalanceResponseBody(empty))
+	if !empty {
+		m.SetBody(GenerateBalanceResponseBody(false))
+	}
+
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
 
@@ -37,7 +45,9 @@ func GenerateBalanceResponse(empty bool) *accounting.BalanceResponse {
 func GenerateBalanceResponseBody(empty bool) *accounting.BalanceResponseBody {
 	m := new(accounting.BalanceResponseBody)
 
-	m.SetBalance(GenerateDecimal(empty))
+	if !empty {
+		m.SetBalance(GenerateDecimal(false))
+	}
 
 	return m
 }
