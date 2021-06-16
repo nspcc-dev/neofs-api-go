@@ -113,3 +113,27 @@ func (x *ContainerContext) ForSetEACL() {
 func (x *ContainerContext) IsForSetEACL() bool {
 	return x.isForVerb(session.ContainerVerbSetEACL)
 }
+
+// Marshal marshals ContainerContext into a protobuf binary form.
+func (x *ContainerContext) Marshal(bs ...[]byte) ([]byte, error) {
+	var buf []byte
+	if len(bs) > 0 {
+		buf = bs[0]
+	}
+	return x.ToV2().StableMarshal(buf)
+}
+
+// Unmarshal unmarshals protobuf binary representation of ContainerContext.
+func (x *ContainerContext) Unmarshal(data []byte) error {
+	return x.ToV2().Unmarshal(data)
+}
+
+// MarshalJSON encodes ContainerContext to protobuf JSON format.
+func (x *ContainerContext) MarshalJSON() ([]byte, error) {
+	return x.ToV2().MarshalJSON()
+}
+
+// UnmarshalJSON decodes ContainerContext from protobuf JSON format.
+func (x *ContainerContext) UnmarshalJSON(data []byte) error {
+	return x.ToV2().UnmarshalJSON(data)
+}
