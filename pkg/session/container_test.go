@@ -5,6 +5,7 @@ import (
 
 	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
 	"github.com/nspcc-dev/neofs-api-go/pkg/session"
+	sessiontest "github.com/nspcc-dev/neofs-api-go/pkg/session/test"
 	v2session "github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/stretchr/testify/require"
 )
@@ -83,5 +84,29 @@ func TestFilter_ToV2(t *testing.T) {
 		require.Equal(t, v2session.ContainerVerbUnknown, cV2.Verb())
 		require.True(t, cV2.Wildcard())
 		require.Nil(t, cV2.ContainerID())
+	})
+}
+
+func TestContainerContextEncoding(t *testing.T) {
+	c := sessiontest.ContainerContext()
+
+	t.Run("binary", func(t *testing.T) {
+		data, err := c.Marshal()
+		require.NoError(t, err)
+
+		c2 := session.NewContainerContext()
+		require.NoError(t, c2.Unmarshal(data))
+
+		require.Equal(t, c, c2)
+	})
+
+	t.Run("json", func(t *testing.T) {
+		data, err := c.MarshalJSON()
+		require.NoError(t, err)
+
+		c2 := session.NewContainerContext()
+		require.NoError(t, c2.UnmarshalJSON(data))
+
+		require.Equal(t, c, c2)
 	})
 }
