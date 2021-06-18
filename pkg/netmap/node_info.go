@@ -332,15 +332,52 @@ func (i *NodeInfo) SetPublicKey(key []byte) {
 }
 
 // Address returns network endpoint address of the node.
-func (i *NodeInfo) Address() string {
-	return (*netmap.NodeInfo)(i).
-		GetAddress()
+//
+// Deprecated: use IterateAddresses method.
+func (i *NodeInfo) Address() (addr string) {
+	i.IterateAddresses(func(s string) bool {
+		addr = s
+		return true
+	})
+
+	return
 }
 
 // SetAddress sets network endpoint address of the node.
+//
+// Deprecated: use SetAddresses method.
 func (i *NodeInfo) SetAddress(addr string) {
+	i.SetAddresses(addr)
+}
+
+// NumberOfAddresses returns number of network addresses of the node.
+func (i *NodeInfo) NumberOfAddresses() int {
+	return (*netmap.NodeInfo)(i).
+		NumberOfAddresses()
+}
+
+// IterateAddresses iterates over network addresses of the node.
+// Breaks iteration on f's true return.
+//
+// Handler should not be nil.
+func (i *NodeInfo) IterateAddresses(f func(string) bool) {
 	(*netmap.NodeInfo)(i).
-		SetAddress(addr)
+		IterateAddresses(f)
+}
+
+// IterateAllAddresses is a helper function to unconditionally
+// iterate over all node addresses.
+func IterateAllAddresses(i *NodeInfo, f func(string)) {
+	i.IterateAddresses(func(addr string) bool {
+		f(addr)
+		return false
+	})
+}
+
+// SetAddresses sets list of network addresses of the node.
+func (i *NodeInfo) SetAddresses(v ...string) {
+	(*netmap.NodeInfo)(i).
+		SetAddresses(v...)
 }
 
 // Attributes returns list of the node attributes.

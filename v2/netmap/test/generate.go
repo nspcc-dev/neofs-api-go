@@ -135,7 +135,7 @@ func GenerateNodeInfo(empty bool) *netmap.NodeInfo {
 	m := new(netmap.NodeInfo)
 
 	if !empty {
-		m.SetAddress("node address")
+		m.SetAddresses("node address", "node address 2")
 		m.SetPublicKey([]byte{1, 2, 3})
 		m.SetState(33)
 		m.SetAttributes(GenerateAttributes(empty))

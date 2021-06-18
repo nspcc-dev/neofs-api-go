@@ -124,13 +124,21 @@ func TestNodeInfo_PublicKey(t *testing.T) {
 	require.Equal(t, key, i.PublicKey())
 }
 
-func TestNodeInfo_Address(t *testing.T) {
+func TestNodeInfo_IterateAddresses(t *testing.T) {
 	i := new(NodeInfo)
-	a := "127.0.0.1:8080"
 
-	i.SetAddress(a)
+	as := []string{"127.0.0.1:8080", "127.0.0.1:8081"}
 
-	require.Equal(t, a, i.Address())
+	i.SetAddresses(as...)
+
+	as2 := make([]string, 0, i.NumberOfAddresses())
+
+	IterateAllAddresses(i, func(addr string) {
+		as2 = append(as2, addr)
+	})
+
+	require.Equal(t, as, as2)
+	require.EqualValues(t, len(as), i.NumberOfAddresses())
 }
 
 func TestNodeInfo_State(t *testing.T) {
@@ -178,7 +186,7 @@ func TestNodeAttributeEncoding(t *testing.T) {
 func TestNodeInfoEncoding(t *testing.T) {
 	i := NewNodeInfo()
 	i.SetPublicKey([]byte{1, 2, 3})
-	i.SetAddress("192.168.0.1")
+	i.SetAddresses("192.168.0.1", "192.168.0.2")
 	i.SetState(NodeStateOnline)
 	i.SetAttributes(testNodeAttribute())
 
@@ -227,7 +235,8 @@ func TestNewNodeInfo(t *testing.T) {
 
 		// check initial values
 		require.Nil(t, ni.PublicKey())
-		require.Empty(t, ni.Address())
+
+		require.Zero(t, ni.NumberOfAddresses())
 		require.Nil(t, ni.Attributes())
 		require.Zero(t, ni.State())
 
@@ -235,7 +244,7 @@ func TestNewNodeInfo(t *testing.T) {
 		niV2 := ni.ToV2()
 
 		require.Nil(t, niV2.GetPublicKey())
-		require.Empty(t, niV2.GetAddress())
+		require.Zero(t, niV2.NumberOfAddresses())
 		require.Nil(t, niV2.GetAttributes())
 		require.EqualValues(t, netmap.UnspecifiedState, niV2.GetState())
 	})

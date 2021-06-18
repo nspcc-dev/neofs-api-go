@@ -84,7 +84,7 @@ func NodeAttribute() *netmap.NodeAttribute {
 func NodeInfo() *netmap.NodeInfo {
 	x := netmap.NewNodeInfo()
 
-	x.SetAddress("address")
+	x.SetAddresses("address 1", "address 2")
 	x.SetPublicKey([]byte("public key"))
 	x.SetState(netmap.NodeStateOnline)
 	x.SetAttributes(NodeAttribute(), NodeAttribute())

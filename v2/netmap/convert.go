@@ -342,7 +342,7 @@ func (ni *NodeInfo) ToGRPCMessage() grpc.Message {
 		m = new(netmap.NodeInfo)
 
 		m.SetPublicKey(ni.publicKey)
-		m.SetAddress(ni.address)
+		m.SetAddresses(ni.addresses)
 		m.SetState(NodeStateToGRPCMessage(ni.state))
 		m.SetAttributes(AttributesToGRPC(ni.attributes))
 	}
@@ -364,7 +364,7 @@ func (ni *NodeInfo) FromGRPCMessage(m grpc.Message) error {
 	}
 
 	ni.publicKey = v.GetPublicKey()
-	ni.address = v.GetAddress()
+	ni.addresses = v.GetAddresses()
 	ni.state = NodeStateFromRPCMessage(v.GetState())
 
 	return nil
