@@ -53,3 +53,21 @@ func TestOperationFromV2(t *testing.T) {
 		require.Equal(t, item.opV2, item.op.ToV2())
 	}
 }
+
+func TestOperation_String(t *testing.T) {
+	toPtr := func(v Operation) *Operation {
+		return &v
+	}
+
+	testEnumStrings(t, new(Operation), []enumStringItem{
+		{val: toPtr(OpEQ), str: "EQ"},
+		{val: toPtr(OpNE), str: "NE"},
+		{val: toPtr(OpGT), str: "GT"},
+		{val: toPtr(OpGE), str: "GE"},
+		{val: toPtr(OpLT), str: "LT"},
+		{val: toPtr(OpLE), str: "LE"},
+		{val: toPtr(OpAND), str: "AND"},
+		{val: toPtr(OpOR), str: "OR"},
+		{val: toPtr(0), str: "OPERATION_UNSPECIFIED"},
+	})
+}

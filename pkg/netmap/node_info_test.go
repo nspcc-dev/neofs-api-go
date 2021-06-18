@@ -240,3 +240,15 @@ func TestNewNodeInfo(t *testing.T) {
 		require.EqualValues(t, netmap.UnspecifiedState, niV2.GetState())
 	})
 }
+
+func TestNodeState_String(t *testing.T) {
+	toPtr := func(v NodeState) *NodeState {
+		return &v
+	}
+
+	testEnumStrings(t, new(NodeState), []enumStringItem{
+		{val: toPtr(NodeStateOnline), str: "ONLINE"},
+		{val: toPtr(NodeStateOffline), str: "OFFLINE"},
+		{val: toPtr(0), str: "UNSPECIFIED"},
+	})
+}

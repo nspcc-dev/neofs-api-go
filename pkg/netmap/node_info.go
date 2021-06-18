@@ -176,15 +176,30 @@ func (s NodeState) ToV2() netmap.NodeState {
 	}
 }
 
+// String returns string representation of NodeState.
+//
+// String mapping:
+//  * NodeStateOnline: ONLINE;
+//  * NodeStateOffline: OFFLINE;
+//  * default: UNSPECIFIED.
 func (s NodeState) String() string {
-	switch s {
-	default:
-		return "STATE_UNSPECIFIED"
-	case NodeStateOffline:
-		return "OFFLINE"
-	case NodeStateOnline:
-		return "ONLINE"
+	return s.ToV2().String()
+}
+
+// FromString parses NodeState from a string representation.
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (s *NodeState) FromString(str string) bool {
+	var g netmap.NodeState
+
+	ok := g.FromString(str)
+
+	if ok {
+		*s = NodeStateFromV2(g)
 	}
+
+	return ok
 }
 
 // NewNodeAttribute creates and returns new NodeAttribute instance.

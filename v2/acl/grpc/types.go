@@ -150,3 +150,68 @@ func (m *BearerToken_Body_TokenLifetime) SetIat(v uint64) {
 		m.Iat = v
 	}
 }
+
+// FromString parses Action from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *Action) FromString(s string) bool {
+	i, ok := Action_value[s]
+	if ok {
+		*x = Action(i)
+	}
+
+	return ok
+}
+
+// FromString parses Role from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *Role) FromString(s string) bool {
+	i, ok := Role_value[s]
+	if ok {
+		*x = Role(i)
+	}
+
+	return ok
+}
+
+// FromString parses Operation from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *Operation) FromString(s string) bool {
+	i, ok := Operation_value[s]
+	if ok {
+		*x = Operation(i)
+	}
+
+	return ok
+}
+
+// FromString parses MatchType from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *MatchType) FromString(s string) bool {
+	i, ok := MatchType_value[s]
+	if ok {
+		*x = MatchType(i)
+	}
+
+	return ok
+}
+
+// FromString parses HeaderType from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *HeaderType) FromString(s string) bool {
+	i, ok := HeaderType_value[s]
+	if ok {
+		*x = HeaderType(i)
+	}
+
+	return ok
+}

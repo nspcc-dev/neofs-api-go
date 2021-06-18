@@ -76,3 +76,16 @@ func (m *Signature) SetSign(v []byte) {
 		m.Sign = v
 	}
 }
+
+// FromString parses ChecksumType from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *ChecksumType) FromString(s string) bool {
+	i, ok := ChecksumType_value[s]
+	if ok {
+		*x = ChecksumType(i)
+	}
+
+	return ok
+}

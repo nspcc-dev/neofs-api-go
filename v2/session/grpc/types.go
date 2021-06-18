@@ -274,3 +274,29 @@ func (m *ResponseVerificationHeader) SetOrigin(v *ResponseVerificationHeader) {
 		m.Origin = v
 	}
 }
+
+// FromString parses ObjectSessionContext_Verb from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *ObjectSessionContext_Verb) FromString(s string) bool {
+	i, ok := ObjectSessionContext_Verb_value[s]
+	if ok {
+		*x = ObjectSessionContext_Verb(i)
+	}
+
+	return ok
+}
+
+// FromString parses ContainerSessionContext_Verb from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *ContainerSessionContext_Verb) FromString(s string) bool {
+	i, ok := ContainerSessionContext_Verb_value[s]
+	if ok {
+		*x = ContainerSessionContext_Verb(i)
+	}
+
+	return ok
+}

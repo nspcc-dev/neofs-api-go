@@ -124,6 +124,32 @@ func ActionFromV2(action v2acl.Action) (a Action) {
 	return a
 }
 
+// String returns string representation of Action.
+//
+// String mapping:
+//  * ActionAllow: ALLOW;
+//  * ActionDeny: DENY;
+//  * ActionUnknown, default: ACTION_UNSPECIFIED.
+func (a Action) String() string {
+	return a.ToV2().String()
+}
+
+// FromString parses Action from a string representation.
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (a *Action) FromString(s string) bool {
+	var g v2acl.Action
+
+	ok := g.FromString(s)
+
+	if ok {
+		*a = ActionFromV2(g)
+	}
+
+	return ok
+}
+
 // ToV2 converts Operation to v2 Operation enum value.
 func (o Operation) ToV2() v2acl.Operation {
 	switch o {
@@ -170,6 +196,37 @@ func OperationFromV2(operation v2acl.Operation) (o Operation) {
 	return o
 }
 
+// String returns string representation of Operation.
+//
+// String mapping:
+//  * OperationGet: GET;
+//  * OperationHead: HEAD;
+//  * OperationPut: PUT;
+//  * OperationDelete: DELETE;
+//  * OperationSearch: SEARCH;
+//  * OperationRange: GETRANGE;
+//  * OperationRangeHash: GETRANGEHASH;
+//  * OperationUnknown, default: OPERATION_UNSPECIFIED.
+func (o Operation) String() string {
+	return o.ToV2().String()
+}
+
+// FromString parses Operation from a string representation.
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (o *Operation) FromString(s string) bool {
+	var g v2acl.Operation
+
+	ok := g.FromString(s)
+
+	if ok {
+		*o = OperationFromV2(g)
+	}
+
+	return ok
+}
+
 // ToV2 converts Role to v2 Role enum value.
 func (r Role) ToV2() v2acl.Role {
 	switch r {
@@ -200,6 +257,33 @@ func RoleFromV2(role v2acl.Role) (r Role) {
 	return r
 }
 
+// String returns string representation of Role.
+//
+// String mapping:
+//  * RoleUser: USER;
+//  * RoleSystem: SYSTEM;
+//  * RoleOthers: OTHERS;
+//  * RoleUnknown, default: ROLE_UNKNOWN.
+func (r Role) String() string {
+	return r.ToV2().String()
+}
+
+// FromString parses Role from a string representation.
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (r *Role) FromString(s string) bool {
+	var g v2acl.Role
+
+	ok := g.FromString(s)
+
+	if ok {
+		*r = RoleFromV2(g)
+	}
+
+	return ok
+}
+
 // ToV2 converts Match to v2 MatchType enum value.
 func (m Match) ToV2() v2acl.MatchType {
 	switch m {
@@ -226,6 +310,32 @@ func MatchFromV2(match v2acl.MatchType) (m Match) {
 	return m
 }
 
+// String returns string representation of Match.
+//
+// String mapping:
+//  * MatchStringEqual: STRING_EQUAL;
+//  * MatchStringNotEqual: STRING_NOT_EQUAL;
+//  * MatchUnknown, default: MATCH_TYPE_UNSPECIFIED.
+func (m Match) String() string {
+	return m.ToV2().String()
+}
+
+// FromString parses Match from a string representation.
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (m *Match) FromString(s string) bool {
+	var g v2acl.MatchType
+
+	ok := g.FromString(s)
+
+	if ok {
+		*m = MatchFromV2(g)
+	}
+
+	return ok
+}
+
 // ToV2 converts FilterHeaderType to v2 HeaderType enum value.
 func (h FilterHeaderType) ToV2() v2acl.HeaderType {
 	switch h {
@@ -250,4 +360,30 @@ func FilterHeaderTypeFromV2(header v2acl.HeaderType) (h FilterHeaderType) {
 	}
 
 	return h
+}
+
+// String returns string representation of FilterHeaderType.
+//
+// String mapping:
+//  * HeaderFromRequest: REQUEST;
+//  * HeaderFromObject: OBJECT;
+//  * HeaderTypeUnknown, default: HEADER_UNSPECIFIED.
+func (h FilterHeaderType) String() string {
+	return h.ToV2().String()
+}
+
+// FromString parses FilterHeaderType from a string representation.
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (h *FilterHeaderType) FromString(s string) bool {
+	var g v2acl.HeaderType
+
+	ok := g.FromString(s)
+
+	if ok {
+		*h = FilterHeaderTypeFromV2(g)
+	}
+
+	return ok
 }
