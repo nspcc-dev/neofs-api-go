@@ -192,3 +192,16 @@ func TestSearchFiltersEncoding(t *testing.T) {
 		require.Equal(t, fs, fs2)
 	})
 }
+
+func TestSearchMatchType_String(t *testing.T) {
+	toPtr := func(v object.SearchMatchType) *object.SearchMatchType {
+		return &v
+	}
+
+	testEnumStrings(t, new(object.SearchMatchType), []enumStringItem{
+		{val: toPtr(object.MatchStringEqual), str: "STRING_EQUAL"},
+		{val: toPtr(object.MatchStringNotEqual), str: "STRING_NOT_EQUAL"},
+		{val: toPtr(object.MatchNotPresent), str: "NOT_PRESENT"},
+		{val: toPtr(object.MatchUnknown), str: "MATCH_TYPE_UNSPECIFIED"},
+	})
+}

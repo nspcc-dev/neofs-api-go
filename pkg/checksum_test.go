@@ -131,3 +131,45 @@ func TestNewChecksum(t *testing.T) {
 		require.Nil(t, chsV2.GetSum())
 	})
 }
+
+type enumIface interface {
+	FromString(string) bool
+	String() string
+}
+
+type enumStringItem struct {
+	val enumIface
+	str string
+}
+
+func testEnumStrings(t *testing.T, e enumIface, items []enumStringItem) {
+	for _, item := range items {
+		require.Equal(t, item.str, item.val.String())
+
+		s := item.val.String()
+
+		require.True(t, e.FromString(s), s)
+
+		require.EqualValues(t, item.val, e, item.val)
+	}
+
+	// incorrect strings
+	for _, str := range []string{
+		"some string",
+		"undefined",
+	} {
+		require.False(t, e.FromString(str))
+	}
+}
+
+func TestChecksumType_String(t *testing.T) {
+	toPtr := func(v ChecksumType) *ChecksumType {
+		return &v
+	}
+
+	testEnumStrings(t, new(ChecksumType), []enumStringItem{
+		{val: toPtr(ChecksumTZ), str: "TZ"},
+		{val: toPtr(ChecksumSHA256), str: "SHA256"},
+		{val: toPtr(ChecksumUnknown), str: "CHECKSUM_TYPE_UNSPECIFIED"},
+	})
+}

@@ -42,13 +42,28 @@ func (c Clause) ToV2() netmap.Clause {
 	}
 }
 
+// String returns string representation of Clause.
+//
+// String mapping:
+//  * ClauseDistinct: DISTINCT;
+//  * ClauseSame: SAME;
+//  * ClauseUnspecified, default: CLAUSE_UNSPECIFIED.
 func (c Clause) String() string {
-	switch c {
-	default:
-		return "CLAUSE_UNSPECIFIED"
-	case ClauseDistinct:
-		return "DISTINCT"
-	case ClauseSame:
-		return "SAME"
+	return c.ToV2().String()
+}
+
+// FromString parses Clause from a string representation.
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (c *Clause) FromString(s string) bool {
+	var g netmap.Clause
+
+	ok := g.FromString(s)
+
+	if ok {
+		*c = ClauseFromV2(g)
 	}
+
+	return ok
 }

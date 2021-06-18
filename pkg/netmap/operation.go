@@ -83,25 +83,34 @@ func (op Operation) ToV2() netmap.Operation {
 	}
 }
 
+// String returns string representation of Operation.
+//
+// String mapping:
+//  * OpNE: NE;
+//  * OpEQ: EQ;
+//  * OpLT: LT;
+//  * OpLE: LE;
+//  * OpGT: GT;
+//  * OpGE: GE;
+//  * OpAND: AND;
+//  * OpOR: OR;
+//  * default: OPERATION_UNSPECIFIED.
 func (op Operation) String() string {
-	switch op {
-	default:
-		return "OPERATION_UNSPECIFIED"
-	case OpNE:
-		return "NE"
-	case OpEQ:
-		return "EQ"
-	case OpLT:
-		return "LT"
-	case OpLE:
-		return "LE"
-	case OpGT:
-		return "GT"
-	case OpGE:
-		return "GE"
-	case OpAND:
-		return "AND"
-	case OpOR:
-		return "OR"
+	return op.ToV2().String()
+}
+
+// FromString parses Operation from a string representation.
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (op *Operation) FromString(s string) bool {
+	var g netmap.Operation
+
+	ok := g.FromString(s)
+
+	if ok {
+		*op = OperationFromV2(g)
 	}
+
+	return ok
 }

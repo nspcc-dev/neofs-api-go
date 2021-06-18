@@ -1,5 +1,11 @@
 package netmap
 
+import (
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
+
 func newFilter(name string, k, v string, op Operation, fs ...*Filter) *Filter {
 	f := NewFilter()
 	f.SetName(name)
@@ -54,4 +60,34 @@ func getTestNode(props ...string) *Node {
 		m[props[i]] = props[i+1]
 	}
 	return &Node{AttrMap: m}
+}
+
+type enumIface interface {
+	FromString(string) bool
+	String() string
+}
+
+type enumStringItem struct {
+	val enumIface
+	str string
+}
+
+func testEnumStrings(t *testing.T, e enumIface, items []enumStringItem) {
+	for _, item := range items {
+		require.Equal(t, item.str, item.val.String())
+
+		s := item.val.String()
+
+		require.True(t, e.FromString(s), s)
+
+		require.EqualValues(t, item.val, e, item.val)
+	}
+
+	// incorrect strings
+	for _, str := range []string{
+		"some string",
+		"undefined",
+	} {
+		require.False(t, e.FromString(str))
+	}
 }

@@ -235,3 +235,29 @@ func (m *SplitInfo) SetLink(v *refs.ObjectID) {
 		m.Link = v
 	}
 }
+
+// FromString parses ObjectType from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *ObjectType) FromString(s string) bool {
+	i, ok := ObjectType_value[s]
+	if ok {
+		*x = ObjectType(i)
+	}
+
+	return ok
+}
+
+// FromString parses MatchType from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *MatchType) FromString(s string) bool {
+	i, ok := MatchType_value[s]
+	if ok {
+		*x = MatchType(i)
+	}
+
+	return ok
+}

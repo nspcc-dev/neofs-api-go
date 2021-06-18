@@ -48,6 +48,33 @@ func SearchMatchFromV2(t v2object.MatchType) (m SearchMatchType) {
 	return m
 }
 
+// String returns string representation of SearchMatchType.
+//
+// String mapping:
+//  * MatchStringEqual: STRING_EQUAL;
+//  * MatchStringNotEqual: STRING_NOT_EQUAL;
+//  * MatchNotPresent: NOT_PRESENT;
+//  * MatchUnknown, default: MATCH_TYPE_UNSPECIFIED.
+func (m SearchMatchType) String() string {
+	return m.ToV2().String()
+}
+
+// FromString parses SearchMatchType from a string representation.
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (m *SearchMatchType) FromString(s string) bool {
+	var g v2object.MatchType
+
+	ok := g.FromString(s)
+
+	if ok {
+		*m = SearchMatchFromV2(g)
+	}
+
+	return ok
+}
+
 type SearchFilter struct {
 	header filterKey
 	value  fmt.Stringer

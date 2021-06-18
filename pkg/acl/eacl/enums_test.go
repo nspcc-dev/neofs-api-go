@@ -115,3 +115,99 @@ func TestFilterHeaderType(t *testing.T) {
 		require.Equal(t, eacl.FilterHeaderTypeFromV2(v2acl.HeaderTypeObject+1), eacl.HeaderTypeUnknown)
 	})
 }
+
+type enumIface interface {
+	FromString(string) bool
+	String() string
+}
+
+type enumStringItem struct {
+	val enumIface
+	str string
+}
+
+func testEnumStrings(t *testing.T, e enumIface, items []enumStringItem) {
+	for _, item := range items {
+		require.Equal(t, item.str, item.val.String())
+
+		s := item.val.String()
+
+		require.True(t, e.FromString(s), s)
+
+		require.EqualValues(t, item.val, e, item.val)
+	}
+
+	// incorrect strings
+	for _, str := range []string{
+		"some string",
+		"UNSPECIFIED",
+	} {
+		require.False(t, e.FromString(str))
+	}
+}
+
+func TestAction_String(t *testing.T) {
+	toPtr := func(v eacl.Action) *eacl.Action {
+		return &v
+	}
+
+	testEnumStrings(t, new(eacl.Action), []enumStringItem{
+		{val: toPtr(eacl.ActionAllow), str: "ALLOW"},
+		{val: toPtr(eacl.ActionDeny), str: "DENY"},
+		{val: toPtr(eacl.ActionUnknown), str: "ACTION_UNSPECIFIED"},
+	})
+}
+
+func TestRole_String(t *testing.T) {
+	toPtr := func(v eacl.Role) *eacl.Role {
+		return &v
+	}
+
+	testEnumStrings(t, new(eacl.Role), []enumStringItem{
+		{val: toPtr(eacl.RoleUser), str: "USER"},
+		{val: toPtr(eacl.RoleSystem), str: "SYSTEM"},
+		{val: toPtr(eacl.RoleOthers), str: "OTHERS"},
+		{val: toPtr(eacl.RoleUnknown), str: "ROLE_UNSPECIFIED"},
+	})
+}
+
+func TestOperation_String(t *testing.T) {
+	toPtr := func(v eacl.Operation) *eacl.Operation {
+		return &v
+	}
+
+	testEnumStrings(t, new(eacl.Operation), []enumStringItem{
+		{val: toPtr(eacl.OperationGet), str: "GET"},
+		{val: toPtr(eacl.OperationPut), str: "PUT"},
+		{val: toPtr(eacl.OperationHead), str: "HEAD"},
+		{val: toPtr(eacl.OperationDelete), str: "DELETE"},
+		{val: toPtr(eacl.OperationSearch), str: "SEARCH"},
+		{val: toPtr(eacl.OperationRange), str: "GETRANGE"},
+		{val: toPtr(eacl.OperationRangeHash), str: "GETRANGEHASH"},
+		{val: toPtr(eacl.OperationUnknown), str: "OPERATION_UNSPECIFIED"},
+	})
+}
+
+func TestMatch_String(t *testing.T) {
+	toPtr := func(v eacl.Match) *eacl.Match {
+		return &v
+	}
+
+	testEnumStrings(t, new(eacl.Match), []enumStringItem{
+		{val: toPtr(eacl.MatchStringEqual), str: "STRING_EQUAL"},
+		{val: toPtr(eacl.MatchStringNotEqual), str: "STRING_NOT_EQUAL"},
+		{val: toPtr(eacl.MatchUnknown), str: "MATCH_TYPE_UNSPECIFIED"},
+	})
+}
+
+func TestFilterHeaderType_String(t *testing.T) {
+	toPtr := func(v eacl.FilterHeaderType) *eacl.FilterHeaderType {
+		return &v
+	}
+
+	testEnumStrings(t, new(eacl.FilterHeaderType), []enumStringItem{
+		{val: toPtr(eacl.HeaderFromRequest), str: "REQUEST"},
+		{val: toPtr(eacl.HeaderFromObject), str: "OBJECT"},
+		{val: toPtr(eacl.HeaderTypeUnknown), str: "HEADER_UNSPECIFIED"},
+	})
+}

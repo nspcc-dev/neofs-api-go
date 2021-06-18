@@ -152,3 +152,47 @@ func (c *Checksum) Parse(s string) error {
 
 	return nil
 }
+
+// String returns string representation of ChecksumType.
+//
+// String mapping:
+//  * ChecksumTZ: TZ;
+//  * ChecksumSHA256: SHA256;
+//  * ChecksumUnknown, default: CHECKSUM_TYPE_UNSPECIFIED.
+func (m ChecksumType) String() string {
+	var m2 refs.ChecksumType
+
+	switch m {
+	default:
+		m2 = refs.UnknownChecksum
+	case ChecksumTZ:
+		m2 = refs.TillichZemor
+	case ChecksumSHA256:
+		m2 = refs.SHA256
+	}
+
+	return m2.String()
+}
+
+// FromString parses ChecksumType from a string representation.
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (m *ChecksumType) FromString(s string) bool {
+	var g refs.ChecksumType
+
+	ok := g.FromString(s)
+
+	if ok {
+		switch g {
+		default:
+			*m = ChecksumUnknown
+		case refs.TillichZemor:
+			*m = ChecksumTZ
+		case refs.SHA256:
+			*m = ChecksumSHA256
+		}
+	}
+
+	return ok
+}

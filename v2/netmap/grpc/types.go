@@ -174,3 +174,42 @@ func (x *NetworkInfo) SetMagicNumber(v uint64) {
 		x.MagicNumber = v
 	}
 }
+
+// FromString parses Clause from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *Clause) FromString(s string) bool {
+	i, ok := Clause_value[s]
+	if ok {
+		*x = Clause(i)
+	}
+
+	return ok
+}
+
+// FromString parses Operation from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *Operation) FromString(s string) bool {
+	i, ok := Operation_value[s]
+	if ok {
+		*x = Operation(i)
+	}
+
+	return ok
+}
+
+// FromString parses NodeInfo_State from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *NodeInfo_State) FromString(s string) bool {
+	i, ok := NodeInfo_State_value[s]
+	if ok {
+		*x = NodeInfo_State(i)
+	}
+
+	return ok
+}
