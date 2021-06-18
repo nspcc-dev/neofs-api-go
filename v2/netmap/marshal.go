@@ -367,7 +367,7 @@ func (ni *NodeInfo) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = protoutil.StringMarshal(addressNodeInfoField, buf[offset:], ni.address)
+	n, err = protoutil.RepeatedStringMarshal(addressNodeInfoField, buf[offset:], ni.addresses)
 	if err != nil {
 		return nil, err
 	}
@@ -397,7 +397,8 @@ func (ni *NodeInfo) StableSize() (size int) {
 	}
 
 	size += protoutil.BytesSize(keyNodeInfoField, ni.publicKey)
-	size += protoutil.StringSize(addressNodeInfoField, ni.address)
+	size += protoutil.RepeatedStringSize(addressNodeInfoField, ni.addresses)
+
 	for i := range ni.attributes {
 		size += protoutil.NestedStructureSize(attributesNodeInfoField, ni.attributes[i])
 	}

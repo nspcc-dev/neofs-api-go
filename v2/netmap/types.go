@@ -71,7 +71,7 @@ type Attribute struct {
 // NodeInfo of storage node.
 type NodeInfo struct {
 	publicKey  []byte
-	address    string
+	addresses  []string
 	attributes []*Attribute
 	state      NodeState
 }
@@ -386,17 +386,52 @@ func (ni *NodeInfo) SetPublicKey(v []byte) {
 	}
 }
 
-func (ni *NodeInfo) GetAddress() string {
-	if ni != nil {
-		return ni.address
-	}
+// GetAddress returns node's network address.
+//
+// Deprecated: use IterateAddresses.
+func (ni *NodeInfo) GetAddress() (addr string) {
+	ni.IterateAddresses(func(s string) bool {
+		addr = s
+		return true
+	})
 
-	return ""
+	return
 }
 
+// SetAddress sets node's network address.
+//
+// Deprecated: use SetAddresses.
 func (ni *NodeInfo) SetAddress(v string) {
+	ni.SetAddresses(v)
+}
+
+// SetAddresses sets list of network addresses of the node.
+func (ni *NodeInfo) SetAddresses(v ...string) {
 	if ni != nil {
-		ni.address = v
+		ni.addresses = v
+	}
+}
+
+// NumberOfAddresses returns number of network addresses of the node.
+func (ni *NodeInfo) NumberOfAddresses() int {
+	if ni != nil {
+		return len(ni.addresses)
+	}
+
+	return 0
+}
+
+// IterateAddresses iterates over network addresses of the node.
+// Breaks iteration on f's true return.
+//
+// Handler should not be nil.
+func (ni *NodeInfo) IterateAddresses(f func(string) bool) {
+	if ni != nil {
+		for i := range ni.addresses {
+			if f(ni.addresses[i]) {
+				break
+			}
+		}
 	}
 }
 

@@ -134,9 +134,16 @@ func (m *NodeInfo_Attribute) SetParents(v []string) {
 }
 
 // SetAddress sets node network address.
+//
+// Deprecated: use SetAddresses.
 func (m *NodeInfo) SetAddress(v string) {
+	m.SetAddresses([]string{v})
+}
+
+// SetAddresses sets list of network addresses of the node.
+func (m *NodeInfo) SetAddresses(v []string) {
 	if m != nil {
-		m.Address = v
+		m.Addresses = v
 	}
 }
 
