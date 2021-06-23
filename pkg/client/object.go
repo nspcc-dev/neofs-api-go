@@ -496,31 +496,35 @@ func (p *GetObjectParams) WithPayloadReaderHandler(f ReaderHandler) *GetObjectPa
 
 // wrapper over the Object Get stream that provides io.Reader.
 type objectPayloadReader struct {
-	stream *rpcapi.GetResponseReader
+	stream interface {
+		Read(*v2object.GetResponse) error
+	}
 
 	resp v2object.GetResponse
 
 	tail []byte
 }
 
-func (x *objectPayloadReader) Read(p []byte) (int, error) {
+func (x *objectPayloadReader) Read(p []byte) (read int, err error) {
 	// read remaining tail
-	read := copy(p, x.tail)
+	read = copy(p, x.tail)
 
 	x.tail = x.tail[read:]
 
 	if len(p)-read == 0 {
-		return read, nil
+		return
 	}
 
 	// receive message from server stream
-	err := x.stream.Read(&x.resp)
+	err = x.stream.Read(&x.resp)
 	if err != nil {
 		if errors.Is(err, io.EOF) {
-			return 0, io.EOF
+			err = io.EOF
+			return
 		}
 
-		return 0, fmt.Errorf("reading the response failed: %w", err)
+		err = fmt.Errorf("reading the response failed: %w", err)
+		return
 	}
 
 	// get chunk part message
@@ -528,12 +532,14 @@ func (x *objectPayloadReader) Read(p []byte) (int, error) {
 
 	chunkPart, ok := part.(*v2object.GetObjectPartChunk)
 	if !ok {
-		return 0, errWrongMessageSeq
+		err = errWrongMessageSeq
+		return
 	}
 
 	// verify response structure
-	if err := signature.VerifyServiceMessage(&x.resp); err != nil {
-		return 0, fmt.Errorf("response verification failed: %w", err)
+	if err = signature.VerifyServiceMessage(&x.resp); err != nil {
+		err = fmt.Errorf("response verification failed: %w", err)
+		return
 	}
 
 	// read new chunk
@@ -546,7 +552,7 @@ func (x *objectPayloadReader) Read(p []byte) (int, error) {
 	// save the tail
 	x.tail = append(x.tail, chunk[tailOffset:]...)
 
-	return read, nil
+	return
 }
 
 var errWrongMessageSeq = errors.New("incorrect message sequence")
