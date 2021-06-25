@@ -6,8 +6,11 @@ import (
 	"errors"
 	"fmt"
 
+	cryptoalgo "github.com/nspcc-dev/neofs-api-go/crypto/algo"
+	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
 	"github.com/nspcc-dev/neofs-api-go/pkg"
-	"github.com/nspcc-dev/neofs-api-go/util/signature"
+	apicrypto "github.com/nspcc-dev/neofs-api-go/v2/crypto"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	signatureV2 "github.com/nspcc-dev/neofs-api-go/v2/signature"
 )
 
@@ -86,27 +89,30 @@ func VerifyID(obj *Object) error {
 	return nil
 }
 
-func CalculateIDSignature(key *ecdsa.PrivateKey, id *ID) (*pkg.Signature, error) {
-	sig := pkg.NewSignature()
+// CalculateIDSignatureECDSA calculates and returns ECDSA signature of ID.
+//
+// Key must not be nil.
+func CalculateIDSignatureECDSA(key *ecdsa.PrivateKey, id *ID) (*pkg.Signature, error) {
+	sigV2 := new(refs.Signature)
 
-	if err := signature.SignDataWithHandler(
-		key,
-		signatureV2.StableMarshalerWrapper{
-			SM: id.ToV2(),
-		},
-		func(key, sign []byte) {
-			sig.SetKey(key)
-			sig.SetSign(sign)
-		},
-	); err != nil {
+	var p apicrypto.SignPrm
+
+	p.SetProtoMarshaler(signatureV2.StableMarshalerCrypto(id.ToV2()))
+	p.SetTargetSignature(sigV2)
+
+	if err := apicrypto.Sign(neofsecdsa.Signer(key), p); err != nil {
 		return nil, err
 	}
 
-	return sig, nil
+	return pkg.NewSignatureFromV2(sigV2), nil
 }
 
-func CalculateAndSetSignature(key *ecdsa.PrivateKey, obj *RawObject) error {
-	sig, err := CalculateIDSignature(key, obj.ID())
+// CalculateAndSetECDSASignature calculates ECDSA signature of object ID and
+// writes it to RawObject.
+//
+// Key must not be nil.
+func CalculateAndSetECDSASignature(key *ecdsa.PrivateKey, obj *RawObject) error {
+	sig, err := CalculateIDSignatureECDSA(key, obj.ID())
 	if err != nil {
 		return err
 	}
@@ -117,25 +123,34 @@ func CalculateAndSetSignature(key *ecdsa.PrivateKey, obj *RawObject) error {
 }
 
 func VerifyIDSignature(obj *Object) error {
-	return signature.VerifyDataWithSource(
-		signatureV2.StableMarshalerWrapper{
-			SM: obj.ID().ToV2(),
-		},
-		func() ([]byte, []byte) {
-			sig := obj.Signature()
+	sig := obj.Signature().ToV2()
 
-			return sig.Key(), sig.Sign()
-		},
-	)
+	key, err := cryptoalgo.UnmarshalKey(cryptoalgo.ECDSA, sig.GetKey())
+	if err != nil {
+		return err
+	}
+
+	var p apicrypto.VerifyPrm
+
+	p.SetProtoMarshaler(signatureV2.StableMarshalerCrypto(obj.ID().ToV2()))
+	p.SetSignature(sig.GetSign())
+
+	if !apicrypto.Verify(key, p) {
+		return errors.New("invalid signature")
+	}
+
+	return nil
 }
 
-// SetIDWithSignature sets object identifier and signature.
-func SetIDWithSignature(key *ecdsa.PrivateKey, obj *RawObject) error {
+// SetIDWithSignatureECDSA sets object identifier and ECDSA signature.
+//
+// Key must not be nil.
+func SetIDWithSignatureECDSA(key *ecdsa.PrivateKey, obj *RawObject) error {
 	if err := CalculateAndSetID(obj); err != nil {
 		return fmt.Errorf("could not set identifier: %w", err)
 	}
 
-	if err := CalculateAndSetSignature(key, obj); err != nil {
+	if err := CalculateAndSetECDSASignature(key, obj); err != nil {
 		return fmt.Errorf("could not set signature: %w", err)
 	}
 
@@ -143,10 +158,12 @@ func SetIDWithSignature(key *ecdsa.PrivateKey, obj *RawObject) error {
 }
 
 // SetVerificationFields calculates and sets all verification fields of the object.
-func SetVerificationFields(key *ecdsa.PrivateKey, obj *RawObject) error {
+//
+// Key must not be nil.
+func SetVerificationFieldsECDSA(key *ecdsa.PrivateKey, obj *RawObject) error {
 	CalculateAndSetPayloadChecksum(obj)
 
-	return SetIDWithSignature(key, obj)
+	return SetIDWithSignatureECDSA(key, obj)
 }
 
 // CheckVerificationFields checks all verification fields of the object.

@@ -4,9 +4,9 @@ import (
 	"io"
 	"testing"
 
+	neofsecdsatest "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa/test"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/signature"
-	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
 
@@ -27,8 +27,6 @@ func (x *singleResponseStream) Read(r *object.GetResponse) error {
 	return nil
 }
 
-var key = test.DecodeKey(0)
-
 func chunkResponse(c []byte) (r object.GetResponse) {
 	chunkPart := new(object.GetObjectPartChunk)
 	chunkPart.SetChunk(c)
@@ -38,7 +36,7 @@ func chunkResponse(c []byte) (r object.GetResponse) {
 
 	r.SetBody(body)
 
-	if err := signature.SignServiceMessage(key, &r); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsatest.Signer(), &r); err != nil {
 		panic(err)
 	}
 

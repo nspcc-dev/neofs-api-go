@@ -1,10 +1,10 @@
 package tokentest
 
 import (
+	neofsecdsatest "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa/test"
 	eacltest "github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl/test"
 	ownertest "github.com/nspcc-dev/neofs-api-go/pkg/owner/test"
 	"github.com/nspcc-dev/neofs-api-go/pkg/token"
-	"github.com/nspcc-dev/neofs-crypto/test"
 )
 
 // Generate returns random token.BearerToken.
@@ -26,7 +26,7 @@ func Generate() *token.BearerToken {
 func GenerateSigned() *token.BearerToken {
 	tok := Generate()
 
-	err := tok.SignToken(test.DecodeKey(0))
+	err := tok.SignTokenECDSA(neofsecdsatest.Key())
 	if err != nil {
 		panic(err)
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
 	"github.com/nspcc-dev/neofs-api-go/pkg/accounting"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
@@ -33,7 +34,7 @@ func (c *clientImpl) GetBalance(ctx context.Context, owner *owner.ID, opts ...Ca
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(callOptions.key, req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return nil, err
 	}

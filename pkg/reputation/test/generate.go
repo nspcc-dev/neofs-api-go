@@ -3,19 +3,15 @@ package reputationtest
 import (
 	"testing"
 
+	neofsecdsatest "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa/test"
 	"github.com/nspcc-dev/neofs-api-go/pkg/reputation"
-	crypto "github.com/nspcc-dev/neofs-crypto"
-	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
 
 func GeneratePeerID() *reputation.PeerID {
 	v := reputation.NewPeerID()
 
-	key := [crypto.PublicKeyCompressedSize]byte{}
-	copy(key[:], crypto.MarshalPublicKey(&test.DecodeKey(-1).PublicKey))
-
-	v.SetPublicKey(key)
+	v.SetPublicKey(neofsecdsatest.PublicBytes())
 
 	return v
 }
@@ -47,7 +43,7 @@ func GenerateGlobalTrust() *reputation.GlobalTrust {
 func GenerateSignedGlobalTrust(t testing.TB) *reputation.GlobalTrust {
 	gt := GenerateGlobalTrust()
 
-	require.NoError(t, gt.Sign(test.DecodeKey(0)))
+	require.NoError(t, gt.SignECDSA(neofsecdsatest.Key()))
 
 	return gt
 }

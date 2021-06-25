@@ -4,13 +4,13 @@ import (
 	"crypto/ecdsa"
 	"errors"
 
+	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
-	"github.com/nspcc-dev/neofs-api-go/util/signature"
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
+	apicrypto "github.com/nspcc-dev/neofs-api-go/v2/crypto"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
 var (
@@ -69,29 +69,41 @@ func (b *BearerToken) SetOwner(id *owner.ID) {
 	b.token.SetBody(body)
 }
 
-func (b *BearerToken) SignToken(key *ecdsa.PrivateKey) error {
+// SignTokenECDSA signs BearerToken with ecdsa.PrivateKey.
+//
+// Key must not be nil.
+func (b *BearerToken) SignTokenECDSA(key *ecdsa.PrivateKey) error {
 	err := sanityCheck(b)
 	if err != nil {
 		return err
 	}
 
-	signWrapper := v2signature.StableMarshalerWrapper{SM: b.token.GetBody()}
+	sig := b.token.GetSignature()
+	if sig == nil {
+		sig = new(refs.Signature)
+		b.token.SetSignature(sig)
+	}
 
-	return signature.SignDataWithHandler(key, signWrapper, func(key []byte, sig []byte) {
-		bearerSignature := new(refs.Signature)
-		bearerSignature.SetKey(key)
-		bearerSignature.SetSign(sig)
-		b.token.SetSignature(bearerSignature)
-	})
+	var p apicrypto.SignPrm
+
+	p.SetProtoMarshaler(v2signature.StableMarshalerCrypto(b.token.GetBody()))
+	p.SetTargetSignature(sig)
+
+	return apicrypto.Sign(neofsecdsa.Signer(key), p)
 }
 
 // Issuer returns owner.ID associated with the key that signed bearer token.
 // To pass node validation it should be owner of requested container. Returns
 // nil if token is not signed.
 func (b *BearerToken) Issuer() *owner.ID {
-	pubKey := crypto.UnmarshalPublicKey(b.token.GetSignature().GetKey())
+	var key ecdsa.PublicKey
 
-	wallet, err := owner.NEO3WalletFromPublicKey(pubKey)
+	err := neofsecdsa.UnmarshalPublicKey(&key, b.token.GetSignature().GetKey())
+	if err != nil {
+		return nil
+	}
+
+	wallet, err := owner.NEO3WalletFromECDSAPublicKey(key)
 	if err != nil {
 		return nil
 	}

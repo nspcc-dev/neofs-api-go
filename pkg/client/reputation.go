@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
 	"github.com/nspcc-dev/neofs-api-go/pkg/reputation"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 	v2reputation "github.com/nspcc-dev/neofs-api-go/v2/reputation"
@@ -67,7 +68,7 @@ func (c *clientImpl) AnnounceLocalTrust(ctx context.Context, prm AnnounceLocalTr
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(callOptions.key, req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +143,7 @@ func (c *clientImpl) AnnounceIntermediateTrust(ctx context.Context, prm Announce
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(callOptions.key, req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return nil, err
 	}

@@ -1,10 +1,7 @@
 package eacl
 
 import (
-	"crypto/ecdsa"
-
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
 // Target is a group of request senders to match EACL. Defined by role enum
@@ -14,40 +11,6 @@ import (
 type Target struct {
 	role Role
 	keys [][]byte
-}
-
-func ecdsaKeysToPtrs(keys []ecdsa.PublicKey) []*ecdsa.PublicKey {
-	keysPtr := make([]*ecdsa.PublicKey, len(keys))
-
-	for i := range keys {
-		keysPtr[i] = &keys[i]
-	}
-
-	return keysPtr
-}
-
-// SetKeys sets list of ECDSA public keys to identify target subject.
-//
-// Deprecated: use SetTargetECDSAKeys instead.
-func (t *Target) SetKeys(keys ...ecdsa.PublicKey) {
-	SetTargetECDSAKeys(t, ecdsaKeysToPtrs(keys)...)
-}
-
-// Keys returns list of ECDSA public keys to identify target subject.
-// If some key has a different format, it is ignored.
-//
-// Deprecated: use TargetECDSAKeys instead.
-func (t *Target) Keys() []ecdsa.PublicKey {
-	keysPtr := TargetECDSAKeys(t)
-	keys := make([]ecdsa.PublicKey, 0, len(keysPtr))
-
-	for i := range keysPtr {
-		if keysPtr[i] != nil {
-			keys = append(keys, *keysPtr[i])
-		}
-	}
-
-	return keys
 }
 
 // BinaryKeys returns list of public keys to identify
@@ -60,41 +23,6 @@ func (t *Target) BinaryKeys() [][]byte {
 // target subject.
 func (t *Target) SetBinaryKeys(keys [][]byte) {
 	t.keys = keys
-}
-
-// SetTargetECDSAKeys converts ECDSA public keys to a binary
-// format and stores them in Target.
-func SetTargetECDSAKeys(t *Target, keys ...*ecdsa.PublicKey) {
-	binKeys := t.BinaryKeys()
-	ln := len(keys)
-
-	if cap(binKeys) >= ln {
-		binKeys = binKeys[:0]
-	} else {
-		binKeys = make([][]byte, 0, ln)
-	}
-
-	for i := 0; i < ln; i++ {
-		binKeys = append(binKeys, crypto.MarshalPublicKey(keys[i]))
-	}
-
-	t.SetBinaryKeys(binKeys)
-}
-
-// TargetECDSAKeys interprets binary public keys of Target
-// as ECDSA public keys. If any key has a different format,
-// the corresponding element will be nil.
-func TargetECDSAKeys(t *Target) []*ecdsa.PublicKey {
-	binKeys := t.BinaryKeys()
-	ln := len(binKeys)
-
-	keys := make([]*ecdsa.PublicKey, ln)
-
-	for i := 0; i < ln; i++ {
-		keys[i] = crypto.UnmarshalPublicKey(binKeys[i])
-	}
-
-	return keys
 }
 
 // SetRole sets target subject's role class.

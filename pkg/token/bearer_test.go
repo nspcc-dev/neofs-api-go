@@ -3,11 +3,11 @@ package token_test
 import (
 	"testing"
 
+	neofsecdsatest "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa/test"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/pkg/token"
 	tokentest "github.com/nspcc-dev/neofs-api-go/pkg/token/test"
-	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
 
@@ -19,15 +19,13 @@ func TestBearerToken_Issuer(t *testing.T) {
 	})
 
 	t.Run("signed token", func(t *testing.T) {
-		key := test.DecodeKey(1)
-
-		wallet, err := owner.NEO3WalletFromPublicKey(&key.PublicKey)
+		wallet, err := owner.NEO3WalletFromECDSAPublicKey(neofsecdsatest.PublicKey())
 		require.NoError(t, err)
 
 		ownerID := owner.NewIDFromNeo3Wallet(wallet)
 
 		bearerToken.SetEACLTable(eacl.NewTable())
-		require.NoError(t, bearerToken.SignToken(key))
+		require.NoError(t, bearerToken.SignTokenECDSA(neofsecdsatest.Key()))
 		require.True(t, ownerID.Equal(bearerToken.Issuer()))
 	})
 }

@@ -9,10 +9,12 @@ import (
 	"fmt"
 	"io"
 
+	cryptoalgo "github.com/nspcc-dev/neofs-api-go/crypto/algo"
+	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
 	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
-	signer "github.com/nspcc-dev/neofs-api-go/util/signature"
+	apicrypto "github.com/nspcc-dev/neofs-api-go/v2/crypto"
 	v2object "github.com/nspcc-dev/neofs-api-go/v2/object"
 	v2refs "github.com/nspcc-dev/neofs-api-go/v2/refs"
 	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
@@ -177,7 +179,7 @@ func (w *putObjectV2Writer) Write(p []byte) (int, error) {
 
 	w.req.SetVerificationHeader(nil)
 
-	if err := signature.SignServiceMessage(w.key, w.req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(w.key), w.req); err != nil {
 		return 0, fmt.Errorf("could not sign chunk request message: %w", err)
 	}
 
@@ -264,7 +266,7 @@ func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...
 	initPart.SetHeader(obj.GetHeader())
 
 	// sign the request
-	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
 		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
@@ -407,7 +409,7 @@ func (c *clientImpl) DeleteObject(ctx context.Context, p *DeleteObjectParams, op
 	body.SetAddress(p.addr.ToV2())
 
 	// sign the request
-	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
 		return fmt.Errorf("signing the request failed: %w", err)
 	}
 
@@ -590,7 +592,7 @@ func (c *clientImpl) GetObject(ctx context.Context, p *GetObjectParams, opts ...
 	body.SetRaw(p.raw)
 
 	// sign the request
-	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
 		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
@@ -771,7 +773,7 @@ func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams,
 	body.SetRaw(p.raw)
 
 	// sign the request
-	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
 		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
@@ -826,15 +828,18 @@ func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams,
 		hdr = hdrWithSig.GetHeader()
 		idSig = hdrWithSig.GetSignature()
 
-		if err := signer.VerifyDataWithSource(
-			signature.StableMarshalerWrapper{
-				SM: p.addr.ObjectID().ToV2(),
-			},
-			func() (key, sig []byte) {
-				return idSig.GetKey(), idSig.GetSign()
-			},
-		); err != nil {
-			return nil, fmt.Errorf("incorrect object header signature: %w", err)
+		key, err := cryptoalgo.UnmarshalKey(cryptoalgo.ECDSA, idSig.GetKey())
+		if err != nil {
+			return nil, err
+		}
+
+		var vPrm apicrypto.VerifyPrm
+
+		vPrm.SetProtoMarshaler(signature.StableMarshalerCrypto(p.addr.ObjectID().ToV2()))
+		vPrm.SetSignature(idSig.GetSign())
+
+		if !apicrypto.Verify(key, vPrm) {
+			return nil, errors.New("incorrect object header signature")
 		}
 	case *v2object.SplitInfo:
 		si := object.NewSplitInfoFromV2(v)
@@ -951,7 +956,7 @@ func (c *clientImpl) ObjectPayloadRangeData(ctx context.Context, p *RangeDataPar
 	body.SetRaw(p.raw)
 
 	// sign the request
-	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
 		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
@@ -1118,7 +1123,7 @@ func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksu
 	body.SetRanges(rsV2)
 
 	// sign the request
-	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
 		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
@@ -1250,7 +1255,7 @@ func (c *clientImpl) SearchObject(ctx context.Context, p *SearchObjectParams, op
 	body.SetFilters(p.filters.ToV2())
 
 	// sign the request
-	if err := signature.SignServiceMessage(callOpts.key, req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
 		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
@@ -1318,14 +1323,15 @@ func (c *clientImpl) attachV2SessionToken(opts *callOptions, hdr *v2session.Requ
 	body.SetContext(opCtx)
 	body.SetLifetime(lt)
 
-	signWrapper := signature.StableMarshalerWrapper{SM: token.GetBody()}
+	var (
+		p   apicrypto.SignPrm
+		sig = new(v2refs.Signature)
+	)
 
-	err := signer.SignDataWithHandler(opts.key, signWrapper, func(key []byte, sig []byte) {
-		sessionTokenSignature := new(v2refs.Signature)
-		sessionTokenSignature.SetKey(key)
-		sessionTokenSignature.SetSign(sig)
-		token.SetSignature(sessionTokenSignature)
-	})
+	p.SetProtoMarshaler(signature.StableMarshalerCrypto(token.GetBody()))
+	p.SetTargetSignature(sig)
+
+	err := apicrypto.Sign(neofsecdsa.Signer(opts.key), p)
 	if err != nil {
 		return err
 	}
