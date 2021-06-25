@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 
+	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
+	neofsrfc6979 "github.com/nspcc-dev/neofs-api-go/crypto/rfc6979"
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/container"
@@ -12,8 +14,8 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/pkg/session"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
-	"github.com/nspcc-dev/neofs-api-go/util/signature"
 	v2container "github.com/nspcc-dev/neofs-api-go/v2/container"
+	apicrypto "github.com/nspcc-dev/neofs-api-go/v2/crypto"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
@@ -43,21 +45,9 @@ type Container interface {
 	AnnounceContainerUsedSpace(context.Context, []container.UsedSpaceAnnouncement, ...CallOption) error
 }
 
-type delContainerSignWrapper struct {
-	body *v2container.DeleteRequestBody
-}
-
 // EACLWithSignature represents eACL table/signature pair.
 type EACLWithSignature struct {
 	table *eacl.Table
-}
-
-func (c delContainerSignWrapper) ReadSignedData(bytes []byte) ([]byte, error) {
-	return c.body.GetContainerID().GetValue(), nil
-}
-
-func (c delContainerSignWrapper) SignedDataSize() int {
-	return len(c.body.GetContainerID().GetValue())
 }
 
 // EACL returns eACL table.
@@ -85,7 +75,7 @@ func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container,
 
 	// if container owner is not set, then use client key as owner
 	if cnr.OwnerID() == nil {
-		w, err := owner.NEO3WalletFromPublicKey(&callOptions.key.PublicKey)
+		w, err := owner.NEO3WalletFromECDSAPublicKey(callOptions.key.PublicKey)
 		if err != nil {
 			return nil, err
 		}
@@ -100,14 +90,17 @@ func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container,
 	reqBody.SetContainer(cnr.ToV2())
 
 	// sign container
-	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetContainer()}
+	var (
+		p   apicrypto.SignPrm
+		sig = new(refs.Signature)
+	)
 
-	err := signature.SignDataWithHandler(callOptions.key, signWrapper, func(key []byte, sig []byte) {
-		containerSignature := new(refs.Signature)
-		containerSignature.SetKey(key)
-		containerSignature.SetSign(sig)
-		reqBody.SetSignature(containerSignature)
-	}, signature.SignWithRFC6979())
+	reqBody.SetSignature(sig)
+
+	p.SetProtoMarshaler(v2signature.StableMarshalerCrypto(reqBody.GetContainer()))
+	p.SetTargetSignature(sig)
+
+	err := apicrypto.Sign(neofsrfc6979.Signer(callOptions.key), p)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +113,7 @@ func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container,
 
 	req.SetMetaHeader(meta)
 
-	err = v2signature.SignServiceMessage(callOptions.key, req)
+	err = v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +149,7 @@ func (c *clientImpl) GetContainer(ctx context.Context, id *cid.ID, opts ...CallO
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(callOptions.key, req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return nil, err
 	}
@@ -215,7 +208,7 @@ func (c *clientImpl) ListContainers(ctx context.Context, ownerID *owner.ID, opts
 	}
 
 	if ownerID == nil {
-		w, err := owner.NEO3WalletFromPublicKey(&callOptions.key.PublicKey)
+		w, err := owner.NEO3WalletFromECDSAPublicKey(callOptions.key.PublicKey)
 		if err != nil {
 			return nil, err
 		}
@@ -231,7 +224,7 @@ func (c *clientImpl) ListContainers(ctx context.Context, ownerID *owner.ID, opts
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(callOptions.key, req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return nil, err
 	}
@@ -265,18 +258,18 @@ func (c *clientImpl) DeleteContainer(ctx context.Context, id *cid.ID, opts ...Ca
 	reqBody := new(v2container.DeleteRequestBody)
 	reqBody.SetContainerID(id.ToV2())
 
-	// sign container
-	err := signature.SignDataWithHandler(callOptions.key,
-		delContainerSignWrapper{
-			body: reqBody,
-		},
-		func(key []byte, sig []byte) {
-			containerSignature := new(refs.Signature)
-			containerSignature.SetKey(key)
-			containerSignature.SetSign(sig)
-			reqBody.SetSignature(containerSignature)
-		},
-		signature.SignWithRFC6979())
+	// sign container ID
+	var (
+		p   apicrypto.SignPrm
+		sig = new(refs.Signature)
+	)
+
+	reqBody.SetSignature(sig)
+
+	p.SetProtoMarshaler(v2signature.StableMarshalerCrypto(reqBody))
+	p.SetTargetSignature(sig)
+
+	err := apicrypto.Sign(neofsrfc6979.Signer(callOptions.key), p)
 	if err != nil {
 		return err
 	}
@@ -285,7 +278,7 @@ func (c *clientImpl) DeleteContainer(ctx context.Context, id *cid.ID, opts ...Ca
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err = v2signature.SignServiceMessage(callOptions.key, req)
+	err = v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return err
 	}
@@ -317,7 +310,7 @@ func (c *clientImpl) GetEACL(ctx context.Context, id *cid.ID, opts ...CallOption
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(callOptions.key, req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return nil, err
 	}
@@ -361,14 +354,18 @@ func (c *clientImpl) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...Call
 	reqBody.SetEACL(eacl.ToV2())
 	reqBody.GetEACL().SetVersion(pkg.SDKVersion().ToV2())
 
-	signWrapper := v2signature.StableMarshalerWrapper{SM: reqBody.GetEACL()}
+	// sign eACL table
+	var (
+		p   apicrypto.SignPrm
+		sig = new(refs.Signature)
+	)
 
-	err := signature.SignDataWithHandler(callOptions.key, signWrapper, func(key []byte, sig []byte) {
-		eaclSignature := new(refs.Signature)
-		eaclSignature.SetKey(key)
-		eaclSignature.SetSign(sig)
-		reqBody.SetSignature(eaclSignature)
-	}, signature.SignWithRFC6979())
+	reqBody.SetSignature(sig)
+
+	p.SetProtoMarshaler(v2signature.StableMarshalerCrypto(reqBody.GetEACL()))
+	p.SetTargetSignature(sig)
+
+	err := apicrypto.Sign(neofsrfc6979.Signer(callOptions.key), p)
 	if err != nil {
 		return err
 	}
@@ -381,7 +378,7 @@ func (c *clientImpl) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...Call
 
 	req.SetMetaHeader(meta)
 
-	err = v2signature.SignServiceMessage(callOptions.key, req)
+	err = v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return err
 	}
@@ -426,7 +423,7 @@ func (c *clientImpl) AnnounceContainerUsedSpace(
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
 	// sign the request
-	err := v2signature.SignServiceMessage(callOptions.key, req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return err
 	}

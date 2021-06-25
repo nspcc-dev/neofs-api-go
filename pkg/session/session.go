@@ -3,9 +3,11 @@ package session
 import (
 	"crypto/ecdsa"
 
+	cryptoalgo "github.com/nspcc-dev/neofs-api-go/crypto/algo"
+	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
-	"github.com/nspcc-dev/neofs-api-go/util/signature"
+	apicrypto "github.com/nspcc-dev/neofs-api-go/v2/crypto"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
@@ -159,27 +161,24 @@ func (t *Token) SetIat(iat uint64) {
 	})
 }
 
-// Sign calculates and writes signature of the Token data.
+// SignECDSA calculates and writes ECDSA signature of the Token data.
 //
 // Returns signature calculation errors.
-func (t *Token) Sign(key *ecdsa.PrivateKey) error {
+func (t *Token) SignECDSA(key *ecdsa.PrivateKey) error {
 	tV2 := (*session.SessionToken)(t)
 
-	signedData := v2signature.StableMarshalerWrapper{
-		SM: tV2.GetBody(),
+	tSig := tV2.GetSignature()
+	if tSig == nil {
+		tSig = new(refs.Signature)
+		tV2.SetSignature(tSig)
 	}
 
-	return signature.SignDataWithHandler(key, signedData, func(key, sig []byte) {
-		tSig := tV2.GetSignature()
-		if tSig == nil {
-			tSig = new(refs.Signature)
-		}
+	var p apicrypto.SignPrm
 
-		tSig.SetKey(key)
-		tSig.SetSign(sig)
+	p.SetProtoMarshaler(v2signature.StableMarshalerCrypto(tV2.GetBody()))
+	p.SetTargetSignature(tSig)
 
-		tV2.SetSignature(tSig)
-	})
+	return apicrypto.Sign(neofsecdsa.Signer(key), p)
 }
 
 // VerifySignature checks if token signature is
@@ -187,14 +186,19 @@ func (t *Token) Sign(key *ecdsa.PrivateKey) error {
 func (t *Token) VerifySignature() bool {
 	tV2 := (*session.SessionToken)(t)
 
-	signedData := v2signature.StableMarshalerWrapper{
-		SM: tV2.GetBody(),
+	sig := tV2.GetSignature()
+
+	key, err := cryptoalgo.UnmarshalKey(cryptoalgo.ECDSA, sig.GetKey())
+	if err != nil {
+		return false
 	}
 
-	return signature.VerifyDataWithSource(signedData, func() (key, sig []byte) {
-		tSig := tV2.GetSignature()
-		return tSig.GetKey(), tSig.GetSign()
-	}) == nil
+	var p apicrypto.VerifyPrm
+
+	p.SetProtoMarshaler(v2signature.StableMarshalerCrypto(tV2.GetBody()))
+	p.SetSignature(sig.GetSign())
+
+	return apicrypto.Verify(key, p)
 }
 
 // Signature returns Token signature.

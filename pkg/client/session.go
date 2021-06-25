@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/pkg/session"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
@@ -29,7 +30,7 @@ func (c *clientImpl) CreateSession(ctx context.Context, expiration uint64, opts 
 		opts[i](callOptions)
 	}
 
-	w, err := owner.NEO3WalletFromPublicKey(&callOptions.key.PublicKey)
+	w, err := owner.NEO3WalletFromECDSAPublicKey(callOptions.key.PublicKey)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +46,7 @@ func (c *clientImpl) CreateSession(ctx context.Context, expiration uint64, opts 
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err = v2signature.SignServiceMessage(callOptions.key, req)
+	err = v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return nil, err
 	}

@@ -4,10 +4,9 @@ import (
 	"math/rand"
 
 	"github.com/google/uuid"
+	neofsecdsatest "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa/test"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/pkg/session"
-	crypto "github.com/nspcc-dev/neofs-crypto"
-	"github.com/nspcc-dev/neofs-crypto/test"
 )
 
 // Generate returns random session.Token.
@@ -27,11 +26,9 @@ func Generate() *session.Token {
 	ownerID := owner.NewID()
 	ownerID.SetNeo3Wallet(w)
 
-	keyBin := crypto.MarshalPublicKey(&test.DecodeKey(0).PublicKey)
-
 	tok.SetID(uid)
 	tok.SetOwnerID(ownerID)
-	tok.SetSessionKey(keyBin)
+	tok.SetSessionKey(neofsecdsatest.PublicBytes())
 	tok.SetExp(11)
 	tok.SetNbf(22)
 	tok.SetIat(33)
@@ -45,7 +42,7 @@ func Generate() *session.Token {
 func GenerateSigned() *session.Token {
 	tok := Generate()
 
-	err := tok.Sign(test.DecodeKey(0))
+	err := tok.SignECDSA(neofsecdsatest.Key())
 	if err != nil {
 		panic(err)
 	}

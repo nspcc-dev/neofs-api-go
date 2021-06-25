@@ -5,7 +5,6 @@ import (
 
 	"github.com/mr-tron/base58"
 	"github.com/nspcc-dev/neofs-api-go/v2/reputation"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
 // PeerID represents peer ID compatible with NeoFS API v2.
@@ -27,9 +26,9 @@ func PeerIDFromV2(id *reputation.PeerID) *PeerID {
 }
 
 // SetPublicKey sets peer ID as a compressed public key.
-func (x *PeerID) SetPublicKey(v [crypto.PublicKeyCompressedSize]byte) {
+func (x *PeerID) SetPublicKey(v []byte) {
 	(*reputation.PeerID)(x).
-		SetPublicKey(v[:])
+		SetPublicKey(v)
 }
 
 // ToV2 converts PeerID to NeoFS API v2 reputation.PeerID message.

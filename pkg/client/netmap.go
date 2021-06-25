@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/netmap"
 	"github.com/nspcc-dev/neofs-api-go/rpc/client"
@@ -57,7 +58,7 @@ func (c *clientImpl) EndpointInfo(ctx context.Context, opts ...CallOption) (*End
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(callOptions.key, req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +96,7 @@ func (c *clientImpl) NetworkInfo(ctx context.Context, opts ...CallOption) (*netm
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(callOptions.key, req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
 	if err != nil {
 		return nil, err
 	}

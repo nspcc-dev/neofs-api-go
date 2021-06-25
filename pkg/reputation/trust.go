@@ -3,8 +3,13 @@ package reputation
 import (
 	"crypto/ecdsa"
 
+	"errors"
+
+	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
+
+	cryptoalgo "github.com/nspcc-dev/neofs-api-go/crypto/algo"
 	"github.com/nspcc-dev/neofs-api-go/pkg"
-	"github.com/nspcc-dev/neofs-api-go/util/signature"
+	apicrypto "github.com/nspcc-dev/neofs-api-go/v2/crypto"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-api-go/v2/reputation"
 	signatureV2 "github.com/nspcc-dev/neofs-api-go/v2/signature"
@@ -288,8 +293,10 @@ func (x *GlobalTrust) Trust() *Trust {
 	)
 }
 
-// Sign signs global trust value with key.
-func (x *GlobalTrust) Sign(key *ecdsa.PrivateKey) error {
+// SignECDSA signs global trust value with ECDSA key.
+//
+// Key mus not be nil.
+func (x *GlobalTrust) SignECDSA(key *ecdsa.PrivateKey) error {
 	v2 := (*reputation.GlobalTrust)(x)
 
 	sigV2 := v2.GetSignature()
@@ -298,14 +305,12 @@ func (x *GlobalTrust) Sign(key *ecdsa.PrivateKey) error {
 		v2.SetSignature(sigV2)
 	}
 
-	return signature.SignDataWithHandler(
-		key,
-		signatureV2.StableMarshalerWrapper{SM: v2.GetBody()},
-		func(key, sig []byte) {
-			sigV2.SetKey(key)
-			sigV2.SetSign(sig)
-		},
-	)
+	var p apicrypto.SignPrm
+
+	p.SetProtoMarshaler(signatureV2.StableMarshalerCrypto(v2.GetBody()))
+	p.SetTargetSignature(sigV2)
+
+	return apicrypto.Sign(neofsecdsa.Signer(key), p)
 }
 
 // VerifySignature verifies global trust signature.
@@ -313,16 +318,26 @@ func (x *GlobalTrust) VerifySignature() error {
 	v2 := (*reputation.GlobalTrust)(x)
 
 	sigV2 := v2.GetSignature()
+
+	key, err := cryptoalgo.UnmarshalKey(cryptoalgo.ECDSA, sigV2.GetKey())
+	if err != nil {
+		return err
+	}
+
 	if sigV2 == nil {
 		sigV2 = new(refs.Signature)
 	}
 
-	return signature.VerifyDataWithSource(
-		signatureV2.StableMarshalerWrapper{SM: v2.GetBody()},
-		func() ([]byte, []byte) {
-			return sigV2.GetKey(), sigV2.GetSign()
-		},
-	)
+	var p apicrypto.VerifyPrm
+
+	p.SetProtoMarshaler(signatureV2.StableMarshalerCrypto(v2.GetBody()))
+	p.SetSignature(sigV2.GetSign())
+
+	if !apicrypto.Verify(key, p) {
+		return errors.New("invalid signature")
+	}
+
+	return nil
 }
 
 // Marshal marshals GlobalTrust into a protobuf binary form.

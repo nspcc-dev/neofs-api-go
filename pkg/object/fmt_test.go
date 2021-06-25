@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 	"testing"
 
-	"github.com/nspcc-dev/neofs-crypto/test"
+	neofsecdsatest "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa/test"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,7 +17,7 @@ func TestVerificationFields(t *testing.T) {
 	obj.SetPayload(payload)
 	obj.SetPayloadSize(uint64(len(payload)))
 
-	require.NoError(t, SetVerificationFields(test.DecodeKey(-1), obj))
+	require.NoError(t, SetVerificationFieldsECDSA(neofsecdsatest.Key(), obj))
 
 	require.NoError(t, CheckVerificationFields(obj.Object()))
 

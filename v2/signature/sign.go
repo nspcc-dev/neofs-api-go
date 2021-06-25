@@ -1,13 +1,15 @@
 package signature
 
 import (
-	"crypto/ecdsa"
 	"errors"
 	"fmt"
 
-	"github.com/nspcc-dev/neofs-api-go/util/signature"
+	neofscrypto "github.com/nspcc-dev/neofs-api-go/crypto"
+	cryptoalgo "github.com/nspcc-dev/neofs-api-go/crypto/algo"
+	cryprotobuf "github.com/nspcc-dev/neofs-api-go/crypto/proto"
 	"github.com/nspcc-dev/neofs-api-go/v2/accounting"
 	"github.com/nspcc-dev/neofs-api-go/v2/container"
+	apicrypto "github.com/nspcc-dev/neofs-api-go/v2/crypto"
 	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
@@ -30,10 +32,6 @@ type serviceResponse interface {
 type stableMarshaler interface {
 	StableMarshal([]byte) ([]byte, error)
 	StableSize() int
-}
-
-type StableMarshalerWrapper struct {
-	SM stableMarshaler
 }
 
 type metaHeader interface {
@@ -115,36 +113,7 @@ func (r *responseVerificationHeader) setOrigin(m stableMarshaler) {
 	}
 }
 
-func (s StableMarshalerWrapper) ReadSignedData(buf []byte) ([]byte, error) {
-	if s.SM != nil {
-		return s.SM.StableMarshal(buf)
-	}
-
-	return nil, nil
-}
-
-func (s StableMarshalerWrapper) SignedDataSize() int {
-	if s.SM != nil {
-		return s.SM.StableSize()
-	}
-
-	return 0
-}
-
-func keySignatureHandler(s *refs.Signature) signature.KeySignatureHandler {
-	return func(key []byte, sig []byte) {
-		s.SetKey(key)
-		s.SetSign(sig)
-	}
-}
-
-func keySignatureSource(s *refs.Signature) signature.KeySignatureSource {
-	return func() ([]byte, []byte) {
-		return s.GetKey(), s.GetSign()
-	}
-}
-
-func SignServiceMessage(key *ecdsa.PrivateKey, msg interface{}) error {
+func SignServiceMessage(signer neofscrypto.Signer, msg interface{}) error {
 	var (
 		body, meta, verifyOrigin stableMarshaler
 		verifyHdr                verificationHeader
@@ -182,18 +151,18 @@ func SignServiceMessage(key *ecdsa.PrivateKey, msg interface{}) error {
 
 	if verifyOrigin == nil {
 		// sign session message body
-		if err := signServiceMessagePart(key, body, verifyHdr.SetBodySignature); err != nil {
+		if err := signServiceMessagePart(signer, body, verifyHdr.SetBodySignature); err != nil {
 			return fmt.Errorf("could not sign body: %w", err)
 		}
 	}
 
 	// sign meta header
-	if err := signServiceMessagePart(key, meta, verifyHdr.SetMetaSignature); err != nil {
+	if err := signServiceMessagePart(signer, meta, verifyHdr.SetMetaSignature); err != nil {
 		return fmt.Errorf("could not sign meta header: %w", err)
 	}
 
 	// sign verification header origin
-	if err := signServiceMessagePart(key, verifyOrigin, verifyHdr.SetOriginSignature); err != nil {
+	if err := signServiceMessagePart(signer, verifyOrigin, verifyHdr.SetOriginSignature); err != nil {
 		return fmt.Errorf("could not sign origin of verification header: %w", err)
 	}
 
@@ -206,15 +175,42 @@ func SignServiceMessage(key *ecdsa.PrivateKey, msg interface{}) error {
 	return nil
 }
 
-func signServiceMessagePart(key *ecdsa.PrivateKey, part stableMarshaler, sigWrite func(*refs.Signature)) error {
+type stableMarshalerWrapper struct {
+	sm stableMarshaler
+}
+
+func (x stableMarshalerWrapper) StableSize() int {
+	if x.sm != nil {
+		return x.sm.StableSize()
+	}
+
+	return 0
+}
+
+func (x stableMarshalerWrapper) StableMarshal(buf []byte) (err error) {
+	if x.sm != nil {
+		_, err = x.sm.StableMarshal(buf)
+	}
+
+	return
+}
+
+func StableMarshalerCrypto(m stableMarshaler) cryprotobuf.StableProtoMarshaler {
+	return stableMarshalerWrapper{
+		sm: m,
+	}
+}
+
+func signServiceMessagePart(signer neofscrypto.Signer, part stableMarshaler, sigWrite func(*refs.Signature)) error {
 	sig := new(refs.Signature)
 
+	var p apicrypto.SignPrm
+
+	p.SetProtoMarshaler(StableMarshalerCrypto(part))
+	p.SetTargetSignature(sig)
+
 	// sign part
-	if err := signature.SignDataWithHandler(
-		key,
-		&StableMarshalerWrapper{part},
-		keySignatureHandler(sig),
-	); err != nil {
+	if err := apicrypto.Sign(signer, p); err != nil {
 		return err
 	}
 
@@ -283,10 +279,23 @@ func verifyMatryoshkaLevel(body stableMarshaler, meta metaHeader, verify verific
 }
 
 func verifyServiceMessagePart(part stableMarshaler, sigRdr func() *refs.Signature) error {
-	return signature.VerifyDataWithSource(
-		&StableMarshalerWrapper{part},
-		keySignatureSource(sigRdr()),
-	)
+	sig := sigRdr()
+
+	key, err := cryptoalgo.UnmarshalKey(cryptoalgo.ECDSA, sig.GetKey())
+	if err != nil {
+		return err
+	}
+
+	var p apicrypto.VerifyPrm
+
+	p.SetProtoMarshaler(StableMarshalerCrypto(part))
+	p.SetSignature(sig.GetSign())
+
+	if !apicrypto.Verify(key, p) {
+		return errors.New("invalid signature")
+	}
+
+	return nil
 }
 
 func serviceMessageBody(req interface{}) stableMarshaler {

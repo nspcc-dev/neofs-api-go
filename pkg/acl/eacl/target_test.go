@@ -1,33 +1,29 @@
 package eacl
 
 import (
-	"crypto/ecdsa"
 	"testing"
 
+	neofsecdsatest "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa/test"
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
-	crypto "github.com/nspcc-dev/neofs-crypto"
-	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
 
 func TestTarget(t *testing.T) {
-	keys := []*ecdsa.PublicKey{
-		&test.DecodeKey(1).PublicKey,
-		&test.DecodeKey(2).PublicKey,
+	keys := [][]byte{
+		neofsecdsatest.PublicBytes(),
+		neofsecdsatest.PublicBytes(),
 	}
 
 	target := NewTarget()
 	target.SetRole(RoleSystem)
-	SetTargetECDSAKeys(target, keys...)
+	target.SetBinaryKeys(keys)
 
 	v2 := target.ToV2()
 	require.NotNil(t, v2)
 	require.Equal(t, v2acl.RoleSystem, v2.GetRole())
 	require.Len(t, v2.GetKeys(), len(keys))
-	for i, key := range v2.GetKeys() {
-		require.Equal(t, key, crypto.MarshalPublicKey(keys[i]))
-	}
+	require.Equal(t, keys, v2.GetKeys())
 
 	newTarget := NewTargetFromV2(v2)
 	require.Equal(t, target, newTarget)
@@ -40,7 +36,7 @@ func TestTarget(t *testing.T) {
 func TestTargetEncoding(t *testing.T) {
 	tar := NewTarget()
 	tar.SetRole(RoleSystem)
-	SetTargetECDSAKeys(tar, &test.DecodeKey(-1).PublicKey)
+	tar.SetBinaryKeys([][]byte{neofsecdsatest.PublicBytes()})
 
 	t.Run("binary", func(t *testing.T) {
 		data, err := tar.Marshal()

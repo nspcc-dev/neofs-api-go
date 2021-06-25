@@ -1,7 +1,6 @@
 package eacl
 
 import (
-	"crypto/ecdsa"
 	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
@@ -56,26 +55,9 @@ func (r *Record) SetAction(action Action) {
 	r.action = action
 }
 
-// AddTarget adds target subject with specified Role and key list.
-//
-// Deprecated: use AddFormedTarget instead.
-func (r *Record) AddTarget(role Role, keys ...ecdsa.PublicKey) {
-	AddFormedTarget(r, role, keys...)
-}
-
 // AddRecordTarget adds single Target to the Record.
 func AddRecordTarget(r *Record, t *Target) {
 	r.SetTargets(append(r.Targets(), t)...)
-}
-
-// AddFormedTarget forms Target with specified Role and list of
-// ECDSA public keys and adds it to the Record.
-func AddFormedTarget(r *Record, role Role, keys ...ecdsa.PublicKey) {
-	t := NewTarget()
-	t.SetRole(role)
-	SetTargetECDSAKeys(t, ecdsaKeysToPtrs(keys)...)
-
-	AddRecordTarget(r, t)
 }
 
 func (r *Record) addFilter(from FilterHeaderType, m Match, keyTyp filterKeyType, key string, val fmt.Stringer) {
@@ -197,14 +179,18 @@ func NewRecordFromV2(record *v2acl.Record) *Record {
 	v2targets := record.GetTargets()
 	v2filters := record.GetFilters()
 
-	r.targets = make([]*Target, 0, len(v2targets))
-	for i := range v2targets {
-		r.targets = append(r.targets, NewTargetFromV2(v2targets[i]))
+	if v2targets != nil {
+		r.targets = make([]*Target, 0, len(v2targets))
+		for i := range v2targets {
+			r.targets = append(r.targets, NewTargetFromV2(v2targets[i]))
+		}
 	}
 
-	r.filters = make([]*Filter, 0, len(v2filters))
-	for i := range v2filters {
-		r.filters = append(r.filters, NewFilterFromV2(v2filters[i]))
+	if v2filters != nil {
+		r.filters = make([]*Filter, 0, len(v2filters))
+		for i := range v2filters {
+			r.filters = append(r.filters, NewFilterFromV2(v2filters[i]))
+		}
 	}
 
 	return r

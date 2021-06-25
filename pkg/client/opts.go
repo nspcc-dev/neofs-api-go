@@ -63,8 +63,8 @@ func WithTTL(ttl uint32) CallOption {
 	}
 }
 
-// WithKey sets client's key for the next request.
-func WithKey(key *ecdsa.PrivateKey) CallOption {
+// WithECDSAKey sets client's ECDSA key for the next request.
+func WithECDSAKey(key *ecdsa.PrivateKey) CallOption {
 	return func(opts *callOptions) {
 		opts.key = key
 	}
@@ -144,9 +144,9 @@ func WithTLSConfig(cfg *tls.Config) Option {
 	}
 }
 
-// WithDefaultPrivateKey returns option to set default private key
+// WithDefaultECDSAPrivateKey returns option to set default ECDSA private key
 // used for the work.
-func WithDefaultPrivateKey(key *ecdsa.PrivateKey) Option {
+func WithDefaultECDSAPrivateKey(key *ecdsa.PrivateKey) Option {
 	return func(opts *clientOptions) {
 		opts.key = key
 	}

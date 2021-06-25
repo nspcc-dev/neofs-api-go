@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/mr-tron/base58"
+	neofsecdsatest "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa/test"
 	. "github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	ownertest "github.com/nspcc-dev/neofs-api-go/pkg/owner/test"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
 )
 
@@ -21,7 +21,7 @@ func TestIDV2(t *testing.T) {
 }
 
 func TestNewIDFromNeo3Wallet(t *testing.T) {
-	wallet, err := NEO3WalletFromPublicKey(&test.DecodeKey(1).PublicKey)
+	wallet, err := NEO3WalletFromECDSAPublicKey(neofsecdsatest.PublicKey())
 	require.NoError(t, err)
 
 	id := NewIDFromNeo3Wallet(wallet)
@@ -33,7 +33,7 @@ func TestID_Parse(t *testing.T) {
 		for i := 0; i < 10; i++ {
 			j := i
 			t.Run(strconv.Itoa(j), func(t *testing.T) {
-				wallet, err := NEO3WalletFromPublicKey(&test.DecodeKey(j).PublicKey)
+				wallet, err := NEO3WalletFromECDSAPublicKey(neofsecdsatest.PublicKey())
 				require.NoError(t, err)
 
 				eid := NewIDFromNeo3Wallet(wallet)
