@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.28.0] - 2021-06-28 - Muuido (무의도, 舞衣島)
+
+### Added
+
+- `String` / `FromString` methods to work with text format of enums from `pkg`.
+- `Marshal(JSON)` / `Unmarshal(JSON)` methods to `container.ContainerContext` type.
+- Ability to handle the `io.Reader` of the object payload in `Client.GetObject`.
+- `NumberOfAddresses` / `IterateAddresses` methods to node info types for support of multiple addresses.
+
+### Fixed
+
+- Added leading slash to format of gRPC method names.
+
+### Updated
+
+- Neo Go library to v0.95.3.
+
 ## [1.27.1] - 2021-06-10
 
 ### Fixed
@@ -646,3 +663,4 @@ Initial public release
 [1.26.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.26.0...v1.26.1
 [1.27.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.26.1...v1.27.0
 [1.27.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.27.0...v1.27.1
+[1.28.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.27.1...v1.28.0
