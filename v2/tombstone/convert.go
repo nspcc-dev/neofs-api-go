@@ -1,13 +1,13 @@
 package tombstone
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	neofsgrpc "github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	tombstone "github.com/nspcc-dev/neofs-api-go/v2/tombstone/grpc"
 )
 
-func (s *Tombstone) ToGRPCMessage() grpc.Message {
+func (s *Tombstone) ToGRPCMessage() neofsgrpc.Message {
 	var m *tombstone.Tombstone
 
 	if s != nil {
@@ -21,7 +21,7 @@ func (s *Tombstone) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (s *Tombstone) FromGRPCMessage(m grpc.Message) error {
+func (s *Tombstone) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*tombstone.Tombstone)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)

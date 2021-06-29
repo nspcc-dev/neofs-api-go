@@ -1,7 +1,7 @@
 package acl
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	neofsgrpc "github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
@@ -152,7 +152,7 @@ func MatchTypeFromGRPCField(t acl.MatchType) MatchType {
 	}
 }
 
-func (f *HeaderFilter) ToGRPCMessage() grpc.Message {
+func (f *HeaderFilter) ToGRPCMessage() neofsgrpc.Message {
 	var m *acl.EACLRecord_Filter
 
 	if f != nil {
@@ -167,7 +167,7 @@ func (f *HeaderFilter) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (f *HeaderFilter) FromGRPCMessage(m grpc.Message) error {
+func (f *HeaderFilter) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*acl.EACLRecord_Filter)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -216,7 +216,7 @@ func HeaderFiltersFromGRPC(fs []*acl.EACLRecord_Filter) (res []*HeaderFilter, er
 	return
 }
 
-func (t *Target) ToGRPCMessage() grpc.Message {
+func (t *Target) ToGRPCMessage() neofsgrpc.Message {
 	var m *acl.EACLRecord_Target
 
 	if t != nil {
@@ -229,7 +229,7 @@ func (t *Target) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (t *Target) FromGRPCMessage(m grpc.Message) error {
+func (t *Target) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*acl.EACLRecord_Target)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -276,7 +276,7 @@ func TargetsFromGRPC(fs []*acl.EACLRecord_Target) (res []*Target, err error) {
 	return
 }
 
-func (r *Record) ToGRPCMessage() grpc.Message {
+func (r *Record) ToGRPCMessage() neofsgrpc.Message {
 	var m *acl.EACLRecord
 
 	if r != nil {
@@ -291,7 +291,7 @@ func (r *Record) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *Record) FromGRPCMessage(m grpc.Message) error {
+func (r *Record) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*acl.EACLRecord)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -350,7 +350,7 @@ func RecordsFromGRPC(fs []*acl.EACLRecord) (res []*Record, err error) {
 	return
 }
 
-func (t *Table) ToGRPCMessage() grpc.Message {
+func (t *Table) ToGRPCMessage() neofsgrpc.Message {
 	var m *acl.EACLTable
 
 	if t != nil {
@@ -364,7 +364,7 @@ func (t *Table) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (t *Table) FromGRPCMessage(m grpc.Message) error {
+func (t *Table) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*acl.EACLTable)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -405,7 +405,7 @@ func (t *Table) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (l *TokenLifetime) ToGRPCMessage() grpc.Message {
+func (l *TokenLifetime) ToGRPCMessage() neofsgrpc.Message {
 	var m *acl.BearerToken_Body_TokenLifetime
 
 	if l != nil {
@@ -419,7 +419,7 @@ func (l *TokenLifetime) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (l *TokenLifetime) FromGRPCMessage(m grpc.Message) error {
+func (l *TokenLifetime) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*acl.BearerToken_Body_TokenLifetime)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -432,7 +432,7 @@ func (l *TokenLifetime) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (bt *BearerTokenBody) ToGRPCMessage() grpc.Message {
+func (bt *BearerTokenBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *acl.BearerToken_Body
 
 	if bt != nil {
@@ -446,7 +446,7 @@ func (bt *BearerTokenBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (bt *BearerTokenBody) FromGRPCMessage(m grpc.Message) error {
+func (bt *BearerTokenBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*acl.BearerToken_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -496,7 +496,7 @@ func (bt *BearerTokenBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (bt *BearerToken) ToGRPCMessage() grpc.Message {
+func (bt *BearerToken) ToGRPCMessage() neofsgrpc.Message {
 	var m *acl.BearerToken
 
 	if bt != nil {
@@ -509,7 +509,7 @@ func (bt *BearerToken) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (bt *BearerToken) FromGRPCMessage(m grpc.Message) error {
+func (bt *BearerToken) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*acl.BearerToken)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)

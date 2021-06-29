@@ -1,14 +1,14 @@
 package accounting
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	neofsgrpc "github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	accounting "github.com/nspcc-dev/neofs-api-go/v2/accounting/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
-func (b *BalanceRequestBody) ToGRPCMessage() grpc.Message {
+func (b *BalanceRequestBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *accounting.BalanceRequest_Body
 
 	if b != nil {
@@ -20,7 +20,7 @@ func (b *BalanceRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (b *BalanceRequestBody) FromGRPCMessage(m grpc.Message) error {
+func (b *BalanceRequestBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*accounting.BalanceRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -42,7 +42,7 @@ func (b *BalanceRequestBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (b *BalanceRequest) ToGRPCMessage() grpc.Message {
+func (b *BalanceRequest) ToGRPCMessage() neofsgrpc.Message {
 	var m *accounting.BalanceRequest
 
 	if b != nil {
@@ -55,7 +55,7 @@ func (b *BalanceRequest) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (b *BalanceRequest) FromGRPCMessage(m grpc.Message) error {
+func (b *BalanceRequest) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*accounting.BalanceRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -80,7 +80,7 @@ func (b *BalanceRequest) FromGRPCMessage(m grpc.Message) error {
 	return b.RequestHeaders.FromMessage(v)
 }
 
-func (d *Decimal) ToGRPCMessage() grpc.Message {
+func (d *Decimal) ToGRPCMessage() neofsgrpc.Message {
 	var m *accounting.Decimal
 
 	if d != nil {
@@ -93,7 +93,7 @@ func (d *Decimal) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (d *Decimal) FromGRPCMessage(m grpc.Message) error {
+func (d *Decimal) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*accounting.Decimal)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -105,7 +105,7 @@ func (d *Decimal) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (br *BalanceResponseBody) ToGRPCMessage() grpc.Message {
+func (br *BalanceResponseBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *accounting.BalanceResponse_Body
 
 	if br != nil {
@@ -117,7 +117,7 @@ func (br *BalanceResponseBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (br *BalanceResponseBody) FromGRPCMessage(m grpc.Message) error {
+func (br *BalanceResponseBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*accounting.BalanceResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -139,7 +139,7 @@ func (br *BalanceResponseBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (br *BalanceResponse) ToGRPCMessage() grpc.Message {
+func (br *BalanceResponse) ToGRPCMessage() neofsgrpc.Message {
 	var m *accounting.BalanceResponse
 
 	if br != nil {
@@ -152,7 +152,7 @@ func (br *BalanceResponse) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (br *BalanceResponse) FromGRPCMessage(m grpc.Message) error {
+func (br *BalanceResponse) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*accounting.BalanceResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)

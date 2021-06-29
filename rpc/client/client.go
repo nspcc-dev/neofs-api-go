@@ -1,29 +1,22 @@
-package client
+package protoclient
 
 import (
-	"sync"
-
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	neofsgrpc "github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 )
 
 // Client represents client for exchanging messages
 // with a remote server using Protobuf RPC.
+//
+// Should be created using DialPrm.Dial.
+//
+// Client is one-time use, and should only be used within an open connection.
 type Client struct {
-	*cfg
-
-	gRPCClientOnce sync.Once
-	gRPCClient     *grpc.Client
+	g neofsgrpc.Client
 }
 
-// New creates, configures via options and returns new Client instance.
-func New(opts ...Option) *Client {
-	c := defaultCfg()
-
-	for _, opt := range opts {
-		opt(c)
-	}
-
-	return &Client{
-		cfg: c,
-	}
+// Close closes opened connection.
+//
+// Must be called only after successful initialization.
+func (x Client) Close() error {
+	return x.g.Close()
 }

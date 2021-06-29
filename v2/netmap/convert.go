@@ -1,14 +1,14 @@
 package netmap
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	neofsgrpc "github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	netmap "github.com/nspcc-dev/neofs-api-go/v2/netmap/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
-func (f *Filter) ToGRPCMessage() grpc.Message {
+func (f *Filter) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.Filter
 
 	if f != nil {
@@ -24,7 +24,7 @@ func (f *Filter) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (f *Filter) FromGRPCMessage(m grpc.Message) error {
+func (f *Filter) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.Filter)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -80,7 +80,7 @@ func FiltersFromGRPC(fs []*netmap.Filter) (res []*Filter, err error) {
 	return
 }
 
-func (s *Selector) ToGRPCMessage() grpc.Message {
+func (s *Selector) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.Selector
 
 	if s != nil {
@@ -96,7 +96,7 @@ func (s *Selector) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (s *Selector) FromGRPCMessage(m grpc.Message) error {
+func (s *Selector) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.Selector)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -146,7 +146,7 @@ func SelectorsFromGRPC(ss []*netmap.Selector) (res []*Selector, err error) {
 	return
 }
 
-func (r *Replica) ToGRPCMessage() grpc.Message {
+func (r *Replica) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.Replica
 
 	if r != nil {
@@ -159,7 +159,7 @@ func (r *Replica) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *Replica) FromGRPCMessage(m grpc.Message) error {
+func (r *Replica) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.Replica)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -206,7 +206,7 @@ func ReplicasFromGRPC(rs []*netmap.Replica) (res []*Replica, err error) {
 	return
 }
 
-func (p *PlacementPolicy) ToGRPCMessage() grpc.Message {
+func (p *PlacementPolicy) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.PlacementPolicy
 
 	if p != nil {
@@ -221,7 +221,7 @@ func (p *PlacementPolicy) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (p *PlacementPolicy) FromGRPCMessage(m grpc.Message) error {
+func (p *PlacementPolicy) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.PlacementPolicy)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -273,7 +273,7 @@ func NodeStateFromRPCMessage(n netmap.NodeInfo_State) NodeState {
 	return NodeState(n)
 }
 
-func (a *Attribute) ToGRPCMessage() grpc.Message {
+func (a *Attribute) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.NodeInfo_Attribute
 
 	if a != nil {
@@ -287,7 +287,7 @@ func (a *Attribute) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (a *Attribute) FromGRPCMessage(m grpc.Message) error {
+func (a *Attribute) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.NodeInfo_Attribute)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -335,7 +335,7 @@ func AttributesFromGRPC(as []*netmap.NodeInfo_Attribute) (res []*Attribute, err 
 	return
 }
 
-func (ni *NodeInfo) ToGRPCMessage() grpc.Message {
+func (ni *NodeInfo) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.NodeInfo
 
 	if ni != nil {
@@ -350,7 +350,7 @@ func (ni *NodeInfo) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (ni *NodeInfo) FromGRPCMessage(m grpc.Message) error {
+func (ni *NodeInfo) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.NodeInfo)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -370,7 +370,7 @@ func (ni *NodeInfo) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (l *LocalNodeInfoRequestBody) ToGRPCMessage() grpc.Message {
+func (l *LocalNodeInfoRequestBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.LocalNodeInfoRequest_Body
 
 	if l != nil {
@@ -380,7 +380,7 @@ func (l *LocalNodeInfoRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (l *LocalNodeInfoRequestBody) FromGRPCMessage(m grpc.Message) error {
+func (l *LocalNodeInfoRequestBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.LocalNodeInfoRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -389,7 +389,7 @@ func (l *LocalNodeInfoRequestBody) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (l *LocalNodeInfoRequest) ToGRPCMessage() grpc.Message {
+func (l *LocalNodeInfoRequest) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.LocalNodeInfoRequest
 
 	if l != nil {
@@ -402,7 +402,7 @@ func (l *LocalNodeInfoRequest) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (l *LocalNodeInfoRequest) FromGRPCMessage(m grpc.Message) error {
+func (l *LocalNodeInfoRequest) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.LocalNodeInfoRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -427,7 +427,7 @@ func (l *LocalNodeInfoRequest) FromGRPCMessage(m grpc.Message) error {
 	return l.RequestHeaders.FromMessage(v)
 }
 
-func (l *LocalNodeInfoResponseBody) ToGRPCMessage() grpc.Message {
+func (l *LocalNodeInfoResponseBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.LocalNodeInfoResponse_Body
 
 	if l != nil {
@@ -440,7 +440,7 @@ func (l *LocalNodeInfoResponseBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (l *LocalNodeInfoResponseBody) FromGRPCMessage(m grpc.Message) error {
+func (l *LocalNodeInfoResponseBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.LocalNodeInfoResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -476,7 +476,7 @@ func (l *LocalNodeInfoResponseBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (l *LocalNodeInfoResponse) ToGRPCMessage() grpc.Message {
+func (l *LocalNodeInfoResponse) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.LocalNodeInfoResponse
 
 	if l != nil {
@@ -489,7 +489,7 @@ func (l *LocalNodeInfoResponse) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (l *LocalNodeInfoResponse) FromGRPCMessage(m grpc.Message) error {
+func (l *LocalNodeInfoResponse) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.LocalNodeInfoResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -514,7 +514,7 @@ func (l *LocalNodeInfoResponse) FromGRPCMessage(m grpc.Message) error {
 	return l.ResponseHeaders.FromMessage(v)
 }
 
-func (i *NetworkInfo) ToGRPCMessage() grpc.Message {
+func (i *NetworkInfo) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.NetworkInfo
 
 	if i != nil {
@@ -527,7 +527,7 @@ func (i *NetworkInfo) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (i *NetworkInfo) FromGRPCMessage(m grpc.Message) error {
+func (i *NetworkInfo) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.NetworkInfo)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -539,7 +539,7 @@ func (i *NetworkInfo) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (l *NetworkInfoRequestBody) ToGRPCMessage() grpc.Message {
+func (l *NetworkInfoRequestBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.NetworkInfoRequest_Body
 
 	if l != nil {
@@ -549,7 +549,7 @@ func (l *NetworkInfoRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (l *NetworkInfoRequestBody) FromGRPCMessage(m grpc.Message) error {
+func (l *NetworkInfoRequestBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.NetworkInfoRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -558,7 +558,7 @@ func (l *NetworkInfoRequestBody) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (l *NetworkInfoRequest) ToGRPCMessage() grpc.Message {
+func (l *NetworkInfoRequest) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.NetworkInfoRequest
 
 	if l != nil {
@@ -571,7 +571,7 @@ func (l *NetworkInfoRequest) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (l *NetworkInfoRequest) FromGRPCMessage(m grpc.Message) error {
+func (l *NetworkInfoRequest) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.NetworkInfoRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -596,7 +596,7 @@ func (l *NetworkInfoRequest) FromGRPCMessage(m grpc.Message) error {
 	return l.RequestHeaders.FromMessage(v)
 }
 
-func (i *NetworkInfoResponseBody) ToGRPCMessage() grpc.Message {
+func (i *NetworkInfoResponseBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.NetworkInfoResponse_Body
 
 	if i != nil {
@@ -608,7 +608,7 @@ func (i *NetworkInfoResponseBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (i *NetworkInfoResponseBody) FromGRPCMessage(m grpc.Message) error {
+func (i *NetworkInfoResponseBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.NetworkInfoResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -630,7 +630,7 @@ func (i *NetworkInfoResponseBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (l *NetworkInfoResponse) ToGRPCMessage() grpc.Message {
+func (l *NetworkInfoResponse) ToGRPCMessage() neofsgrpc.Message {
 	var m *netmap.NetworkInfoResponse
 
 	if l != nil {
@@ -643,7 +643,7 @@ func (l *NetworkInfoResponse) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (l *NetworkInfoResponse) FromGRPCMessage(m grpc.Message) error {
+func (l *NetworkInfoResponse) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*netmap.NetworkInfoResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)

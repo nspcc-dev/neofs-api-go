@@ -1,12 +1,12 @@
 package refs
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	neofsgrpc "github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
-func (o *OwnerID) ToGRPCMessage() grpc.Message {
+func (o *OwnerID) ToGRPCMessage() neofsgrpc.Message {
 	var m *refs.OwnerID
 
 	if o != nil {
@@ -18,7 +18,7 @@ func (o *OwnerID) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (o *OwnerID) FromGRPCMessage(m grpc.Message) error {
+func (o *OwnerID) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*refs.OwnerID)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -29,7 +29,7 @@ func (o *OwnerID) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (c *ContainerID) ToGRPCMessage() grpc.Message {
+func (c *ContainerID) ToGRPCMessage() neofsgrpc.Message {
 	var m *refs.ContainerID
 
 	if c != nil {
@@ -41,7 +41,7 @@ func (c *ContainerID) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (c *ContainerID) FromGRPCMessage(m grpc.Message) error {
+func (c *ContainerID) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*refs.ContainerID)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -87,7 +87,7 @@ func ContainerIDsFromGRPCMessage(idsV2 []*refs.ContainerID) (res []*ContainerID,
 	return
 }
 
-func (o *ObjectID) ToGRPCMessage() grpc.Message {
+func (o *ObjectID) ToGRPCMessage() neofsgrpc.Message {
 	var m *refs.ObjectID
 
 	if o != nil {
@@ -99,7 +99,7 @@ func (o *ObjectID) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (o *ObjectID) FromGRPCMessage(m grpc.Message) error {
+func (o *ObjectID) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*refs.ObjectID)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -145,7 +145,7 @@ func ObjectIDListFromGRPCMessage(idsV2 []*refs.ObjectID) (res []*ObjectID, err e
 	return
 }
 
-func (a *Address) ToGRPCMessage() grpc.Message {
+func (a *Address) ToGRPCMessage() neofsgrpc.Message {
 	var m *refs.Address
 
 	if a != nil {
@@ -158,7 +158,7 @@ func (a *Address) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (a *Address) FromGRPCMessage(m grpc.Message) error {
+func (a *Address) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*refs.Address)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -202,7 +202,7 @@ func ChecksumTypeFromGRPC(t refs.ChecksumType) ChecksumType {
 	return ChecksumType(t)
 }
 
-func (c *Checksum) ToGRPCMessage() grpc.Message {
+func (c *Checksum) ToGRPCMessage() neofsgrpc.Message {
 	var m *refs.Checksum
 
 	if c != nil {
@@ -215,7 +215,7 @@ func (c *Checksum) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (c *Checksum) FromGRPCMessage(m grpc.Message) error {
+func (c *Checksum) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*refs.Checksum)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -227,7 +227,7 @@ func (c *Checksum) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (v *Version) ToGRPCMessage() grpc.Message {
+func (v *Version) ToGRPCMessage() neofsgrpc.Message {
 	var m *refs.Version
 
 	if v != nil {
@@ -240,7 +240,7 @@ func (v *Version) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (v *Version) FromGRPCMessage(m grpc.Message) error {
+func (v *Version) FromGRPCMessage(m neofsgrpc.Message) error {
 	ver, ok := m.(*refs.Version)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -252,7 +252,7 @@ func (v *Version) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (s *Signature) ToGRPCMessage() grpc.Message {
+func (s *Signature) ToGRPCMessage() neofsgrpc.Message {
 	var m *refs.Signature
 
 	if s != nil {
@@ -265,7 +265,7 @@ func (s *Signature) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (s *Signature) FromGRPCMessage(m grpc.Message) error {
+func (s *Signature) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*refs.Signature)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, s)

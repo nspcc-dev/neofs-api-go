@@ -1,7 +1,7 @@
 package message
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	neofsgrpc "github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
@@ -10,7 +10,7 @@ import (
 // of the gRPC message that is used
 // for Message encoding/decoding.
 type GRPCConvertedMessage interface {
-	grpc.Message
+	neofsgrpc.Message
 	proto.Message
 }
 

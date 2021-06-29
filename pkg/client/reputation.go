@@ -6,21 +6,10 @@ import (
 
 	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
 	"github.com/nspcc-dev/neofs-api-go/pkg/reputation"
-	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 	v2reputation "github.com/nspcc-dev/neofs-api-go/v2/reputation"
 	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
 )
-
-// Reputation contains methods for working with Reputation system values.
-type Reputation interface {
-	// AnnounceLocalTrust announces local trust values of local peer.
-	AnnounceLocalTrust(context.Context, AnnounceLocalTrustPrm, ...CallOption) (*AnnounceLocalTrustRes, error)
-
-	// AnnounceIntermediateTrust announces the intermediate result of the iterative algorithm for calculating
-	// the global reputation of the node.
-	AnnounceIntermediateTrust(context.Context, AnnounceIntermediateTrustPrm, ...CallOption) (*AnnounceIntermediateTrustRes, error)
-}
 
 // AnnounceLocalTrustPrm groups parameters of AnnounceLocalTrust operation.
 type AnnounceLocalTrustPrm struct {
@@ -52,9 +41,9 @@ func (x *AnnounceLocalTrustPrm) SetTrusts(trusts []*reputation.Trust) {
 // AnnounceLocalTrustRes groups results of AnnounceLocalTrust operation.
 type AnnounceLocalTrustRes struct{}
 
-func (c *clientImpl) AnnounceLocalTrust(ctx context.Context, prm AnnounceLocalTrustPrm, opts ...CallOption) (*AnnounceLocalTrustRes, error) {
+func (x Client) AnnounceLocalTrust(ctx context.Context, prm AnnounceLocalTrustPrm, opts ...CallOption) (*AnnounceLocalTrustRes, error) {
 	// apply all available options
-	callOptions := c.defaultCallOptions()
+	callOptions := defaultCallOptions()
 
 	for i := range opts {
 		opts[i](callOptions)
@@ -64,21 +53,29 @@ func (c *clientImpl) AnnounceLocalTrust(ctx context.Context, prm AnnounceLocalTr
 	reqBody.SetEpoch(prm.Epoch())
 	reqBody.SetTrusts(reputation.TrustsToV2(prm.Trusts()))
 
-	req := new(v2reputation.AnnounceLocalTrustRequest)
+	var req v2reputation.AnnounceLocalTrustRequest
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), &req)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := rpcapi.AnnounceLocalTrust(c.Raw(), req, client.WithContext(ctx))
+	var p rpcapi.AnnounceLocalTrustPrm
+
+	p.SetRequest(req)
+
+	var res rpcapi.AnnounceLocalTrustRes
+
+	err = rpcapi.AnnounceLocalTrust(ctx, x.c, p, &res)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
-	err = v2signature.VerifyServiceMessage(resp)
+	resp := res.Response()
+
+	err = v2signature.VerifyServiceMessage(&resp)
 	if err != nil {
 		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
@@ -126,9 +123,9 @@ func (x *AnnounceIntermediateTrustPrm) SetTrust(trust *reputation.PeerToPeerTrus
 // AnnounceIntermediateTrustRes groups results of AnnounceIntermediateTrust operation.
 type AnnounceIntermediateTrustRes struct{}
 
-func (c *clientImpl) AnnounceIntermediateTrust(ctx context.Context, prm AnnounceIntermediateTrustPrm, opts ...CallOption) (*AnnounceIntermediateTrustRes, error) {
+func (x Client) AnnounceIntermediateTrust(ctx context.Context, prm AnnounceIntermediateTrustPrm, opts ...CallOption) (*AnnounceIntermediateTrustRes, error) {
 	// apply all available options
-	callOptions := c.defaultCallOptions()
+	callOptions := defaultCallOptions()
 
 	for i := range opts {
 		opts[i](callOptions)
@@ -139,21 +136,29 @@ func (c *clientImpl) AnnounceIntermediateTrust(ctx context.Context, prm Announce
 	reqBody.SetIteration(prm.Iteration())
 	reqBody.SetTrust(prm.Trust().ToV2())
 
-	req := new(v2reputation.AnnounceIntermediateResultRequest)
+	var req v2reputation.AnnounceIntermediateResultRequest
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), &req)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := rpcapi.AnnounceIntermediateResult(c.Raw(), req, client.WithContext(ctx))
+	var p rpcapi.AnnounceIntermediateResultPrm
+
+	p.SetRequest(req)
+
+	var res rpcapi.AnnounceIntermediateResultRes
+
+	err = rpcapi.AnnounceIntermediateResult(ctx, x.c, p, &res)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
-	err = v2signature.VerifyServiceMessage(resp)
+	resp := res.Response()
+
+	err = v2signature.VerifyServiceMessage(&resp)
 	if err != nil {
 		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}

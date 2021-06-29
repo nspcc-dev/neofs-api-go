@@ -12,38 +12,42 @@ const (
 	testRPCName     = "test RPC"
 )
 
-func TestCallMethodInfoUnary(t *testing.T) {
-	i := common.CallMethodInfoUnary(testServiceName, testRPCName)
+func TestCallMethodInfo_ServiceName(t *testing.T) {
+	var i common.CallMethodInfo
 
-	require.Equal(t, testServiceName, i.Service)
-	require.Equal(t, testRPCName, i.Name)
-	require.False(t, i.ClientStream())
-	require.False(t, i.ServerStream())
+	i.SetServiceName(testServiceName)
+
+	require.Equal(t, testServiceName, i.ServiceName())
 }
 
-func TestCallMethodInfoServerStream(t *testing.T) {
-	i := common.CallMethodInfoServerStream(testServiceName, testRPCName)
+func TestCallMethodInfo_MethodName(t *testing.T) {
+	var i common.CallMethodInfo
 
-	require.Equal(t, testServiceName, i.Service)
-	require.Equal(t, testRPCName, i.Name)
+	i.SetMethodName(testRPCName)
+
+	require.Equal(t, testRPCName, i.MethodName())
+}
+
+func TestCallMethodInfo_ServerStream(t *testing.T) {
+	var i common.CallMethodInfo
+
+	require.False(t, i.ClientStream())
+	require.False(t, i.ServerStream())
+
+	i.SetServerStream()
+
 	require.False(t, i.ClientStream())
 	require.True(t, i.ServerStream())
 }
 
-func TestCallMethodInfoClientStream(t *testing.T) {
-	i := common.CallMethodInfoClientStream(testServiceName, testRPCName)
+func TestCallMethodInfo_ClientStream(t *testing.T) {
+	var i common.CallMethodInfo
 
-	require.Equal(t, testServiceName, i.Service)
-	require.Equal(t, testRPCName, i.Name)
+	require.False(t, i.ClientStream())
+	require.False(t, i.ServerStream())
+
+	i.SetClientStream()
+
 	require.True(t, i.ClientStream())
 	require.False(t, i.ServerStream())
-}
-
-func TestCallMethodInfoBidirectionalStream(t *testing.T) {
-	i := common.CallMethodInfoBidirectionalStream(testServiceName, testRPCName)
-
-	require.Equal(t, testServiceName, i.Service)
-	require.Equal(t, testRPCName, i.Name)
-	require.True(t, i.ClientStream())
-	require.True(t, i.ServerStream())
 }
