@@ -1,8 +1,9 @@
 package rpc
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/rpc/client"
-	"github.com/nspcc-dev/neofs-api-go/rpc/common"
+	"context"
+
+	protoclient "github.com/nspcc-dev/neofs-api-go/rpc/client"
 	"github.com/nspcc-dev/neofs-api-go/v2/reputation"
 )
 
@@ -13,34 +14,68 @@ const (
 	rpcReputationAnnounceIntermediateResult = "AnnounceIntermediateResult"
 )
 
-// AnnounceLocalTrust executes ReputationService.AnnounceLocalTrust RPC.
-func AnnounceLocalTrust(
-	cli *client.Client,
-	req *reputation.AnnounceLocalTrustRequest,
-	opts ...client.CallOption,
-) (*reputation.AnnounceLocalTrustResponse, error) {
-	resp := new(reputation.AnnounceLocalTrustResponse)
+// AnnounceLocalTrustPrm groups the parameters of AnnounceLocalTrust call.
+type AnnounceLocalTrustPrm struct {
+	req reputation.AnnounceLocalTrustRequest
+}
 
-	err := client.SendUnary(cli, common.CallMethodInfoUnary(serviceReputation, rpcReputationAnnounceLocalTrust), req, resp, opts...)
-	if err != nil {
-		return nil, err
-	}
+// SetRequest sets request to send to the server.
+//
+// Required parameter.
+func (x *AnnounceLocalTrustPrm) SetRequest(req reputation.AnnounceLocalTrustRequest) {
+	x.req = req
+}
 
-	return resp, nil
+// AnnounceLocalTrustRes groups the results of AnnounceLocalTrust call.
+type AnnounceLocalTrustRes struct {
+	resp reputation.AnnounceLocalTrustResponse
+}
+
+// Response returns the server response.
+func (x *AnnounceLocalTrustRes) Response() reputation.AnnounceLocalTrustResponse {
+	return x.resp
+}
+
+// AnnounceLocalTrust executes ReputationService.NetworkInfo RPC.
+//
+// Client connection should be established.
+//
+// If there is no error, res.Response() contains the server response.
+//
+// Context and res must not be nil.
+func AnnounceLocalTrust(ctx context.Context, cli protoclient.Client, prm AnnounceLocalTrustPrm, res *AnnounceLocalTrustRes) error {
+	return sendUnaryRPC(ctx, cli, &prm.req, &res.resp, serviceReputation, rpcReputationAnnounceLocalTrust)
+}
+
+// AnnounceIntermediateResultPrm groups the parameters of AnnounceIntermediateResult call.
+type AnnounceIntermediateResultPrm struct {
+	req reputation.AnnounceIntermediateResultRequest
+}
+
+// SetRequest sets request to send to the server.
+//
+// Required parameter.
+func (x *AnnounceIntermediateResultPrm) SetRequest(req reputation.AnnounceIntermediateResultRequest) {
+	x.req = req
+}
+
+// AnnounceIntermediateResultRes groups the results of AnnounceIntermediateResult call.
+type AnnounceIntermediateResultRes struct {
+	resp reputation.AnnounceIntermediateResultResponse
+}
+
+// Response returns the server response.
+func (x *AnnounceIntermediateResultRes) Response() reputation.AnnounceIntermediateResultResponse {
+	return x.resp
 }
 
 // AnnounceIntermediateResult executes ReputationService.AnnounceIntermediateResult RPC.
-func AnnounceIntermediateResult(
-	cli *client.Client,
-	req *reputation.AnnounceIntermediateResultRequest,
-	opts ...client.CallOption,
-) (*reputation.AnnounceIntermediateResultRequest, error) {
-	resp := new(reputation.AnnounceIntermediateResultRequest)
-
-	err := client.SendUnary(cli, common.CallMethodInfoUnary(serviceReputation, rpcReputationAnnounceIntermediateResult), req, resp, opts...)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+//
+// Client connection should be established.
+//
+// If there is no error, res.Response() contains the server response.
+//
+// Context and res must not be nil.
+func AnnounceIntermediateResult(ctx context.Context, cli protoclient.Client, prm AnnounceIntermediateResultPrm, res *AnnounceIntermediateResultRes) error {
+	return sendUnaryRPC(ctx, cli, &prm.req, &res.resp, serviceReputation, rpcReputationAnnounceIntermediateResult)
 }

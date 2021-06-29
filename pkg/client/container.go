@@ -13,37 +13,12 @@ import (
 	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/pkg/session"
-	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 	v2container "github.com/nspcc-dev/neofs-api-go/v2/container"
 	apicrypto "github.com/nspcc-dev/neofs-api-go/v2/crypto"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	rpcapi "github.com/nspcc-dev/neofs-api-go/v2/rpc"
 	v2signature "github.com/nspcc-dev/neofs-api-go/v2/signature"
 )
-
-// Container contains methods related to container and ACL.
-type Container interface {
-	// PutContainer creates new container in the NeoFS network.
-	PutContainer(context.Context, *container.Container, ...CallOption) (*cid.ID, error)
-
-	// GetContainer returns container by ID.
-	GetContainer(context.Context, *cid.ID, ...CallOption) (*container.Container, error)
-
-	// ListContainers return container list with the provided owner.
-	ListContainers(context.Context, *owner.ID, ...CallOption) ([]*cid.ID, error)
-
-	// DeleteContainer removes container from NeoFS network.
-	DeleteContainer(context.Context, *cid.ID, ...CallOption) error
-
-	// GetEACL returns extended ACL for a given container.
-	GetEACL(context.Context, *cid.ID, ...CallOption) (*EACLWithSignature, error)
-
-	// SetEACL sets extended ACL.
-	SetEACL(context.Context, *eacl.Table, ...CallOption) error
-
-	// AnnounceContainerUsedSpace announces amount of space which is taken by stored objects.
-	AnnounceContainerUsedSpace(context.Context, []container.UsedSpaceAnnouncement, ...CallOption) error
-}
 
 // EACLWithSignature represents eACL table/signature pair.
 type EACLWithSignature struct {
@@ -62,9 +37,9 @@ func (e EACLWithSignature) Signature() *pkg.Signature {
 	return e.table.Signature()
 }
 
-func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*cid.ID, error) {
+func (x Client) PutContainer(ctx context.Context, cnr *container.Container, opts ...CallOption) (*cid.ID, error) {
 	// apply all available options
-	callOptions := c.defaultCallOptions()
+	callOptions := defaultCallOptions()
 
 	for i := range opts {
 		opts[i](callOptions)
@@ -105,7 +80,7 @@ func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container,
 		return nil, err
 	}
 
-	req := new(v2container.PutRequest)
+	var req v2container.PutRequest
 	req.SetBody(reqBody)
 
 	meta := v2MetaHeaderFromOpts(callOptions)
@@ -113,17 +88,25 @@ func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container,
 
 	req.SetMetaHeader(meta)
 
-	err = v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
+	err = v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), &req)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := rpcapi.PutContainer(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.PutContainerPrm
+
+	prm.SetRequest(req)
+
+	var res rpcapi.PutContainerRes
+
+	err = rpcapi.PutContainer(ctx, x.c, prm, &res)
 	if err != nil {
 		return nil, err
 	}
 
-	err = v2signature.VerifyServiceMessage(resp)
+	resp := res.Response()
+
+	err = v2signature.VerifyServiceMessage(&resp)
 	if err != nil {
 		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
@@ -134,9 +117,9 @@ func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container,
 // GetContainer receives container structure through NeoFS API call.
 //
 // Returns error if container structure is received but does not meet NeoFS API specification.
-func (c *clientImpl) GetContainer(ctx context.Context, id *cid.ID, opts ...CallOption) (*container.Container, error) {
+func (x Client) GetContainer(ctx context.Context, id *cid.ID, opts ...CallOption) (*container.Container, error) {
 	// apply all available options
-	callOptions := c.defaultCallOptions()
+	callOptions := defaultCallOptions()
 
 	for i := range opts {
 		opts[i](callOptions)
@@ -145,21 +128,29 @@ func (c *clientImpl) GetContainer(ctx context.Context, id *cid.ID, opts ...CallO
 	reqBody := new(v2container.GetRequestBody)
 	reqBody.SetContainerID(id.ToV2())
 
-	req := new(v2container.GetRequest)
+	var req v2container.GetRequest
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), &req)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := rpcapi.GetContainer(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.GetContainerPrm
+
+	prm.SetRequest(req)
+
+	var res rpcapi.GetContainerRes
+
+	err = rpcapi.GetContainer(ctx, x.c, prm, &res)
 	if err != nil {
 		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
-	err = v2signature.VerifyServiceMessage(resp)
+	resp := res.Response()
+
+	err = v2signature.VerifyServiceMessage(&resp)
 	if err != nil {
 		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
@@ -196,9 +187,9 @@ func GetVerifiedContainerStructure(ctx context.Context, c Client, id *cid.ID, op
 	return cnr, nil
 }
 
-func (c *clientImpl) ListContainers(ctx context.Context, ownerID *owner.ID, opts ...CallOption) ([]*cid.ID, error) {
+func (x Client) ListContainers(ctx context.Context, ownerID *owner.ID, opts ...CallOption) ([]*cid.ID, error) {
 	// apply all available options
-	callOptions := c.defaultCallOptions()
+	callOptions := defaultCallOptions()
 
 	for i := range opts {
 		opts[i](callOptions)
@@ -217,21 +208,29 @@ func (c *clientImpl) ListContainers(ctx context.Context, ownerID *owner.ID, opts
 	reqBody := new(v2container.ListRequestBody)
 	reqBody.SetOwnerID(ownerID.ToV2())
 
-	req := new(v2container.ListRequest)
+	var req v2container.ListRequest
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), &req)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := rpcapi.ListContainers(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.ListContainerPrm
+
+	prm.SetRequest(req)
+
+	var res rpcapi.ListContainerRes
+
+	err = rpcapi.ListContainers(ctx, x.c, prm, &res)
 	if err != nil {
 		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
-	err = v2signature.VerifyServiceMessage(resp)
+	resp := res.Response()
+
+	err = v2signature.VerifyServiceMessage(&resp)
 	if err != nil {
 		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
@@ -244,9 +243,9 @@ func (c *clientImpl) ListContainers(ctx context.Context, ownerID *owner.ID, opts
 	return result, nil
 }
 
-func (c *clientImpl) DeleteContainer(ctx context.Context, id *cid.ID, opts ...CallOption) error {
+func (x Client) DeleteContainer(ctx context.Context, id *cid.ID, opts ...CallOption) error {
 	// apply all available options
-	callOptions := c.defaultCallOptions()
+	callOptions := defaultCallOptions()
 
 	for i := range opts {
 		opts[i](callOptions)
@@ -271,30 +270,38 @@ func (c *clientImpl) DeleteContainer(ctx context.Context, id *cid.ID, opts ...Ca
 		return err
 	}
 
-	req := new(v2container.DeleteRequest)
+	var req v2container.DeleteRequest
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err = v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
+	err = v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), &req)
 	if err != nil {
 		return err
 	}
 
-	resp, err := rpcapi.DeleteContainer(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.DeleteContainerPrm
+
+	prm.SetRequest(req)
+
+	var res rpcapi.DeleteContainerRes
+
+	err = rpcapi.DeleteContainer(ctx, x.c, prm, &res)
 	if err != nil {
 		return fmt.Errorf("transport error: %w", err)
 	}
 
-	if err := v2signature.VerifyServiceMessage(resp); err != nil {
+	resp := res.Response()
+
+	if err := v2signature.VerifyServiceMessage(&resp); err != nil {
 		return fmt.Errorf("can't verify response message: %w", err)
 	}
 
 	return nil
 }
 
-func (c *clientImpl) GetEACL(ctx context.Context, id *cid.ID, opts ...CallOption) (*EACLWithSignature, error) {
+func (x Client) GetEACL(ctx context.Context, id *cid.ID, opts ...CallOption) (*EACLWithSignature, error) {
 	// apply all available options
-	callOptions := c.defaultCallOptions()
+	callOptions := defaultCallOptions()
 
 	for i := range opts {
 		opts[i](callOptions)
@@ -303,21 +310,29 @@ func (c *clientImpl) GetEACL(ctx context.Context, id *cid.ID, opts ...CallOption
 	reqBody := new(v2container.GetExtendedACLRequestBody)
 	reqBody.SetContainerID(id.ToV2())
 
-	req := new(v2container.GetExtendedACLRequest)
+	var req v2container.GetExtendedACLRequest
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
-	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), &req)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := rpcapi.GetEACL(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.GetEACLPrm
+
+	prm.SetRequest(req)
+
+	var res rpcapi.GetEACLRes
+
+	err = rpcapi.GetEACL(ctx, x.c, prm, &res)
 	if err != nil {
 		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
-	err = v2signature.VerifyServiceMessage(resp)
+	resp := res.Response()
+
+	err = v2signature.VerifyServiceMessage(&resp)
 	if err != nil {
 		return nil, fmt.Errorf("can't verify response message: %w", err)
 	}
@@ -339,9 +354,9 @@ func (c *clientImpl) GetEACL(ctx context.Context, id *cid.ID, opts ...CallOption
 	}, nil
 }
 
-func (c *clientImpl) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
+func (x Client) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...CallOption) error {
 	// apply all available options
-	callOptions := c.defaultCallOptions()
+	callOptions := defaultCallOptions()
 
 	for i := range opts {
 		opts[i](callOptions)
@@ -367,7 +382,7 @@ func (c *clientImpl) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...Call
 		return err
 	}
 
-	req := new(v2container.SetExtendedACLRequest)
+	var req v2container.SetExtendedACLRequest
 	req.SetBody(reqBody)
 
 	meta := v2MetaHeaderFromOpts(callOptions)
@@ -375,17 +390,25 @@ func (c *clientImpl) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...Call
 
 	req.SetMetaHeader(meta)
 
-	err = v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
+	err = v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), &req)
 	if err != nil {
 		return err
 	}
 
-	resp, err := rpcapi.SetEACL(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.SetEACLPrm
+
+	prm.SetRequest(req)
+
+	var res rpcapi.SetEACLRes
+
+	err = rpcapi.SetEACL(ctx, x.c, prm, &res)
 	if err != nil {
 		return fmt.Errorf("transport error: %w", err)
 	}
 
-	err = v2signature.VerifyServiceMessage(resp)
+	resp := res.Response()
+
+	err = v2signature.VerifyServiceMessage(&resp)
 	if err != nil {
 		return fmt.Errorf("can't verify response message: %w", err)
 	}
@@ -395,11 +418,11 @@ func (c *clientImpl) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...Call
 
 // AnnounceContainerUsedSpace used by storage nodes to estimate their container
 // sizes during lifetime. Use it only in storage node applications.
-func (c *clientImpl) AnnounceContainerUsedSpace(
+func (x Client) AnnounceContainerUsedSpace(
 	ctx context.Context,
 	announce []container.UsedSpaceAnnouncement,
 	opts ...CallOption) error {
-	callOptions := c.defaultCallOptions() // apply all available options
+	callOptions := defaultCallOptions() // apply all available options
 
 	for i := range opts {
 		opts[i](callOptions)
@@ -415,22 +438,30 @@ func (c *clientImpl) AnnounceContainerUsedSpace(
 	reqBody := new(v2container.AnnounceUsedSpaceRequestBody)
 	reqBody.SetAnnouncements(v2announce)
 
-	req := new(v2container.AnnounceUsedSpaceRequest)
+	var req v2container.AnnounceUsedSpaceRequest
 	req.SetBody(reqBody)
 	req.SetMetaHeader(v2MetaHeaderFromOpts(callOptions))
 
 	// sign the request
-	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), req)
+	err := v2signature.SignServiceMessage(neofsecdsa.Signer(callOptions.key), &req)
 	if err != nil {
 		return err
 	}
 
-	resp, err := rpcapi.AnnounceUsedSpace(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.AnnounceUsedSpacePrm
+
+	prm.SetRequest(req)
+
+	var res rpcapi.AnnounceUsedSpaceRes
+
+	err = rpcapi.AnnounceUsedSpace(ctx, x.c, prm, &res)
 	if err != nil {
 		return fmt.Errorf("transport error: %w", err)
 	}
 
-	err = v2signature.VerifyServiceMessage(resp)
+	resp := res.Response()
+
+	err = v2signature.VerifyServiceMessage(&resp)
 	if err != nil {
 		return fmt.Errorf("can't verify response message: %w", err)
 	}

@@ -3,7 +3,7 @@ package message
 import (
 	"fmt"
 
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	neofsgrpc "github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 )
 
 // Message represents raw Protobuf message
@@ -12,7 +12,7 @@ import (
 type Message interface {
 	// Must return gRPC message that can
 	// be used for gRPC protocol transmission.
-	ToGRPCMessage() grpc.Message
+	ToGRPCMessage() neofsgrpc.Message
 
 	// Must restore the message from related
 	// gRPC message.
@@ -20,7 +20,7 @@ type Message interface {
 	// If gRPC message is not a related one,
 	// ErrUnexpectedMessageType can be returned
 	// to indicate this.
-	FromGRPCMessage(grpc.Message) error
+	FromGRPCMessage(neofsgrpc.Message) error
 }
 
 // ErrUnexpectedMessageType is an error that

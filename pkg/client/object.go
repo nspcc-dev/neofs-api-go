@@ -13,7 +13,6 @@ import (
 	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
 	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
-	"github.com/nspcc-dev/neofs-api-go/rpc/client"
 	apicrypto "github.com/nspcc-dev/neofs-api-go/v2/crypto"
 	v2object "github.com/nspcc-dev/neofs-api-go/v2/object"
 	v2refs "github.com/nspcc-dev/neofs-api-go/v2/refs"
@@ -21,33 +20,6 @@ import (
 	v2session "github.com/nspcc-dev/neofs-api-go/v2/session"
 	"github.com/nspcc-dev/neofs-api-go/v2/signature"
 )
-
-// Object contains methods for working with objects.
-type Object interface {
-	// PutObject puts new object to NeoFS.
-	PutObject(context.Context, *PutObjectParams, ...CallOption) (*object.ID, error)
-
-	// DeleteObject deletes object to NeoFS.
-	DeleteObject(context.Context, *DeleteObjectParams, ...CallOption) error
-
-	// GetObject returns object stored in NeoFS.
-	GetObject(context.Context, *GetObjectParams, ...CallOption) (*object.Object, error)
-
-	// GetObjectHeader returns object header.
-	GetObjectHeader(context.Context, *ObjectHeaderParams, ...CallOption) (*object.Object, error)
-
-	// ObjectPayloadRangeData returns range of object payload.
-	ObjectPayloadRangeData(context.Context, *RangeDataParams, ...CallOption) ([]byte, error)
-
-	// ObjectPayloadRangeSHA256 returns sha-256 hashes of object sub-ranges from NeoFS.
-	ObjectPayloadRangeSHA256(context.Context, *RangeChecksumParams, ...CallOption) ([][sha256.Size]byte, error)
-
-	// ObjectPayloadRangeTZ returns homomorphic hashes of object sub-ranges from NeoFS.
-	ObjectPayloadRangeTZ(context.Context, *RangeChecksumParams, ...CallOption) ([][TZSize]byte, error)
-
-	// SearchObject searches for objects in NeoFS using provided parameters.
-	SearchObject(context.Context, *SearchObjectParams, ...CallOption) ([]*object.ID, error)
-}
 
 type PutObjectParams struct {
 	obj *object.Object
@@ -124,9 +96,9 @@ type putObjectV2Writer struct {
 
 	chunkPart *v2object.PutObjectPartChunk
 
-	req *v2object.PutRequest
+	req v2object.PutRequest
 
-	stream *rpcapi.PutRequestWriter
+	stream rpcapi.PutObjectStream
 }
 
 type checksumType int
@@ -179,7 +151,7 @@ func (w *putObjectV2Writer) Write(p []byte) (int, error) {
 
 	w.req.SetVerificationHeader(nil)
 
-	if err := signature.SignServiceMessage(neofsecdsa.Signer(w.key), w.req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(w.key), &w.req); err != nil {
 		return 0, fmt.Errorf("could not sign chunk request message: %w", err)
 	}
 
@@ -222,8 +194,8 @@ func (p *PutObjectParams) PayloadReader() io.Reader {
 	return nil
 }
 
-func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...CallOption) (*object.ID, error) {
-	callOpts := c.defaultCallOptions()
+func (x Client) PutObject(ctx context.Context, p *PutObjectParams, opts ...CallOption) (*object.ID, error) {
+	callOpts := defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -232,7 +204,7 @@ func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...
 	}
 
 	// create request
-	req := new(v2object.PutRequest)
+	var req v2object.PutRequest
 
 	// initialize request body
 	body := new(v2object.PutRequestBody)
@@ -245,7 +217,7 @@ func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...
 	// set meta header
 	meta := v2MetaHeaderFromOpts(callOpts)
 
-	if err := c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+	if err := x.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
 		addr: v2Addr,
 		verb: v2session.ObjectVerbPut,
 	}); err != nil {
@@ -266,17 +238,21 @@ func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...
 	initPart.SetHeader(obj.GetHeader())
 
 	// sign the request
-	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), &req); err != nil {
 		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// open stream
-	resp := new(v2object.PutResponse)
+	var prm rpcapi.PutObjectPrm
 
-	stream, err := rpcapi.PutObject(c.Raw(), resp, client.WithContext(ctx))
+	var res rpcapi.PutObjectRes
+
+	err := rpcapi.PutObject(ctx, x.c, prm, &res)
 	if err != nil {
-		return nil, fmt.Errorf("stream opening failed: %w", err)
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
+
+	stream := res.Stream()
 
 	// send init part
 	err = stream.Write(req)
@@ -310,13 +286,15 @@ func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...
 	}
 
 	// close object stream and receive response from remote node
-	err = stream.Close()
+	err = stream.CloseSend()
 	if err != nil {
 		return nil, fmt.Errorf("closing the stream failed: %w", err)
 	}
 
+	resp := res.Response()
+
 	// verify response structure
-	if err := signature.VerifyServiceMessage(resp); err != nil {
+	if err := signature.VerifyServiceMessage(&resp); err != nil {
 		return nil, fmt.Errorf("response verification failed: %w", err)
 	}
 
@@ -377,8 +355,8 @@ func DeleteObject(ctx context.Context, c Client, p *DeleteObjectParams, opts ...
 // DeleteObject removes object by address.
 //
 // If target of tombstone address is not set, the address is ignored.
-func (c *clientImpl) DeleteObject(ctx context.Context, p *DeleteObjectParams, opts ...CallOption) error {
-	callOpts := c.defaultCallOptions()
+func (x Client) DeleteObject(ctx context.Context, p *DeleteObjectParams, opts ...CallOption) error {
+	callOpts := defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -387,7 +365,7 @@ func (c *clientImpl) DeleteObject(ctx context.Context, p *DeleteObjectParams, op
 	}
 
 	// create request
-	req := new(v2object.DeleteRequest)
+	var req v2object.DeleteRequest
 
 	// initialize request body
 	body := new(v2object.DeleteRequestBody)
@@ -396,7 +374,7 @@ func (c *clientImpl) DeleteObject(ctx context.Context, p *DeleteObjectParams, op
 	// set meta header
 	meta := v2MetaHeaderFromOpts(callOpts)
 
-	if err := c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+	if err := x.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
 		addr: p.addr.ToV2(),
 		verb: v2session.ObjectVerbDelete,
 	}); err != nil {
@@ -409,15 +387,23 @@ func (c *clientImpl) DeleteObject(ctx context.Context, p *DeleteObjectParams, op
 	body.SetAddress(p.addr.ToV2())
 
 	// sign the request
-	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), &req); err != nil {
 		return fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// send request
-	resp, err := rpcapi.DeleteObject(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.DeleteObjectPrm
+
+	prm.SetRequest(req)
+
+	var res rpcapi.DeleteObjectRes
+
+	err := rpcapi.DeleteObject(ctx, x.c, prm, &res)
 	if err != nil {
-		return fmt.Errorf("sending the request failed: %w", err)
+		return fmt.Errorf("transport error: %w", err)
 	}
+
+	resp := res.Response()
 
 	// verify response structure
 	if err := signature.VerifyServiceMessage(resp); err != nil {
@@ -559,8 +545,8 @@ func (x *objectPayloadReader) Read(p []byte) (read int, err error) {
 
 var errWrongMessageSeq = errors.New("incorrect message sequence")
 
-func (c *clientImpl) GetObject(ctx context.Context, p *GetObjectParams, opts ...CallOption) (*object.Object, error) {
-	callOpts := c.defaultCallOptions()
+func (x Client) GetObject(ctx context.Context, p *GetObjectParams, opts ...CallOption) (*object.Object, error) {
+	callOpts := defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -569,7 +555,7 @@ func (c *clientImpl) GetObject(ctx context.Context, p *GetObjectParams, opts ...
 	}
 
 	// create request
-	req := new(v2object.GetRequest)
+	var req v2object.GetRequest
 
 	// initialize request body
 	body := new(v2object.GetRequestBody)
@@ -578,7 +564,7 @@ func (c *clientImpl) GetObject(ctx context.Context, p *GetObjectParams, opts ...
 	// set meta header
 	meta := v2MetaHeaderFromOpts(callOpts)
 
-	if err := c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+	if err := x.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
 		addr: p.addr.ToV2(),
 		verb: v2session.ObjectVerbGet,
 	}); err != nil {
@@ -592,15 +578,23 @@ func (c *clientImpl) GetObject(ctx context.Context, p *GetObjectParams, opts ...
 	body.SetRaw(p.raw)
 
 	// sign the request
-	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), &req); err != nil {
 		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// open stream
-	stream, err := rpcapi.GetObject(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.GetObjectPrm
+
+	prm.SetRequest(req)
+
+	var res rpcapi.GetObjectRes
+
+	err := rpcapi.GetObject(ctx, x.c, prm, &res)
 	if err != nil {
-		return nil, fmt.Errorf("stream opening failed: %w", err)
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
+
+	stream := res.Stream()
 
 	var (
 		headWas bool
@@ -648,7 +642,7 @@ loop:
 
 			if p.readerHandler != nil {
 				p.readerHandler(&objectPayloadReader{
-					stream: stream,
+					stream: &stream,
 				})
 
 				break loop
@@ -739,8 +733,8 @@ func (p *ObjectHeaderParams) RawFlag() bool {
 	return false
 }
 
-func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams, opts ...CallOption) (*object.Object, error) {
-	callOpts := c.defaultCallOptions()
+func (x Client) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams, opts ...CallOption) (*object.Object, error) {
+	callOpts := defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -749,7 +743,7 @@ func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams,
 	}
 
 	// create request
-	req := new(v2object.HeadRequest)
+	var req v2object.HeadRequest
 
 	// initialize request body
 	body := new(v2object.HeadRequestBody)
@@ -758,7 +752,7 @@ func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams,
 	// set meta header
 	meta := v2MetaHeaderFromOpts(callOpts)
 
-	if err := c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+	if err := x.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
 		addr: p.addr.ToV2(),
 		verb: v2session.ObjectVerbHead,
 	}); err != nil {
@@ -773,18 +767,26 @@ func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams,
 	body.SetRaw(p.raw)
 
 	// sign the request
-	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), &req); err != nil {
 		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// send Head request
-	resp, err := rpcapi.HeadObject(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.HeadObjectPrm
+
+	prm.SetRequest(req)
+
+	var res rpcapi.HeadObjectRes
+
+	err := rpcapi.HeadObject(ctx, x.c, prm, &res)
 	if err != nil {
-		return nil, fmt.Errorf("sending the request failed: %w", err)
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
+	resp := res.Response()
+
 	// verify response structure
-	if err := signature.VerifyServiceMessage(resp); err != nil {
+	if err := signature.VerifyServiceMessage(&resp); err != nil {
 		return nil, fmt.Errorf("response verification failed: %w", err)
 	}
 
@@ -922,8 +924,8 @@ func (p *RangeDataParams) DataWriter() io.Writer {
 	return nil
 }
 
-func (c *clientImpl) ObjectPayloadRangeData(ctx context.Context, p *RangeDataParams, opts ...CallOption) ([]byte, error) {
-	callOpts := c.defaultCallOptions()
+func (x Client) ObjectPayloadRangeData(ctx context.Context, p *RangeDataParams, opts ...CallOption) ([]byte, error) {
+	callOpts := defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -932,7 +934,7 @@ func (c *clientImpl) ObjectPayloadRangeData(ctx context.Context, p *RangeDataPar
 	}
 
 	// create request
-	req := new(v2object.GetRangeRequest)
+	var req v2object.GetRangeRequest
 
 	// initialize request body
 	body := new(v2object.GetRangeRequestBody)
@@ -941,7 +943,7 @@ func (c *clientImpl) ObjectPayloadRangeData(ctx context.Context, p *RangeDataPar
 	// set meta header
 	meta := v2MetaHeaderFromOpts(callOpts)
 
-	if err := c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+	if err := x.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
 		addr: p.addr.ToV2(),
 		verb: v2session.ObjectVerbRange,
 	}); err != nil {
@@ -956,15 +958,23 @@ func (c *clientImpl) ObjectPayloadRangeData(ctx context.Context, p *RangeDataPar
 	body.SetRaw(p.raw)
 
 	// sign the request
-	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), &req); err != nil {
 		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// open stream
-	stream, err := rpcapi.GetObjectRange(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.GetObjectRangePrm
+
+	prm.SetRequest(req)
+
+	var res rpcapi.GetObjectRangeRes
+
+	err := rpcapi.GetObjectRange(ctx, x.c, prm, &res)
 	if err != nil {
-		return nil, fmt.Errorf("could not create Get payload range stream: %w", err)
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
+
+	stream := res.Stream()
 
 	var payload []byte
 	if p.w != nil {
@@ -1066,8 +1076,8 @@ func (p *RangeChecksumParams) withChecksumType(t checksumType) *RangeChecksumPar
 	return p
 }
 
-func (c *clientImpl) ObjectPayloadRangeSHA256(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) ([][sha256.Size]byte, error) {
-	res, err := c.objectPayloadRangeHash(ctx, p.withChecksumType(checksumSHA256), opts...)
+func (x Client) ObjectPayloadRangeSHA256(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) ([][sha256.Size]byte, error) {
+	res, err := x.objectPayloadRangeHash(ctx, p.withChecksumType(checksumSHA256), opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1075,8 +1085,8 @@ func (c *clientImpl) ObjectPayloadRangeSHA256(ctx context.Context, p *RangeCheck
 	return res.([][sha256.Size]byte), nil
 }
 
-func (c *clientImpl) ObjectPayloadRangeTZ(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) ([][TZSize]byte, error) {
-	res, err := c.objectPayloadRangeHash(ctx, p.withChecksumType(checksumTZ), opts...)
+func (x Client) ObjectPayloadRangeTZ(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) ([][TZSize]byte, error) {
+	res, err := x.objectPayloadRangeHash(ctx, p.withChecksumType(checksumTZ), opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1084,8 +1094,8 @@ func (c *clientImpl) ObjectPayloadRangeTZ(ctx context.Context, p *RangeChecksumP
 	return res.([][TZSize]byte), nil
 }
 
-func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) (interface{}, error) {
-	callOpts := c.defaultCallOptions()
+func (x Client) objectPayloadRangeHash(ctx context.Context, p *RangeChecksumParams, opts ...CallOption) (interface{}, error) {
+	callOpts := defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -1094,7 +1104,7 @@ func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksu
 	}
 
 	// create request
-	req := new(v2object.GetRangeHashRequest)
+	var req v2object.GetRangeHashRequest
 
 	// initialize request body
 	body := new(v2object.GetRangeHashRequestBody)
@@ -1103,7 +1113,7 @@ func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksu
 	// set meta header
 	meta := v2MetaHeaderFromOpts(callOpts)
 
-	if err := c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+	if err := x.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
 		addr: p.addr.ToV2(),
 		verb: v2session.ObjectVerbRangeHash,
 	}); err != nil {
@@ -1123,18 +1133,26 @@ func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksu
 	body.SetRanges(rsV2)
 
 	// sign the request
-	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), &req); err != nil {
 		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// send request
-	resp, err := rpcapi.HashObjectRange(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.HashObjectRangePrm
+
+	prm.SetRequest(req)
+
+	var hres rpcapi.HashObjectRangeRes
+
+	err := rpcapi.HashObjectRange(ctx, x.c, prm, &hres)
 	if err != nil {
-		return nil, fmt.Errorf("sending the request failed: %w", err)
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
+	resp := hres.Response()
+
 	// verify response structure
-	if err := signature.VerifyServiceMessage(resp); err != nil {
+	if err := signature.VerifyServiceMessage(&resp); err != nil {
 		return nil, fmt.Errorf("response verification failed: %w", err)
 	}
 
@@ -1218,8 +1236,8 @@ func (p *SearchObjectParams) SearchFilters() object.SearchFilters {
 	return nil
 }
 
-func (c *clientImpl) SearchObject(ctx context.Context, p *SearchObjectParams, opts ...CallOption) ([]*object.ID, error) {
-	callOpts := c.defaultCallOptions()
+func (x Client) SearchObject(ctx context.Context, p *SearchObjectParams, opts ...CallOption) ([]*object.ID, error) {
+	callOpts := defaultCallOptions()
 
 	for i := range opts {
 		if opts[i] != nil {
@@ -1228,7 +1246,7 @@ func (c *clientImpl) SearchObject(ctx context.Context, p *SearchObjectParams, op
 	}
 
 	// create request
-	req := new(v2object.SearchRequest)
+	var req v2object.SearchRequest
 
 	// initialize request body
 	body := new(v2object.SearchRequestBody)
@@ -1240,7 +1258,7 @@ func (c *clientImpl) SearchObject(ctx context.Context, p *SearchObjectParams, op
 	// set meta header
 	meta := v2MetaHeaderFromOpts(callOpts)
 
-	if err := c.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
+	if err := x.attachV2SessionToken(callOpts, meta, v2SessionReqInfo{
 		addr: v2Addr,
 		verb: v2session.ObjectVerbSearch,
 	}); err != nil {
@@ -1255,15 +1273,23 @@ func (c *clientImpl) SearchObject(ctx context.Context, p *SearchObjectParams, op
 	body.SetFilters(p.filters.ToV2())
 
 	// sign the request
-	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), req); err != nil {
+	if err := signature.SignServiceMessage(neofsecdsa.Signer(callOpts.key), &req); err != nil {
 		return nil, fmt.Errorf("signing the request failed: %w", err)
 	}
 
 	// create search stream
-	stream, err := rpcapi.SearchObjects(c.Raw(), req, client.WithContext(ctx))
+	var prm rpcapi.SearchObjectsPrm
+
+	prm.SetRequest(req)
+
+	var res rpcapi.SearchObjectsRes
+
+	err := rpcapi.SearchObjects(ctx, x.c, prm, &res)
 	if err != nil {
-		return nil, fmt.Errorf("stream opening failed: %w", err)
+		return nil, fmt.Errorf("transport error: %w", err)
 	}
+
+	stream := res.Stream()
 
 	var (
 		searchResult []*object.ID
@@ -1295,7 +1321,7 @@ func (c *clientImpl) SearchObject(ctx context.Context, p *SearchObjectParams, op
 	return searchResult, nil
 }
 
-func (c *clientImpl) attachV2SessionToken(opts *callOptions, hdr *v2session.RequestMetaHeader, info v2SessionReqInfo) error {
+func (x Client) attachV2SessionToken(opts *callOptions, hdr *v2session.RequestMetaHeader, info v2SessionReqInfo) error {
 	if opts.session == nil {
 		return nil
 	}

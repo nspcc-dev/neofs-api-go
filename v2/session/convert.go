@@ -3,7 +3,7 @@ package session
 import (
 	"fmt"
 
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	neofsgrpc "github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
 	aclGRPC "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
@@ -12,7 +12,7 @@ import (
 	session "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
 )
 
-func (c *CreateRequestBody) ToGRPCMessage() grpc.Message {
+func (c *CreateRequestBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.CreateRequest_Body
 
 	if c != nil {
@@ -25,7 +25,7 @@ func (c *CreateRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (c *CreateRequestBody) FromGRPCMessage(m grpc.Message) error {
+func (c *CreateRequestBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.CreateRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -52,7 +52,7 @@ func (c *CreateRequestBody) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (c *CreateRequest) ToGRPCMessage() grpc.Message {
+func (c *CreateRequest) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.CreateRequest
 
 	if c != nil {
@@ -65,7 +65,7 @@ func (c *CreateRequest) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (c *CreateRequest) FromGRPCMessage(m grpc.Message) error {
+func (c *CreateRequest) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.CreateRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -90,7 +90,7 @@ func (c *CreateRequest) FromGRPCMessage(m grpc.Message) error {
 	return c.RequestHeaders.FromMessage(v)
 }
 
-func (c *CreateResponseBody) ToGRPCMessage() grpc.Message {
+func (c *CreateResponseBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.CreateResponse_Body
 
 	if c != nil {
@@ -103,7 +103,7 @@ func (c *CreateResponseBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (c *CreateResponseBody) FromGRPCMessage(m grpc.Message) error {
+func (c *CreateResponseBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.CreateResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -115,7 +115,7 @@ func (c *CreateResponseBody) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (c *CreateResponse) ToGRPCMessage() grpc.Message {
+func (c *CreateResponse) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.CreateResponse
 
 	if c != nil {
@@ -128,7 +128,7 @@ func (c *CreateResponse) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (c *CreateResponse) FromGRPCMessage(m grpc.Message) error {
+func (c *CreateResponse) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.CreateResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -153,7 +153,7 @@ func (c *CreateResponse) FromGRPCMessage(m grpc.Message) error {
 	return c.ResponseHeaders.FromMessage(v)
 }
 
-func (l *TokenLifetime) ToGRPCMessage() grpc.Message {
+func (l *TokenLifetime) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.SessionToken_Body_TokenLifetime
 
 	if l != nil {
@@ -167,7 +167,7 @@ func (l *TokenLifetime) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (l *TokenLifetime) FromGRPCMessage(m grpc.Message) error {
+func (l *TokenLifetime) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.SessionToken_Body_TokenLifetime)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -180,7 +180,7 @@ func (l *TokenLifetime) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (x *XHeader) ToGRPCMessage() grpc.Message {
+func (x *XHeader) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.XHeader
 
 	if x != nil {
@@ -193,7 +193,7 @@ func (x *XHeader) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (x *XHeader) FromGRPCMessage(m grpc.Message) error {
+func (x *XHeader) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.XHeader)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -240,7 +240,7 @@ func XHeadersFromGRPC(xs []*session.XHeader) (res []*XHeader, err error) {
 	return
 }
 
-func (t *SessionToken) ToGRPCMessage() grpc.Message {
+func (t *SessionToken) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.SessionToken
 
 	if t != nil {
@@ -253,7 +253,7 @@ func (t *SessionToken) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (t *SessionToken) FromGRPCMessage(m grpc.Message) error {
+func (t *SessionToken) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.SessionToken)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -292,7 +292,7 @@ func (t *SessionToken) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *RequestVerificationHeader) ToGRPCMessage() grpc.Message {
+func (r *RequestVerificationHeader) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.RequestVerificationHeader
 
 	if r != nil {
@@ -307,7 +307,7 @@ func (r *RequestVerificationHeader) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *RequestVerificationHeader) FromGRPCMessage(m grpc.Message) error {
+func (r *RequestVerificationHeader) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.RequestVerificationHeader)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -374,7 +374,7 @@ func (r *RequestVerificationHeader) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *RequestMetaHeader) ToGRPCMessage() grpc.Message {
+func (r *RequestMetaHeader) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.RequestMetaHeader
 
 	if r != nil {
@@ -392,7 +392,7 @@ func (r *RequestMetaHeader) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *RequestMetaHeader) FromGRPCMessage(m grpc.Message) error {
+func (r *RequestMetaHeader) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.RequestMetaHeader)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -467,7 +467,7 @@ func (r *RequestMetaHeader) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *ResponseVerificationHeader) ToGRPCMessage() grpc.Message {
+func (r *ResponseVerificationHeader) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.ResponseVerificationHeader
 
 	if r != nil {
@@ -482,7 +482,7 @@ func (r *ResponseVerificationHeader) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *ResponseVerificationHeader) FromGRPCMessage(m grpc.Message) error {
+func (r *ResponseVerificationHeader) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.ResponseVerificationHeader)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -549,7 +549,7 @@ func (r *ResponseVerificationHeader) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *ResponseMetaHeader) ToGRPCMessage() grpc.Message {
+func (r *ResponseMetaHeader) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.ResponseMetaHeader
 
 	if r != nil {
@@ -565,7 +565,7 @@ func (r *ResponseMetaHeader) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *ResponseMetaHeader) FromGRPCMessage(m grpc.Message) error {
+func (r *ResponseMetaHeader) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.ResponseMetaHeader)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -654,7 +654,7 @@ func ObjectSessionVerbFromGRPCField(v session.ObjectSessionContext_Verb) ObjectS
 	}
 }
 
-func (c *ObjectSessionContext) ToGRPCMessage() grpc.Message {
+func (c *ObjectSessionContext) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.ObjectSessionContext
 
 	if c != nil {
@@ -667,7 +667,7 @@ func (c *ObjectSessionContext) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (c *ObjectSessionContext) FromGRPCMessage(m grpc.Message) error {
+func (c *ObjectSessionContext) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.ObjectSessionContext)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -694,7 +694,7 @@ func (c *ObjectSessionContext) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (t *SessionTokenBody) ToGRPCMessage() grpc.Message {
+func (t *SessionTokenBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.SessionToken_Body
 
 	if t != nil {
@@ -720,7 +720,7 @@ func (t *SessionTokenBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (t *SessionTokenBody) FromGRPCMessage(m grpc.Message) error {
+func (t *SessionTokenBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.SessionToken_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -828,7 +828,7 @@ func ContainerSessionVerbFromGRPCField(v session.ContainerSessionContext_Verb) C
 
 // ToGRPCMessage converts ContainerSessionContext to gRPC-generated
 // session.ContainerSessionContext message.
-func (x *ContainerSessionContext) ToGRPCMessage() grpc.Message {
+func (x *ContainerSessionContext) ToGRPCMessage() neofsgrpc.Message {
 	var m *session.ContainerSessionContext
 
 	if x != nil {
@@ -846,7 +846,7 @@ func (x *ContainerSessionContext) ToGRPCMessage() grpc.Message {
 //
 // Returns message.ErrUnexpectedMessageType if m is not
 // a gRPC-generated session.ContainerSessionContext message.
-func (x *ContainerSessionContext) FromGRPCMessage(m grpc.Message) error {
+func (x *ContainerSessionContext) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*session.ContainerSessionContext)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)

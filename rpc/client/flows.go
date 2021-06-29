@@ -1,124 +1,201 @@
-package client
+package protoclient
 
 import (
-	"errors"
-	"io"
-	"sync"
+	"context"
 
-	"github.com/nspcc-dev/neofs-api-go/rpc/common"
 	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 )
 
+// SendUnaryPrm inherits RPCPrm with additional
+// parameters for SendUnary.
+type SendUnaryPrm struct {
+	RPCPrm
+
+	req, resp message.Message
+}
+
+// OpenClientStreamRes groups the results of OpenClientStream.
+type SendUnaryRes struct{}
+
+// SetMessages sets request and response messages for the unary RPC communication.
+//
+// Must not be nil.
+func (x *SendUnaryPrm) SetMessages(req, resp message.Message) {
+	x.req, x.resp = req, resp
+}
+
 // SendUnary initializes communication session by RPC info, performs unary RPC
 // and closes the session.
-func SendUnary(cli *Client, info common.CallMethodInfo, req, resp message.Message, opts ...CallOption) error {
-	rw, err := cli.Init(info, opts...)
+//
+// Client connection should be established.
+//
+// Context and client must not be nil.
+// SendUnaryRes is currently ignored and can be nil. It is left for potential occasion of results.
+func SendUnary(ctx context.Context, cli Client, prm SendUnaryPrm, _ *SendUnaryRes) error {
+	var res RPCRes
+
+	err := cli.RPC(ctx, prm.RPCPrm, &res)
 	if err != nil {
 		return err
 	}
 
-	err = rw.WriteMessage(req)
+	m := res.Messager()
+
+	err = m.WriteMessage(prm.req)
 	if err != nil {
 		return err
 	}
 
-	err = rw.ReadMessage(resp)
+	err = m.CloseSend()
 	if err != nil {
 		return err
 	}
 
-	return rw.Close()
+	return m.ReadMessage(prm.resp)
 }
 
-// MessageWriterCloser wraps MessageWriter
-// and io.Closer interfaces.
-type MessageWriterCloser interface {
-	MessageWriter
-	io.Closer
-}
-
-type clientStreamWriterCloser struct {
-	MessageReadWriter
+// MessageWriterCloser is a wrapper over MessageReadWriter
+// which shadows ReadMessage and CloseSend methods to combine
+// them in single CloseSend method.
+type MessageWriterCloser struct {
+	m MessageReadWriter
 
 	resp message.Message
 }
 
-func (c *clientStreamWriterCloser) Close() error {
-	err := c.MessageReadWriter.Close()
+// WriteMessage calls WriteMessage on underlying MessageReadWriter.
+func (x MessageWriterCloser) WriteMessage(m message.Message) error {
+	return x.m.WriteMessage(m)
+}
+
+// CloseSend calls CloseSend and reads the response message on underlying MessageReadWriter.
+func (x MessageWriterCloser) CloseSend() error {
+	err := x.m.CloseSend()
 	if err != nil {
 		return err
 	}
 
-	return c.ReadMessage(c.resp)
+	return x.m.ReadMessage(x.resp)
+}
+
+// OpenClientStreamPrm inherits RPCPrm with additional
+// parameters for OpenClientStream.
+type OpenClientStreamPrm struct {
+	RPCPrm
+
+	resp message.Message
+}
+
+// OpenClientStreamRes groups the results of OpenClientStream.
+type OpenClientStreamRes struct {
+	msgr MessageWriterCloser
 }
 
 // OpenClientStream initializes communication session by RPC info, opens client-side stream
-// and returns its interface.
+// and wraps it into .
 //
-// All stream writes must be performed before the closing. Close must be called once.
-func OpenClientStream(cli *Client, info common.CallMethodInfo, resp message.Message, opts ...CallOption) (MessageWriterCloser, error) {
-	rw, err := cli.Init(info, opts...)
+// All stream writes must be performed before the closing. CloseSend must be called once.
+//
+// Context, client and res must not be nil.
+func OpenClientStream(ctx context.Context, cli Client, prm OpenClientStreamPrm, res *OpenClientStreamRes) error {
+	var r RPCRes
+
+	err := cli.RPC(ctx, prm.RPCPrm, &r)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &clientStreamWriterCloser{
-		MessageReadWriter: rw,
-		resp:              resp,
-	}, nil
+	res.msgr = MessageWriterCloser{
+		m:    r.Messager(),
+		resp: prm.resp,
+	}
+
+	return nil
 }
 
-// MessageReaderCloser wraps MessageReader
-// and io.Closer interface.
-type MessageReaderCloser interface {
-	MessageReader
-	io.Closer
+// SetResponse sets response message for the client-streaming RPC communication.
+func (x *OpenClientStreamPrm) SetResponse(resp message.Message) {
+	x.resp = resp
 }
 
-type serverStreamReaderCloser struct {
-	rw MessageReadWriter
+// Messager initialized MessageReaderCloser which can be used for request writing.
+//
+// Should be closed after communication is completed. Parameterized response
+// is after the successful Close.
+func (x OpenClientStreamRes) Messager() MessageWriterCloser {
+	return x.msgr
+}
 
-	once sync.Once
+// MessageReaderCloser is a wrapper over MessageReadWriter
+// which shadows WriteMessage and CloseSend methods method in redefined ReadMessage.
+type MessageReaderCloser struct {
+	m MessageReadWriter
+
+	reqSent bool
 
 	req message.Message
 }
 
-func (s *serverStreamReaderCloser) ReadMessage(msg message.Message) error {
-	var err error
+// ReadMessage calls WriteMessage on underlying MessageReadWriter on first call,
+// and then performs ReadMessage. Calls CloseSend if ReadMessage returned io.EOF.
+func (s *MessageReaderCloser) ReadMessage(msg message.Message) error {
+	if !s.reqSent {
+		if err := s.m.WriteMessage(s.req); err != nil {
+			return err
+		} else if err = s.m.CloseSend(); err != nil {
+			return err
+		}
 
-	s.once.Do(func() {
-		err = s.rw.WriteMessage(s.req)
-	})
-
-	if err != nil {
-		return err
+		s.reqSent = true
 	}
 
-	err = s.rw.ReadMessage(msg)
-	if !errors.Is(err, io.EOF) {
-		return err
-	}
+	return s.m.ReadMessage(msg)
+}
 
-	err = s.rw.Close()
-	if err != nil {
-		return err
-	}
+// OpenServerStreamPrm inherits RPCPrm with additional
+// parameters for OpenServerStream.
+type OpenServerStreamPrm struct {
+	RPCPrm
 
-	return io.EOF
+	req message.Message
+}
+
+// OpenServerStreamRes groups the results of OpenServerStream.
+type OpenServerStreamRes struct {
+	msgr MessageReaderCloser
 }
 
 // OpenServerStream initializes communication session by RPC info, opens server-side stream
 // and returns its interface.
 //
-// All stream reads must be performed before the closing. Close must be called once.
-func OpenServerStream(cli *Client, info common.CallMethodInfo, req message.Message, opts ...CallOption) (MessageReader, error) {
-	rw, err := cli.Init(info, opts...)
+// All stream reads must be performed before the closing. CloseSend must be called once.
+//
+// Context, client and res must not be nil.
+func OpenServerStream(ctx context.Context, cli Client, prm OpenServerStreamPrm, res *OpenServerStreamRes) error {
+	var r RPCRes
+
+	err := cli.RPC(ctx, prm.RPCPrm, &r)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &serverStreamReaderCloser{
-		rw:  rw,
-		req: req,
-	}, nil
+	res.msgr = MessageReaderCloser{
+		m:   r.Messager(),
+		req: prm.req,
+	}
+
+	return nil
+}
+
+// SetResponse sets request message for the server-streaming RPC communication.
+func (x *OpenServerStreamPrm) SetRequest(resp message.Message) {
+	x.req = resp
+}
+
+// Messager initialized MessageReaderCloser which can be used for response reading.
+//
+// Should be closed after communication is completed. Parameterized response
+// is after the successful Close.
+func (x OpenServerStreamRes) Messager() MessageReaderCloser {
+	return x.msgr
 }

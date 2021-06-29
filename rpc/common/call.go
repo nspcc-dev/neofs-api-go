@@ -1,75 +1,56 @@
 package common
 
-type callType uint8
-
-const (
-	_ callType = iota
-	callUnary
-	callClientStream
-	callServerStream
-	callBidirStream
-)
-
 // CallMethodInfo is an information about the RPC.
+//
+// Describes unary RPC by default.
 type CallMethodInfo struct {
-	// Name of the service.
-	Service string
+	svcName string
 
-	// Name of the RPC.
-	Name string
+	mName string
 
-	t callType
+	sClient, sServer bool
+}
+
+// SetServerStream makes CallMethodInfo to describe
+// server-side streaming RPC.
+func (x *CallMethodInfo) SetServerStream() {
+	x.sServer = true
 }
 
 // ServerStream checks if CallMethodInfo contains
 // information about the server-side streaming RPC.
-func (c CallMethodInfo) ServerStream() bool {
-	return c.t == callServerStream || c.t == callBidirStream
+func (x CallMethodInfo) ServerStream() bool {
+	return x.sServer
+}
+
+// SetClientStream makes CallMethodInfo to describe
+// client-side streaming RPC.
+func (x *CallMethodInfo) SetClientStream() {
+	x.sClient = true
 }
 
 // ClientStream checks if CallMethodInfo contains
 // information about the client-side streaming RPC.
-func (c CallMethodInfo) ClientStream() bool {
-	return c.t == callClientStream || c.t == callBidirStream
+func (x CallMethodInfo) ClientStream() bool {
+	return x.sClient
 }
 
-func (c *CallMethodInfo) setCommon(service, name string) {
-	c.Service = service
-	c.Name = name
+// SetServiceName sets service name.
+func (x *CallMethodInfo) SetServiceName(service string) {
+	x.svcName = service
 }
 
-// CallMethodInfoUnary returns CallMethodInfo structure
-// initialized for the unary RPC.
-func CallMethodInfoUnary(service, name string) (info CallMethodInfo) {
-	info.setCommon(service, name)
-	info.t = callUnary
-
-	return
+// ServiceName returns service name.
+func (x CallMethodInfo) ServiceName() string {
+	return x.svcName
 }
 
-// CallMethodInfoClientStream returns CallMethodInfo structure
-// initialized for the client-side streaming RPC.
-func CallMethodInfoClientStream(service, name string) (info CallMethodInfo) {
-	info.setCommon(service, name)
-	info.t = callClientStream
-
-	return
+// SetMethodName sets method name.
+func (x *CallMethodInfo) SetMethodName(method string) {
+	x.mName = method
 }
 
-// CallMethodInfoServerStream returns CallMethodInfo structure
-// initialized for the server-side streaming RPC.
-func CallMethodInfoServerStream(service, name string) (info CallMethodInfo) {
-	info.setCommon(service, name)
-	info.t = callServerStream
-
-	return
-}
-
-// CallMethodInfoBidirectionalStream returns CallMethodInfo structure
-// initialized for the bidirectional streaming RPC.
-func CallMethodInfoBidirectionalStream(service, name string) (info CallMethodInfo) {
-	info.setCommon(service, name)
-	info.t = callBidirStream
-
-	return
+// MethodName returns method name.
+func (x CallMethodInfo) MethodName() string {
+	return x.mName
 }

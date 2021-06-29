@@ -3,7 +3,7 @@ package object
 import (
 	"fmt"
 
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	neofsgrpc "github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	object "github.com/nspcc-dev/neofs-api-go/v2/object/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
@@ -28,7 +28,7 @@ func MatchTypeFromGRPCField(t object.MatchType) MatchType {
 	return MatchType(t)
 }
 
-func (h *ShortHeader) ToGRPCMessage() grpc.Message {
+func (h *ShortHeader) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.ShortHeader
 
 	if h != nil {
@@ -46,7 +46,7 @@ func (h *ShortHeader) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (h *ShortHeader) FromGRPCMessage(m grpc.Message) error {
+func (h *ShortHeader) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.ShortHeader)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -117,7 +117,7 @@ func (h *ShortHeader) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (a *Attribute) ToGRPCMessage() grpc.Message {
+func (a *Attribute) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.Header_Attribute
 
 	if a != nil {
@@ -130,7 +130,7 @@ func (a *Attribute) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (a *Attribute) FromGRPCMessage(m grpc.Message) error {
+func (a *Attribute) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.Header_Attribute)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -177,7 +177,7 @@ func AttributesFromGRPC(xs []*object.Header_Attribute) (res []*Attribute, err er
 	return
 }
 
-func (h *SplitHeader) ToGRPCMessage() grpc.Message {
+func (h *SplitHeader) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.Header_Split
 
 	if h != nil {
@@ -194,7 +194,7 @@ func (h *SplitHeader) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (h *SplitHeader) FromGRPCMessage(m grpc.Message) error {
+func (h *SplitHeader) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.Header_Split)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -268,7 +268,7 @@ func (h *SplitHeader) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (h *Header) ToGRPCMessage() grpc.Message {
+func (h *Header) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.Header
 
 	if h != nil {
@@ -290,7 +290,7 @@ func (h *Header) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (h *Header) FromGRPCMessage(m grpc.Message) error {
+func (h *Header) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.Header)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -408,7 +408,7 @@ func (h *Header) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (h *HeaderWithSignature) ToGRPCMessage() grpc.Message {
+func (h *HeaderWithSignature) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.HeaderWithSignature
 
 	if h != nil {
@@ -421,7 +421,7 @@ func (h *HeaderWithSignature) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (h *HeaderWithSignature) FromGRPCMessage(m grpc.Message) error {
+func (h *HeaderWithSignature) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.HeaderWithSignature)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -457,7 +457,7 @@ func (h *HeaderWithSignature) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (o *Object) ToGRPCMessage() grpc.Message {
+func (o *Object) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.Object
 
 	if o != nil {
@@ -472,7 +472,7 @@ func (o *Object) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (o *Object) FromGRPCMessage(m grpc.Message) error {
+func (o *Object) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.Object)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -527,7 +527,7 @@ func (o *Object) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (s *SplitInfo) ToGRPCMessage() grpc.Message {
+func (s *SplitInfo) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.SplitInfo
 
 	if s != nil {
@@ -541,7 +541,7 @@ func (s *SplitInfo) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (s *SplitInfo) FromGRPCMessage(m grpc.Message) error {
+func (s *SplitInfo) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.SplitInfo)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -582,7 +582,7 @@ func (s *SplitInfo) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *GetRequestBody) ToGRPCMessage() grpc.Message {
+func (r *GetRequestBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetRequest_Body
 
 	if r != nil {
@@ -595,7 +595,7 @@ func (r *GetRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetRequestBody) FromGRPCMessage(m grpc.Message) error {
+func (r *GetRequestBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -622,7 +622,7 @@ func (r *GetRequestBody) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *GetRequest) ToGRPCMessage() grpc.Message {
+func (r *GetRequest) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetRequest
 
 	if r != nil {
@@ -635,7 +635,7 @@ func (r *GetRequest) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetRequest) FromGRPCMessage(m grpc.Message) error {
+func (r *GetRequest) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -660,7 +660,7 @@ func (r *GetRequest) FromGRPCMessage(m grpc.Message) error {
 	return r.RequestHeaders.FromMessage(v)
 }
 
-func (r *GetObjectPartInit) ToGRPCMessage() grpc.Message {
+func (r *GetObjectPartInit) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetResponse_Body_Init
 
 	if r != nil {
@@ -674,7 +674,7 @@ func (r *GetObjectPartInit) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetObjectPartInit) FromGRPCMessage(m grpc.Message) error {
+func (r *GetObjectPartInit) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetResponse_Body_Init)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -724,7 +724,7 @@ func (r *GetObjectPartInit) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (r *GetObjectPartChunk) ToGRPCMessage() grpc.Message {
+func (r *GetObjectPartChunk) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetResponse_Body_Chunk
 
 	if r != nil {
@@ -736,7 +736,7 @@ func (r *GetObjectPartChunk) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetObjectPartChunk) FromGRPCMessage(m grpc.Message) error {
+func (r *GetObjectPartChunk) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetResponse_Body_Chunk)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -747,7 +747,7 @@ func (r *GetObjectPartChunk) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *GetResponseBody) ToGRPCMessage() grpc.Message {
+func (r *GetResponseBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetResponse_Body
 
 	if r != nil {
@@ -770,7 +770,7 @@ func (r *GetResponseBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetResponseBody) FromGRPCMessage(m grpc.Message) error {
+func (r *GetResponseBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -807,7 +807,7 @@ func (r *GetResponseBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (r *GetResponse) ToGRPCMessage() grpc.Message {
+func (r *GetResponse) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetResponse
 
 	if r != nil {
@@ -820,7 +820,7 @@ func (r *GetResponse) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetResponse) FromGRPCMessage(m grpc.Message) error {
+func (r *GetResponse) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -845,7 +845,7 @@ func (r *GetResponse) FromGRPCMessage(m grpc.Message) error {
 	return r.ResponseHeaders.FromMessage(v)
 }
 
-func (r *PutObjectPartInit) ToGRPCMessage() grpc.Message {
+func (r *PutObjectPartInit) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.PutRequest_Body_Init
 
 	if r != nil {
@@ -860,7 +860,7 @@ func (r *PutObjectPartInit) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *PutObjectPartInit) FromGRPCMessage(m grpc.Message) error {
+func (r *PutObjectPartInit) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.PutRequest_Body_Init)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -915,7 +915,7 @@ func (r *PutObjectPartInit) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *PutObjectPartChunk) ToGRPCMessage() grpc.Message {
+func (r *PutObjectPartChunk) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.PutRequest_Body_Chunk
 
 	if r != nil {
@@ -927,7 +927,7 @@ func (r *PutObjectPartChunk) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *PutObjectPartChunk) FromGRPCMessage(m grpc.Message) error {
+func (r *PutObjectPartChunk) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.PutRequest_Body_Chunk)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -938,7 +938,7 @@ func (r *PutObjectPartChunk) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *PutRequestBody) ToGRPCMessage() grpc.Message {
+func (r *PutRequestBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.PutRequest_Body
 
 	if r != nil {
@@ -959,7 +959,7 @@ func (r *PutRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *PutRequestBody) FromGRPCMessage(m grpc.Message) error {
+func (r *PutRequestBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.PutRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -990,7 +990,7 @@ func (r *PutRequestBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (r *PutRequest) ToGRPCMessage() grpc.Message {
+func (r *PutRequest) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.PutRequest
 
 	if r != nil {
@@ -1003,7 +1003,7 @@ func (r *PutRequest) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *PutRequest) FromGRPCMessage(m grpc.Message) error {
+func (r *PutRequest) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.PutRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1028,7 +1028,7 @@ func (r *PutRequest) FromGRPCMessage(m grpc.Message) error {
 	return r.RequestHeaders.FromMessage(v)
 }
 
-func (r *PutResponseBody) ToGRPCMessage() grpc.Message {
+func (r *PutResponseBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.PutResponse_Body
 
 	if r != nil {
@@ -1040,7 +1040,7 @@ func (r *PutResponseBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *PutResponseBody) FromGRPCMessage(m grpc.Message) error {
+func (r *PutResponseBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.PutResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1062,7 +1062,7 @@ func (r *PutResponseBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (r *PutResponse) ToGRPCMessage() grpc.Message {
+func (r *PutResponse) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.PutResponse
 
 	if r != nil {
@@ -1075,7 +1075,7 @@ func (r *PutResponse) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *PutResponse) FromGRPCMessage(m grpc.Message) error {
+func (r *PutResponse) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.PutResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1100,7 +1100,7 @@ func (r *PutResponse) FromGRPCMessage(m grpc.Message) error {
 	return r.ResponseHeaders.FromMessage(v)
 }
 
-func (r *DeleteRequestBody) ToGRPCMessage() grpc.Message {
+func (r *DeleteRequestBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.DeleteRequest_Body
 
 	if r != nil {
@@ -1112,7 +1112,7 @@ func (r *DeleteRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *DeleteRequestBody) FromGRPCMessage(m grpc.Message) error {
+func (r *DeleteRequestBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.DeleteRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1134,7 +1134,7 @@ func (r *DeleteRequestBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (r *DeleteRequest) ToGRPCMessage() grpc.Message {
+func (r *DeleteRequest) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.DeleteRequest
 
 	if r != nil {
@@ -1147,7 +1147,7 @@ func (r *DeleteRequest) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *DeleteRequest) FromGRPCMessage(m grpc.Message) error {
+func (r *DeleteRequest) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.DeleteRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1172,7 +1172,7 @@ func (r *DeleteRequest) FromGRPCMessage(m grpc.Message) error {
 	return r.RequestHeaders.FromMessage(v)
 }
 
-func (r *DeleteResponseBody) ToGRPCMessage() grpc.Message {
+func (r *DeleteResponseBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.DeleteResponse_Body
 
 	if r != nil {
@@ -1184,7 +1184,7 @@ func (r *DeleteResponseBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *DeleteResponseBody) FromGRPCMessage(m grpc.Message) error {
+func (r *DeleteResponseBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.DeleteResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1206,7 +1206,7 @@ func (r *DeleteResponseBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (r *DeleteResponse) ToGRPCMessage() grpc.Message {
+func (r *DeleteResponse) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.DeleteResponse
 
 	if r != nil {
@@ -1219,7 +1219,7 @@ func (r *DeleteResponse) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *DeleteResponse) FromGRPCMessage(m grpc.Message) error {
+func (r *DeleteResponse) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.DeleteResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1244,7 +1244,7 @@ func (r *DeleteResponse) FromGRPCMessage(m grpc.Message) error {
 	return r.ResponseHeaders.FromMessage(v)
 }
 
-func (r *HeadRequestBody) ToGRPCMessage() grpc.Message {
+func (r *HeadRequestBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.HeadRequest_Body
 
 	if r != nil {
@@ -1258,7 +1258,7 @@ func (r *HeadRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *HeadRequestBody) FromGRPCMessage(m grpc.Message) error {
+func (r *HeadRequestBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.HeadRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1286,7 +1286,7 @@ func (r *HeadRequestBody) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *HeadRequest) ToGRPCMessage() grpc.Message {
+func (r *HeadRequest) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.HeadRequest
 
 	if r != nil {
@@ -1299,7 +1299,7 @@ func (r *HeadRequest) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *HeadRequest) FromGRPCMessage(m grpc.Message) error {
+func (r *HeadRequest) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.HeadRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1324,7 +1324,7 @@ func (r *HeadRequest) FromGRPCMessage(m grpc.Message) error {
 	return r.RequestHeaders.FromMessage(v)
 }
 
-func (r *HeadResponseBody) ToGRPCMessage() grpc.Message {
+func (r *HeadResponseBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.HeadResponse_Body
 
 	if r != nil {
@@ -1347,7 +1347,7 @@ func (r *HeadResponseBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *HeadResponseBody) FromGRPCMessage(m grpc.Message) error {
+func (r *HeadResponseBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.HeadResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1384,7 +1384,7 @@ func (r *HeadResponseBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (r *HeadResponse) ToGRPCMessage() grpc.Message {
+func (r *HeadResponse) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.HeadResponse
 
 	if r != nil {
@@ -1397,7 +1397,7 @@ func (r *HeadResponse) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *HeadResponse) FromGRPCMessage(m grpc.Message) error {
+func (r *HeadResponse) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.HeadResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1422,7 +1422,7 @@ func (r *HeadResponse) FromGRPCMessage(m grpc.Message) error {
 	return r.ResponseHeaders.FromMessage(v)
 }
 
-func (f *SearchFilter) ToGRPCMessage() grpc.Message {
+func (f *SearchFilter) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.SearchRequest_Body_Filter
 
 	if f != nil {
@@ -1436,7 +1436,7 @@ func (f *SearchFilter) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (f *SearchFilter) FromGRPCMessage(m grpc.Message) error {
+func (f *SearchFilter) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.SearchRequest_Body_Filter)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1484,7 +1484,7 @@ func SearchFiltersFromGRPC(fs []*object.SearchRequest_Body_Filter) (res []*Searc
 	return
 }
 
-func (r *SearchRequestBody) ToGRPCMessage() grpc.Message {
+func (r *SearchRequestBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.SearchRequest_Body
 
 	if r != nil {
@@ -1498,7 +1498,7 @@ func (r *SearchRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *SearchRequestBody) FromGRPCMessage(m grpc.Message) error {
+func (r *SearchRequestBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.SearchRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1530,7 +1530,7 @@ func (r *SearchRequestBody) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *SearchRequest) ToGRPCMessage() grpc.Message {
+func (r *SearchRequest) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.SearchRequest
 
 	if r != nil {
@@ -1543,7 +1543,7 @@ func (r *SearchRequest) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *SearchRequest) FromGRPCMessage(m grpc.Message) error {
+func (r *SearchRequest) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.SearchRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1568,7 +1568,7 @@ func (r *SearchRequest) FromGRPCMessage(m grpc.Message) error {
 	return r.RequestHeaders.FromMessage(v)
 }
 
-func (r *SearchResponseBody) ToGRPCMessage() grpc.Message {
+func (r *SearchResponseBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.SearchResponse_Body
 
 	if r != nil {
@@ -1580,7 +1580,7 @@ func (r *SearchResponseBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *SearchResponseBody) FromGRPCMessage(m grpc.Message) error {
+func (r *SearchResponseBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.SearchResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1593,7 +1593,7 @@ func (r *SearchResponseBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (r *SearchResponse) ToGRPCMessage() grpc.Message {
+func (r *SearchResponse) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.SearchResponse
 
 	if r != nil {
@@ -1606,7 +1606,7 @@ func (r *SearchResponse) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *SearchResponse) FromGRPCMessage(m grpc.Message) error {
+func (r *SearchResponse) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.SearchResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1631,7 +1631,7 @@ func (r *SearchResponse) FromGRPCMessage(m grpc.Message) error {
 	return r.ResponseHeaders.FromMessage(v)
 }
 
-func (r *Range) ToGRPCMessage() grpc.Message {
+func (r *Range) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.Range
 
 	if r != nil {
@@ -1644,7 +1644,7 @@ func (r *Range) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *Range) FromGRPCMessage(m grpc.Message) error {
+func (r *Range) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.Range)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1691,7 +1691,7 @@ func RangesFromGRPC(rs []*object.Range) (res []*Range, err error) {
 	return
 }
 
-func (r *GetRangeRequestBody) ToGRPCMessage() grpc.Message {
+func (r *GetRangeRequestBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetRangeRequest_Body
 
 	if r != nil {
@@ -1705,7 +1705,7 @@ func (r *GetRangeRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetRangeRequestBody) FromGRPCMessage(m grpc.Message) error {
+func (r *GetRangeRequestBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetRangeRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1746,7 +1746,7 @@ func (r *GetRangeRequestBody) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *GetRangeRequest) ToGRPCMessage() grpc.Message {
+func (r *GetRangeRequest) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetRangeRequest
 
 	if r != nil {
@@ -1759,7 +1759,7 @@ func (r *GetRangeRequest) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetRangeRequest) FromGRPCMessage(m grpc.Message) error {
+func (r *GetRangeRequest) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetRangeRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1784,7 +1784,7 @@ func (r *GetRangeRequest) FromGRPCMessage(m grpc.Message) error {
 	return r.RequestHeaders.FromMessage(v)
 }
 
-func (r *GetRangePartChunk) ToGRPCMessage() grpc.Message {
+func (r *GetRangePartChunk) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetRangeResponse_Body_Chunk
 
 	if r != nil {
@@ -1796,7 +1796,7 @@ func (r *GetRangePartChunk) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetRangePartChunk) FromGRPCMessage(m grpc.Message) error {
+func (r *GetRangePartChunk) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetRangeResponse_Body_Chunk)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1807,7 +1807,7 @@ func (r *GetRangePartChunk) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *GetRangeResponseBody) ToGRPCMessage() grpc.Message {
+func (r *GetRangeResponseBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetRangeResponse_Body
 
 	if r != nil {
@@ -1828,7 +1828,7 @@ func (r *GetRangeResponseBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetRangeResponseBody) FromGRPCMessage(m grpc.Message) error {
+func (r *GetRangeResponseBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetRangeResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1859,7 +1859,7 @@ func (r *GetRangeResponseBody) FromGRPCMessage(m grpc.Message) error {
 	return err
 }
 
-func (r *GetRangeResponse) ToGRPCMessage() grpc.Message {
+func (r *GetRangeResponse) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetRangeResponse
 
 	if r != nil {
@@ -1872,7 +1872,7 @@ func (r *GetRangeResponse) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetRangeResponse) FromGRPCMessage(m grpc.Message) error {
+func (r *GetRangeResponse) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetRangeResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1897,7 +1897,7 @@ func (r *GetRangeResponse) FromGRPCMessage(m grpc.Message) error {
 	return r.ResponseHeaders.FromMessage(v)
 }
 
-func (r *GetRangeHashRequestBody) ToGRPCMessage() grpc.Message {
+func (r *GetRangeHashRequestBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetRangeHashRequest_Body
 
 	if r != nil {
@@ -1912,7 +1912,7 @@ func (r *GetRangeHashRequestBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetRangeHashRequestBody) FromGRPCMessage(m grpc.Message) error {
+func (r *GetRangeHashRequestBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetRangeHashRequest_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1945,7 +1945,7 @@ func (r *GetRangeHashRequestBody) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *GetRangeHashRequest) ToGRPCMessage() grpc.Message {
+func (r *GetRangeHashRequest) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetRangeHashRequest
 
 	if r != nil {
@@ -1958,7 +1958,7 @@ func (r *GetRangeHashRequest) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetRangeHashRequest) FromGRPCMessage(m grpc.Message) error {
+func (r *GetRangeHashRequest) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetRangeHashRequest)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -1983,7 +1983,7 @@ func (r *GetRangeHashRequest) FromGRPCMessage(m grpc.Message) error {
 	return r.RequestHeaders.FromMessage(v)
 }
 
-func (r *GetRangeHashResponseBody) ToGRPCMessage() grpc.Message {
+func (r *GetRangeHashResponseBody) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetRangeHashResponse_Body
 
 	if r != nil {
@@ -1996,7 +1996,7 @@ func (r *GetRangeHashResponseBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetRangeHashResponseBody) FromGRPCMessage(m grpc.Message) error {
+func (r *GetRangeHashResponseBody) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetRangeHashResponse_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -2008,7 +2008,7 @@ func (r *GetRangeHashResponseBody) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (r *GetRangeHashResponse) ToGRPCMessage() grpc.Message {
+func (r *GetRangeHashResponse) ToGRPCMessage() neofsgrpc.Message {
 	var m *object.GetRangeHashResponse
 
 	if r != nil {
@@ -2021,7 +2021,7 @@ func (r *GetRangeHashResponse) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (r *GetRangeHashResponse) FromGRPCMessage(m grpc.Message) error {
+func (r *GetRangeHashResponse) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*object.GetRangeHashResponse)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)

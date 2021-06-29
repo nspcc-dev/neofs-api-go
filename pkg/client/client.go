@@ -1,47 +1,25 @@
 package client
 
-import (
-	"io"
-	"sync"
+import protoclient "github.com/nspcc-dev/neofs-api-go/rpc/client"
 
-	"github.com/nspcc-dev/neofs-api-go/rpc/client"
-)
-
-// Client represents NeoFS client.
-type Client interface {
-	Accounting
-	Container
-	Netmap
-	Object
-	Session
-	Reputation
-
-	// Raw must return underlying raw protobuf client.
-	Raw() *client.Client
-
-	// Conn must return underlying connection.
-	//
-	// Must return a non-nil result after the first RPC call
-	// completed without a connection error.
-	Conn() io.Closer
+// Client represents NeoFS API client.
+// It is a wrapper over protoclient.Client.
+//
+// Should be initialized using DialPrm.Dial or SetProtoClient method.
+//
+// Client is one-time use, and should only be used within an open connection.
+type Client struct {
+	c protoclient.Client
 }
 
-type clientImpl struct {
-	onceInit sync.Once
-
-	raw *client.Client
-
-	opts *clientOptions
+// SetProtoClient sets underlying protoclient.Client.
+func (x *Client) SetProtoClient(c protoclient.Client) {
+	x.c = c
 }
 
-func New(opts ...Option) (Client, error) {
-	clientOptions := defaultClientOptions()
-
-	for i := range opts {
-		opts[i](clientOptions)
-	}
-
-	return &clientImpl{
-		opts: clientOptions,
-	}, nil
+// Close closes opened connection.
+//
+// Must be called only after successful initialization.
+func (x Client) Close() error {
+	return x.c.Close()
 }

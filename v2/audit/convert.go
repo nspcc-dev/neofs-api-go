@@ -1,14 +1,14 @@
 package audit
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	neofsgrpc "github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	audit "github.com/nspcc-dev/neofs-api-go/v2/audit/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 )
 
-func (a *DataAuditResult) ToGRPCMessage() grpc.Message {
+func (a *DataAuditResult) ToGRPCMessage() neofsgrpc.Message {
 	var m *audit.DataAuditResult
 
 	if a != nil {
@@ -33,7 +33,7 @@ func (a *DataAuditResult) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (a *DataAuditResult) FromGRPCMessage(m grpc.Message) error {
+func (a *DataAuditResult) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*audit.DataAuditResult)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)

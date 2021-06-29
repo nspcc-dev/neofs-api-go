@@ -1,14 +1,14 @@
 package storagegroup
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	neofsgrpc "github.com/nspcc-dev/neofs-api-go/rpc/grpc"
 	"github.com/nspcc-dev/neofs-api-go/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 	sg "github.com/nspcc-dev/neofs-api-go/v2/storagegroup/grpc"
 )
 
-func (s *StorageGroup) ToGRPCMessage() grpc.Message {
+func (s *StorageGroup) ToGRPCMessage() neofsgrpc.Message {
 	m := new(sg.StorageGroup)
 
 	if s != nil {
@@ -23,7 +23,7 @@ func (s *StorageGroup) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (s *StorageGroup) FromGRPCMessage(m grpc.Message) error {
+func (s *StorageGroup) FromGRPCMessage(m neofsgrpc.Message) error {
 	v, ok := m.(*sg.StorageGroup)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
