@@ -166,10 +166,7 @@ func (c *clientImpl) GetContainer(ctx context.Context, id *cid.ID, opts ...CallO
 
 	body := resp.GetBody()
 
-	cnr, err := container.NewVerifiedFromV2(body.GetContainer())
-	if err != nil {
-		return nil, err
-	}
+	cnr := container.NewContainerFromV2(body.GetContainer())
 
 	cnr.SetSessionToken(
 		session.NewTokenFromV2(body.GetSessionToken()),
