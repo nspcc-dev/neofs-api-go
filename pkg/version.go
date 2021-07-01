@@ -74,17 +74,6 @@ func (v *Version) String() string {
 	return fmt.Sprintf("v%d.%d", v.Major(), v.Minor())
 }
 
-// IsSupportedVersion returns error if v is not supported by current SDK.
-func IsSupportedVersion(v *Version) error {
-	mjr, mnr := v.Major(), v.Minor()
-
-	if mjr != 2 || mnr > sdkMnr {
-		return fmt.Errorf("unsupported version %d.%d", mjr, mnr)
-	}
-
-	return nil
-}
-
 // Marshal marshals Version into a protobuf binary form.
 //
 // Buffer is allocated when the argument is empty.
