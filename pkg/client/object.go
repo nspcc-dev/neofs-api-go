@@ -1333,7 +1333,6 @@ func (x Client) attachV2SessionToken(opts *callOptions, hdr *v2session.RequestMe
 	}
 
 	token := new(v2session.SessionToken)
-	token.SetBody(opts.session.ToV2().GetBody())
 
 	opCtx := new(v2session.ObjectSessionContext)
 	opCtx.SetAddress(info.addr)
@@ -1344,7 +1343,9 @@ func (x Client) attachV2SessionToken(opts *callOptions, hdr *v2session.RequestMe
 	lt.SetNbf(info.nbf)
 	lt.SetExp(info.exp)
 
-	body := token.GetBody()
+	body := new(v2session.SessionTokenBody)
+	body.SetID(opts.session.ID())
+	body.SetOwnerID(opts.session.OwnerID().ToV2())
 	body.SetSessionKey(opts.session.SessionKey())
 	body.SetContext(opCtx)
 	body.SetLifetime(lt)
