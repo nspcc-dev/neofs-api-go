@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.28.2] - 2021-07-06
+
+### Fixed
+
+- Data corruption of parameterized session token in `pkg/client.Client` ([#323](https://github.com/nspcc-dev/neofs-api-go/issues/323)).
+
 ## [1.28.1] - 2021-07-01
 
 ### Fixed
@@ -676,3 +682,4 @@ Initial public release
 [1.27.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.27.0...v1.27.1
 [1.28.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.27.1...v1.28.0
 [1.28.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.0...v1.28.1
+[1.28.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.1...v1.28.2
