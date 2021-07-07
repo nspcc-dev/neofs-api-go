@@ -1332,8 +1332,6 @@ func (x Client) attachV2SessionToken(opts *callOptions, hdr *v2session.RequestMe
 		return nil
 	}
 
-	token := new(v2session.SessionToken)
-
 	opCtx := new(v2session.ObjectSessionContext)
 	opCtx.SetAddress(info.addr)
 	opCtx.SetVerb(info.verb)
@@ -1349,6 +1347,9 @@ func (x Client) attachV2SessionToken(opts *callOptions, hdr *v2session.RequestMe
 	body.SetSessionKey(opts.session.SessionKey())
 	body.SetContext(opCtx)
 	body.SetLifetime(lt)
+
+	token := new(v2session.SessionToken)
+	token.SetBody(body)
 
 	var (
 		p   apicrypto.SignPrm
