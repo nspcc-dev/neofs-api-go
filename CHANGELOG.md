@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.28.3] - 2021-07-07
+
+### Fixed
+
+- Regression of the session token corruption fix from v1.28.2 ([#326](https://github.com/nspcc-dev/neofs-api-go/issues/326)).
+
 ## [1.28.2] - 2021-07-06
 
 ### Fixed
@@ -683,3 +689,4 @@ Initial public release
 [1.28.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.27.1...v1.28.0
 [1.28.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.0...v1.28.1
 [1.28.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.1...v1.28.2
+[1.28.3]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.2...v1.28.3
