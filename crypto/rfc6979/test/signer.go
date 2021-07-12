@@ -36,7 +36,7 @@ func Signer() neofscrypto.Signer {
 			panic(err)
 		}
 
-		s = neofsrfc6979.Signer(key)
+		s = neofsrfc6979.Signer(*key)
 	})
 
 	return s

@@ -72,7 +72,7 @@ func (b *BearerToken) SetOwner(id *owner.ID) {
 // SignTokenECDSA signs BearerToken with ecdsa.PrivateKey.
 //
 // Key must not be nil.
-func (b *BearerToken) SignTokenECDSA(key *ecdsa.PrivateKey) error {
+func (b *BearerToken) SignTokenECDSA(key ecdsa.PrivateKey) error {
 	err := sanityCheck(b)
 	if err != nil {
 		return err

@@ -164,7 +164,7 @@ func (t *Token) SetIat(iat uint64) {
 // SignECDSA calculates and writes ECDSA signature of the Token data.
 //
 // Returns signature calculation errors.
-func (t *Token) SignECDSA(key *ecdsa.PrivateKey) error {
+func (t *Token) SignECDSA(key ecdsa.PrivateKey) error {
 	tV2 := (*session.SessionToken)(t)
 
 	tSig := tV2.GetSignature()

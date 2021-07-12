@@ -92,7 +92,7 @@ type putObjectV2Reader struct {
 }
 
 type putObjectV2Writer struct {
-	key *ecdsa.PrivateKey
+	key ecdsa.PrivateKey
 
 	chunkPart *v2object.PutObjectPartChunk
 

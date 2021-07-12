@@ -18,7 +18,7 @@ type (
 		xHeaders []*pkg.XHeader
 		ttl      uint32
 		epoch    uint64
-		key      *ecdsa.PrivateKey
+		key      ecdsa.PrivateKey
 		session  *session.Token
 		bearer   *token.BearerToken
 	}
@@ -51,7 +51,7 @@ func WithTTL(ttl uint32) CallOption {
 }
 
 // WithECDSAKey sets client's ECDSA key for the next request.
-func WithECDSAKey(key *ecdsa.PrivateKey) CallOption {
+func WithECDSAKey(key ecdsa.PrivateKey) CallOption {
 	return func(opts *callOptions) {
 		opts.key = key
 	}

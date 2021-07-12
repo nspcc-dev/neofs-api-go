@@ -23,8 +23,8 @@ type rfc6979Signer ecdsa.PrivateKey
 // on data.
 //
 // Uses elliptic.P256() elliptic curve.
-func Signer(key *ecdsa.PrivateKey) neofscrypto.Signer {
-	return (*rfc6979Signer)(key)
+func Signer(key ecdsa.PrivateKey) neofscrypto.Signer {
+	return (rfc6979Signer)(key)
 }
 
 var (
@@ -38,12 +38,12 @@ func initCurve() {
 
 const rfc6979SigLen = 64
 
-func (x *rfc6979Signer) Sign(data []byte) ([]byte, error) {
+func (x rfc6979Signer) Sign(data []byte) ([]byte, error) {
 	onceCurve.Do(initCurve)
 
 	h := sha256.Sum256(data)
 
-	r, s := rfc6979.SignECDSA((*ecdsa.PrivateKey)(x), h[:], sha256.New)
+	r, s := rfc6979.SignECDSA((*ecdsa.PrivateKey)(&x), h[:], sha256.New)
 
 	mid := rfc6979SigLen / 2
 	sig := make([]byte, rfc6979SigLen)
@@ -57,7 +57,7 @@ func (x *rfc6979Signer) Sign(data []byte) ([]byte, error) {
 	return sig, nil
 }
 
-func (x *rfc6979Signer) Public() neofscrypto.PublicKey {
+func (x rfc6979Signer) Public() neofscrypto.PublicKey {
 	return (*rfc9679PublicKey)(&x.PublicKey)
 }
 
