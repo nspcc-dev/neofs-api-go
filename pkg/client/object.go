@@ -291,7 +291,7 @@ func (x Client) PutObject(ctx context.Context, p *PutObjectParams, opts ...CallO
 		return nil, fmt.Errorf("closing the stream failed: %w", err)
 	}
 
-	resp := res.Response()
+	resp := stream.Response()
 
 	// verify response structure
 	if err := signature.VerifyServiceMessage(&resp); err != nil {
