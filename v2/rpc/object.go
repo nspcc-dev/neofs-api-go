@@ -26,8 +26,6 @@ type PutObjectPrm struct{}
 // PutObjectRes groups the results of PutObject call.
 type PutObjectRes struct {
 	stream PutObjectStream
-
-	resp object.PutResponse
 }
 
 // Response returns client stream as PutObjectStream.
@@ -35,15 +33,12 @@ func (x PutObjectRes) Stream() PutObjectStream {
 	return x.stream
 }
 
-// Response returns the server response.
-func (x PutObjectRes) Response() object.PutResponse {
-	return x.resp
-}
-
 // PutObjectStream is a wrapper over client.MessageWriterCloser
 // which provides method to write object.PutRequest messages.
 type PutObjectStream struct {
 	m protoclient.MessageWriterCloser
+
+	resp *object.PutResponse
 }
 
 // Write writes object.GetResponse into the stream.
@@ -60,13 +55,18 @@ func (x PutObjectStream) CloseSend() error {
 	return x.m.CloseSend()
 }
 
+// Response returns the server response. Should be called after the successful CloseSend.
+func (x PutObjectStream) Response() object.PutResponse {
+	return *x.resp
+}
+
 // PutObject executes ObjectService.Put RPC.
 //
 // Client connection should be established.
 //
 // If there is no error, client can stream messages using res.Stream().
 // When all messages are sent, stream should be closed via CloseSend.
-// After the stream is closed w/o an error, res.Response() contains the server response.
+// After the stream is closed w/o an error, stream.Response() contains the server response.
 //
 // Context and res must not be nil.
 func PutObject(ctx context.Context, cli protoclient.Client, _ PutObjectPrm, res *PutObjectRes) error {
@@ -77,7 +77,9 @@ func PutObject(ctx context.Context, cli protoclient.Client, _ PutObjectPrm, res 
 	var csPrm protoclient.OpenClientStreamPrm
 
 	csPrm.SetCallMethodInfo(info)
-	csPrm.SetResponse(&res.resp)
+
+	res.stream.resp = new(object.PutResponse)
+	csPrm.SetResponse(res.stream.resp)
 
 	var csRes protoclient.OpenClientStreamRes
 
