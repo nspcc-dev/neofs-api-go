@@ -778,28 +778,53 @@ func (r *GetResponseBody) FromGRPCMessage(m neofsgrpc.Message) error {
 
 	var err error
 
-	r.objPart = nil
-
 	switch pt := v.GetObjectPart().(type) {
 	case nil:
 	case *object.GetResponse_Body_Init_:
+		var partInit *GetObjectPartInit
+
 		if pt != nil {
-			partInit := new(GetObjectPartInit)
-			r.objPart = partInit
+			var ok bool
+
+			partInit, ok = r.objPart.(*GetObjectPartInit)
+			if !ok {
+				partInit = new(GetObjectPartInit)
+			}
+
 			err = partInit.FromGRPCMessage(pt.Init)
 		}
+
+		r.objPart = partInit
 	case *object.GetResponse_Body_Chunk:
+		var partChunk *GetObjectPartChunk
+
 		if pt != nil {
-			partChunk := new(GetObjectPartChunk)
-			r.objPart = partChunk
+			var ok bool
+
+			partChunk, ok = r.objPart.(*GetObjectPartChunk)
+			if !ok {
+				partChunk = new(GetObjectPartChunk)
+			}
+
 			err = partChunk.FromGRPCMessage(pt)
 		}
+
+		r.objPart = partChunk
 	case *object.GetResponse_Body_SplitInfo:
+		var partChunk *SplitInfo
+
 		if pt != nil {
-			partSplit := new(SplitInfo)
-			r.objPart = partSplit
-			err = partSplit.FromGRPCMessage(pt.SplitInfo)
+			var ok bool
+
+			partChunk, ok = r.objPart.(*SplitInfo)
+			if !ok {
+				partChunk = new(SplitInfo)
+			}
+
+			err = partChunk.FromGRPCMessage(pt)
 		}
+
+		r.objPart = partChunk
 	default:
 		err = fmt.Errorf("unknown get object part %T", pt)
 	}
