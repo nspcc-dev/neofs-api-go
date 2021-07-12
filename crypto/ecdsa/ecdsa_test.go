@@ -15,7 +15,7 @@ func TestEcdsaSigner(t *testing.T) {
 	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	require.NoError(t, err)
 
-	s := neofsecdsa.Signer(key)
+	s := neofsecdsa.Signer(*key)
 
 	neofscryptotest.TestSigner(t, s)
 

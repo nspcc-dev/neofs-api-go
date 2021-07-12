@@ -2,7 +2,6 @@ package reputation
 
 import (
 	"crypto/ecdsa"
-
 	"errors"
 
 	neofsecdsa "github.com/nspcc-dev/neofs-api-go/crypto/ecdsa"
@@ -296,7 +295,7 @@ func (x *GlobalTrust) Trust() *Trust {
 // SignECDSA signs global trust value with ECDSA key.
 //
 // Key mus not be nil.
-func (x *GlobalTrust) SignECDSA(key *ecdsa.PrivateKey) error {
+func (x *GlobalTrust) SignECDSA(key ecdsa.PrivateKey) error {
 	v2 := (*reputation.GlobalTrust)(x)
 
 	sigV2 := v2.GetSignature()

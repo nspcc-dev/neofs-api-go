@@ -92,7 +92,7 @@ func VerifyID(obj *Object) error {
 // CalculateIDSignatureECDSA calculates and returns ECDSA signature of ID.
 //
 // Key must not be nil.
-func CalculateIDSignatureECDSA(key *ecdsa.PrivateKey, id *ID) (*pkg.Signature, error) {
+func CalculateIDSignatureECDSA(key ecdsa.PrivateKey, id *ID) (*pkg.Signature, error) {
 	sigV2 := new(refs.Signature)
 
 	var p apicrypto.SignPrm
@@ -111,7 +111,7 @@ func CalculateIDSignatureECDSA(key *ecdsa.PrivateKey, id *ID) (*pkg.Signature, e
 // writes it to RawObject.
 //
 // Key must not be nil.
-func CalculateAndSetECDSASignature(key *ecdsa.PrivateKey, obj *RawObject) error {
+func CalculateAndSetECDSASignature(key ecdsa.PrivateKey, obj *RawObject) error {
 	sig, err := CalculateIDSignatureECDSA(key, obj.ID())
 	if err != nil {
 		return err
@@ -145,7 +145,7 @@ func VerifyIDSignature(obj *Object) error {
 // SetIDWithSignatureECDSA sets object identifier and ECDSA signature.
 //
 // Key must not be nil.
-func SetIDWithSignatureECDSA(key *ecdsa.PrivateKey, obj *RawObject) error {
+func SetIDWithSignatureECDSA(key ecdsa.PrivateKey, obj *RawObject) error {
 	if err := CalculateAndSetID(obj); err != nil {
 		return fmt.Errorf("could not set identifier: %w", err)
 	}
@@ -160,7 +160,7 @@ func SetIDWithSignatureECDSA(key *ecdsa.PrivateKey, obj *RawObject) error {
 // SetVerificationFields calculates and sets all verification fields of the object.
 //
 // Key must not be nil.
-func SetVerificationFieldsECDSA(key *ecdsa.PrivateKey, obj *RawObject) error {
+func SetVerificationFieldsECDSA(key ecdsa.PrivateKey, obj *RawObject) error {
 	CalculateAndSetPayloadChecksum(obj)
 
 	return SetIDWithSignatureECDSA(key, obj)

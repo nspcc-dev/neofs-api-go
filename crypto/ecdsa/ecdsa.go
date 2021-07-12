@@ -28,16 +28,16 @@ var (
 // on data.
 //
 // Uses elliptic.P256() elliptic curve.
-func Signer(key *ecdsa.PrivateKey) neofscrypto.Signer {
-	return (*signer)(key)
+func Signer(key ecdsa.PrivateKey) neofscrypto.Signer {
+	return (signer)(key)
 }
 
-func (x *signer) Sign(data []byte) ([]byte, error) {
+func (x signer) Sign(data []byte) ([]byte, error) {
 	onceCurve.Do(func() { curve = elliptic.P256() })
 
 	h := sha512.Sum512(data)
 
-	r, s, err := ecdsa.Sign(rand.Reader, (*ecdsa.PrivateKey)(x), h[:])
+	r, s, err := ecdsa.Sign(rand.Reader, (*ecdsa.PrivateKey)(&x), h[:])
 	if err != nil {
 		return nil, err
 	}
