@@ -312,6 +312,7 @@ const (
 	MatchStringEqual
 	MatchStringNotEqual
 	MatchNotPresent
+	MatchCommonPrefix
 )
 
 func (h *ShortHeader) GetVersion() *refs.Version {
