@@ -18,6 +18,7 @@ const (
 	MatchStringEqual
 	MatchStringNotEqual
 	MatchNotPresent
+	MatchCommonPrefix
 )
 
 func (m SearchMatchType) ToV2() v2object.MatchType {
@@ -28,6 +29,8 @@ func (m SearchMatchType) ToV2() v2object.MatchType {
 		return v2object.MatchStringNotEqual
 	case MatchNotPresent:
 		return v2object.MatchNotPresent
+	case MatchCommonPrefix:
+		return v2object.MatchCommonPrefix
 	default:
 		return v2object.MatchUnknown
 	}
@@ -41,6 +44,8 @@ func SearchMatchFromV2(t v2object.MatchType) (m SearchMatchType) {
 		m = MatchStringNotEqual
 	case v2object.MatchNotPresent:
 		m = MatchNotPresent
+	case v2object.MatchCommonPrefix:
+		m = MatchCommonPrefix
 	default:
 		m = MatchUnknown
 	}
@@ -54,6 +59,7 @@ func SearchMatchFromV2(t v2object.MatchType) (m SearchMatchType) {
 //  * MatchStringEqual: STRING_EQUAL;
 //  * MatchStringNotEqual: STRING_NOT_EQUAL;
 //  * MatchNotPresent: NOT_PRESENT;
+//  * MatchCommonPrefix: COMMON_PREFIX;
 //  * MatchUnknown, default: MATCH_TYPE_UNSPECIFIED.
 func (m SearchMatchType) String() string {
 	return m.ToV2().String()

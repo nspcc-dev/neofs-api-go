@@ -10,14 +10,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var (
-	eqV2Matches = map[object.SearchMatchType]v2object.MatchType{
-		object.MatchUnknown:        v2object.MatchUnknown,
-		object.MatchStringEqual:    v2object.MatchStringEqual,
-		object.MatchStringNotEqual: v2object.MatchStringNotEqual,
-		object.MatchNotPresent:     v2object.MatchNotPresent,
-	}
-)
+var eqV2Matches = map[object.SearchMatchType]v2object.MatchType{
+	object.MatchUnknown:        v2object.MatchUnknown,
+	object.MatchStringEqual:    v2object.MatchStringEqual,
+	object.MatchStringNotEqual: v2object.MatchStringNotEqual,
+	object.MatchNotPresent:     v2object.MatchNotPresent,
+	object.MatchCommonPrefix:   v2object.MatchCommonPrefix,
+}
 
 func TestMatch(t *testing.T) {
 	t.Run("known matches", func(t *testing.T) {
@@ -181,6 +180,7 @@ func TestSearchFiltersEncoding(t *testing.T) {
 	fs := object.NewSearchFilters()
 	fs.AddFilter("key 1", "value 2", object.MatchStringEqual)
 	fs.AddFilter("key 2", "value 2", object.MatchStringNotEqual)
+	fs.AddFilter("key 2", "value 2", object.MatchCommonPrefix)
 
 	t.Run("json", func(t *testing.T) {
 		data, err := fs.MarshalJSON()
@@ -199,6 +199,7 @@ func TestSearchMatchType_String(t *testing.T) {
 	}
 
 	testEnumStrings(t, new(object.SearchMatchType), []enumStringItem{
+		{val: toPtr(object.MatchCommonPrefix), str: "COMMON_PREFIX"},
 		{val: toPtr(object.MatchStringEqual), str: "STRING_EQUAL"},
 		{val: toPtr(object.MatchStringNotEqual), str: "STRING_NOT_EQUAL"},
 		{val: toPtr(object.MatchNotPresent), str: "NOT_PRESENT"},
