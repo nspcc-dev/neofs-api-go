@@ -668,6 +668,17 @@ func (x *NetworkInfo) GetMagicNumber() uint64 {
 // `Attribute` is a Key-Value metadata pair. Key name must be a valid UTF-8
 // string. Value can't be empty.
 //
+// Attributes can be constructed into a chain of attributes: any attribute can
+// have a parent attribute and a child attribute (except the first and the last
+// one). A string representation of the chain of attributes in NeoFS Storage
+// Node configuration uses ":" and "/" symbols, e.g.:
+//
+//        `NEOFS_NODE_ATTRIBUTE_1=key1:val1/key2:val2`
+//
+// Therefore the string attribute representation in the Node configuration must
+// use "\:", "\/" and "\\" escaped symbols if any of them appears in an attribute's
+// key or value.
+//
 // Node's attributes are mostly used during Storage Policy evaluation to
 // calculate object's placement and find a set of nodes satisfying policy
 // requirements. There are some "well-known" node attributes common to all the
