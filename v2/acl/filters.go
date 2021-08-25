@@ -30,7 +30,4 @@ const (
 
 	// FilterObjectHomomorphicHash is a filter key to "homomorphic_hash" field of the object header.
 	FilterObjectHomomorphicHash = ObjectFilterPrefix + "homomorphicHash"
-
-	// FilterObjectParent is a filter key to "split.parent" field of the object header.
-	FilterObjectParent = ObjectFilterPrefix + "split.parent"
 )
