@@ -6,6 +6,7 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
 	cid "github.com/nspcc-dev/neofs-api-go/pkg/container/id"
+	"github.com/nspcc-dev/neofs-api-go/pkg/object"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 )
@@ -115,6 +116,11 @@ func (r *Record) AddObjectVersionFilter(m Match, v *pkg.Version) {
 	r.addObjectReservedFilter(m, fKeyObjVersion, v)
 }
 
+// AddObjectIDFilter adds filter by object ID.
+func (r *Record) AddObjectIDFilter(m Match, id *object.ID) {
+	r.addObjectReservedFilter(m, fKeyObjID, id)
+}
+
 // AddObjectContainerIDFilter adds filter by object container ID.
 func (r *Record) AddObjectContainerIDFilter(m Match, id *cid.ID) {
 	r.addObjectReservedFilter(m, fKeyObjContainerID, id)
@@ -125,7 +131,30 @@ func (r *Record) AddObjectOwnerIDFilter(m Match, id *owner.ID) {
 	r.addObjectReservedFilter(m, fKeyObjOwnerID, id)
 }
 
-// TODO: add remaining filters after neofs-api#72
+// AddObjectCreationEpoch adds filter by object creation epoch.
+func (r *Record) AddObjectCreationEpoch(m Match, epoch uint64) {
+	r.addObjectReservedFilter(m, fKeyObjCreationEpoch, u64Stringer(epoch))
+}
+
+// AddObjectPayloadLengthFilter adds filter by object payload length.
+func (r *Record) AddObjectPayloadLengthFilter(m Match, size uint64) {
+	r.addObjectReservedFilter(m, fKeyObjPayloadLength, u64Stringer(size))
+}
+
+// AddObjectPayloadHashFilter adds filter by object payload hash value.
+func (r *Record) AddObjectPayloadHashFilter(m Match, h *pkg.Checksum) {
+	r.addObjectReservedFilter(m, fKeyObjPayloadHash, h)
+}
+
+// AddObjectTypeFilter adds filter by object type.
+func (r *Record) AddObjectTypeFilter(m Match, t object.Type) {
+	r.addObjectReservedFilter(m, fKeyObjType, t)
+}
+
+// AddObjectHomomorphicHashFilter adds filter by object payload homomorphic hash value.
+func (r *Record) AddObjectHomomorphicHashFilter(m Match, h *pkg.Checksum) {
+	r.addObjectReservedFilter(m, fKeyObjHomomorphicHash, h)
+}
 
 // ToV2 converts Record to v2 acl.EACLRecord message.
 //

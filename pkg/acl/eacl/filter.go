@@ -2,6 +2,7 @@ package eacl
 
 import (
 	"fmt"
+	"strconv"
 
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 )
@@ -18,6 +19,8 @@ type Filter struct {
 }
 
 type staticStringer string
+
+type u64Stringer uint64
 
 type filterKey struct {
 	typ filterKeyType
@@ -43,6 +46,10 @@ const (
 
 func (s staticStringer) String() string {
 	return string(s)
+}
+
+func (u u64Stringer) String() string {
+	return strconv.FormatUint(uint64(u), 10)
 }
 
 // Value returns filtered string value.
