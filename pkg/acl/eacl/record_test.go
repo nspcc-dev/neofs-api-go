@@ -2,8 +2,14 @@ package eacl
 
 import (
 	"crypto/ecdsa"
+	"fmt"
 	"testing"
 
+	cidtest "github.com/nspcc-dev/neofs-api-go/pkg/container/id/test"
+	"github.com/nspcc-dev/neofs-api-go/pkg/object"
+	objecttest "github.com/nspcc-dev/neofs-api-go/pkg/object/test"
+	ownertest "github.com/nspcc-dev/neofs-api-go/pkg/owner/test"
+	refstest "github.com/nspcc-dev/neofs-api-go/pkg/test"
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 	"github.com/nspcc-dev/neofs-crypto/test"
 	"github.com/stretchr/testify/require"
@@ -144,4 +150,101 @@ func TestRecord_ToV2(t *testing.T) {
 		require.Nil(t, recordV2.GetTargets())
 		require.Nil(t, recordV2.GetFilters())
 	})
+}
+
+func TestReservedRecords(t *testing.T) {
+	var (
+		v       = refstest.Version()
+		oid     = objecttest.ID()
+		cid     = cidtest.Generate()
+		ownerid = ownertest.Generate()
+		h       = refstest.Checksum()
+		typ     = new(object.Type)
+	)
+
+	testSuit := []struct {
+		f     func(r *Record)
+		key   string
+		value string
+	}{
+		{
+			f:     func(r *Record) { r.AddObjectAttributeFilter(MatchStringEqual, "foo", "bar") },
+			key:   "foo",
+			value: "bar",
+		},
+		{
+			f:     func(r *Record) { r.AddObjectVersionFilter(MatchStringEqual, v) },
+			key:   v2acl.FilterObjectVersion,
+			value: v.String(),
+		},
+		{
+			f:     func(r *Record) { r.AddObjectIDFilter(MatchStringEqual, oid) },
+			key:   v2acl.FilterObjectID,
+			value: oid.String(),
+		},
+		{
+			f:     func(r *Record) { r.AddObjectContainerIDFilter(MatchStringEqual, cid) },
+			key:   v2acl.FilterObjectContainerID,
+			value: cid.String(),
+		},
+		{
+			f:     func(r *Record) { r.AddObjectOwnerIDFilter(MatchStringEqual, ownerid) },
+			key:   v2acl.FilterObjectOwnerID,
+			value: ownerid.String(),
+		},
+		{
+			f:     func(r *Record) { r.AddObjectCreationEpoch(MatchStringEqual, 100) },
+			key:   v2acl.FilterObjectCreationEpoch,
+			value: "100",
+		},
+		{
+			f:     func(r *Record) { r.AddObjectPayloadLengthFilter(MatchStringEqual, 5000) },
+			key:   v2acl.FilterObjectPayloadLength,
+			value: "5000",
+		},
+		{
+			f:     func(r *Record) { r.AddObjectPayloadHashFilter(MatchStringEqual, h) },
+			key:   v2acl.FilterObjectPayloadHash,
+			value: h.String(),
+		},
+		{
+			f:     func(r *Record) { r.AddObjectHomomorphicHashFilter(MatchStringEqual, h) },
+			key:   v2acl.FilterObjectHomomorphicHash,
+			value: h.String(),
+		},
+		{
+			f: func(r *Record) {
+				require.True(t, typ.FromString("REGULAR"))
+				r.AddObjectTypeFilter(MatchStringEqual, *typ)
+			},
+			key:   v2acl.FilterObjectType,
+			value: "REGULAR",
+		},
+		{
+			f: func(r *Record) {
+				require.True(t, typ.FromString("TOMBSTONE"))
+				r.AddObjectTypeFilter(MatchStringEqual, *typ)
+			},
+			key:   v2acl.FilterObjectType,
+			value: "TOMBSTONE",
+		},
+		{
+			f: func(r *Record) {
+				require.True(t, typ.FromString("STORAGE_GROUP"))
+				r.AddObjectTypeFilter(MatchStringEqual, *typ)
+			},
+			key:   v2acl.FilterObjectType,
+			value: "STORAGE_GROUP",
+		},
+	}
+
+	for n, testCase := range testSuit {
+		desc := fmt.Sprintf("case #%d", n)
+		record := NewRecord()
+		testCase.f(record)
+		require.Len(t, record.Filters(), 1, desc)
+		f := record.Filters()[0]
+		require.Equal(t, f.Key(), testCase.key, desc)
+		require.Equal(t, f.Value(), testCase.value, desc)
+	}
 }
