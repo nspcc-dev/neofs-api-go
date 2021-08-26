@@ -28,8 +28,8 @@ func NewTombstone() *Tombstone {
 // ToV2 converts Tombstone to v2 Tombstone message.
 //
 // Nil Tombstone converts to nil.
-func (ts *Tombstone) ToV2() *tombstone.Tombstone {
-	return (*tombstone.Tombstone)(ts)
+func (t *Tombstone) ToV2() *tombstone.Tombstone {
+	return (*tombstone.Tombstone)(t)
 }
 
 // ExpirationEpoch return number of tombstone expiration epoch.
