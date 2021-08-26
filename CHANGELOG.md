@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.29.0] - 2021-08-27 - Anmyeondo (안면도, 安眠島)
+
+### Fixed
+
+- Well-known BasicACL constants to fit the specification (#330, #334).
+- Linter warnings (#335).
+
+### Added
+
+- Support for `COMMON_PREFIX` filter operation for object attributes (#331).
+- Missing well-known eACL filter setters (#333).
+
+### Removed
+
+- `FilterObjectParent` well-known object related filter key (#333).
+
+### Updated
+
+- Go version to `1.16` (#335).
+- Tests in CI to run on `1.16` and `1.17` Go versions (#335).
+
 ## [1.28.3] - 2021-07-07
 
 ### Fixed
@@ -690,3 +711,4 @@ Initial public release
 [1.28.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.0...v1.28.1
 [1.28.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.1...v1.28.2
 [1.28.3]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.2...v1.28.3
+[1.29.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.3...v1.29.0
