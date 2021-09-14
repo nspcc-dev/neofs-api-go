@@ -111,6 +111,8 @@ func HeaderTypeToGRPCField(t HeaderType) acl.HeaderType {
 		return acl.HeaderType_REQUEST
 	case HeaderTypeObject:
 		return acl.HeaderType_OBJECT
+	case HeaderTypeService:
+		return acl.HeaderType_SERVICE
 	default:
 		return acl.HeaderType_HEADER_UNSPECIFIED
 	}
@@ -123,6 +125,8 @@ func HeaderTypeFromGRPCField(t acl.HeaderType) HeaderType {
 		return HeaderTypeRequest
 	case acl.HeaderType_OBJECT:
 		return HeaderTypeObject
+	case acl.HeaderType_SERVICE:
+		return HeaderTypeService
 	default:
 		return HeaderTypeUnknown
 	}
