@@ -43,6 +43,7 @@ var (
 		eacl.HeaderTypeUnknown: v2acl.HeaderTypeUnknown,
 		eacl.HeaderFromRequest: v2acl.HeaderTypeRequest,
 		eacl.HeaderFromObject:  v2acl.HeaderTypeObject,
+		eacl.HeaderFromService: v2acl.HeaderTypeService,
 	}
 )
 
@@ -104,15 +105,15 @@ func TestMatch(t *testing.T) {
 
 func TestFilterHeaderType(t *testing.T) {
 	t.Run("known header types", func(t *testing.T) {
-		for i := eacl.HeaderTypeUnknown; i <= eacl.HeaderFromObject; i++ {
+		for i := eacl.HeaderTypeUnknown; i <= eacl.HeaderFromService; i++ {
 			require.Equal(t, eqV2HeaderTypes[i], i.ToV2())
 			require.Equal(t, eacl.FilterHeaderTypeFromV2(i.ToV2()), i)
 		}
 	})
 
 	t.Run("unknown header types", func(t *testing.T) {
-		require.Equal(t, (eacl.HeaderFromObject + 1).ToV2(), v2acl.HeaderTypeUnknown)
-		require.Equal(t, eacl.FilterHeaderTypeFromV2(v2acl.HeaderTypeObject+1), eacl.HeaderTypeUnknown)
+		require.Equal(t, (eacl.HeaderFromService + 1).ToV2(), v2acl.HeaderTypeUnknown)
+		require.Equal(t, eacl.FilterHeaderTypeFromV2(v2acl.HeaderTypeService+1), eacl.HeaderTypeUnknown)
 	})
 }
 

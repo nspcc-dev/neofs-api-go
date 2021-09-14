@@ -85,6 +85,7 @@ const (
 	HeaderTypeUnknown HeaderType = iota
 	HeaderTypeRequest
 	HeaderTypeObject
+	HeaderTypeService
 )
 
 const (

@@ -96,6 +96,9 @@ const (
 
 	// HeaderFromObject is a FilterHeaderType for object header.
 	HeaderFromObject
+
+	// HeaderFromService is a FilterHeaderType for service header.
+	HeaderFromService
 )
 
 // ToV2 converts Action to v2 Action enum value.
@@ -343,6 +346,8 @@ func (h FilterHeaderType) ToV2() v2acl.HeaderType {
 		return v2acl.HeaderTypeRequest
 	case HeaderFromObject:
 		return v2acl.HeaderTypeObject
+	case HeaderFromService:
+		return v2acl.HeaderTypeService
 	default:
 		return v2acl.HeaderTypeUnknown
 	}
@@ -355,6 +360,8 @@ func FilterHeaderTypeFromV2(header v2acl.HeaderType) (h FilterHeaderType) {
 		h = HeaderFromRequest
 	case v2acl.HeaderTypeObject:
 		h = HeaderFromObject
+	case v2acl.HeaderTypeService:
+		h = HeaderFromService
 	default:
 		h = HeaderTypeUnknown
 	}
