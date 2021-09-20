@@ -22,8 +22,9 @@ func NEO3WalletFromPublicKey(key *ecdsa.PublicKey) (*NEO3Wallet, error) {
 	}
 
 	neoPublicKey := keys.PublicKey{
-		X: key.X,
-		Y: key.Y,
+		Curve: key.Curve,
+		X:     key.X,
+		Y:     key.Y,
 	}
 
 	d, err := base58.Decode(neoPublicKey.Address())
