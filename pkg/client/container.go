@@ -130,6 +130,11 @@ func (c *clientImpl) PutContainer(ctx context.Context, cnr *container.Container,
 		return nil, err
 	}
 
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOptions, resp); err != nil {
+		return nil, err
+	}
+
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
 		return nil, fmt.Errorf("can't verify response message: %w", err)
@@ -164,6 +169,11 @@ func (c *clientImpl) GetContainer(ctx context.Context, id *cid.ID, opts ...CallO
 	resp, err := rpcapi.GetContainer(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
 		return nil, fmt.Errorf("transport error: %w", err)
+	}
+
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOptions, resp); err != nil {
+		return nil, err
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)
@@ -238,6 +248,11 @@ func (c *clientImpl) ListContainers(ctx context.Context, ownerID *owner.ID, opts
 		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOptions, resp); err != nil {
+		return nil, err
+	}
+
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
 		return nil, fmt.Errorf("can't verify response message: %w", err)
@@ -292,6 +307,11 @@ func (c *clientImpl) DeleteContainer(ctx context.Context, id *cid.ID, opts ...Ca
 		return fmt.Errorf("transport error: %w", err)
 	}
 
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOptions, resp); err != nil {
+		return err
+	}
+
 	if err := v2signature.VerifyServiceMessage(resp); err != nil {
 		return fmt.Errorf("can't verify response message: %w", err)
 	}
@@ -322,6 +342,11 @@ func (c *clientImpl) GetEACL(ctx context.Context, id *cid.ID, opts ...CallOption
 	resp, err := rpcapi.GetEACL(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
 		return nil, fmt.Errorf("transport error: %w", err)
+	}
+
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOptions, resp); err != nil {
+		return nil, err
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)
@@ -388,6 +413,11 @@ func (c *clientImpl) SetEACL(ctx context.Context, eacl *eacl.Table, opts ...Call
 		return fmt.Errorf("transport error: %w", err)
 	}
 
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOptions, resp); err != nil {
+		return err
+	}
+
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
 		return fmt.Errorf("can't verify response message: %w", err)
@@ -431,6 +461,11 @@ func (c *clientImpl) AnnounceContainerUsedSpace(
 	resp, err := rpcapi.AnnounceUsedSpace(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
 		return fmt.Errorf("transport error: %w", err)
+	}
+
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOptions, resp); err != nil {
+		return err
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)

@@ -67,6 +67,11 @@ func (c *clientImpl) EndpointInfo(ctx context.Context, opts ...CallOption) (*End
 		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOptions, resp); err != nil {
+		return nil, err
+	}
+
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
 		return nil, fmt.Errorf("can't verify response message: %w", err)
@@ -103,6 +108,11 @@ func (c *clientImpl) NetworkInfo(ctx context.Context, opts ...CallOption) (*netm
 	resp, err := rpcapi.NetworkInfo(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
 		return nil, fmt.Errorf("v2 NetworkInfo RPC failure: %w", err)
+	}
+
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOptions, resp); err != nil {
+		return nil, err
 	}
 
 	err = v2signature.VerifyServiceMessage(resp)

@@ -43,6 +43,11 @@ func (c *clientImpl) GetBalance(ctx context.Context, owner *owner.ID, opts ...Ca
 		return nil, fmt.Errorf("transport error: %w", err)
 	}
 
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOptions, resp); err != nil {
+		return nil, err
+	}
+
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
 		return nil, fmt.Errorf("can't verify response message: %w", err)
