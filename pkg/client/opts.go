@@ -33,6 +33,8 @@ type (
 		key *ecdsa.PrivateKey
 
 		rawOpts []client.Option
+
+		cbRespInfo func(ResponseMetaInfo) error
 	}
 
 	v2SessionReqInfo struct {

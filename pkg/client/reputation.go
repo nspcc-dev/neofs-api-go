@@ -77,6 +77,11 @@ func (c *clientImpl) AnnounceLocalTrust(ctx context.Context, prm AnnounceLocalTr
 		return nil, err
 	}
 
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOptions, resp); err != nil {
+		return nil, err
+	}
+
 	err = v2signature.VerifyServiceMessage(resp)
 	if err != nil {
 		return nil, fmt.Errorf("can't verify response message: %w", err)
@@ -149,6 +154,11 @@ func (c *clientImpl) AnnounceIntermediateTrust(ctx context.Context, prm Announce
 
 	resp, err := rpcapi.AnnounceIntermediateResult(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
+		return nil, err
+	}
+
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOptions, resp); err != nil {
 		return nil, err
 	}
 

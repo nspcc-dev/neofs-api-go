@@ -313,6 +313,11 @@ func (c *clientImpl) PutObject(ctx context.Context, p *PutObjectParams, opts ...
 		return nil, fmt.Errorf("closing the stream failed: %w", err)
 	}
 
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOpts, resp); err != nil {
+		return nil, err
+	}
+
 	// verify response structure
 	if err := signature.VerifyServiceMessage(resp); err != nil {
 		return nil, fmt.Errorf("response verification failed: %w", err)
@@ -415,6 +420,11 @@ func (c *clientImpl) DeleteObject(ctx context.Context, p *DeleteObjectParams, op
 	resp, err := rpcapi.DeleteObject(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
 		return fmt.Errorf("sending the request failed: %w", err)
+	}
+
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOpts, resp); err != nil {
+		return err
 	}
 
 	// verify response structure
@@ -623,6 +633,11 @@ loop:
 			return nil, fmt.Errorf("reading the response failed: %w", err)
 		}
 
+		// handle response meta info
+		if err := c.handleResponseInfoV2(callOpts, resp); err != nil {
+			return nil, err
+		}
+
 		// verify response structure
 		if err := signature.VerifyServiceMessage(resp); err != nil {
 			return nil, fmt.Errorf("response verification failed: %w", err)
@@ -779,6 +794,11 @@ func (c *clientImpl) GetObjectHeader(ctx context.Context, p *ObjectHeaderParams,
 	resp, err := rpcapi.HeadObject(c.Raw(), req, client.WithContext(ctx))
 	if err != nil {
 		return nil, fmt.Errorf("sending the request failed: %w", err)
+	}
+
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOpts, resp); err != nil {
+		return nil, err
 	}
 
 	// verify response structure
@@ -979,6 +999,11 @@ func (c *clientImpl) ObjectPayloadRangeData(ctx context.Context, p *RangeDataPar
 			return nil, fmt.Errorf("reading the response failed: %w", err)
 		}
 
+		// handle response meta info
+		if err := c.handleResponseInfoV2(callOpts, resp); err != nil {
+			return nil, err
+		}
+
 		// verify response structure
 		if err := signature.VerifyServiceMessage(resp); err != nil {
 			return nil, fmt.Errorf("could not verify %T: %w", resp, err)
@@ -1128,6 +1153,11 @@ func (c *clientImpl) objectPayloadRangeHash(ctx context.Context, p *RangeChecksu
 		return nil, fmt.Errorf("sending the request failed: %w", err)
 	}
 
+	// handle response meta info
+	if err := c.handleResponseInfoV2(callOpts, resp); err != nil {
+		return nil, err
+	}
+
 	// verify response structure
 	if err := signature.VerifyServiceMessage(resp); err != nil {
 		return nil, fmt.Errorf("response verification failed: %w", err)
@@ -1274,6 +1304,11 @@ func (c *clientImpl) SearchObject(ctx context.Context, p *SearchObjectParams, op
 			}
 
 			return nil, fmt.Errorf("reading the response failed: %w", err)
+		}
+
+		// handle response meta info
+		if err := c.handleResponseInfoV2(callOpts, resp); err != nil {
+			return nil, err
 		}
 
 		// verify response structure
