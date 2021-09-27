@@ -34,8 +34,8 @@ func AnnounceIntermediateResult(
 	cli *client.Client,
 	req *reputation.AnnounceIntermediateResultRequest,
 	opts ...client.CallOption,
-) (*reputation.AnnounceIntermediateResultRequest, error) {
-	resp := new(reputation.AnnounceIntermediateResultRequest)
+) (*reputation.AnnounceIntermediateResultResponse, error) {
+	resp := new(reputation.AnnounceIntermediateResultResponse)
 
 	err := client.SendUnary(cli, common.CallMethodInfoUnary(serviceReputation, rpcReputationAnnounceIntermediateResult), req, resp, opts...)
 	if err != nil {
