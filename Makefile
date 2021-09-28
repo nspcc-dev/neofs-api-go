@@ -46,8 +46,10 @@ protoc:
 	@for f in `find . -type f -name '*.proto' -not -path './vendor/*'`; do \
 		echo "⇒ Processing $$f "; \
 		protoc \
-			--proto_path=.:./vendor:./vendor/github.com/nspcc-dev/neofs-api:/usr/local/include \
-			--go_out=plugins=grpc,paths=source_relative:. $$f; \
+			--proto_path=.:./vendor:/usr/local/include \
+			--go_out=. --go_opt=paths=source_relative \
+			--go-grpc_opt=require_unimplemented_servers=false \
+			--go-grpc_out=. --go-grpc_opt=paths=source_relative $$f; \
 	done
 	rm -rf vendor
 
