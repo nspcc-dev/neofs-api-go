@@ -470,8 +470,99 @@ func (l *LocalNodeInfoResponseBody) Unmarshal(data []byte) error {
 
 const (
 	_ = iota
+	netPrmKeyFNum
+	netPrmValFNum
+)
+
+func (x *NetworkParameter) StableMarshal(buf []byte) ([]byte, error) {
+	if x == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, x.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	n, err = protoutil.BytesMarshal(netPrmKeyFNum, buf[offset:], x.k)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = protoutil.BytesMarshal(netPrmValFNum, buf[offset:], x.v)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (x *NetworkParameter) StableSize() (size int) {
+	if x == nil {
+		return 0
+	}
+
+	size += protoutil.BytesSize(netPrmKeyFNum, x.k)
+	size += protoutil.BytesSize(netPrmValFNum, x.v)
+
+	return size
+}
+
+const (
+	_ = iota
+	netCfgPrmsFNum
+)
+
+func (x *NetworkConfig) StableMarshal(buf []byte) ([]byte, error) {
+	if x == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, x.StableSize())
+	}
+
+	var (
+		offset, n int
+		err       error
+	)
+
+	for i := range x.ps {
+		n, err = protoutil.NestedStructureMarshal(netCfgPrmsFNum, buf[offset:], x.ps[i])
+		if err != nil {
+			return nil, err
+		}
+
+		offset += n
+	}
+
+	return buf, nil
+}
+
+func (x *NetworkConfig) StableSize() (size int) {
+	if x == nil {
+		return 0
+	}
+
+	for i := range x.ps {
+		size += protoutil.NestedStructureSize(netCfgPrmsFNum, x.ps[i])
+	}
+
+	return size
+}
+
+const (
+	_ = iota
 	netInfoCurEpochFNum
 	netInfoMagicNumFNum
+	netInfoMSPerBlockFNum
+	netInfoCfgFNum
 )
 
 func (i *NetworkInfo) StableMarshal(buf []byte) ([]byte, error) {
@@ -495,7 +586,21 @@ func (i *NetworkInfo) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = protoutil.UInt64Marshal(netInfoMagicNumFNum, buf[offset:], i.magicNum)
+	n, err = protoutil.UInt64Marshal(netInfoMagicNumFNum, buf[offset:], i.magicNum)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	n, err = protoutil.Int64Marshal(netInfoMSPerBlockFNum, buf[offset:], i.msPerBlock)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = protoutil.NestedStructureMarshal(netInfoCfgFNum, buf[offset:], i.netCfg)
 	if err != nil {
 		return nil, err
 	}
@@ -510,6 +615,8 @@ func (i *NetworkInfo) StableSize() (size int) {
 
 	size += protoutil.UInt64Size(netInfoCurEpochFNum, i.curEpoch)
 	size += protoutil.UInt64Size(netInfoMagicNumFNum, i.magicNum)
+	size += protoutil.Int64Size(netInfoMSPerBlockFNum, i.msPerBlock)
+	size += protoutil.NestedStructureSize(netInfoCfgFNum, i.netCfg)
 
 	return size
 }

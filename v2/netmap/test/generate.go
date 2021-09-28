@@ -188,12 +188,38 @@ func GenerateLocalNodeInfoResponse(empty bool) *netmap.LocalNodeInfoResponse {
 	return m
 }
 
+func GenerateNetworkParameter(empty bool) *netmap.NetworkParameter {
+	m := new(netmap.NetworkParameter)
+
+	if !empty {
+		m.SetKey([]byte("key"))
+		m.SetValue([]byte("value"))
+	}
+
+	return m
+}
+
+func GenerateNetworkConfig(empty bool) *netmap.NetworkConfig {
+	m := new(netmap.NetworkConfig)
+
+	if !empty {
+		m.SetParameters(
+			GenerateNetworkParameter(empty),
+			GenerateNetworkParameter(empty),
+		)
+	}
+
+	return m
+}
+
 func GenerateNetworkInfo(empty bool) *netmap.NetworkInfo {
 	m := new(netmap.NetworkInfo)
 
 	if !empty {
 		m.SetMagicNumber(228)
 		m.SetCurrentEpoch(666)
+		m.SetMsPerBlock(5678)
+		m.SetNetworkConfig(GenerateNetworkConfig(empty))
 	}
 
 	return m

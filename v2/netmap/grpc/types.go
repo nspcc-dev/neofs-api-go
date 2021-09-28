@@ -182,6 +182,20 @@ func (x *NetworkInfo) SetMagicNumber(v uint64) {
 	}
 }
 
+// SetMsPerBlock sets MillisecondsPerBlock network parameter.
+func (x *NetworkInfo) SetMsPerBlock(v int64) {
+	if x != nil {
+		x.MsPerBlock = v
+	}
+}
+
+// SetNetworkConfig sets NeoFS network configuration.
+func (x *NetworkInfo) SetNetworkConfig(v *NetworkConfig) {
+	if x != nil {
+		x.NetworkConfig = v
+	}
+}
+
 // FromString parses Clause from a string representation,
 // It is a reverse action to String().
 //
@@ -219,4 +233,25 @@ func (x *NodeInfo_State) FromString(s string) bool {
 	}
 
 	return ok
+}
+
+// SetKey sets parameter key.
+func (x *NetworkConfig_Parameter) SetKey(v []byte) {
+	if x != nil {
+		x.Key = v
+	}
+}
+
+// SetValue sets parameter value.
+func (x *NetworkConfig_Parameter) SetValue(v []byte) {
+	if x != nil {
+		x.Value = v
+	}
+}
+
+// SetParameters sets NeoFS network parameters.
+func (x *NetworkConfig) SetParameters(v []*NetworkConfig_Parameter) {
+	if x != nil {
+		x.Parameters = v
+	}
 }
