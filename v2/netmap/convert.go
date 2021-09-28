@@ -514,6 +514,89 @@ func (l *LocalNodeInfoResponse) FromGRPCMessage(m grpc.Message) error {
 	return l.ResponseHeaders.FromMessage(v)
 }
 
+func (x *NetworkParameter) ToGRPCMessage() grpc.Message {
+	var m *netmap.NetworkConfig_Parameter
+
+	if x != nil {
+		m = new(netmap.NetworkConfig_Parameter)
+
+		m.SetKey(x.k)
+		m.SetValue(x.v)
+	}
+
+	return m
+}
+
+func (x *NetworkParameter) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NetworkConfig_Parameter)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	x.k = v.GetKey()
+	x.v = v.GetValue()
+
+	return nil
+}
+
+func (x *NetworkConfig) ToGRPCMessage() grpc.Message {
+	var m *netmap.NetworkConfig
+
+	if x != nil {
+		m = new(netmap.NetworkConfig)
+
+		var ps []*netmap.NetworkConfig_Parameter
+
+		if ln := len(x.ps); ln > 0 {
+			ps = make([]*netmap.NetworkConfig_Parameter, 0, ln)
+
+			for i := 0; i < ln; i++ {
+				ps = append(ps, x.ps[i].ToGRPCMessage().(*netmap.NetworkConfig_Parameter))
+			}
+		}
+
+		m.SetParameters(ps)
+	}
+
+	return m
+}
+
+func (x *NetworkConfig) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NetworkConfig)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var (
+		ps   []*NetworkParameter
+		psV2 = v.GetParameters()
+	)
+
+	if psV2 != nil {
+		ln := len(psV2)
+
+		ps = make([]*NetworkParameter, 0, ln)
+
+		for i := 0; i < ln; i++ {
+			var p *NetworkParameter
+
+			if psV2[i] != nil {
+				p = new(NetworkParameter)
+
+				if err := p.FromGRPCMessage(psV2[i]); err != nil {
+					return err
+				}
+			}
+
+			ps = append(ps, p)
+		}
+	}
+
+	x.ps = ps
+
+	return nil
+}
+
 func (i *NetworkInfo) ToGRPCMessage() grpc.Message {
 	var m *netmap.NetworkInfo
 
@@ -522,6 +605,8 @@ func (i *NetworkInfo) ToGRPCMessage() grpc.Message {
 
 		m.SetMagicNumber(i.magicNum)
 		m.SetCurrentEpoch(i.curEpoch)
+		m.SetMsPerBlock(i.msPerBlock)
+		m.SetNetworkConfig(i.netCfg.ToGRPCMessage().(*netmap.NetworkConfig))
 	}
 
 	return m
@@ -533,8 +618,25 @@ func (i *NetworkInfo) FromGRPCMessage(m grpc.Message) error {
 		return message.NewUnexpectedMessageType(m, v)
 	}
 
+	var err error
+
+	netCfg := v.GetNetworkConfig()
+	if netCfg == nil {
+		i.netCfg = nil
+	} else {
+		if i.netCfg == nil {
+			i.netCfg = new(NetworkConfig)
+		}
+
+		err = i.netCfg.FromGRPCMessage(netCfg)
+		if err != nil {
+			return err
+		}
+	}
+
 	i.magicNum = v.GetMagicNumber()
 	i.curEpoch = v.GetCurrentEpoch()
+	i.msPerBlock = v.GetMsPerBlock()
 
 	return nil
 }

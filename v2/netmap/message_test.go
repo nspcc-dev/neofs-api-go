@@ -18,6 +18,8 @@ func TestMessageConvert(t *testing.T) {
 		func(empty bool) message.Message { return netmaptest.GenerateNodeInfo(empty) },
 		func(empty bool) message.Message { return netmaptest.GenerateLocalNodeInfoRequest(empty) },
 		func(empty bool) message.Message { return netmaptest.GenerateLocalNodeInfoResponseBody(empty) },
+		func(empty bool) message.Message { return netmaptest.GenerateNetworkParameter(empty) },
+		func(empty bool) message.Message { return netmaptest.GenerateNetworkConfig(empty) },
 		func(empty bool) message.Message { return netmaptest.GenerateNetworkInfo(empty) },
 		func(empty bool) message.Message { return netmaptest.GenerateNetworkInfoRequest(empty) },
 		func(empty bool) message.Message { return netmaptest.GenerateNetworkInfoResponseBody(empty) },

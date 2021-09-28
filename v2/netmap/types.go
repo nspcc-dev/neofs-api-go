@@ -517,10 +517,86 @@ func (l *LocalNodeInfoResponse) SetBody(body *LocalNodeInfoResponseBody) {
 	}
 }
 
+// NetworkParameter represents NeoFS network parameter.
+type NetworkParameter struct {
+	k, v []byte
+}
+
+// GetKey returns parameter key.
+func (x *NetworkParameter) GetKey() []byte {
+	if x != nil {
+		return x.k
+	}
+
+	return nil
+}
+
+// SetKey sets parameter key.
+func (x *NetworkParameter) SetKey(k []byte) {
+	if x != nil {
+		x.k = k
+	}
+}
+
+// GetValue returns parameter value.
+func (x *NetworkParameter) GetValue() []byte {
+	if x != nil {
+		return x.v
+	}
+
+	return nil
+}
+
+// SetValue sets parameter value.
+func (x *NetworkParameter) SetValue(v []byte) {
+	if x != nil {
+		x.v = v
+	}
+}
+
+// NetworkConfig represents NeoFS network configuration.
+type NetworkConfig struct {
+	ps []*NetworkParameter
+}
+
+// NumberOfParameters returns number of network parameters.
+func (x *NetworkConfig) NumberOfParameters() int {
+	if x != nil {
+		return len(x.ps)
+	}
+
+	return 0
+}
+
+// IterateParameters iterates over network parameters.
+// Breaks iteration on f's true return.
+//
+// Handler must not be nil.
+func (x *NetworkConfig) IterateParameters(f func(*NetworkParameter) bool) {
+	if x != nil {
+		for i := range x.ps {
+			if f(x.ps[i]) {
+				break
+			}
+		}
+	}
+}
+
+// SetParameters sets list of network parameters.
+func (x *NetworkConfig) SetParameters(v ...*NetworkParameter) {
+	if x != nil {
+		x.ps = v
+	}
+}
+
 // NetworkInfo groups information about
 // NeoFS network.
 type NetworkInfo struct {
 	curEpoch, magicNum uint64
+
+	msPerBlock int64
+
+	netCfg *NetworkConfig
 }
 
 // GetCurrentEpoch returns number of the current epoch.
@@ -552,6 +628,38 @@ func (i *NetworkInfo) GetMagicNumber() uint64 {
 func (i *NetworkInfo) SetMagicNumber(magic uint64) {
 	if i != nil {
 		i.magicNum = magic
+	}
+}
+
+// GetMsPerBlock returns MillisecondsPerBlock network parameter.
+func (i *NetworkInfo) GetMsPerBlock() int64 {
+	if i != nil {
+		return i.msPerBlock
+	}
+
+	return 0
+}
+
+// SetMsPerBlock sets MillisecondsPerBlock network parameter.
+func (i *NetworkInfo) SetMsPerBlock(v int64) {
+	if i != nil {
+		i.msPerBlock = v
+	}
+}
+
+// GetNetworkConfig returns NeoFS network configuration.
+func (i *NetworkInfo) GetNetworkConfig() *NetworkConfig {
+	if i != nil {
+		return i.netCfg
+	}
+
+	return nil
+}
+
+// SetNetworkConfig sets NeoFS network configuration.
+func (i *NetworkInfo) SetNetworkConfig(v *NetworkConfig) {
+	if i != nil {
+		i.netCfg = v
 	}
 }
 
