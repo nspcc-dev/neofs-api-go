@@ -86,6 +86,8 @@ type RequestMetaHeader struct {
 
 	bearerToken *acl.BearerToken
 
+	sidechainMagic uint64
+
 	origin *RequestMetaHeader
 }
 
@@ -423,6 +425,22 @@ func (r *RequestMetaHeader) GetBearerToken() *acl.BearerToken {
 func (r *RequestMetaHeader) SetBearerToken(v *acl.BearerToken) {
 	if r != nil {
 		r.bearerToken = v
+	}
+}
+
+// GetSidechainMagic returns network magic of NeoFS sidechain.
+func (r *RequestMetaHeader) GetSidechainMagic() uint64 {
+	if r != nil {
+		return r.sidechainMagic
+	}
+
+	return 0
+}
+
+// SetSidechainMagic sets network magic of NeoFS sidechain.
+func (r *RequestMetaHeader) SetSidechainMagic(v uint64) {
+	if r != nil {
+		r.sidechainMagic = v
 	}
 }
 

@@ -177,6 +177,13 @@ func (m *RequestMetaHeader) SetBearerToken(v *acl.BearerToken) {
 	}
 }
 
+// SetSidechainMagic sets network magic of NeoFS sidechain.
+func (m *RequestMetaHeader) SetSidechainMagic(v uint64) {
+	if m != nil {
+		m.SidechainMagic = v
+	}
+}
+
 // SetOrigin sets origin request meta header.
 func (m *RequestMetaHeader) SetOrigin(v *RequestMetaHeader) {
 	if m != nil {

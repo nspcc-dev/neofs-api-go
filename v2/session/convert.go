@@ -386,6 +386,7 @@ func (r *RequestMetaHeader) ToGRPCMessage() grpc.Message {
 		m.SetXHeaders(XHeadersToGRPC(r.xHeaders))
 		m.SetEpoch(r.epoch)
 		m.SetTtl(r.ttl)
+		m.SetSidechainMagic(r.sidechainMagic)
 		m.SetOrigin(r.origin.ToGRPCMessage().(*session.RequestMetaHeader))
 	}
 
@@ -463,6 +464,7 @@ func (r *RequestMetaHeader) FromGRPCMessage(m grpc.Message) error {
 
 	r.epoch = v.GetEpoch()
 	r.ttl = v.GetTtl()
+	r.sidechainMagic = v.GetSidechainMagic()
 
 	return nil
 }

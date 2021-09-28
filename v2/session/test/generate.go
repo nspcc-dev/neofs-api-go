@@ -128,6 +128,7 @@ func generateRequestMetaHeader(empty, withOrigin bool) *session.RequestMetaHeade
 	if !empty {
 		m.SetEpoch(13)
 		m.SetTTL(100)
+		m.SetSidechainMagic(1337)
 	}
 
 	m.SetXHeaders(GenerateXHeaders(empty))

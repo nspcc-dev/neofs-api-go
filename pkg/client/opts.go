@@ -27,6 +27,8 @@ type (
 		key      *ecdsa.PrivateKey
 		session  *session.Token
 		bearer   *token.BearerToken
+
+		sidechainMagic uint64
 	}
 
 	clientOptions struct {
@@ -88,11 +90,21 @@ func WithBearer(token *token.BearerToken) CallOption {
 	}
 }
 
+// WithSidechainMagic returns option to specify network magic of NeoFS sidechain.
+//
+// Zero by default.
+func WithSidechainMagic(magic uint64) CallOption {
+	return func(opts *callOptions) {
+		opts.sidechainMagic = magic
+	}
+}
+
 func v2MetaHeaderFromOpts(options *callOptions) *v2session.RequestMetaHeader {
 	meta := new(v2session.RequestMetaHeader)
 	meta.SetVersion(options.version.ToV2())
 	meta.SetTTL(options.ttl)
 	meta.SetEpoch(options.epoch)
+	meta.SetSidechainMagic(options.sidechainMagic)
 
 	xhdrs := make([]*v2session.XHeader, len(options.xHeaders))
 	for i := range options.xHeaders {
