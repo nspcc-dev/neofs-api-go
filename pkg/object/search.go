@@ -2,6 +2,7 @@ package object
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg"
@@ -22,17 +23,28 @@ const (
 )
 
 func (m SearchMatchType) ToV2() v2object.MatchType {
+	if m2, ok := searchMatchTypeToV2(m); ok {
+		return m2
+	}
+
+	return v2object.MatchUnknown
+}
+
+// converts SearchMatchType to v2 MatchType enum value. Returns false if value is not a named constant.
+func searchMatchTypeToV2(m SearchMatchType) (v2object.MatchType, bool) {
 	switch m {
-	case MatchStringEqual:
-		return v2object.MatchStringEqual
-	case MatchStringNotEqual:
-		return v2object.MatchStringNotEqual
-	case MatchNotPresent:
-		return v2object.MatchNotPresent
-	case MatchCommonPrefix:
-		return v2object.MatchCommonPrefix
 	default:
-		return v2object.MatchUnknown
+		return 0, false
+	case MatchUnknown:
+		return v2object.MatchUnknown, true
+	case MatchStringEqual:
+		return v2object.MatchStringEqual, true
+	case MatchStringNotEqual:
+		return v2object.MatchStringNotEqual, true
+	case MatchNotPresent:
+		return v2object.MatchNotPresent, true
+	case MatchCommonPrefix:
+		return v2object.MatchCommonPrefix, true
 	}
 }
 
@@ -53,32 +65,60 @@ func SearchMatchFromV2(t v2object.MatchType) (m SearchMatchType) {
 	return m
 }
 
-// String returns string representation of SearchMatchType.
+// String implements fmt.Stringer.
 //
 // String mapping:
 //  * MatchStringEqual: STRING_EQUAL;
 //  * MatchStringNotEqual: STRING_NOT_EQUAL;
 //  * MatchNotPresent: NOT_PRESENT;
 //  * MatchCommonPrefix: COMMON_PREFIX;
-//  * MatchUnknown, default: MATCH_TYPE_UNSPECIFIED.
+//  * MatchUnknown: MATCH_TYPE_UNSPECIFIED.
+//
+// Use MarshalText to get the canonical text format.
 func (m SearchMatchType) String() string {
-	return m.ToV2().String()
+	// TODO: simplify stringer after FromString will be removed (neofs-api-go#346)
+	txt, _ := m.MarshalText()
+	return string(txt)
+}
+
+var errUnsupportedMatch = errors.New("unsupported SearchMatchType")
+
+// MarshalText implements encoding.TextMarshaler.
+//
+// Text mapping:
+//  * ActionAllow: ALLOW;
+//  * ActionDeny: DENY;
+//  * ActionUnknown: ACTION_UNSPECIFIED.
+func (m SearchMatchType) MarshalText() ([]byte, error) {
+	a2, ok := searchMatchTypeToV2(m)
+	if !ok {
+		return nil, errUnsupportedMatch
+	}
+
+	return []byte(a2.String()), nil
+}
+
+func (m *SearchMatchType) UnmarshalText(text []byte) error {
+	var m2 v2object.MatchType
+
+	ok := m2.FromString(string(text))
+	if !ok {
+		return errUnsupportedMatch
+	}
+
+	*m = SearchMatchFromV2(m2)
+
+	return nil
 }
 
 // FromString parses SearchMatchType from a string representation.
 // It is a reverse action to String().
 //
 // Returns true if s was parsed successfully.
+//
+// Deprecated: use UnmarshalText instead.
 func (m *SearchMatchType) FromString(s string) bool {
-	var g v2object.MatchType
-
-	ok := g.FromString(s)
-
-	if ok {
-		*m = SearchMatchFromV2(g)
-	}
-
-	return ok
+	return m.UnmarshalText([]byte(s)) == nil
 }
 
 type SearchFilter struct {

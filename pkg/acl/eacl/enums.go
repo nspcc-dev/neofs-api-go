@@ -1,6 +1,8 @@
 package eacl
 
 import (
+	"errors"
+
 	v2acl "github.com/nspcc-dev/neofs-api-go/v2/acl"
 )
 
@@ -103,13 +105,24 @@ const (
 
 // ToV2 converts Action to v2 Action enum value.
 func (a Action) ToV2() v2acl.Action {
+	if a2, ok := actionToV2(a); ok {
+		return a2
+	}
+
+	return v2acl.ActionUnknown
+}
+
+// converts Action to v2 Action enum value. Returns false if value is not a named constant.
+func actionToV2(a Action) (v2acl.Action, bool) {
 	switch a {
-	case ActionAllow:
-		return v2acl.ActionAllow
-	case ActionDeny:
-		return v2acl.ActionDeny
 	default:
-		return v2acl.ActionUnknown
+		return 0, false
+	case ActionUnknown:
+		return v2acl.ActionUnknown, true
+	case ActionAllow:
+		return v2acl.ActionAllow, true
+	case ActionDeny:
+		return v2acl.ActionDeny, true
 	}
 }
 
@@ -127,51 +140,85 @@ func ActionFromV2(action v2acl.Action) (a Action) {
 	return a
 }
 
-// String returns string representation of Action.
+// String implements fmt.Stringer.
 //
-// String mapping:
+// Use MarshalText to get the canonical text format.
+func (a Action) String() string {
+	// TODO: simplify stringer after FromString will be removed (neofs-api-go#346)
+	txt, _ := a.MarshalText()
+	return string(txt)
+}
+
+var errUnsupportedAction = errors.New("unsupported Action")
+
+// MarshalText implements encoding.TextMarshaler.
+//
+// Text mapping:
 //  * ActionAllow: ALLOW;
 //  * ActionDeny: DENY;
-//  * ActionUnknown, default: ACTION_UNSPECIFIED.
-func (a Action) String() string {
-	return a.ToV2().String()
+//  * ActionUnknown: ACTION_UNSPECIFIED.
+func (a Action) MarshalText() ([]byte, error) {
+	a2, ok := actionToV2(a)
+	if !ok {
+		return nil, errUnsupportedAction
+	}
+
+	return []byte(a2.String()), nil
+}
+
+func (a *Action) UnmarshalText(text []byte) error {
+	var a2 v2acl.Action
+
+	ok := a2.FromString(string(text))
+	if !ok {
+		return errUnsupportedAction
+	}
+
+	*a = ActionFromV2(a2)
+
+	return nil
 }
 
 // FromString parses Action from a string representation.
 // It is a reverse action to String().
 //
 // Returns true if s was parsed successfully.
+//
+// Deprecated: use UnmarshalText instead.
 func (a *Action) FromString(s string) bool {
-	var g v2acl.Action
-
-	ok := g.FromString(s)
-
-	if ok {
-		*a = ActionFromV2(g)
-	}
-
-	return ok
+	return a.UnmarshalText([]byte(s)) == nil
 }
 
 // ToV2 converts Operation to v2 Operation enum value.
 func (o Operation) ToV2() v2acl.Operation {
+	if o2, ok := operationToV2(o); ok {
+		return o2
+	}
+
+	return v2acl.OperationUnknown
+}
+
+// converts Operation to v2 Operation enum value. Returns false if value is not a named constant.
+func operationToV2(o Operation) (v2acl.Operation, bool) {
 	switch o {
-	case OperationGet:
-		return v2acl.OperationGet
-	case OperationHead:
-		return v2acl.OperationHead
-	case OperationPut:
-		return v2acl.OperationPut
-	case OperationDelete:
-		return v2acl.OperationDelete
-	case OperationSearch:
-		return v2acl.OperationSearch
-	case OperationRange:
-		return v2acl.OperationRange
-	case OperationRangeHash:
-		return v2acl.OperationRangeHash
 	default:
-		return v2acl.OperationUnknown
+		return 0, false
+	case OperationUnknown:
+		return v2acl.OperationUnknown, true
+	case OperationGet:
+		return v2acl.OperationGet, true
+	case OperationHead:
+		return v2acl.OperationHead, true
+	case OperationPut:
+		return v2acl.OperationPut, true
+	case OperationDelete:
+		return v2acl.OperationDelete, true
+	case OperationSearch:
+		return v2acl.OperationSearch, true
+	case OperationRange:
+		return v2acl.OperationRange, true
+	case OperationRangeHash:
+		return v2acl.OperationRangeHash, true
 	}
 }
 
@@ -199,9 +246,20 @@ func OperationFromV2(operation v2acl.Operation) (o Operation) {
 	return o
 }
 
-// String returns string representation of Operation.
+// String implements fmt.Stringer.
 //
-// String mapping:
+// Use MarshalText to get the canonical text format.
+func (o Operation) String() string {
+	// TODO: simplify stringer after FromString will be removed (neofs-api-go#346)
+	txt, _ := o.MarshalText()
+	return string(txt)
+}
+
+var errUnsupportedOperation = errors.New("unsupported Operation")
+
+// MarshalText implements encoding.TextMarshaler.
+//
+// Text mapping:
 //  * OperationGet: GET;
 //  * OperationHead: HEAD;
 //  * OperationPut: PUT;
@@ -209,38 +267,61 @@ func OperationFromV2(operation v2acl.Operation) (o Operation) {
 //  * OperationSearch: SEARCH;
 //  * OperationRange: GETRANGE;
 //  * OperationRangeHash: GETRANGEHASH;
-//  * OperationUnknown, default: OPERATION_UNSPECIFIED.
-func (o Operation) String() string {
-	return o.ToV2().String()
+//  * OperationUnknown: OPERATION_UNSPECIFIED.
+func (o Operation) MarshalText() ([]byte, error) {
+	o2, ok := operationToV2(o)
+	if !ok {
+		return nil, errUnsupportedOperation
+	}
+
+	return []byte(o2.String()), nil
+}
+
+func (o *Operation) UnmarshalText(text []byte) error {
+	var o2 v2acl.Operation
+
+	ok := o2.FromString(string(text))
+	if !ok {
+		return errUnsupportedAction
+	}
+
+	*o = OperationFromV2(o2)
+
+	return nil
 }
 
 // FromString parses Operation from a string representation.
 // It is a reverse action to String().
 //
 // Returns true if s was parsed successfully.
+//
+// Deprecated: use UnmarshalText instead.
 func (o *Operation) FromString(s string) bool {
-	var g v2acl.Operation
-
-	ok := g.FromString(s)
-
-	if ok {
-		*o = OperationFromV2(g)
-	}
-
-	return ok
+	return o.UnmarshalText([]byte(s)) == nil
 }
 
 // ToV2 converts Role to v2 Role enum value.
 func (r Role) ToV2() v2acl.Role {
+	if r2, ok := roleToV2(r); ok {
+		return r2
+	}
+
+	return v2acl.RoleUnknown
+}
+
+// converts Role to v2 Role enum value. Returns false if value is not a named constant.
+func roleToV2(r Role) (v2acl.Role, bool) {
 	switch r {
-	case RoleUser:
-		return v2acl.RoleUser
-	case RoleSystem:
-		return v2acl.RoleSystem
-	case RoleOthers:
-		return v2acl.RoleOthers
 	default:
-		return v2acl.RoleUnknown
+		return 0, false
+	case RoleUnknown:
+		return v2acl.RoleUnknown, true
+	case RoleUser:
+		return v2acl.RoleUser, true
+	case RoleSystem:
+		return v2acl.RoleSystem, true
+	case RoleOthers:
+		return v2acl.RoleOthers, true
 	}
 }
 
@@ -260,42 +341,76 @@ func RoleFromV2(role v2acl.Role) (r Role) {
 	return r
 }
 
-// String returns string representation of Role.
+// String implements fmt.Stringer.
 //
-// String mapping:
+// Use MarshalText to get the canonical text format.
+func (r Role) String() string {
+	// TODO: simplify stringer after FromString will be removed (neofs-api-go#346)
+	txt, _ := r.MarshalText()
+	return string(txt)
+}
+
+var errUnsupportedRole = errors.New("unsupported Role")
+
+// MarshalText implements encoding.TextMarshaler.
+//
+// Text mapping:
 //  * RoleUser: USER;
 //  * RoleSystem: SYSTEM;
 //  * RoleOthers: OTHERS;
-//  * RoleUnknown, default: ROLE_UNKNOWN.
-func (r Role) String() string {
-	return r.ToV2().String()
+//  * RoleUnknown: ROLE_UNKNOWN.
+func (r Role) MarshalText() ([]byte, error) {
+	r2, ok := roleToV2(r)
+	if !ok {
+		return nil, errUnsupportedRole
+	}
+
+	return []byte(r2.String()), nil
+}
+
+func (r *Role) UnmarshalText(text []byte) error {
+	var r2 v2acl.Role
+
+	ok := r2.FromString(string(text))
+	if !ok {
+		return errUnsupportedRole
+	}
+
+	*r = RoleFromV2(r2)
+
+	return nil
 }
 
 // FromString parses Role from a string representation.
 // It is a reverse action to String().
 //
 // Returns true if s was parsed successfully.
+//
+// Deprecated: use UnmarshalText instead.
 func (r *Role) FromString(s string) bool {
-	var g v2acl.Role
-
-	ok := g.FromString(s)
-
-	if ok {
-		*r = RoleFromV2(g)
-	}
-
-	return ok
+	return r.UnmarshalText([]byte(s)) == nil
 }
 
 // ToV2 converts Match to v2 MatchType enum value.
 func (m Match) ToV2() v2acl.MatchType {
+	if m2, ok := matchToV2(m); ok {
+		return m2
+	}
+
+	return v2acl.MatchTypeUnknown
+}
+
+// converts Match to v2 MatchType enum value. Returns false if value is not a named constant.
+func matchToV2(m Match) (v2acl.MatchType, bool) {
 	switch m {
-	case MatchStringEqual:
-		return v2acl.MatchTypeStringEqual
-	case MatchStringNotEqual:
-		return v2acl.MatchTypeStringNotEqual
 	default:
-		return v2acl.MatchTypeUnknown
+		return 0, false
+	case MatchUnknown:
+		return v2acl.MatchTypeUnknown, true
+	case MatchStringEqual:
+		return v2acl.MatchTypeStringEqual, true
+	case MatchStringNotEqual:
+		return v2acl.MatchTypeStringNotEqual, true
 	}
 }
 
@@ -313,43 +428,77 @@ func MatchFromV2(match v2acl.MatchType) (m Match) {
 	return m
 }
 
-// String returns string representation of Match.
+// String implements fmt.Stringer.
 //
-// String mapping:
+// Use MarshalText to get the canonical text format.
+func (m Match) String() string {
+	// TODO: simplify stringer after FromString will be removed (neofs-api-go#346)
+	txt, _ := m.MarshalText()
+	return string(txt)
+}
+
+var errUnsupportedMatch = errors.New("unsupported Match")
+
+// MarshalText implements encoding.TextMarshaler.
+//
+// Text mapping:
 //  * MatchStringEqual: STRING_EQUAL;
 //  * MatchStringNotEqual: STRING_NOT_EQUAL;
-//  * MatchUnknown, default: MATCH_TYPE_UNSPECIFIED.
-func (m Match) String() string {
-	return m.ToV2().String()
+//  * MatchUnknown: MATCH_TYPE_UNSPECIFIED.
+func (m Match) MarshalText() ([]byte, error) {
+	m2, ok := matchToV2(m)
+	if !ok {
+		return nil, errUnsupportedMatch
+	}
+
+	return []byte(m2.String()), nil
+}
+
+func (m *Match) UnmarshalText(text []byte) error {
+	var m2 v2acl.MatchType
+
+	ok := m2.FromString(string(text))
+	if !ok {
+		return errUnsupportedMatch
+	}
+
+	*m = MatchFromV2(m2)
+
+	return nil
 }
 
 // FromString parses Match from a string representation.
 // It is a reverse action to String().
 //
 // Returns true if s was parsed successfully.
+//
+// Deprecated: use UnmarshalText instead.
 func (m *Match) FromString(s string) bool {
-	var g v2acl.MatchType
-
-	ok := g.FromString(s)
-
-	if ok {
-		*m = MatchFromV2(g)
-	}
-
-	return ok
+	return m.UnmarshalText([]byte(s)) == nil
 }
 
 // ToV2 converts FilterHeaderType to v2 HeaderType enum value.
 func (h FilterHeaderType) ToV2() v2acl.HeaderType {
+	if h2, ok := filterHeaderTypeToV2(h); ok {
+		return h2
+	}
+
+	return v2acl.HeaderTypeUnknown
+}
+
+// converts FilterHeaderType to v2 HeaderType enum value. Returns false if value is not a named constant.
+func filterHeaderTypeToV2(h FilterHeaderType) (v2acl.HeaderType, bool) {
 	switch h {
-	case HeaderFromRequest:
-		return v2acl.HeaderTypeRequest
-	case HeaderFromObject:
-		return v2acl.HeaderTypeObject
-	case HeaderFromService:
-		return v2acl.HeaderTypeService
 	default:
-		return v2acl.HeaderTypeUnknown
+		return 0, false
+	case HeaderTypeUnknown:
+		return v2acl.HeaderTypeUnknown, true
+	case HeaderFromRequest:
+		return v2acl.HeaderTypeRequest, true
+	case HeaderFromObject:
+		return v2acl.HeaderTypeObject, true
+	case HeaderFromService:
+		return v2acl.HeaderTypeService, true
 	}
 }
 
@@ -369,28 +518,51 @@ func FilterHeaderTypeFromV2(header v2acl.HeaderType) (h FilterHeaderType) {
 	return h
 }
 
-// String returns string representation of FilterHeaderType.
+// String implements fmt.Stringer.
 //
-// String mapping:
+// Use MarshalText to get the canonical text format.
+func (h FilterHeaderType) String() string {
+	// TODO: simplify stringer after FromString will be removed (neofs-api-go#346)
+	txt, _ := h.MarshalText()
+	return string(txt)
+}
+
+var errUnsupportedHeaderType = errors.New("unsupported FilterHeaderType")
+
+// MarshalText implements encoding.TextMarshaler.
+//
+// Text mapping:
 //  * HeaderFromRequest: REQUEST;
 //  * HeaderFromObject: OBJECT;
-//  * HeaderTypeUnknown, default: HEADER_UNSPECIFIED.
-func (h FilterHeaderType) String() string {
-	return h.ToV2().String()
+//  * HeaderTypeUnknown: HEADER_UNSPECIFIED.
+func (h FilterHeaderType) MarshalText() ([]byte, error) {
+	m2, ok := filterHeaderTypeToV2(h)
+	if !ok {
+		return nil, errUnsupportedHeaderType
+	}
+
+	return []byte(m2.String()), nil
+}
+
+func (h *FilterHeaderType) UnmarshalText(text []byte) error {
+	var h2 v2acl.HeaderType
+
+	ok := h2.FromString(string(text))
+	if !ok {
+		return errUnsupportedHeaderType
+	}
+
+	*h = FilterHeaderTypeFromV2(h2)
+
+	return nil
 }
 
 // FromString parses FilterHeaderType from a string representation.
 // It is a reverse action to String().
 //
 // Returns true if s was parsed successfully.
+//
+// Deprecated: use UnmarshalText instead.
 func (h *FilterHeaderType) FromString(s string) bool {
-	var g v2acl.HeaderType
-
-	ok := g.FromString(s)
-
-	if ok {
-		*h = FilterHeaderTypeFromV2(g)
-	}
-
-	return ok
+	return h.UnmarshalText([]byte(s)) == nil
 }

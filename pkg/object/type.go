@@ -1,6 +1,8 @@
 package object
 
 import (
+	"errors"
+
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 )
 
@@ -13,13 +15,24 @@ const (
 )
 
 func (t Type) ToV2() object.Type {
+	if t2, ok := typeToV2(t); ok {
+		return t2
+	}
+
+	return object.TypeRegular
+}
+
+// converts Action to v2 Action enum value. Returns false if value is not a named constant.
+func typeToV2(t Type) (object.Type, bool) {
 	switch t {
-	case TypeTombstone:
-		return object.TypeTombstone
-	case TypeStorageGroup:
-		return object.TypeStorageGroup
 	default:
-		return object.TypeRegular
+		return 0, false
+	case TypeRegular:
+		return object.TypeRegular, true
+	case TypeTombstone:
+		return object.TypeTombstone, true
+	case TypeStorageGroup:
+		return object.TypeStorageGroup, true
 	}
 }
 
@@ -34,36 +47,51 @@ func TypeFromV2(t object.Type) Type {
 	}
 }
 
-// String returns string representation of Type.
+// String implements fmt.Stringer.
 //
-// String mapping:
+// Use MarshalText to get the canonical text format.
+func (t Type) String() string {
+	// TODO: simplify stringer after FromString will be removed (neofs-api-go#346)
+	txt, _ := t.MarshalText()
+	return string(txt)
+}
+
+var errUnsupportedType = errors.New("unsupported Type")
+
+// MarshalText implements encoding.TextMarshaler.
+//
+// Text mapping:
 //  * TypeTombstone: TOMBSTONE;
 //  * TypeStorageGroup: STORAGE_GROUP;
-//  * TypeRegular, default: REGULAR.
-func (t Type) String() string {
-	return t.ToV2().String()
+//  * TypeRegular: REGULAR.
+func (t Type) MarshalText() ([]byte, error) {
+	t2, ok := typeToV2(t)
+	if !ok {
+		return nil, errUnsupportedType
+	}
+
+	return []byte(t2.String()), nil
+}
+
+func (t *Type) UnmarshalText(text []byte) error {
+	var a2 object.Type
+
+	ok := a2.FromString(string(text))
+	if !ok {
+		return errUnsupportedType
+	}
+
+	*t = TypeFromV2(a2)
+
+	return nil
 }
 
 // FromString parses Type from a string representation.
 // It is a reverse action to String().
 //
 // Returns true if s was parsed successfully.
-func (t *Type) FromString(s string) bool {
-	var g object.Type
-
-	ok := g.FromString(s)
-
-	if ok {
-		*t = TypeFromV2(g)
-	}
-
-	return ok
-}
-
-// TypeFromString parses Type from its string representation.
 //
-// Deprecated: use FromString method.
-func TypeFromString(s string) (t Type) {
-	t.FromString(s)
-	return
+// Deprecated: use UnmarshalText instead.
+func (t *Type) FromString(s string) bool {
+	return t.UnmarshalText([]byte(s)) == nil
 }

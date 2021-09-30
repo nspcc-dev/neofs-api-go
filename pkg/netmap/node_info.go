@@ -1,6 +1,7 @@
 package netmap
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/nspcc-dev/hrw"
@@ -33,7 +34,8 @@ type NodeAttribute netmap.Attribute
 type NodeInfo netmap.NodeInfo
 
 const (
-	_ NodeState = iota
+	// NodeStateUnknown is a NodeState value used to mark node state as undefined.
+	NodeStateUnknown NodeState = iota
 
 	// NodeStateOffline is network unavailable state.
 	NodeStateOffline
@@ -166,40 +168,74 @@ func NodeStateFromV2(s netmap.NodeState) NodeState {
 
 // ToV2 converts NodeState to v2 NodeState.
 func (s NodeState) ToV2() netmap.NodeState {
+	if s2, ok := nodeStateToV2(s); ok {
+		return s2
+	}
+
+	return netmap.UnspecifiedState
+}
+
+// converts NodeState to v2 NodeState enum value. Returns false if value is not a named constant.
+func nodeStateToV2(s NodeState) (netmap.NodeState, bool) {
 	switch s {
 	default:
-		return netmap.UnspecifiedState
+		return 0, false
+	case NodeStateUnknown:
+		return netmap.UnspecifiedState, true
 	case NodeStateOffline:
-		return netmap.Offline
+		return netmap.Offline, true
 	case NodeStateOnline:
-		return netmap.Online
+		return netmap.Online, true
 	}
 }
 
-// String returns string representation of NodeState.
+// String implements fmt.Stringer.
 //
-// String mapping:
+// Use MarshalText to get the canonical text format.
+func (s NodeState) String() string {
+	// TODO: simplify stringer after FromString will be removed (neofs-api-go#346)
+	txt, _ := s.MarshalText()
+	return string(txt)
+}
+
+var errUnsupportedNodeState = errors.New("unsupported NodeState")
+
+// MarshalText implements encoding.TextMarshaler.
+//
+// Text mapping:
 //  * NodeStateOnline: ONLINE;
 //  * NodeStateOffline: OFFLINE;
-//  * default: UNSPECIFIED.
-func (s NodeState) String() string {
-	return s.ToV2().String()
+//  * NodeStateUnknown: UNSPECIFIED.
+func (s NodeState) MarshalText() ([]byte, error) {
+	s2, ok := nodeStateToV2(s)
+	if !ok {
+		return nil, errUnsupportedNodeState
+	}
+
+	return []byte(s2.String()), nil
+}
+
+func (s *NodeState) UnmarshalText(text []byte) error {
+	var s2 netmap.NodeState
+
+	ok := s2.FromString(string(text))
+	if !ok {
+		return errUnsupportedNodeState
+	}
+
+	*s = NodeStateFromV2(s2)
+
+	return nil
 }
 
 // FromString parses NodeState from a string representation.
 // It is a reverse action to String().
 //
 // Returns true if s was parsed successfully.
+//
+// Deprecated: use UnmarshalText instead.
 func (s *NodeState) FromString(str string) bool {
-	var g netmap.NodeState
-
-	ok := g.FromString(str)
-
-	if ok {
-		*s = NodeStateFromV2(g)
-	}
-
-	return ok
+	return s.UnmarshalText([]byte(str)) == nil
 }
 
 // NewNodeAttribute creates and returns new NodeAttribute instance.

@@ -1,6 +1,8 @@
 package netmap
 
 import (
+	"errors"
+
 	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
 )
 
@@ -32,38 +34,72 @@ func ClauseFromV2(c netmap.Clause) Clause {
 
 // ToV2 converts Clause to v2 Clause.
 func (c Clause) ToV2() netmap.Clause {
+	if o2, ok := clauseToV2(c); ok {
+		return o2
+	}
+
+	return netmap.UnspecifiedClause
+}
+
+// converts Clause to v2 Clause. enum value. Returns false if value is not a named constant.
+func clauseToV2(c Clause) (netmap.Clause, bool) {
 	switch c {
 	default:
-		return netmap.UnspecifiedClause
+		return 0, false
+	case ClauseUnspecified:
+		return netmap.UnspecifiedClause, true
 	case ClauseDistinct:
-		return netmap.Distinct
+		return netmap.Distinct, true
 	case ClauseSame:
-		return netmap.Same
+		return netmap.Same, true
 	}
 }
 
-// String returns string representation of Clause.
+// String implements fmt.Stringer.
 //
-// String mapping:
+// Use MarshalText to get the canonical text format.
+func (c Clause) String() string {
+	// TODO: simplify stringer after FromString will be removed (neofs-api-go#346)
+	txt, _ := c.MarshalText()
+	return string(txt)
+}
+
+var errUnsupportedClause = errors.New("unsupported Clause")
+
+// MarshalText implements encoding.TextMarshaler.
+//
+// Text mapping:
 //  * ClauseDistinct: DISTINCT;
 //  * ClauseSame: SAME;
-//  * ClauseUnspecified, default: CLAUSE_UNSPECIFIED.
-func (c Clause) String() string {
-	return c.ToV2().String()
+//  * ClauseUnspecified: CLAUSE_UNSPECIFIED.
+func (c Clause) MarshalText() ([]byte, error) {
+	o2, ok := clauseToV2(c)
+	if !ok {
+		return nil, errUnsupportedClause
+	}
+
+	return []byte(o2.String()), nil
+}
+
+func (c *Clause) UnmarshalText(text []byte) error {
+	var c2 netmap.Clause
+
+	ok := c2.FromString(string(text))
+	if !ok {
+		return errUnsupportedClause
+	}
+
+	*c = ClauseFromV2(c2)
+
+	return nil
 }
 
 // FromString parses Clause from a string representation.
 // It is a reverse action to String().
 //
 // Returns true if s was parsed successfully.
+//
+// Deprecated: use UnmarshalText instead.
 func (c *Clause) FromString(s string) bool {
-	var g netmap.Clause
-
-	ok := g.FromString(s)
-
-	if ok {
-		*c = ClauseFromV2(g)
-	}
-
-	return ok
+	return c.UnmarshalText([]byte(s)) == nil
 }

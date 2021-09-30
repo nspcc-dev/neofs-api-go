@@ -1,6 +1,7 @@
 package object_test
 
 import (
+	"encoding"
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/pkg/object"
@@ -49,8 +50,8 @@ func TestType_String(t *testing.T) {
 }
 
 type enumIface interface {
-	FromString(string) bool
-	String() string
+	encoding.TextMarshaler
+	encoding.TextUnmarshaler
 }
 
 type enumStringItem struct {
@@ -60,11 +61,13 @@ type enumStringItem struct {
 
 func testEnumStrings(t *testing.T, e enumIface, items []enumStringItem) {
 	for _, item := range items {
-		require.Equal(t, item.str, item.val.String())
+		txt, err := item.val.MarshalText()
+		require.NoError(t, err)
 
-		s := item.val.String()
+		require.Equal(t, item.str, string(txt))
 
-		require.True(t, e.FromString(s), s)
+		err = e.UnmarshalText(txt)
+		require.NoError(t, err)
 
 		require.EqualValues(t, item.val, e, item.val)
 	}
@@ -74,6 +77,6 @@ func testEnumStrings(t *testing.T, e enumIface, items []enumStringItem) {
 		"some string",
 		"undefined",
 	} {
-		require.False(t, e.FromString(str))
+		require.Error(t, e.UnmarshalText([]byte(str)))
 	}
 }

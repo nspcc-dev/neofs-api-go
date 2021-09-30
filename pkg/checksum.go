@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
@@ -153,17 +154,30 @@ func (c *Checksum) Parse(s string) error {
 	return nil
 }
 
-// String returns string representation of ChecksumType.
+// String implements fmt.Stringer.
 //
-// String mapping:
+// Use MarshalText to get the canonical text format.
+func (m ChecksumType) String() string {
+	// TODO: simplify stringer after FromString will be removed (neofs-api-go#346)
+	txt, _ := m.MarshalText()
+	return string(txt)
+}
+
+var errUnsupportedChecksumType = errors.New("unsupported ChecksumType")
+
+// MarshalText implements encoding.TextMarshaler.
+//
+// Text mapping:
 //  * ChecksumTZ: TZ;
 //  * ChecksumSHA256: SHA256;
-//  * ChecksumUnknown, default: CHECKSUM_TYPE_UNSPECIFIED.
-func (m ChecksumType) String() string {
+//  * ChecksumUnknown: CHECKSUM_TYPE_UNSPECIFIED.
+func (m ChecksumType) MarshalText() ([]byte, error) {
 	var m2 refs.ChecksumType
 
 	switch m {
 	default:
+		return nil, errUnsupportedChecksumType
+	case ChecksumUnknown:
 		m2 = refs.UnknownChecksum
 	case ChecksumTZ:
 		m2 = refs.TillichZemor
@@ -171,28 +185,35 @@ func (m ChecksumType) String() string {
 		m2 = refs.SHA256
 	}
 
-	return m2.String()
+	return []byte(m2.String()), nil
+}
+
+func (m *ChecksumType) UnmarshalText(text []byte) error {
+	var g refs.ChecksumType
+
+	ok := g.FromString(string(text))
+	if !ok {
+		return errUnsupportedChecksumType
+	}
+
+	switch g {
+	case refs.UnknownChecksum:
+		*m = ChecksumUnknown
+	case refs.TillichZemor:
+		*m = ChecksumTZ
+	case refs.SHA256:
+		*m = ChecksumSHA256
+	}
+
+	return nil
 }
 
 // FromString parses ChecksumType from a string representation.
 // It is a reverse action to String().
 //
 // Returns true if s was parsed successfully.
+//
+// Deprecated: use UnmarshalText instead.
 func (m *ChecksumType) FromString(s string) bool {
-	var g refs.ChecksumType
-
-	ok := g.FromString(s)
-
-	if ok {
-		switch g {
-		default:
-			*m = ChecksumUnknown
-		case refs.TillichZemor:
-			*m = ChecksumTZ
-		case refs.SHA256:
-			*m = ChecksumSHA256
-		}
-	}
-
-	return ok
+	return m.UnmarshalText([]byte(s)) == nil
 }
