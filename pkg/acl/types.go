@@ -9,4 +9,7 @@ const (
 
 	// ReadOnlyBasicRule is a basic ACL value for public-read container.
 	ReadOnlyBasicRule = 0x1FBF8CFF
+
+	// PublicAppendRule is a basic ACL value for public-append container.
+	PublicAppendRule = 0x1FBF9FFF
 )
