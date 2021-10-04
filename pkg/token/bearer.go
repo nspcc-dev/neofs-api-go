@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"errors"
 
+	"github.com/nspcc-dev/neofs-api-go/pkg"
 	"github.com/nspcc-dev/neofs-api-go/pkg/acl/eacl"
 	"github.com/nspcc-dev/neofs-api-go/pkg/owner"
 	"github.com/nspcc-dev/neofs-api-go/util/signature"
@@ -34,6 +35,7 @@ func (b *BearerToken) ToV2() *acl.BearerToken {
 	return &b.token
 }
 
+// SetLifetime sets lifetime related numeric values to the token.
 func (b *BearerToken) SetLifetime(exp, nbf, iat uint64) {
 	body := b.token.GetBody()
 	if body == nil {
@@ -49,6 +51,22 @@ func (b *BearerToken) SetLifetime(exp, nbf, iat uint64) {
 	b.token.SetBody(body)
 }
 
+// Exp returns epoch number of the token expiration.
+func (b *BearerToken) Exp() uint64 {
+	return b.token.GetBody().GetLifetime().GetExp()
+}
+
+// Nbf returns starting epoch number of the token.
+func (b *BearerToken) Nbf() uint64 {
+	return b.token.GetBody().GetLifetime().GetNbf()
+}
+
+// Iat returns epoch number when token was issued.
+func (b *BearerToken) Iat() uint64 {
+	return b.token.GetBody().GetLifetime().GetIat()
+}
+
+// SetEACLTable attaches extended ACL table to the bearer token.
 func (b *BearerToken) SetEACLTable(table *eacl.Table) {
 	body := b.token.GetBody()
 	if body == nil {
@@ -59,6 +77,13 @@ func (b *BearerToken) SetEACLTable(table *eacl.Table) {
 	b.token.SetBody(body)
 }
 
+// EACLTable returns extended ACL table attached to the token.
+func (b *BearerToken) EACLTable() *eacl.Table {
+	return eacl.NewTableFromV2(b.token.GetBody().GetEACL())
+}
+
+// SetOwner sets the token owner. The same owner should be used when sending
+// request with attached bearer token.
 func (b *BearerToken) SetOwner(id *owner.ID) {
 	body := b.token.GetBody()
 	if body == nil {
@@ -69,6 +94,13 @@ func (b *BearerToken) SetOwner(id *owner.ID) {
 	b.token.SetBody(body)
 }
 
+// Owner returns owner of the bearer token.
+// Do not mistake with bearer token issuer.
+func (b *BearerToken) Owner() *owner.ID {
+	return owner.NewIDFromV2(b.token.GetBody().GetOwnerID())
+}
+
+// SignToken signs the token with the token issuer key.
 func (b *BearerToken) SignToken(key *ecdsa.PrivateKey) error {
 	err := sanityCheck(b)
 	if err != nil {
@@ -82,6 +114,23 @@ func (b *BearerToken) SignToken(key *ecdsa.PrivateKey) error {
 		bearerSignature.SetKey(key)
 		bearerSignature.SetSign(sig)
 		b.token.SetSignature(bearerSignature)
+	})
+}
+
+// Signature of the session token issuer.
+func (b *BearerToken) Signature() *pkg.Signature {
+	return pkg.NewSignatureFromV2(b.token.GetSignature())
+}
+
+// VerifyBearerTokenSignature checks if bearer token was correctly
+// signed by the key specified in the signature field.
+// If signature is correct, then returns nil.
+func VerifyBearerTokenSignature(b *BearerToken) error {
+	signWrapper := v2signature.StableMarshalerWrapper{SM: b.token.GetBody()}
+
+	return signature.VerifyDataWithSource(signWrapper, func() (key, sig []byte) {
+		tokenSignature := b.Signature()
+		return tokenSignature.Key(), tokenSignature.Sign()
 	})
 }
 

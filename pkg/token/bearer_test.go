@@ -29,6 +29,19 @@ func TestBearerToken_Issuer(t *testing.T) {
 		bearerToken.SetEACLTable(eacl.NewTable())
 		require.NoError(t, bearerToken.SignToken(key))
 		require.True(t, ownerID.Equal(bearerToken.Issuer()))
+		require.NoError(t, token.VerifyBearerTokenSignature(bearerToken))
+
+		t.Run("invalid signature", func(t *testing.T) {
+			badSignature := bearerToken.Signature()
+			badValue := badSignature.Sign()
+			badValue[0] += 1
+			badSignature.SetSign(badValue)
+			// use ToV2 to update underlying bearer token value
+			// because high-level SDK API restricts set access to signature
+			bearerToken.ToV2().SetSignature(badSignature.ToV2())
+
+			require.Error(t, token.VerifyBearerTokenSignature(bearerToken))
+		})
 	})
 }
 
@@ -67,6 +80,14 @@ func TestBearerToken_ToV2(t *testing.T) {
 func TestNewBearerToken(t *testing.T) {
 	t.Run("default values", func(t *testing.T) {
 		tkn := token.NewBearerToken()
+
+		// check initial values
+		require.Zero(t, tkn.Exp())
+		require.Zero(t, tkn.Nbf())
+		require.Zero(t, tkn.Iat())
+		require.Equal(t, new(eacl.Table), tkn.EACLTable())
+		require.Nil(t, tkn.Owner())
+		require.Nil(t, tkn.Signature())
 
 		// convert to v2 message
 		tknV2 := tkn.ToV2()
