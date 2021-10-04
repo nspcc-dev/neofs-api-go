@@ -19,6 +19,11 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SessionServiceClient interface {
 	// Opens a new session between two peers.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// session has been successfully opened;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 }
 
@@ -44,6 +49,11 @@ func (c *sessionServiceClient) Create(ctx context.Context, in *CreateRequest, op
 // for forward compatibility
 type SessionServiceServer interface {
 	// Opens a new session between two peers.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// session has been successfully opened;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
 }
 
