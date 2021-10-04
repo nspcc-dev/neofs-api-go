@@ -24,6 +24,11 @@ type ObjectServiceClient interface {
 	// messages, except the first one, carry payload chunks. Requested object can
 	// be restored by concatenation of object message payload and all chunks
 	// keeping receiving order.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// object has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (ObjectService_GetClient, error)
 	// Put the object into container. Request uses gRPC stream. First message
 	// SHOULD be of PutHeader type. `ContainerID` and `OwnerID` of an object
@@ -31,27 +36,57 @@ type ObjectServiceClient interface {
 	// session package). Chunk messages are considered by server as a part of an
 	// object payload. All messages, except first one, SHOULD be payload chunks.
 	// Chunk messages SHOULD be sent in direct order of fragmentation.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// object has been successfully saved in the container;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Put(ctx context.Context, opts ...grpc.CallOption) (ObjectService_PutClient, error)
 	// Delete the object from a container. There is no immediate removal
 	// guarantee. Object will be marked for removal and deleted eventually.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// object has been successfully marked to be removed from the container;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	// Returns the object Headers without data payload. By default full header is
 	// returned. If `main_only` request field is set, the short header with only
 	// the very minimal information would be returned instead.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// object header has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Head(ctx context.Context, in *HeadRequest, opts ...grpc.CallOption) (*HeadResponse, error)
 	// Search objects in container. Search query allows to match by Object
 	// Header's filed values. Please see the corresponding NeoFS Technical
 	// Specification section for more details.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// objects have been successfully selected;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (ObjectService_SearchClient, error)
 	// Get byte range of data payload. Range is set as an (offset, length) tuple.
 	// Like in `Get` method, the response uses gRPC stream. Requested range can be
 	// restored by concatenation of all received payload chunks keeping receiving
 	// order.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// data range of the object payload has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	GetRange(ctx context.Context, in *GetRangeRequest, opts ...grpc.CallOption) (ObjectService_GetRangeClient, error)
 	// Returns homomorphic or regular hash of object's payload range after
 	// applying XOR operation with the provided `salt`. Ranges are set of (offset,
 	// length) tuples. Hashes order in response corresponds to ranges order in
 	// request. Note that hash is calculated for XORed data.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// data range of the object payload has been successfully hashed;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	GetRangeHash(ctx context.Context, in *GetRangeHashRequest, opts ...grpc.CallOption) (*GetRangeHashResponse, error)
 }
 
@@ -230,6 +265,11 @@ type ObjectServiceServer interface {
 	// messages, except the first one, carry payload chunks. Requested object can
 	// be restored by concatenation of object message payload and all chunks
 	// keeping receiving order.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// object has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Get(*GetRequest, ObjectService_GetServer) error
 	// Put the object into container. Request uses gRPC stream. First message
 	// SHOULD be of PutHeader type. `ContainerID` and `OwnerID` of an object
@@ -237,27 +277,57 @@ type ObjectServiceServer interface {
 	// session package). Chunk messages are considered by server as a part of an
 	// object payload. All messages, except first one, SHOULD be payload chunks.
 	// Chunk messages SHOULD be sent in direct order of fragmentation.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// object has been successfully saved in the container;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Put(ObjectService_PutServer) error
 	// Delete the object from a container. There is no immediate removal
 	// guarantee. Object will be marked for removal and deleted eventually.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// object has been successfully marked to be removed from the container;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	// Returns the object Headers without data payload. By default full header is
 	// returned. If `main_only` request field is set, the short header with only
 	// the very minimal information would be returned instead.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// object header has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Head(context.Context, *HeadRequest) (*HeadResponse, error)
 	// Search objects in container. Search query allows to match by Object
 	// Header's filed values. Please see the corresponding NeoFS Technical
 	// Specification section for more details.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// objects have been successfully selected;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Search(*SearchRequest, ObjectService_SearchServer) error
 	// Get byte range of data payload. Range is set as an (offset, length) tuple.
 	// Like in `Get` method, the response uses gRPC stream. Requested range can be
 	// restored by concatenation of all received payload chunks keeping receiving
 	// order.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// data range of the object payload has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	GetRange(*GetRangeRequest, ObjectService_GetRangeServer) error
 	// Returns homomorphic or regular hash of object's payload range after
 	// applying XOR operation with the provided `salt`. Ranges are set of (offset,
 	// length) tuples. Hashes order in response corresponds to ranges order in
 	// request. Note that hash is calculated for XORed data.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// data range of the object payload has been successfully hashed;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	GetRangeHash(context.Context, *GetRangeHashRequest) (*GetRangeHashResponse, error)
 }
 

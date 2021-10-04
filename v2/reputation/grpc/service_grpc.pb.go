@@ -19,9 +19,19 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ReputationServiceClient interface {
 	// Announce local client trust information to any node in NeoFS network.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// local trust has been successfully announced;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	AnnounceLocalTrust(ctx context.Context, in *AnnounceLocalTrustRequest, opts ...grpc.CallOption) (*AnnounceLocalTrustResponse, error)
 	// Announces the intermediate result of the iterative algorithm for
 	// calculating the global reputation of the node in NeoFS network.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// intermediate trust estimation has been successfully announced;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	AnnounceIntermediateResult(ctx context.Context, in *AnnounceIntermediateResultRequest, opts ...grpc.CallOption) (*AnnounceIntermediateResultResponse, error)
 }
 
@@ -56,9 +66,19 @@ func (c *reputationServiceClient) AnnounceIntermediateResult(ctx context.Context
 // for forward compatibility
 type ReputationServiceServer interface {
 	// Announce local client trust information to any node in NeoFS network.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// local trust has been successfully announced;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	AnnounceLocalTrust(context.Context, *AnnounceLocalTrustRequest) (*AnnounceLocalTrustResponse, error)
 	// Announces the intermediate result of the iterative algorithm for
 	// calculating the global reputation of the node in NeoFS network.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// intermediate trust estimation has been successfully announced;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	AnnounceIntermediateResult(context.Context, *AnnounceIntermediateResultRequest) (*AnnounceIntermediateResultResponse, error)
 }
 

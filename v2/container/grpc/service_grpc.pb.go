@@ -22,24 +22,59 @@ type ContainerServiceClient interface {
 	// response immediately. After a new block is issued in sidechain, request is
 	// verified by Inner Ring nodes. After one more block in sidechain, container
 	// is added into smart contract storage.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// request to save the container has been sent to the sidechain;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Put(ctx context.Context, in *PutRequest, opts ...grpc.CallOption) (*PutResponse, error)
 	// `Delete` invokes `Container` smart contract's `Delete` method and returns
 	// response immediately. After a new block is issued in sidechain, request is
 	// verified by Inner Ring nodes. After one more block in sidechain, container
 	// is added into smart contract storage.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// request to remove the container has been sent to the sidechain;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
 	// Returns container structure from `Container` smart contract storage.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// container has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	// Returns all owner's containers from 'Container` smart contract' storage.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// container list has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	// Invokes 'SetEACL' method of 'Container` smart contract and returns response
 	// immediately. After one more block in sidechain, Extended ACL changes are
 	// added into smart contract storage.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// request to save container eACL has been sent to the sidechain;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	SetExtendedACL(ctx context.Context, in *SetExtendedACLRequest, opts ...grpc.CallOption) (*SetExtendedACLResponse, error)
 	// Returns Extended ACL table and signature from `Container` smart contract
 	// storage.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// container eACL has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	GetExtendedACL(ctx context.Context, in *GetExtendedACLRequest, opts ...grpc.CallOption) (*GetExtendedACLResponse, error)
 	// Announce container used space values for P2P synchronization.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// estimation of used space has been successfully announced;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	AnnounceUsedSpace(ctx context.Context, in *AnnounceUsedSpaceRequest, opts ...grpc.CallOption) (*AnnounceUsedSpaceResponse, error)
 }
 
@@ -122,24 +157,59 @@ type ContainerServiceServer interface {
 	// response immediately. After a new block is issued in sidechain, request is
 	// verified by Inner Ring nodes. After one more block in sidechain, container
 	// is added into smart contract storage.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// request to save the container has been sent to the sidechain;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Put(context.Context, *PutRequest) (*PutResponse, error)
 	// `Delete` invokes `Container` smart contract's `Delete` method and returns
 	// response immediately. After a new block is issued in sidechain, request is
 	// verified by Inner Ring nodes. After one more block in sidechain, container
 	// is added into smart contract storage.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// request to remove the container has been sent to the sidechain;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
 	// Returns container structure from `Container` smart contract storage.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// container has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	// Returns all owner's containers from 'Container` smart contract' storage.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// container list has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	List(context.Context, *ListRequest) (*ListResponse, error)
 	// Invokes 'SetEACL' method of 'Container` smart contract and returns response
 	// immediately. After one more block in sidechain, Extended ACL changes are
 	// added into smart contract storage.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// request to save container eACL has been sent to the sidechain;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	SetExtendedACL(context.Context, *SetExtendedACLRequest) (*SetExtendedACLResponse, error)
 	// Returns Extended ACL table and signature from `Container` smart contract
 	// storage.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// container eACL has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	GetExtendedACL(context.Context, *GetExtendedACLRequest) (*GetExtendedACLResponse, error)
 	// Announce container used space values for P2P synchronization.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// estimation of used space has been successfully announced;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	AnnounceUsedSpace(context.Context, *AnnounceUsedSpaceRequest) (*AnnounceUsedSpaceResponse, error)
 }
 

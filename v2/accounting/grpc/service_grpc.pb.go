@@ -19,6 +19,11 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccountingServiceClient interface {
 	// Returns the amount of funds in GAS token for the requested NeoFS account.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// balance has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Balance(ctx context.Context, in *BalanceRequest, opts ...grpc.CallOption) (*BalanceResponse, error)
 }
 
@@ -44,6 +49,11 @@ func (c *accountingServiceClient) Balance(ctx context.Context, in *BalanceReques
 // for forward compatibility
 type AccountingServiceServer interface {
 	// Returns the amount of funds in GAS token for the requested NeoFS account.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// balance has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	Balance(context.Context, *BalanceRequest) (*BalanceResponse, error)
 }
 

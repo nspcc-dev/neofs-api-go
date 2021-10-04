@@ -23,8 +23,18 @@ type NetmapServiceClient interface {
 	// want to get recent information directly, or to talk to the node not yet
 	// present in `Network Map` to find out what API version can be used for
 	// further communication. Can also be used to check if node is up and running.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// information about the server has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	LocalNodeInfo(ctx context.Context, in *LocalNodeInfoRequest, opts ...grpc.CallOption) (*LocalNodeInfoResponse, error)
 	// Read recent information about the NeoFS network.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// information about the current network state has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	NetworkInfo(ctx context.Context, in *NetworkInfoRequest, opts ...grpc.CallOption) (*NetworkInfoResponse, error)
 }
 
@@ -63,8 +73,18 @@ type NetmapServiceServer interface {
 	// want to get recent information directly, or to talk to the node not yet
 	// present in `Network Map` to find out what API version can be used for
 	// further communication. Can also be used to check if node is up and running.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// information about the server has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	LocalNodeInfo(context.Context, *LocalNodeInfoRequest) (*LocalNodeInfoResponse, error)
 	// Read recent information about the NeoFS network.
+	//
+	// Statuses:
+	// - **OK** (0, SECTION_SUCCESS):
+	// information about the current network state has been successfully read;
+	// - Common failures (SECTION_FAILURE_COMMON).
 	NetworkInfo(context.Context, *NetworkInfoRequest) (*NetworkInfoResponse, error)
 }
 
