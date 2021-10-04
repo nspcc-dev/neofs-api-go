@@ -9,6 +9,9 @@ run:
   # include test files or not, default is true
   tests: false
 
+  skip-files:
+    - (^|.*/)grpc/(.*)
+    
 # output configuration options
 output:
   # colored-line-number|line-number|json|tab|checkstyle|code-climate, default is "colored-line-number"
@@ -29,7 +32,7 @@ linters:
   enable:
     # mandatory linters
     - govet
-    - golint
+    - revive
 
     # some default golangci-lint linters
     - errcheck
