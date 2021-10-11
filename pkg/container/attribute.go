@@ -74,3 +74,57 @@ func (a Attributes) ToV2() []*container.Attribute {
 
 	return attrs
 }
+
+// sets value of the attribute by key.
+func setAttribute(c *Container, key, value string) {
+	var a *Attribute
+
+	iterateAttributes(c, func(a_ *Attribute) bool {
+		if a_.Key() == key {
+			a = a_
+		}
+
+		return a != nil
+	})
+
+	if a == nil {
+		a = NewAttribute()
+		a.SetKey(key)
+
+		c.SetAttributes(append(c.Attributes(), a))
+	}
+
+	a.SetValue(value)
+}
+
+// iterates over container attributes. Stops at f's true return.
+//
+// Handler must not be nil.
+func iterateAttributes(c *Container, f func(*Attribute) bool) {
+	for _, a := range c.Attributes() {
+		if f(a) {
+			return
+		}
+	}
+}
+
+// SetNativeNameWithZone sets container native name and its zone.
+func SetNativeNameWithZone(c *Container, name, zone string) {
+	setAttribute(c, container.SysAttributeName, name)
+	setAttribute(c, container.SysAttributeZone, zone)
+}
+
+// GetNativeNameWithZone returns container native name and its zone.
+func GetNativeNameWithZone(c *Container) (name string, zone string) {
+	iterateAttributes(c, func(a *Attribute) bool {
+		if key := a.Key(); key == container.SysAttributeName {
+			name = a.Value()
+		} else if key == container.SysAttributeZone {
+			zone = a.Value()
+		}
+
+		return name != "" && zone != ""
+	})
+
+	return
+}

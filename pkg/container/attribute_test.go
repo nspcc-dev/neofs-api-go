@@ -118,3 +118,25 @@ func TestNewAttributeFromV2(t *testing.T) {
 		require.Nil(t, container.NewAttributeFromV2(x))
 	})
 }
+
+func TestGetNameWithZone(t *testing.T) {
+	c := container.New()
+
+	for _, item := range [...]struct {
+		name, zone string
+	}{
+		{"name1", ""},
+		{"name1", "zone1"},
+		{"name2", "zone1"},
+		{"name2", "zone2"},
+		{"", "zone2"},
+		{"", ""},
+	} {
+		container.SetNativeNameWithZone(c, item.name, item.zone)
+
+		name, zone := container.GetNativeNameWithZone(c)
+
+		require.Equal(t, item.name, name, item.name)
+		require.Equal(t, item.zone, zone, item.zone)
+	}
+}
