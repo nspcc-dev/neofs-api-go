@@ -109,9 +109,16 @@ func iterateAttributes(c *Container, f func(*Attribute) bool) {
 }
 
 // SetNativeNameWithZone sets container native name and its zone.
+//
+// Use SetNativeName to set default zone.
 func SetNativeNameWithZone(c *Container, name, zone string) {
 	setAttribute(c, container.SysAttributeName, name)
 	setAttribute(c, container.SysAttributeZone, zone)
+}
+
+// SetNativeName sets container native name with default zone (container).
+func SetNativeName(c *Container, name string) {
+	SetNativeNameWithZone(c, name, container.SysAttributeZoneDefault)
 }
 
 // GetNativeNameWithZone returns container native name and its zone.
