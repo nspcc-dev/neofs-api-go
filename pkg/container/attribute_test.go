@@ -140,3 +140,16 @@ func TestGetNameWithZone(t *testing.T) {
 		require.Equal(t, item.zone, zone, item.zone)
 	}
 }
+
+func TestSetNativeName(t *testing.T) {
+	c := container.New()
+
+	const nameDefZone = "some name"
+
+	container.SetNativeName(c, nameDefZone)
+
+	name, zone := container.GetNativeNameWithZone(c)
+
+	require.Equal(t, nameDefZone, name)
+	require.Equal(t, containerv2.SysAttributeZoneDefault, zone)
+}

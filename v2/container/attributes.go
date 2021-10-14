@@ -13,3 +13,6 @@ const (
 	// SysAttributeZone is a string of zone for container name.
 	SysAttributeZone = SysAttributePrefix + "ZONE"
 )
+
+// SysAttributeZoneDefault is a default value for SysAttributeZone attribute.
+const SysAttributeZoneDefault = "container"
