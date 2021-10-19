@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.30.0] - 2021-10-19 - Udo (우도, 牛島)
+
+NeoFS API v2.10 support.
+
+### Fixed
+
+- Potential NPE in NEO3Wallet related functions (#340)
+- Incorrect return of reputation intermediate announcement (#342)
+
+### Added
+
+- pkg/client callback to parse internal response information (#337)
+- Service filter type in extended ACL from API v2.10 (#338)
+- Enhanced network info structures from API v2.10 (#339)
+- Well-known public-append basic ACL constant (#341) 
+- Native contract names support (#351)
+
+### Changed
+
+- Updated grpc to v1.41.0 (#176)
+
 ## [1.29.0] - 2021-08-27 - Anmyeondo (안면도, 安眠島)
 
 ### Fixed
@@ -712,3 +733,4 @@ Initial public release
 [1.28.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.1...v1.28.2
 [1.28.3]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.2...v1.28.3
 [1.29.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.3...v1.29.0
+[1.30.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.29.0...v1.30.0
