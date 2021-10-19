@@ -41,7 +41,7 @@ imports:
 protoc:
 	@GOPRIVATE=github.com/nspcc-dev go mod vendor
 	# Install specific version for protobuf lib
-	@go list -f '{{.Path}}/...@{{.Version}}' -m  github.com/golang/protobuf | xargs go get -v
+	@go list -f '{{.Path}}/...@{{.Version}}' -m  google.golang.org/protobuf | xargs go get -v
 	# Protoc generate
 	@for f in `find . -type f -name '*.proto' -not -path './vendor/*'`; do \
 		echo "⇒ Processing $$f "; \
