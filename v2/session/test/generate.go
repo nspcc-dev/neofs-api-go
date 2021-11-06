@@ -4,6 +4,7 @@ import (
 	acltest "github.com/nspcc-dev/neofs-api-go/v2/acl/test"
 	refstest "github.com/nspcc-dev/neofs-api-go/v2/refs/test"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
+	statustest "github.com/nspcc-dev/neofs-api-go/v2/status/test"
 )
 
 func GenerateCreateRequestBody(empty bool) *session.CreateRequestBody {
@@ -89,6 +90,7 @@ func generateResponseMetaHeader(empty, withOrigin bool) *session.ResponseMetaHea
 
 	m.SetXHeaders(GenerateXHeaders(empty))
 	m.SetVersion(refstest.GenerateVersion(empty))
+	m.SetStatus(statustest.Status(empty))
 
 	if withOrigin {
 		m.SetOrigin(generateResponseMetaHeader(empty, false))

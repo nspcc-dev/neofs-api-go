@@ -3,6 +3,7 @@ package session
 import (
 	acl "github.com/nspcc-dev/neofs-api-go/v2/acl/grpc"
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
+	status "github.com/nspcc-dev/neofs-api-go/v2/status/grpc"
 )
 
 // SetKey sets key to the X-Header.
@@ -216,6 +217,13 @@ func (m *ResponseMetaHeader) SetXHeaders(v []*XHeader) {
 func (m *ResponseMetaHeader) SetOrigin(v *ResponseMetaHeader) {
 	if m != nil {
 		m.Origin = v
+	}
+}
+
+// SetStatus sets response status.
+func (m *ResponseMetaHeader) SetStatus(v *status.Status) {
+	if m != nil {
+		m.Status = v
 	}
 }
 

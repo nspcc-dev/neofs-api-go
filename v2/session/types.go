@@ -3,6 +3,7 @@ package session
 import (
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	"github.com/nspcc-dev/neofs-api-go/v2/status"
 )
 
 type CreateRequestBody struct {
@@ -105,6 +106,8 @@ type ResponseMetaHeader struct {
 	xHeaders []*XHeader
 
 	origin *ResponseMetaHeader
+
+	status *status.Status
 }
 
 const (
@@ -606,6 +609,39 @@ func (r *ResponseMetaHeader) SetOrigin(v *ResponseMetaHeader) {
 	if r != nil {
 		r.origin = v
 	}
+}
+
+// GetStatus returns response status.
+func (r *ResponseMetaHeader) GetStatus() *status.Status {
+	if r != nil {
+		return r.status
+	}
+
+	return nil
+}
+
+// SetStatus sets response status.
+func (r *ResponseMetaHeader) SetStatus(v *status.Status) {
+	if r != nil {
+		r.status = v
+	}
+}
+
+// SetStatus sets status of the message which can carry ResponseMetaHeader.
+//
+// Sets status field on the "highest" level of meta headers.
+// If meta header is missing in message, it is allocated.
+func SetStatus(msg interface {
+	GetMetaHeader() *ResponseMetaHeader
+	SetMetaHeader(*ResponseMetaHeader)
+}, st *status.Status) {
+	meta := msg.GetMetaHeader()
+	if meta == nil {
+		meta = new(ResponseMetaHeader)
+		msg.SetMetaHeader(meta)
+	}
+
+	meta.SetStatus(st)
 }
 
 func (c *ObjectSessionContext) sessionTokenContext() {}

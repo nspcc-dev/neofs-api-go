@@ -10,6 +10,8 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refsGRPC "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 	session "github.com/nspcc-dev/neofs-api-go/v2/session/grpc"
+	"github.com/nspcc-dev/neofs-api-go/v2/status"
+	statusGRPC "github.com/nspcc-dev/neofs-api-go/v2/status/grpc"
 )
 
 func (c *CreateRequestBody) ToGRPCMessage() grpc.Message {
@@ -560,6 +562,7 @@ func (r *ResponseMetaHeader) ToGRPCMessage() grpc.Message {
 		m.SetEpoch(r.epoch)
 		m.SetTtl(r.ttl)
 		m.SetOrigin(r.origin.ToGRPCMessage().(*session.ResponseMetaHeader))
+		m.SetStatus(r.status.ToGRPCMessage().(*statusGRPC.Status))
 	}
 
 	return m
@@ -596,6 +599,20 @@ func (r *ResponseMetaHeader) FromGRPCMessage(m grpc.Message) error {
 		}
 
 		err = r.origin.FromGRPCMessage(origin)
+		if err != nil {
+			return err
+		}
+	}
+
+	st := v.GetStatus()
+	if st == nil {
+		r.status = nil
+	} else {
+		if r.status == nil {
+			r.status = new(status.Status)
+		}
+
+		err = r.status.FromGRPCMessage(st)
 		if err != nil {
 			return err
 		}
