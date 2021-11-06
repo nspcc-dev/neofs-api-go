@@ -52,6 +52,7 @@ const (
 	respMetaHeaderTTLField      = 3
 	respMetaHeaderXHeadersField = 4
 	respMetaHeaderOriginField   = 5
+	respMetaHeaderStatusField   = 6
 
 	respVerifHeaderBodySignatureField   = 1
 	respVerifHeaderMetaSignatureField   = 2
@@ -712,7 +713,14 @@ func (r *ResponseMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
 		offset += n
 	}
 
-	_, err = proto.NestedStructureMarshal(respMetaHeaderOriginField, buf[offset:], r.origin)
+	n, err = proto.NestedStructureMarshal(respMetaHeaderOriginField, buf[offset:], r.origin)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.NestedStructureMarshal(respMetaHeaderStatusField, buf[offset:], r.status)
 	if err != nil {
 		return nil, err
 	}
@@ -737,6 +745,7 @@ func (r *ResponseMetaHeader) StableSize() (size int) {
 	}
 
 	size += proto.NestedStructureSize(respMetaHeaderOriginField, r.origin)
+	size += proto.NestedStructureSize(respMetaHeaderStatusField, r.status)
 
 	return size
 }
