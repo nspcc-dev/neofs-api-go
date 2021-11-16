@@ -5,8 +5,8 @@ import (
 	"io"
 	"sync"
 
-	"github.com/nspcc-dev/neofs-api-go/rpc/common"
-	"github.com/nspcc-dev/neofs-api-go/rpc/message"
+	"github.com/nspcc-dev/neofs-api-go/v2/rpc/common"
+	"github.com/nspcc-dev/neofs-api-go/v2/rpc/message"
 )
 
 // SendUnary initializes communication session by RPC info, performs unary RPC

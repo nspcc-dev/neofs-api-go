@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/nspcc-dev/neofs-api-go/rpc/message"
+	"github.com/nspcc-dev/neofs-api-go/v2/rpc/message"
 	"github.com/stretchr/testify/require"
 )
 

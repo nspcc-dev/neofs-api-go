@@ -3,7 +3,7 @@ package message
 import (
 	"fmt"
 
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
+	"github.com/nspcc-dev/neofs-api-go/v2/rpc/grpc"
 )
 
 // Message represents raw Protobuf message
