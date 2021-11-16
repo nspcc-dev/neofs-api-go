@@ -3,9 +3,9 @@ package client
 import (
 	"io"
 
-	"github.com/nspcc-dev/neofs-api-go/rpc/common"
-	"github.com/nspcc-dev/neofs-api-go/rpc/grpc"
-	"github.com/nspcc-dev/neofs-api-go/rpc/message"
+	"github.com/nspcc-dev/neofs-api-go/v2/rpc/common"
+	"github.com/nspcc-dev/neofs-api-go/v2/rpc/grpc"
+	"github.com/nspcc-dev/neofs-api-go/v2/rpc/message"
 )
 
 // MessageReader is an interface of the Message reader.

@@ -3,7 +3,7 @@ package grpc
 import (
 	"io"
 
-	"github.com/nspcc-dev/neofs-api-go/rpc/common"
+	"github.com/nspcc-dev/neofs-api-go/v2/rpc/common"
 	"google.golang.org/grpc"
 )
 

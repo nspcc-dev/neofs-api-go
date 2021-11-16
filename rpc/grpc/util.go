@@ -3,7 +3,7 @@ package grpc
 import (
 	"fmt"
 
-	"github.com/nspcc-dev/neofs-api-go/rpc/common"
+	"github.com/nspcc-dev/neofs-api-go/v2/rpc/common"
 )
 
 const methodNameFmt = "/%s/%s"
