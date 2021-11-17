@@ -157,5 +157,5 @@ var ReputationService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "v2/reputation/grpc/service.proto",
+	Metadata: "reputation/grpc/service.proto",
 }

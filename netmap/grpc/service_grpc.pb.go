@@ -163,5 +163,5 @@ var NetmapService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "v2/netmap/grpc/service.proto",
+	Metadata: "netmap/grpc/service.proto",
 }
