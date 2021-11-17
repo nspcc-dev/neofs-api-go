@@ -59,6 +59,7 @@ type PlacementPolicy struct {
 	backupFactor uint32
 	selectors    []*Selector
 	filters      []*Filter
+	subnetID     *refs.SubnetID
 }
 
 // Attribute of storage node.
@@ -328,6 +329,14 @@ func (p *PlacementPolicy) GetReplicas() []*Replica {
 
 func (p *PlacementPolicy) SetReplicas(replicas []*Replica) {
 	p.replicas = replicas
+}
+
+func (p *PlacementPolicy) GetSubnetID() *refs.SubnetID {
+	return p.subnetID
+}
+
+func (p *PlacementPolicy) SetSubnetID(id *refs.SubnetID) {
+	p.subnetID = id
 }
 
 func (a *Attribute) GetKey() string {
