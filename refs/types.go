@@ -30,6 +30,10 @@ type Signature struct {
 	key, sign []byte
 }
 
+type SubnetID struct {
+	value uint32
+}
+
 type Version struct {
 	major, minor uint32
 }
@@ -164,6 +168,19 @@ func (s *Signature) SetSign(v []byte) {
 	if s != nil {
 		s.sign = v
 	}
+}
+
+func (s *SubnetID) SetValue(id uint32) {
+	if s != nil {
+		s.value = id
+	}
+}
+
+func (s *SubnetID) GetValue() uint32 {
+	if s != nil {
+		return s.value
+	}
+	return 0
 }
 
 func (v *Version) GetMajor() uint32 {
