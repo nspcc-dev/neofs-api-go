@@ -1,9 +1,9 @@
 package status
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/rpc/message"
-	protoutil "github.com/nspcc-dev/neofs-api-go/util/proto"
+	"github.com/nspcc-dev/neofs-api-go/v2/rpc/message"
 	status "github.com/nspcc-dev/neofs-api-go/v2/status/grpc"
+	protoutil "github.com/nspcc-dev/neofs-api-go/v2/util/proto"
 )
 
 const (

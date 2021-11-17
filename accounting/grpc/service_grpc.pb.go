@@ -107,5 +107,5 @@ var AccountingService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "v2/accounting/grpc/service.proto",
+	Metadata: "accounting/grpc/service.proto",
 }

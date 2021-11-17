@@ -413,5 +413,5 @@ var ContainerService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "v2/container/grpc/service.proto",
+	Metadata: "container/grpc/service.proto",
 }
