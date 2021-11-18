@@ -183,6 +183,16 @@ func (s *SubnetID) GetValue() uint32 {
 	return 0
 }
 
+// IsZeroSubnet returns true iff the SubnetID refers to zero subnet.
+func IsZeroSubnet(id *SubnetID) bool {
+	return id.GetValue() == 0
+}
+
+// MakeZeroSubnet makes the SubnetID to refer to zero subnet.
+func MakeZeroSubnet(id *SubnetID) {
+	id.SetValue(0)
+}
+
 func (v *Version) GetMajor() uint32 {
 	if v != nil {
 		return v.major
