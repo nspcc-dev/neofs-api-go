@@ -1,5 +1,10 @@
 package refs
 
+import (
+	"fmt"
+	"strconv"
+)
+
 type OwnerID struct {
 	val []byte
 }
@@ -181,6 +186,33 @@ func (s *SubnetID) GetValue() uint32 {
 		return s.value
 	}
 	return 0
+}
+
+// MarshalText encodes SubnetID into text format according to NeoFS API V2 protocol:
+// value in base-10 integer string format.
+//
+// Implements encoding.TextMarshaler.
+func (s *SubnetID) MarshalText() ([]byte, error) {
+	num := s.GetValue() // NPE safe, returns zero on nil (zero subnet)
+
+	return []byte(strconv.FormatUint(uint64(num), 10)), nil
+}
+
+// UnmarshalText decodes SubnetID from the text according to NeoFS API V2 protocol:
+// should be base-10 integer string format.
+//
+// Must not be called on nil.
+//
+// Implements encoding.TextUnmarshaler.
+func (s *SubnetID) UnmarshalText(txt []byte) error {
+	num, err := strconv.ParseUint(string(txt), 10, 32)
+	if err != nil {
+		return fmt.Errorf("invalid numeric value: %w", err)
+	}
+
+	s.value = uint32(num)
+
+	return nil
 }
 
 // IsZeroSubnet returns true iff the SubnetID refers to zero subnet.
