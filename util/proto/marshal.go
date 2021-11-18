@@ -384,3 +384,34 @@ func Float64Size(fNum int, v float64) int {
 
 	return VarUIntSize(uint64(prefix)) + 8
 }
+
+// Fixed32Marshal encodes uint32 value to Protocol Buffers fixed32 field with specified number,
+// and writes it to specified buffer. Returns number of bytes written.
+//
+// Panics if the buffer is undersized.
+func Fixed32Marshal(field int, buf []byte, v uint32) int {
+	if v == 0 {
+		return 0
+	}
+
+	prefix := field<<3 | 5
+
+	// buf length check can prevent panic at PutUvarint, but it will make
+	// marshaller a bit slower.
+	i := binary.PutUvarint(buf, uint64(prefix))
+	binary.LittleEndian.PutUint32(buf[i:], v)
+
+	return i + 4
+}
+
+// Fixed32Size returns number of bytes required to encode uint32 value to Protocol Buffers fixed32 field
+// with specified number.
+func Fixed32Size(fNum int, v uint32) int {
+	if v == 0 {
+		return 0
+	}
+
+	prefix := fNum<<3 | 5
+
+	return VarUIntSize(uint64(prefix)) + 4
+}
