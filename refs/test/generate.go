@@ -103,3 +103,13 @@ func GenerateChecksum(empty bool) *refs.Checksum {
 
 	return m
 }
+
+func GenerateSubnetID(empty bool) *refs.SubnetID {
+	m := new(refs.SubnetID)
+
+	if !empty {
+		m.SetValue(666)
+	}
+
+	return m
+}

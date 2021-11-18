@@ -316,3 +316,35 @@ func (v *Version) StableSize() (size int) {
 func (v *Version) Unmarshal(data []byte) error {
 	return message.Unmarshal(v, data, new(refs.Version))
 }
+
+// SubnetID message field numbers
+const (
+	_ = iota
+	subnetIDValFNum
+)
+
+// StableMarshal marshals SubnetID to NeoFS API V2 binary format (Protocol Buffers with direct field order).
+//
+// Returns a slice of recorded data. Data is written to the provided buffer if there is enough space.
+func (s *SubnetID) StableMarshal(buf []byte) ([]byte, error) {
+	if s == nil {
+		return []byte{}, nil
+	}
+
+	if buf == nil {
+		buf = make([]byte, s.StableSize())
+	}
+
+	proto.Fixed32Marshal(subnetIDValFNum, buf, s.value)
+
+	return buf, nil
+}
+
+// StableSize returns the number of bytes required to write SubnetID in NeoFS API V2 binary format (see StableMarshal).
+func (s *SubnetID) StableSize() (size int) {
+	if s != nil {
+		size += proto.Fixed32Size(subnetIDValFNum, s.value)
+	}
+
+	return
+}

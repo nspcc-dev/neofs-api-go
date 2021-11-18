@@ -276,3 +276,31 @@ func (s *Signature) FromGRPCMessage(m grpc.Message) error {
 
 	return nil
 }
+
+// ToGRPCMessage forms refs.SubnetID message and returns it as grpc.Message.
+func (s *SubnetID) ToGRPCMessage() grpc.Message {
+	var m *refs.SubnetID
+
+	if s != nil {
+		m = new(refs.SubnetID)
+
+		m.SetValue(s.value)
+	}
+
+	return m
+}
+
+// FromGRPCMessage restores Info from grpc.Message.
+//
+// Supported types:
+//  * refs.SubnetID.
+func (s *SubnetID) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*refs.SubnetID)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	s.value = v.GetValue()
+
+	return nil
+}

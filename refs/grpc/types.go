@@ -89,3 +89,10 @@ func (x *ChecksumType) FromString(s string) bool {
 
 	return ok
 }
+
+// SetValue sets subnet identifier in a base-10 integer format.
+func (x *SubnetID) SetValue(v uint32) {
+	if x != nil {
+		x.Value = v
+	}
+}
