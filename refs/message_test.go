@@ -17,5 +17,6 @@ func TestMessageConvert(t *testing.T) {
 		func(empty bool) message.Message { return refstest.GenerateChecksum(empty) },
 		func(empty bool) message.Message { return refstest.GenerateSignature(empty) },
 		func(empty bool) message.Message { return refstest.GenerateVersion(empty) },
+		func(empty bool) message.Message { return refstest.GenerateSubnetID(empty) },
 	)
 }
