@@ -113,12 +113,16 @@ func WriteSubnetInfo(node *NodeInfo, info NodeSubnetInfo) {
 // ErrRemoveSubnet is returned when a node needs to leave the subnet.
 var ErrRemoveSubnet = errors.New("remove subnet")
 
+var errNoSubnets = errors.New("no subnets")
+
 // IterateSubnets iterates over all subnets the node belongs to and passes the IDs to f.
 // Handler must not be nil.
 //
-// If f returns ErrRemoveSubnet, then removes subnet entry. Breaks on any other non-nil error and returns it.
+// If f returns ErrRemoveSubnet, then removes subnet entry. Note that this leads to an instant mutation of NodeInfo.
+// Breaks on any other non-nil error and returns it.
 //
 // Returns an error if any subnet attribute has wrong format.
+// Returns an error if the node is not included in any subnet by the end of the loop.
 func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 	attrs := node.GetAttributes()
 
@@ -126,6 +130,7 @@ func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 		err     error
 		id      refs.SubnetID
 		metZero bool // if zero subnet's attribute was met in for-loop
+		entries uint
 	)
 
 	for i := 0; i < len(attrs); i++ { // range must not be used because of attrs mutation in body
@@ -168,6 +173,7 @@ func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 
 			if !isRemoveErr {
 				// no handler's error and non-zero subnet
+				entries++
 				continue
 			} else if metZero {
 				// removal error and zero subnet.
@@ -183,7 +189,10 @@ func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 			// we can set False or remove attribute, latter is more memory/network efficient.
 			attrs = append(attrs[:i], attrs[i+1:]...)
 			i--
+			continue
 		}
+
+		entries++
 	}
 
 	if !metZero {
@@ -199,7 +208,13 @@ func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 			attr.SetValue(attrSubnetValExit)
 
 			attrs = append(attrs, &attr)
+		} else {
+			entries++
 		}
+	}
+
+	if entries <= 0 {
+		return errNoSubnets
 	}
 
 	node.SetAttributes(attrs)

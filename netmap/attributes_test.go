@@ -179,6 +179,15 @@ func TestSubnets(t *testing.T) {
 		t.Run("zero", func(t *testing.T) {
 			var node netmap.NodeInfo
 
+			// enter to some non-zero subnet so that zero is not the only one
+			var attr netmap.Attribute
+
+			attr.SetKey(subnetAttrKey("321"))
+			attr.SetValue("True")
+
+			attrs := []*netmap.Attribute{&attr}
+			node.SetAttributes(attrs)
+
 			err := netmap.IterateSubnets(&node, func(id refs.SubnetID) error {
 				if refs.IsZeroSubnet(&id) {
 					return netmap.ErrRemoveSubnet
@@ -189,12 +198,19 @@ func TestSubnets(t *testing.T) {
 
 			require.NoError(t, err)
 
-			attrs := node.GetAttributes()
-			require.Len(t, attrs, 1)
+			attrs = node.GetAttributes()
+			require.Len(t, attrs, 2)
 
-			attr := attrs[0]
-			assertSubnetAttrKey(t, attr, 0)
-			require.Equal(t, "False", attr.GetValue())
+			found := false
+
+			for i := range attrs {
+				if attrs[i].GetKey() == subnetAttrKey("0") {
+					require.Equal(t, "False", attrs[i].GetValue())
+					found = true
+				}
+			}
+
+			require.True(t, found)
 		})
 
 		t.Run("non-zero", func(t *testing.T) {
@@ -221,6 +237,31 @@ func TestSubnets(t *testing.T) {
 
 			attrs = node.GetAttributes()
 			require.Empty(t, attrs)
+		})
+
+		t.Run("all", func(t *testing.T) {
+			var (
+				node  netmap.NodeInfo
+				attrs []*netmap.Attribute
+			)
+
+			// enter to some non-zero subnet so that zero is not the only one
+			for i := 1; i <= 5; i++ {
+				var attr netmap.Attribute
+
+				attr.SetKey(subnetAttrKey(strconv.Itoa(i)))
+				attr.SetValue("True")
+
+				attrs = append(attrs, &attr)
+			}
+
+			node.SetAttributes(attrs)
+
+			err := netmap.IterateSubnets(&node, func(id refs.SubnetID) error {
+				return netmap.ErrRemoveSubnet
+			})
+
+			require.Error(t, err)
 		})
 	})
 }
