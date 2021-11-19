@@ -264,4 +264,31 @@ func TestSubnets(t *testing.T) {
 			require.Error(t, err)
 		})
 	})
+
+	t.Run("zero subnet removal via attribute", func(t *testing.T) {
+		var (
+			node netmap.NodeInfo
+
+			attrZero, attrOther netmap.Attribute
+		)
+
+		attrZero.SetKey(subnetAttrKey("0"))
+		attrZero.SetValue("False")
+
+		attrOther.SetKey(subnetAttrKey("1"))
+		attrOther.SetValue("True")
+
+		node.SetAttributes([]*netmap.Attribute{&attrZero, &attrOther})
+
+		calledCount := 0
+
+		err := netmap.IterateSubnets(&node, func(id refs.SubnetID) error {
+			require.False(t, refs.IsZeroSubnet(&id))
+			calledCount++
+			return nil
+		})
+
+		require.NoError(t, err)
+		require.EqualValues(t, 1, calledCount)
+	})
 }
