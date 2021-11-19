@@ -126,11 +126,24 @@ var errNoSubnets = errors.New("no subnets")
 func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 	attrs := node.GetAttributes()
 
+	type zeroStatus uint8
+
+	const (
+		_ zeroStatus = iota
+		// missing attribute of zero subnet
+		zeroNoAttr
+		// with `False` attribute
+		zeroExit
+		// with `True` attribute
+		zeroEntry
+	)
+
 	var (
 		err     error
 		id      refs.SubnetID
-		metZero bool // if zero subnet's attribute was met in for-loop
 		entries uint
+
+		stZero = zeroNoAttr
 	)
 
 	for i := 0; i < len(attrs); i++ { // range must not be used because of attrs mutation in body
@@ -144,19 +157,33 @@ func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 		}
 
 		// check value
-		switch val := attrs[i].GetValue(); val {
-		default:
+		val := attrs[i].GetValue()
+		if val != attrSubnetValExit && val != attrSubnetValEntry {
 			return fmt.Errorf("invalid attribute value: %s", val)
-		case attrSubnetValExit:
-			// node is outside the subnet
-			continue
-		case attrSubnetValEntry:
-			// required to avoid default case
 		}
 
 		// decode subnet ID
 		if err = id.UnmarshalText([]byte(idTxt)); err != nil {
 			return fmt.Errorf("invalid ID text: %w", err)
+		}
+
+		// update status of zero subnet
+		isZero := refs.IsZeroSubnet(&id)
+
+		if stZero == zeroNoAttr { // in order to not reset if has been already set
+			if isZero {
+				if val == attrSubnetValEntry {
+					// clear True attribute for zero subnet is also possible
+					stZero = zeroEntry
+				} else {
+					stZero = zeroExit
+				}
+			}
+		}
+
+		// continue to process only the subnets to which the node belongs
+		if val == attrSubnetValExit {
+			continue
 		}
 
 		// pass ID to the handler
@@ -168,34 +195,23 @@ func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 			return err
 		}
 
-		if !metZero { // in order to not reset if has been already set
-			metZero = refs.IsZeroSubnet(&id)
-
-			if !isRemoveErr {
-				// no handler's error and non-zero subnet
-				entries++
-				continue
-			} else if metZero {
-				// removal error and zero subnet.
-				// we don't remove attribute of zero subnet because it means entry
-				attrs[i].SetValue(attrSubnetValExit)
-
-				continue
-			}
-		}
-
 		if isRemoveErr {
-			// removal error and non-zero subnet.
-			// we can set False or remove attribute, latter is more memory/network efficient.
-			attrs = append(attrs[:i], attrs[i+1:]...)
-			i--
+			if isZero {
+				// we can't remove attribute of zero subnet because it means entry
+				attrs[i].SetValue(attrSubnetValExit)
+			} else {
+				// we can set False or remove attribute, latter is more memory/network efficient.
+				attrs = append(attrs[:i], attrs[i+1:]...)
+				i--
+			}
+
 			continue
 		}
 
 		entries++
 	}
 
-	if !metZero {
+	if stZero == zeroNoAttr {
 		// missing attribute of zero subnet equivalent to entry
 		refs.MakeZeroSubnet(&id)
 
