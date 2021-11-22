@@ -128,24 +128,12 @@ var errNoSubnets = errors.New("no subnets")
 func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 	attrs := node.GetAttributes()
 
-	type zeroStatus uint8
-
-	const (
-		_ zeroStatus = iota
-		// missing attribute of zero subnet
-		zeroNoAttr
-		// with `False` attribute
-		zeroExit
-		// with `True` attribute
-		zeroEntry
-	)
-
 	var (
 		err     error
 		id      refs.SubnetID
 		entries uint
 
-		stZero = zeroNoAttr
+		zeroEntry = true
 	)
 
 	for i := 0; i < len(attrs); i++ { // range must not be used because of attrs mutation in body
@@ -172,15 +160,8 @@ func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 		// update status of zero subnet
 		isZero := refs.IsZeroSubnet(&id)
 
-		if stZero == zeroNoAttr { // in order to not reset if has been already set
-			if isZero {
-				if val == attrSubnetValEntry {
-					// clear True attribute for zero subnet is also possible
-					stZero = zeroEntry
-				} else {
-					stZero = zeroExit
-				}
-			}
+		if isZero {
+			zeroEntry = val == attrSubnetValEntry
 		}
 
 		// continue to process only the subnets to which the node belongs
@@ -213,7 +194,7 @@ func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 		entries++
 	}
 
-	if stZero == zeroNoAttr {
+	if zeroEntry {
 		// missing attribute of zero subnet equivalent to entry
 		refs.MakeZeroSubnet(&id)
 
