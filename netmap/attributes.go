@@ -118,6 +118,8 @@ var errNoSubnets = errors.New("no subnets")
 // IterateSubnets iterates over all subnets the node belongs to and passes the IDs to f.
 // Handler must not be nil.
 //
+// Subnet attributes are expected to be key-unique, otherwise undefined behavior.
+//
 // If f returns ErrRemoveSubnet, then removes subnet entry. Note that this leads to an instant mutation of NodeInfo.
 // Breaks on any other non-nil error and returns it.
 //
