@@ -113,29 +113,44 @@ func TestSubnets(t *testing.T) {
 	t.Run("with correct attribute", func(t *testing.T) {
 		var (
 			node netmap.NodeInfo
-			attr netmap.Attribute
+
+			attrEntry, attrExit netmap.Attribute
 		)
 
-		attr.SetKey(subnetAttrKey("13"))
-		attr.SetValue("True")
+		const (
+			numEntry = 13
+			numExit  = 14
+		)
 
-		attrs := []*netmap.Attribute{&attr}
+		attrEntry.SetKey(subnetAttrKey(strconv.FormatUint(numEntry, 10)))
+		attrEntry.SetValue("True")
+
+		attrExit.SetKey(subnetAttrKey(strconv.FormatUint(numExit, 10)))
+		attrExit.SetValue("False")
+
+		attrs := []*netmap.Attribute{&attrEntry, &attrEntry}
 
 		node.SetAttributes(attrs)
 
-		called := 0
+		mCalledNums := make(map[uint32]struct{})
 
 		err := netmap.IterateSubnets(&node, func(id refs.SubnetID) error {
-			if !refs.IsZeroSubnet(&id) {
-				called++
-				require.EqualValues(t, 13, id.GetValue())
-			}
+			mCalledNums[id.GetValue()] = struct{}{}
 
 			return nil
 		})
 
 		require.NoError(t, err)
-		require.EqualValues(t, 1, called)
+		require.Len(t, mCalledNums, 2)
+
+		_, ok := mCalledNums[numEntry]
+		require.True(t, ok)
+
+		_, ok = mCalledNums[numExit]
+		require.False(t, ok)
+
+		_, ok = mCalledNums[0]
+		require.True(t, ok)
 	})
 
 	t.Run("with incorrect attribute", func(t *testing.T) {
