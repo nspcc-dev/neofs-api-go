@@ -199,7 +199,9 @@ func (s *SubnetID) MarshalText() ([]byte, error) {
 }
 
 // UnmarshalText decodes SubnetID from the text according to NeoFS API V2 protocol:
-// should be base-10 integer string format.
+// should be base-10 integer string format with bitsize = 32.
+//
+// Returns strconv.ErrRange if integer overflows uint32.
 //
 // Must not be called on nil.
 //

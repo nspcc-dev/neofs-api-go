@@ -1,6 +1,7 @@
 package refs_test
 
 import (
+	"math"
 	"strconv"
 	"testing"
 
@@ -47,4 +48,13 @@ func TestSubnetID_UnmarshalText(t *testing.T) {
 	require.NoError(t, err)
 
 	require.EqualValues(t, val, id.GetValue())
+
+	t.Run("uint32 overflow", func(t *testing.T) {
+		txt := strconv.FormatUint(math.MaxUint32+1, 10)
+
+		var id refs.SubnetID
+
+		err := id.UnmarshalText([]byte(txt))
+		require.ErrorIs(t, err, strconv.ErrRange)
+	})
 }
