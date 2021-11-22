@@ -35,6 +35,18 @@ func TestSubnetID_MarshalText(t *testing.T) {
 	require.NoError(t, err)
 
 	require.EqualValues(t, val, res)
+
+	t.Run("nil", func(t *testing.T) {
+		var id *refs.SubnetID
+
+		txt, err := id.MarshalText()
+		require.NoError(t, err)
+
+		res, err := strconv.ParseUint(string(txt), 10, 32)
+		require.NoError(t, err)
+
+		require.Zero(t, res)
+	})
 }
 
 func TestSubnetID_UnmarshalText(t *testing.T) {
