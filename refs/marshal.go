@@ -348,3 +348,11 @@ func (s *SubnetID) StableSize() (size int) {
 
 	return
 }
+
+// Unmarshal unmarshals SubnetID from NeoFS API V2 binary format (see StableMarshal).
+// Must not be called on nil.
+//
+// Note: empty data corresponds to zero ID value or nil pointer to it.
+func (s *SubnetID) Unmarshal(data []byte) error {
+	return message.Unmarshal(s, data, new(refs.SubnetID))
+}
