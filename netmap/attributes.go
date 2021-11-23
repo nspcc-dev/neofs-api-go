@@ -202,7 +202,11 @@ func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 		refs.MakeZeroSubnet(&id)
 
 		err = f(id)
-		if errors.Is(err, ErrRemoveSubnet) {
+		if err != nil {
+			if !errors.Is(err, ErrRemoveSubnet) {
+				return err
+			}
+
 			// zero subnet should be clearly removed with False value
 			var attr Attribute
 
