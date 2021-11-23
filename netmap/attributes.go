@@ -28,8 +28,8 @@ type NodeSubnetInfo struct {
 	id *refs.SubnetID
 }
 
-// Enters returns true iff node enters the subnet.
-func (x NodeSubnetInfo) Enters() bool {
+// Enabled returns true iff subnet membership is enabled for the node.
+func (x NodeSubnetInfo) Enabled() bool {
 	return !x.exit
 }
 
@@ -56,9 +56,11 @@ func subnetAttributeKey(id *refs.SubnetID) string {
 
 // WriteSubnetInfo writes NodeSubnetInfo to NodeInfo via attributes. NodeInfo must not be nil.
 //
+// Existing subnet attributes are expected to be key-unique, otherwise undefined behavior.
+//
 // Does not add (removes existing) attribute if node:
-//   * exists non-zero subnet;
-//   * enters zero subnet.
+//   * disables non-zero subnet;
+//   * enables zero subnet.
 //
 // Attribute key is calculated from ID using format `__NEOFS__SUBNET_%s`.
 // Attribute Value is:
@@ -68,7 +70,7 @@ func WriteSubnetInfo(node *NodeInfo, info NodeSubnetInfo) {
 	attrs := node.GetAttributes()
 
 	id := info.ID()
-	enters := info.Enters()
+	enters := info.Enabled()
 
 	// calculate attribute key
 	key := subnetAttributeKey(id)
@@ -77,6 +79,7 @@ func WriteSubnetInfo(node *NodeInfo, info NodeSubnetInfo) {
 		for i := range attrs {
 			if attrs[i].GetKey() == key {
 				attrs = append(attrs[:i], attrs[i+1:]...)
+				break // attributes are expected to be key-unique
 			}
 		}
 	} else {
@@ -141,7 +144,7 @@ func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 
 		// cut subnet ID string
 		idTxt := strings.TrimPrefix(key, attrSubnetPrefix)
-		if idTxt == key {
+		if len(idTxt) == len(key) {
 			// not a subnet attribute
 			continue
 		}
