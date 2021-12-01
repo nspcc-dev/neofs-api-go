@@ -26,6 +26,7 @@ const (
 	backupPolicyField    = 2
 	selectorsPolicyField = 3
 	filtersPolicyField   = 4
+	subnetIDPolicyField  = 5
 
 	keyAttributeField     = 1
 	valueAttributeField   = 2
@@ -262,6 +263,11 @@ func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
 		offset += n
 	}
 
+	_, err = protoutil.NestedStructureMarshal(subnetIDPolicyField, buf[offset:], p.subnetID)
+	if err != nil {
+		return nil, err
+	}
+
 	return buf, nil
 }
 
@@ -279,6 +285,8 @@ func (p *PlacementPolicy) StableSize() (size int) {
 	for i := range p.filters {
 		size += protoutil.NestedStructureSize(filtersPolicyField, p.filters[i])
 	}
+
+	size += protoutil.NestedStructureSize(subnetIDPolicyField, p.subnetID)
 
 	return size
 }

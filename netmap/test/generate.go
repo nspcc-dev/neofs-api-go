@@ -102,6 +102,7 @@ func GeneratePlacementPolicy(empty bool) *netmap.PlacementPolicy {
 		m.SetFilters(GenerateFilters(false))
 		m.SetSelectors(GenerateSelectors(false))
 		m.SetReplicas(GenerateReplicas(false))
+		m.SetSubnetID(refstest.GenerateSubnetID(false))
 	}
 
 	return m

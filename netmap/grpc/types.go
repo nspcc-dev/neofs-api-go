@@ -1,5 +1,7 @@
 package netmap
 
+import refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
+
 // SetReplicas of placement policy.
 func (m *PlacementPolicy) SetReplicas(v []*Replica) {
 	if m != nil {
@@ -25,6 +27,13 @@ func (m *PlacementPolicy) SetSelectors(v []*Selector) {
 func (m *PlacementPolicy) SetFilters(v []*Filter) {
 	if m != nil {
 		m.Filters = v
+	}
+}
+
+// SetSubnetID sets ID of subnet.
+func (m *PlacementPolicy) SetSubnetID(v *refs.SubnetID) {
+	if m != nil {
+		m.SubnetId = v
 	}
 }
 
