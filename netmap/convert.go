@@ -216,6 +216,7 @@ func (p *PlacementPolicy) ToGRPCMessage() grpc.Message {
 		m.SetSelectors(SelectorsToGRPC(p.selectors))
 		m.SetReplicas(ReplicasToGRPC(p.replicas))
 		m.SetContainerBackupFactor(p.backupFactor)
+		m.SetSubnetID(p.subnetID.ToGRPCMessage().(*refsGRPC.SubnetID))
 	}
 
 	return m
@@ -242,6 +243,20 @@ func (p *PlacementPolicy) FromGRPCMessage(m grpc.Message) error {
 	p.replicas, err = ReplicasFromGRPC(v.GetReplicas())
 	if err != nil {
 		return err
+	}
+
+	subnetID := v.GetSubnetId()
+	if subnetID == nil {
+		p.subnetID = nil
+	} else {
+		if p.subnetID == nil {
+			p.subnetID = new(refs.SubnetID)
+		}
+
+		err = p.subnetID.FromGRPCMessage(subnetID)
+		if err != nil {
+			return err
+		}
 	}
 
 	p.backupFactor = v.GetContainerBackupFactor()
