@@ -18,7 +18,7 @@ dep:
 	@printf "⇒ Install test requirements: "
 	CGO_ENABLED=0 \
 	GO111MODULE=on \
-	go test -i ./... && echo OK
+	go test ./... && echo OK
 
 # Run all code formatters
 fmts: fmt imports
