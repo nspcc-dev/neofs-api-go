@@ -30,7 +30,7 @@ cd "$API_GO_PATH" || exit 1
 make protoc
 
 # REMOVE PROTO DEFINITIONS
-ARGS=$(find ./$prefix -name '*.proto' -not -path './vendor/*')
+ARGS=$(find ./$prefix -name '*.proto' -not -path './vendor/*' -not -path './util/*')
 for file in $ARGS; do
 	rm "$file"
 done
