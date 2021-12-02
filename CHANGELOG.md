@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.11.0] - 2021-12-02 - Sinjido (신지도, 薪智島)
+
+NeoFS API v2.11 support. High level packages are moved to 
+[neofs-sdk-go](https://github.com/nspcc-dev/neofs-sdk-go) repository. 
+Repository restructured as Go module version 2 and synced with 
+[neofs-api](https://github.com/nspcc-dev/neofs-api) release version.
+
+### Fixed
+- Protobuf recompile script handles path with special symbols correctly (#354)
+- `make dep` command (#364)
+
+### Added
+- Status codes in response messages (#350)
+- Storage subnetwork types (#355, #356, #360, #362)
+
+### Changed
+- neofs-api-go is now Go module version 2 (#201)
+
+### Removed
+- All packages from `pkg` moved to 
+  [neofs-sdk-go](https://github.com/nspcc-dev/neofs-sdk-go) (#201)
+
 ## [1.30.0] - 2021-10-19 - Udo (우도, 牛島)
 
 NeoFS API v2.10 support.
@@ -734,3 +756,4 @@ Initial public release
 [1.28.3]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.2...v1.28.3
 [1.29.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.3...v1.29.0
 [1.30.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.29.0...v1.30.0
+[2.11.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.30.0...v2.11.0
