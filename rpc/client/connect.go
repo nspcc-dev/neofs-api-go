@@ -15,7 +15,10 @@ func (c *Client) createGRPCClient() (err error) {
 			return
 		}
 
-		c.gRPCClient = grpc.New(grpc.WithClientConnection(c.conn))
+		c.gRPCClient = grpc.New(
+			grpc.WithClientConnection(c.conn),
+			grpc.WithRWTimeout(c.rwTimeout),
+		)
 	})
 
 	return
