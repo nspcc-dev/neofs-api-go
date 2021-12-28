@@ -19,6 +19,7 @@ In alphabetical order:
 In chronological order:
 - Pavel Korotkov
 - Pavel Karpy
+- Angira Kekteeva
 
 # Special Thanks
 
