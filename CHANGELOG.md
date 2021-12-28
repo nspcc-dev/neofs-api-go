@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.11.1] - 2021-12-28
+
+### Added
+- Timeout for single message transmission in `rpc/client` (#366)
+
 ## [2.11.0] - 2021-12-02 - Sinjido (신지도, 薪智島)
 
 NeoFS API v2.11 support. High level packages are moved to 
@@ -757,3 +762,4 @@ Initial public release
 [1.29.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.28.3...v1.29.0
 [1.30.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.29.0...v1.30.0
 [2.11.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.30.0...v2.11.0
+[2.11.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.11.0...v2.11.1
