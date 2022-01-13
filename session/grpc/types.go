@@ -185,6 +185,22 @@ func (m *RequestMetaHeader) SetOrigin(v *RequestMetaHeader) {
 	}
 }
 
+// GetNetworkMagic returns NeoFS network magic.
+func (m *RequestMetaHeader) GetNetworkMagic() uint64 {
+	if m != nil {
+		return m.MagicNumber
+	}
+
+	return 0
+}
+
+// SetNetworkMagic sets NeoFS network magic.
+func (m *RequestMetaHeader) SetNetworkMagic(v uint64) {
+	if m != nil {
+		m.MagicNumber = v
+	}
+}
+
 // SetVersion sets server protocol version.
 func (m *ResponseMetaHeader) SetVersion(v *refs.Version) {
 	if m != nil {

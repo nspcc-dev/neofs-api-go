@@ -88,6 +88,8 @@ type RequestMetaHeader struct {
 	bearerToken *acl.BearerToken
 
 	origin *RequestMetaHeader
+
+	netMagic uint64
 }
 
 type ResponseVerificationHeader struct {
@@ -440,6 +442,22 @@ func (r *RequestMetaHeader) GetOrigin() *RequestMetaHeader {
 func (r *RequestMetaHeader) SetOrigin(v *RequestMetaHeader) {
 	if r != nil {
 		r.origin = v
+	}
+}
+
+// GetNetworkMagic returns NeoFS network magic.
+func (r *RequestMetaHeader) GetNetworkMagic() uint64 {
+	if r != nil {
+		return r.netMagic
+	}
+
+	return 0
+}
+
+// SetNetworkMagic sets NeoFS network magic.
+func (r *RequestMetaHeader) SetNetworkMagic(v uint64) {
+	if r != nil {
+		r.netMagic = v
 	}
 }
 
