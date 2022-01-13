@@ -41,6 +41,7 @@ const (
 	reqMetaHeaderSessionTokenField = 5
 	reqMetaHeaderBearerTokenField  = 6
 	reqMetaHeaderOriginField       = 7
+	reqMetaHeaderNetMagicField     = 8
 
 	reqVerifHeaderBodySignatureField   = 1
 	reqVerifHeaderMetaSignatureField   = 2
@@ -564,7 +565,14 @@ func (r *RequestMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = proto.NestedStructureMarshal(reqMetaHeaderOriginField, buf[offset:], r.origin)
+	n, err = proto.NestedStructureMarshal(reqMetaHeaderOriginField, buf[offset:], r.origin)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.UInt64Marshal(reqMetaHeaderNetMagicField, buf[offset:], r.netMagic)
 	if err != nil {
 		return nil, err
 	}
@@ -591,6 +599,7 @@ func (r *RequestMetaHeader) StableSize() (size int) {
 	size += proto.NestedStructureSize(reqMetaHeaderSessionTokenField, r.sessionToken)
 	size += proto.NestedStructureSize(reqMetaHeaderBearerTokenField, r.bearerToken)
 	size += proto.NestedStructureSize(reqMetaHeaderOriginField, r.origin)
+	size += proto.UInt64Size(reqMetaHeaderNetMagicField, r.netMagic)
 
 	return size
 }
