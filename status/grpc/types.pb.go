@@ -124,7 +124,10 @@ const (
 	// If the server cannot match failed outcome to the code, it should
 	// use this code.
 	CommonFail_INTERNAL CommonFail = 0
-	// [**1025**] Wrong magic of the NeoFS network. Not detailed.
+	// [**1025**] Wrong magic of the NeoFS network.
+	// Details:
+	//  - [**0**] Magic number of the served NeoFS network (big-endian 64-bit
+	//  unsigned integer).
 	CommonFail_WRONG_MAGIC_NUMBER CommonFail = 1
 )
 
