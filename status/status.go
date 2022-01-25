@@ -57,6 +57,8 @@ const (
 const (
 	// Internal is a local Code value for INTERNAL failure status.
 	Internal Code = iota
+	// WrongMagicNumber is a local Code value for WRONG_MAGIC_NUMBER failure status.
+	WrongMagicNumber
 )
 
 const (

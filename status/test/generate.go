@@ -37,7 +37,7 @@ func Status(empty bool) *status.Status {
 	if !empty {
 		m.SetCode(765)
 		m.SetMessage("some string")
-		m.SetDetails(Details(false))
+		status.SetStatusDetails(m, Details(false))
 	}
 
 	return m
