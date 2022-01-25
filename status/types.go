@@ -106,9 +106,22 @@ func (x *Status) IterateDetails(f func(*Detail) bool) {
 	}
 }
 
-// SetDetails sets Detail list of the Status.
-func (x *Status) SetDetails(v []*Detail) {
+// ResetDetails empties the detail list.
+func (x *Status) ResetDetails() {
 	if x != nil {
-		x.details = v
+		x.details = x.details[:0]
 	}
+}
+
+// AppendDetails appends the list of details to the Status.
+func (x *Status) AppendDetails(ds ...*Detail) {
+	if x != nil {
+		x.details = append(x.details, ds...)
+	}
+}
+
+// SetStatusDetails sets Detail list of the Status.
+func SetStatusDetails(dst *Status, ds []*Detail) {
+	dst.ResetDetails()
+	dst.AppendDetails(ds...)
 }
