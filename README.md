@@ -2,7 +2,7 @@
 <img src="./.github/logo.svg" width="500px" alt="NeoFS">
 </p>
 <p align="center">
-  Golang SDK for <a href="https://fs.neo.org">NeoFS</a>
+  Low-level Golang API for <a href="https://fs.neo.org">NeoFS</a>
 </p>
 
 ---
@@ -15,7 +15,7 @@
 # Overview
 
 Go implementation of recent [NeoFS API](https://github.com/nspcc-dev/neofs-api)
-versions and SDK layer working with all of them in a handy way.
+versions. For a more high-level SDK see [NeoFS SDK](https://github.com/nspcc-dev/neofs-sdk-go).
 
 ## NeoFS-API compatibility
 
