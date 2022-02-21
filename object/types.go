@@ -305,6 +305,7 @@ const (
 	TypeRegular Type = iota
 	TypeTombstone
 	TypeStorageGroup
+	TypeLock
 )
 
 const (

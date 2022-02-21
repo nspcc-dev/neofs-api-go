@@ -42,6 +42,11 @@ func (x *Detail) SetValue(val []byte) {
 // Code represents NeoFS API V2-compatible status code.
 type Code uint32
 
+// EqualNumber checks if the numerical Code equals num.
+func (x Code) EqualNumber(num uint32) bool {
+	return uint32(x) == num
+}
+
 // Status represents structure of NeoFS API V2-compatible status return message.
 type Status struct {
 	code Code

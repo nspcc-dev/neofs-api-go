@@ -2,6 +2,7 @@ package objecttest
 
 import (
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refstest "github.com/nspcc-dev/neofs-api-go/v2/refs/test"
 	sessiontest "github.com/nspcc-dev/neofs-api-go/v2/session/test"
 )
@@ -568,6 +569,19 @@ func GenerateGetRangeHashResponse(empty bool) *object.GetRangeHashResponse {
 
 	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
 	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
+
+	return m
+}
+
+func GenerateLock(empty bool) *object.Lock {
+	m := new(object.Lock)
+
+	if !empty {
+		m.SetMembers([]refs.ObjectID{
+			*refstest.GenerateObjectID(false),
+			*refstest.GenerateObjectID(false),
+		})
+	}
 
 	return m
 }

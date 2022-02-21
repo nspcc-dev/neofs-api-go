@@ -50,5 +50,6 @@ func TestMessageConvert(t *testing.T) {
 		func(empty bool) message.Message { return objecttest.GenerateGetRangeHashRequest(empty) },
 		func(empty bool) message.Message { return objecttest.GenerateGetRangeHashResponseBody(empty) },
 		func(empty bool) message.Message { return objecttest.GenerateGetRangeHashResponse(empty) },
+		func(empty bool) message.Message { return objecttest.GenerateLock(empty) },
 	)
 }
