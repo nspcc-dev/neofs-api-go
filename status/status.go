@@ -80,3 +80,17 @@ func LocalizeCommonFail(c *Code) {
 func GlobalizeCommonFail(c *Code) {
 	c.GlobalizeSection(sectionAfterSuccess(sectionCommon))
 }
+
+// LocalizeIfInSection checks if passed global status.Code belongs to the section and:
+//   then localizes the code and returns true,
+//   else leaves the code unchanged and returns false.
+//
+// Arg must not be nil.
+func LocalizeIfInSection(c *Code, sec uint32) bool {
+	if IsInSection(*c, sec) {
+		c.LocalizeSection(sec)
+		return true
+	}
+
+	return false
+}
