@@ -260,6 +260,7 @@ func (s *Signature) ToGRPCMessage() grpc.Message {
 
 		m.SetKey(s.key)
 		m.SetSign(s.sign)
+		m.SetScheme(refs.SignatureScheme(s.scheme))
 	}
 
 	return m
@@ -273,6 +274,7 @@ func (s *Signature) FromGRPCMessage(m grpc.Message) error {
 
 	s.key = v.GetKey()
 	s.sign = v.GetSign()
+	s.scheme = SignatureScheme(v.GetScheme())
 
 	return nil
 }

@@ -31,8 +31,17 @@ type Checksum struct {
 
 type ChecksumType uint32
 
+type SignatureScheme uint32
+
+const (
+	UnspecifiedScheme SignatureScheme = iota
+	ECDSA_SHA512
+	ECDSA_RFC6979_SHA256
+)
+
 type Signature struct {
 	key, sign []byte
+	scheme    SignatureScheme
 }
 
 type SubnetID struct {
@@ -172,6 +181,19 @@ func (s *Signature) GetSign() []byte {
 func (s *Signature) SetSign(v []byte) {
 	if s != nil {
 		s.sign = v
+	}
+}
+
+func (s *Signature) GetScheme() SignatureScheme {
+	if s != nil {
+		return s.scheme
+	}
+	return UnspecifiedScheme
+}
+
+func (s *Signature) SetScheme(scheme SignatureScheme) {
+	if s != nil {
+		s.scheme = scheme
 	}
 }
 

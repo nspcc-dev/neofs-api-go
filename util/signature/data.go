@@ -3,6 +3,7 @@ package signature
 import (
 	"crypto/ecdsa"
 
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
@@ -13,24 +14,24 @@ type DataSource interface {
 
 type DataWithSignature interface {
 	DataSource
-	GetSignatureWithKey() (key, sig []byte)
-	SetSignatureWithKey(key, sig []byte)
+	GetSignature() *refs.Signature
+	SetSignature(*refs.Signature)
 }
 
 type SignOption func(*cfg)
 
-type KeySignatureHandler func(key []byte, sig []byte)
+type KeySignatureHandler func(*refs.Signature)
 
-type KeySignatureSource func() (key, sig []byte)
+type KeySignatureSource func() *refs.Signature
 
-func DataSignature(key *ecdsa.PrivateKey, src DataSource, opts ...SignOption) ([]byte, error) {
+func SignDataWithHandler(key *ecdsa.PrivateKey, src DataSource, handler KeySignatureHandler, opts ...SignOption) error {
 	if key == nil {
-		return nil, crypto.ErrEmptyPrivateKey
+		return crypto.ErrEmptyPrivateKey
 	}
 
 	data, err := dataForSignature(src)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer bytesPool.Put(data)
 
@@ -40,16 +41,16 @@ func DataSignature(key *ecdsa.PrivateKey, src DataSource, opts ...SignOption) ([
 		opts[i](cfg)
 	}
 
-	return cfg.signFunc(key, data)
-}
-
-func SignDataWithHandler(key *ecdsa.PrivateKey, src DataSource, handler KeySignatureHandler, opts ...SignOption) error {
-	sig, err := DataSignature(key, src, opts...)
+	sigData, err := sign(cfg, cfg.defaultScheme, key, data)
 	if err != nil {
 		return err
 	}
 
-	handler(crypto.MarshalPublicKey(&key.PublicKey), sig)
+	sig := new(refs.Signature)
+	sig.SetScheme(cfg.defaultScheme)
+	sig.SetKey(crypto.MarshalPublicKey(&key.PublicKey))
+	sig.SetSign(sigData)
+	handler(sig)
 
 	return nil
 }
@@ -67,19 +68,13 @@ func VerifyDataWithSource(dataSrc DataSource, sigSrc KeySignatureSource, opts ..
 		opts[i](cfg)
 	}
 
-	key, sig := sigSrc()
-
-	return cfg.verifyFunc(
-		crypto.UnmarshalPublicKey(key),
-		data,
-		sig,
-	)
+	return verify(cfg, data, sigSrc())
 }
 
 func SignData(key *ecdsa.PrivateKey, v DataWithSignature, opts ...SignOption) error {
-	return SignDataWithHandler(key, v, v.SetSignatureWithKey, opts...)
+	return SignDataWithHandler(key, v, v.SetSignature, opts...)
 }
 
 func VerifyData(src DataWithSignature, opts ...SignOption) error {
-	return VerifyDataWithSource(src, src.GetSignatureWithKey, opts...)
+	return VerifyDataWithSource(src, src.GetSignature, opts...)
 }

@@ -131,19 +131,6 @@ func (s StableMarshalerWrapper) SignedDataSize() int {
 	return 0
 }
 
-func keySignatureHandler(s *refs.Signature) signature.KeySignatureHandler {
-	return func(key []byte, sig []byte) {
-		s.SetKey(key)
-		s.SetSign(sig)
-	}
-}
-
-func keySignatureSource(s *refs.Signature) signature.KeySignatureSource {
-	return func() ([]byte, []byte) {
-		return s.GetKey(), s.GetSign()
-	}
-}
-
 func SignServiceMessage(key *ecdsa.PrivateKey, msg interface{}) error {
 	var (
 		body, meta, verifyOrigin stableMarshaler
@@ -213,7 +200,9 @@ func signServiceMessagePart(key *ecdsa.PrivateKey, part stableMarshaler, sigWrit
 	if err := signature.SignDataWithHandler(
 		key,
 		&StableMarshalerWrapper{part},
-		keySignatureHandler(sig),
+		func(s *refs.Signature) {
+			*sig = *s
+		},
 	); err != nil {
 		return err
 	}
@@ -285,7 +274,7 @@ func verifyMatryoshkaLevel(body stableMarshaler, meta metaHeader, verify verific
 func verifyServiceMessagePart(part stableMarshaler, sigRdr func() *refs.Signature) error {
 	return signature.VerifyDataWithSource(
 		&StableMarshalerWrapper{part},
-		keySignatureSource(sigRdr()),
+		sigRdr,
 	)
 }
 
