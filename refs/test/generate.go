@@ -1,6 +1,8 @@
 package refstest
 
 import (
+	"math/rand"
+
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 )
 
@@ -88,6 +90,7 @@ func GenerateSignature(empty bool) *refs.Signature {
 	if !empty {
 		m.SetKey([]byte{1})
 		m.SetSign([]byte{2})
+		m.SetScheme(refs.SignatureScheme(rand.Int31() % 3))
 	}
 
 	return m

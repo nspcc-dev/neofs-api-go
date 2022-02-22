@@ -19,8 +19,9 @@ const (
 	checksumTypeField  = 1
 	checksumValueField = 2
 
-	signatureKeyField   = 1
-	signatureValueField = 2
+	signatureKeyField    = 1
+	signatureValueField  = 2
+	signatureSchemeField = 3
 
 	versionMajorField = 1
 	versionMinorField = 2
@@ -250,7 +251,14 @@ func (s *Signature) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = proto.BytesMarshal(signatureValueField, buf[offset:], s.sign)
+	n, err = proto.BytesMarshal(signatureValueField, buf[offset:], s.sign)
+	if err != nil {
+		return nil, err
+	}
+
+	offset += n
+
+	_, err = proto.EnumMarshal(signatureSchemeField, buf[offset:], int32(s.scheme))
 	if err != nil {
 		return nil, err
 	}
@@ -265,6 +273,7 @@ func (s *Signature) StableSize() (size int) {
 
 	size += proto.BytesSize(signatureKeyField, s.key)
 	size += proto.BytesSize(signatureValueField, s.sign)
+	size += proto.EnumSize(signatureSchemeField, int32(s.scheme))
 
 	return size
 }

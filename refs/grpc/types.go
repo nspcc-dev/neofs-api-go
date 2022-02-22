@@ -77,6 +77,26 @@ func (x *Signature) SetSign(v []byte) {
 	}
 }
 
+// SetScheme sets signature scheme.
+func (x *Signature) SetScheme(s SignatureScheme) {
+	if x != nil {
+		x.Scheme = s
+	}
+}
+
+// FromString parses SignatureScheme from a string representation,
+// It is a reverse action to String().
+//
+// Returns true if s was parsed successfully.
+func (x *SignatureScheme) FromString(s string) bool {
+	i, ok := SignatureScheme_value[s]
+	if ok {
+		*x = SignatureScheme(i)
+	}
+
+	return ok
+}
+
 // FromString parses ChecksumType from a string representation,
 // It is a reverse action to String().
 //
