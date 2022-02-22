@@ -1,79 +1,79 @@
 package refs
 
 // SetValue sets container identifier in a binary format.
-func (m *ContainerID) SetValue(v []byte) {
-	if m != nil {
-		m.Value = v
+func (x *ContainerID) SetValue(v []byte) {
+	if x != nil {
+		x.Value = v
 	}
 }
 
 // SetValue sets object identifier in a binary format.
-func (m *ObjectID) SetValue(v []byte) {
-	if m != nil {
-		m.Value = v
+func (x *ObjectID) SetValue(v []byte) {
+	if x != nil {
+		x.Value = v
 	}
 }
 
 // SetValue sets owner identifier in a binary format.
-func (m *OwnerID) SetValue(v []byte) {
-	if m != nil {
-		m.Value = v
+func (x *OwnerID) SetValue(v []byte) {
+	if x != nil {
+		x.Value = v
 	}
 }
 
 // SetContainerId sets container identifier of the address.
-func (m *Address) SetContainerId(v *ContainerID) {
-	if m != nil {
-		m.ContainerId = v
+func (x *Address) SetContainerId(v *ContainerID) {
+	if x != nil {
+		x.ContainerId = v
 	}
 }
 
 // SetObjectId sets object identifier of the address.
-func (m *Address) SetObjectId(v *ObjectID) {
-	if m != nil {
-		m.ObjectId = v
+func (x *Address) SetObjectId(v *ObjectID) {
+	if x != nil {
+		x.ObjectId = v
 	}
 }
 
 // SetChecksumType in generic checksum structure.
-func (m *Checksum) SetChecksumType(v ChecksumType) {
-	if m != nil {
-		m.Type = v
+func (x *Checksum) SetChecksumType(v ChecksumType) {
+	if x != nil {
+		x.Type = v
 	}
 }
 
-// SetChecksumSum in generic checksum structure.
-func (m *Checksum) SetSum(v []byte) {
-	if m != nil {
-		m.Sum = v
+// SetSum in generic checksum structure.
+func (x *Checksum) SetSum(v []byte) {
+	if x != nil {
+		x.Sum = v
 	}
 }
 
 // SetMajor sets major version number.
-func (m *Version) SetMajor(v uint32) {
-	if m != nil {
-		m.Major = v
+func (x *Version) SetMajor(v uint32) {
+	if x != nil {
+		x.Major = v
 	}
 }
 
 // SetMinor sets minor version number.
-func (m *Version) SetMinor(v uint32) {
-	if m != nil {
-		m.Minor = v
+func (x *Version) SetMinor(v uint32) {
+	if x != nil {
+		x.Minor = v
 	}
 }
 
 // SetKey sets public key in a binary format.
-func (m *Signature) SetKey(v []byte) {
-	if m != nil {
-		m.Key = v
+func (x *Signature) SetKey(v []byte) {
+	if x != nil {
+		x.Key = v
 	}
 }
 
 // SetSign sets signature.
-func (m *Signature) SetSign(v []byte) {
-	if m != nil {
-		m.Sign = v
+func (x *Signature) SetSign(v []byte) {
+	if x != nil {
+		x.Sign = v
 	}
 }
 
