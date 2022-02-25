@@ -145,8 +145,8 @@ func generateRequestMetaHeader(empty, withOrigin bool) *session.RequestMetaHeade
 	return m
 }
 
-func GenerateSessionToken(empty bool) *session.SessionToken {
-	m := new(session.SessionToken)
+func GenerateSessionToken(empty bool) *session.Token {
+	m := new(session.Token)
 
 	if !empty {
 		m.SetBody(GenerateSessionTokenBody(false))
@@ -157,8 +157,8 @@ func GenerateSessionToken(empty bool) *session.SessionToken {
 	return m
 }
 
-func GenerateSessionTokenBody(empty bool) *session.SessionTokenBody {
-	m := new(session.SessionTokenBody)
+func GenerateSessionTokenBody(empty bool) *session.TokenBody {
+	m := new(session.TokenBody)
 
 	if !empty {
 		m.SetID([]byte{1})

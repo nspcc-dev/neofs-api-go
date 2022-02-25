@@ -59,7 +59,7 @@ type GetRequest struct {
 type GetResponseBody struct {
 	cnr *Container
 
-	token *session.SessionToken
+	token *session.Token
 
 	sig *refs.Signature
 }
@@ -145,7 +145,7 @@ type GetExtendedACLResponseBody struct {
 
 	sig *refs.Signature
 
-	token *session.SessionToken
+	token *session.Token
 }
 
 type GetExtendedACLResponse struct {
@@ -406,7 +406,7 @@ func (r *GetResponseBody) SetContainer(v *Container) {
 
 // GetSessionToken returns token of the session within which requested
 // container was created.
-func (r *GetResponseBody) GetSessionToken() *session.SessionToken {
+func (r *GetResponseBody) GetSessionToken() *session.Token {
 	if r != nil {
 		return r.token
 	}
@@ -416,7 +416,7 @@ func (r *GetResponseBody) GetSessionToken() *session.SessionToken {
 
 // SetSessionToken sets token of the session within which requested
 // container was created.
-func (r *GetResponseBody) SetSessionToken(v *session.SessionToken) {
+func (r *GetResponseBody) SetSessionToken(v *session.Token) {
 	if r != nil {
 		r.token = v
 	}
@@ -678,7 +678,7 @@ func (r *GetExtendedACLResponseBody) SetSignature(v *refs.Signature) {
 
 // GetSessionToken returns token of the session within which requested
 // eACL table was set.
-func (r *GetExtendedACLResponseBody) GetSessionToken() *session.SessionToken {
+func (r *GetExtendedACLResponseBody) GetSessionToken() *session.Token {
 	if r != nil {
 		return r.token
 	}
@@ -688,7 +688,7 @@ func (r *GetExtendedACLResponseBody) GetSessionToken() *session.SessionToken {
 
 // SetSessionToken sets token of the session within which requested
 // eACL table was set.
-func (r *GetExtendedACLResponseBody) SetSessionToken(v *session.SessionToken) {
+func (r *GetExtendedACLResponseBody) SetSessionToken(v *session.Token) {
 	if r != nil {
 		r.token = v
 	}

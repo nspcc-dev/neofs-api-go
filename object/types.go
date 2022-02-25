@@ -54,7 +54,7 @@ type Header struct {
 
 	typ Type
 
-	sessionToken *session.SessionToken
+	sessionToken *session.Token
 
 	attr []*Attribute
 
@@ -640,7 +640,7 @@ func (h *Header) SetHomomorphicHash(v *refs.Checksum) {
 	}
 }
 
-func (h *Header) GetSessionToken() *session.SessionToken {
+func (h *Header) GetSessionToken() *session.Token {
 	if h != nil {
 		return h.sessionToken
 	}
@@ -648,7 +648,7 @@ func (h *Header) GetSessionToken() *session.SessionToken {
 	return nil
 }
 
-func (h *Header) SetSessionToken(v *session.SessionToken) {
+func (h *Header) SetSessionToken(v *session.Token) {
 	if h != nil {
 		h.sessionToken = v
 	}

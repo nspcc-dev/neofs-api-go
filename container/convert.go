@@ -432,7 +432,7 @@ func (r *GetResponseBody) FromGRPCMessage(m grpc.Message) error {
 		r.token = nil
 	} else {
 		if r.token == nil {
-			r.token = new(session.SessionToken)
+			r.token = new(session.Token)
 		}
 
 		err = r.token.FromGRPCMessage(token)
@@ -1026,7 +1026,7 @@ func (r *GetExtendedACLResponseBody) FromGRPCMessage(m grpc.Message) error {
 		r.token = nil
 	} else {
 		if r.token == nil {
-			r.token = new(session.SessionToken)
+			r.token = new(session.Token)
 		}
 
 		err = r.token.FromGRPCMessage(token)

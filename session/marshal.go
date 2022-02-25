@@ -363,7 +363,7 @@ func (x *ContainerSessionContext) Unmarshal(data []byte) error {
 	return message.Unmarshal(x, data, new(session.ContainerSessionContext))
 }
 
-func (t *SessionTokenBody) StableMarshal(buf []byte) ([]byte, error) {
+func (t *TokenBody) StableMarshal(buf []byte) ([]byte, error) {
 	if t == nil {
 		return []byte{}, nil
 	}
@@ -425,7 +425,7 @@ func (t *SessionTokenBody) StableMarshal(buf []byte) ([]byte, error) {
 	return buf, nil
 }
 
-func (t *SessionTokenBody) StableSize() (size int) {
+func (t *TokenBody) StableSize() (size int) {
 	if t == nil {
 		return 0
 	}
@@ -449,7 +449,7 @@ func (t *SessionTokenBody) StableSize() (size int) {
 	return size
 }
 
-func (t *SessionTokenBody) Unmarshal(data []byte) error {
+func (t *TokenBody) Unmarshal(data []byte) error {
 	m := new(session.SessionToken_Body)
 	if err := goproto.Unmarshal(data, m); err != nil {
 		return err
@@ -458,7 +458,7 @@ func (t *SessionTokenBody) Unmarshal(data []byte) error {
 	return t.FromGRPCMessage(m)
 }
 
-func (t *SessionToken) StableMarshal(buf []byte) ([]byte, error) {
+func (t *Token) StableMarshal(buf []byte) ([]byte, error) {
 	if t == nil {
 		return []byte{}, nil
 	}
@@ -487,7 +487,7 @@ func (t *SessionToken) StableMarshal(buf []byte) ([]byte, error) {
 	return buf, nil
 }
 
-func (t *SessionToken) StableSize() (size int) {
+func (t *Token) StableSize() (size int) {
 	if t == nil {
 		return 0
 	}
@@ -498,7 +498,7 @@ func (t *SessionToken) StableSize() (size int) {
 	return size
 }
 
-func (t *SessionToken) Unmarshal(data []byte) error {
+func (t *Token) Unmarshal(data []byte) error {
 	m := new(session.SessionToken)
 	if err := goproto.Unmarshal(data, m); err != nil {
 		return err
