@@ -34,7 +34,7 @@ versions. For a more high-level SDK see [NeoFS SDK](https://github.com/nspcc-dev
 |v1.29.x|[v2.9.1](https://github.com/nspcc-dev/neofs-api/releases/tag/v2.9.1)|
 |v1.30.x|[v2.10.0](https://github.com/nspcc-dev/neofs-api/releases/tag/v2.10.0)|
 |v2.11.x|[v2.11.0](https://github.com/nspcc-dev/neofs-api/releases/tag/v2.11.0)|
-
+|v2.12.x|[v2.12.0](https://github.com/nspcc-dev/neofs-api/releases/tag/v2.12.0)|
 
 ## Contributing
 

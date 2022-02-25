@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.12.0] - 2022-02-25 - Heuksando (흑산도, 黑山島)
+
+NeoFS API v2.12 support
+
+### Added
+- Network magic field (`uint64`) to `session.RequestMetaHeader` (#367)
+- Constants for attributes related to object notifications (#372)
+- `refs.SignatureScheme` enum and corresponding field to `session.Signature` message (#55)
+- New status codes in `container`, `object` and `session` packages (#371)
+- `object.TypeLock` type enum value and `object.Lock` type of its content (#371)
+
+### Changed
+- API of `signature` package (#55)
+
+### Deprecated
+- `SessionToken`, `SessionTokenBody` and `SessionTokenContext` types from `session` package
+
 ## [2.11.1] - 2021-12-28
 
 ### Added
@@ -763,3 +780,4 @@ Initial public release
 [1.30.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.29.0...v1.30.0
 [2.11.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.30.0...v2.11.0
 [2.11.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.11.0...v2.11.1
+[2.12.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.11.1...v2.12.0
