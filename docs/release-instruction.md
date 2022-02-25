@@ -23,10 +23,6 @@ Open Pull Request (must receive at least one approval) and merge this changes.
 
 Actualize compatibility table in `README.md` with relevant information.
 
-## Update version
-
-Actualize minor/major version constants in `pkg/version.go` file.
-
 ## Tag a release
 
 Use `vX.Y.Z` tag for releases and `vX.Y.Z-rc.N` for release candidates
