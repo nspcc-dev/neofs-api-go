@@ -33,6 +33,7 @@ type ChecksumType uint32
 
 type SignatureScheme uint32
 
+//nolint:revive
 const (
 	UnspecifiedScheme SignatureScheme = iota
 	ECDSA_SHA512

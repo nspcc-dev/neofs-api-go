@@ -242,7 +242,7 @@ func XHeadersFromGRPC(xs []*session.XHeader) (res []*XHeader, err error) {
 	return
 }
 
-func (t *SessionToken) ToGRPCMessage() grpc.Message {
+func (t *Token) ToGRPCMessage() grpc.Message {
 	var m *session.SessionToken
 
 	if t != nil {
@@ -255,7 +255,7 @@ func (t *SessionToken) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (t *SessionToken) FromGRPCMessage(m grpc.Message) error {
+func (t *Token) FromGRPCMessage(m grpc.Message) error {
 	v, ok := m.(*session.SessionToken)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)
@@ -268,7 +268,7 @@ func (t *SessionToken) FromGRPCMessage(m grpc.Message) error {
 		t.body = nil
 	} else {
 		if t.body == nil {
-			t.body = new(SessionTokenBody)
+			t.body = new(TokenBody)
 		}
 
 		err = t.body.FromGRPCMessage(body)
@@ -422,7 +422,7 @@ func (r *RequestMetaHeader) FromGRPCMessage(m grpc.Message) error {
 		r.sessionToken = nil
 	} else {
 		if r.sessionToken == nil {
-			r.sessionToken = new(SessionToken)
+			r.sessionToken = new(Token)
 		}
 
 		err = r.sessionToken.FromGRPCMessage(sessionToken)
@@ -713,7 +713,7 @@ func (c *ObjectSessionContext) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func (t *SessionTokenBody) ToGRPCMessage() grpc.Message {
+func (t *TokenBody) ToGRPCMessage() grpc.Message {
 	var m *session.SessionToken_Body
 
 	if t != nil {
@@ -739,7 +739,7 @@ func (t *SessionTokenBody) ToGRPCMessage() grpc.Message {
 	return m
 }
 
-func (t *SessionTokenBody) FromGRPCMessage(m grpc.Message) error {
+func (t *TokenBody) FromGRPCMessage(m grpc.Message) error {
 	v, ok := m.(*session.SessionToken_Body)
 	if !ok {
 		return message.NewUnexpectedMessageType(m, v)

@@ -373,7 +373,7 @@ func (h *Header) FromGRPCMessage(m grpc.Message) error {
 		h.sessionToken = nil
 	} else {
 		if h.sessionToken == nil {
-			h.sessionToken = new(session.SessionToken)
+			h.sessionToken = new(session.Token)
 		}
 
 		err = h.sessionToken.FromGRPCMessage(sessionToken)

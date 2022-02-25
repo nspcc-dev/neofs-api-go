@@ -22,11 +22,11 @@ func (l *TokenLifetime) UnmarshalJSON(data []byte) error {
 	return message.UnmarshalJSON(l, data, new(session.SessionToken_Body_TokenLifetime))
 }
 
-func (t *SessionTokenBody) MarshalJSON() ([]byte, error) {
+func (t *TokenBody) MarshalJSON() ([]byte, error) {
 	return message.MarshalJSON(t)
 }
 
-func (t *SessionTokenBody) UnmarshalJSON(data []byte) error {
+func (t *TokenBody) UnmarshalJSON(data []byte) error {
 	msg := new(session.SessionToken_Body)
 
 	if err := protojson.Unmarshal(data, msg); err != nil {
@@ -36,11 +36,11 @@ func (t *SessionTokenBody) UnmarshalJSON(data []byte) error {
 	return t.FromGRPCMessage(msg)
 }
 
-func (t *SessionToken) MarshalJSON() ([]byte, error) {
+func (t *Token) MarshalJSON() ([]byte, error) {
 	return message.MarshalJSON(t)
 }
 
-func (t *SessionToken) UnmarshalJSON(data []byte) error {
+func (t *Token) UnmarshalJSON(data []byte) error {
 	msg := new(session.SessionToken)
 
 	if err := protojson.Unmarshal(data, msg); err != nil {

@@ -46,11 +46,15 @@ type ObjectSessionContext struct {
 	addr *refs.Address
 }
 
-type SessionTokenContext interface {
+type TokenContext interface {
 	sessionTokenContext()
 }
 
-type SessionTokenBody struct {
+// Deprecated: use TokenContext instead.
+//nolint:revive
+type SessionTokenContext = TokenContext
+
+type TokenBody struct {
 	id []byte
 
 	ownerID *refs.OwnerID
@@ -59,14 +63,22 @@ type SessionTokenBody struct {
 
 	sessionKey []byte
 
-	ctx SessionTokenContext
+	ctx TokenContext
 }
 
-type SessionToken struct {
-	body *SessionTokenBody
+// Deprecated: use TokenBody instead.
+//nolint:revive
+type SessionTokenBody = TokenBody
+
+type Token struct {
+	body *TokenBody
 
 	sig *refs.Signature
 }
+
+// Deprecated: use Token instead.
+//nolint:revive
+type SessionToken = Token
 
 type RequestVerificationHeader struct {
 	bodySig, metaSig, originSig *refs.Signature
@@ -83,7 +95,7 @@ type RequestMetaHeader struct {
 
 	xHeaders []*XHeader
 
-	sessionToken *SessionToken
+	sessionToken *Token
 
 	bearerToken *acl.BearerToken
 
@@ -403,7 +415,7 @@ func (r *RequestMetaHeader) SetXHeaders(v []*XHeader) {
 	}
 }
 
-func (r *RequestMetaHeader) GetSessionToken() *SessionToken {
+func (r *RequestMetaHeader) GetSessionToken() *Token {
 	if r != nil {
 		return r.sessionToken
 	}
@@ -411,7 +423,7 @@ func (r *RequestMetaHeader) GetSessionToken() *SessionToken {
 	return nil
 }
 
-func (r *RequestMetaHeader) SetSessionToken(v *SessionToken) {
+func (r *RequestMetaHeader) SetSessionToken(v *Token) {
 	if r != nil {
 		r.sessionToken = v
 	}
@@ -692,7 +704,7 @@ func (c *ObjectSessionContext) SetAddress(v *refs.Address) {
 	}
 }
 
-func (t *SessionTokenBody) GetID() []byte {
+func (t *TokenBody) GetID() []byte {
 	if t != nil {
 		return t.id
 	}
@@ -700,13 +712,13 @@ func (t *SessionTokenBody) GetID() []byte {
 	return nil
 }
 
-func (t *SessionTokenBody) SetID(v []byte) {
+func (t *TokenBody) SetID(v []byte) {
 	if t != nil {
 		t.id = v
 	}
 }
 
-func (t *SessionTokenBody) GetOwnerID() *refs.OwnerID {
+func (t *TokenBody) GetOwnerID() *refs.OwnerID {
 	if t != nil {
 		return t.ownerID
 	}
@@ -714,13 +726,13 @@ func (t *SessionTokenBody) GetOwnerID() *refs.OwnerID {
 	return nil
 }
 
-func (t *SessionTokenBody) SetOwnerID(v *refs.OwnerID) {
+func (t *TokenBody) SetOwnerID(v *refs.OwnerID) {
 	if t != nil {
 		t.ownerID = v
 	}
 }
 
-func (t *SessionTokenBody) GetLifetime() *TokenLifetime {
+func (t *TokenBody) GetLifetime() *TokenLifetime {
 	if t != nil {
 		return t.lifetime
 	}
@@ -728,13 +740,13 @@ func (t *SessionTokenBody) GetLifetime() *TokenLifetime {
 	return nil
 }
 
-func (t *SessionTokenBody) SetLifetime(v *TokenLifetime) {
+func (t *TokenBody) SetLifetime(v *TokenLifetime) {
 	if t != nil {
 		t.lifetime = v
 	}
 }
 
-func (t *SessionTokenBody) GetSessionKey() []byte {
+func (t *TokenBody) GetSessionKey() []byte {
 	if t != nil {
 		return t.sessionKey
 	}
@@ -742,13 +754,13 @@ func (t *SessionTokenBody) GetSessionKey() []byte {
 	return nil
 }
 
-func (t *SessionTokenBody) SetSessionKey(v []byte) {
+func (t *TokenBody) SetSessionKey(v []byte) {
 	if t != nil {
 		t.sessionKey = v
 	}
 }
 
-func (t *SessionTokenBody) GetContext() SessionTokenContext {
+func (t *TokenBody) GetContext() TokenContext {
 	if t != nil {
 		return t.ctx
 	}
@@ -756,13 +768,13 @@ func (t *SessionTokenBody) GetContext() SessionTokenContext {
 	return nil
 }
 
-func (t *SessionTokenBody) SetContext(v SessionTokenContext) {
+func (t *TokenBody) SetContext(v TokenContext) {
 	if t != nil {
 		t.ctx = v
 	}
 }
 
-func (t *SessionToken) GetBody() *SessionTokenBody {
+func (t *Token) GetBody() *TokenBody {
 	if t != nil {
 		return t.body
 	}
@@ -770,13 +782,13 @@ func (t *SessionToken) GetBody() *SessionTokenBody {
 	return nil
 }
 
-func (t *SessionToken) SetBody(v *SessionTokenBody) {
+func (t *Token) SetBody(v *TokenBody) {
 	if t != nil {
 		t.body = v
 	}
 }
 
-func (t *SessionToken) GetSignature() *refs.Signature {
+func (t *Token) GetSignature() *refs.Signature {
 	if t != nil {
 		return t.sig
 	}
@@ -784,7 +796,7 @@ func (t *SessionToken) GetSignature() *refs.Signature {
 	return nil
 }
 
-func (t *SessionToken) SetSignature(v *refs.Signature) {
+func (t *Token) SetSignature(v *refs.Signature) {
 	if t != nil {
 		t.sig = v
 	}
