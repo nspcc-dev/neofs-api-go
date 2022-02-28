@@ -394,7 +394,7 @@ func (h *Header) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range h.attr {
-		n, err = proto.NestedStructureMarshal(hdrAttributesField, buf[offset:], h.attr[i])
+		n, err = proto.NestedStructureMarshal(hdrAttributesField, buf[offset:], &h.attr[i])
 		if err != nil {
 			return nil, err
 		}
@@ -425,7 +425,7 @@ func (h *Header) StableSize() (size int) {
 	size += proto.NestedStructureSize(hdrHomomorphicHashField, h.homoHash)
 	size += proto.NestedStructureSize(hdrSessionTokenField, h.sessionToken)
 	for i := range h.attr {
-		size += proto.NestedStructureSize(hdrAttributesField, h.attr[i])
+		size += proto.NestedStructureSize(hdrAttributesField, &h.attr[i])
 	}
 	size += proto.NestedStructureSize(hdrSplitField, h.split)
 

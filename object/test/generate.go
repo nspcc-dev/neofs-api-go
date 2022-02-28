@@ -35,13 +35,13 @@ func GenerateAttribute(empty bool) *object.Attribute {
 	return m
 }
 
-func GenerateAttributes(empty bool) []*object.Attribute {
-	var res []*object.Attribute
+func GenerateAttributes(empty bool) []object.Attribute {
+	var res []object.Attribute
 
 	if !empty {
 		res = append(res,
-			GenerateAttribute(false),
-			GenerateAttribute(false),
+			*GenerateAttribute(false),
+			*GenerateAttribute(false),
 		)
 	}
 

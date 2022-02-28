@@ -142,7 +142,7 @@ func (a *Attribute) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func AttributesToGRPC(xs []*Attribute) (res []*object.Header_Attribute) {
+func AttributesToGRPC(xs []Attribute) (res []*object.Header_Attribute) {
 	if xs != nil {
 		res = make([]*object.Header_Attribute, 0, len(xs))
 
@@ -154,23 +154,17 @@ func AttributesToGRPC(xs []*Attribute) (res []*object.Header_Attribute) {
 	return
 }
 
-func AttributesFromGRPC(xs []*object.Header_Attribute) (res []*Attribute, err error) {
+func AttributesFromGRPC(xs []*object.Header_Attribute) (res []Attribute, err error) {
 	if xs != nil {
-		res = make([]*Attribute, 0, len(xs))
+		res = make([]Attribute, len(xs))
 
 		for i := range xs {
-			var x *Attribute
-
 			if xs[i] != nil {
-				x = new(Attribute)
-
-				err = x.FromGRPCMessage(xs[i])
+				err = res[i].FromGRPCMessage(xs[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, x)
 		}
 	}
 
