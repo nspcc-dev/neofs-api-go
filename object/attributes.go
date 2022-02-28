@@ -108,25 +108,19 @@ func WriteNotificationInfo(o *Object, ni NotificationInfo) {
 		attrs = attrs[:len(attrs)-1]
 	}
 
-	notifyAttrs := make([]*Attribute, 0, 2)
-
 	if !changedEpoch {
-		eAttr := new(Attribute)
-		eAttr.SetKey(SysAttributeTickEpoch)
-		eAttr.SetValue(epoch)
-
-		notifyAttrs = append(notifyAttrs, eAttr)
+		index := len(attrs)
+		attrs = append(attrs, Attribute{})
+		attrs[index].SetKey(SysAttributeTickEpoch)
+		attrs[index].SetValue(epoch)
 	}
 
 	if !changedTopic && topic != "" {
-		tAttr := new(Attribute)
-		tAttr.SetKey(SysAttributeTickTopic)
-		tAttr.SetValue(topic)
-
-		notifyAttrs = append(notifyAttrs, tAttr)
+		index := len(attrs)
+		attrs = append(attrs, Attribute{})
+		attrs[index].SetKey(SysAttributeTickTopic)
+		attrs[index].SetValue(topic)
 	}
-
-	attrs = append(attrs, notifyAttrs...)
 
 	h.SetAttributes(attrs)
 }

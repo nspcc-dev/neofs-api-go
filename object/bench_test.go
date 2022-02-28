@@ -3,6 +3,8 @@ package object
 import (
 	"math/rand"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func randString(n int) string {
@@ -14,13 +16,13 @@ func randString(n int) string {
 }
 
 func BenchmarkAttributesMarshal(b *testing.B) {
-	attrs := make([]*Attribute, 50)
+	attrs := make([]Attribute, 50)
 	for i := range attrs {
-		attrs[i] = new(Attribute)
 		attrs[i].key = SysAttributePrefix + randString(10)
 		attrs[i].val = randString(10)
 	}
 	raw := AttributesToGRPC(attrs)
+	require.Equal(b, len(raw), len(attrs))
 
 	b.Run("marshal", func(b *testing.B) {
 		b.ReportAllocs()

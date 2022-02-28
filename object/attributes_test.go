@@ -42,7 +42,7 @@ func TestSetNotification(t *testing.T) {
 func TestGetNotification(t *testing.T) {
 	o := new(Object)
 
-	attr := []*Attribute{
+	attr := []Attribute{
 		{SysAttributeTickEpoch, "10"},
 		{SysAttributeTickTopic, "test"},
 	}

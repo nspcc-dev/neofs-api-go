@@ -56,7 +56,7 @@ type Header struct {
 
 	sessionToken *session.Token
 
-	attr []*Attribute
+	attr []Attribute
 
 	split *SplitHeader
 }
@@ -654,7 +654,7 @@ func (h *Header) SetSessionToken(v *session.Token) {
 	}
 }
 
-func (h *Header) GetAttributes() []*Attribute {
+func (h *Header) GetAttributes() []Attribute {
 	if h != nil {
 		return h.attr
 	}
@@ -662,7 +662,7 @@ func (h *Header) GetAttributes() []*Attribute {
 	return nil
 }
 
-func (h *Header) SetAttributes(v []*Attribute) {
+func (h *Header) SetAttributes(v []Attribute) {
 	if h != nil {
 		h.attr = v
 	}
