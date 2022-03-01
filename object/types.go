@@ -34,7 +34,7 @@ type SplitHeader struct {
 
 	parHdr *Header
 
-	children []*refs.ObjectID
+	children []refs.ObjectID
 
 	splitID []byte
 }
@@ -228,7 +228,7 @@ type SearchRequest struct {
 }
 
 type SearchResponseBody struct {
-	idList []*refs.ObjectID
+	idList []refs.ObjectID
 }
 
 type SearchResponse struct {
@@ -500,7 +500,7 @@ func (h *SplitHeader) SetParentHeader(v *Header) {
 	}
 }
 
-func (h *SplitHeader) GetChildren() []*refs.ObjectID {
+func (h *SplitHeader) GetChildren() []refs.ObjectID {
 	if h != nil {
 		return h.children
 	}
@@ -508,7 +508,7 @@ func (h *SplitHeader) GetChildren() []*refs.ObjectID {
 	return nil
 }
 
-func (h *SplitHeader) SetChildren(v []*refs.ObjectID) {
+func (h *SplitHeader) SetChildren(v []refs.ObjectID) {
 	if h != nil {
 		h.children = v
 	}
@@ -1316,7 +1316,7 @@ func (r *SearchRequest) SetBody(v *SearchRequestBody) {
 	}
 }
 
-func (r *SearchResponseBody) GetIDList() []*refs.ObjectID {
+func (r *SearchResponseBody) GetIDList() []refs.ObjectID {
 	if r != nil {
 		return r.idList
 	}
@@ -1324,7 +1324,7 @@ func (r *SearchResponseBody) GetIDList() []*refs.ObjectID {
 	return nil
 }
 
-func (r *SearchResponseBody) SetIDList(v []*refs.ObjectID) {
+func (r *SearchResponseBody) SetIDList(v []refs.ObjectID) {
 	if r != nil {
 		r.idList = v
 	}

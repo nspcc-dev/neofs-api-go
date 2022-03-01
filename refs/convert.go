@@ -110,7 +110,7 @@ func (o *ObjectID) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func ObjectIDListToGRPCMessage(ids []*ObjectID) (res []*refs.ObjectID) {
+func ObjectIDListToGRPCMessage(ids []ObjectID) (res []*refs.ObjectID) {
 	if ids != nil {
 		res = make([]*refs.ObjectID, 0, len(ids))
 
@@ -122,23 +122,17 @@ func ObjectIDListToGRPCMessage(ids []*ObjectID) (res []*refs.ObjectID) {
 	return
 }
 
-func ObjectIDListFromGRPCMessage(idsV2 []*refs.ObjectID) (res []*ObjectID, err error) {
+func ObjectIDListFromGRPCMessage(idsV2 []*refs.ObjectID) (res []ObjectID, err error) {
 	if idsV2 != nil {
-		res = make([]*ObjectID, 0, len(idsV2))
+		res = make([]ObjectID, len(idsV2))
 
 		for i := range idsV2 {
-			var id *ObjectID
-
 			if idsV2[i] != nil {
-				id = new(ObjectID)
-
-				err = id.FromGRPCMessage(idsV2[i])
+				err = res[i].FromGRPCMessage(idsV2[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, id)
 		}
 	}
 

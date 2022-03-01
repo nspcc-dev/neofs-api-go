@@ -48,13 +48,13 @@ func GenerateObjectID(empty bool) *refs.ObjectID {
 	return m
 }
 
-func GenerateObjectIDs(empty bool) []*refs.ObjectID {
-	var ids []*refs.ObjectID
+func GenerateObjectIDs(empty bool) []refs.ObjectID {
+	var ids []refs.ObjectID
 
 	if !empty {
 		ids = append(ids,
-			GenerateObjectID(false),
-			GenerateObjectID(false),
+			*GenerateObjectID(false),
+			*GenerateObjectID(false),
 		)
 	}
 

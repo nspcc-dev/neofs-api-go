@@ -19,7 +19,7 @@ type DataAuditResult struct {
 
 	pubKey []byte
 
-	passSG, failSG []*refs.ObjectID
+	passSG, failSG []refs.ObjectID
 
 	failNodes, passNodes [][]byte
 
@@ -91,7 +91,7 @@ func (a *DataAuditResult) SetPublicKey(v []byte) {
 }
 
 // GetPassSG returns list of Storage Groups that passed audit PoR stage.
-func (a *DataAuditResult) GetPassSG() []*refs.ObjectID {
+func (a *DataAuditResult) GetPassSG() []refs.ObjectID {
 	if a != nil {
 		return a.passSG
 	}
@@ -100,14 +100,14 @@ func (a *DataAuditResult) GetPassSG() []*refs.ObjectID {
 }
 
 // SetPassSG sets list of Storage Groups that passed audit PoR stage.
-func (a *DataAuditResult) SetPassSG(v []*refs.ObjectID) {
+func (a *DataAuditResult) SetPassSG(v []refs.ObjectID) {
 	if a != nil {
 		a.passSG = v
 	}
 }
 
 // GetFailSG returns list of Storage Groups that failed audit PoR stage.
-func (a *DataAuditResult) GetFailSG() []*refs.ObjectID {
+func (a *DataAuditResult) GetFailSG() []refs.ObjectID {
 	if a != nil {
 		return a.failSG
 	}
@@ -116,7 +116,7 @@ func (a *DataAuditResult) GetFailSG() []*refs.ObjectID {
 }
 
 // SetFailSG sets list of Storage Groups that failed audit PoR stage.
-func (a *DataAuditResult) SetFailSG(v []*refs.ObjectID) {
+func (a *DataAuditResult) SetFailSG(v []refs.ObjectID) {
 	if a != nil {
 		a.failSG = v
 	}
