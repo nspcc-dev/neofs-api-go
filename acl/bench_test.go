@@ -12,18 +12,17 @@ func BenchmarkTable_ToGRPCMessage(b *testing.B) {
 	const size = 4
 
 	tb := new(acl.Table)
-	rs := make([]*acl.Record, size)
+	rs := make([]acl.Record, size)
 	for i := range rs {
-		fs := make([]*acl.HeaderFilter, size)
+		fs := make([]acl.HeaderFilter, size)
 		for j := range fs {
-			fs[j] = acltest.GenerateFilter(false)
+			fs[j] = *acltest.GenerateFilter(false)
 		}
-		ts := make([]*acl.Target, size)
+		ts := make([]acl.Target, size)
 		for j := range ts {
-			ts[j] = acltest.GenerateTarget(false)
+			ts[j] = *acltest.GenerateTarget(false)
 		}
 
-		rs[i] = new(acl.Record)
 		rs[i].SetFilters(fs)
 		rs[i].SetTargets(ts)
 	}

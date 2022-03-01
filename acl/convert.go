@@ -185,7 +185,7 @@ func (f *HeaderFilter) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func HeaderFiltersToGRPC(fs []*HeaderFilter) (res []*acl.EACLRecord_Filter) {
+func HeaderFiltersToGRPC(fs []HeaderFilter) (res []*acl.EACLRecord_Filter) {
 	if fs != nil {
 		res = make([]*acl.EACLRecord_Filter, 0, len(fs))
 
@@ -197,23 +197,17 @@ func HeaderFiltersToGRPC(fs []*HeaderFilter) (res []*acl.EACLRecord_Filter) {
 	return
 }
 
-func HeaderFiltersFromGRPC(fs []*acl.EACLRecord_Filter) (res []*HeaderFilter, err error) {
+func HeaderFiltersFromGRPC(fs []*acl.EACLRecord_Filter) (res []HeaderFilter, err error) {
 	if fs != nil {
-		res = make([]*HeaderFilter, 0, len(fs))
+		res = make([]HeaderFilter, len(fs))
 
 		for i := range fs {
-			var x *HeaderFilter
-
 			if fs[i] != nil {
-				x = new(HeaderFilter)
-
-				err = x.FromGRPCMessage(fs[i])
+				err = res[i].FromGRPCMessage(fs[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, x)
 		}
 	}
 
@@ -245,7 +239,7 @@ func (t *Target) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func TargetsToGRPC(ts []*Target) (res []*acl.EACLRecord_Target) {
+func TargetsToGRPC(ts []Target) (res []*acl.EACLRecord_Target) {
 	if ts != nil {
 		res = make([]*acl.EACLRecord_Target, 0, len(ts))
 
@@ -257,23 +251,17 @@ func TargetsToGRPC(ts []*Target) (res []*acl.EACLRecord_Target) {
 	return
 }
 
-func TargetsFromGRPC(fs []*acl.EACLRecord_Target) (res []*Target, err error) {
+func TargetsFromGRPC(fs []*acl.EACLRecord_Target) (res []Target, err error) {
 	if fs != nil {
-		res = make([]*Target, 0, len(fs))
+		res = make([]Target, len(fs))
 
 		for i := range fs {
-			var x *Target
-
 			if fs[i] != nil {
-				x = new(Target)
-
-				err = x.FromGRPCMessage(fs[i])
+				err = res[i].FromGRPCMessage(fs[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, x)
 		}
 	}
 
@@ -319,7 +307,7 @@ func (r *Record) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func RecordsToGRPC(ts []*Record) (res []*acl.EACLRecord) {
+func RecordsToGRPC(ts []Record) (res []*acl.EACLRecord) {
 	if ts != nil {
 		res = make([]*acl.EACLRecord, 0, len(ts))
 
@@ -331,23 +319,17 @@ func RecordsToGRPC(ts []*Record) (res []*acl.EACLRecord) {
 	return
 }
 
-func RecordsFromGRPC(fs []*acl.EACLRecord) (res []*Record, err error) {
+func RecordsFromGRPC(fs []*acl.EACLRecord) (res []Record, err error) {
 	if fs != nil {
-		res = make([]*Record, 0, len(fs))
+		res = make([]Record, len(fs))
 
 		for i := range fs {
-			var x *Record
-
 			if fs[i] != nil {
-				x = new(Record)
-
-				err = x.FromGRPCMessage(fs[i])
+				err = res[i].FromGRPCMessage(fs[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, x)
 		}
 	}
 

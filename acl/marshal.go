@@ -67,7 +67,7 @@ func (t *Table) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range t.records {
-		n, err = protoutil.NestedStructureMarshal(tableRecordsField, buf[offset:], t.records[i])
+		n, err = protoutil.NestedStructureMarshal(tableRecordsField, buf[offset:], &t.records[i])
 		if err != nil {
 			return nil, err
 		}
@@ -88,7 +88,7 @@ func (t *Table) StableSize() (size int) {
 	size += protoutil.NestedStructureSize(tableContainerIDField, t.cid)
 
 	for i := range t.records {
-		size += protoutil.NestedStructureSize(tableRecordsField, t.records[i])
+		size += protoutil.NestedStructureSize(tableRecordsField, &t.records[i])
 	}
 
 	return size
@@ -129,7 +129,7 @@ func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range r.filters {
-		n, err = protoutil.NestedStructureMarshal(recordFiltersField, buf[offset:], r.filters[i])
+		n, err = protoutil.NestedStructureMarshal(recordFiltersField, buf[offset:], &r.filters[i])
 		if err != nil {
 			return nil, err
 		}
@@ -138,7 +138,7 @@ func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
 	}
 
 	for i := range r.targets {
-		n, err = protoutil.NestedStructureMarshal(recordTargetsField, buf[offset:], r.targets[i])
+		n, err = protoutil.NestedStructureMarshal(recordTargetsField, buf[offset:], &r.targets[i])
 		if err != nil {
 			return nil, err
 		}
@@ -159,11 +159,11 @@ func (r *Record) StableSize() (size int) {
 	size += protoutil.EnumSize(recordActionField, int32(r.action))
 
 	for i := range r.filters {
-		size += protoutil.NestedStructureSize(recordFiltersField, r.filters[i])
+		size += protoutil.NestedStructureSize(recordFiltersField, &r.filters[i])
 	}
 
 	for i := range r.targets {
-		size += protoutil.NestedStructureSize(recordTargetsField, r.targets[i])
+		size += protoutil.NestedStructureSize(recordTargetsField, &r.targets[i])
 	}
 
 	return size

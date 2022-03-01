@@ -42,13 +42,13 @@ func GenerateTable(empty bool) *acl.Table {
 	return m
 }
 
-func GenerateRecords(empty bool) []*acl.Record {
-	var rs []*acl.Record
+func GenerateRecords(empty bool) []acl.Record {
+	var rs []acl.Record
 
 	if !empty {
 		rs = append(rs,
-			GenerateRecord(false),
-			GenerateRecord(false),
+			*GenerateRecord(false),
+			*GenerateRecord(false),
 		)
 	}
 
@@ -68,13 +68,13 @@ func GenerateRecord(empty bool) *acl.Record {
 	return m
 }
 
-func GenerateFilters(empty bool) []*acl.HeaderFilter {
-	var fs []*acl.HeaderFilter
+func GenerateFilters(empty bool) []acl.HeaderFilter {
+	var fs []acl.HeaderFilter
 
 	if !empty {
 		fs = append(fs,
-			GenerateFilter(false),
-			GenerateFilter(false),
+			*GenerateFilter(false),
+			*GenerateFilter(false),
 		)
 	}
 
@@ -94,13 +94,13 @@ func GenerateFilter(empty bool) *acl.HeaderFilter {
 	return m
 }
 
-func GenerateTargets(empty bool) []*acl.Target {
-	var ts []*acl.Target
+func GenerateTargets(empty bool) []acl.Target {
+	var ts []acl.Target
 
 	if !empty {
 		ts = append(ts,
-			GenerateTarget(false),
-			GenerateTarget(false),
+			*GenerateTarget(false),
+			*GenerateTarget(false),
 		)
 	}
 
