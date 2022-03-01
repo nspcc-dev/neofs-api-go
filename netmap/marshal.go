@@ -84,7 +84,7 @@ func (f *Filter) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range f.filters {
-		n, err = protoutil.NestedStructureMarshal(filtersFilterField, buf[offset:], f.filters[i])
+		n, err = protoutil.NestedStructureMarshal(filtersFilterField, buf[offset:], &f.filters[i])
 		if err != nil {
 			return nil, err
 		}
@@ -101,7 +101,7 @@ func (f *Filter) StableSize() (size int) {
 	size += protoutil.EnumSize(opFilterField, int32(f.op))
 	size += protoutil.StringSize(valueFilterField, f.value)
 	for i := range f.filters {
-		size += protoutil.NestedStructureSize(filtersFilterField, f.filters[i])
+		size += protoutil.NestedStructureSize(filtersFilterField, &f.filters[i])
 	}
 
 	return size
@@ -230,7 +230,7 @@ func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
 	)
 
 	for i := range p.replicas {
-		n, err = protoutil.NestedStructureMarshal(replicasPolicyField, buf[offset:], p.replicas[i])
+		n, err = protoutil.NestedStructureMarshal(replicasPolicyField, buf[offset:], &p.replicas[i])
 		if err != nil {
 			return nil, err
 		}
@@ -246,7 +246,7 @@ func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range p.selectors {
-		n, err = protoutil.NestedStructureMarshal(selectorsPolicyField, buf[offset:], p.selectors[i])
+		n, err = protoutil.NestedStructureMarshal(selectorsPolicyField, buf[offset:], &p.selectors[i])
 		if err != nil {
 			return nil, err
 		}
@@ -255,7 +255,7 @@ func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
 	}
 
 	for i := range p.filters {
-		n, err = protoutil.NestedStructureMarshal(filtersPolicyField, buf[offset:], p.filters[i])
+		n, err = protoutil.NestedStructureMarshal(filtersPolicyField, buf[offset:], &p.filters[i])
 		if err != nil {
 			return nil, err
 		}
@@ -273,17 +273,17 @@ func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
 
 func (p *PlacementPolicy) StableSize() (size int) {
 	for i := range p.replicas {
-		size += protoutil.NestedStructureSize(replicasPolicyField, p.replicas[i])
+		size += protoutil.NestedStructureSize(replicasPolicyField, &p.replicas[i])
 	}
 
 	size += protoutil.UInt32Size(backupPolicyField, p.backupFactor)
 
 	for i := range p.selectors {
-		size += protoutil.NestedStructureSize(selectorsPolicyField, p.selectors[i])
+		size += protoutil.NestedStructureSize(selectorsPolicyField, &p.selectors[i])
 	}
 
 	for i := range p.filters {
-		size += protoutil.NestedStructureSize(filtersPolicyField, p.filters[i])
+		size += protoutil.NestedStructureSize(filtersPolicyField, &p.filters[i])
 	}
 
 	size += protoutil.NestedStructureSize(subnetIDPolicyField, p.subnetID)
@@ -542,7 +542,7 @@ func (x *NetworkConfig) StableMarshal(buf []byte) ([]byte, error) {
 	)
 
 	for i := range x.ps {
-		n, err = protoutil.NestedStructureMarshal(netCfgPrmsFNum, buf[offset:], x.ps[i])
+		n, err = protoutil.NestedStructureMarshal(netCfgPrmsFNum, buf[offset:], &x.ps[i])
 		if err != nil {
 			return nil, err
 		}
@@ -559,7 +559,7 @@ func (x *NetworkConfig) StableSize() (size int) {
 	}
 
 	for i := range x.ps {
-		size += protoutil.NestedStructureSize(netCfgPrmsFNum, x.ps[i])
+		size += protoutil.NestedStructureSize(netCfgPrmsFNum, &x.ps[i])
 	}
 
 	return size

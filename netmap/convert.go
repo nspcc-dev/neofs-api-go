@@ -45,7 +45,7 @@ func (f *Filter) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func FiltersToGRPC(fs []*Filter) (res []*netmap.Filter) {
+func FiltersToGRPC(fs []Filter) (res []*netmap.Filter) {
 	if fs != nil {
 		res = make([]*netmap.Filter, 0, len(fs))
 
@@ -57,23 +57,17 @@ func FiltersToGRPC(fs []*Filter) (res []*netmap.Filter) {
 	return
 }
 
-func FiltersFromGRPC(fs []*netmap.Filter) (res []*Filter, err error) {
+func FiltersFromGRPC(fs []*netmap.Filter) (res []Filter, err error) {
 	if fs != nil {
-		res = make([]*Filter, 0, len(fs))
+		res = make([]Filter, len(fs))
 
 		for i := range fs {
-			var f *Filter
-
 			if fs[i] != nil {
-				f = new(Filter)
-
-				err = f.FromGRPCMessage(fs[i])
+				err = res[i].FromGRPCMessage(fs[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, f)
 		}
 	}
 
@@ -111,7 +105,7 @@ func (s *Selector) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func SelectorsToGRPC(ss []*Selector) (res []*netmap.Selector) {
+func SelectorsToGRPC(ss []Selector) (res []*netmap.Selector) {
 	if ss != nil {
 		res = make([]*netmap.Selector, 0, len(ss))
 
@@ -123,23 +117,17 @@ func SelectorsToGRPC(ss []*Selector) (res []*netmap.Selector) {
 	return
 }
 
-func SelectorsFromGRPC(ss []*netmap.Selector) (res []*Selector, err error) {
+func SelectorsFromGRPC(ss []*netmap.Selector) (res []Selector, err error) {
 	if ss != nil {
-		res = make([]*Selector, 0, len(ss))
+		res = make([]Selector, len(ss))
 
 		for i := range ss {
-			var s *Selector
-
 			if ss[i] != nil {
-				s = new(Selector)
-
-				err = s.FromGRPCMessage(ss[i])
+				err = res[i].FromGRPCMessage(ss[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, s)
 		}
 	}
 
@@ -171,7 +159,7 @@ func (r *Replica) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func ReplicasToGRPC(rs []*Replica) (res []*netmap.Replica) {
+func ReplicasToGRPC(rs []Replica) (res []*netmap.Replica) {
 	if rs != nil {
 		res = make([]*netmap.Replica, 0, len(rs))
 
@@ -183,23 +171,17 @@ func ReplicasToGRPC(rs []*Replica) (res []*netmap.Replica) {
 	return
 }
 
-func ReplicasFromGRPC(rs []*netmap.Replica) (res []*Replica, err error) {
+func ReplicasFromGRPC(rs []*netmap.Replica) (res []Replica, err error) {
 	if rs != nil {
-		res = make([]*Replica, 0, len(rs))
+		res = make([]Replica, len(rs))
 
 		for i := range rs {
-			var r *Replica
-
 			if rs[i] != nil {
-				r = new(Replica)
-
-				err = r.FromGRPCMessage(rs[i])
+				err = res[i].FromGRPCMessage(rs[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, r)
 		}
 	}
 
@@ -583,27 +565,21 @@ func (x *NetworkConfig) FromGRPCMessage(m grpc.Message) error {
 	}
 
 	var (
-		ps   []*NetworkParameter
+		ps   []NetworkParameter
 		psV2 = v.GetParameters()
 	)
 
 	if psV2 != nil {
 		ln := len(psV2)
 
-		ps = make([]*NetworkParameter, 0, ln)
+		ps = make([]NetworkParameter, ln)
 
 		for i := 0; i < ln; i++ {
-			var p *NetworkParameter
-
 			if psV2[i] != nil {
-				p = new(NetworkParameter)
-
-				if err := p.FromGRPCMessage(psV2[i]); err != nil {
+				if err := ps[i].FromGRPCMessage(psV2[i]); err != nil {
 					return err
 				}
 			}
-
-			ps = append(ps, p)
 		}
 	}
 
