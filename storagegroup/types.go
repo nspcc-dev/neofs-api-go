@@ -13,7 +13,7 @@ type StorageGroup struct {
 
 	exp uint64
 
-	members []*refs.ObjectID
+	members []refs.ObjectID
 }
 
 // GetValidationDataSize of unified storage group structure.
@@ -66,7 +66,7 @@ func (s *StorageGroup) SetExpirationEpoch(v uint64) {
 
 // GetMembers of unified storage group structure. Members are objects of
 // storage group.
-func (s *StorageGroup) GetMembers() []*refs.ObjectID {
+func (s *StorageGroup) GetMembers() []refs.ObjectID {
 	if s != nil {
 		return s.members
 	}
@@ -76,7 +76,7 @@ func (s *StorageGroup) GetMembers() []*refs.ObjectID {
 
 // SetMembers into unified storage group structure. Members are objects of
 // storage group.
-func (s *StorageGroup) SetMembers(v []*refs.ObjectID) {
+func (s *StorageGroup) SetMembers(v []refs.ObjectID) {
 	if s != nil {
 		s.members = v
 	}

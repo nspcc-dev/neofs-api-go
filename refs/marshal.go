@@ -104,9 +104,9 @@ func (o *ObjectID) StableMarshal(buf []byte) ([]byte, error) {
 
 // ObjectIDNestedListSize returns byte length of nested
 // repeated ObjectID field with fNum number.
-func ObjectIDNestedListSize(fNum int64, ids []*ObjectID) (sz int) {
+func ObjectIDNestedListSize(fNum int64, ids []ObjectID) (sz int) {
 	for i := range ids {
-		sz += proto.NestedStructureSize(fNum, ids[i])
+		sz += proto.NestedStructureSize(fNum, &ids[i])
 	}
 
 	return
@@ -122,11 +122,11 @@ func (o *ObjectID) StableSize() int {
 
 // ObjectIDNestedListMarshal writes protobuf repeated ObjectID field
 // with fNum number to buf.
-func ObjectIDNestedListMarshal(fNum int64, buf []byte, ids []*ObjectID) (off int, err error) {
+func ObjectIDNestedListMarshal(fNum int64, buf []byte, ids []ObjectID) (off int, err error) {
 	for i := range ids {
 		var n int
 
-		n, err = proto.NestedStructureMarshal(fNum, buf[off:], ids[i])
+		n, err = proto.NestedStructureMarshal(fNum, buf[off:], &ids[i])
 		if err != nil {
 			return
 		}

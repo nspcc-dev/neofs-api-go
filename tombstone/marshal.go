@@ -43,7 +43,7 @@ func (s *Tombstone) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range s.members {
-		n, err = proto.NestedStructureMarshal(membersFNum, buf[offset:], s.members[i])
+		n, err = proto.NestedStructureMarshal(membersFNum, buf[offset:], &s.members[i])
 		if err != nil {
 			return nil, err
 		}
@@ -62,9 +62,8 @@ func (s *Tombstone) StableSize() (size int) {
 
 	size += proto.UInt64Size(expFNum, s.exp)
 	size += proto.BytesSize(splitIDFNum, s.splitID)
-
 	for i := range s.members {
-		size += proto.NestedStructureSize(membersFNum, s.members[i])
+		size += proto.NestedStructureSize(membersFNum, &s.members[i])
 	}
 
 	return size

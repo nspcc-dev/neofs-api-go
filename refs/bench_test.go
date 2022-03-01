@@ -15,9 +15,8 @@ func BenchmarkObjectIDSlice(b *testing.B) {
 }
 
 func benchmarkObjectIDSlice(b *testing.B, size int) {
-	ids := make([]*ObjectID, size)
+	ids := make([]ObjectID, size)
 	for i := range ids {
-		ids[i] = new(ObjectID)
 		ids[i].val = make([]byte, 32)
 		rand.Read(ids[i].val)
 	}
