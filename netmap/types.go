@@ -36,7 +36,7 @@ type Filter struct {
 	key     string
 	op      Operation
 	value   string
-	filters []*Filter
+	filters []Filter
 }
 
 type Selector struct {
@@ -55,10 +55,10 @@ type Replica struct {
 type Operation uint32
 
 type PlacementPolicy struct {
-	replicas     []*Replica
+	replicas     []Replica
 	backupFactor uint32
-	selectors    []*Selector
-	filters      []*Filter
+	selectors    []Selector
+	filters      []Filter
 	subnetID     *refs.SubnetID
 }
 
@@ -114,7 +114,7 @@ const (
 	Distinct
 )
 
-func (f *Filter) GetFilters() []*Filter {
+func (f *Filter) GetFilters() []Filter {
 	if f != nil {
 		return f.filters
 	}
@@ -122,7 +122,7 @@ func (f *Filter) GetFilters() []*Filter {
 	return nil
 }
 
-func (f *Filter) SetFilters(filters []*Filter) {
+func (f *Filter) SetFilters(filters []Filter) {
 	if f != nil {
 		f.filters = filters
 	}
@@ -281,7 +281,7 @@ func (r *Replica) SetCount(count uint32) {
 	}
 }
 
-func (p *PlacementPolicy) GetFilters() []*Filter {
+func (p *PlacementPolicy) GetFilters() []Filter {
 	if p != nil {
 		return p.filters
 	}
@@ -289,13 +289,13 @@ func (p *PlacementPolicy) GetFilters() []*Filter {
 	return nil
 }
 
-func (p *PlacementPolicy) SetFilters(filters []*Filter) {
+func (p *PlacementPolicy) SetFilters(filters []Filter) {
 	if p != nil {
 		p.filters = filters
 	}
 }
 
-func (p *PlacementPolicy) GetSelectors() []*Selector {
+func (p *PlacementPolicy) GetSelectors() []Selector {
 	if p != nil {
 		return p.selectors
 	}
@@ -303,7 +303,7 @@ func (p *PlacementPolicy) GetSelectors() []*Selector {
 	return nil
 }
 
-func (p *PlacementPolicy) SetSelectors(selectors []*Selector) {
+func (p *PlacementPolicy) SetSelectors(selectors []Selector) {
 	if p != nil {
 		p.selectors = selectors
 	}
@@ -323,11 +323,11 @@ func (p *PlacementPolicy) SetContainerBackupFactor(backupFactor uint32) {
 	}
 }
 
-func (p *PlacementPolicy) GetReplicas() []*Replica {
+func (p *PlacementPolicy) GetReplicas() []Replica {
 	return p.replicas
 }
 
-func (p *PlacementPolicy) SetReplicas(replicas []*Replica) {
+func (p *PlacementPolicy) SetReplicas(replicas []Replica) {
 	p.replicas = replicas
 }
 
@@ -565,7 +565,7 @@ func (x *NetworkParameter) SetValue(v []byte) {
 
 // NetworkConfig represents NeoFS network configuration.
 type NetworkConfig struct {
-	ps []*NetworkParameter
+	ps []NetworkParameter
 }
 
 // NumberOfParameters returns number of network parameters.
@@ -584,7 +584,7 @@ func (x *NetworkConfig) NumberOfParameters() int {
 func (x *NetworkConfig) IterateParameters(f func(*NetworkParameter) bool) {
 	if x != nil {
 		for i := range x.ps {
-			if f(x.ps[i]) {
+			if f(&x.ps[i]) {
 				break
 			}
 		}
@@ -592,7 +592,7 @@ func (x *NetworkConfig) IterateParameters(f func(*NetworkParameter) bool) {
 }
 
 // SetParameters sets list of network parameters.
-func (x *NetworkConfig) SetParameters(v ...*NetworkParameter) {
+func (x *NetworkConfig) SetParameters(v ...NetworkParameter) {
 	if x != nil {
 		x.ps = v
 	}

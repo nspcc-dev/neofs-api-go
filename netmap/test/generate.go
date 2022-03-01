@@ -20,9 +20,9 @@ func generateFilter(empty, withSub bool) *netmap.Filter {
 		m.SetOp(1)
 
 		if withSub {
-			m.SetFilters([]*netmap.Filter{
-				generateFilter(empty, false),
-				generateFilter(empty, false),
+			m.SetFilters([]netmap.Filter{
+				*generateFilter(empty, false),
+				*generateFilter(empty, false),
 			})
 		}
 	}
@@ -30,13 +30,13 @@ func generateFilter(empty, withSub bool) *netmap.Filter {
 	return m
 }
 
-func GenerateFilters(empty bool) []*netmap.Filter {
-	var res []*netmap.Filter
+func GenerateFilters(empty bool) []netmap.Filter {
+	var res []netmap.Filter
 
 	if !empty {
 		res = append(res,
-			GenerateFilter(false),
-			GenerateFilter(false),
+			*GenerateFilter(false),
+			*GenerateFilter(false),
 		)
 	}
 
@@ -57,13 +57,13 @@ func GenerateSelector(empty bool) *netmap.Selector {
 	return m
 }
 
-func GenerateSelectors(empty bool) []*netmap.Selector {
-	var res []*netmap.Selector
+func GenerateSelectors(empty bool) []netmap.Selector {
+	var res []netmap.Selector
 
 	if !empty {
 		res = append(res,
-			GenerateSelector(false),
-			GenerateSelector(false),
+			*GenerateSelector(false),
+			*GenerateSelector(false),
 		)
 	}
 
@@ -81,13 +81,13 @@ func GenerateReplica(empty bool) *netmap.Replica {
 	return m
 }
 
-func GenerateReplicas(empty bool) []*netmap.Replica {
-	var res []*netmap.Replica
+func GenerateReplicas(empty bool) []netmap.Replica {
+	var res []netmap.Replica
 
 	if !empty {
 		res = append(res,
-			GenerateReplica(false),
-			GenerateReplica(false),
+			*GenerateReplica(false),
+			*GenerateReplica(false),
 		)
 	}
 
@@ -205,8 +205,8 @@ func GenerateNetworkConfig(empty bool) *netmap.NetworkConfig {
 
 	if !empty {
 		m.SetParameters(
-			GenerateNetworkParameter(empty),
-			GenerateNetworkParameter(empty),
+			*GenerateNetworkParameter(empty),
+			*GenerateNetworkParameter(empty),
 		)
 	}
 
