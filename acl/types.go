@@ -27,9 +27,9 @@ type Record struct {
 
 	action Action
 
-	filters []*HeaderFilter
+	filters []HeaderFilter
 
-	targets []*Target
+	targets []Target
 }
 
 // Table is a unified structure of EACLTable
@@ -39,7 +39,7 @@ type Table struct {
 
 	cid *refs.ContainerID
 
-	records []*Record
+	records []Record
 }
 
 type TokenLifetime struct {
@@ -224,7 +224,7 @@ func (r *Record) SetAction(v Action) {
 	}
 }
 
-func (r *Record) GetFilters() []*HeaderFilter {
+func (r *Record) GetFilters() []HeaderFilter {
 	if r != nil {
 		return r.filters
 	}
@@ -232,13 +232,13 @@ func (r *Record) GetFilters() []*HeaderFilter {
 	return nil
 }
 
-func (r *Record) SetFilters(v []*HeaderFilter) {
+func (r *Record) SetFilters(v []HeaderFilter) {
 	if r != nil {
 		r.filters = v
 	}
 }
 
-func (r *Record) GetTargets() []*Target {
+func (r *Record) GetTargets() []Target {
 	if r != nil {
 		return r.targets
 	}
@@ -246,7 +246,7 @@ func (r *Record) GetTargets() []*Target {
 	return nil
 }
 
-func (r *Record) SetTargets(v []*Target) {
+func (r *Record) SetTargets(v []Target) {
 	if r != nil {
 		r.targets = v
 	}
@@ -280,7 +280,7 @@ func (t *Table) SetContainerID(v *refs.ContainerID) {
 	}
 }
 
-func (t *Table) GetRecords() []*Record {
+func (t *Table) GetRecords() []Record {
 	if t != nil {
 		return t.records
 	}
@@ -288,7 +288,7 @@ func (t *Table) GetRecords() []*Record {
 	return nil
 }
 
-func (t *Table) SetRecords(v []*Record) {
+func (t *Table) SetRecords(v []Record) {
 	if t != nil {
 		t.records = v
 	}
