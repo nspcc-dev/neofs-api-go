@@ -218,7 +218,7 @@ type SearchRequestBody struct {
 
 	version uint32
 
-	filters []*SearchFilter
+	filters []SearchFilter
 }
 
 type SearchRequest struct {
@@ -276,7 +276,7 @@ type GetRangeResponse struct {
 type GetRangeHashRequestBody struct {
 	addr *refs.Address
 
-	rngs []*Range
+	rngs []Range
 
 	salt []byte
 
@@ -1288,7 +1288,7 @@ func (r *SearchRequestBody) SetVersion(v uint32) {
 	}
 }
 
-func (r *SearchRequestBody) GetFilters() []*SearchFilter {
+func (r *SearchRequestBody) GetFilters() []SearchFilter {
 	if r != nil {
 		return r.filters
 	}
@@ -1296,7 +1296,7 @@ func (r *SearchRequestBody) GetFilters() []*SearchFilter {
 	return nil
 }
 
-func (r *SearchRequestBody) SetFilters(v []*SearchFilter) {
+func (r *SearchRequestBody) SetFilters(v []SearchFilter) {
 	if r != nil {
 		r.filters = v
 	}
@@ -1486,7 +1486,7 @@ func (r *GetRangeHashRequestBody) SetAddress(v *refs.Address) {
 	}
 }
 
-func (r *GetRangeHashRequestBody) GetRanges() []*Range {
+func (r *GetRangeHashRequestBody) GetRanges() []Range {
 	if r != nil {
 		return r.rngs
 	}
@@ -1494,7 +1494,7 @@ func (r *GetRangeHashRequestBody) GetRanges() []*Range {
 	return nil
 }
 
-func (r *GetRangeHashRequestBody) SetRanges(v []*Range) {
+func (r *GetRangeHashRequestBody) SetRanges(v []Range) {
 	if r != nil {
 		r.rngs = v
 	}
