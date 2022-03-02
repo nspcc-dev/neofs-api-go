@@ -52,7 +52,7 @@ func (c *ContainerID) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func ContainerIDsToGRPCMessage(ids []*ContainerID) (res []*refs.ContainerID) {
+func ContainerIDsToGRPCMessage(ids []ContainerID) (res []*refs.ContainerID) {
 	if ids != nil {
 		res = make([]*refs.ContainerID, 0, len(ids))
 
@@ -64,23 +64,17 @@ func ContainerIDsToGRPCMessage(ids []*ContainerID) (res []*refs.ContainerID) {
 	return
 }
 
-func ContainerIDsFromGRPCMessage(idsV2 []*refs.ContainerID) (res []*ContainerID, err error) {
+func ContainerIDsFromGRPCMessage(idsV2 []*refs.ContainerID) (res []ContainerID, err error) {
 	if idsV2 != nil {
-		res = make([]*ContainerID, 0, len(idsV2))
+		res = make([]ContainerID, len(idsV2))
 
 		for i := range idsV2 {
-			var id *ContainerID
-
 			if idsV2[i] != nil {
-				id = new(ContainerID)
-
-				err = id.FromGRPCMessage(idsV2[i])
+				err = res[i].FromGRPCMessage(idsV2[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, id)
 		}
 	}
 

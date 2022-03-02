@@ -71,13 +71,13 @@ func GenerateContainerID(empty bool) *refs.ContainerID {
 	return m
 }
 
-func GenerateContainerIDs(empty bool) []*refs.ContainerID {
-	var res []*refs.ContainerID
+func GenerateContainerIDs(empty bool) []refs.ContainerID {
+	var res []refs.ContainerID
 
 	if !empty {
 		res = append(res,
-			GenerateContainerID(false),
-			GenerateContainerID(false),
+			*GenerateContainerID(false),
+			*GenerateContainerID(false),
 		)
 	}
 
