@@ -14,7 +14,7 @@ func (m *PutRequest_Body) SetContainer(v *Container) {
 }
 
 // SetSignature sets signature of the container structure.
-func (m *PutRequest_Body) SetSignature(v *refs.Signature) {
+func (m *PutRequest_Body) SetSignature(v *refs.SignatureRFC6979) {
 	if m != nil {
 		m.Signature = v
 	}
@@ -77,7 +77,7 @@ func (m *DeleteRequest_Body) SetContainerId(v *refs.ContainerID) {
 }
 
 // SetSignature sets signature of the container identifier.
-func (m *DeleteRequest_Body) SetSignature(v *refs.Signature) {
+func (m *DeleteRequest_Body) SetSignature(v *refs.SignatureRFC6979) {
 	if m != nil {
 		m.Signature = v
 	}
@@ -166,8 +166,8 @@ func (m *GetResponse_Body) SetSessionToken(v *session.SessionToken) {
 	}
 }
 
-// SetSignature sets signature of the requested container.
-func (m *GetResponse_Body) SetSignature(v *refs.Signature) {
+// SetSignature sets signature of the container structure.
+func (m *GetResponse_Body) SetSignature(v *refs.SignatureRFC6979) {
 	if m != nil {
 		m.Signature = v
 	}
@@ -257,8 +257,8 @@ func (m *SetExtendedACLRequest_Body) SetEacl(v *acl.EACLTable) {
 	}
 }
 
-// SetSignature sets signature of the eACL table.
-func (m *SetExtendedACLRequest_Body) SetSignature(v *refs.Signature) {
+// SetSignature sets signature of the eACL table structure.
+func (m *SetExtendedACLRequest_Body) SetSignature(v *refs.SignatureRFC6979) {
 	if m != nil {
 		m.Signature = v
 	}
@@ -341,8 +341,8 @@ func (m *GetExtendedACLResponse_Body) SetEacl(v *acl.EACLTable) {
 	}
 }
 
-// SetSignature sets signature of the eACL table.
-func (m *GetExtendedACLResponse_Body) SetSignature(v *refs.Signature) {
+// SetSignature sets signature of the eACL table structure.
+func (m *GetExtendedACLResponse_Body) SetSignature(v *refs.SignatureRFC6979) {
 	if m != nil {
 		m.Signature = v
 	}

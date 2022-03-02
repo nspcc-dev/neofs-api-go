@@ -152,6 +152,18 @@ func (c *Container) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
+func toSignatureRFC6979(s *refs.Signature) *refsGRPC.SignatureRFC6979 {
+	var res *refsGRPC.SignatureRFC6979
+
+	if s != nil {
+		res = new(refsGRPC.SignatureRFC6979)
+		res.SetKey(s.GetKey())
+		res.SetSign(s.GetSign())
+	}
+
+	return res
+}
+
 func (r *PutRequestBody) ToGRPCMessage() grpc.Message {
 	var m *container.PutRequest_Body
 
@@ -159,7 +171,7 @@ func (r *PutRequestBody) ToGRPCMessage() grpc.Message {
 		m = new(container.PutRequest_Body)
 
 		m.SetContainer(r.cnr.ToGRPCMessage().(*container.Container))
-		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetSignature(toSignatureRFC6979(r.sig))
 	}
 
 	return m
@@ -195,7 +207,8 @@ func (r *PutRequestBody) FromGRPCMessage(m grpc.Message) error {
 			r.sig = new(refs.Signature)
 		}
 
-		err = r.sig.FromGRPCMessage(sig)
+		r.sig.SetKey(sig.GetKey())
+		r.sig.SetSign(sig.GetSign())
 	}
 
 	return err
@@ -391,7 +404,7 @@ func (r *GetResponseBody) ToGRPCMessage() grpc.Message {
 
 		m.SetContainer(r.cnr.ToGRPCMessage().(*container.Container))
 		m.SetSessionToken(r.token.ToGRPCMessage().(*sessionGRPC.SessionToken))
-		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetSignature(toSignatureRFC6979(r.sig))
 	}
 
 	return m
@@ -424,7 +437,8 @@ func (r *GetResponseBody) FromGRPCMessage(m grpc.Message) error {
 			r.sig = new(refs.Signature)
 		}
 
-		err = r.sig.FromGRPCMessage(sig)
+		r.sig.SetKey(sig.GetKey())
+		r.sig.SetSign(sig.GetSign())
 	}
 
 	token := v.GetSessionToken()
@@ -486,7 +500,7 @@ func (r *DeleteRequestBody) ToGRPCMessage() grpc.Message {
 		m = new(container.DeleteRequest_Body)
 
 		m.SetContainerId(r.cid.ToGRPCMessage().(*refsGRPC.ContainerID))
-		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetSignature(toSignatureRFC6979(r.sig))
 	}
 
 	return m
@@ -522,7 +536,8 @@ func (r *DeleteRequestBody) FromGRPCMessage(m grpc.Message) error {
 			r.sig = new(refs.Signature)
 		}
 
-		err = r.sig.FromGRPCMessage(sig)
+		r.sig.SetKey(sig.GetKey())
+		r.sig.SetSign(sig.GetSign())
 	}
 
 	return err
@@ -765,7 +780,7 @@ func (r *SetExtendedACLRequestBody) ToGRPCMessage() grpc.Message {
 		m = new(container.SetExtendedACLRequest_Body)
 
 		m.SetEacl(r.eacl.ToGRPCMessage().(*aclGRPC.EACLTable))
-		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetSignature(toSignatureRFC6979(r.sig))
 	}
 
 	return m
@@ -801,7 +816,8 @@ func (r *SetExtendedACLRequestBody) FromGRPCMessage(m grpc.Message) error {
 			r.sig = new(refs.Signature)
 		}
 
-		err = r.sig.FromGRPCMessage(sig)
+		r.sig.SetKey(sig.GetKey())
+		r.sig.SetSign(sig.GetSign())
 	}
 
 	return err
@@ -981,7 +997,7 @@ func (r *GetExtendedACLResponseBody) ToGRPCMessage() grpc.Message {
 		m = new(container.GetExtendedACLResponse_Body)
 
 		m.SetEacl(r.eacl.ToGRPCMessage().(*aclGRPC.EACLTable))
-		m.SetSignature(r.sig.ToGRPCMessage().(*refsGRPC.Signature))
+		m.SetSignature(toSignatureRFC6979(r.sig))
 		m.SetSessionToken(r.token.ToGRPCMessage().(*sessionGRPC.SessionToken))
 	}
 
@@ -1018,7 +1034,8 @@ func (r *GetExtendedACLResponseBody) FromGRPCMessage(m grpc.Message) error {
 			r.sig = new(refs.Signature)
 		}
 
-		err = r.sig.FromGRPCMessage(sig)
+		r.sig.SetKey(sig.GetKey())
+		r.sig.SetSign(sig.GetSign())
 	}
 
 	token := v.GetSessionToken()

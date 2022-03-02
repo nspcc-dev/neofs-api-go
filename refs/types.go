@@ -35,8 +35,7 @@ type SignatureScheme uint32
 
 //nolint:revive
 const (
-	UnspecifiedScheme SignatureScheme = iota
-	ECDSA_SHA512
+	ECDSA_SHA512 SignatureScheme = iota
 	ECDSA_RFC6979_SHA256
 )
 
@@ -189,7 +188,7 @@ func (s *Signature) GetScheme() SignatureScheme {
 	if s != nil {
 		return s.scheme
 	}
-	return UnspecifiedScheme
+	return 0
 }
 
 func (s *Signature) SetScheme(scheme SignatureScheme) {
