@@ -67,7 +67,7 @@ func WriteAccessDeniedDesc(st *status.Status, desc string) {
 		d.SetID(detailAccessDeniedDesc)
 		d.SetValue([]byte(desc))
 
-		st.AppendDetails(&d)
+		st.AppendDetails(d)
 	}
 }
 

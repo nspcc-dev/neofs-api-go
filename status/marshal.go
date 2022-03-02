@@ -88,7 +88,7 @@ func (x *Status) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range x.details {
-		n, err = protoutil.NestedStructureMarshal(statusDetailsFNum, buf[offset:], x.details[i])
+		n, err = protoutil.NestedStructureMarshal(statusDetailsFNum, buf[offset:], &x.details[i])
 		if err != nil {
 			return nil, err
 		}
@@ -104,7 +104,7 @@ func (x *Status) StableSize() (size int) {
 	size += protoutil.StringSize(statusMsgFNum, x.msg)
 
 	for i := range x.details {
-		size += protoutil.NestedStructureSize(statusDetailsFNum, x.details[i])
+		size += protoutil.NestedStructureSize(statusDetailsFNum, &x.details[i])
 	}
 
 	return size
