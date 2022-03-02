@@ -543,7 +543,7 @@ func (r *RequestMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range r.xHeaders {
-		n, err = proto.NestedStructureMarshal(reqMetaHeaderXHeadersField, buf[offset:], r.xHeaders[i])
+		n, err = proto.NestedStructureMarshal(reqMetaHeaderXHeadersField, buf[offset:], &r.xHeaders[i])
 		if err != nil {
 			return nil, err
 		}
@@ -593,7 +593,7 @@ func (r *RequestMetaHeader) StableSize() (size int) {
 	size += proto.UInt32Size(reqMetaHeaderTTLField, r.ttl)
 
 	for i := range r.xHeaders {
-		size += proto.NestedStructureSize(reqMetaHeaderXHeadersField, r.xHeaders[i])
+		size += proto.NestedStructureSize(reqMetaHeaderXHeadersField, &r.xHeaders[i])
 	}
 
 	size += proto.NestedStructureSize(reqMetaHeaderSessionTokenField, r.sessionToken)
@@ -714,7 +714,7 @@ func (r *ResponseMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range r.xHeaders {
-		n, err = proto.NestedStructureMarshal(respMetaHeaderXHeadersField, buf[offset:], r.xHeaders[i])
+		n, err = proto.NestedStructureMarshal(respMetaHeaderXHeadersField, buf[offset:], &r.xHeaders[i])
 		if err != nil {
 			return nil, err
 		}
@@ -750,7 +750,7 @@ func (r *ResponseMetaHeader) StableSize() (size int) {
 	size += proto.UInt32Size(respMetaHeaderTTLField, r.ttl)
 
 	for i := range r.xHeaders {
-		size += proto.NestedStructureSize(respMetaHeaderXHeadersField, r.xHeaders[i])
+		size += proto.NestedStructureSize(respMetaHeaderXHeadersField, &r.xHeaders[i])
 	}
 
 	size += proto.NestedStructureSize(respMetaHeaderOriginField, r.origin)

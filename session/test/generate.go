@@ -217,13 +217,13 @@ func GenerateXHeader(empty bool) *session.XHeader {
 	return m
 }
 
-func GenerateXHeaders(empty bool) []*session.XHeader {
-	var xs []*session.XHeader
+func GenerateXHeaders(empty bool) []session.XHeader {
+	var xs []session.XHeader
 
 	if !empty {
 		xs = append(xs,
-			GenerateXHeader(false),
-			GenerateXHeader(false),
+			*GenerateXHeader(false),
+			*GenerateXHeader(false),
 		)
 	}
 

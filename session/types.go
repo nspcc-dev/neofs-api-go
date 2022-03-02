@@ -93,7 +93,7 @@ type RequestMetaHeader struct {
 
 	epoch uint64
 
-	xHeaders []*XHeader
+	xHeaders []XHeader
 
 	sessionToken *Token
 
@@ -117,7 +117,7 @@ type ResponseMetaHeader struct {
 
 	epoch uint64
 
-	xHeaders []*XHeader
+	xHeaders []XHeader
 
 	origin *ResponseMetaHeader
 
@@ -401,7 +401,7 @@ func (r *RequestMetaHeader) SetEpoch(v uint64) {
 	}
 }
 
-func (r *RequestMetaHeader) GetXHeaders() []*XHeader {
+func (r *RequestMetaHeader) GetXHeaders() []XHeader {
 	if r != nil {
 		return r.xHeaders
 	}
@@ -409,7 +409,7 @@ func (r *RequestMetaHeader) GetXHeaders() []*XHeader {
 	return nil
 }
 
-func (r *RequestMetaHeader) SetXHeaders(v []*XHeader) {
+func (r *RequestMetaHeader) SetXHeaders(v []XHeader) {
 	if r != nil {
 		r.xHeaders = v
 	}
@@ -613,7 +613,7 @@ func (r *ResponseMetaHeader) SetEpoch(v uint64) {
 	}
 }
 
-func (r *ResponseMetaHeader) GetXHeaders() []*XHeader {
+func (r *ResponseMetaHeader) GetXHeaders() []XHeader {
 	if r != nil {
 		return r.xHeaders
 	}
@@ -621,7 +621,7 @@ func (r *ResponseMetaHeader) GetXHeaders() []*XHeader {
 	return nil
 }
 
-func (r *ResponseMetaHeader) SetXHeaders(v []*XHeader) {
+func (r *ResponseMetaHeader) SetXHeaders(v []XHeader) {
 	if r != nil {
 		r.xHeaders = v
 	}
