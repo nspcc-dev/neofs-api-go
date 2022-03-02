@@ -209,7 +209,7 @@ func (x *GlobalTrust) SetSignature(v *refs.Signature) {
 type AnnounceLocalTrustRequestBody struct {
 	epoch uint64
 
-	trusts []*Trust
+	trusts []Trust
 }
 
 // GetEpoch returns epoch in which the trust was assessed.
@@ -229,7 +229,7 @@ func (x *AnnounceLocalTrustRequestBody) SetEpoch(v uint64) {
 }
 
 // GetTrusts returns list of normalized trust values.
-func (x *AnnounceLocalTrustRequestBody) GetTrusts() []*Trust {
+func (x *AnnounceLocalTrustRequestBody) GetTrusts() []Trust {
 	if x != nil {
 		return x.trusts
 	}
@@ -238,7 +238,7 @@ func (x *AnnounceLocalTrustRequestBody) GetTrusts() []*Trust {
 }
 
 // SetTrusts sets list of normalized trust values.
-func (x *AnnounceLocalTrustRequestBody) SetTrusts(v []*Trust) {
+func (x *AnnounceLocalTrustRequestBody) SetTrusts(v []Trust) {
 	if x != nil {
 		x.trusts = v
 	}
