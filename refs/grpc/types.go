@@ -84,6 +84,20 @@ func (x *Signature) SetScheme(s SignatureScheme) {
 	}
 }
 
+// SetKey sets public key in a binary format.
+func (x *SignatureRFC6979) SetKey(v []byte) {
+	if x != nil {
+		x.Key = v
+	}
+}
+
+// SetSign sets signature.
+func (x *SignatureRFC6979) SetSign(v []byte) {
+	if x != nil {
+		x.Sign = v
+	}
+}
+
 // FromString parses SignatureScheme from a string representation,
 // It is a reverse action to String().
 //

@@ -316,6 +316,8 @@ func (r *PutRequestBody) GetSignature() *refs.Signature {
 
 func (r *PutRequestBody) SetSignature(v *refs.Signature) {
 	if r != nil {
+		// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
+		v.SetScheme(0)
 		r.sig = v
 	}
 }
@@ -434,6 +436,8 @@ func (r *GetResponseBody) GetSignature() *refs.Signature {
 // SetSignature sets signature of the requested container.
 func (r *GetResponseBody) SetSignature(v *refs.Signature) {
 	if r != nil {
+		// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
+		v.SetScheme(0)
 		r.sig = v
 	}
 }
@@ -476,6 +480,8 @@ func (r *DeleteRequestBody) GetSignature() *refs.Signature {
 
 func (r *DeleteRequestBody) SetSignature(v *refs.Signature) {
 	if r != nil {
+		// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
+		v.SetScheme(0)
 		r.sig = v
 	}
 }
@@ -588,6 +594,8 @@ func (r *SetExtendedACLRequestBody) GetSignature() *refs.Signature {
 
 func (r *SetExtendedACLRequestBody) SetSignature(v *refs.Signature) {
 	if r != nil {
+		// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
+		v.SetScheme(0)
 		r.sig = v
 	}
 }
@@ -672,6 +680,8 @@ func (r *GetExtendedACLResponseBody) GetSignature() *refs.Signature {
 
 func (r *GetExtendedACLResponseBody) SetSignature(v *refs.Signature) {
 	if r != nil {
+		// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
+		v.SetScheme(0)
 		r.sig = v
 	}
 }
