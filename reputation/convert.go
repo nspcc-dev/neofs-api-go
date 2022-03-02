@@ -138,7 +138,7 @@ func (x *PeerToPeerTrust) FromGRPCMessage(m grpc.Message) error {
 
 // TrustsToGRPC converts slice of Trust structures
 // to slice of gRPC-generated Trust messages.
-func TrustsToGRPC(xs []*Trust) (res []*reputation.Trust) {
+func TrustsToGRPC(xs []Trust) (res []*reputation.Trust) {
 	if xs != nil {
 		res = make([]*reputation.Trust, 0, len(xs))
 
@@ -152,23 +152,17 @@ func TrustsToGRPC(xs []*Trust) (res []*reputation.Trust) {
 
 // TrustsFromGRPC tries to restore slice of Trust structures from
 // slice of gRPC-generated reputation.Trust messages.
-func TrustsFromGRPC(xs []*reputation.Trust) (res []*Trust, err error) {
+func TrustsFromGRPC(xs []*reputation.Trust) (res []Trust, err error) {
 	if xs != nil {
-		res = make([]*Trust, 0, len(xs))
+		res = make([]Trust, len(xs))
 
 		for i := range xs {
-			var x *Trust
-
 			if xs[i] != nil {
-				x = new(Trust)
-
-				err = x.FromGRPCMessage(xs[i])
+				err = res[i].FromGRPCMessage(xs[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, x)
 		}
 	}
 

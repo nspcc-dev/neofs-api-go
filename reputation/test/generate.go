@@ -61,13 +61,13 @@ func GenerateGlobalTrust(empty bool) *reputation.GlobalTrust {
 	return m
 }
 
-func GenerateTrusts(empty bool) []*reputation.Trust {
-	var res []*reputation.Trust
+func GenerateTrusts(empty bool) []reputation.Trust {
+	var res []reputation.Trust
 
 	if !empty {
 		res = append(res,
-			GenerateTrust(false),
-			GenerateTrust(false),
+			*GenerateTrust(false),
+			*GenerateTrust(false),
 		)
 	}
 

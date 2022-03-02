@@ -238,7 +238,7 @@ func (x *AnnounceLocalTrustRequestBody) StableMarshal(buf []byte) ([]byte, error
 	offset += n
 
 	for i := range x.trusts {
-		n, err = protoutil.NestedStructureMarshal(announceLocalTrustBodyTrustsFNum, buf[offset:], x.trusts[i])
+		n, err = protoutil.NestedStructureMarshal(announceLocalTrustBodyTrustsFNum, buf[offset:], &x.trusts[i])
 		if err != nil {
 			return nil, err
 		}
@@ -253,7 +253,7 @@ func (x *AnnounceLocalTrustRequestBody) StableSize() (size int) {
 	size += protoutil.UInt64Size(announceLocalTrustBodyEpochFNum, x.epoch)
 
 	for i := range x.trusts {
-		size += protoutil.NestedStructureSize(announceLocalTrustBodyTrustsFNum, x.trusts[i])
+		size += protoutil.NestedStructureSize(announceLocalTrustBodyTrustsFNum, &x.trusts[i])
 	}
 
 	return
