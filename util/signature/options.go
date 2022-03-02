@@ -9,14 +9,15 @@ import (
 )
 
 type cfg struct {
-	defaultScheme  refs.SignatureScheme
-	restrictScheme refs.SignatureScheme
+	defaultScheme refs.SignatureScheme
+	useScheme     refs.SignatureScheme
+	restrict      bool
 }
 
 func defaultCfg() *cfg {
 	return &cfg{
-		defaultScheme:  refs.ECDSA_SHA512,
-		restrictScheme: refs.UnspecifiedScheme,
+		defaultScheme: refs.ECDSA_SHA512,
+		useScheme:     refs.ECDSA_SHA512,
 	}
 }
 
@@ -25,7 +26,7 @@ func verify(cfg *cfg, data []byte, sig *refs.Signature) error {
 	if scheme == refs.UnspecifiedScheme {
 		scheme = cfg.defaultScheme
 	}
-	if cfg.restrictScheme != refs.UnspecifiedScheme && scheme != cfg.restrictScheme {
+	if cfg.restrict && cfg.defaultScheme != refs.UnspecifiedScheme && scheme != cfg.defaultScheme {
 		return fmt.Errorf("%w: unexpected signature scheme", crypto.ErrInvalidSignature)
 	}
 
@@ -40,8 +41,8 @@ func verify(cfg *cfg, data []byte, sig *refs.Signature) error {
 	}
 }
 
-func sign(cfg *cfg, scheme refs.SignatureScheme, key *ecdsa.PrivateKey, data []byte) ([]byte, error) {
-	switch scheme {
+func sign(cfg *cfg, key *ecdsa.PrivateKey, data []byte) ([]byte, error) {
+	switch cfg.useScheme {
 	case refs.ECDSA_SHA512:
 		return crypto.Sign(key, data)
 	case refs.ECDSA_RFC6979_SHA256:
@@ -54,6 +55,7 @@ func sign(cfg *cfg, scheme refs.SignatureScheme, key *ecdsa.PrivateKey, data []b
 func SignWithRFC6979() SignOption {
 	return func(c *cfg) {
 		c.defaultScheme = refs.ECDSA_RFC6979_SHA256
-		c.restrictScheme = refs.ECDSA_RFC6979_SHA256
+		c.useScheme = refs.ECDSA_RFC6979_SHA256
+		c.restrict = true
 	}
 }

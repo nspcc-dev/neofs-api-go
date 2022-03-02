@@ -41,13 +41,15 @@ func SignDataWithHandler(key *ecdsa.PrivateKey, src DataSource, handler KeySigna
 		opts[i](cfg)
 	}
 
-	sigData, err := sign(cfg, cfg.defaultScheme, key, data)
+	sigData, err := sign(cfg, key, data)
 	if err != nil {
 		return err
 	}
 
 	sig := new(refs.Signature)
-	sig.SetScheme(cfg.defaultScheme)
+	if cfg.useScheme != cfg.defaultScheme {
+		sig.SetScheme(cfg.useScheme)
+	}
 	sig.SetKey(crypto.MarshalPublicKey(&key.PublicKey))
 	sig.SetSign(sigData)
 	handler(sig)
