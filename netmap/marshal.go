@@ -383,7 +383,7 @@ func (ni *NodeInfo) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range ni.attributes {
-		n, err = protoutil.NestedStructureMarshal(attributesNodeInfoField, buf[offset:], ni.attributes[i])
+		n, err = protoutil.NestedStructureMarshal(attributesNodeInfoField, buf[offset:], &ni.attributes[i])
 		if err != nil {
 			return nil, err
 		}
@@ -408,7 +408,7 @@ func (ni *NodeInfo) StableSize() (size int) {
 	size += protoutil.RepeatedStringSize(addressNodeInfoField, ni.addresses)
 
 	for i := range ni.attributes {
-		size += protoutil.NestedStructureSize(attributesNodeInfoField, ni.attributes[i])
+		size += protoutil.NestedStructureSize(attributesNodeInfoField, &ni.attributes[i])
 	}
 
 	size += protoutil.EnumSize(stateNodeInfoField, int32(ni.state))

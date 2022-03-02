@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/netmap"
+	netmaptest "github.com/nspcc-dev/neofs-api-go/v2/netmap/test"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/stretchr/testify/require"
 )
@@ -15,6 +16,57 @@ func subnetAttrKey(val string) string {
 
 func assertSubnetAttrKey(t *testing.T, attr *netmap.Attribute, num uint32) {
 	require.Equal(t, subnetAttrKey(strconv.FormatUint(uint64(num), 10)), attr.GetKey())
+}
+
+func BenchmarkNodeAttributes(b *testing.B) {
+	const size = 50
+
+	id := new(refs.SubnetID)
+	id.SetValue(12)
+
+	attrs := make([]netmap.Attribute, size)
+	for i := range attrs {
+		if i == size/2 {
+			attrs[i] = *netmaptest.GenerateAttribute(false)
+		} else {
+			data, err := id.MarshalText()
+			require.NoError(b, err)
+
+			attrs[i].SetKey(subnetAttrKey(string(data)))
+			attrs[i].SetValue("True")
+		}
+	}
+
+	var info netmap.NodeSubnetInfo
+	info.SetID(id)
+	info.SetEntryFlag(false)
+
+	node := new(netmap.NodeInfo)
+
+	// When using a single slice `StartTimer` overhead is comparable to the
+	// function execution time, so we reduce this cost by updating slices in groups.
+	const cacheSize = 1000
+	a := make([][]netmap.Attribute, cacheSize)
+	for i := range a {
+		a[i] = make([]netmap.Attribute, size)
+	}
+
+	b.ResetTimer()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		if i%cacheSize == 0 {
+			b.StopTimer()
+			for j := range a {
+				copy(a[j], attrs)
+			}
+			b.StartTimer()
+		}
+		node.SetAttributes(a[i%cacheSize])
+		netmap.WriteSubnetInfo(node, info)
+		if len(node.GetAttributes())+1 != len(attrs) {
+			b.FailNow()
+		}
+	}
 }
 
 func TestWriteSubnetInfo(t *testing.T) {
@@ -40,7 +92,7 @@ func TestWriteSubnetInfo(t *testing.T) {
 			attrs = node.GetAttributes()
 			require.Len(t, attrs, 1)
 
-			attr := attrs[0]
+			attr := &attrs[0]
 			assertSubnetAttrKey(t, attr, 0)
 			require.Equal(t, "False", attr.GetValue())
 
@@ -76,7 +128,7 @@ func TestWriteSubnetInfo(t *testing.T) {
 			attrs := node.GetAttributes()
 			require.Len(t, attrs, 1)
 
-			attr := attrs[0]
+			attr := &attrs[0]
 			assertSubnetAttrKey(t, attr, num)
 			require.Equal(t, "True", attr.GetValue())
 
@@ -128,7 +180,7 @@ func TestSubnets(t *testing.T) {
 		attrExit.SetKey(subnetAttrKey(strconv.FormatUint(numExit, 10)))
 		attrExit.SetValue("False")
 
-		attrs := []*netmap.Attribute{&attrEntry, &attrEntry}
+		attrs := []netmap.Attribute{attrEntry, attrEntry}
 
 		node.SetAttributes(attrs)
 
@@ -157,7 +209,7 @@ func TestSubnets(t *testing.T) {
 		assertErr := func(attr netmap.Attribute) {
 			var node netmap.NodeInfo
 
-			node.SetAttributes([]*netmap.Attribute{&attr})
+			node.SetAttributes([]netmap.Attribute{attr})
 
 			require.Error(t, netmap.IterateSubnets(&node, func(refs.SubnetID) error {
 				return nil
@@ -200,7 +252,7 @@ func TestSubnets(t *testing.T) {
 			attr.SetKey(subnetAttrKey("321"))
 			attr.SetValue("True")
 
-			attrs := []*netmap.Attribute{&attr}
+			attrs := []netmap.Attribute{attr}
 			node.SetAttributes(attrs)
 
 			err := netmap.IterateSubnets(&node, func(id refs.SubnetID) error {
@@ -237,7 +289,7 @@ func TestSubnets(t *testing.T) {
 			attr.SetKey(subnetAttrKey("99"))
 			attr.SetValue("True")
 
-			attrs := []*netmap.Attribute{&attr}
+			attrs := []netmap.Attribute{attr}
 			node.SetAttributes(attrs)
 
 			err := netmap.IterateSubnets(&node, func(id refs.SubnetID) error {
@@ -257,7 +309,7 @@ func TestSubnets(t *testing.T) {
 		t.Run("all", func(t *testing.T) {
 			var (
 				node  netmap.NodeInfo
-				attrs []*netmap.Attribute
+				attrs []netmap.Attribute
 			)
 
 			// enter to some non-zero subnet so that zero is not the only one
@@ -267,7 +319,7 @@ func TestSubnets(t *testing.T) {
 				attr.SetKey(subnetAttrKey(strconv.Itoa(i)))
 				attr.SetValue("True")
 
-				attrs = append(attrs, &attr)
+				attrs = append(attrs, attr)
 			}
 
 			node.SetAttributes(attrs)
@@ -293,7 +345,7 @@ func TestSubnets(t *testing.T) {
 		attrOther.SetKey(subnetAttrKey("1"))
 		attrOther.SetValue("True")
 
-		node.SetAttributes([]*netmap.Attribute{&attrZero, &attrOther})
+		node.SetAttributes([]netmap.Attribute{attrZero, attrOther})
 
 		calledCount := 0
 

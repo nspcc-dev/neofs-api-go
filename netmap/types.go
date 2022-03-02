@@ -73,7 +73,7 @@ type Attribute struct {
 type NodeInfo struct {
 	publicKey  []byte
 	addresses  []string
-	attributes []*Attribute
+	attributes []Attribute
 	state      NodeState
 }
 
@@ -444,7 +444,7 @@ func (ni *NodeInfo) IterateAddresses(f func(string) bool) {
 	}
 }
 
-func (ni *NodeInfo) GetAttributes() []*Attribute {
+func (ni *NodeInfo) GetAttributes() []Attribute {
 	if ni != nil {
 		return ni.attributes
 	}
@@ -452,7 +452,7 @@ func (ni *NodeInfo) GetAttributes() []*Attribute {
 	return nil
 }
 
-func (ni *NodeInfo) SetAttributes(v []*Attribute) {
+func (ni *NodeInfo) SetAttributes(v []Attribute) {
 	if ni != nil {
 		ni.attributes = v
 	}

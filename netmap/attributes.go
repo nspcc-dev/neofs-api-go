@@ -101,12 +101,10 @@ func WriteSubnetInfo(node *NodeInfo, info NodeSubnetInfo) {
 		}
 
 		if !presented {
-			var attr Attribute
-
-			attr.SetKey(key)
-			attr.SetValue(val)
-
-			attrs = append(attrs, &attr)
+			index := len(attrs)
+			attrs = append(attrs, Attribute{})
+			attrs[index].SetKey(key)
+			attrs[index].SetValue(val)
 		}
 	}
 
@@ -208,12 +206,10 @@ func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 			}
 
 			// zero subnet should be clearly removed with False value
-			var attr Attribute
-
-			attr.SetKey(subnetAttributeKey(&id))
-			attr.SetValue(attrSubnetValExit)
-
-			attrs = append(attrs, &attr)
+			index := len(attrs)
+			attrs = append(attrs, Attribute{})
+			attrs[index].SetKey(subnetAttributeKey(&id))
+			attrs[index].SetValue(attrSubnetValExit)
 		} else {
 			entries++
 		}
