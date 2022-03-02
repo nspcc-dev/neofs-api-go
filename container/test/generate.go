@@ -19,13 +19,13 @@ func GenerateAttribute(empty bool) *container.Attribute {
 	return m
 }
 
-func GenerateAttributes(empty bool) []*container.Attribute {
-	var res []*container.Attribute
+func GenerateAttributes(empty bool) []container.Attribute {
+	var res []container.Attribute
 
 	if !empty {
 		res = append(res,
-			GenerateAttribute(false),
-			GenerateAttribute(false),
+			*GenerateAttribute(false),
+			*GenerateAttribute(false),
 		)
 	}
 
@@ -340,13 +340,13 @@ func GenerateUsedSpaceAnnouncement(empty bool) *container.UsedSpaceAnnouncement 
 	return m
 }
 
-func GenerateUsedSpaceAnnouncements(empty bool) []*container.UsedSpaceAnnouncement {
-	var res []*container.UsedSpaceAnnouncement
+func GenerateUsedSpaceAnnouncements(empty bool) []container.UsedSpaceAnnouncement {
+	var res []container.UsedSpaceAnnouncement
 
 	if !empty {
 		res = append(res,
-			GenerateUsedSpaceAnnouncement(false),
-			GenerateUsedSpaceAnnouncement(false),
+			*GenerateUsedSpaceAnnouncement(false),
+			*GenerateUsedSpaceAnnouncement(false),
 		)
 	}
 

@@ -138,7 +138,7 @@ func (c *Container) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range c.attr {
-		n, err = protoutil.NestedStructureMarshal(containerAttributesField, buf[offset:], c.attr[i])
+		n, err = protoutil.NestedStructureMarshal(containerAttributesField, buf[offset:], &c.attr[i])
 		if err != nil {
 			return nil, err
 		}
@@ -165,7 +165,7 @@ func (c *Container) StableSize() (size int) {
 	size += protoutil.UInt32Size(containerBasicACLField, c.basicACL)
 
 	for i := range c.attr {
-		size += protoutil.NestedStructureSize(containerAttributesField, c.attr[i])
+		size += protoutil.NestedStructureSize(containerAttributesField, &c.attr[i])
 	}
 
 	size += protoutil.NestedStructureSize(containerPlacementField, c.policy)
@@ -432,7 +432,7 @@ func (r *ListResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	)
 
 	for i := range r.cidList {
-		n, err = protoutil.NestedStructureMarshal(listRespBodyIDsField, buf[offset:], r.cidList[i])
+		n, err = protoutil.NestedStructureMarshal(listRespBodyIDsField, buf[offset:], &r.cidList[i])
 		if err != nil {
 			return nil, err
 		}
@@ -449,7 +449,7 @@ func (r *ListResponseBody) StableSize() (size int) {
 	}
 
 	for i := range r.cidList {
-		size += protoutil.NestedStructureSize(listRespBodyIDsField, r.cidList[i])
+		size += protoutil.NestedStructureSize(listRespBodyIDsField, &r.cidList[i])
 	}
 
 	return size
@@ -665,7 +665,7 @@ func (r *AnnounceUsedSpaceRequestBody) StableMarshal(buf []byte) ([]byte, error)
 	)
 
 	for i := range r.announcements {
-		n, err = protoutil.NestedStructureMarshal(usedSpaceReqBodyAnnouncementsField, buf[offset:], r.announcements[i])
+		n, err = protoutil.NestedStructureMarshal(usedSpaceReqBodyAnnouncementsField, buf[offset:], &r.announcements[i])
 		if err != nil {
 			return nil, err
 		}
@@ -682,7 +682,7 @@ func (r *AnnounceUsedSpaceRequestBody) StableSize() (size int) {
 	}
 
 	for i := range r.announcements {
-		size += protoutil.NestedStructureSize(usedSpaceReqBodyAnnouncementsField, r.announcements[i])
+		size += protoutil.NestedStructureSize(usedSpaceReqBodyAnnouncementsField, &r.announcements[i])
 	}
 
 	return size

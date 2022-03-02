@@ -20,7 +20,7 @@ type Container struct {
 
 	basicACL uint32
 
-	attr []*Attribute
+	attr []Attribute
 
 	policy *netmap.PlacementPolicy
 }
@@ -101,7 +101,7 @@ type ListRequest struct {
 }
 
 type ListResponseBody struct {
-	cidList []*refs.ContainerID
+	cidList []refs.ContainerID
 }
 
 type ListResponse struct {
@@ -163,7 +163,7 @@ type UsedSpaceAnnouncement struct {
 }
 
 type AnnounceUsedSpaceRequestBody struct {
-	announcements []*UsedSpaceAnnouncement
+	announcements []UsedSpaceAnnouncement
 }
 
 type AnnounceUsedSpaceRequest struct {
@@ -264,7 +264,7 @@ func (c *Container) SetBasicACL(v uint32) {
 	}
 }
 
-func (c *Container) GetAttributes() []*Attribute {
+func (c *Container) GetAttributes() []Attribute {
 	if c != nil {
 		return c.attr
 	}
@@ -272,7 +272,7 @@ func (c *Container) GetAttributes() []*Attribute {
 	return nil
 }
 
-func (c *Container) SetAttributes(v []*Attribute) {
+func (c *Container) SetAttributes(v []Attribute) {
 	if c != nil {
 		c.attr = v
 	}
@@ -542,7 +542,7 @@ func (r *ListRequest) SetBody(v *ListRequestBody) {
 	}
 }
 
-func (r *ListResponseBody) GetContainerIDs() []*refs.ContainerID {
+func (r *ListResponseBody) GetContainerIDs() []refs.ContainerID {
 	if r != nil {
 		return r.cidList
 	}
@@ -550,7 +550,7 @@ func (r *ListResponseBody) GetContainerIDs() []*refs.ContainerID {
 	return nil
 }
 
-func (r *ListResponseBody) SetContainerIDs(v []*refs.ContainerID) {
+func (r *ListResponseBody) SetContainerIDs(v []refs.ContainerID) {
 	if r != nil {
 		r.cidList = v
 	}
@@ -760,7 +760,7 @@ func (a *UsedSpaceAnnouncement) SetContainerID(v *refs.ContainerID) {
 	}
 }
 
-func (r *AnnounceUsedSpaceRequestBody) GetAnnouncements() []*UsedSpaceAnnouncement {
+func (r *AnnounceUsedSpaceRequestBody) GetAnnouncements() []UsedSpaceAnnouncement {
 	if r != nil {
 		return r.announcements
 	}
@@ -768,7 +768,7 @@ func (r *AnnounceUsedSpaceRequestBody) GetAnnouncements() []*UsedSpaceAnnounceme
 	return nil
 }
 
-func (r *AnnounceUsedSpaceRequestBody) SetAnnouncements(v []*UsedSpaceAnnouncement) {
+func (r *AnnounceUsedSpaceRequestBody) SetAnnouncements(v []UsedSpaceAnnouncement) {
 	if r != nil {
 		r.announcements = v
 	}

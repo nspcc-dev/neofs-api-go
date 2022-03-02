@@ -39,7 +39,7 @@ func (a *Attribute) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func AttributesToGRPC(xs []*Attribute) (res []*container.Container_Attribute) {
+func AttributesToGRPC(xs []Attribute) (res []*container.Container_Attribute) {
 	if xs != nil {
 		res = make([]*container.Container_Attribute, 0, len(xs))
 
@@ -51,23 +51,17 @@ func AttributesToGRPC(xs []*Attribute) (res []*container.Container_Attribute) {
 	return
 }
 
-func AttributesFromGRPC(xs []*container.Container_Attribute) (res []*Attribute, err error) {
+func AttributesFromGRPC(xs []*container.Container_Attribute) (res []Attribute, err error) {
 	if xs != nil {
-		res = make([]*Attribute, 0, len(xs))
+		res = make([]Attribute, len(xs))
 
 		for i := range xs {
-			var x *Attribute
-
 			if xs[i] != nil {
-				x = new(Attribute)
-
-				err = x.FromGRPCMessage(xs[i])
+				err = res[i].FromGRPCMessage(xs[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, x)
 		}
 	}
 
@@ -1133,7 +1127,7 @@ func (a *UsedSpaceAnnouncement) FromGRPCMessage(m grpc.Message) error {
 }
 
 func UsedSpaceAnnouncementsToGRPCMessage(
-	ids []*UsedSpaceAnnouncement,
+	ids []UsedSpaceAnnouncement,
 ) (res []*container.AnnounceUsedSpaceRequest_Body_Announcement) {
 	if ids != nil {
 		res = make([]*container.AnnounceUsedSpaceRequest_Body_Announcement, 0, len(ids))
@@ -1148,23 +1142,17 @@ func UsedSpaceAnnouncementsToGRPCMessage(
 
 func UsedSpaceAnnouncementssFromGRPCMessage(
 	asV2 []*container.AnnounceUsedSpaceRequest_Body_Announcement,
-) (res []*UsedSpaceAnnouncement, err error) {
+) (res []UsedSpaceAnnouncement, err error) {
 	if asV2 != nil {
-		res = make([]*UsedSpaceAnnouncement, 0, len(asV2))
+		res = make([]UsedSpaceAnnouncement, len(asV2))
 
 		for i := range asV2 {
-			var a *UsedSpaceAnnouncement
-
 			if asV2[i] != nil {
-				a = new(UsedSpaceAnnouncement)
-
-				err = a.FromGRPCMessage(asV2[i])
+				err = res[i].FromGRPCMessage(asV2[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, a)
 		}
 	}
 
