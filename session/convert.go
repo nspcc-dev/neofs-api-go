@@ -207,7 +207,7 @@ func (x *XHeader) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func XHeadersToGRPC(xs []*XHeader) (res []*session.XHeader) {
+func XHeadersToGRPC(xs []XHeader) (res []*session.XHeader) {
 	if xs != nil {
 		res = make([]*session.XHeader, 0, len(xs))
 
@@ -219,23 +219,17 @@ func XHeadersToGRPC(xs []*XHeader) (res []*session.XHeader) {
 	return
 }
 
-func XHeadersFromGRPC(xs []*session.XHeader) (res []*XHeader, err error) {
+func XHeadersFromGRPC(xs []*session.XHeader) (res []XHeader, err error) {
 	if xs != nil {
-		res = make([]*XHeader, 0, len(xs))
+		res = make([]XHeader, len(xs))
 
 		for i := range xs {
-			var x *XHeader
-
 			if xs[i] != nil {
-				x = new(XHeader)
-
-				err = x.FromGRPCMessage(xs[i])
+				err = res[i].FromGRPCMessage(xs[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, x)
 		}
 	}
 
