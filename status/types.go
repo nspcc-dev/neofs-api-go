@@ -53,7 +53,7 @@ type Status struct {
 
 	msg string
 
-	details []*Detail
+	details []Detail
 }
 
 // Code returns code of the Status.
@@ -104,7 +104,7 @@ func (x *Status) NumberOfDetails() int {
 func (x *Status) IterateDetails(f func(*Detail) bool) {
 	if x != nil {
 		for i := range x.details {
-			if f(x.details[i]) {
+			if f(&x.details[i]) {
 				break
 			}
 		}
@@ -119,14 +119,14 @@ func (x *Status) ResetDetails() {
 }
 
 // AppendDetails appends the list of details to the Status.
-func (x *Status) AppendDetails(ds ...*Detail) {
+func (x *Status) AppendDetails(ds ...Detail) {
 	if x != nil {
 		x.details = append(x.details, ds...)
 	}
 }
 
 // SetStatusDetails sets Detail list of the Status.
-func SetStatusDetails(dst *Status, ds []*Detail) {
+func SetStatusDetails(dst *Status, ds []Detail) {
 	dst.ResetDetails()
 	dst.AppendDetails(ds...)
 }

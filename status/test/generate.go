@@ -17,13 +17,13 @@ func Detail(empty bool) *status.Detail {
 }
 
 // Details returns several status.Detail messages filled with static random values.
-func Details(empty bool) []*status.Detail {
-	var res []*status.Detail
+func Details(empty bool) []status.Detail {
+	var res []status.Detail
 
 	if !empty {
 		res = append(res,
-			Detail(false),
-			Detail(false),
+			*Detail(false),
+			*Detail(false),
 		)
 	}
 

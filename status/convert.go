@@ -71,27 +71,21 @@ func (x *Status) FromGRPCMessage(m grpc.Message) error {
 	}
 
 	var (
-		ds   []*Detail
+		ds   []Detail
 		dsV2 = v.GetDetails()
 	)
 
 	if dsV2 != nil {
 		ln := len(dsV2)
 
-		ds = make([]*Detail, 0, ln)
+		ds = make([]Detail, ln)
 
 		for i := 0; i < ln; i++ {
-			var p *Detail
-
 			if dsV2[i] != nil {
-				p = new(Detail)
-
-				if err := p.FromGRPCMessage(dsV2[i]); err != nil {
+				if err := ds[i].FromGRPCMessage(dsV2[i]); err != nil {
 					return err
 				}
 			}
-
-			ds = append(ds, p)
 		}
 	}
 
