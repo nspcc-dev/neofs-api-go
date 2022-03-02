@@ -297,7 +297,7 @@ func (a *Attribute) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func AttributesToGRPC(as []*Attribute) (res []*netmap.NodeInfo_Attribute) {
+func AttributesToGRPC(as []Attribute) (res []*netmap.NodeInfo_Attribute) {
 	if as != nil {
 		res = make([]*netmap.NodeInfo_Attribute, 0, len(as))
 
@@ -309,23 +309,17 @@ func AttributesToGRPC(as []*Attribute) (res []*netmap.NodeInfo_Attribute) {
 	return
 }
 
-func AttributesFromGRPC(as []*netmap.NodeInfo_Attribute) (res []*Attribute, err error) {
+func AttributesFromGRPC(as []*netmap.NodeInfo_Attribute) (res []Attribute, err error) {
 	if as != nil {
-		res = make([]*Attribute, 0, len(as))
+		res = make([]Attribute, len(as))
 
 		for i := range as {
-			var a *Attribute
-
 			if as[i] != nil {
-				a = new(Attribute)
-
-				err = a.FromGRPCMessage(as[i])
+				err = res[i].FromGRPCMessage(as[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, a)
 		}
 	}
 

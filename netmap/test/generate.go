@@ -119,13 +119,13 @@ func GenerateAttribute(empty bool) *netmap.Attribute {
 	return m
 }
 
-func GenerateAttributes(empty bool) []*netmap.Attribute {
-	var res []*netmap.Attribute
+func GenerateAttributes(empty bool) []netmap.Attribute {
+	var res []netmap.Attribute
 
 	if !empty {
 		res = append(res,
-			GenerateAttribute(false),
-			GenerateAttribute(false),
+			*GenerateAttribute(false),
+			*GenerateAttribute(false),
 		)
 	}
 
