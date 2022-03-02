@@ -380,13 +380,13 @@ func GenerateSearchFilter(empty bool) *object.SearchFilter {
 	return m
 }
 
-func GenerateSearchFilters(empty bool) []*object.SearchFilter {
-	var res []*object.SearchFilter
+func GenerateSearchFilters(empty bool) []object.SearchFilter {
+	var res []object.SearchFilter
 
 	if !empty {
 		res = append(res,
-			GenerateSearchFilter(false),
-			GenerateSearchFilter(false),
+			*GenerateSearchFilter(false),
+			*GenerateSearchFilter(false),
 		)
 	}
 
@@ -452,13 +452,13 @@ func GenerateRange(empty bool) *object.Range {
 	return m
 }
 
-func GenerateRanges(empty bool) []*object.Range {
-	var res []*object.Range
+func GenerateRanges(empty bool) []object.Range {
+	var res []object.Range
 
 	if !empty {
 		res = append(res,
-			GenerateRange(false),
-			GenerateRange(false),
+			*GenerateRange(false),
+			*GenerateRange(false),
 		)
 	}
 

@@ -1158,7 +1158,7 @@ func (r *SearchRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range r.filters {
-		n, err = proto.NestedStructureMarshal(searchReqBodyFiltersField, buf[offset:], r.filters[i])
+		n, err = proto.NestedStructureMarshal(searchReqBodyFiltersField, buf[offset:], &r.filters[i])
 		if err != nil {
 			return nil, err
 		}
@@ -1178,7 +1178,7 @@ func (r *SearchRequestBody) StableSize() (size int) {
 	size += proto.UInt32Size(searchReqBodyVersionField, r.version)
 
 	for i := range r.filters {
-		size += proto.NestedStructureSize(searchReqBodyFiltersField, r.filters[i])
+		size += proto.NestedStructureSize(searchReqBodyFiltersField, &r.filters[i])
 	}
 
 	return size
@@ -1400,7 +1400,7 @@ func (r *GetRangeHashRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	offset += n
 
 	for i := range r.rngs {
-		n, err = proto.NestedStructureMarshal(getRangeHashReqBodyRangesField, buf[offset:], r.rngs[i])
+		n, err = proto.NestedStructureMarshal(getRangeHashReqBodyRangesField, buf[offset:], &r.rngs[i])
 		if err != nil {
 			return nil, err
 		}
@@ -1431,7 +1431,7 @@ func (r *GetRangeHashRequestBody) StableSize() (size int) {
 	size += proto.NestedStructureSize(getRangeHashReqBodyAddressField, r.addr)
 
 	for i := range r.rngs {
-		size += proto.NestedStructureSize(getRangeHashReqBodyRangesField, r.rngs[i])
+		size += proto.NestedStructureSize(getRangeHashReqBodyRangesField, &r.rngs[i])
 	}
 
 	size += proto.BytesSize(getRangeHashReqBodySaltField, r.salt)

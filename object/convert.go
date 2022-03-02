@@ -1443,7 +1443,7 @@ func (f *SearchFilter) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func SearchFiltersToGRPC(fs []*SearchFilter) (res []*object.SearchRequest_Body_Filter) {
+func SearchFiltersToGRPC(fs []SearchFilter) (res []*object.SearchRequest_Body_Filter) {
 	if fs != nil {
 		res = make([]*object.SearchRequest_Body_Filter, 0, len(fs))
 
@@ -1455,23 +1455,17 @@ func SearchFiltersToGRPC(fs []*SearchFilter) (res []*object.SearchRequest_Body_F
 	return
 }
 
-func SearchFiltersFromGRPC(fs []*object.SearchRequest_Body_Filter) (res []*SearchFilter, err error) {
+func SearchFiltersFromGRPC(fs []*object.SearchRequest_Body_Filter) (res []SearchFilter, err error) {
 	if fs != nil {
-		res = make([]*SearchFilter, 0, len(fs))
+		res = make([]SearchFilter, len(fs))
 
 		for i := range fs {
-			var x *SearchFilter
-
 			if fs[i] != nil {
-				x = new(SearchFilter)
-
-				err = x.FromGRPCMessage(fs[i])
+				err = res[i].FromGRPCMessage(fs[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, x)
 		}
 	}
 
@@ -1650,7 +1644,7 @@ func (r *Range) FromGRPCMessage(m grpc.Message) error {
 	return nil
 }
 
-func RangesToGRPC(rs []*Range) (res []*object.Range) {
+func RangesToGRPC(rs []Range) (res []*object.Range) {
 	if rs != nil {
 		res = make([]*object.Range, 0, len(rs))
 
@@ -1662,23 +1656,17 @@ func RangesToGRPC(rs []*Range) (res []*object.Range) {
 	return
 }
 
-func RangesFromGRPC(rs []*object.Range) (res []*Range, err error) {
+func RangesFromGRPC(rs []*object.Range) (res []Range, err error) {
 	if rs != nil {
-		res = make([]*Range, 0, len(rs))
+		res = make([]Range, len(rs))
 
 		for i := range rs {
-			var r *Range
-
 			if rs[i] != nil {
-				r = new(Range)
-
-				err = r.FromGRPCMessage(rs[i])
+				err = res[i].FromGRPCMessage(rs[i])
 				if err != nil {
 					return
 				}
 			}
-
-			res = append(res, r)
 		}
 	}
 
