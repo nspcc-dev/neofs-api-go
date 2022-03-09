@@ -2,7 +2,6 @@ package client
 
 import (
 	"crypto/tls"
-	"net/url"
 	"time"
 
 	"google.golang.org/grpc"
@@ -58,35 +57,23 @@ func WithNetworkAddress(v string) Option {
 //
 // Ignored if WithGRPCConn is provided.
 func WithNetworkURIAddress(addr string, tlsCfg *tls.Config) []Option {
-	uri, err := url.ParseRequestURI(addr)
+	host, isTLS, err := ParseURI(addr)
 	if err != nil {
-		return []Option{WithNetworkAddress(addr)}
-	}
-
-	// check if passed string was parsed correctly
-	// URIs that do not start with a slash after the scheme are interpreted as:
-	// `scheme:opaque` => if `opaque` is not empty, then it is supposed that URI
-	// is in `host:port` format
-	if uri.Opaque != "" {
-		return []Option{WithNetworkAddress(addr)}
-	}
-
-	switch uri.Scheme {
-	case grpcScheme:
-		tlsCfg = nil
-	case grpcTLSScheme:
-		if tlsCfg == nil {
-			tlsCfg = &tls.Config{}
-		}
-	default:
-		// not supported scheme
 		return nil
 	}
 
-	return []Option{
-		WithNetworkAddress(uri.Host),
-		WithTLSCfg(tlsCfg),
+	opts := make([]Option, 2)
+	opts[0] = WithNetworkAddress(host)
+	if isTLS {
+		if tlsCfg == nil {
+			tlsCfg = &tls.Config{}
+		}
+		opts[1] = WithTLSCfg(tlsCfg)
+	} else {
+		opts[1] = WithTLSCfg(nil)
 	}
+
+	return opts
 }
 
 // WithDialTimeout returns option to specify
