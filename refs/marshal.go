@@ -36,10 +36,7 @@ func (o *OwnerID) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, o.StableSize())
 	}
 
-	_, err := proto.BytesMarshal(ownerIDValField, buf, o.val)
-	if err != nil {
-		return nil, err
-	}
+	proto.BytesMarshal(ownerIDValField, buf, o.val)
 
 	return buf, nil
 }
@@ -65,10 +62,7 @@ func (c *ContainerID) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, c.StableSize())
 	}
 
-	_, err := proto.BytesMarshal(containerIDValField, buf, c.val)
-	if err != nil {
-		return nil, err
-	}
+	proto.BytesMarshal(containerIDValField, buf, c.val)
 
 	return buf, nil
 }
@@ -94,10 +88,7 @@ func (o *ObjectID) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, o.StableSize())
 	}
 
-	_, err := proto.BytesMarshal(objectIDValField, buf, o.val)
-	if err != nil {
-		return nil, err
-	}
+	proto.BytesMarshal(objectIDValField, buf, o.val)
 
 	return buf, nil
 }
@@ -195,22 +186,10 @@ func (c *Checksum) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, c.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.EnumMarshal(checksumTypeField, buf[offset:], int32(c.typ))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.BytesMarshal(checksumValueField, buf[offset:], c.sum)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.EnumMarshal(checksumTypeField, buf[offset:], int32(c.typ))
+	proto.BytesMarshal(checksumValueField, buf[offset:], c.sum)
 
 	return buf, nil
 }
@@ -239,29 +218,11 @@ func (s *Signature) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, s.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.BytesMarshal(signatureKeyField, buf[offset:], s.key)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.BytesMarshal(signatureValueField, buf[offset:], s.sign)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.EnumMarshal(signatureSchemeField, buf[offset:], int32(s.scheme))
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.BytesMarshal(signatureKeyField, buf[offset:], s.key)
+	offset += proto.BytesMarshal(signatureValueField, buf[offset:], s.sign)
+	proto.EnumMarshal(signatureSchemeField, buf[offset:], int32(s.scheme))
 
 	return buf, nil
 }
@@ -291,22 +252,10 @@ func (v *Version) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, v.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.UInt32Marshal(versionMajorField, buf[offset:], v.major)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.UInt32Marshal(versionMinorField, buf[offset:], v.minor)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.UInt32Marshal(versionMajorField, buf[offset:], v.major)
+	proto.UInt32Marshal(versionMinorField, buf[offset:], v.minor)
 
 	return buf, nil
 }

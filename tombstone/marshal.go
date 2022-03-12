@@ -28,19 +28,8 @@ func (s *Tombstone) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.UInt64Marshal(expFNum, buf[offset:], s.exp)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.BytesMarshal(splitIDFNum, buf[offset:], s.splitID)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.UInt64Marshal(expFNum, buf[offset:], s.exp)
+	offset += proto.BytesMarshal(splitIDFNum, buf[offset:], s.splitID)
 
 	for i := range s.members {
 		n, err = proto.NestedStructureMarshal(membersFNum, buf[offset:], &s.members[i])

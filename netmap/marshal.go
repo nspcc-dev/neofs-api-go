@@ -55,33 +55,10 @@ func (f *Filter) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = protoutil.StringMarshal(nameFilterField, buf[offset:], f.name)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.StringMarshal(keyFilterField, buf[offset:], f.key)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.EnumMarshal(opFilterField, buf[offset:], int32(f.op))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.StringMarshal(valueFilterField, buf[offset:], f.value)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += protoutil.StringMarshal(nameFilterField, buf[offset:], f.name)
+	offset += protoutil.StringMarshal(keyFilterField, buf[offset:], f.key)
+	offset += protoutil.EnumMarshal(opFilterField, buf[offset:], int32(f.op))
+	offset += protoutil.StringMarshal(valueFilterField, buf[offset:], f.value)
 
 	for i := range f.filters {
 		n, err = protoutil.NestedStructureMarshal(filtersFilterField, buf[offset:], &f.filters[i])
@@ -120,43 +97,13 @@ func (s *Selector) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, s.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.StringMarshal(nameSelectorField, buf[offset:], s.name)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.UInt32Marshal(countSelectorField, buf[offset:], s.count)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.EnumMarshal(clauseSelectorField, buf[offset:], int32(s.clause))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.StringMarshal(attributeSelectorField, buf[offset:], s.attribute)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = protoutil.StringMarshal(filterSelectorField, buf[offset:], s.filter)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.StringMarshal(nameSelectorField, buf[offset:], s.name)
+	offset += protoutil.UInt32Marshal(countSelectorField, buf[offset:], s.count)
+	offset += protoutil.EnumMarshal(clauseSelectorField, buf[offset:], int32(s.clause))
+	offset += protoutil.StringMarshal(attributeSelectorField, buf[offset:], s.attribute)
+	protoutil.StringMarshal(filterSelectorField, buf[offset:], s.filter)
 
 	return buf, nil
 }
@@ -184,22 +131,10 @@ func (r *Replica) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.UInt32Marshal(countReplicaField, buf[offset:], r.count)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = protoutil.StringMarshal(selectorReplicaField, buf[offset:], r.selector)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.UInt32Marshal(countReplicaField, buf[offset:], r.count)
+	protoutil.StringMarshal(selectorReplicaField, buf[offset:], r.selector)
 
 	return buf, nil
 }
@@ -238,12 +173,7 @@ func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
 		offset += n
 	}
 
-	n, err = protoutil.UInt32Marshal(backupPolicyField, buf[offset:], p.backupFactor)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += protoutil.UInt32Marshal(backupPolicyField, buf[offset:], p.backupFactor)
 
 	for i := range p.selectors {
 		n, err = protoutil.NestedStructureMarshal(selectorsPolicyField, buf[offset:], &p.selectors[i])
@@ -304,32 +234,13 @@ func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, a.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.StringMarshal(keyAttributeField, buf[offset:], a.key)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.StringMarshal(valueAttributeField, buf[offset:], a.value)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += protoutil.StringMarshal(keyAttributeField, buf[offset:], a.key)
+	offset += protoutil.StringMarshal(valueAttributeField, buf[offset:], a.value)
 
 	for i := range a.parents {
-		n, err = protoutil.StringMarshal(parentsAttributeField, buf[offset:], a.parents[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += protoutil.StringMarshal(parentsAttributeField, buf[offset:], a.parents[i])
 	}
 
 	return buf, nil
@@ -368,19 +279,8 @@ func (ni *NodeInfo) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = protoutil.BytesMarshal(keyNodeInfoField, buf[offset:], ni.publicKey)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.RepeatedStringMarshal(addressNodeInfoField, buf[offset:], ni.addresses)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += protoutil.BytesMarshal(keyNodeInfoField, buf[offset:], ni.publicKey)
+	offset += protoutil.RepeatedStringMarshal(addressNodeInfoField, buf[offset:], ni.addresses)
 
 	for i := range ni.attributes {
 		n, err = protoutil.NestedStructureMarshal(attributesNodeInfoField, buf[offset:], &ni.attributes[i])
@@ -391,10 +291,7 @@ func (ni *NodeInfo) StableMarshal(buf []byte) ([]byte, error) {
 		offset += n
 	}
 
-	_, err = protoutil.EnumMarshal(stateNodeInfoField, buf[offset:], int32(ni.state))
-	if err != nil {
-		return nil, err
-	}
+	protoutil.EnumMarshal(stateNodeInfoField, buf[offset:], int32(ni.state))
 
 	return buf, nil
 }
@@ -491,22 +388,10 @@ func (x *NetworkParameter) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, x.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.BytesMarshal(netPrmKeyFNum, buf[offset:], x.k)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = protoutil.BytesMarshal(netPrmValFNum, buf[offset:], x.v)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.BytesMarshal(netPrmKeyFNum, buf[offset:], x.k)
+	protoutil.BytesMarshal(netPrmValFNum, buf[offset:], x.v)
 
 	return buf, nil
 }
@@ -583,30 +468,13 @@ func (i *NetworkInfo) StableMarshal(buf []byte) ([]byte, error) {
 	}
 
 	var (
-		offset, n int
-		err       error
+		offset int
+		err    error
 	)
 
-	n, err = protoutil.UInt64Marshal(netInfoCurEpochFNum, buf[offset:], i.curEpoch)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.UInt64Marshal(netInfoMagicNumFNum, buf[offset:], i.magicNum)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.Int64Marshal(netInfoMSPerBlockFNum, buf[offset:], i.msPerBlock)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += protoutil.UInt64Marshal(netInfoCurEpochFNum, buf[offset:], i.curEpoch)
+	offset += protoutil.UInt64Marshal(netInfoMagicNumFNum, buf[offset:], i.magicNum)
+	offset += protoutil.Int64Marshal(netInfoMSPerBlockFNum, buf[offset:], i.msPerBlock)
 
 	_, err = protoutil.NestedStructureMarshal(netInfoCfgFNum, buf[offset:], i.netCfg)
 	if err != nil {

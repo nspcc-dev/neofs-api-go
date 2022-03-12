@@ -82,10 +82,7 @@ func (c *CreateRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = proto.UInt64Marshal(createReqBodyExpirationField, buf[offset:], c.expiration)
-	if err != nil {
-		return nil, err
-	}
+	proto.UInt64Marshal(createReqBodyExpirationField, buf[offset:], c.expiration)
 
 	return buf, nil
 }
@@ -114,22 +111,10 @@ func (c *CreateResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, c.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.BytesMarshal(createRespBodyIDField, buf[offset:], c.id)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.BytesMarshal(createRespBodyKeyField, buf[offset:], c.sessionKey)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.BytesMarshal(createRespBodyIDField, buf[offset:], c.id)
+	proto.BytesMarshal(createRespBodyKeyField, buf[offset:], c.sessionKey)
 
 	return buf, nil
 }
@@ -158,22 +143,10 @@ func (x *XHeader) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, x.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.StringMarshal(xheaderKeyField, buf[offset:], x.key)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.StringMarshal(xheaderValueField, buf[offset:], x.val)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.StringMarshal(xheaderKeyField, buf[offset:], x.key)
+	proto.StringMarshal(xheaderValueField, buf[offset:], x.val)
 
 	return buf, nil
 }
@@ -207,29 +180,11 @@ func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, l.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.UInt64Marshal(lifetimeExpirationField, buf[offset:], l.exp)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.UInt64Marshal(lifetimeNotValidBeforeField, buf[offset:], l.nbf)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.UInt64Marshal(lifetimeIssuedAtField, buf[offset:], l.iat)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.UInt64Marshal(lifetimeExpirationField, buf[offset:], l.exp)
+	offset += proto.UInt64Marshal(lifetimeNotValidBeforeField, buf[offset:], l.nbf)
+	proto.UInt64Marshal(lifetimeIssuedAtField, buf[offset:], l.iat)
 
 	return buf, nil
 }
@@ -264,22 +219,10 @@ func (c *ObjectSessionContext) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, c.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.EnumMarshal(objectCtxVerbField, buf[offset:], int32(c.verb))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.NestedStructureMarshal(objectCtxAddressField, buf[offset:], c.addr)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.EnumMarshal(objectCtxVerbField, buf[offset:], int32(c.verb))
+	proto.NestedStructureMarshal(objectCtxAddressField, buf[offset:], c.addr)
 
 	return buf, nil
 }
@@ -320,29 +263,11 @@ func (x *ContainerSessionContext) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, x.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.EnumMarshal(cnrCtxVerbFNum, buf[offset:], int32(ContainerSessionVerbToGRPCField(x.verb)))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.BoolMarshal(cnrCtxWildcardFNum, buf[offset:], x.wildcard)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.NestedStructureMarshal(cnrCtxCidFNum, buf[offset:], x.cid)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.EnumMarshal(cnrCtxVerbFNum, buf[offset:], int32(ContainerSessionVerbToGRPCField(x.verb)))
+	offset += proto.BoolMarshal(cnrCtxWildcardFNum, buf[offset:], x.wildcard)
+	proto.NestedStructureMarshal(cnrCtxCidFNum, buf[offset:], x.cid)
 
 	return buf, nil
 }
@@ -377,12 +302,7 @@ func (t *TokenBody) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.BytesMarshal(sessionTokenBodyIDField, buf[offset:], t.id)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.BytesMarshal(sessionTokenBodyIDField, buf[offset:], t.id)
 
 	n, err = proto.NestedStructureMarshal(sessionTokenBodyOwnerField, buf[offset:], t.ownerID)
 	if err != nil {
@@ -398,12 +318,7 @@ func (t *TokenBody) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.BytesMarshal(sessionTokenBodyKeyField, buf[offset:], t.sessionKey)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.BytesMarshal(sessionTokenBodyKeyField, buf[offset:], t.sessionKey)
 
 	if t.ctx != nil {
 		switch v := t.ctx.(type) {
@@ -528,19 +443,8 @@ func (r *RequestMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.UInt64Marshal(reqMetaHeaderEpochField, buf[offset:], r.epoch)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.UInt32Marshal(reqMetaHeaderTTLField, buf[offset:], r.ttl)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.UInt64Marshal(reqMetaHeaderEpochField, buf[offset:], r.epoch)
+	offset += proto.UInt32Marshal(reqMetaHeaderTTLField, buf[offset:], r.ttl)
 
 	for i := range r.xHeaders {
 		n, err = proto.NestedStructureMarshal(reqMetaHeaderXHeadersField, buf[offset:], &r.xHeaders[i])
@@ -572,10 +476,7 @@ func (r *RequestMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = proto.UInt64Marshal(reqMetaHeaderNetMagicField, buf[offset:], r.netMagic)
-	if err != nil {
-		return nil, err
-	}
+	proto.UInt64Marshal(reqMetaHeaderNetMagicField, buf[offset:], r.netMagic)
 
 	return buf, nil
 }
@@ -699,19 +600,8 @@ func (r *ResponseMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.UInt64Marshal(respMetaHeaderEpochField, buf[offset:], r.epoch)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.UInt32Marshal(respMetaHeaderTTLField, buf[offset:], r.ttl)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.UInt64Marshal(respMetaHeaderEpochField, buf[offset:], r.epoch)
+	offset += proto.UInt32Marshal(respMetaHeaderTTLField, buf[offset:], r.ttl)
 
 	for i := range r.xHeaders {
 		n, err = proto.NestedStructureMarshal(respMetaHeaderXHeadersField, buf[offset:], &r.xHeaders[i])

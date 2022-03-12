@@ -20,10 +20,7 @@ func (x *PeerID) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, x.StableSize())
 	}
 
-	_, err := protoutil.BytesMarshal(peerIDPubKeyFNum, buf, x.publicKey)
-	if err != nil {
-		return nil, err
-	}
+	protoutil.BytesMarshal(peerIDPubKeyFNum, buf, x.publicKey)
 
 	return buf, nil
 }
@@ -65,10 +62,7 @@ func (x *Trust) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = protoutil.Float64Marshal(trustValueFNum, buf[offset:], x.val)
-	if err != nil {
-		return nil, err
-	}
+	protoutil.Float64Marshal(trustValueFNum, buf[offset:], x.val)
 
 	return buf, nil
 }
@@ -230,12 +224,7 @@ func (x *AnnounceLocalTrustRequestBody) StableMarshal(buf []byte) ([]byte, error
 		err       error
 	)
 
-	n, err = protoutil.UInt64Marshal(announceLocalTrustBodyEpochFNum, buf[offset:], x.epoch)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += protoutil.UInt64Marshal(announceLocalTrustBodyEpochFNum, buf[offset:], x.epoch)
 
 	for i := range x.trusts {
 		n, err = protoutil.NestedStructureMarshal(announceLocalTrustBodyTrustsFNum, buf[offset:], &x.trusts[i])
@@ -292,23 +281,12 @@ func (x *AnnounceIntermediateResultRequestBody) StableMarshal(buf []byte) ([]byt
 	}
 
 	var (
-		offset, n int
-		err       error
+		offset int
+		err    error
 	)
 
-	n, err = protoutil.UInt64Marshal(announceInterResBodyEpochFNum, buf, x.epoch)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.UInt32Marshal(announceInterResBodyIterFNum, buf[offset:], x.iter)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += protoutil.UInt64Marshal(announceInterResBodyEpochFNum, buf, x.epoch)
+	offset += protoutil.UInt32Marshal(announceInterResBodyIterFNum, buf[offset:], x.iter)
 
 	_, err = protoutil.NestedStructureMarshal(announceInterResBodyTrustFNum, buf[offset:], x.trust)
 	if err != nil {

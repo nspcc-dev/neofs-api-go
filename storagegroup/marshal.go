@@ -30,12 +30,7 @@ func (s *StorageGroup) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.UInt64Marshal(sizeField, buf[offset:], s.size)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.UInt64Marshal(sizeField, buf[offset:], s.size)
 
 	n, err = proto.NestedStructureMarshal(hashField, buf[offset:], s.hash)
 	if err != nil {
@@ -44,12 +39,7 @@ func (s *StorageGroup) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.UInt64Marshal(expirationField, buf[offset:], s.exp)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.UInt64Marshal(expirationField, buf[offset:], s.exp)
 
 	_, err = refs.ObjectIDNestedListMarshal(objectIDsField, buf[offset:], s.members)
 	if err != nil {

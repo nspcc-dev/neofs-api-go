@@ -24,22 +24,10 @@ func (d *Decimal) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, d.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.Int64Marshal(decimalValueField, buf[offset:], d.val)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = protoutil.UInt32Marshal(decimalPrecisionField, buf[offset:], d.prec)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.Int64Marshal(decimalValueField, buf[offset:], d.val)
+	protoutil.UInt32Marshal(decimalPrecisionField, buf[offset:], d.prec)
 
 	return buf, nil
 }
