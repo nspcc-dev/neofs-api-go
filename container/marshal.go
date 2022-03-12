@@ -60,22 +60,10 @@ func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, a.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.StringMarshal(attributeKeyField, buf[offset:], a.key)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = protoutil.StringMarshal(attributeValueField, buf[offset:], a.val)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.StringMarshal(attributeKeyField, buf[offset:], a.key)
+	protoutil.StringMarshal(attributeValueField, buf[offset:], a.val)
 
 	return buf, nil
 }
@@ -123,19 +111,8 @@ func (c *Container) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = protoutil.BytesMarshal(containerNonceField, buf[offset:], c.nonce)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.UInt32Marshal(containerBasicACLField, buf[offset:], c.basicACL)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += protoutil.BytesMarshal(containerNonceField, buf[offset:], c.nonce)
+	offset += protoutil.UInt32Marshal(containerBasicACLField, buf[offset:], c.basicACL)
 
 	for i := range c.attr {
 		n, err = protoutil.NestedStructureMarshal(containerAttributesField, buf[offset:], &c.attr[i])
@@ -612,12 +589,7 @@ func (a *UsedSpaceAnnouncement) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = protoutil.UInt64Marshal(usedSpaceAnnounceEpochField, buf[offset:], a.epoch)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += protoutil.UInt64Marshal(usedSpaceAnnounceEpochField, buf[offset:], a.epoch)
 
 	n, err = protoutil.NestedStructureMarshal(usedSpaceAnnounceCIDField, buf[offset:], a.cid)
 	if err != nil {
@@ -626,10 +598,7 @@ func (a *UsedSpaceAnnouncement) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = protoutil.UInt64Marshal(usedSpaceAnnounceUsedSpaceField, buf[offset:], a.usedSpace)
-	if err != nil {
-		return nil, err
-	}
+	protoutil.UInt64Marshal(usedSpaceAnnounceUsedSpaceField, buf[offset:], a.usedSpace)
 
 	return buf, nil
 }

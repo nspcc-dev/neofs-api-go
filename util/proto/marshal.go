@@ -20,9 +20,9 @@ type (
 	}
 )
 
-func BytesMarshal(field int, buf, v []byte) (int, error) {
+func BytesMarshal(field int, buf, v []byte) int {
 	if len(v) == 0 {
-		return 0, nil
+		return 0
 	}
 
 	prefix := field<<3 | 0x2
@@ -33,7 +33,7 @@ func BytesMarshal(field int, buf, v []byte) (int, error) {
 	i += binary.PutUvarint(buf[i:], uint64(len(v)))
 	i += copy(buf[i:], v)
 
-	return i, nil
+	return i
 }
 
 func BytesSize(field int, v []byte) int {
@@ -47,7 +47,7 @@ func BytesSize(field int, v []byte) int {
 	return VarUIntSize(uint64(prefix)) + VarUIntSize(uint64(ln)) + ln
 }
 
-func StringMarshal(field int, buf []byte, v string) (int, error) {
+func StringMarshal(field int, buf []byte, v string) int {
 	return BytesMarshal(field, buf, []byte(v))
 }
 
@@ -55,9 +55,9 @@ func StringSize(field int, v string) int {
 	return BytesSize(field, []byte(v))
 }
 
-func BoolMarshal(field int, buf []byte, v bool) (int, error) {
+func BoolMarshal(field int, buf []byte, v bool) int {
 	if !v {
-		return 0, nil
+		return 0
 	}
 
 	prefix := field << 3
@@ -67,7 +67,7 @@ func BoolMarshal(field int, buf []byte, v bool) (int, error) {
 	i := binary.PutUvarint(buf, uint64(prefix))
 	buf[i] = 0x1
 
-	return i + 1, nil
+	return i + 1
 }
 
 func BoolSize(field int, v bool) int {
@@ -80,9 +80,9 @@ func BoolSize(field int, v bool) int {
 	return VarUIntSize(uint64(prefix)) + 1 // bool is always 1 byte long
 }
 
-func UInt64Marshal(field int, buf []byte, v uint64) (int, error) {
+func UInt64Marshal(field int, buf []byte, v uint64) int {
 	if v == 0 {
-		return 0, nil
+		return 0
 	}
 
 	prefix := field << 3
@@ -92,7 +92,7 @@ func UInt64Marshal(field int, buf []byte, v uint64) (int, error) {
 	i := binary.PutUvarint(buf, uint64(prefix))
 	i += binary.PutUvarint(buf[i:], v)
 
-	return i, nil
+	return i
 }
 
 func UInt64Size(field int, v uint64) int {
@@ -105,7 +105,7 @@ func UInt64Size(field int, v uint64) int {
 	return VarUIntSize(uint64(prefix)) + VarUIntSize(v)
 }
 
-func Int64Marshal(field int, buf []byte, v int64) (int, error) {
+func Int64Marshal(field int, buf []byte, v int64) int {
 	return UInt64Marshal(field, buf, uint64(v))
 }
 
@@ -113,7 +113,7 @@ func Int64Size(field int, v int64) int {
 	return UInt64Size(field, uint64(v))
 }
 
-func UInt32Marshal(field int, buf []byte, v uint32) (int, error) {
+func UInt32Marshal(field int, buf []byte, v uint32) int {
 	return UInt64Marshal(field, buf, uint64(v))
 }
 
@@ -121,7 +121,7 @@ func UInt32Size(field int, v uint32) int {
 	return UInt64Size(field, uint64(v))
 }
 
-func Int32Marshal(field int, buf []byte, v int32) (int, error) {
+func Int32Marshal(field int, buf []byte, v int32) int {
 	return UInt64Marshal(field, buf, uint64(v))
 }
 
@@ -129,7 +129,7 @@ func Int32Size(field int, v int32) int {
 	return UInt64Size(field, uint64(v))
 }
 
-func EnumMarshal(field int, buf []byte, v int32) (int, error) {
+func EnumMarshal(field int, buf []byte, v int32) int {
 	return UInt64Marshal(field, buf, uint64(v))
 }
 
@@ -137,19 +137,14 @@ func EnumSize(field int, v int32) int {
 	return UInt64Size(field, uint64(v))
 }
 
-func RepeatedBytesMarshal(field int, buf []byte, v [][]byte) (int, error) {
+func RepeatedBytesMarshal(field int, buf []byte, v [][]byte) int {
 	var offset int
 
 	for i := range v {
-		off, err := BytesMarshal(field, buf[offset:], v[i])
-		if err != nil {
-			return 0, err
-		}
-
-		offset += off
+		offset += BytesMarshal(field, buf[offset:], v[i])
 	}
 
-	return offset, nil
+	return offset
 }
 
 func RepeatedBytesSize(field int, v [][]byte) (size int) {
@@ -160,19 +155,14 @@ func RepeatedBytesSize(field int, v [][]byte) (size int) {
 	return size
 }
 
-func RepeatedStringMarshal(field int, buf []byte, v []string) (int, error) {
+func RepeatedStringMarshal(field int, buf []byte, v []string) int {
 	var offset int
 
 	for i := range v {
-		off, err := StringMarshal(field, buf[offset:], v[i])
-		if err != nil {
-			return 0, err
-		}
-
-		offset += off
+		offset += StringMarshal(field, buf[offset:], v[i])
 	}
 
-	return offset, nil
+	return offset
 }
 
 func RepeatedStringSize(field int, v []string) (size int) {
@@ -183,9 +173,9 @@ func RepeatedStringSize(field int, v []string) (size int) {
 	return size
 }
 
-func RepeatedUInt64Marshal(field int, buf []byte, v []uint64) (int, error) {
+func RepeatedUInt64Marshal(field int, buf []byte, v []uint64) int {
 	if len(v) == 0 {
-		return 0, nil
+		return 0
 	}
 
 	prefix := field<<3 | 0x02
@@ -197,7 +187,7 @@ func RepeatedUInt64Marshal(field int, buf []byte, v []uint64) (int, error) {
 		offset += binary.PutUvarint(buf[offset:], v[i])
 	}
 
-	return offset, nil
+	return offset
 }
 
 func RepeatedUInt64Size(field int, v []uint64) (size, arraySize int) {
@@ -218,9 +208,9 @@ func RepeatedUInt64Size(field int, v []uint64) (size, arraySize int) {
 	return size, arraySize
 }
 
-func RepeatedInt64Marshal(field int, buf []byte, v []int64) (int, error) {
+func RepeatedInt64Marshal(field int, buf []byte, v []int64) int {
 	if len(v) == 0 {
-		return 0, nil
+		return 0
 	}
 
 	convert := make([]uint64, len(v))
@@ -244,9 +234,9 @@ func RepeatedInt64Size(field int, v []int64) (size, arraySize int) {
 	return RepeatedUInt64Size(field, convert)
 }
 
-func RepeatedUInt32Marshal(field int, buf []byte, v []uint32) (int, error) {
+func RepeatedUInt32Marshal(field int, buf []byte, v []uint32) int {
 	if len(v) == 0 {
-		return 0, nil
+		return 0
 	}
 
 	convert := make([]uint64, len(v))
@@ -270,9 +260,9 @@ func RepeatedUInt32Size(field int, v []uint32) (size, arraySize int) {
 	return RepeatedUInt64Size(field, convert)
 }
 
-func RepeatedInt32Marshal(field int, buf []byte, v []int32) (int, error) {
+func RepeatedInt32Marshal(field int, buf []byte, v []int32) int {
 	if len(v) == 0 {
-		return 0, nil
+		return 0
 	}
 
 	convert := make([]uint64, len(v))
@@ -337,9 +327,9 @@ func NestedStructureSize(field int64, v stableMarshaller) (size int) {
 	return size
 }
 
-func Fixed64Marshal(field int, buf []byte, v uint64) (int, error) {
+func Fixed64Marshal(field int, buf []byte, v uint64) int {
 	if v == 0 {
-		return 0, nil
+		return 0
 	}
 
 	prefix := field<<3 | 1
@@ -349,7 +339,7 @@ func Fixed64Marshal(field int, buf []byte, v uint64) (int, error) {
 	i := binary.PutUvarint(buf, uint64(prefix))
 	binary.LittleEndian.PutUint64(buf[i:], v)
 
-	return i + 8, nil
+	return i + 8
 }
 
 func Fixed64Size(fNum int, v uint64) int {
@@ -362,9 +352,9 @@ func Fixed64Size(fNum int, v uint64) int {
 	return VarUIntSize(uint64(prefix)) + 8
 }
 
-func Float64Marshal(field int, buf []byte, v float64) (int, error) {
+func Float64Marshal(field int, buf []byte, v float64) int {
 	if v == 0 {
-		return 0, nil
+		return 0
 	}
 
 	prefix := field<<3 | 1
@@ -372,7 +362,7 @@ func Float64Marshal(field int, buf []byte, v float64) (int, error) {
 	i := binary.PutUvarint(buf, uint64(prefix))
 	binary.LittleEndian.PutUint64(buf[i:], math.Float64bits(v))
 
-	return i + 8, nil
+	return i + 8
 }
 
 func Float64Size(fNum int, v float64) int {

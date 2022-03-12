@@ -114,19 +114,8 @@ func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = protoutil.EnumMarshal(recordOperationField, buf[offset:], int32(r.op))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.EnumMarshal(recordActionField, buf[offset:], int32(r.action))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += protoutil.EnumMarshal(recordOperationField, buf[offset:], int32(r.op))
+	offset += protoutil.EnumMarshal(recordActionField, buf[offset:], int32(r.action))
 
 	for i := range r.filters {
 		n, err = protoutil.NestedStructureMarshal(recordFiltersField, buf[offset:], &r.filters[i])
@@ -184,36 +173,12 @@ func (f *HeaderFilter) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, f.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.EnumMarshal(filterHeaderTypeField, buf[offset:], int32(f.hdrType))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.EnumMarshal(filterMatchTypeField, buf[offset:], int32(f.matchType))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.StringMarshal(filterNameField, buf[offset:], f.key)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = protoutil.StringMarshal(filterValueField, buf[offset:], f.value)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.EnumMarshal(filterHeaderTypeField, buf[offset:], int32(f.hdrType))
+	offset += protoutil.EnumMarshal(filterMatchTypeField, buf[offset:], int32(f.matchType))
+	offset += protoutil.StringMarshal(filterNameField, buf[offset:], f.key)
+	protoutil.StringMarshal(filterValueField, buf[offset:], f.value)
 
 	return buf, nil
 }
@@ -247,22 +212,10 @@ func (t *Target) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, t.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.EnumMarshal(targetTypeField, buf[offset:], int32(t.role))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = protoutil.RepeatedBytesMarshal(targetKeysField, buf[offset:], t.keys)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.EnumMarshal(targetTypeField, buf[offset:], int32(t.role))
+	protoutil.RepeatedBytesMarshal(targetKeysField, buf[offset:], t.keys)
 
 	return buf, nil
 }
@@ -292,29 +245,11 @@ func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, l.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.UInt64Marshal(lifetimeExpirationField, buf[offset:], l.exp)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.UInt64Marshal(lifetimeNotValidBeforeField, buf[offset:], l.nbf)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = protoutil.UInt64Marshal(lifetimeIssuedAtField, buf[offset:], l.iat)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.UInt64Marshal(lifetimeExpirationField, buf[offset:], l.exp)
+	offset += protoutil.UInt64Marshal(lifetimeNotValidBeforeField, buf[offset:], l.nbf)
+	protoutil.UInt64Marshal(lifetimeIssuedAtField, buf[offset:], l.iat)
 
 	return buf, nil
 }

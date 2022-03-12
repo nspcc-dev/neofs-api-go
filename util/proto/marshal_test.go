@@ -1,7 +1,6 @@
 package proto_test
 
 import (
-	"fmt"
 	"math"
 	"testing"
 
@@ -59,91 +58,55 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	if wrongField {
 		fieldNum++
 	}
-	offset, err := proto.BytesMarshal(fieldNum, buf, s.FieldA)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field a: %w", err)
-	}
-	i += offset
+	i += proto.BytesMarshal(fieldNum, buf, s.FieldA)
 
 	fieldNum = 2
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.StringMarshal(fieldNum, buf, s.FieldB)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field b: %w", err)
-	}
-	i += offset
+	i += proto.StringMarshal(fieldNum, buf, s.FieldB)
 
 	fieldNum = 200
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.BoolMarshal(fieldNum, buf, s.FieldC)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field c: %w", err)
-	}
-	i += offset
+	i += proto.BoolMarshal(fieldNum, buf, s.FieldC)
 
 	fieldNum = 201
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.Int32Marshal(fieldNum, buf, s.FieldD)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field d: %w", err)
-	}
-	i += offset
+	i += proto.Int32Marshal(fieldNum, buf, s.FieldD)
 
 	fieldNum = 202
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.UInt32Marshal(fieldNum, buf, s.FieldE)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field e: %w", err)
-	}
-	i += offset
+	i += proto.UInt32Marshal(fieldNum, buf, s.FieldE)
 
 	fieldNum = 203
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.Int64Marshal(fieldNum, buf, s.FieldF)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field f: %w", err)
-	}
-	i += offset
+	i += proto.Int64Marshal(fieldNum, buf, s.FieldF)
 
 	fieldNum = 204
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.UInt64Marshal(fieldNum, buf, s.FieldG)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field g: %w", err)
-	}
-	i += offset
+	i += proto.UInt64Marshal(fieldNum, buf, s.FieldG)
 
 	fieldNum = 205
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.Fixed64Marshal(fieldNum, buf, s.FieldI)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field I: %w", err)
-	}
-	i += offset
+	i += proto.Fixed64Marshal(fieldNum, buf, s.FieldI)
 
 	fieldNum = 206
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.Float64Marshal(fieldNum, buf, s.FieldJ)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field J: %w", err)
-	}
-	i += offset
+	i += proto.Float64Marshal(fieldNum, buf, s.FieldJ)
 
 	fieldNum = 207
 	if wrongField {
@@ -158,11 +121,7 @@ func (s *stablePrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte, e
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.EnumMarshal(fieldNum, buf, int32(s.FieldH))
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field h: %w", err)
-	}
-	i += offset
+	i += proto.EnumMarshal(fieldNum, buf, int32(s.FieldH))
 
 	return buf, nil
 }
@@ -190,69 +149,43 @@ func (s *stableRepPrimitives) stableMarshal(buf []byte, wrongField bool) ([]byte
 		buf = make([]byte, s.stableSize())
 	}
 
-	var (
-		i, offset, fieldNum int
-	)
+	var i, fieldNum int
 
 	fieldNum = 1
 	if wrongField {
 		fieldNum++
 	}
-	offset, err := proto.RepeatedBytesMarshal(fieldNum, buf, s.FieldA)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field a: %w", err)
-	}
-	i += offset
+	i += proto.RepeatedBytesMarshal(fieldNum, buf, s.FieldA)
 
 	fieldNum = 2
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.RepeatedStringMarshal(fieldNum, buf, s.FieldB)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field b: %w", err)
-	}
-	i += offset
+	i += proto.RepeatedStringMarshal(fieldNum, buf, s.FieldB)
 
 	fieldNum = 3
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.RepeatedInt32Marshal(fieldNum, buf, s.FieldC)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field c: %w", err)
-	}
-	i += offset
+	i += proto.RepeatedInt32Marshal(fieldNum, buf, s.FieldC)
 
 	fieldNum = 4
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.RepeatedUInt32Marshal(fieldNum, buf, s.FieldD)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field d: %w", err)
-	}
-	i += offset
+	i += proto.RepeatedUInt32Marshal(fieldNum, buf, s.FieldD)
 
 	fieldNum = 5
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.RepeatedInt64Marshal(fieldNum, buf, s.FieldE)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field e: %w", err)
-	}
-	i += offset
+	i += proto.RepeatedInt64Marshal(fieldNum, buf, s.FieldE)
 
 	fieldNum = 6
 	if wrongField {
 		fieldNum++
 	}
-	offset, err = proto.RepeatedUInt64Marshal(fieldNum, buf, s.FieldF)
-	if err != nil {
-		return nil, fmt.Errorf("can't marshal field f: %w", err)
-	}
-	i += offset
+	i += proto.RepeatedUInt64Marshal(fieldNum, buf, s.FieldF)
 
 	return buf, nil
 }

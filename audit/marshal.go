@@ -48,12 +48,7 @@ func (a *DataAuditResult) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.Fixed64Marshal(auditEpochFNum, buf[offset:], a.auditEpoch)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.Fixed64Marshal(auditEpochFNum, buf[offset:], a.auditEpoch)
 
 	n, err = proto.NestedStructureMarshal(cidFNum, buf[offset:], a.cid)
 	if err != nil {
@@ -62,33 +57,10 @@ func (a *DataAuditResult) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.BytesMarshal(pubKeyFNum, buf[offset:], a.pubKey)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.BoolMarshal(completeFNum, buf[offset:], a.complete)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.UInt32Marshal(requestsFNum, buf[offset:], a.requests)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.UInt32Marshal(retriesFNum, buf[offset:], a.retries)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.BytesMarshal(pubKeyFNum, buf[offset:], a.pubKey)
+	offset += proto.BoolMarshal(completeFNum, buf[offset:], a.complete)
+	offset += proto.UInt32Marshal(requestsFNum, buf[offset:], a.requests)
+	offset += proto.UInt32Marshal(retriesFNum, buf[offset:], a.retries)
 
 	n, err = refs.ObjectIDNestedListMarshal(passSGFNum, buf[offset:], a.passSG)
 	if err != nil {
@@ -104,38 +76,11 @@ func (a *DataAuditResult) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.UInt32Marshal(hitFNum, buf[offset:], a.hit)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.UInt32Marshal(missFNum, buf[offset:], a.miss)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.UInt32Marshal(failFNum, buf[offset:], a.fail)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.RepeatedBytesMarshal(passNodesFNum, buf[offset:], a.passNodes)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.RepeatedBytesMarshal(failNodesFNum, buf[offset:], a.failNodes)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.UInt32Marshal(hitFNum, buf[offset:], a.hit)
+	offset += proto.UInt32Marshal(missFNum, buf[offset:], a.miss)
+	offset += proto.UInt32Marshal(failFNum, buf[offset:], a.fail)
+	offset += proto.RepeatedBytesMarshal(passNodesFNum, buf[offset:], a.passNodes)
+	proto.RepeatedBytesMarshal(failNodesFNum, buf[offset:], a.failNodes)
 
 	return buf, nil
 }

@@ -133,12 +133,7 @@ func (h *ShortHeader) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.UInt64Marshal(shortHdrEpochField, buf[offset:], h.creatEpoch)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.UInt64Marshal(shortHdrEpochField, buf[offset:], h.creatEpoch)
 
 	n, err = proto.NestedStructureMarshal(shortHdrOwnerField, buf[offset:], h.ownerID)
 	if err != nil {
@@ -147,19 +142,8 @@ func (h *ShortHeader) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.EnumMarshal(shortHdrObjectTypeField, buf[offset:], int32(h.typ))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.UInt64Marshal(shortHdrPayloadLength, buf[offset:], h.payloadLen)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.EnumMarshal(shortHdrObjectTypeField, buf[offset:], int32(h.typ))
+	offset += proto.UInt64Marshal(shortHdrPayloadLength, buf[offset:], h.payloadLen)
 
 	n, err = proto.NestedStructureMarshal(shortHdrHashField, buf[offset:], h.payloadHash)
 	if err != nil {
@@ -205,22 +189,10 @@ func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, a.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.StringMarshal(attributeKeyField, buf[offset:], a.key)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.StringMarshal(attributeValueField, buf[offset:], a.val)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.StringMarshal(attributeKeyField, buf[offset:], a.key)
+	proto.StringMarshal(attributeValueField, buf[offset:], a.val)
 
 	return buf, nil
 }
@@ -289,10 +261,7 @@ func (h *SplitHeader) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = proto.BytesMarshal(splitHdrSplitIDField, buf[offset:], h.splitID)
-	if err != nil {
-		return nil, err
-	}
+	proto.BytesMarshal(splitHdrSplitIDField, buf[offset:], h.splitID)
 
 	return buf, nil
 }
@@ -351,19 +320,8 @@ func (h *Header) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.UInt64Marshal(hdrEpochField, buf[offset:], h.creatEpoch)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.UInt64Marshal(hdrPayloadLengthField, buf[offset:], h.payloadLen)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.UInt64Marshal(hdrEpochField, buf[offset:], h.creatEpoch)
+	offset += proto.UInt64Marshal(hdrPayloadLengthField, buf[offset:], h.payloadLen)
 
 	n, err = proto.NestedStructureMarshal(hdrPayloadHashField, buf[offset:], h.payloadHash)
 	if err != nil {
@@ -372,12 +330,7 @@ func (h *Header) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.EnumMarshal(hdrObjectTypeField, buf[offset:], int32(h.typ))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.EnumMarshal(hdrObjectTypeField, buf[offset:], int32(h.typ))
 
 	n, err = proto.NestedStructureMarshal(hdrHomomorphicHashField, buf[offset:], h.homoHash)
 	if err != nil {
@@ -515,10 +468,7 @@ func (o *Object) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = proto.BytesMarshal(objPayloadField, buf[offset:], o.payload)
-	if err != nil {
-		return nil, err
-	}
+	proto.BytesMarshal(objPayloadField, buf[offset:], o.payload)
 
 	return buf, nil
 }
@@ -554,12 +504,7 @@ func (s *SplitInfo) StableMarshal(buf []byte) ([]byte, error) {
 		err       error
 	)
 
-	n, err = proto.BytesMarshal(splitInfoSplitIDField, buf[offset:], s.splitID)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.BytesMarshal(splitInfoSplitIDField, buf[offset:], s.splitID)
 
 	n, err = proto.NestedStructureMarshal(splitInfoLastPartField, buf[offset:], s.lastPart)
 	if err != nil {
@@ -613,10 +558,7 @@ func (r *GetRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = proto.BoolMarshal(getReqBodyRawFlagField, buf[offset:], r.raw)
-	if err != nil {
-		return nil, err
-	}
+	proto.BoolMarshal(getReqBodyRawFlagField, buf[offset:], r.raw)
 
 	return buf, nil
 }
@@ -706,10 +648,7 @@ func (r *GetResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		}
 	case *GetObjectPartChunk:
 		if v != nil {
-			_, err := proto.BytesMarshal(getRespBodyChunkField, buf, v.chunk)
-			if err != nil {
-				return nil, err
-			}
+			proto.BytesMarshal(getRespBodyChunkField, buf, v.chunk)
 		}
 	case *SplitInfo:
 		_, err := proto.NestedStructureMarshal(getRespBodySplitInfoField, buf, v)
@@ -784,10 +723,7 @@ func (r *PutObjectPartInit) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = proto.UInt32Marshal(putReqInitCopiesNumField, buf[offset:], r.copyNum)
-	if err != nil {
-		return nil, err
-	}
+	proto.UInt32Marshal(putReqInitCopiesNumField, buf[offset:], r.copyNum)
 
 	return buf, nil
 }
@@ -827,10 +763,7 @@ func (r *PutRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		}
 	case *PutObjectPartChunk:
 		if v != nil {
-			_, err := proto.BytesMarshal(putReqBodyChunkField, buf, v.chunk)
-			if err != nil {
-				return nil, err
-			}
+			proto.BytesMarshal(putReqBodyChunkField, buf, v.chunk)
 		}
 	default:
 		panic("unknown one of object put request body type")
@@ -977,17 +910,8 @@ func (r *HeadRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.BoolMarshal(headReqBodyMainFlagField, buf[offset:], r.mainOnly)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.BoolMarshal(headReqBodyRawFlagField, buf[offset:], r.raw)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.BoolMarshal(headReqBodyMainFlagField, buf[offset:], r.mainOnly)
+	proto.BoolMarshal(headReqBodyRawFlagField, buf[offset:], r.raw)
 
 	return buf, nil
 }
@@ -1086,29 +1010,11 @@ func (f *SearchFilter) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, f.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.EnumMarshal(searchFilterMatchField, buf[offset:], int32(f.matchType))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.StringMarshal(searchFilterNameField, buf[offset:], f.key)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.StringMarshal(searchFilterValueField, buf[offset:], f.val)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.EnumMarshal(searchFilterMatchField, buf[offset:], int32(f.matchType))
+	offset += proto.StringMarshal(searchFilterNameField, buf[offset:], f.key)
+	proto.StringMarshal(searchFilterValueField, buf[offset:], f.val)
 
 	return buf, nil
 }
@@ -1150,12 +1056,7 @@ func (r *SearchRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	n, err = proto.UInt32Marshal(searchReqBodyVersionField, buf[offset:], r.version)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.UInt32Marshal(searchReqBodyVersionField, buf[offset:], r.version)
 
 	for i := range r.filters {
 		n, err = proto.NestedStructureMarshal(searchReqBodyFiltersField, buf[offset:], &r.filters[i])
@@ -1233,22 +1134,10 @@ func (r *Range) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.UInt64Marshal(rangeOffsetField, buf[offset:], r.off)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.UInt64Marshal(rangeLengthField, buf[offset:], r.len)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.UInt64Marshal(rangeOffsetField, buf[offset:], r.off)
+	proto.UInt64Marshal(rangeLengthField, buf[offset:], r.len)
 
 	return buf, nil
 }
@@ -1296,10 +1185,7 @@ func (r *GetRangeRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 
 	offset += n
 
-	_, err = proto.BoolMarshal(getRangeReqBodyRawField, buf[offset:], r.raw)
-	if err != nil {
-		return nil, err
-	}
+	proto.BoolMarshal(getRangeReqBodyRawField, buf[offset:], r.raw)
 
 	return buf, nil
 }
@@ -1333,10 +1219,7 @@ func (r *GetRangeResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	case nil:
 	case *GetRangePartChunk:
 		if v != nil {
-			_, err := proto.BytesMarshal(getRangeRespChunkField, buf, v.chunk)
-			if err != nil {
-				return nil, err
-			}
+			proto.BytesMarshal(getRangeRespChunkField, buf, v.chunk)
 		}
 	case *SplitInfo:
 		if v != nil {
@@ -1408,17 +1291,8 @@ func (r *GetRangeHashRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		offset += n
 	}
 
-	n, err = proto.BytesMarshal(getRangeHashReqBodySaltField, buf[offset:], r.salt)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.EnumMarshal(getRangeHashReqBodyTypeField, buf[offset:], int32(r.typ))
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.BytesMarshal(getRangeHashReqBodySaltField, buf[offset:], r.salt)
+	proto.EnumMarshal(getRangeHashReqBodyTypeField, buf[offset:], int32(r.typ))
 
 	return buf, nil
 }
@@ -1453,22 +1327,10 @@ func (r *GetRangeHashResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.EnumMarshal(getRangeHashRespBodyTypeField, buf, int32(r.typ))
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.RepeatedBytesMarshal(getRangeHashRespBodyHashListField, buf[offset:], r.hashList)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.EnumMarshal(getRangeHashRespBodyTypeField, buf, int32(r.typ))
+	proto.RepeatedBytesMarshal(getRangeHashRespBodyHashListField, buf[offset:], r.hashList)
 
 	return buf, nil
 }
