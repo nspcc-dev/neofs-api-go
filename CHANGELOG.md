@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.12.1] - 2022-03-15
+
+### Fixed
+- Incompatible changes in signature scheme (#380)
+ 
+### Added
+- Public URI-parsing function `client.ParseURI()` (#383)
+
+### Changed
+- Slices with pointers `[]*T` replaced with regular structure slices `[]T` in
+  v2 structures (#376)
+
 ## [2.12.0] - 2022-02-25 - Heuksando (흑산도, 黑山島)
 
 NeoFS API v2.12 support
@@ -781,3 +793,4 @@ Initial public release
 [2.11.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v1.30.0...v2.11.0
 [2.11.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.11.0...v2.11.1
 [2.12.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.11.1...v2.12.0
+[2.12.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.12.0...v2.12.1
