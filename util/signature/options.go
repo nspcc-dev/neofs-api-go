@@ -2,9 +2,11 @@ package signature
 
 import (
 	"crypto/ecdsa"
+	"encoding/base64"
 	"fmt"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
+	"github.com/nspcc-dev/neofs-api-go/v2/util/signature/walletconnect"
 	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
@@ -24,12 +26,22 @@ func verify(cfg *cfg, data []byte, sig *refs.Signature) error {
 	}
 
 	pub := crypto.UnmarshalPublicKey(sig.GetKey())
+	if pub == nil {
+		return crypto.ErrEmptyPublicKey
+	}
 
 	switch cfg.scheme {
 	case refs.ECDSA_SHA512:
 		return crypto.Verify(pub, data, sig.GetSign())
 	case refs.ECDSA_RFC6979_SHA256:
 		return crypto.VerifyRFC6979(pub, data, sig.GetSign())
+	case refs.ECDSA_RFC6979_SHA256_WALLET_CONNECT:
+		buf := make([]byte, base64.StdEncoding.EncodedLen(len(data)))
+		base64.StdEncoding.Encode(buf, data)
+		if !walletconnect.Verify(pub, buf, sig.GetSign()) {
+			return crypto.ErrInvalidSignature
+		}
+		return nil
 	default:
 		return fmt.Errorf("unsupported signature scheme %s", cfg.scheme)
 	}
@@ -41,6 +53,10 @@ func sign(cfg *cfg, key *ecdsa.PrivateKey, data []byte) ([]byte, error) {
 		return crypto.Sign(key, data)
 	case refs.ECDSA_RFC6979_SHA256:
 		return crypto.SignRFC6979(key, data)
+	case refs.ECDSA_RFC6979_SHA256_WALLET_CONNECT:
+		buf := make([]byte, base64.StdEncoding.EncodedLen(len(data)))
+		base64.StdEncoding.Encode(buf, data)
+		return walletconnect.Sign(key, buf)
 	default:
 		panic(fmt.Sprintf("unsupported scheme %s", cfg.scheme))
 	}
@@ -57,5 +73,11 @@ func SignWithRFC6979() SignOption {
 func WithBuffer(buf []byte) SignOption {
 	return func(c *cfg) {
 		c.buffer = buf
+	}
+}
+
+func SignWithWalletConnect() SignOption {
+	return func(c *cfg) {
+		c.scheme = refs.ECDSA_RFC6979_SHA256_WALLET_CONNECT
 	}
 }
