@@ -9,5 +9,6 @@ require (
 	google.golang.org/protobuf v1.27.1
 )
 
-// Used for debug reasons
-// replace github.com/nspcc-dev/neofs-crypto => ../neofs-crypto
+// This version uses broken NeoFS API with incompatible signature
+// definitions. See fix in https://github.com/nspcc-dev/neofs-api/pull/203
+retract v2.12.0
