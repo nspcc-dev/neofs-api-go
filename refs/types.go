@@ -37,6 +37,7 @@ type SignatureScheme uint32
 const (
 	ECDSA_SHA512 SignatureScheme = iota
 	ECDSA_RFC6979_SHA256
+	ECDSA_RFC6979_SHA256_WALLET_CONNECT
 )
 
 type Signature struct {
