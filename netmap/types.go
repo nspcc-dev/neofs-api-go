@@ -123,9 +123,7 @@ func (f *Filter) GetFilters() []Filter {
 }
 
 func (f *Filter) SetFilters(filters []Filter) {
-	if f != nil {
-		f.filters = filters
-	}
+	f.filters = filters
 }
 
 func (f *Filter) GetValue() string {
@@ -137,9 +135,7 @@ func (f *Filter) GetValue() string {
 }
 
 func (f *Filter) SetValue(value string) {
-	if f != nil {
-		f.value = value
-	}
+	f.value = value
 }
 
 func (f *Filter) GetOp() Operation {
@@ -150,9 +146,7 @@ func (f *Filter) GetOp() Operation {
 }
 
 func (f *Filter) SetOp(op Operation) {
-	if f != nil {
-		f.op = op
-	}
+	f.op = op
 }
 
 func (f *Filter) GetKey() string {
@@ -164,9 +158,7 @@ func (f *Filter) GetKey() string {
 }
 
 func (f *Filter) SetKey(key string) {
-	if f != nil {
-		f.key = key
-	}
+	f.key = key
 }
 
 func (f *Filter) GetName() string {
@@ -178,9 +170,7 @@ func (f *Filter) GetName() string {
 }
 
 func (f *Filter) SetName(name string) {
-	if f != nil {
-		f.name = name
-	}
+	f.name = name
 }
 
 func (s *Selector) GetFilter() string {
@@ -192,9 +182,7 @@ func (s *Selector) GetFilter() string {
 }
 
 func (s *Selector) SetFilter(filter string) {
-	if s != nil {
-		s.filter = filter
-	}
+	s.filter = filter
 }
 
 func (s *Selector) GetAttribute() string {
@@ -206,9 +194,7 @@ func (s *Selector) GetAttribute() string {
 }
 
 func (s *Selector) SetAttribute(attribute string) {
-	if s != nil {
-		s.attribute = attribute
-	}
+	s.attribute = attribute
 }
 
 func (s *Selector) GetClause() Clause {
@@ -220,9 +206,7 @@ func (s *Selector) GetClause() Clause {
 }
 
 func (s *Selector) SetClause(clause Clause) {
-	if s != nil {
-		s.clause = clause
-	}
+	s.clause = clause
 }
 
 func (s *Selector) GetCount() uint32 {
@@ -234,9 +218,7 @@ func (s *Selector) GetCount() uint32 {
 }
 
 func (s *Selector) SetCount(count uint32) {
-	if s != nil {
-		s.count = count
-	}
+	s.count = count
 }
 
 func (s *Selector) GetName() string {
@@ -248,9 +230,7 @@ func (s *Selector) GetName() string {
 }
 
 func (s *Selector) SetName(name string) {
-	if s != nil {
-		s.name = name
-	}
+	s.name = name
 }
 
 func (r *Replica) GetSelector() string {
@@ -262,9 +242,7 @@ func (r *Replica) GetSelector() string {
 }
 
 func (r *Replica) SetSelector(selector string) {
-	if r != nil {
-		r.selector = selector
-	}
+	r.selector = selector
 }
 
 func (r *Replica) GetCount() uint32 {
@@ -276,9 +254,7 @@ func (r *Replica) GetCount() uint32 {
 }
 
 func (r *Replica) SetCount(count uint32) {
-	if r != nil {
-		r.count = count
-	}
+	r.count = count
 }
 
 func (p *PlacementPolicy) GetFilters() []Filter {
@@ -290,9 +266,7 @@ func (p *PlacementPolicy) GetFilters() []Filter {
 }
 
 func (p *PlacementPolicy) SetFilters(filters []Filter) {
-	if p != nil {
-		p.filters = filters
-	}
+	p.filters = filters
 }
 
 func (p *PlacementPolicy) GetSelectors() []Selector {
@@ -304,9 +278,7 @@ func (p *PlacementPolicy) GetSelectors() []Selector {
 }
 
 func (p *PlacementPolicy) SetSelectors(selectors []Selector) {
-	if p != nil {
-		p.selectors = selectors
-	}
+	p.selectors = selectors
 }
 
 func (p *PlacementPolicy) GetContainerBackupFactor() uint32 {
@@ -318,9 +290,7 @@ func (p *PlacementPolicy) GetContainerBackupFactor() uint32 {
 }
 
 func (p *PlacementPolicy) SetContainerBackupFactor(backupFactor uint32) {
-	if p != nil {
-		p.backupFactor = backupFactor
-	}
+	p.backupFactor = backupFactor
 }
 
 func (p *PlacementPolicy) GetReplicas() []Replica {
@@ -348,9 +318,7 @@ func (a *Attribute) GetKey() string {
 }
 
 func (a *Attribute) SetKey(v string) {
-	if a != nil {
-		a.key = v
-	}
+	a.key = v
 }
 
 func (a *Attribute) GetValue() string {
@@ -362,9 +330,7 @@ func (a *Attribute) GetValue() string {
 }
 
 func (a *Attribute) SetValue(v string) {
-	if a != nil {
-		a.value = v
-	}
+	a.value = v
 }
 
 func (a *Attribute) GetParents() []string {
@@ -376,9 +342,7 @@ func (a *Attribute) GetParents() []string {
 }
 
 func (a *Attribute) SetParents(parent []string) {
-	if a != nil {
-		a.parents = parent
-	}
+	a.parents = parent
 }
 
 func (ni *NodeInfo) GetPublicKey() []byte {
@@ -390,9 +354,7 @@ func (ni *NodeInfo) GetPublicKey() []byte {
 }
 
 func (ni *NodeInfo) SetPublicKey(v []byte) {
-	if ni != nil {
-		ni.publicKey = v
-	}
+	ni.publicKey = v
 }
 
 // GetAddress returns node's network address.
@@ -416,9 +378,7 @@ func (ni *NodeInfo) SetAddress(v string) {
 
 // SetAddresses sets list of network addresses of the node.
 func (ni *NodeInfo) SetAddresses(v ...string) {
-	if ni != nil {
-		ni.addresses = v
-	}
+	ni.addresses = v
 }
 
 // NumberOfAddresses returns number of network addresses of the node.
@@ -453,9 +413,7 @@ func (ni *NodeInfo) GetAttributes() []Attribute {
 }
 
 func (ni *NodeInfo) SetAttributes(v []Attribute) {
-	if ni != nil {
-		ni.attributes = v
-	}
+	ni.attributes = v
 }
 
 func (ni *NodeInfo) GetState() NodeState {
@@ -467,9 +425,7 @@ func (ni *NodeInfo) GetState() NodeState {
 }
 
 func (ni *NodeInfo) SetState(state NodeState) {
-	if ni != nil {
-		ni.state = state
-	}
+	ni.state = state
 }
 
 func (l *LocalNodeInfoResponseBody) GetVersion() *refs.Version {
@@ -481,9 +437,7 @@ func (l *LocalNodeInfoResponseBody) GetVersion() *refs.Version {
 }
 
 func (l *LocalNodeInfoResponseBody) SetVersion(version *refs.Version) {
-	if l != nil {
-		l.version = version
-	}
+	l.version = version
 }
 
 func (l *LocalNodeInfoResponseBody) GetNodeInfo() *NodeInfo {
@@ -495,9 +449,7 @@ func (l *LocalNodeInfoResponseBody) GetNodeInfo() *NodeInfo {
 }
 
 func (l *LocalNodeInfoResponseBody) SetNodeInfo(nodeInfo *NodeInfo) {
-	if l != nil {
-		l.nodeInfo = nodeInfo
-	}
+	l.nodeInfo = nodeInfo
 }
 
 func (l *LocalNodeInfoRequest) GetBody() *LocalNodeInfoRequestBody {
@@ -508,9 +460,7 @@ func (l *LocalNodeInfoRequest) GetBody() *LocalNodeInfoRequestBody {
 }
 
 func (l *LocalNodeInfoRequest) SetBody(body *LocalNodeInfoRequestBody) {
-	if l != nil {
-		l.body = body
-	}
+	l.body = body
 }
 
 func (l *LocalNodeInfoResponse) GetBody() *LocalNodeInfoResponseBody {
@@ -521,9 +471,7 @@ func (l *LocalNodeInfoResponse) GetBody() *LocalNodeInfoResponseBody {
 }
 
 func (l *LocalNodeInfoResponse) SetBody(body *LocalNodeInfoResponseBody) {
-	if l != nil {
-		l.body = body
-	}
+	l.body = body
 }
 
 // NetworkParameter represents NeoFS network parameter.
@@ -542,9 +490,7 @@ func (x *NetworkParameter) GetKey() []byte {
 
 // SetKey sets parameter key.
 func (x *NetworkParameter) SetKey(k []byte) {
-	if x != nil {
-		x.k = k
-	}
+	x.k = k
 }
 
 // GetValue returns parameter value.
@@ -558,9 +504,7 @@ func (x *NetworkParameter) GetValue() []byte {
 
 // SetValue sets parameter value.
 func (x *NetworkParameter) SetValue(v []byte) {
-	if x != nil {
-		x.v = v
-	}
+	x.v = v
 }
 
 // NetworkConfig represents NeoFS network configuration.
@@ -593,9 +537,7 @@ func (x *NetworkConfig) IterateParameters(f func(*NetworkParameter) bool) {
 
 // SetParameters sets list of network parameters.
 func (x *NetworkConfig) SetParameters(v ...NetworkParameter) {
-	if x != nil {
-		x.ps = v
-	}
+	x.ps = v
 }
 
 // NetworkInfo groups information about
@@ -619,9 +561,7 @@ func (i *NetworkInfo) GetCurrentEpoch() uint64 {
 
 // SetCurrentEpoch sets number of the current epoch.
 func (i *NetworkInfo) SetCurrentEpoch(epoch uint64) {
-	if i != nil {
-		i.curEpoch = epoch
-	}
+	i.curEpoch = epoch
 }
 
 // GetMagicNumber returns magic number of the sidechain.
@@ -635,9 +575,7 @@ func (i *NetworkInfo) GetMagicNumber() uint64 {
 
 // SetMagicNumber sets magic number of the sidechain.
 func (i *NetworkInfo) SetMagicNumber(magic uint64) {
-	if i != nil {
-		i.magicNum = magic
-	}
+	i.magicNum = magic
 }
 
 // GetMsPerBlock returns MillisecondsPerBlock network parameter.
@@ -651,9 +589,7 @@ func (i *NetworkInfo) GetMsPerBlock() int64 {
 
 // SetMsPerBlock sets MillisecondsPerBlock network parameter.
 func (i *NetworkInfo) SetMsPerBlock(v int64) {
-	if i != nil {
-		i.msPerBlock = v
-	}
+	i.msPerBlock = v
 }
 
 // GetNetworkConfig returns NeoFS network configuration.
@@ -667,9 +603,7 @@ func (i *NetworkInfo) GetNetworkConfig() *NetworkConfig {
 
 // SetNetworkConfig sets NeoFS network configuration.
 func (i *NetworkInfo) SetNetworkConfig(v *NetworkConfig) {
-	if i != nil {
-		i.netCfg = v
-	}
+	i.netCfg = v
 }
 
 // NetworkInfoRequestBody is a structure of NetworkInfo request body.
@@ -691,9 +625,7 @@ func (i *NetworkInfoResponseBody) GetNetworkInfo() *NetworkInfo {
 
 // SetNetworkInfo sets information about the NeoFS network.
 func (i *NetworkInfoResponseBody) SetNetworkInfo(netInfo *NetworkInfo) {
-	if i != nil {
-		i.netInfo = netInfo
-	}
+	i.netInfo = netInfo
 }
 
 func (l *NetworkInfoRequest) GetBody() *NetworkInfoRequestBody {
@@ -704,9 +636,7 @@ func (l *NetworkInfoRequest) GetBody() *NetworkInfoRequestBody {
 }
 
 func (l *NetworkInfoRequest) SetBody(body *NetworkInfoRequestBody) {
-	if l != nil {
-		l.body = body
-	}
+	l.body = body
 }
 
 func (l *NetworkInfoResponse) GetBody() *NetworkInfoResponseBody {
@@ -717,7 +647,5 @@ func (l *NetworkInfoResponse) GetBody() *NetworkInfoResponseBody {
 }
 
 func (l *NetworkInfoResponse) SetBody(body *NetworkInfoResponseBody) {
-	if l != nil {
-		l.body = body
-	}
+	l.body = body
 }

@@ -40,9 +40,7 @@ func (b *BalanceRequestBody) GetOwnerID() *refs.OwnerID {
 }
 
 func (b *BalanceRequestBody) SetOwnerID(v *refs.OwnerID) {
-	if b != nil {
-		b.ownerID = v
-	}
+	b.ownerID = v
 }
 
 func (b *BalanceRequest) GetBody() *BalanceRequestBody {
@@ -54,9 +52,7 @@ func (b *BalanceRequest) GetBody() *BalanceRequestBody {
 }
 
 func (b *BalanceRequest) SetBody(v *BalanceRequestBody) {
-	if b != nil {
-		b.body = v
-	}
+	b.body = v
 }
 
 func (d *Decimal) GetValue() int64 {
@@ -68,9 +64,7 @@ func (d *Decimal) GetValue() int64 {
 }
 
 func (d *Decimal) SetValue(v int64) {
-	if d != nil {
-		d.val = v
-	}
+	d.val = v
 }
 
 func (d *Decimal) GetPrecision() uint32 {
@@ -82,9 +76,7 @@ func (d *Decimal) GetPrecision() uint32 {
 }
 
 func (d *Decimal) SetPrecision(v uint32) {
-	if d != nil {
-		d.prec = v
-	}
+	d.prec = v
 }
 
 func (br *BalanceResponseBody) GetBalance() *Decimal {
@@ -96,9 +88,7 @@ func (br *BalanceResponseBody) GetBalance() *Decimal {
 }
 
 func (br *BalanceResponseBody) SetBalance(v *Decimal) {
-	if br != nil {
-		br.bal = v
-	}
+	br.bal = v
 }
 
 func (br *BalanceResponse) GetBody() *BalanceResponseBody {
@@ -110,7 +100,5 @@ func (br *BalanceResponse) GetBody() *BalanceResponseBody {
 }
 
 func (br *BalanceResponse) SetBody(v *BalanceResponseBody) {
-	if br != nil {
-		br.body = v
-	}
+	br.body = v
 }

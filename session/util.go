@@ -23,9 +23,7 @@ func (c *RequestHeaders) GetMetaHeader() *RequestMetaHeader {
 
 // SetMetaHeader sets meta header of the request.
 func (c *RequestHeaders) SetMetaHeader(v *RequestMetaHeader) {
-	if c != nil {
-		c.metaHeader = v
-	}
+	c.metaHeader = v
 }
 
 // GetVerificationHeader returns verification header of the request.
@@ -39,9 +37,7 @@ func (c *RequestHeaders) GetVerificationHeader() *RequestVerificationHeader {
 
 // SetVerificationHeader sets verification header of the request.
 func (c *RequestHeaders) SetVerificationHeader(v *RequestVerificationHeader) {
-	if c != nil {
-		c.verifyHeader = v
-	}
+	c.verifyHeader = v
 }
 
 func (c *RequestHeaders) ToMessage(m interface {
@@ -106,9 +102,7 @@ func (c *ResponseHeaders) GetMetaHeader() *ResponseMetaHeader {
 
 // SetMetaHeader sets meta header of the response.
 func (c *ResponseHeaders) SetMetaHeader(v *ResponseMetaHeader) {
-	if c != nil {
-		c.metaHeader = v
-	}
+	c.metaHeader = v
 }
 
 // GetVerificationHeader returns verification header of the response.
@@ -122,9 +116,7 @@ func (c *ResponseHeaders) GetVerificationHeader() *ResponseVerificationHeader {
 
 // SetVerificationHeader sets verification header of the response.
 func (c *ResponseHeaders) SetVerificationHeader(v *ResponseVerificationHeader) {
-	if c != nil {
-		c.verifyHeader = v
-	}
+	c.verifyHeader = v
 }
 
 func (c *ResponseHeaders) ToMessage(m interface {

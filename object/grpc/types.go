@@ -7,233 +7,167 @@ import (
 
 // SetKey sets key to the object attribute.
 func (m *Header_Attribute) SetKey(v string) {
-	if m != nil {
-		m.Key = v
-	}
+	m.Key = v
 }
 
 // SetValue sets value of the object attribute.
 func (m *Header_Attribute) SetValue(v string) {
-	if m != nil {
-		m.Value = v
-	}
+	m.Value = v
 }
 
 // SetParent sets identifier of the parent object.
 func (m *Header_Split) SetParent(v *refs.ObjectID) {
-	if m != nil {
-		m.Parent = v
-	}
+	m.Parent = v
 }
 
 // SetPrevious sets identifier of the previous object in split-chain.
 func (m *Header_Split) SetPrevious(v *refs.ObjectID) {
-	if m != nil {
-		m.Previous = v
-	}
+	m.Previous = v
 }
 
 // SetParentSignature sets signature of the parent object header.
 func (m *Header_Split) SetParentSignature(v *refs.Signature) {
-	if m != nil {
-		m.ParentSignature = v
-	}
+	m.ParentSignature = v
 }
 
 // SetParentHeader sets parent header structure.
 func (m *Header_Split) SetParentHeader(v *Header) {
-	if m != nil {
-		m.ParentHeader = v
-	}
+	m.ParentHeader = v
 }
 
 // SetChildren sets list of the identifiers of the child objects.
 func (m *Header_Split) SetChildren(v []*refs.ObjectID) {
-	if m != nil {
-		m.Children = v
-	}
+	m.Children = v
 }
 
 // SetSplitId sets split ID of the object.
 func (m *Header_Split) SetSplitId(v []byte) {
-	if m != nil {
-		m.SplitId = v
-	}
+	m.SplitId = v
 }
 
 // SetContainerId sets identifier of the container.
 func (m *Header) SetContainerId(v *refs.ContainerID) {
-	if m != nil {
-		m.ContainerId = v
-	}
+	m.ContainerId = v
 }
 
 // SetOwnerId sets identifier of the object owner.
 func (m *Header) SetOwnerId(v *refs.OwnerID) {
-	if m != nil {
-		m.OwnerId = v
-	}
+	m.OwnerId = v
 }
 
 // SetCreationEpoch sets creation epoch number.
 func (m *Header) SetCreationEpoch(v uint64) {
-	if m != nil {
-		m.CreationEpoch = v
-	}
+	m.CreationEpoch = v
 }
 
 // SetVersion sets version of the object format.
 func (m *Header) SetVersion(v *refs.Version) {
-	if m != nil {
-		m.Version = v
-	}
+	m.Version = v
 }
 
 // SetPayloadLength sets length of the object payload.
 func (m *Header) SetPayloadLength(v uint64) {
-	if m != nil {
-		m.PayloadLength = v
-	}
+	m.PayloadLength = v
 }
 
 // SetPayloadHash sets hash of the object payload.
 func (m *Header) SetPayloadHash(v *refs.Checksum) {
-	if m != nil {
-		m.PayloadHash = v
-	}
+	m.PayloadHash = v
 }
 
 // SetObjectType sets type of the object.
 func (m *Header) SetObjectType(v ObjectType) {
-	if m != nil {
-		m.ObjectType = v
-	}
+	m.ObjectType = v
 }
 
 // SetHomomorphicHash sets homomorphic hash of the object payload.
 func (m *Header) SetHomomorphicHash(v *refs.Checksum) {
-	if m != nil {
-		m.HomomorphicHash = v
-	}
+	m.HomomorphicHash = v
 }
 
 // SetSessionToken sets session token.
 func (m *Header) SetSessionToken(v *session.SessionToken) {
-	if m != nil {
-		m.SessionToken = v
-	}
+	m.SessionToken = v
 }
 
 // SetAttributes sets list of the object attributes.
 func (m *Header) SetAttributes(v []*Header_Attribute) {
-	if m != nil {
-		m.Attributes = v
-	}
+	m.Attributes = v
 }
 
 // SetSplit sets split header.
 func (m *Header) SetSplit(v *Header_Split) {
-	if m != nil {
-		m.Split = v
-	}
+	m.Split = v
 }
 
 // SetObjectId sets identifier of the object.
 func (m *Object) SetObjectId(v *refs.ObjectID) {
-	if m != nil {
-		m.ObjectId = v
-	}
+	m.ObjectId = v
 }
 
 // SetSignature sets signature of the object identifier.
 func (m *Object) SetSignature(v *refs.Signature) {
-	if m != nil {
-		m.Signature = v
-	}
+	m.Signature = v
 }
 
 // SetHeader sets header of the object.
 func (m *Object) SetHeader(v *Header) {
-	if m != nil {
-		m.Header = v
-	}
+	m.Header = v
 }
 
 // SetPayload sets payload bytes of the object.
 func (m *Object) SetPayload(v []byte) {
-	if m != nil {
-		m.Payload = v
-	}
+	m.Payload = v
 }
 
 // SetVersion sets version of the object.
 func (m *ShortHeader) SetVersion(v *refs.Version) {
-	if m != nil {
-		m.Version = v
-	}
+	m.Version = v
 }
 
 // SetCreationEpoch sets creation epoch number.
 func (m *ShortHeader) SetCreationEpoch(v uint64) {
-	if m != nil {
-		m.CreationEpoch = v
-	}
+	m.CreationEpoch = v
 }
 
 // SetOwnerId sets identifier of the object owner.
 func (m *ShortHeader) SetOwnerId(v *refs.OwnerID) {
-	if m != nil {
-		m.OwnerId = v
-	}
+	m.OwnerId = v
 }
 
 // SetObjectType sets type of the object.
 func (m *ShortHeader) SetObjectType(v ObjectType) {
-	if m != nil {
-		m.ObjectType = v
-	}
+	m.ObjectType = v
 }
 
 // SetPayloadLength sets length of the object payload.
 func (m *ShortHeader) SetPayloadLength(v uint64) {
-	if m != nil {
-		m.PayloadLength = v
-	}
+	m.PayloadLength = v
 }
 
 // SetPayloadHash sets hash of the object payload.
 func (m *ShortHeader) SetPayloadHash(v *refs.Checksum) {
-	if m != nil {
-		m.PayloadHash = v
-	}
+	m.PayloadHash = v
 }
 
 // SetHomomorphicHash sets homomorphic hash of the object payload.
 func (m *ShortHeader) SetHomomorphicHash(v *refs.Checksum) {
-	if m != nil {
-		m.HomomorphicHash = v
-	}
+	m.HomomorphicHash = v
 }
 
 // SetSplitId sets id of split hierarchy.
 func (m *SplitInfo) SetSplitId(v []byte) {
-	if m != nil {
-		m.SplitId = v
-	}
+	m.SplitId = v
 }
 
 // SetLastPart sets id of most right child in split hierarchy.
 func (m *SplitInfo) SetLastPart(v *refs.ObjectID) {
-	if m != nil {
-		m.LastPart = v
-	}
+	m.LastPart = v
 }
 
 // SetLink sets id of linking object in split hierarchy.
 func (m *SplitInfo) SetLink(v *refs.ObjectID) {
-	if m != nil {
-		m.Link = v
-	}
+	m.Link = v
 }
 
 // FromString parses ObjectType from a string representation,

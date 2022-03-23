@@ -67,9 +67,7 @@ func (o *OwnerID) GetValue() []byte {
 }
 
 func (o *OwnerID) SetValue(v []byte) {
-	if o != nil {
-		o.val = v
-	}
+	o.val = v
 }
 
 func (c *ContainerID) GetValue() []byte {
@@ -81,9 +79,7 @@ func (c *ContainerID) GetValue() []byte {
 }
 
 func (c *ContainerID) SetValue(v []byte) {
-	if c != nil {
-		c.val = v
-	}
+	c.val = v
 }
 
 func (o *ObjectID) GetValue() []byte {
@@ -95,9 +91,7 @@ func (o *ObjectID) GetValue() []byte {
 }
 
 func (o *ObjectID) SetValue(v []byte) {
-	if o != nil {
-		o.val = v
-	}
+	o.val = v
 }
 
 func (a *Address) GetContainerID() *ContainerID {
@@ -109,9 +103,7 @@ func (a *Address) GetContainerID() *ContainerID {
 }
 
 func (a *Address) SetContainerID(v *ContainerID) {
-	if a != nil {
-		a.cid = v
-	}
+	a.cid = v
 }
 
 func (a *Address) GetObjectID() *ObjectID {
@@ -123,9 +115,7 @@ func (a *Address) GetObjectID() *ObjectID {
 }
 
 func (a *Address) SetObjectID(v *ObjectID) {
-	if a != nil {
-		a.oid = v
-	}
+	a.oid = v
 }
 
 func (c *Checksum) GetType() ChecksumType {
@@ -137,9 +127,7 @@ func (c *Checksum) GetType() ChecksumType {
 }
 
 func (c *Checksum) SetType(v ChecksumType) {
-	if c != nil {
-		c.typ = v
-	}
+	c.typ = v
 }
 
 func (c *Checksum) GetSum() []byte {
@@ -151,9 +139,7 @@ func (c *Checksum) GetSum() []byte {
 }
 
 func (c *Checksum) SetSum(v []byte) {
-	if c != nil {
-		c.sum = v
-	}
+	c.sum = v
 }
 
 func (s *Signature) GetKey() []byte {
@@ -165,9 +151,7 @@ func (s *Signature) GetKey() []byte {
 }
 
 func (s *Signature) SetKey(v []byte) {
-	if s != nil {
-		s.key = v
-	}
+	s.key = v
 }
 
 func (s *Signature) GetSign() []byte {
@@ -179,9 +163,7 @@ func (s *Signature) GetSign() []byte {
 }
 
 func (s *Signature) SetSign(v []byte) {
-	if s != nil {
-		s.sign = v
-	}
+	s.sign = v
 }
 
 func (s *Signature) GetScheme() SignatureScheme {
@@ -192,15 +174,11 @@ func (s *Signature) GetScheme() SignatureScheme {
 }
 
 func (s *Signature) SetScheme(scheme SignatureScheme) {
-	if s != nil {
-		s.scheme = scheme
-	}
+	s.scheme = scheme
 }
 
 func (s *SubnetID) SetValue(id uint32) {
-	if s != nil {
-		s.value = id
-	}
+	s.value = id
 }
 
 func (s *SubnetID) GetValue() uint32 {
@@ -258,9 +236,7 @@ func (v *Version) GetMajor() uint32 {
 }
 
 func (v *Version) SetMajor(val uint32) {
-	if v != nil {
-		v.major = val
-	}
+	v.major = val
 }
 
 func (v *Version) GetMinor() uint32 {
@@ -272,7 +248,5 @@ func (v *Version) GetMinor() uint32 {
 }
 
 func (v *Version) SetMinor(val uint32) {
-	if v != nil {
-		v.minor = val
-	}
+	v.minor = val
 }

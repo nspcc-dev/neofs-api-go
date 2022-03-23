@@ -121,9 +121,7 @@ func (f *HeaderFilter) GetHeaderType() HeaderType {
 }
 
 func (f *HeaderFilter) SetHeaderType(v HeaderType) {
-	if f != nil {
-		f.hdrType = v
-	}
+	f.hdrType = v
 }
 
 func (f *HeaderFilter) GetMatchType() MatchType {
@@ -135,9 +133,7 @@ func (f *HeaderFilter) GetMatchType() MatchType {
 }
 
 func (f *HeaderFilter) SetMatchType(v MatchType) {
-	if f != nil {
-		f.matchType = v
-	}
+	f.matchType = v
 }
 
 func (f *HeaderFilter) GetKey() string {
@@ -149,9 +145,7 @@ func (f *HeaderFilter) GetKey() string {
 }
 
 func (f *HeaderFilter) SetKey(v string) {
-	if f != nil {
-		f.key = v
-	}
+	f.key = v
 }
 
 func (f *HeaderFilter) GetValue() string {
@@ -163,9 +157,7 @@ func (f *HeaderFilter) GetValue() string {
 }
 
 func (f *HeaderFilter) SetValue(v string) {
-	if f != nil {
-		f.value = v
-	}
+	f.value = v
 }
 
 func (t *Target) GetRole() Role {
@@ -177,9 +169,7 @@ func (t *Target) GetRole() Role {
 }
 
 func (t *Target) SetRole(v Role) {
-	if t != nil {
-		t.role = v
-	}
+	t.role = v
 }
 
 func (t *Target) GetKeys() [][]byte {
@@ -191,9 +181,7 @@ func (t *Target) GetKeys() [][]byte {
 }
 
 func (t *Target) SetKeys(v [][]byte) {
-	if t != nil {
-		t.keys = v
-	}
+	t.keys = v
 }
 
 func (r *Record) GetOperation() Operation {
@@ -205,9 +193,7 @@ func (r *Record) GetOperation() Operation {
 }
 
 func (r *Record) SetOperation(v Operation) {
-	if r != nil {
-		r.op = v
-	}
+	r.op = v
 }
 
 func (r *Record) GetAction() Action {
@@ -219,9 +205,7 @@ func (r *Record) GetAction() Action {
 }
 
 func (r *Record) SetAction(v Action) {
-	if r != nil {
-		r.action = v
-	}
+	r.action = v
 }
 
 func (r *Record) GetFilters() []HeaderFilter {
@@ -233,9 +217,7 @@ func (r *Record) GetFilters() []HeaderFilter {
 }
 
 func (r *Record) SetFilters(v []HeaderFilter) {
-	if r != nil {
-		r.filters = v
-	}
+	r.filters = v
 }
 
 func (r *Record) GetTargets() []Target {
@@ -247,9 +229,7 @@ func (r *Record) GetTargets() []Target {
 }
 
 func (r *Record) SetTargets(v []Target) {
-	if r != nil {
-		r.targets = v
-	}
+	r.targets = v
 }
 
 func (t *Table) GetVersion() *refs.Version {
@@ -261,9 +241,7 @@ func (t *Table) GetVersion() *refs.Version {
 }
 
 func (t *Table) SetVersion(v *refs.Version) {
-	if t != nil {
-		t.version = v
-	}
+	t.version = v
 }
 
 func (t *Table) GetContainerID() *refs.ContainerID {
@@ -275,9 +253,7 @@ func (t *Table) GetContainerID() *refs.ContainerID {
 }
 
 func (t *Table) SetContainerID(v *refs.ContainerID) {
-	if t != nil {
-		t.cid = v
-	}
+	t.cid = v
 }
 
 func (t *Table) GetRecords() []Record {
@@ -289,9 +265,7 @@ func (t *Table) GetRecords() []Record {
 }
 
 func (t *Table) SetRecords(v []Record) {
-	if t != nil {
-		t.records = v
-	}
+	t.records = v
 }
 
 func (l *TokenLifetime) GetExp() uint64 {
@@ -303,9 +277,7 @@ func (l *TokenLifetime) GetExp() uint64 {
 }
 
 func (l *TokenLifetime) SetExp(v uint64) {
-	if l != nil {
-		l.exp = v
-	}
+	l.exp = v
 }
 
 func (l *TokenLifetime) GetNbf() uint64 {
@@ -317,9 +289,7 @@ func (l *TokenLifetime) GetNbf() uint64 {
 }
 
 func (l *TokenLifetime) SetNbf(v uint64) {
-	if l != nil {
-		l.nbf = v
-	}
+	l.nbf = v
 }
 
 func (l *TokenLifetime) GetIat() uint64 {
@@ -331,9 +301,7 @@ func (l *TokenLifetime) GetIat() uint64 {
 }
 
 func (l *TokenLifetime) SetIat(v uint64) {
-	if l != nil {
-		l.iat = v
-	}
+	l.iat = v
 }
 
 func (bt *BearerTokenBody) GetEACL() *Table {
@@ -345,9 +313,7 @@ func (bt *BearerTokenBody) GetEACL() *Table {
 }
 
 func (bt *BearerTokenBody) SetEACL(v *Table) {
-	if bt != nil {
-		bt.eacl = v
-	}
+	bt.eacl = v
 }
 
 func (bt *BearerTokenBody) GetOwnerID() *refs.OwnerID {
@@ -359,9 +325,7 @@ func (bt *BearerTokenBody) GetOwnerID() *refs.OwnerID {
 }
 
 func (bt *BearerTokenBody) SetOwnerID(v *refs.OwnerID) {
-	if bt != nil {
-		bt.ownerID = v
-	}
+	bt.ownerID = v
 }
 
 func (bt *BearerTokenBody) GetLifetime() *TokenLifetime {
@@ -373,9 +337,7 @@ func (bt *BearerTokenBody) GetLifetime() *TokenLifetime {
 }
 
 func (bt *BearerTokenBody) SetLifetime(v *TokenLifetime) {
-	if bt != nil {
-		bt.lifetime = v
-	}
+	bt.lifetime = v
 }
 
 func (bt *BearerToken) GetBody() *BearerTokenBody {
@@ -387,9 +349,7 @@ func (bt *BearerToken) GetBody() *BearerTokenBody {
 }
 
 func (bt *BearerToken) SetBody(v *BearerTokenBody) {
-	if bt != nil {
-		bt.body = v
-	}
+	bt.body = v
 }
 
 func (bt *BearerToken) GetSignature() *refs.Signature {
@@ -401,7 +361,5 @@ func (bt *BearerToken) GetSignature() *refs.Signature {
 }
 
 func (bt *BearerToken) SetSignature(v *refs.Signature) {
-	if bt != nil {
-		bt.sig = v
-	}
+	bt.sig = v
 }

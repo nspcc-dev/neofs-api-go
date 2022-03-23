@@ -144,9 +144,7 @@ func (c *CreateRequestBody) GetOwnerID() *refs.OwnerID {
 }
 
 func (c *CreateRequestBody) SetOwnerID(v *refs.OwnerID) {
-	if c != nil {
-		c.ownerID = v
-	}
+	c.ownerID = v
 }
 
 func (c *CreateRequestBody) GetExpiration() uint64 {
@@ -158,9 +156,7 @@ func (c *CreateRequestBody) GetExpiration() uint64 {
 }
 
 func (c *CreateRequestBody) SetExpiration(v uint64) {
-	if c != nil {
-		c.expiration = v
-	}
+	c.expiration = v
 }
 
 func (c *CreateRequest) GetBody() *CreateRequestBody {
@@ -172,9 +168,7 @@ func (c *CreateRequest) GetBody() *CreateRequestBody {
 }
 
 func (c *CreateRequest) SetBody(v *CreateRequestBody) {
-	if c != nil {
-		c.body = v
-	}
+	c.body = v
 }
 
 func (c *CreateRequest) GetMetaHeader() *RequestMetaHeader {
@@ -186,9 +180,7 @@ func (c *CreateRequest) GetMetaHeader() *RequestMetaHeader {
 }
 
 func (c *CreateRequest) SetMetaHeader(v *RequestMetaHeader) {
-	if c != nil {
-		c.metaHeader = v
-	}
+	c.metaHeader = v
 }
 
 func (c *CreateRequest) GetVerificationHeader() *RequestVerificationHeader {
@@ -200,9 +192,7 @@ func (c *CreateRequest) GetVerificationHeader() *RequestVerificationHeader {
 }
 
 func (c *CreateRequest) SetVerificationHeader(v *RequestVerificationHeader) {
-	if c != nil {
-		c.verifyHeader = v
-	}
+	c.verifyHeader = v
 }
 
 func (c *CreateResponseBody) GetID() []byte {
@@ -214,9 +204,7 @@ func (c *CreateResponseBody) GetID() []byte {
 }
 
 func (c *CreateResponseBody) SetID(v []byte) {
-	if c != nil {
-		c.id = v
-	}
+	c.id = v
 }
 
 func (c *CreateResponseBody) GetSessionKey() []byte {
@@ -228,9 +216,7 @@ func (c *CreateResponseBody) GetSessionKey() []byte {
 }
 
 func (c *CreateResponseBody) SetSessionKey(v []byte) {
-	if c != nil {
-		c.sessionKey = v
-	}
+	c.sessionKey = v
 }
 
 func (c *CreateResponse) GetBody() *CreateResponseBody {
@@ -242,9 +228,7 @@ func (c *CreateResponse) GetBody() *CreateResponseBody {
 }
 
 func (c *CreateResponse) SetBody(v *CreateResponseBody) {
-	if c != nil {
-		c.body = v
-	}
+	c.body = v
 }
 
 func (c *CreateResponse) GetMetaHeader() *ResponseMetaHeader {
@@ -256,9 +240,7 @@ func (c *CreateResponse) GetMetaHeader() *ResponseMetaHeader {
 }
 
 func (c *CreateResponse) SetMetaHeader(v *ResponseMetaHeader) {
-	if c != nil {
-		c.metaHeader = v
-	}
+	c.metaHeader = v
 }
 
 func (c *CreateResponse) GetVerificationHeader() *ResponseVerificationHeader {
@@ -270,9 +252,7 @@ func (c *CreateResponse) GetVerificationHeader() *ResponseVerificationHeader {
 }
 
 func (c *CreateResponse) SetVerificationHeader(v *ResponseVerificationHeader) {
-	if c != nil {
-		c.verifyHeader = v
-	}
+	c.verifyHeader = v
 }
 
 func (x *XHeader) GetKey() string {
@@ -284,9 +264,7 @@ func (x *XHeader) GetKey() string {
 }
 
 func (x *XHeader) SetKey(v string) {
-	if x != nil {
-		x.key = v
-	}
+	x.key = v
 }
 
 func (x *XHeader) GetValue() string {
@@ -298,9 +276,7 @@ func (x *XHeader) GetValue() string {
 }
 
 func (x *XHeader) SetValue(v string) {
-	if x != nil {
-		x.val = v
-	}
+	x.val = v
 }
 
 func (r *RequestVerificationHeader) GetBodySignature() *refs.Signature {
@@ -312,9 +288,7 @@ func (r *RequestVerificationHeader) GetBodySignature() *refs.Signature {
 }
 
 func (r *RequestVerificationHeader) SetBodySignature(v *refs.Signature) {
-	if r != nil {
-		r.bodySig = v
-	}
+	r.bodySig = v
 }
 
 func (r *RequestVerificationHeader) GetMetaSignature() *refs.Signature {
@@ -326,9 +300,7 @@ func (r *RequestVerificationHeader) GetMetaSignature() *refs.Signature {
 }
 
 func (r *RequestVerificationHeader) SetMetaSignature(v *refs.Signature) {
-	if r != nil {
-		r.metaSig = v
-	}
+	r.metaSig = v
 }
 
 func (r *RequestVerificationHeader) GetOriginSignature() *refs.Signature {
@@ -340,9 +312,7 @@ func (r *RequestVerificationHeader) GetOriginSignature() *refs.Signature {
 }
 
 func (r *RequestVerificationHeader) SetOriginSignature(v *refs.Signature) {
-	if r != nil {
-		r.originSig = v
-	}
+	r.originSig = v
 }
 
 func (r *RequestVerificationHeader) GetOrigin() *RequestVerificationHeader {
@@ -354,9 +324,7 @@ func (r *RequestVerificationHeader) GetOrigin() *RequestVerificationHeader {
 }
 
 func (r *RequestVerificationHeader) SetOrigin(v *RequestVerificationHeader) {
-	if r != nil {
-		r.origin = v
-	}
+	r.origin = v
 }
 
 func (r *RequestMetaHeader) GetVersion() *refs.Version {
@@ -368,9 +336,7 @@ func (r *RequestMetaHeader) GetVersion() *refs.Version {
 }
 
 func (r *RequestMetaHeader) SetVersion(v *refs.Version) {
-	if r != nil {
-		r.version = v
-	}
+	r.version = v
 }
 
 func (r *RequestMetaHeader) GetTTL() uint32 {
@@ -382,9 +348,7 @@ func (r *RequestMetaHeader) GetTTL() uint32 {
 }
 
 func (r *RequestMetaHeader) SetTTL(v uint32) {
-	if r != nil {
-		r.ttl = v
-	}
+	r.ttl = v
 }
 
 func (r *RequestMetaHeader) GetEpoch() uint64 {
@@ -396,9 +360,7 @@ func (r *RequestMetaHeader) GetEpoch() uint64 {
 }
 
 func (r *RequestMetaHeader) SetEpoch(v uint64) {
-	if r != nil {
-		r.epoch = v
-	}
+	r.epoch = v
 }
 
 func (r *RequestMetaHeader) GetXHeaders() []XHeader {
@@ -410,9 +372,7 @@ func (r *RequestMetaHeader) GetXHeaders() []XHeader {
 }
 
 func (r *RequestMetaHeader) SetXHeaders(v []XHeader) {
-	if r != nil {
-		r.xHeaders = v
-	}
+	r.xHeaders = v
 }
 
 func (r *RequestMetaHeader) GetSessionToken() *Token {
@@ -424,9 +384,7 @@ func (r *RequestMetaHeader) GetSessionToken() *Token {
 }
 
 func (r *RequestMetaHeader) SetSessionToken(v *Token) {
-	if r != nil {
-		r.sessionToken = v
-	}
+	r.sessionToken = v
 }
 
 func (r *RequestMetaHeader) GetBearerToken() *acl.BearerToken {
@@ -438,9 +396,7 @@ func (r *RequestMetaHeader) GetBearerToken() *acl.BearerToken {
 }
 
 func (r *RequestMetaHeader) SetBearerToken(v *acl.BearerToken) {
-	if r != nil {
-		r.bearerToken = v
-	}
+	r.bearerToken = v
 }
 
 func (r *RequestMetaHeader) GetOrigin() *RequestMetaHeader {
@@ -452,9 +408,7 @@ func (r *RequestMetaHeader) GetOrigin() *RequestMetaHeader {
 }
 
 func (r *RequestMetaHeader) SetOrigin(v *RequestMetaHeader) {
-	if r != nil {
-		r.origin = v
-	}
+	r.origin = v
 }
 
 // GetNetworkMagic returns NeoFS network magic.
@@ -468,9 +422,7 @@ func (r *RequestMetaHeader) GetNetworkMagic() uint64 {
 
 // SetNetworkMagic sets NeoFS network magic.
 func (r *RequestMetaHeader) SetNetworkMagic(v uint64) {
-	if r != nil {
-		r.netMagic = v
-	}
+	r.netMagic = v
 }
 
 func (l *TokenLifetime) GetExp() uint64 {
@@ -482,9 +434,7 @@ func (l *TokenLifetime) GetExp() uint64 {
 }
 
 func (l *TokenLifetime) SetExp(v uint64) {
-	if l != nil {
-		l.exp = v
-	}
+	l.exp = v
 }
 
 func (l *TokenLifetime) GetNbf() uint64 {
@@ -496,9 +446,7 @@ func (l *TokenLifetime) GetNbf() uint64 {
 }
 
 func (l *TokenLifetime) SetNbf(v uint64) {
-	if l != nil {
-		l.nbf = v
-	}
+	l.nbf = v
 }
 
 func (l *TokenLifetime) GetIat() uint64 {
@@ -510,9 +458,7 @@ func (l *TokenLifetime) GetIat() uint64 {
 }
 
 func (l *TokenLifetime) SetIat(v uint64) {
-	if l != nil {
-		l.iat = v
-	}
+	l.iat = v
 }
 
 func (r *ResponseVerificationHeader) GetBodySignature() *refs.Signature {
@@ -524,9 +470,7 @@ func (r *ResponseVerificationHeader) GetBodySignature() *refs.Signature {
 }
 
 func (r *ResponseVerificationHeader) SetBodySignature(v *refs.Signature) {
-	if r != nil {
-		r.bodySig = v
-	}
+	r.bodySig = v
 }
 
 func (r *ResponseVerificationHeader) GetMetaSignature() *refs.Signature {
@@ -538,9 +482,7 @@ func (r *ResponseVerificationHeader) GetMetaSignature() *refs.Signature {
 }
 
 func (r *ResponseVerificationHeader) SetMetaSignature(v *refs.Signature) {
-	if r != nil {
-		r.metaSig = v
-	}
+	r.metaSig = v
 }
 
 func (r *ResponseVerificationHeader) GetOriginSignature() *refs.Signature {
@@ -552,9 +494,7 @@ func (r *ResponseVerificationHeader) GetOriginSignature() *refs.Signature {
 }
 
 func (r *ResponseVerificationHeader) SetOriginSignature(v *refs.Signature) {
-	if r != nil {
-		r.originSig = v
-	}
+	r.originSig = v
 }
 
 func (r *ResponseVerificationHeader) GetOrigin() *ResponseVerificationHeader {
@@ -566,9 +506,7 @@ func (r *ResponseVerificationHeader) GetOrigin() *ResponseVerificationHeader {
 }
 
 func (r *ResponseVerificationHeader) SetOrigin(v *ResponseVerificationHeader) {
-	if r != nil {
-		r.origin = v
-	}
+	r.origin = v
 }
 
 func (r *ResponseMetaHeader) GetVersion() *refs.Version {
@@ -580,9 +518,7 @@ func (r *ResponseMetaHeader) GetVersion() *refs.Version {
 }
 
 func (r *ResponseMetaHeader) SetVersion(v *refs.Version) {
-	if r != nil {
-		r.version = v
-	}
+	r.version = v
 }
 
 func (r *ResponseMetaHeader) GetTTL() uint32 {
@@ -594,9 +530,7 @@ func (r *ResponseMetaHeader) GetTTL() uint32 {
 }
 
 func (r *ResponseMetaHeader) SetTTL(v uint32) {
-	if r != nil {
-		r.ttl = v
-	}
+	r.ttl = v
 }
 
 func (r *ResponseMetaHeader) GetEpoch() uint64 {
@@ -608,9 +542,7 @@ func (r *ResponseMetaHeader) GetEpoch() uint64 {
 }
 
 func (r *ResponseMetaHeader) SetEpoch(v uint64) {
-	if r != nil {
-		r.epoch = v
-	}
+	r.epoch = v
 }
 
 func (r *ResponseMetaHeader) GetXHeaders() []XHeader {
@@ -622,9 +554,7 @@ func (r *ResponseMetaHeader) GetXHeaders() []XHeader {
 }
 
 func (r *ResponseMetaHeader) SetXHeaders(v []XHeader) {
-	if r != nil {
-		r.xHeaders = v
-	}
+	r.xHeaders = v
 }
 
 func (r *ResponseMetaHeader) GetOrigin() *ResponseMetaHeader {
@@ -636,9 +566,7 @@ func (r *ResponseMetaHeader) GetOrigin() *ResponseMetaHeader {
 }
 
 func (r *ResponseMetaHeader) SetOrigin(v *ResponseMetaHeader) {
-	if r != nil {
-		r.origin = v
-	}
+	r.origin = v
 }
 
 // GetStatus returns response status.
@@ -652,9 +580,7 @@ func (r *ResponseMetaHeader) GetStatus() *status.Status {
 
 // SetStatus sets response status.
 func (r *ResponseMetaHeader) SetStatus(v *status.Status) {
-	if r != nil {
-		r.status = v
-	}
+	r.status = v
 }
 
 // SetStatus sets status of the message which can carry ResponseMetaHeader.
@@ -685,9 +611,7 @@ func (c *ObjectSessionContext) GetVerb() ObjectSessionVerb {
 }
 
 func (c *ObjectSessionContext) SetVerb(v ObjectSessionVerb) {
-	if c != nil {
-		c.verb = v
-	}
+	c.verb = v
 }
 
 func (c *ObjectSessionContext) GetAddress() *refs.Address {
@@ -699,9 +623,7 @@ func (c *ObjectSessionContext) GetAddress() *refs.Address {
 }
 
 func (c *ObjectSessionContext) SetAddress(v *refs.Address) {
-	if c != nil {
-		c.addr = v
-	}
+	c.addr = v
 }
 
 func (t *TokenBody) GetID() []byte {
@@ -713,9 +635,7 @@ func (t *TokenBody) GetID() []byte {
 }
 
 func (t *TokenBody) SetID(v []byte) {
-	if t != nil {
-		t.id = v
-	}
+	t.id = v
 }
 
 func (t *TokenBody) GetOwnerID() *refs.OwnerID {
@@ -727,9 +647,7 @@ func (t *TokenBody) GetOwnerID() *refs.OwnerID {
 }
 
 func (t *TokenBody) SetOwnerID(v *refs.OwnerID) {
-	if t != nil {
-		t.ownerID = v
-	}
+	t.ownerID = v
 }
 
 func (t *TokenBody) GetLifetime() *TokenLifetime {
@@ -741,9 +659,7 @@ func (t *TokenBody) GetLifetime() *TokenLifetime {
 }
 
 func (t *TokenBody) SetLifetime(v *TokenLifetime) {
-	if t != nil {
-		t.lifetime = v
-	}
+	t.lifetime = v
 }
 
 func (t *TokenBody) GetSessionKey() []byte {
@@ -755,9 +671,7 @@ func (t *TokenBody) GetSessionKey() []byte {
 }
 
 func (t *TokenBody) SetSessionKey(v []byte) {
-	if t != nil {
-		t.sessionKey = v
-	}
+	t.sessionKey = v
 }
 
 func (t *TokenBody) GetContext() TokenContext {
@@ -769,9 +683,7 @@ func (t *TokenBody) GetContext() TokenContext {
 }
 
 func (t *TokenBody) SetContext(v TokenContext) {
-	if t != nil {
-		t.ctx = v
-	}
+	t.ctx = v
 }
 
 func (t *Token) GetBody() *TokenBody {
@@ -783,9 +695,7 @@ func (t *Token) GetBody() *TokenBody {
 }
 
 func (t *Token) SetBody(v *TokenBody) {
-	if t != nil {
-		t.body = v
-	}
+	t.body = v
 }
 
 func (t *Token) GetSignature() *refs.Signature {
@@ -797,9 +707,7 @@ func (t *Token) GetSignature() *refs.Signature {
 }
 
 func (t *Token) SetSignature(v *refs.Signature) {
-	if t != nil {
-		t.sig = v
-	}
+	t.sig = v
 }
 
 // ContainerSessionVerb represents NeoFS API v2
@@ -843,9 +751,7 @@ func (x *ContainerSessionContext) Verb() ContainerSessionVerb {
 
 // SetVerb sets type of request for which the token is issued.
 func (x *ContainerSessionContext) SetVerb(v ContainerSessionVerb) {
-	if x != nil {
-		x.verb = v
-	}
+	x.verb = v
 }
 
 // Wildcard returns wildcard flag of the container session.
@@ -859,9 +765,7 @@ func (x *ContainerSessionContext) Wildcard() bool {
 
 // SetWildcard sets wildcard flag of the container session.
 func (x *ContainerSessionContext) SetWildcard(v bool) {
-	if x != nil {
-		x.wildcard = v
-	}
+	x.wildcard = v
 }
 
 // ContainerID returns identifier of the container related to the session.
@@ -875,7 +779,5 @@ func (x *ContainerSessionContext) ContainerID() *refs.ContainerID {
 
 // SetContainerID sets identifier of the container related to the session.
 func (x *ContainerSessionContext) SetContainerID(v *refs.ContainerID) {
-	if x != nil {
-		x.cid = v
-	}
+	x.cid = v
 }

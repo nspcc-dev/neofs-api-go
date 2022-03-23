@@ -325,9 +325,7 @@ func (h *ShortHeader) GetVersion() *refs.Version {
 }
 
 func (h *ShortHeader) SetVersion(v *refs.Version) {
-	if h != nil {
-		h.version = v
-	}
+	h.version = v
 }
 
 func (h *ShortHeader) GetCreationEpoch() uint64 {
@@ -339,9 +337,7 @@ func (h *ShortHeader) GetCreationEpoch() uint64 {
 }
 
 func (h *ShortHeader) SetCreationEpoch(v uint64) {
-	if h != nil {
-		h.creatEpoch = v
-	}
+	h.creatEpoch = v
 }
 
 func (h *ShortHeader) GetOwnerID() *refs.OwnerID {
@@ -353,9 +349,7 @@ func (h *ShortHeader) GetOwnerID() *refs.OwnerID {
 }
 
 func (h *ShortHeader) SetOwnerID(v *refs.OwnerID) {
-	if h != nil {
-		h.ownerID = v
-	}
+	h.ownerID = v
 }
 
 func (h *ShortHeader) GetObjectType() Type {
@@ -367,9 +361,7 @@ func (h *ShortHeader) GetObjectType() Type {
 }
 
 func (h *ShortHeader) SetObjectType(v Type) {
-	if h != nil {
-		h.typ = v
-	}
+	h.typ = v
 }
 
 func (h *ShortHeader) GetPayloadLength() uint64 {
@@ -381,9 +373,7 @@ func (h *ShortHeader) GetPayloadLength() uint64 {
 }
 
 func (h *ShortHeader) SetPayloadLength(v uint64) {
-	if h != nil {
-		h.payloadLen = v
-	}
+	h.payloadLen = v
 }
 
 func (h *ShortHeader) GetPayloadHash() *refs.Checksum {
@@ -395,9 +385,7 @@ func (h *ShortHeader) GetPayloadHash() *refs.Checksum {
 }
 
 func (h *ShortHeader) SetPayloadHash(v *refs.Checksum) {
-	if h != nil {
-		h.payloadHash = v
-	}
+	h.payloadHash = v
 }
 
 func (h *ShortHeader) GetHomomorphicHash() *refs.Checksum {
@@ -409,9 +397,7 @@ func (h *ShortHeader) GetHomomorphicHash() *refs.Checksum {
 }
 
 func (h *ShortHeader) SetHomomorphicHash(v *refs.Checksum) {
-	if h != nil {
-		h.homoHash = v
-	}
+	h.homoHash = v
 }
 
 func (h *ShortHeader) getHeaderPart() {}
@@ -425,9 +411,7 @@ func (a *Attribute) GetKey() string {
 }
 
 func (a *Attribute) SetKey(v string) {
-	if a != nil {
-		a.key = v
-	}
+	a.key = v
 }
 
 func (a *Attribute) GetValue() string {
@@ -439,9 +423,7 @@ func (a *Attribute) GetValue() string {
 }
 
 func (a *Attribute) SetValue(v string) {
-	if a != nil {
-		a.val = v
-	}
+	a.val = v
 }
 
 func (h *SplitHeader) GetParent() *refs.ObjectID {
@@ -453,9 +435,7 @@ func (h *SplitHeader) GetParent() *refs.ObjectID {
 }
 
 func (h *SplitHeader) SetParent(v *refs.ObjectID) {
-	if h != nil {
-		h.par = v
-	}
+	h.par = v
 }
 
 func (h *SplitHeader) GetPrevious() *refs.ObjectID {
@@ -467,9 +447,7 @@ func (h *SplitHeader) GetPrevious() *refs.ObjectID {
 }
 
 func (h *SplitHeader) SetPrevious(v *refs.ObjectID) {
-	if h != nil {
-		h.prev = v
-	}
+	h.prev = v
 }
 
 func (h *SplitHeader) GetParentSignature() *refs.Signature {
@@ -481,9 +459,7 @@ func (h *SplitHeader) GetParentSignature() *refs.Signature {
 }
 
 func (h *SplitHeader) SetParentSignature(v *refs.Signature) {
-	if h != nil {
-		h.parSig = v
-	}
+	h.parSig = v
 }
 
 func (h *SplitHeader) GetParentHeader() *Header {
@@ -495,9 +471,7 @@ func (h *SplitHeader) GetParentHeader() *Header {
 }
 
 func (h *SplitHeader) SetParentHeader(v *Header) {
-	if h != nil {
-		h.parHdr = v
-	}
+	h.parHdr = v
 }
 
 func (h *SplitHeader) GetChildren() []refs.ObjectID {
@@ -509,9 +483,7 @@ func (h *SplitHeader) GetChildren() []refs.ObjectID {
 }
 
 func (h *SplitHeader) SetChildren(v []refs.ObjectID) {
-	if h != nil {
-		h.children = v
-	}
+	h.children = v
 }
 
 func (h *SplitHeader) GetSplitID() []byte {
@@ -523,9 +495,7 @@ func (h *SplitHeader) GetSplitID() []byte {
 }
 
 func (h *SplitHeader) SetSplitID(v []byte) {
-	if h != nil {
-		h.splitID = v
-	}
+	h.splitID = v
 }
 
 func (h *Header) GetVersion() *refs.Version {
@@ -537,9 +507,7 @@ func (h *Header) GetVersion() *refs.Version {
 }
 
 func (h *Header) SetVersion(v *refs.Version) {
-	if h != nil {
-		h.version = v
-	}
+	h.version = v
 }
 
 func (h *Header) GetContainerID() *refs.ContainerID {
@@ -551,9 +519,7 @@ func (h *Header) GetContainerID() *refs.ContainerID {
 }
 
 func (h *Header) SetContainerID(v *refs.ContainerID) {
-	if h != nil {
-		h.cid = v
-	}
+	h.cid = v
 }
 
 func (h *Header) GetOwnerID() *refs.OwnerID {
@@ -565,9 +531,7 @@ func (h *Header) GetOwnerID() *refs.OwnerID {
 }
 
 func (h *Header) SetOwnerID(v *refs.OwnerID) {
-	if h != nil {
-		h.ownerID = v
-	}
+	h.ownerID = v
 }
 
 func (h *Header) GetCreationEpoch() uint64 {
@@ -579,9 +543,7 @@ func (h *Header) GetCreationEpoch() uint64 {
 }
 
 func (h *Header) SetCreationEpoch(v uint64) {
-	if h != nil {
-		h.creatEpoch = v
-	}
+	h.creatEpoch = v
 }
 
 func (h *Header) GetPayloadLength() uint64 {
@@ -593,9 +555,7 @@ func (h *Header) GetPayloadLength() uint64 {
 }
 
 func (h *Header) SetPayloadLength(v uint64) {
-	if h != nil {
-		h.payloadLen = v
-	}
+	h.payloadLen = v
 }
 
 func (h *Header) GetPayloadHash() *refs.Checksum {
@@ -607,9 +567,7 @@ func (h *Header) GetPayloadHash() *refs.Checksum {
 }
 
 func (h *Header) SetPayloadHash(v *refs.Checksum) {
-	if h != nil {
-		h.payloadHash = v
-	}
+	h.payloadHash = v
 }
 
 func (h *Header) GetObjectType() Type {
@@ -621,9 +579,7 @@ func (h *Header) GetObjectType() Type {
 }
 
 func (h *Header) SetObjectType(v Type) {
-	if h != nil {
-		h.typ = v
-	}
+	h.typ = v
 }
 
 func (h *Header) GetHomomorphicHash() *refs.Checksum {
@@ -635,9 +591,7 @@ func (h *Header) GetHomomorphicHash() *refs.Checksum {
 }
 
 func (h *Header) SetHomomorphicHash(v *refs.Checksum) {
-	if h != nil {
-		h.homoHash = v
-	}
+	h.homoHash = v
 }
 
 func (h *Header) GetSessionToken() *session.Token {
@@ -649,9 +603,7 @@ func (h *Header) GetSessionToken() *session.Token {
 }
 
 func (h *Header) SetSessionToken(v *session.Token) {
-	if h != nil {
-		h.sessionToken = v
-	}
+	h.sessionToken = v
 }
 
 func (h *Header) GetAttributes() []Attribute {
@@ -663,9 +615,7 @@ func (h *Header) GetAttributes() []Attribute {
 }
 
 func (h *Header) SetAttributes(v []Attribute) {
-	if h != nil {
-		h.attr = v
-	}
+	h.attr = v
 }
 
 func (h *Header) GetSplit() *SplitHeader {
@@ -677,9 +627,7 @@ func (h *Header) GetSplit() *SplitHeader {
 }
 
 func (h *Header) SetSplit(v *SplitHeader) {
-	if h != nil {
-		h.split = v
-	}
+	h.split = v
 }
 
 func (h *HeaderWithSignature) GetHeader() *Header {
@@ -691,9 +639,7 @@ func (h *HeaderWithSignature) GetHeader() *Header {
 }
 
 func (h *HeaderWithSignature) SetHeader(v *Header) {
-	if h != nil {
-		h.header = v
-	}
+	h.header = v
 }
 
 func (h *HeaderWithSignature) GetSignature() *refs.Signature {
@@ -705,9 +651,7 @@ func (h *HeaderWithSignature) GetSignature() *refs.Signature {
 }
 
 func (h *HeaderWithSignature) SetSignature(v *refs.Signature) {
-	if h != nil {
-		h.signature = v
-	}
+	h.signature = v
 }
 
 func (h *HeaderWithSignature) getHeaderPart() {}
@@ -721,9 +665,7 @@ func (o *Object) GetObjectID() *refs.ObjectID {
 }
 
 func (o *Object) SetObjectID(v *refs.ObjectID) {
-	if o != nil {
-		o.objectID = v
-	}
+	o.objectID = v
 }
 
 func (o *Object) GetSignature() *refs.Signature {
@@ -735,9 +677,7 @@ func (o *Object) GetSignature() *refs.Signature {
 }
 
 func (o *Object) SetSignature(v *refs.Signature) {
-	if o != nil {
-		o.idSig = v
-	}
+	o.idSig = v
 }
 
 func (o *Object) GetHeader() *Header {
@@ -749,9 +689,7 @@ func (o *Object) GetHeader() *Header {
 }
 
 func (o *Object) SetHeader(v *Header) {
-	if o != nil {
-		o.header = v
-	}
+	o.header = v
 }
 
 func (o *Object) GetPayload() []byte {
@@ -763,9 +701,7 @@ func (o *Object) GetPayload() []byte {
 }
 
 func (o *Object) SetPayload(v []byte) {
-	if o != nil {
-		o.payload = v
-	}
+	o.payload = v
 }
 
 func (s *SplitInfo) GetSplitID() []byte {
@@ -777,9 +713,7 @@ func (s *SplitInfo) GetSplitID() []byte {
 }
 
 func (s *SplitInfo) SetSplitID(v []byte) {
-	if s != nil {
-		s.splitID = v
-	}
+	s.splitID = v
 }
 
 func (s *SplitInfo) GetLastPart() *refs.ObjectID {
@@ -791,9 +725,7 @@ func (s *SplitInfo) GetLastPart() *refs.ObjectID {
 }
 
 func (s *SplitInfo) SetLastPart(v *refs.ObjectID) {
-	if s != nil {
-		s.lastPart = v
-	}
+	s.lastPart = v
 }
 
 func (s *SplitInfo) GetLink() *refs.ObjectID {
@@ -805,9 +737,7 @@ func (s *SplitInfo) GetLink() *refs.ObjectID {
 }
 
 func (s *SplitInfo) SetLink(v *refs.ObjectID) {
-	if s != nil {
-		s.link = v
-	}
+	s.link = v
 }
 
 func (s *SplitInfo) getObjectPart() {}
@@ -825,9 +755,7 @@ func (r *GetRequestBody) GetAddress() *refs.Address {
 }
 
 func (r *GetRequestBody) SetAddress(v *refs.Address) {
-	if r != nil {
-		r.addr = v
-	}
+	r.addr = v
 }
 
 func (r *GetRequestBody) GetRaw() bool {
@@ -839,9 +767,7 @@ func (r *GetRequestBody) GetRaw() bool {
 }
 
 func (r *GetRequestBody) SetRaw(v bool) {
-	if r != nil {
-		r.raw = v
-	}
+	r.raw = v
 }
 
 func (r *GetRequest) GetBody() *GetRequestBody {
@@ -853,9 +779,7 @@ func (r *GetRequest) GetBody() *GetRequestBody {
 }
 
 func (r *GetRequest) SetBody(v *GetRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *GetObjectPartInit) GetObjectID() *refs.ObjectID {
@@ -867,9 +791,7 @@ func (r *GetObjectPartInit) GetObjectID() *refs.ObjectID {
 }
 
 func (r *GetObjectPartInit) SetObjectID(v *refs.ObjectID) {
-	if r != nil {
-		r.id = v
-	}
+	r.id = v
 }
 
 func (r *GetObjectPartInit) GetSignature() *refs.Signature {
@@ -881,9 +803,7 @@ func (r *GetObjectPartInit) GetSignature() *refs.Signature {
 }
 
 func (r *GetObjectPartInit) SetSignature(v *refs.Signature) {
-	if r != nil {
-		r.sig = v
-	}
+	r.sig = v
 }
 
 func (r *GetObjectPartInit) GetHeader() *Header {
@@ -895,9 +815,7 @@ func (r *GetObjectPartInit) GetHeader() *Header {
 }
 
 func (r *GetObjectPartInit) SetHeader(v *Header) {
-	if r != nil {
-		r.hdr = v
-	}
+	r.hdr = v
 }
 
 func (r *GetObjectPartInit) getObjectPart() {}
@@ -911,9 +829,7 @@ func (r *GetObjectPartChunk) GetChunk() []byte {
 }
 
 func (r *GetObjectPartChunk) SetChunk(v []byte) {
-	if r != nil {
-		r.chunk = v
-	}
+	r.chunk = v
 }
 
 func (r *GetObjectPartChunk) getObjectPart() {}
@@ -927,9 +843,7 @@ func (r *GetResponseBody) GetObjectPart() GetObjectPart {
 }
 
 func (r *GetResponseBody) SetObjectPart(v GetObjectPart) {
-	if r != nil {
-		r.objPart = v
-	}
+	r.objPart = v
 }
 
 func (r *GetResponse) GetBody() *GetResponseBody {
@@ -941,9 +855,7 @@ func (r *GetResponse) GetBody() *GetResponseBody {
 }
 
 func (r *GetResponse) SetBody(v *GetResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *PutObjectPartInit) GetObjectID() *refs.ObjectID {
@@ -955,9 +867,7 @@ func (r *PutObjectPartInit) GetObjectID() *refs.ObjectID {
 }
 
 func (r *PutObjectPartInit) SetObjectID(v *refs.ObjectID) {
-	if r != nil {
-		r.id = v
-	}
+	r.id = v
 }
 
 func (r *PutObjectPartInit) GetSignature() *refs.Signature {
@@ -969,9 +879,7 @@ func (r *PutObjectPartInit) GetSignature() *refs.Signature {
 }
 
 func (r *PutObjectPartInit) SetSignature(v *refs.Signature) {
-	if r != nil {
-		r.sig = v
-	}
+	r.sig = v
 }
 
 func (r *PutObjectPartInit) GetHeader() *Header {
@@ -983,9 +891,7 @@ func (r *PutObjectPartInit) GetHeader() *Header {
 }
 
 func (r *PutObjectPartInit) SetHeader(v *Header) {
-	if r != nil {
-		r.hdr = v
-	}
+	r.hdr = v
 }
 
 func (r *PutObjectPartInit) GetCopiesNumber() uint32 {
@@ -997,9 +903,7 @@ func (r *PutObjectPartInit) GetCopiesNumber() uint32 {
 }
 
 func (r *PutObjectPartInit) SetCopiesNumber(v uint32) {
-	if r != nil {
-		r.copyNum = v
-	}
+	r.copyNum = v
 }
 
 func (r *PutObjectPartInit) putObjectPart() {}
@@ -1013,9 +917,7 @@ func (r *PutObjectPartChunk) GetChunk() []byte {
 }
 
 func (r *PutObjectPartChunk) SetChunk(v []byte) {
-	if r != nil {
-		r.chunk = v
-	}
+	r.chunk = v
 }
 
 func (r *PutObjectPartChunk) putObjectPart() {}
@@ -1029,9 +931,7 @@ func (r *PutRequestBody) GetObjectPart() PutObjectPart {
 }
 
 func (r *PutRequestBody) SetObjectPart(v PutObjectPart) {
-	if r != nil {
-		r.objPart = v
-	}
+	r.objPart = v
 }
 
 func (r *PutRequest) GetBody() *PutRequestBody {
@@ -1043,9 +943,7 @@ func (r *PutRequest) GetBody() *PutRequestBody {
 }
 
 func (r *PutRequest) SetBody(v *PutRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *PutResponseBody) GetObjectID() *refs.ObjectID {
@@ -1057,9 +955,7 @@ func (r *PutResponseBody) GetObjectID() *refs.ObjectID {
 }
 
 func (r *PutResponseBody) SetObjectID(v *refs.ObjectID) {
-	if r != nil {
-		r.id = v
-	}
+	r.id = v
 }
 
 func (r *PutResponse) GetBody() *PutResponseBody {
@@ -1071,9 +967,7 @@ func (r *PutResponse) GetBody() *PutResponseBody {
 }
 
 func (r *PutResponse) SetBody(v *PutResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *DeleteRequestBody) GetAddress() *refs.Address {
@@ -1085,9 +979,7 @@ func (r *DeleteRequestBody) GetAddress() *refs.Address {
 }
 
 func (r *DeleteRequestBody) SetAddress(v *refs.Address) {
-	if r != nil {
-		r.addr = v
-	}
+	r.addr = v
 }
 
 func (r *DeleteRequest) GetBody() *DeleteRequestBody {
@@ -1099,9 +991,7 @@ func (r *DeleteRequest) GetBody() *DeleteRequestBody {
 }
 
 func (r *DeleteRequest) SetBody(v *DeleteRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 // GetTombstone returns tombstone address.
@@ -1115,9 +1005,7 @@ func (r *DeleteResponseBody) GetTombstone() *refs.Address {
 
 // SetTombstone sets tombstone address.
 func (r *DeleteResponseBody) SetTombstone(v *refs.Address) {
-	if r != nil {
-		r.tombstone = v
-	}
+	r.tombstone = v
 }
 
 func (r *DeleteResponse) GetBody() *DeleteResponseBody {
@@ -1129,9 +1017,7 @@ func (r *DeleteResponse) GetBody() *DeleteResponseBody {
 }
 
 func (r *DeleteResponse) SetBody(v *DeleteResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *HeadRequestBody) GetAddress() *refs.Address {
@@ -1143,9 +1029,7 @@ func (r *HeadRequestBody) GetAddress() *refs.Address {
 }
 
 func (r *HeadRequestBody) SetAddress(v *refs.Address) {
-	if r != nil {
-		r.addr = v
-	}
+	r.addr = v
 }
 
 func (r *HeadRequestBody) GetMainOnly() bool {
@@ -1157,9 +1041,7 @@ func (r *HeadRequestBody) GetMainOnly() bool {
 }
 
 func (r *HeadRequestBody) SetMainOnly(v bool) {
-	if r != nil {
-		r.mainOnly = v
-	}
+	r.mainOnly = v
 }
 
 func (r *HeadRequestBody) GetRaw() bool {
@@ -1171,9 +1053,7 @@ func (r *HeadRequestBody) GetRaw() bool {
 }
 
 func (r *HeadRequestBody) SetRaw(v bool) {
-	if r != nil {
-		r.raw = v
-	}
+	r.raw = v
 }
 
 func (r *HeadRequest) GetBody() *HeadRequestBody {
@@ -1185,9 +1065,7 @@ func (r *HeadRequest) GetBody() *HeadRequestBody {
 }
 
 func (r *HeadRequest) SetBody(v *HeadRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *HeadResponseBody) GetHeaderPart() GetHeaderPart {
@@ -1199,9 +1077,7 @@ func (r *HeadResponseBody) GetHeaderPart() GetHeaderPart {
 }
 
 func (r *HeadResponseBody) SetHeaderPart(v GetHeaderPart) {
-	if r != nil {
-		r.hdrPart = v
-	}
+	r.hdrPart = v
 }
 
 func (r *HeadResponse) GetBody() *HeadResponseBody {
@@ -1213,9 +1089,7 @@ func (r *HeadResponse) GetBody() *HeadResponseBody {
 }
 
 func (r *HeadResponse) SetBody(v *HeadResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (f *SearchFilter) GetMatchType() MatchType {
@@ -1227,9 +1101,7 @@ func (f *SearchFilter) GetMatchType() MatchType {
 }
 
 func (f *SearchFilter) SetMatchType(v MatchType) {
-	if f != nil {
-		f.matchType = v
-	}
+	f.matchType = v
 }
 
 func (f *SearchFilter) GetKey() string {
@@ -1241,9 +1113,7 @@ func (f *SearchFilter) GetKey() string {
 }
 
 func (f *SearchFilter) SetKey(v string) {
-	if f != nil {
-		f.key = v
-	}
+	f.key = v
 }
 
 func (f *SearchFilter) GetValue() string {
@@ -1255,9 +1125,7 @@ func (f *SearchFilter) GetValue() string {
 }
 
 func (f *SearchFilter) SetValue(v string) {
-	if f != nil {
-		f.val = v
-	}
+	f.val = v
 }
 
 func (r *SearchRequestBody) GetContainerID() *refs.ContainerID {
@@ -1269,9 +1137,7 @@ func (r *SearchRequestBody) GetContainerID() *refs.ContainerID {
 }
 
 func (r *SearchRequestBody) SetContainerID(v *refs.ContainerID) {
-	if r != nil {
-		r.cid = v
-	}
+	r.cid = v
 }
 
 func (r *SearchRequestBody) GetVersion() uint32 {
@@ -1283,9 +1149,7 @@ func (r *SearchRequestBody) GetVersion() uint32 {
 }
 
 func (r *SearchRequestBody) SetVersion(v uint32) {
-	if r != nil {
-		r.version = v
-	}
+	r.version = v
 }
 
 func (r *SearchRequestBody) GetFilters() []SearchFilter {
@@ -1297,9 +1161,7 @@ func (r *SearchRequestBody) GetFilters() []SearchFilter {
 }
 
 func (r *SearchRequestBody) SetFilters(v []SearchFilter) {
-	if r != nil {
-		r.filters = v
-	}
+	r.filters = v
 }
 
 func (r *SearchRequest) GetBody() *SearchRequestBody {
@@ -1311,9 +1173,7 @@ func (r *SearchRequest) GetBody() *SearchRequestBody {
 }
 
 func (r *SearchRequest) SetBody(v *SearchRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *SearchResponseBody) GetIDList() []refs.ObjectID {
@@ -1325,9 +1185,7 @@ func (r *SearchResponseBody) GetIDList() []refs.ObjectID {
 }
 
 func (r *SearchResponseBody) SetIDList(v []refs.ObjectID) {
-	if r != nil {
-		r.idList = v
-	}
+	r.idList = v
 }
 
 func (r *SearchResponse) GetBody() *SearchResponseBody {
@@ -1339,9 +1197,7 @@ func (r *SearchResponse) GetBody() *SearchResponseBody {
 }
 
 func (r *SearchResponse) SetBody(v *SearchResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *Range) GetOffset() uint64 {
@@ -1353,9 +1209,7 @@ func (r *Range) GetOffset() uint64 {
 }
 
 func (r *Range) SetOffset(v uint64) {
-	if r != nil {
-		r.off = v
-	}
+	r.off = v
 }
 
 func (r *Range) GetLength() uint64 {
@@ -1367,9 +1221,7 @@ func (r *Range) GetLength() uint64 {
 }
 
 func (r *Range) SetLength(v uint64) {
-	if r != nil {
-		r.len = v
-	}
+	r.len = v
 }
 
 func (r *GetRangeRequestBody) GetAddress() *refs.Address {
@@ -1381,9 +1233,7 @@ func (r *GetRangeRequestBody) GetAddress() *refs.Address {
 }
 
 func (r *GetRangeRequestBody) SetAddress(v *refs.Address) {
-	if r != nil {
-		r.addr = v
-	}
+	r.addr = v
 }
 
 func (r *GetRangeRequestBody) GetRange() *Range {
@@ -1395,9 +1245,7 @@ func (r *GetRangeRequestBody) GetRange() *Range {
 }
 
 func (r *GetRangeRequestBody) SetRange(v *Range) {
-	if r != nil {
-		r.rng = v
-	}
+	r.rng = v
 }
 
 func (r *GetRangeRequestBody) GetRaw() bool {
@@ -1409,9 +1257,7 @@ func (r *GetRangeRequestBody) GetRaw() bool {
 }
 
 func (r *GetRangeRequestBody) SetRaw(v bool) {
-	if r != nil {
-		r.raw = v
-	}
+	r.raw = v
 }
 
 func (r *GetRangeRequest) GetBody() *GetRangeRequestBody {
@@ -1423,9 +1269,7 @@ func (r *GetRangeRequest) GetBody() *GetRangeRequestBody {
 }
 
 func (r *GetRangeRequest) SetBody(v *GetRangeRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *GetRangePartChunk) GetChunk() []byte {
@@ -1437,9 +1281,7 @@ func (r *GetRangePartChunk) GetChunk() []byte {
 }
 
 func (r *GetRangePartChunk) SetChunk(v []byte) {
-	if r != nil {
-		r.chunk = v
-	}
+	r.chunk = v
 }
 
 func (r *GetRangePartChunk) getRangePart() {}
@@ -1453,9 +1295,7 @@ func (r *GetRangeResponseBody) GetRangePart() GetRangePart {
 }
 
 func (r *GetRangeResponseBody) SetRangePart(v GetRangePart) {
-	if r != nil {
-		r.rngPart = v
-	}
+	r.rngPart = v
 }
 
 func (r *GetRangeResponse) GetBody() *GetRangeResponseBody {
@@ -1467,9 +1307,7 @@ func (r *GetRangeResponse) GetBody() *GetRangeResponseBody {
 }
 
 func (r *GetRangeResponse) SetBody(v *GetRangeResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *GetRangeHashRequestBody) GetAddress() *refs.Address {
@@ -1481,9 +1319,7 @@ func (r *GetRangeHashRequestBody) GetAddress() *refs.Address {
 }
 
 func (r *GetRangeHashRequestBody) SetAddress(v *refs.Address) {
-	if r != nil {
-		r.addr = v
-	}
+	r.addr = v
 }
 
 func (r *GetRangeHashRequestBody) GetRanges() []Range {
@@ -1495,9 +1331,7 @@ func (r *GetRangeHashRequestBody) GetRanges() []Range {
 }
 
 func (r *GetRangeHashRequestBody) SetRanges(v []Range) {
-	if r != nil {
-		r.rngs = v
-	}
+	r.rngs = v
 }
 
 func (r *GetRangeHashRequestBody) GetSalt() []byte {
@@ -1509,9 +1343,7 @@ func (r *GetRangeHashRequestBody) GetSalt() []byte {
 }
 
 func (r *GetRangeHashRequestBody) SetSalt(v []byte) {
-	if r != nil {
-		r.salt = v
-	}
+	r.salt = v
 }
 
 func (r *GetRangeHashRequestBody) GetType() refs.ChecksumType {
@@ -1523,9 +1355,7 @@ func (r *GetRangeHashRequestBody) GetType() refs.ChecksumType {
 }
 
 func (r *GetRangeHashRequestBody) SetType(v refs.ChecksumType) {
-	if r != nil {
-		r.typ = v
-	}
+	r.typ = v
 }
 
 func (r *GetRangeHashRequest) GetBody() *GetRangeHashRequestBody {
@@ -1537,9 +1367,7 @@ func (r *GetRangeHashRequest) GetBody() *GetRangeHashRequestBody {
 }
 
 func (r *GetRangeHashRequest) SetBody(v *GetRangeHashRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *GetRangeHashResponseBody) GetType() refs.ChecksumType {
@@ -1551,9 +1379,7 @@ func (r *GetRangeHashResponseBody) GetType() refs.ChecksumType {
 }
 
 func (r *GetRangeHashResponseBody) SetType(v refs.ChecksumType) {
-	if r != nil {
-		r.typ = v
-	}
+	r.typ = v
 }
 
 func (r *GetRangeHashResponseBody) GetHashList() [][]byte {
@@ -1565,9 +1391,7 @@ func (r *GetRangeHashResponseBody) GetHashList() [][]byte {
 }
 
 func (r *GetRangeHashResponseBody) SetHashList(v [][]byte) {
-	if r != nil {
-		r.hashList = v
-	}
+	r.hashList = v
 }
 
 func (r *GetRangeHashResponse) GetBody() *GetRangeHashResponseBody {
@@ -1579,7 +1403,5 @@ func (r *GetRangeHashResponse) GetBody() *GetRangeHashResponseBody {
 }
 
 func (r *GetRangeHashResponse) SetBody(v *GetRangeHashResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
