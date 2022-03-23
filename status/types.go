@@ -18,9 +18,7 @@ func (x *Detail) ID() uint32 {
 
 // SetID sets identifier of the Detail.
 func (x *Detail) SetID(id uint32) {
-	if x != nil {
-		x.id = id
-	}
+	x.id = id
 }
 
 // Value returns value of the Detail.
@@ -34,9 +32,7 @@ func (x *Detail) Value() []byte {
 
 // SetValue sets value of the Detail.
 func (x *Detail) SetValue(val []byte) {
-	if x != nil {
-		x.val = val
-	}
+	x.val = val
 }
 
 // Code represents NeoFS API V2-compatible status code.
@@ -67,9 +63,7 @@ func (x *Status) Code() Code {
 
 // SetCode sets code of the Status.
 func (x *Status) SetCode(code Code) {
-	if x != nil {
-		x.code = code
-	}
+	x.code = code
 }
 
 // Message sets message of the Status.
@@ -83,9 +77,7 @@ func (x *Status) Message() string {
 
 // SetMessage sets message of the Status.
 func (x *Status) SetMessage(msg string) {
-	if x != nil {
-		x.msg = msg
-	}
+	x.msg = msg
 }
 
 // NumberOfParameters returns number of network parameters.

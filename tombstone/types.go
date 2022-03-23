@@ -25,9 +25,7 @@ func (s *Tombstone) GetExpirationEpoch() uint64 {
 
 // SetExpirationEpoch sets number of tombstone expiration epoch.
 func (s *Tombstone) SetExpirationEpoch(v uint64) {
-	if s != nil {
-		s.exp = v
-	}
+	s.exp = v
 }
 
 // GetSplitID returns identifier of split object hierarchy.
@@ -41,9 +39,7 @@ func (s *Tombstone) GetSplitID() []byte {
 
 // SetSplitID sets identifier of split object hierarchy.
 func (s *Tombstone) SetSplitID(v []byte) {
-	if s != nil {
-		s.splitID = v
-	}
+	s.splitID = v
 }
 
 // GetMembers returns list of objects to be deleted.
@@ -57,7 +53,5 @@ func (s *Tombstone) GetMembers() []refs.ObjectID {
 
 // SetMembers sets list of objects to be deleted.
 func (s *Tombstone) SetMembers(v []refs.ObjectID) {
-	if s != nil {
-		s.members = v
-	}
+	s.members = v
 }

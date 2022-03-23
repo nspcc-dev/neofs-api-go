@@ -22,9 +22,7 @@ func (x *PeerID) GetPublicKey() []byte {
 
 // SetPublicKey sets peer's binary public key of ID.
 func (x *PeerID) SetPublicKey(v []byte) {
-	if x != nil {
-		x.publicKey = v
-	}
+	x.publicKey = v
 }
 
 // Trust represents reputation.Trust message
@@ -46,9 +44,7 @@ func (x *Trust) GetPeer() *PeerID {
 
 // SetPeer sets trusted peer's ID.
 func (x *Trust) SetPeer(v *PeerID) {
-	if x != nil {
-		x.peer = v
-	}
+	x.peer = v
 }
 
 // GetValue returns trust value.
@@ -62,9 +58,7 @@ func (x *Trust) GetValue() float64 {
 
 // SetValue sets trust value.
 func (x *Trust) SetValue(v float64) {
-	if x != nil {
-		x.val = v
-	}
+	x.val = v
 }
 
 // PeerToPeerTrust represents reputation.PeerToPeerTrust message
@@ -86,9 +80,7 @@ func (x *PeerToPeerTrust) GetTrustingPeer() *PeerID {
 
 // SetTrustingPeer sets trusting peer ID.
 func (x *PeerToPeerTrust) SetTrustingPeer(v *PeerID) {
-	if x != nil {
-		x.trusting = v
-	}
+	x.trusting = v
 }
 
 // GetTrust returns trust value of trusting peer to the trusted one.
@@ -102,9 +94,7 @@ func (x *PeerToPeerTrust) GetTrust() *Trust {
 
 // SetTrust sets trust value of trusting peer to the trusted one.
 func (x *PeerToPeerTrust) SetTrust(v *Trust) {
-	if x != nil {
-		x.trust = v
-	}
+	x.trust = v
 }
 
 // GlobalTrustBody represents reputation.GlobalTrust.Body message
@@ -126,9 +116,7 @@ func (x *GlobalTrustBody) GetManager() *PeerID {
 
 // SetManager sets node manager ID.
 func (x *GlobalTrustBody) SetManager(v *PeerID) {
-	if x != nil {
-		x.manager = v
-	}
+	x.manager = v
 }
 
 // GetTrust returns global trust value.
@@ -142,9 +130,7 @@ func (x *GlobalTrustBody) GetTrust() *Trust {
 
 // SetTrust sets global trust value.
 func (x *GlobalTrustBody) SetTrust(v *Trust) {
-	if x != nil {
-		x.trust = v
-	}
+	x.trust = v
 }
 
 // GlobalTrust represents reputation.GlobalTrust message
@@ -168,9 +154,7 @@ func (x *GlobalTrust) GetVersion() *refs.Version {
 
 // SetVersion sets message format version.
 func (x *GlobalTrust) SetVersion(v *refs.Version) {
-	if x != nil {
-		x.version = v
-	}
+	x.version = v
 }
 
 // GetBody returns message body.
@@ -184,9 +168,7 @@ func (x *GlobalTrust) GetBody() *GlobalTrustBody {
 
 // SetBody sets message body.
 func (x *GlobalTrust) SetBody(v *GlobalTrustBody) {
-	if x != nil {
-		x.body = v
-	}
+	x.body = v
 }
 
 // GetSignature returns body signature.
@@ -200,9 +182,7 @@ func (x *GlobalTrust) GetSignature() *refs.Signature {
 
 // SetSignature sets body signature.
 func (x *GlobalTrust) SetSignature(v *refs.Signature) {
-	if x != nil {
-		x.sig = v
-	}
+	x.sig = v
 }
 
 // AnnounceLocalTrustRequestBody is a structure of AnnounceLocalTrust request body.
@@ -223,9 +203,7 @@ func (x *AnnounceLocalTrustRequestBody) GetEpoch() uint64 {
 
 // SetEpoch sets epoch in which the trust was assessed.
 func (x *AnnounceLocalTrustRequestBody) SetEpoch(v uint64) {
-	if x != nil {
-		x.epoch = v
-	}
+	x.epoch = v
 }
 
 // GetTrusts returns list of normalized trust values.
@@ -239,9 +217,7 @@ func (x *AnnounceLocalTrustRequestBody) GetTrusts() []Trust {
 
 // SetTrusts sets list of normalized trust values.
 func (x *AnnounceLocalTrustRequestBody) SetTrusts(v []Trust) {
-	if x != nil {
-		x.trusts = v
-	}
+	x.trusts = v
 }
 
 // AnnounceLocalTrustResponseBody is a structure of AnnounceLocalTrust response body.
@@ -266,9 +242,7 @@ func (x *AnnounceLocalTrustRequest) GetBody() *AnnounceLocalTrustRequestBody {
 
 // SetBody sets request body.
 func (x *AnnounceLocalTrustRequest) SetBody(v *AnnounceLocalTrustRequestBody) {
-	if x != nil {
-		x.body = v
-	}
+	x.body = v
 }
 
 // AnnounceLocalTrustResponse represents reputation.AnnounceLocalTrustResponse
@@ -290,9 +264,7 @@ func (x *AnnounceLocalTrustResponse) GetBody() *AnnounceLocalTrustResponseBody {
 
 // SetBody sets response body.
 func (x *AnnounceLocalTrustResponse) SetBody(v *AnnounceLocalTrustResponseBody) {
-	if x != nil {
-		x.body = v
-	}
+	x.body = v
 }
 
 // AnnounceIntermediateResultRequestBody is a structure of AnnounceIntermediateResult request body.
@@ -315,9 +287,7 @@ func (x *AnnounceIntermediateResultRequestBody) GetEpoch() uint64 {
 
 // SetEpoch sets epoch number in which the intermediate trust was assessed.
 func (x *AnnounceIntermediateResultRequestBody) SetEpoch(v uint64) {
-	if x != nil {
-		x.epoch = v
-	}
+	x.epoch = v
 }
 
 // GetIteration returns sequence number of the iteration.
@@ -331,9 +301,7 @@ func (x *AnnounceIntermediateResultRequestBody) GetIteration() uint32 {
 
 // SetIteration sets sequence number of the iteration.
 func (x *AnnounceIntermediateResultRequestBody) SetIteration(v uint32) {
-	if x != nil {
-		x.iter = v
-	}
+	x.iter = v
 }
 
 // GetTrust returns current global trust value.
@@ -347,9 +315,7 @@ func (x *AnnounceIntermediateResultRequestBody) GetTrust() *PeerToPeerTrust {
 
 // SetTrust sets current global trust value.
 func (x *AnnounceIntermediateResultRequestBody) SetTrust(v *PeerToPeerTrust) {
-	if x != nil {
-		x.trust = v
-	}
+	x.trust = v
 }
 
 // AnnounceIntermediateResultResponseBody is a structure of AnnounceIntermediateResult response body.
@@ -374,9 +340,7 @@ func (x *AnnounceIntermediateResultRequest) GetBody() *AnnounceIntermediateResul
 
 // SetBody sets request body.
 func (x *AnnounceIntermediateResultRequest) SetBody(v *AnnounceIntermediateResultRequestBody) {
-	if x != nil {
-		x.body = v
-	}
+	x.body = v
 }
 
 // AnnounceIntermediateResultResponse represents reputation.AnnounceIntermediateResultResponse
@@ -398,7 +362,5 @@ func (x *AnnounceIntermediateResultResponse) GetBody() *AnnounceIntermediateResu
 
 // SetBody sets response body.
 func (x *AnnounceIntermediateResultResponse) SetBody(v *AnnounceIntermediateResultResponseBody) {
-	if x != nil {
-		x.body = v
-	}
+	x.body = v
 }

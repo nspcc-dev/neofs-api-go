@@ -27,9 +27,7 @@ func (s *StorageGroup) GetValidationDataSize() uint64 {
 
 // SetValidationDataSize into unified storage group structure.
 func (s *StorageGroup) SetValidationDataSize(v uint64) {
-	if s != nil {
-		s.size = v
-	}
+	s.size = v
 }
 
 // GetValidationHash of unified storage group structure.
@@ -43,9 +41,7 @@ func (s *StorageGroup) GetValidationHash() *refs.Checksum {
 
 // SetValidationHash into unified storage group structure.
 func (s *StorageGroup) SetValidationHash(v *refs.Checksum) {
-	if s != nil {
-		s.hash = v
-	}
+	s.hash = v
 }
 
 // GetExpirationEpoch of unified storage group structure.
@@ -59,9 +55,7 @@ func (s *StorageGroup) GetExpirationEpoch() uint64 {
 
 // SetExpirationEpoch into unified storage group structure.
 func (s *StorageGroup) SetExpirationEpoch(v uint64) {
-	if s != nil {
-		s.exp = v
-	}
+	s.exp = v
 }
 
 // GetMembers of unified storage group structure. Members are objects of
@@ -77,7 +71,5 @@ func (s *StorageGroup) GetMembers() []refs.ObjectID {
 // SetMembers into unified storage group structure. Members are objects of
 // storage group.
 func (s *StorageGroup) SetMembers(v []refs.ObjectID) {
-	if s != nil {
-		s.members = v
-	}
+	s.members = v
 }

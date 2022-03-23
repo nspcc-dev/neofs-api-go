@@ -189,9 +189,7 @@ func (a *Attribute) GetKey() string {
 }
 
 func (a *Attribute) SetKey(v string) {
-	if a != nil {
-		a.key = v
-	}
+	a.key = v
 }
 
 func (a *Attribute) GetValue() string {
@@ -203,9 +201,7 @@ func (a *Attribute) GetValue() string {
 }
 
 func (a *Attribute) SetValue(v string) {
-	if a != nil {
-		a.val = v
-	}
+	a.val = v
 }
 
 func (c *Container) GetVersion() *refs.Version {
@@ -217,9 +213,7 @@ func (c *Container) GetVersion() *refs.Version {
 }
 
 func (c *Container) SetVersion(v *refs.Version) {
-	if c != nil {
-		c.version = v
-	}
+	c.version = v
 }
 
 func (c *Container) GetOwnerID() *refs.OwnerID {
@@ -231,9 +225,7 @@ func (c *Container) GetOwnerID() *refs.OwnerID {
 }
 
 func (c *Container) SetOwnerID(v *refs.OwnerID) {
-	if c != nil {
-		c.ownerID = v
-	}
+	c.ownerID = v
 }
 
 func (c *Container) GetNonce() []byte {
@@ -245,9 +237,7 @@ func (c *Container) GetNonce() []byte {
 }
 
 func (c *Container) SetNonce(v []byte) {
-	if c != nil {
-		c.nonce = v
-	}
+	c.nonce = v
 }
 
 func (c *Container) GetBasicACL() uint32 {
@@ -259,9 +249,7 @@ func (c *Container) GetBasicACL() uint32 {
 }
 
 func (c *Container) SetBasicACL(v uint32) {
-	if c != nil {
-		c.basicACL = v
-	}
+	c.basicACL = v
 }
 
 func (c *Container) GetAttributes() []Attribute {
@@ -273,9 +261,7 @@ func (c *Container) GetAttributes() []Attribute {
 }
 
 func (c *Container) SetAttributes(v []Attribute) {
-	if c != nil {
-		c.attr = v
-	}
+	c.attr = v
 }
 
 func (c *Container) GetPlacementPolicy() *netmap.PlacementPolicy {
@@ -287,9 +273,7 @@ func (c *Container) GetPlacementPolicy() *netmap.PlacementPolicy {
 }
 
 func (c *Container) SetPlacementPolicy(v *netmap.PlacementPolicy) {
-	if c != nil {
-		c.policy = v
-	}
+	c.policy = v
 }
 
 func (r *PutRequestBody) GetContainer() *Container {
@@ -301,9 +285,7 @@ func (r *PutRequestBody) GetContainer() *Container {
 }
 
 func (r *PutRequestBody) SetContainer(v *Container) {
-	if r != nil {
-		r.cnr = v
-	}
+	r.cnr = v
 }
 
 func (r *PutRequestBody) GetSignature() *refs.Signature {
@@ -315,11 +297,9 @@ func (r *PutRequestBody) GetSignature() *refs.Signature {
 }
 
 func (r *PutRequestBody) SetSignature(v *refs.Signature) {
-	if r != nil {
-		// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
-		v.SetScheme(0)
-		r.sig = v
-	}
+	// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
+	v.SetScheme(0)
+	r.sig = v
 }
 
 func (r *PutRequest) GetBody() *PutRequestBody {
@@ -331,9 +311,7 @@ func (r *PutRequest) GetBody() *PutRequestBody {
 }
 
 func (r *PutRequest) SetBody(v *PutRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *PutResponseBody) GetContainerID() *refs.ContainerID {
@@ -345,9 +323,7 @@ func (r *PutResponseBody) GetContainerID() *refs.ContainerID {
 }
 
 func (r *PutResponseBody) SetContainerID(v *refs.ContainerID) {
-	if r != nil {
-		r.cid = v
-	}
+	r.cid = v
 }
 
 func (r *PutResponse) GetBody() *PutResponseBody {
@@ -359,9 +335,7 @@ func (r *PutResponse) GetBody() *PutResponseBody {
 }
 
 func (r *PutResponse) SetBody(v *PutResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *GetRequestBody) GetContainerID() *refs.ContainerID {
@@ -373,9 +347,7 @@ func (r *GetRequestBody) GetContainerID() *refs.ContainerID {
 }
 
 func (r *GetRequestBody) SetContainerID(v *refs.ContainerID) {
-	if r != nil {
-		r.cid = v
-	}
+	r.cid = v
 }
 
 func (r *GetRequest) GetBody() *GetRequestBody {
@@ -387,9 +359,7 @@ func (r *GetRequest) GetBody() *GetRequestBody {
 }
 
 func (r *GetRequest) SetBody(v *GetRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *GetResponseBody) GetContainer() *Container {
@@ -401,9 +371,7 @@ func (r *GetResponseBody) GetContainer() *Container {
 }
 
 func (r *GetResponseBody) SetContainer(v *Container) {
-	if r != nil {
-		r.cnr = v
-	}
+	r.cnr = v
 }
 
 // GetSessionToken returns token of the session within which requested
@@ -419,9 +387,7 @@ func (r *GetResponseBody) GetSessionToken() *session.Token {
 // SetSessionToken sets token of the session within which requested
 // container was created.
 func (r *GetResponseBody) SetSessionToken(v *session.Token) {
-	if r != nil {
-		r.token = v
-	}
+	r.token = v
 }
 
 // GetSignature returns signature of the requested container.
@@ -435,11 +401,9 @@ func (r *GetResponseBody) GetSignature() *refs.Signature {
 
 // SetSignature sets signature of the requested container.
 func (r *GetResponseBody) SetSignature(v *refs.Signature) {
-	if r != nil {
-		// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
-		v.SetScheme(0)
-		r.sig = v
-	}
+	// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
+	v.SetScheme(0)
+	r.sig = v
 }
 
 func (r *GetResponse) GetBody() *GetResponseBody {
@@ -451,9 +415,7 @@ func (r *GetResponse) GetBody() *GetResponseBody {
 }
 
 func (r *GetResponse) SetBody(v *GetResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *DeleteRequestBody) GetContainerID() *refs.ContainerID {
@@ -465,9 +427,7 @@ func (r *DeleteRequestBody) GetContainerID() *refs.ContainerID {
 }
 
 func (r *DeleteRequestBody) SetContainerID(v *refs.ContainerID) {
-	if r != nil {
-		r.cid = v
-	}
+	r.cid = v
 }
 
 func (r *DeleteRequestBody) GetSignature() *refs.Signature {
@@ -479,11 +439,9 @@ func (r *DeleteRequestBody) GetSignature() *refs.Signature {
 }
 
 func (r *DeleteRequestBody) SetSignature(v *refs.Signature) {
-	if r != nil {
-		// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
-		v.SetScheme(0)
-		r.sig = v
-	}
+	// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
+	v.SetScheme(0)
+	r.sig = v
 }
 
 func (r *DeleteRequest) GetBody() *DeleteRequestBody {
@@ -495,9 +453,7 @@ func (r *DeleteRequest) GetBody() *DeleteRequestBody {
 }
 
 func (r *DeleteRequest) SetBody(v *DeleteRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *DeleteResponse) GetBody() *DeleteResponseBody {
@@ -509,9 +465,7 @@ func (r *DeleteResponse) GetBody() *DeleteResponseBody {
 }
 
 func (r *DeleteResponse) SetBody(v *DeleteResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *ListRequestBody) GetOwnerID() *refs.OwnerID {
@@ -523,9 +477,7 @@ func (r *ListRequestBody) GetOwnerID() *refs.OwnerID {
 }
 
 func (r *ListRequestBody) SetOwnerID(v *refs.OwnerID) {
-	if r != nil {
-		r.ownerID = v
-	}
+	r.ownerID = v
 }
 
 func (r *ListRequest) GetBody() *ListRequestBody {
@@ -537,9 +489,7 @@ func (r *ListRequest) GetBody() *ListRequestBody {
 }
 
 func (r *ListRequest) SetBody(v *ListRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *ListResponseBody) GetContainerIDs() []refs.ContainerID {
@@ -551,9 +501,7 @@ func (r *ListResponseBody) GetContainerIDs() []refs.ContainerID {
 }
 
 func (r *ListResponseBody) SetContainerIDs(v []refs.ContainerID) {
-	if r != nil {
-		r.cidList = v
-	}
+	r.cidList = v
 }
 
 func (r *ListResponse) GetBody() *ListResponseBody {
@@ -565,9 +513,7 @@ func (r *ListResponse) GetBody() *ListResponseBody {
 }
 
 func (r *ListResponse) SetBody(v *ListResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *SetExtendedACLRequestBody) GetEACL() *acl.Table {
@@ -579,9 +525,7 @@ func (r *SetExtendedACLRequestBody) GetEACL() *acl.Table {
 }
 
 func (r *SetExtendedACLRequestBody) SetEACL(v *acl.Table) {
-	if r != nil {
-		r.eacl = v
-	}
+	r.eacl = v
 }
 
 func (r *SetExtendedACLRequestBody) GetSignature() *refs.Signature {
@@ -593,11 +537,9 @@ func (r *SetExtendedACLRequestBody) GetSignature() *refs.Signature {
 }
 
 func (r *SetExtendedACLRequestBody) SetSignature(v *refs.Signature) {
-	if r != nil {
-		// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
-		v.SetScheme(0)
-		r.sig = v
-	}
+	// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
+	v.SetScheme(0)
+	r.sig = v
 }
 
 func (r *SetExtendedACLRequest) GetBody() *SetExtendedACLRequestBody {
@@ -609,9 +551,7 @@ func (r *SetExtendedACLRequest) GetBody() *SetExtendedACLRequestBody {
 }
 
 func (r *SetExtendedACLRequest) SetBody(v *SetExtendedACLRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *SetExtendedACLResponse) GetBody() *SetExtendedACLResponseBody {
@@ -623,9 +563,7 @@ func (r *SetExtendedACLResponse) GetBody() *SetExtendedACLResponseBody {
 }
 
 func (r *SetExtendedACLResponse) SetBody(v *SetExtendedACLResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *GetExtendedACLRequestBody) GetContainerID() *refs.ContainerID {
@@ -637,9 +575,7 @@ func (r *GetExtendedACLRequestBody) GetContainerID() *refs.ContainerID {
 }
 
 func (r *GetExtendedACLRequestBody) SetContainerID(v *refs.ContainerID) {
-	if r != nil {
-		r.cid = v
-	}
+	r.cid = v
 }
 
 func (r *GetExtendedACLRequest) GetBody() *GetExtendedACLRequestBody {
@@ -651,9 +587,7 @@ func (r *GetExtendedACLRequest) GetBody() *GetExtendedACLRequestBody {
 }
 
 func (r *GetExtendedACLRequest) SetBody(v *GetExtendedACLRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *GetExtendedACLResponseBody) GetEACL() *acl.Table {
@@ -665,9 +599,7 @@ func (r *GetExtendedACLResponseBody) GetEACL() *acl.Table {
 }
 
 func (r *GetExtendedACLResponseBody) SetEACL(v *acl.Table) {
-	if r != nil {
-		r.eacl = v
-	}
+	r.eacl = v
 }
 
 func (r *GetExtendedACLResponseBody) GetSignature() *refs.Signature {
@@ -679,11 +611,9 @@ func (r *GetExtendedACLResponseBody) GetSignature() *refs.Signature {
 }
 
 func (r *GetExtendedACLResponseBody) SetSignature(v *refs.Signature) {
-	if r != nil {
-		// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
-		v.SetScheme(0)
-		r.sig = v
-	}
+	// TODO: (neofs-api-go#381) avoid this hack (e.g. create refs.SignatureRFC6979 type)
+	v.SetScheme(0)
+	r.sig = v
 }
 
 // GetSessionToken returns token of the session within which requested
@@ -699,9 +629,7 @@ func (r *GetExtendedACLResponseBody) GetSessionToken() *session.Token {
 // SetSessionToken sets token of the session within which requested
 // eACL table was set.
 func (r *GetExtendedACLResponseBody) SetSessionToken(v *session.Token) {
-	if r != nil {
-		r.token = v
-	}
+	r.token = v
 }
 
 func (r *GetExtendedACLResponse) GetBody() *GetExtendedACLResponseBody {
@@ -713,9 +641,7 @@ func (r *GetExtendedACLResponse) GetBody() *GetExtendedACLResponseBody {
 }
 
 func (r *GetExtendedACLResponse) SetBody(v *GetExtendedACLResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (a *UsedSpaceAnnouncement) GetEpoch() uint64 {
@@ -727,9 +653,7 @@ func (a *UsedSpaceAnnouncement) GetEpoch() uint64 {
 }
 
 func (a *UsedSpaceAnnouncement) SetEpoch(v uint64) {
-	if a != nil {
-		a.epoch = v
-	}
+	a.epoch = v
 }
 
 func (a *UsedSpaceAnnouncement) GetUsedSpace() uint64 {
@@ -741,9 +665,7 @@ func (a *UsedSpaceAnnouncement) GetUsedSpace() uint64 {
 }
 
 func (a *UsedSpaceAnnouncement) SetUsedSpace(v uint64) {
-	if a != nil {
-		a.usedSpace = v
-	}
+	a.usedSpace = v
 }
 
 func (a *UsedSpaceAnnouncement) GetContainerID() *refs.ContainerID {
@@ -755,9 +677,7 @@ func (a *UsedSpaceAnnouncement) GetContainerID() *refs.ContainerID {
 }
 
 func (a *UsedSpaceAnnouncement) SetContainerID(v *refs.ContainerID) {
-	if a != nil {
-		a.cid = v
-	}
+	a.cid = v
 }
 
 func (r *AnnounceUsedSpaceRequestBody) GetAnnouncements() []UsedSpaceAnnouncement {
@@ -769,9 +689,7 @@ func (r *AnnounceUsedSpaceRequestBody) GetAnnouncements() []UsedSpaceAnnouncemen
 }
 
 func (r *AnnounceUsedSpaceRequestBody) SetAnnouncements(v []UsedSpaceAnnouncement) {
-	if r != nil {
-		r.announcements = v
-	}
+	r.announcements = v
 }
 
 func (r *AnnounceUsedSpaceRequest) GetBody() *AnnounceUsedSpaceRequestBody {
@@ -783,9 +701,7 @@ func (r *AnnounceUsedSpaceRequest) GetBody() *AnnounceUsedSpaceRequestBody {
 }
 
 func (r *AnnounceUsedSpaceRequest) SetBody(v *AnnounceUsedSpaceRequestBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
 
 func (r *AnnounceUsedSpaceResponse) GetBody() *AnnounceUsedSpaceResponseBody {
@@ -797,7 +713,5 @@ func (r *AnnounceUsedSpaceResponse) GetBody() *AnnounceUsedSpaceResponseBody {
 }
 
 func (r *AnnounceUsedSpaceResponse) SetBody(v *AnnounceUsedSpaceResponseBody) {
-	if r != nil {
-		r.body = v
-	}
+	r.body = v
 }
