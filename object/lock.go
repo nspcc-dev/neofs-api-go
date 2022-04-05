@@ -48,28 +48,22 @@ const (
 
 // StableMarshal encodes the Lock into Protocol Buffers binary format
 // with direct field order.
-func (x *Lock) StableMarshal(buf []byte) ([]byte, error) {
+func (x *Lock) StableMarshal(buf []byte) []byte {
 	if x == nil || len(x.members) == 0 {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, x.StableSize())
 	}
 
-	var offset, n int
-	var err error
+	var offset int
 
 	for i := range x.members {
-		n, err = proto.NestedStructureMarshal(fNumLockMembers, buf[offset:], &x.members[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += proto.NestedStructureMarshal(fNumLockMembers, buf[offset:], &x.members[i])
 	}
 
-	return buf, nil
+	return buf
 }
 
 // StableSize size of the buffer required to write the Lock in Protocol Buffers
@@ -146,11 +140,7 @@ func WriteLock(obj *Object, lock Lock) {
 
 	hdr.SetObjectType(TypeLock)
 
-	payload, err := lock.StableMarshal(nil)
-	if err != nil {
-		panic(fmt.Sprintf("encode lock content: %v", err))
-	}
-
+	payload := lock.StableMarshal(nil)
 	obj.SetPayload(payload)
 }
 

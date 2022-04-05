@@ -112,52 +112,26 @@ const (
 	getRangeHashRespBodyHashListField = 2
 )
 
-func (h *ShortHeader) StableMarshal(buf []byte) ([]byte, error) {
+func (h *ShortHeader) StableMarshal(buf []byte) []byte {
 	if h == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, h.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(shortHdrVersionField, buf[offset:], h.version)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(shortHdrVersionField, buf[offset:], h.version)
 	offset += proto.UInt64Marshal(shortHdrEpochField, buf[offset:], h.creatEpoch)
-
-	n, err = proto.NestedStructureMarshal(shortHdrOwnerField, buf[offset:], h.ownerID)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(shortHdrOwnerField, buf[offset:], h.ownerID)
 	offset += proto.EnumMarshal(shortHdrObjectTypeField, buf[offset:], int32(h.typ))
 	offset += proto.UInt64Marshal(shortHdrPayloadLength, buf[offset:], h.payloadLen)
+	offset += proto.NestedStructureMarshal(shortHdrHashField, buf[offset:], h.payloadHash)
+	proto.NestedStructureMarshal(shortHdrHomoHashField, buf[offset:], h.homoHash)
 
-	n, err = proto.NestedStructureMarshal(shortHdrHashField, buf[offset:], h.payloadHash)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.NestedStructureMarshal(shortHdrHomoHashField, buf[offset:], h.homoHash)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (h *ShortHeader) StableSize() (size int) {
@@ -180,9 +154,9 @@ func (h *ShortHeader) Unmarshal(data []byte) error {
 	return message.Unmarshal(h, data, new(object.ShortHeader))
 }
 
-func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
+func (a *Attribute) StableMarshal(buf []byte) []byte {
 	if a == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -194,7 +168,7 @@ func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
 	offset += proto.StringMarshal(attributeKeyField, buf[offset:], a.key)
 	proto.StringMarshal(attributeValueField, buf[offset:], a.val)
 
-	return buf, nil
+	return buf
 }
 
 func (a *Attribute) StableSize() (size int) {
@@ -212,58 +186,25 @@ func (a *Attribute) Unmarshal(data []byte) error {
 	return message.Unmarshal(a, data, new(object.Header_Attribute))
 }
 
-func (h *SplitHeader) StableMarshal(buf []byte) ([]byte, error) {
+func (h *SplitHeader) StableMarshal(buf []byte) []byte {
 	if h == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, h.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(splitHdrParentField, buf[offset:], h.par)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(splitHdrPreviousField, buf[offset:], h.prev)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(splitHdrParentSignatureField, buf[offset:], h.parSig)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(splitHdrParentHeaderField, buf[offset:], h.parHdr)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = refs.ObjectIDNestedListMarshal(splitHdrChildrenField, buf[offset:], h.children)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(splitHdrParentField, buf[offset:], h.par)
+	offset += proto.NestedStructureMarshal(splitHdrPreviousField, buf[offset:], h.prev)
+	offset += proto.NestedStructureMarshal(splitHdrParentSignatureField, buf[offset:], h.parSig)
+	offset += proto.NestedStructureMarshal(splitHdrParentHeaderField, buf[offset:], h.parHdr)
+	offset += refs.ObjectIDNestedListMarshal(splitHdrChildrenField, buf[offset:], h.children)
 	proto.BytesMarshal(splitHdrSplitIDField, buf[offset:], h.splitID)
 
-	return buf, nil
+	return buf
 }
 
 func (h *SplitHeader) StableSize() (size int) {
@@ -285,82 +226,34 @@ func (h *SplitHeader) Unmarshal(data []byte) error {
 	return message.Unmarshal(h, data, new(object.Header_Split))
 }
 
-func (h *Header) StableMarshal(buf []byte) ([]byte, error) {
+func (h *Header) StableMarshal(buf []byte) []byte {
 	if h == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, h.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(hdrVersionField, buf[offset:], h.version)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(hdrContainerIDField, buf[offset:], h.cid)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(hdrOwnerIDField, buf[offset:], h.ownerID)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(hdrVersionField, buf[offset:], h.version)
+	offset += proto.NestedStructureMarshal(hdrContainerIDField, buf[offset:], h.cid)
+	offset += proto.NestedStructureMarshal(hdrOwnerIDField, buf[offset:], h.ownerID)
 	offset += proto.UInt64Marshal(hdrEpochField, buf[offset:], h.creatEpoch)
 	offset += proto.UInt64Marshal(hdrPayloadLengthField, buf[offset:], h.payloadLen)
-
-	n, err = proto.NestedStructureMarshal(hdrPayloadHashField, buf[offset:], h.payloadHash)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(hdrPayloadHashField, buf[offset:], h.payloadHash)
 	offset += proto.EnumMarshal(hdrObjectTypeField, buf[offset:], int32(h.typ))
-
-	n, err = proto.NestedStructureMarshal(hdrHomomorphicHashField, buf[offset:], h.homoHash)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(hdrSessionTokenField, buf[offset:], h.sessionToken)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.NestedStructureMarshal(hdrHomomorphicHashField, buf[offset:], h.homoHash)
+	offset += proto.NestedStructureMarshal(hdrSessionTokenField, buf[offset:], h.sessionToken)
 
 	for i := range h.attr {
-		n, err = proto.NestedStructureMarshal(hdrAttributesField, buf[offset:], &h.attr[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += proto.NestedStructureMarshal(hdrAttributesField, buf[offset:], &h.attr[i])
 	}
 
-	_, err = proto.NestedStructureMarshal(hdrSplitField, buf[offset:], h.split)
-	if err != nil {
-		return nil, err
-	}
+	proto.NestedStructureMarshal(hdrSplitField, buf[offset:], h.split)
 
-	return buf, nil
+	return buf
 }
 
 func (h *Header) StableSize() (size int) {
@@ -389,33 +282,21 @@ func (h *Header) Unmarshal(data []byte) error {
 	return message.Unmarshal(h, data, new(object.Header))
 }
 
-func (h *HeaderWithSignature) StableMarshal(buf []byte) ([]byte, error) {
+func (h *HeaderWithSignature) StableMarshal(buf []byte) []byte {
 	if h == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, h.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(hdrWithSigHeaderField, buf[offset:], h.header)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.NestedStructureMarshal(hdrWithSigHeaderField, buf[offset:], h.header)
+	proto.NestedStructureMarshal(hdrWithSigSignatureField, buf[offset:], h.signature)
 
-	offset += n
-
-	_, err = proto.NestedStructureMarshal(hdrWithSigSignatureField, buf[offset:], h.signature)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (h *HeaderWithSignature) StableSize() (size int) {
@@ -433,44 +314,23 @@ func (h *HeaderWithSignature) Unmarshal(data []byte) error {
 	return message.Unmarshal(h, data, new(object.HeaderWithSignature))
 }
 
-func (o *Object) StableMarshal(buf []byte) ([]byte, error) {
+func (o *Object) StableMarshal(buf []byte) []byte {
 	if o == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, o.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(objIDField, buf[offset:], o.objectID)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(objSignatureField, buf[offset:], o.idSig)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(objHeaderField, buf[offset:], o.header)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(objIDField, buf[offset:], o.objectID)
+	offset += proto.NestedStructureMarshal(objSignatureField, buf[offset:], o.idSig)
+	offset += proto.NestedStructureMarshal(objHeaderField, buf[offset:], o.header)
 	proto.BytesMarshal(objPayloadField, buf[offset:], o.payload)
 
-	return buf, nil
+	return buf
 }
 
 func (o *Object) StableSize() (size int) {
@@ -490,35 +350,22 @@ func (o *Object) Unmarshal(data []byte) error {
 	return message.Unmarshal(o, data, new(object.Object))
 }
 
-func (s *SplitInfo) StableMarshal(buf []byte) ([]byte, error) {
+func (s *SplitInfo) StableMarshal(buf []byte) []byte {
 	if s == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, s.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
 	offset += proto.BytesMarshal(splitInfoSplitIDField, buf[offset:], s.splitID)
+	offset += proto.NestedStructureMarshal(splitInfoLastPartField, buf[offset:], s.lastPart)
+	proto.NestedStructureMarshal(splitInfoLinkField, buf[offset:], s.link)
 
-	n, err = proto.NestedStructureMarshal(splitInfoLastPartField, buf[offset:], s.lastPart)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.NestedStructureMarshal(splitInfoLinkField, buf[offset:], s.link)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (s *SplitInfo) StableSize() (size int) {
@@ -537,30 +384,21 @@ func (s *SplitInfo) Unmarshal(data []byte) error {
 	return message.Unmarshal(s, data, new(object.SplitInfo))
 }
 
-func (r *GetRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *GetRequestBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(getReqBodyAddressField, buf[offset:], r.addr)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(getReqBodyAddressField, buf[offset:], r.addr)
 	proto.BoolMarshal(getReqBodyRawFlagField, buf[offset:], r.raw)
 
-	return buf, nil
+	return buf
 }
 
 func (r *GetRequestBody) StableSize() (size int) {
@@ -578,40 +416,22 @@ func (r *GetRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.GetRequest_Body))
 }
 
-func (r *GetObjectPartInit) StableMarshal(buf []byte) ([]byte, error) {
+func (r *GetObjectPartInit) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(getRespInitObjectIDField, buf[offset:], r.id)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.NestedStructureMarshal(getRespInitObjectIDField, buf[offset:], r.id)
+	offset += proto.NestedStructureMarshal(getRespInitSignatureField, buf[offset:], r.sig)
+	proto.NestedStructureMarshal(getRespInitHeaderField, buf[offset:], r.hdr)
 
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(getRespInitSignatureField, buf[offset:], r.sig)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.NestedStructureMarshal(getRespInitHeaderField, buf[offset:], r.hdr)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (r *GetObjectPartInit) StableSize() (size int) {
@@ -630,9 +450,9 @@ func (r *GetObjectPartInit) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.GetResponse_Body_Init))
 }
 
-func (r *GetResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *GetResponseBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -642,24 +462,18 @@ func (r *GetResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	switch v := r.objPart.(type) {
 	case nil:
 	case *GetObjectPartInit:
-		_, err := proto.NestedStructureMarshal(getRespBodyInitField, buf, v)
-		if err != nil {
-			return nil, err
-		}
+		proto.NestedStructureMarshal(getRespBodyInitField, buf, v)
 	case *GetObjectPartChunk:
 		if v != nil {
 			proto.BytesMarshal(getRespBodyChunkField, buf, v.chunk)
 		}
 	case *SplitInfo:
-		_, err := proto.NestedStructureMarshal(getRespBodySplitInfoField, buf, v)
-		if err != nil {
-			return nil, err
-		}
+		proto.NestedStructureMarshal(getRespBodySplitInfoField, buf, v)
 	default:
 		panic("unknown one of object get response body type")
 	}
 
-	return buf, nil
+	return buf
 }
 
 func (r *GetResponseBody) StableSize() (size int) {
@@ -688,44 +502,23 @@ func (r *GetResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.GetResponse_Body))
 }
 
-func (r *PutObjectPartInit) StableMarshal(buf []byte) ([]byte, error) {
+func (r *PutObjectPartInit) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(putReqInitObjectIDField, buf[offset:], r.id)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(putReqInitSignatureField, buf[offset:], r.sig)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(putReqInitHeaderField, buf[offset:], r.hdr)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(putReqInitObjectIDField, buf[offset:], r.id)
+	offset += proto.NestedStructureMarshal(putReqInitSignatureField, buf[offset:], r.sig)
+	offset += proto.NestedStructureMarshal(putReqInitHeaderField, buf[offset:], r.hdr)
 	proto.UInt32Marshal(putReqInitCopiesNumField, buf[offset:], r.copyNum)
 
-	return buf, nil
+	return buf
 }
 
 func (r *PutObjectPartInit) StableSize() (size int) {
@@ -745,9 +538,9 @@ func (r *PutObjectPartInit) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.PutRequest_Body_Init))
 }
 
-func (r *PutRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *PutRequestBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -757,10 +550,7 @@ func (r *PutRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 	switch v := r.objPart.(type) {
 	case nil:
 	case *PutObjectPartInit:
-		_, err := proto.NestedStructureMarshal(putReqBodyInitField, buf, v)
-		if err != nil {
-			return nil, err
-		}
+		proto.NestedStructureMarshal(putReqBodyInitField, buf, v)
 	case *PutObjectPartChunk:
 		if v != nil {
 			proto.BytesMarshal(putReqBodyChunkField, buf, v.chunk)
@@ -769,7 +559,7 @@ func (r *PutRequestBody) StableMarshal(buf []byte) ([]byte, error) {
 		panic("unknown one of object put request body type")
 	}
 
-	return buf, nil
+	return buf
 }
 
 func (r *PutRequestBody) StableSize() (size int) {
@@ -796,21 +586,18 @@ func (r *PutRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.PutRequest_Body))
 }
 
-func (r *PutResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *PutResponseBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	_, err := proto.NestedStructureMarshal(putRespBodyObjectIDField, buf, r.id)
-	if err != nil {
-		return nil, err
-	}
+	proto.NestedStructureMarshal(putRespBodyObjectIDField, buf, r.id)
 
-	return buf, nil
+	return buf
 }
 
 func (r *PutResponseBody) StableSize() (size int) {
@@ -827,21 +614,18 @@ func (r *PutResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.PutResponse_Body))
 }
 
-func (r *DeleteRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *DeleteRequestBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	_, err := proto.NestedStructureMarshal(deleteReqBodyAddressField, buf, r.addr)
-	if err != nil {
-		return nil, err
-	}
+	proto.NestedStructureMarshal(deleteReqBodyAddressField, buf, r.addr)
 
-	return buf, nil
+	return buf
 }
 
 func (r *DeleteRequestBody) StableSize() (size int) {
@@ -858,21 +642,18 @@ func (r *DeleteRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.DeleteRequest_Body))
 }
 
-func (r *DeleteResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *DeleteResponseBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	_, err := proto.NestedStructureMarshal(deleteRespBodyTombstoneFNum, buf, r.tombstone)
-	if err != nil {
-		return nil, err
-	}
+	proto.NestedStructureMarshal(deleteRespBodyTombstoneFNum, buf, r.tombstone)
 
-	return buf, nil
+	return buf
 }
 
 func (r *DeleteResponseBody) StableSize() (size int) {
@@ -889,31 +670,22 @@ func (r *DeleteResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.DeleteResponse_Body))
 }
 
-func (r *HeadRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *HeadRequestBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(headReqBodyAddressField, buf[offset:], r.addr)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(headReqBodyAddressField, buf[offset:], r.addr)
 	offset += proto.BoolMarshal(headReqBodyMainFlagField, buf[offset:], r.mainOnly)
 	proto.BoolMarshal(headReqBodyRawFlagField, buf[offset:], r.raw)
 
-	return buf, nil
+	return buf
 }
 
 func (r *HeadRequestBody) StableSize() (size int) {
@@ -932,9 +704,9 @@ func (r *HeadRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.HeadRequest_Body))
 }
 
-func (r *HeadResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *HeadResponseBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -945,30 +717,21 @@ func (r *HeadResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	case nil:
 	case *HeaderWithSignature:
 		if v != nil {
-			_, err := proto.NestedStructureMarshal(headRespBodyHeaderField, buf, v)
-			if err != nil {
-				return nil, err
-			}
+			proto.NestedStructureMarshal(headRespBodyHeaderField, buf, v)
 		}
 	case *ShortHeader:
 		if v != nil {
-			_, err := proto.NestedStructureMarshal(headRespBodyShortHeaderField, buf, v)
-			if err != nil {
-				return nil, err
-			}
+			proto.NestedStructureMarshal(headRespBodyShortHeaderField, buf, v)
 		}
 	case *SplitInfo:
 		if v != nil {
-			_, err := proto.NestedStructureMarshal(headRespBodySplitInfoField, buf, v)
-			if err != nil {
-				return nil, err
-			}
+			proto.NestedStructureMarshal(headRespBodySplitInfoField, buf, v)
 		}
 	default:
 		panic("unknown one of object put request body type")
 	}
 
-	return buf, nil
+	return buf
 }
 
 func (r *HeadResponseBody) StableSize() (size int) {
@@ -1001,9 +764,9 @@ func (r *HeadResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.HeadResponse_Body))
 }
 
-func (f *SearchFilter) StableMarshal(buf []byte) ([]byte, error) {
+func (f *SearchFilter) StableMarshal(buf []byte) []byte {
 	if f == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -1016,7 +779,7 @@ func (f *SearchFilter) StableMarshal(buf []byte) ([]byte, error) {
 	offset += proto.StringMarshal(searchFilterNameField, buf[offset:], f.key)
 	proto.StringMarshal(searchFilterValueField, buf[offset:], f.val)
 
-	return buf, nil
+	return buf
 }
 
 func (f *SearchFilter) StableSize() (size int) {
@@ -1035,39 +798,25 @@ func (f *SearchFilter) Unmarshal(data []byte) error {
 	return message.Unmarshal(f, data, new(object.SearchRequest_Body_Filter))
 }
 
-func (r *SearchRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *SearchRequestBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(searchReqBodyContainerIDField, buf[offset:], r.cid)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(searchReqBodyContainerIDField, buf[offset:], r.cid)
 	offset += proto.UInt32Marshal(searchReqBodyVersionField, buf[offset:], r.version)
 
 	for i := range r.filters {
-		n, err = proto.NestedStructureMarshal(searchReqBodyFiltersField, buf[offset:], &r.filters[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += proto.NestedStructureMarshal(searchReqBodyFiltersField, buf[offset:], &r.filters[i])
 	}
 
-	return buf, nil
+	return buf
 }
 
 func (r *SearchRequestBody) StableSize() (size int) {
@@ -1089,26 +838,20 @@ func (r *SearchRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.SearchRequest_Body))
 }
 
-func (r *SearchResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *SearchResponseBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset int
-		err    error
-	)
+	var offset int
 
-	_, err = refs.ObjectIDNestedListMarshal(searchRespBodyObjectIDsField, buf[offset:], r.idList)
-	if err != nil {
-		return nil, err
-	}
+	refs.ObjectIDNestedListMarshal(searchRespBodyObjectIDsField, buf[offset:], r.idList)
 
-	return buf, nil
+	return buf
 }
 
 func (r *SearchResponseBody) StableSize() (size int) {
@@ -1125,9 +868,9 @@ func (r *SearchResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.SearchResponse_Body))
 }
 
-func (r *Range) StableMarshal(buf []byte) ([]byte, error) {
+func (r *Range) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -1139,7 +882,7 @@ func (r *Range) StableMarshal(buf []byte) ([]byte, error) {
 	offset += proto.UInt64Marshal(rangeOffsetField, buf[offset:], r.off)
 	proto.UInt64Marshal(rangeLengthField, buf[offset:], r.len)
 
-	return buf, nil
+	return buf
 }
 
 func (r *Range) StableSize() (size int) {
@@ -1157,37 +900,22 @@ func (r *Range) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.Range))
 }
 
-func (r *GetRangeRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *GetRangeRequestBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(getRangeReqBodyAddressField, buf[offset:], r.addr)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(getRangeReqBodyRangeField, buf[offset:], r.rng)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(getRangeReqBodyAddressField, buf[offset:], r.addr)
+	offset += proto.NestedStructureMarshal(getRangeReqBodyRangeField, buf[offset:], r.rng)
 	proto.BoolMarshal(getRangeReqBodyRawField, buf[offset:], r.raw)
 
-	return buf, nil
+	return buf
 }
 
 func (r *GetRangeRequestBody) StableSize() (size int) {
@@ -1206,9 +934,9 @@ func (r *GetRangeRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.GetRangeRequest_Body))
 }
 
-func (r *GetRangeResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *GetRangeResponseBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -1223,16 +951,13 @@ func (r *GetRangeResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 		}
 	case *SplitInfo:
 		if v != nil {
-			_, err := proto.NestedStructureMarshal(getRangeRespSplitInfoField, buf, v)
-			if err != nil {
-				return nil, err
-			}
+			proto.NestedStructureMarshal(getRangeRespSplitInfoField, buf, v)
 		}
 	default:
 		panic("unknown one of object get range request body type")
 	}
 
-	return buf, nil
+	return buf
 }
 
 func (r *GetRangeResponseBody) StableSize() (size int) {
@@ -1261,40 +986,27 @@ func (r *GetRangeResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.GetRangeResponse_Body))
 }
 
-func (r *GetRangeHashRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *GetRangeHashRequestBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(getRangeHashReqBodyAddressField, buf[offset:], r.addr)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += proto.NestedStructureMarshal(getRangeHashReqBodyAddressField, buf[offset:], r.addr)
 
 	for i := range r.rngs {
-		n, err = proto.NestedStructureMarshal(getRangeHashReqBodyRangesField, buf[offset:], &r.rngs[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += proto.NestedStructureMarshal(getRangeHashReqBodyRangesField, buf[offset:], &r.rngs[i])
 	}
 
 	offset += proto.BytesMarshal(getRangeHashReqBodySaltField, buf[offset:], r.salt)
 	proto.EnumMarshal(getRangeHashReqBodyTypeField, buf[offset:], int32(r.typ))
 
-	return buf, nil
+	return buf
 }
 
 func (r *GetRangeHashRequestBody) StableSize() (size int) {
@@ -1318,9 +1030,9 @@ func (r *GetRangeHashRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(object.GetRangeHashRequest_Body))
 }
 
-func (r *GetRangeHashResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+func (r *GetRangeHashResponseBody) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -1332,7 +1044,7 @@ func (r *GetRangeHashResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	offset += proto.EnumMarshal(getRangeHashRespBodyTypeField, buf, int32(r.typ))
 	proto.RepeatedBytesMarshal(getRangeHashRespBodyHashListField, buf[offset:], r.hashList)
 
-	return buf, nil
+	return buf
 }
 
 func (r *GetRangeHashResponseBody) StableSize() (size int) {

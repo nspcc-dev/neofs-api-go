@@ -12,9 +12,9 @@ const (
 	detailValueFNum
 )
 
-func (x *Detail) StableMarshal(buf []byte) ([]byte, error) {
+func (x *Detail) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -24,9 +24,9 @@ func (x *Detail) StableMarshal(buf []byte) ([]byte, error) {
 	var offset int
 
 	offset += protoutil.UInt32Marshal(detailIDFNum, buf[offset:], x.id)
-	offset += protoutil.BytesMarshal(detailValueFNum, buf[offset:], x.val)
+	protoutil.BytesMarshal(detailValueFNum, buf[offset:], x.val)
 
-	return buf, nil
+	return buf
 }
 
 func (x *Detail) StableSize() (size int) {
@@ -47,40 +47,25 @@ const (
 	statusDetailsFNum
 )
 
-func (x *Status) StableMarshal(buf []byte) ([]byte, error) {
+func (x *Status) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, x.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
 	offset += protoutil.UInt32Marshal(statusCodeFNum, buf[offset:], CodeToGRPC(x.code))
-	if err != nil {
-		return nil, err
-	}
-
 	offset += protoutil.StringMarshal(statusMsgFNum, buf[offset:], x.msg)
-	if err != nil {
-		return nil, err
-	}
 
 	for i := range x.details {
-		n, err = protoutil.NestedStructureMarshal(statusDetailsFNum, buf[offset:], &x.details[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += protoutil.NestedStructureMarshal(statusDetailsFNum, buf[offset:], &x.details[i])
 	}
 
-	return buf, nil
+	return buf
 }
 
 func (x *Status) StableSize() (size int) {

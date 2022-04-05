@@ -41,19 +41,16 @@ const (
 	nodeInfoResponseBodyField    = 2
 )
 
-func (f *Filter) StableMarshal(buf []byte) ([]byte, error) {
+func (f *Filter) StableMarshal(buf []byte) []byte {
 	if f == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, f.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
 	offset += protoutil.StringMarshal(nameFilterField, buf[offset:], f.name)
 	offset += protoutil.StringMarshal(keyFilterField, buf[offset:], f.key)
@@ -61,15 +58,10 @@ func (f *Filter) StableMarshal(buf []byte) ([]byte, error) {
 	offset += protoutil.StringMarshal(valueFilterField, buf[offset:], f.value)
 
 	for i := range f.filters {
-		n, err = protoutil.NestedStructureMarshal(filtersFilterField, buf[offset:], &f.filters[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += protoutil.NestedStructureMarshal(filtersFilterField, buf[offset:], &f.filters[i])
 	}
 
-	return buf, nil
+	return buf
 }
 
 func (f *Filter) StableSize() (size int) {
@@ -88,9 +80,9 @@ func (f *Filter) Unmarshal(data []byte) error {
 	return message.Unmarshal(f, data, new(netmap.Filter))
 }
 
-func (s *Selector) StableMarshal(buf []byte) ([]byte, error) {
+func (s *Selector) StableMarshal(buf []byte) []byte {
 	if s == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -105,7 +97,7 @@ func (s *Selector) StableMarshal(buf []byte) ([]byte, error) {
 	offset += protoutil.StringMarshal(attributeSelectorField, buf[offset:], s.attribute)
 	protoutil.StringMarshal(filterSelectorField, buf[offset:], s.filter)
 
-	return buf, nil
+	return buf
 }
 
 func (s *Selector) StableSize() (size int) {
@@ -122,9 +114,9 @@ func (s *Selector) Unmarshal(data []byte) error {
 	return message.Unmarshal(s, data, new(netmap.Selector))
 }
 
-func (r *Replica) StableMarshal(buf []byte) ([]byte, error) {
+func (r *Replica) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -136,7 +128,7 @@ func (r *Replica) StableMarshal(buf []byte) ([]byte, error) {
 	offset += protoutil.UInt32Marshal(countReplicaField, buf[offset:], r.count)
 	protoutil.StringMarshal(selectorReplicaField, buf[offset:], r.selector)
 
-	return buf, nil
+	return buf
 }
 
 func (r *Replica) StableSize() (size int) {
@@ -150,55 +142,34 @@ func (r *Replica) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(netmap.Replica))
 }
 
-func (p *PlacementPolicy) StableMarshal(buf []byte) ([]byte, error) {
+func (p *PlacementPolicy) StableMarshal(buf []byte) []byte {
 	if p == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, p.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
 	for i := range p.replicas {
-		n, err = protoutil.NestedStructureMarshal(replicasPolicyField, buf[offset:], &p.replicas[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += protoutil.NestedStructureMarshal(replicasPolicyField, buf[offset:], &p.replicas[i])
 	}
 
 	offset += protoutil.UInt32Marshal(backupPolicyField, buf[offset:], p.backupFactor)
 
 	for i := range p.selectors {
-		n, err = protoutil.NestedStructureMarshal(selectorsPolicyField, buf[offset:], &p.selectors[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += protoutil.NestedStructureMarshal(selectorsPolicyField, buf[offset:], &p.selectors[i])
 	}
 
 	for i := range p.filters {
-		n, err = protoutil.NestedStructureMarshal(filtersPolicyField, buf[offset:], &p.filters[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += protoutil.NestedStructureMarshal(filtersPolicyField, buf[offset:], &p.filters[i])
 	}
 
-	_, err = protoutil.NestedStructureMarshal(subnetIDPolicyField, buf[offset:], p.subnetID)
-	if err != nil {
-		return nil, err
-	}
+	protoutil.NestedStructureMarshal(subnetIDPolicyField, buf[offset:], p.subnetID)
 
-	return buf, nil
+	return buf
 }
 
 func (p *PlacementPolicy) StableSize() (size int) {
@@ -225,9 +196,9 @@ func (p *PlacementPolicy) Unmarshal(data []byte) error {
 	return message.Unmarshal(p, data, new(netmap.PlacementPolicy))
 }
 
-func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
+func (a *Attribute) StableMarshal(buf []byte) []byte {
 	if a == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -243,7 +214,7 @@ func (a *Attribute) StableMarshal(buf []byte) ([]byte, error) {
 		offset += protoutil.StringMarshal(parentsAttributeField, buf[offset:], a.parents[i])
 	}
 
-	return buf, nil
+	return buf
 }
 
 func (a *Attribute) StableSize() (size int) {
@@ -265,35 +236,27 @@ func (a *Attribute) Unmarshal(data []byte) error {
 	return message.Unmarshal(a, data, new(netmap.NodeInfo_Attribute))
 }
 
-func (ni *NodeInfo) StableMarshal(buf []byte) ([]byte, error) {
+func (ni *NodeInfo) StableMarshal(buf []byte) []byte {
 	if ni == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, ni.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
 	offset += protoutil.BytesMarshal(keyNodeInfoField, buf[offset:], ni.publicKey)
 	offset += protoutil.RepeatedStringMarshal(addressNodeInfoField, buf[offset:], ni.addresses)
 
 	for i := range ni.attributes {
-		n, err = protoutil.NestedStructureMarshal(attributesNodeInfoField, buf[offset:], &ni.attributes[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += protoutil.NestedStructureMarshal(attributesNodeInfoField, buf[offset:], &ni.attributes[i])
 	}
 
 	protoutil.EnumMarshal(stateNodeInfoField, buf[offset:], int32(ni.state))
 
-	return buf, nil
+	return buf
 }
 
 func (ni *NodeInfo) StableSize() (size int) {
@@ -317,8 +280,8 @@ func (ni *NodeInfo) Unmarshal(data []byte) error {
 	return message.Unmarshal(ni, data, new(netmap.NodeInfo))
 }
 
-func (l *LocalNodeInfoRequestBody) StableMarshal(buf []byte) ([]byte, error) {
-	return nil, nil
+func (l *LocalNodeInfoRequestBody) StableMarshal(buf []byte) []byte {
+	return nil
 }
 
 func (l *LocalNodeInfoRequestBody) StableSize() (size int) {
@@ -329,33 +292,21 @@ func (l *LocalNodeInfoRequestBody) Unmarshal([]byte) error {
 	return nil
 }
 
-func (l *LocalNodeInfoResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+func (l *LocalNodeInfoResponseBody) StableMarshal(buf []byte) []byte {
 	if l == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, l.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.NestedStructureMarshal(versionInfoResponseBodyField, buf[offset:], l.version)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.NestedStructureMarshal(versionInfoResponseBodyField, buf[offset:], l.version)
+	protoutil.NestedStructureMarshal(nodeInfoResponseBodyField, buf[offset:], l.nodeInfo)
 
-	offset += n
-
-	_, err = protoutil.NestedStructureMarshal(nodeInfoResponseBodyField, buf[offset:], l.nodeInfo)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (l *LocalNodeInfoResponseBody) StableSize() (size int) {
@@ -379,9 +330,9 @@ const (
 	netPrmValFNum
 )
 
-func (x *NetworkParameter) StableMarshal(buf []byte) ([]byte, error) {
+func (x *NetworkParameter) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -393,7 +344,7 @@ func (x *NetworkParameter) StableMarshal(buf []byte) ([]byte, error) {
 	offset += protoutil.BytesMarshal(netPrmKeyFNum, buf[offset:], x.k)
 	protoutil.BytesMarshal(netPrmValFNum, buf[offset:], x.v)
 
-	return buf, nil
+	return buf
 }
 
 func (x *NetworkParameter) StableSize() (size int) {
@@ -412,30 +363,22 @@ const (
 	netCfgPrmsFNum
 )
 
-func (x *NetworkConfig) StableMarshal(buf []byte) ([]byte, error) {
+func (x *NetworkConfig) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, x.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
 	for i := range x.ps {
-		n, err = protoutil.NestedStructureMarshal(netCfgPrmsFNum, buf[offset:], &x.ps[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += protoutil.NestedStructureMarshal(netCfgPrmsFNum, buf[offset:], &x.ps[i])
 	}
 
-	return buf, nil
+	return buf
 }
 
 func (x *NetworkConfig) StableSize() (size int) {
@@ -458,30 +401,23 @@ const (
 	netInfoCfgFNum
 )
 
-func (i *NetworkInfo) StableMarshal(buf []byte) ([]byte, error) {
+func (i *NetworkInfo) StableMarshal(buf []byte) []byte {
 	if i == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, i.StableSize())
 	}
 
-	var (
-		offset int
-		err    error
-	)
+	var offset int
 
 	offset += protoutil.UInt64Marshal(netInfoCurEpochFNum, buf[offset:], i.curEpoch)
 	offset += protoutil.UInt64Marshal(netInfoMagicNumFNum, buf[offset:], i.magicNum)
 	offset += protoutil.Int64Marshal(netInfoMSPerBlockFNum, buf[offset:], i.msPerBlock)
+	protoutil.NestedStructureMarshal(netInfoCfgFNum, buf[offset:], i.netCfg)
 
-	_, err = protoutil.NestedStructureMarshal(netInfoCfgFNum, buf[offset:], i.netCfg)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (i *NetworkInfo) StableSize() (size int) {
@@ -501,8 +437,8 @@ func (i *NetworkInfo) Unmarshal(data []byte) error {
 	return message.Unmarshal(i, data, new(netmap.NetworkInfo))
 }
 
-func (l *NetworkInfoRequestBody) StableMarshal(buf []byte) ([]byte, error) {
-	return nil, nil
+func (l *NetworkInfoRequestBody) StableMarshal(buf []byte) []byte {
+	return nil
 }
 
 func (l *NetworkInfoRequestBody) StableSize() (size int) {
@@ -518,21 +454,18 @@ const (
 	netInfoRespBodyNetInfoFNum
 )
 
-func (i *NetworkInfoResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+func (i *NetworkInfoResponseBody) StableMarshal(buf []byte) []byte {
 	if i == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, i.StableSize())
 	}
 
-	_, err := protoutil.NestedStructureMarshal(netInfoRespBodyNetInfoFNum, buf, i.netInfo)
-	if err != nil {
-		return nil, err
-	}
+	protoutil.NestedStructureMarshal(netInfoRespBodyNetInfoFNum, buf, i.netInfo)
 
-	return buf, nil
+	return buf
 }
 
 func (i *NetworkInfoResponseBody) StableSize() (size int) {

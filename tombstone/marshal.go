@@ -14,33 +14,25 @@ const (
 
 // StableMarshal marshals unified tombstone message in a protobuf
 // compatible way without field order shuffle.
-func (s *Tombstone) StableMarshal(buf []byte) ([]byte, error) {
+func (s *Tombstone) StableMarshal(buf []byte) []byte {
 	if s == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, s.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
 	offset += proto.UInt64Marshal(expFNum, buf[offset:], s.exp)
 	offset += proto.BytesMarshal(splitIDFNum, buf[offset:], s.splitID)
 
 	for i := range s.members {
-		n, err = proto.NestedStructureMarshal(membersFNum, buf[offset:], &s.members[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += proto.NestedStructureMarshal(membersFNum, buf[offset:], &s.members[i])
 	}
 
-	return buf, nil
+	return buf
 }
 
 // StableSize returns size of tombstone message marshalled by StableMarshal function.

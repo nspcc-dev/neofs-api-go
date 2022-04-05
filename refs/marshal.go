@@ -27,9 +27,9 @@ const (
 	versionMinorField = 2
 )
 
-func (o *OwnerID) StableMarshal(buf []byte) ([]byte, error) {
+func (o *OwnerID) StableMarshal(buf []byte) []byte {
 	if o == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -38,7 +38,7 @@ func (o *OwnerID) StableMarshal(buf []byte) ([]byte, error) {
 
 	proto.BytesMarshal(ownerIDValField, buf, o.val)
 
-	return buf, nil
+	return buf
 }
 
 func (o *OwnerID) StableSize() int {
@@ -53,9 +53,9 @@ func (o *OwnerID) Unmarshal(data []byte) error {
 	return message.Unmarshal(o, data, new(refs.OwnerID))
 }
 
-func (c *ContainerID) StableMarshal(buf []byte) ([]byte, error) {
+func (c *ContainerID) StableMarshal(buf []byte) []byte {
 	if c == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -64,7 +64,7 @@ func (c *ContainerID) StableMarshal(buf []byte) ([]byte, error) {
 
 	proto.BytesMarshal(containerIDValField, buf, c.val)
 
-	return buf, nil
+	return buf
 }
 
 func (c *ContainerID) StableSize() int {
@@ -79,9 +79,9 @@ func (c *ContainerID) Unmarshal(data []byte) error {
 	return message.Unmarshal(c, data, new(refs.ContainerID))
 }
 
-func (o *ObjectID) StableMarshal(buf []byte) ([]byte, error) {
+func (o *ObjectID) StableMarshal(buf []byte) []byte {
 	if o == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -90,7 +90,7 @@ func (o *ObjectID) StableMarshal(buf []byte) ([]byte, error) {
 
 	proto.BytesMarshal(objectIDValField, buf, o.val)
 
-	return buf, nil
+	return buf
 }
 
 // ObjectIDNestedListSize returns byte length of nested
@@ -113,16 +113,9 @@ func (o *ObjectID) StableSize() int {
 
 // ObjectIDNestedListMarshal writes protobuf repeated ObjectID field
 // with fNum number to buf.
-func ObjectIDNestedListMarshal(fNum int64, buf []byte, ids []ObjectID) (off int, err error) {
+func ObjectIDNestedListMarshal(fNum int64, buf []byte, ids []ObjectID) (off int) {
 	for i := range ids {
-		var n int
-
-		n, err = proto.NestedStructureMarshal(fNum, buf[off:], &ids[i])
-		if err != nil {
-			return
-		}
-
-		off += n
+		off += proto.NestedStructureMarshal(fNum, buf[off:], &ids[i])
 	}
 
 	return
@@ -132,33 +125,21 @@ func (o *ObjectID) Unmarshal(data []byte) error {
 	return message.Unmarshal(o, data, new(refs.ObjectID))
 }
 
-func (a *Address) StableMarshal(buf []byte) ([]byte, error) {
+func (a *Address) StableMarshal(buf []byte) []byte {
 	if a == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, a.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(addressContainerField, buf[offset:], a.cid)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.NestedStructureMarshal(addressContainerField, buf[offset:], a.cid)
+	proto.NestedStructureMarshal(addressObjectField, buf[offset:], a.oid)
 
-	offset += n
-
-	_, err = proto.NestedStructureMarshal(addressObjectField, buf[offset:], a.oid)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (a *Address) StableSize() (size int) {
@@ -167,7 +148,6 @@ func (a *Address) StableSize() (size int) {
 	}
 
 	size += proto.NestedStructureSize(addressContainerField, a.cid)
-
 	size += proto.NestedStructureSize(addressObjectField, a.oid)
 
 	return size
@@ -177,9 +157,9 @@ func (a *Address) Unmarshal(data []byte) error {
 	return message.Unmarshal(a, data, new(refs.Address))
 }
 
-func (c *Checksum) StableMarshal(buf []byte) ([]byte, error) {
+func (c *Checksum) StableMarshal(buf []byte) []byte {
 	if c == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -191,7 +171,7 @@ func (c *Checksum) StableMarshal(buf []byte) ([]byte, error) {
 	offset += proto.EnumMarshal(checksumTypeField, buf[offset:], int32(c.typ))
 	proto.BytesMarshal(checksumValueField, buf[offset:], c.sum)
 
-	return buf, nil
+	return buf
 }
 
 func (c *Checksum) StableSize() (size int) {
@@ -209,9 +189,9 @@ func (c *Checksum) Unmarshal(data []byte) error {
 	return message.Unmarshal(c, data, new(refs.Checksum))
 }
 
-func (s *Signature) StableMarshal(buf []byte) ([]byte, error) {
+func (s *Signature) StableMarshal(buf []byte) []byte {
 	if s == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -224,7 +204,7 @@ func (s *Signature) StableMarshal(buf []byte) ([]byte, error) {
 	offset += proto.BytesMarshal(signatureValueField, buf[offset:], s.sign)
 	proto.EnumMarshal(signatureSchemeField, buf[offset:], int32(s.scheme))
 
-	return buf, nil
+	return buf
 }
 
 func (s *Signature) StableSize() (size int) {
@@ -243,9 +223,9 @@ func (s *Signature) Unmarshal(data []byte) error {
 	return message.Unmarshal(s, data, new(refs.Signature))
 }
 
-func (v *Version) StableMarshal(buf []byte) ([]byte, error) {
+func (v *Version) StableMarshal(buf []byte) []byte {
 	if v == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -257,7 +237,7 @@ func (v *Version) StableMarshal(buf []byte) ([]byte, error) {
 	offset += proto.UInt32Marshal(versionMajorField, buf[offset:], v.major)
 	proto.UInt32Marshal(versionMinorField, buf[offset:], v.minor)
 
-	return buf, nil
+	return buf
 }
 
 func (v *Version) StableSize() (size int) {
@@ -284,9 +264,9 @@ const (
 // StableMarshal marshals SubnetID to NeoFS API V2 binary format (Protocol Buffers with direct field order).
 //
 // Returns a slice of recorded data. Data is written to the provided buffer if there is enough space.
-func (s *SubnetID) StableMarshal(buf []byte) ([]byte, error) {
+func (s *SubnetID) StableMarshal(buf []byte) []byte {
 	if s == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -295,7 +275,7 @@ func (s *SubnetID) StableMarshal(buf []byte) ([]byte, error) {
 
 	proto.Fixed32Marshal(subnetIDValFNum, buf, s.value)
 
-	return buf, nil
+	return buf
 }
 
 // StableSize returns the number of bytes required to write SubnetID in NeoFS API V2 binary format (see StableMarshal).

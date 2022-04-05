@@ -61,30 +61,21 @@ const (
 	respVerifHeaderOriginField          = 4
 )
 
-func (c *CreateRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+func (c *CreateRequestBody) StableMarshal(buf []byte) []byte {
 	if c == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, c.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(createReqBodyOwnerField, buf[offset:], c.ownerID)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(createReqBodyOwnerField, buf[offset:], c.ownerID)
 	proto.UInt64Marshal(createReqBodyExpirationField, buf[offset:], c.expiration)
 
-	return buf, nil
+	return buf
 }
 
 func (c *CreateRequestBody) StableSize() (size int) {
@@ -102,9 +93,9 @@ func (c *CreateRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(c, data, new(session.CreateRequest_Body))
 }
 
-func (c *CreateResponseBody) StableMarshal(buf []byte) ([]byte, error) {
+func (c *CreateResponseBody) StableMarshal(buf []byte) []byte {
 	if c == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -116,7 +107,7 @@ func (c *CreateResponseBody) StableMarshal(buf []byte) ([]byte, error) {
 	offset += proto.BytesMarshal(createRespBodyIDField, buf[offset:], c.id)
 	proto.BytesMarshal(createRespBodyKeyField, buf[offset:], c.sessionKey)
 
-	return buf, nil
+	return buf
 }
 
 func (c *CreateResponseBody) StableSize() (size int) {
@@ -134,9 +125,9 @@ func (c *CreateResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(c, data, new(session.CreateResponse_Body))
 }
 
-func (x *XHeader) StableMarshal(buf []byte) ([]byte, error) {
+func (x *XHeader) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -148,7 +139,7 @@ func (x *XHeader) StableMarshal(buf []byte) ([]byte, error) {
 	offset += proto.StringMarshal(xheaderKeyField, buf[offset:], x.key)
 	proto.StringMarshal(xheaderValueField, buf[offset:], x.val)
 
-	return buf, nil
+	return buf
 }
 
 func (x *XHeader) StableSize() (size int) {
@@ -171,9 +162,9 @@ func (x *XHeader) Unmarshal(data []byte) error {
 	return x.FromGRPCMessage(m)
 }
 
-func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
+func (l *TokenLifetime) StableMarshal(buf []byte) []byte {
 	if l == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -186,7 +177,7 @@ func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
 	offset += proto.UInt64Marshal(lifetimeNotValidBeforeField, buf[offset:], l.nbf)
 	proto.UInt64Marshal(lifetimeIssuedAtField, buf[offset:], l.iat)
 
-	return buf, nil
+	return buf
 }
 
 func (l *TokenLifetime) StableSize() (size int) {
@@ -210,9 +201,9 @@ func (l *TokenLifetime) Unmarshal(data []byte) error {
 	return l.FromGRPCMessage(m)
 }
 
-func (c *ObjectSessionContext) StableMarshal(buf []byte) ([]byte, error) {
+func (c *ObjectSessionContext) StableMarshal(buf []byte) []byte {
 	if c == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -224,7 +215,7 @@ func (c *ObjectSessionContext) StableMarshal(buf []byte) ([]byte, error) {
 	offset += proto.EnumMarshal(objectCtxVerbField, buf[offset:], int32(c.verb))
 	proto.NestedStructureMarshal(objectCtxAddressField, buf[offset:], c.addr)
 
-	return buf, nil
+	return buf
 }
 
 func (c *ObjectSessionContext) StableSize() (size int) {
@@ -254,9 +245,9 @@ const (
 	cnrCtxCidFNum
 )
 
-func (x *ContainerSessionContext) StableMarshal(buf []byte) ([]byte, error) {
+func (x *ContainerSessionContext) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -269,7 +260,7 @@ func (x *ContainerSessionContext) StableMarshal(buf []byte) ([]byte, error) {
 	offset += proto.BoolMarshal(cnrCtxWildcardFNum, buf[offset:], x.wildcard)
 	proto.NestedStructureMarshal(cnrCtxCidFNum, buf[offset:], x.cid)
 
-	return buf, nil
+	return buf
 }
 
 func (x *ContainerSessionContext) StableSize() (size int) {
@@ -288,56 +279,34 @@ func (x *ContainerSessionContext) Unmarshal(data []byte) error {
 	return message.Unmarshal(x, data, new(session.ContainerSessionContext))
 }
 
-func (t *TokenBody) StableMarshal(buf []byte) ([]byte, error) {
+func (t *TokenBody) StableMarshal(buf []byte) []byte {
 	if t == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, t.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
 	offset += proto.BytesMarshal(sessionTokenBodyIDField, buf[offset:], t.id)
-
-	n, err = proto.NestedStructureMarshal(sessionTokenBodyOwnerField, buf[offset:], t.ownerID)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(sessionTokenBodyLifetimeField, buf[offset:], t.lifetime)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(sessionTokenBodyOwnerField, buf[offset:], t.ownerID)
+	offset += proto.NestedStructureMarshal(sessionTokenBodyLifetimeField, buf[offset:], t.lifetime)
 	offset += proto.BytesMarshal(sessionTokenBodyKeyField, buf[offset:], t.sessionKey)
 
 	if t.ctx != nil {
 		switch v := t.ctx.(type) {
 		case *ObjectSessionContext:
-			_, err = proto.NestedStructureMarshal(sessionTokenBodyObjectCtxField, buf[offset:], v)
-			if err != nil {
-				return nil, err
-			}
+			proto.NestedStructureMarshal(sessionTokenBodyObjectCtxField, buf[offset:], v)
 		case *ContainerSessionContext:
-			_, err = proto.NestedStructureMarshal(sessionTokenBodyCnrCtxField, buf[offset:], v)
-			if err != nil {
-				return nil, err
-			}
+			proto.NestedStructureMarshal(sessionTokenBodyCnrCtxField, buf[offset:], v)
 		default:
 			panic("cannot marshal unknown session token context")
 		}
 	}
 
-	return buf, nil
+	return buf
 }
 
 func (t *TokenBody) StableSize() (size int) {
@@ -373,33 +342,21 @@ func (t *TokenBody) Unmarshal(data []byte) error {
 	return t.FromGRPCMessage(m)
 }
 
-func (t *Token) StableMarshal(buf []byte) ([]byte, error) {
+func (t *Token) StableMarshal(buf []byte) []byte {
 	if t == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, t.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(sessionTokenBodyField, buf[offset:], t.body)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.NestedStructureMarshal(sessionTokenBodyField, buf[offset:], t.body)
+	proto.NestedStructureMarshal(sessionTokenSignatureField, buf[offset:], t.sig)
 
-	offset += n
-
-	_, err = proto.NestedStructureMarshal(sessionTokenSignatureField, buf[offset:], t.sig)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (t *Token) StableSize() (size int) {
@@ -422,63 +379,31 @@ func (t *Token) Unmarshal(data []byte) error {
 	return t.FromGRPCMessage(m)
 }
 
-func (r *RequestMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
+func (r *RequestMetaHeader) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(reqMetaHeaderVersionField, buf[offset:], r.version)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(reqMetaHeaderVersionField, buf[offset:], r.version)
 	offset += proto.UInt64Marshal(reqMetaHeaderEpochField, buf[offset:], r.epoch)
 	offset += proto.UInt32Marshal(reqMetaHeaderTTLField, buf[offset:], r.ttl)
 
 	for i := range r.xHeaders {
-		n, err = proto.NestedStructureMarshal(reqMetaHeaderXHeadersField, buf[offset:], &r.xHeaders[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += proto.NestedStructureMarshal(reqMetaHeaderXHeadersField, buf[offset:], &r.xHeaders[i])
 	}
 
-	n, err = proto.NestedStructureMarshal(reqMetaHeaderSessionTokenField, buf[offset:], r.sessionToken)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(reqMetaHeaderBearerTokenField, buf[offset:], r.bearerToken)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(reqMetaHeaderOriginField, buf[offset:], r.origin)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(reqMetaHeaderSessionTokenField, buf[offset:], r.sessionToken)
+	offset += proto.NestedStructureMarshal(reqMetaHeaderBearerTokenField, buf[offset:], r.bearerToken)
+	offset += proto.NestedStructureMarshal(reqMetaHeaderOriginField, buf[offset:], r.origin)
 	proto.UInt64Marshal(reqMetaHeaderNetMagicField, buf[offset:], r.netMagic)
 
-	return buf, nil
+	return buf
 }
 
 func (r *RequestMetaHeader) StableSize() (size int) {
@@ -514,47 +439,23 @@ func (r *RequestMetaHeader) Unmarshal(data []byte) error {
 	return r.FromGRPCMessage(m)
 }
 
-func (r *RequestVerificationHeader) StableMarshal(buf []byte) ([]byte, error) {
+func (r *RequestVerificationHeader) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(reqVerifHeaderBodySignatureField, buf[offset:], r.bodySig)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.NestedStructureMarshal(reqVerifHeaderBodySignatureField, buf[offset:], r.bodySig)
+	offset += proto.NestedStructureMarshal(reqVerifHeaderMetaSignatureField, buf[offset:], r.metaSig)
+	offset += proto.NestedStructureMarshal(reqVerifHeaderOriginSignatureField, buf[offset:], r.originSig)
+	proto.NestedStructureMarshal(reqVerifHeaderOriginField, buf[offset:], r.origin)
 
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(reqVerifHeaderMetaSignatureField, buf[offset:], r.metaSig)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(reqVerifHeaderOriginSignatureField, buf[offset:], r.originSig)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.NestedStructureMarshal(reqVerifHeaderOriginField, buf[offset:], r.origin)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (r *RequestVerificationHeader) StableSize() (size int) {
@@ -579,52 +480,29 @@ func (r *RequestVerificationHeader) Unmarshal(data []byte) error {
 	return r.FromGRPCMessage(m)
 }
 
-func (r *ResponseMetaHeader) StableMarshal(buf []byte) ([]byte, error) {
+func (r *ResponseMetaHeader) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(respMetaHeaderVersionField, buf[offset:], r.version)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(respMetaHeaderVersionField, buf[offset:], r.version)
 	offset += proto.UInt64Marshal(respMetaHeaderEpochField, buf[offset:], r.epoch)
 	offset += proto.UInt32Marshal(respMetaHeaderTTLField, buf[offset:], r.ttl)
 
 	for i := range r.xHeaders {
-		n, err = proto.NestedStructureMarshal(respMetaHeaderXHeadersField, buf[offset:], &r.xHeaders[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += proto.NestedStructureMarshal(respMetaHeaderXHeadersField, buf[offset:], &r.xHeaders[i])
 	}
 
-	n, err = proto.NestedStructureMarshal(respMetaHeaderOriginField, buf[offset:], r.origin)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.NestedStructureMarshal(respMetaHeaderOriginField, buf[offset:], r.origin)
+	proto.NestedStructureMarshal(respMetaHeaderStatusField, buf[offset:], r.status)
 
-	offset += n
-
-	_, err = proto.NestedStructureMarshal(respMetaHeaderStatusField, buf[offset:], r.status)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (r *ResponseMetaHeader) StableSize() (size int) {
@@ -658,47 +536,23 @@ func (r *ResponseMetaHeader) Unmarshal(data []byte) error {
 	return r.FromGRPCMessage(m)
 }
 
-func (r *ResponseVerificationHeader) StableMarshal(buf []byte) ([]byte, error) {
+func (r *ResponseVerificationHeader) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(respVerifHeaderBodySignatureField, buf[offset:], r.bodySig)
-	if err != nil {
-		return nil, err
-	}
+	offset += proto.NestedStructureMarshal(respVerifHeaderBodySignatureField, buf[offset:], r.bodySig)
+	offset += proto.NestedStructureMarshal(respVerifHeaderMetaSignatureField, buf[offset:], r.metaSig)
+	offset += proto.NestedStructureMarshal(respVerifHeaderOriginSignatureField, buf[offset:], r.originSig)
+	proto.NestedStructureMarshal(respVerifHeaderOriginField, buf[offset:], r.origin)
 
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(respVerifHeaderMetaSignatureField, buf[offset:], r.metaSig)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(respVerifHeaderOriginSignatureField, buf[offset:], r.originSig)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.NestedStructureMarshal(respVerifHeaderOriginField, buf[offset:], r.origin)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (r *ResponseVerificationHeader) StableSize() (size int) {

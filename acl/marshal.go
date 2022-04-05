@@ -38,44 +38,25 @@ const (
 
 // StableMarshal marshals unified acl table structure in a protobuf
 // compatible way without field order shuffle.
-func (t *Table) StableMarshal(buf []byte) ([]byte, error) {
+func (t *Table) StableMarshal(buf []byte) []byte {
 	if t == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, t.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.NestedStructureMarshal(tableVersionField, buf[offset:], t.version)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = protoutil.NestedStructureMarshal(tableContainerIDField, buf[offset:], t.cid)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
+	offset += protoutil.NestedStructureMarshal(tableVersionField, buf[offset:], t.version)
+	offset += protoutil.NestedStructureMarshal(tableContainerIDField, buf[offset:], t.cid)
 
 	for i := range t.records {
-		n, err = protoutil.NestedStructureMarshal(tableRecordsField, buf[offset:], &t.records[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += protoutil.NestedStructureMarshal(tableRecordsField, buf[offset:], &t.records[i])
 	}
 
-	return buf, nil
+	return buf
 }
 
 // StableSize of acl table structure marshalled by StableMarshal function.
@@ -100,42 +81,29 @@ func (t *Table) Unmarshal(data []byte) error {
 
 // StableMarshal marshals unified acl record structure in a protobuf
 // compatible way without field order shuffle.
-func (r *Record) StableMarshal(buf []byte) ([]byte, error) {
+func (r *Record) StableMarshal(buf []byte) []byte {
 	if r == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, r.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
 	offset += protoutil.EnumMarshal(recordOperationField, buf[offset:], int32(r.op))
 	offset += protoutil.EnumMarshal(recordActionField, buf[offset:], int32(r.action))
 
 	for i := range r.filters {
-		n, err = protoutil.NestedStructureMarshal(recordFiltersField, buf[offset:], &r.filters[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += protoutil.NestedStructureMarshal(recordFiltersField, buf[offset:], &r.filters[i])
 	}
 
 	for i := range r.targets {
-		n, err = protoutil.NestedStructureMarshal(recordTargetsField, buf[offset:], &r.targets[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += protoutil.NestedStructureMarshal(recordTargetsField, buf[offset:], &r.targets[i])
 	}
 
-	return buf, nil
+	return buf
 }
 
 // StableSize of acl record structure marshalled by StableMarshal function.
@@ -164,9 +132,9 @@ func (r *Record) Unmarshal(data []byte) error {
 
 // StableMarshal marshals unified header filter structure in a protobuf
 // compatible way without field order shuffle.
-func (f *HeaderFilter) StableMarshal(buf []byte) ([]byte, error) {
+func (f *HeaderFilter) StableMarshal(buf []byte) []byte {
 	if f == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -180,7 +148,7 @@ func (f *HeaderFilter) StableMarshal(buf []byte) ([]byte, error) {
 	offset += protoutil.StringMarshal(filterNameField, buf[offset:], f.key)
 	protoutil.StringMarshal(filterValueField, buf[offset:], f.value)
 
-	return buf, nil
+	return buf
 }
 
 // StableSize of header filter structure marshalled by StableMarshal function.
@@ -203,9 +171,9 @@ func (f *HeaderFilter) Unmarshal(data []byte) error {
 
 // StableMarshal marshals unified role info structure in a protobuf
 // compatible way without field order shuffle.
-func (t *Target) StableMarshal(buf []byte) ([]byte, error) {
+func (t *Target) StableMarshal(buf []byte) []byte {
 	if t == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -217,7 +185,7 @@ func (t *Target) StableMarshal(buf []byte) ([]byte, error) {
 	offset += protoutil.EnumMarshal(targetTypeField, buf[offset:], int32(t.role))
 	protoutil.RepeatedBytesMarshal(targetKeysField, buf[offset:], t.keys)
 
-	return buf, nil
+	return buf
 }
 
 // StableSize of role info structure marshalled by StableMarshal function.
@@ -236,9 +204,9 @@ func (t *Target) Unmarshal(data []byte) error {
 	return message.Unmarshal(t, data, new(acl.EACLRecord_Target))
 }
 
-func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
+func (l *TokenLifetime) StableMarshal(buf []byte) []byte {
 	if l == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -251,7 +219,7 @@ func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
 	offset += protoutil.UInt64Marshal(lifetimeNotValidBeforeField, buf[offset:], l.nbf)
 	protoutil.UInt64Marshal(lifetimeIssuedAtField, buf[offset:], l.iat)
 
-	return buf, nil
+	return buf
 }
 
 func (l *TokenLifetime) StableSize() (size int) {
@@ -270,40 +238,22 @@ func (l *TokenLifetime) Unmarshal(data []byte) error {
 	return message.Unmarshal(l, data, new(acl.BearerToken_Body_TokenLifetime))
 }
 
-func (bt *BearerTokenBody) StableMarshal(buf []byte) ([]byte, error) {
+func (bt *BearerTokenBody) StableMarshal(buf []byte) []byte {
 	if bt == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, bt.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.NestedStructureMarshal(bearerTokenBodyACLField, buf[offset:], bt.eacl)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.NestedStructureMarshal(bearerTokenBodyACLField, buf[offset:], bt.eacl)
+	offset += protoutil.NestedStructureMarshal(bearerTokenBodyOwnerField, buf[offset:], bt.ownerID)
+	protoutil.NestedStructureMarshal(bearerTokenBodyLifetimeField, buf[offset:], bt.lifetime)
 
-	offset += n
-
-	n, err = protoutil.NestedStructureMarshal(bearerTokenBodyOwnerField, buf[offset:], bt.ownerID)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = protoutil.NestedStructureMarshal(bearerTokenBodyLifetimeField, buf[offset:], bt.lifetime)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (bt *BearerTokenBody) StableSize() (size int) {
@@ -322,33 +272,21 @@ func (bt *BearerTokenBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(bt, data, new(acl.BearerToken_Body))
 }
 
-func (bt *BearerToken) StableMarshal(buf []byte) ([]byte, error) {
+func (bt *BearerToken) StableMarshal(buf []byte) []byte {
 	if bt == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, bt.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.NestedStructureMarshal(bearerTokenBodyField, buf[offset:], bt.body)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.NestedStructureMarshal(bearerTokenBodyField, buf[offset:], bt.body)
+	protoutil.NestedStructureMarshal(bearerTokenSignatureField, buf[offset:], bt.sig)
 
-	offset += n
-
-	_, err = protoutil.NestedStructureMarshal(bearerTokenSignatureField, buf[offset:], bt.sig)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (bt *BearerToken) StableSize() (size int) {
