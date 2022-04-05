@@ -16,37 +16,23 @@ const (
 
 // StableMarshal marshals unified storage group structure in a protobuf
 // compatible way without field order shuffle.
-func (s *StorageGroup) StableMarshal(buf []byte) ([]byte, error) {
+func (s *StorageGroup) StableMarshal(buf []byte) []byte {
 	if s == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, s.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
 	offset += proto.UInt64Marshal(sizeField, buf[offset:], s.size)
-
-	n, err = proto.NestedStructureMarshal(hashField, buf[offset:], s.hash)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(hashField, buf[offset:], s.hash)
 	offset += proto.UInt64Marshal(expirationField, buf[offset:], s.exp)
+	refs.ObjectIDNestedListMarshal(objectIDsField, buf[offset:], s.members)
 
-	_, err = refs.ObjectIDNestedListMarshal(objectIDsField, buf[offset:], s.members)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 // StableSize of storage group structure marshalled by StableMarshal function.

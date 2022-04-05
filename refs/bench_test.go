@@ -44,8 +44,8 @@ func benchmarkObjectIDSlice(b *testing.B, size int) {
 		b.ReportAllocs()
 		for i := 0; i < b.N; i++ {
 			buf := make([]byte, ObjectIDNestedListSize(1, ids))
-			_, err := ObjectIDNestedListMarshal(1, buf, ids)
-			if err != nil {
+			n := ObjectIDNestedListMarshal(1, buf, ids)
+			if n != len(buf) {
 				b.FailNow()
 			}
 		}

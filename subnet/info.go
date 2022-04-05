@@ -105,33 +105,21 @@ const (
 // StableMarshal marshals Info to NeoFS API V2 binary format (Protocol Buffers with direct field order).
 //
 // Returns a slice of recorded data. Data is written to the provided buffer if there is enough space.
-func (x *Info) StableMarshal(buf []byte) ([]byte, error) {
+func (x *Info) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, x.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.NestedStructureMarshal(subnetInfoIDFNum, buf[offset:], x.id)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.NestedStructureMarshal(subnetInfoIDFNum, buf[offset:], x.id)
+	protoutil.NestedStructureMarshal(subnetInfoOwnerFNum, buf[offset:], x.owner)
 
-	offset += n
-
-	_, err = protoutil.NestedStructureMarshal(subnetInfoOwnerFNum, buf[offset:], x.owner)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 // StableSize returns the number of bytes required to write Info in NeoFS API V2 binary format (see StableMarshal).

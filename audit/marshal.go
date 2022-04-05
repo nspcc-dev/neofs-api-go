@@ -27,62 +27,33 @@ const (
 
 // StableMarshal marshals unified DataAuditResult structure into a protobuf
 // binary format without field order shuffle.
-func (a *DataAuditResult) StableMarshal(buf []byte) ([]byte, error) {
+func (a *DataAuditResult) StableMarshal(buf []byte) []byte {
 	if a == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, a.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = proto.NestedStructureMarshal(versionFNum, buf[offset:], a.version)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(versionFNum, buf[offset:], a.version)
 	offset += proto.Fixed64Marshal(auditEpochFNum, buf[offset:], a.auditEpoch)
-
-	n, err = proto.NestedStructureMarshal(cidFNum, buf[offset:], a.cid)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += proto.NestedStructureMarshal(cidFNum, buf[offset:], a.cid)
 	offset += proto.BytesMarshal(pubKeyFNum, buf[offset:], a.pubKey)
 	offset += proto.BoolMarshal(completeFNum, buf[offset:], a.complete)
 	offset += proto.UInt32Marshal(requestsFNum, buf[offset:], a.requests)
 	offset += proto.UInt32Marshal(retriesFNum, buf[offset:], a.retries)
-
-	n, err = refs.ObjectIDNestedListMarshal(passSGFNum, buf[offset:], a.passSG)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = refs.ObjectIDNestedListMarshal(failSGFNum, buf[offset:], a.failSG)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += refs.ObjectIDNestedListMarshal(passSGFNum, buf[offset:], a.passSG)
+	offset += refs.ObjectIDNestedListMarshal(failSGFNum, buf[offset:], a.failSG)
 	offset += proto.UInt32Marshal(hitFNum, buf[offset:], a.hit)
 	offset += proto.UInt32Marshal(missFNum, buf[offset:], a.miss)
 	offset += proto.UInt32Marshal(failFNum, buf[offset:], a.fail)
 	offset += proto.RepeatedBytesMarshal(passNodesFNum, buf[offset:], a.passNodes)
 	proto.RepeatedBytesMarshal(failNodesFNum, buf[offset:], a.failNodes)
 
-	return buf, nil
+	return buf
 }
 
 // StableSize returns byte length of DataAuditResult structure

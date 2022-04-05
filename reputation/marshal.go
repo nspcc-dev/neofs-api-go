@@ -11,9 +11,9 @@ const (
 	peerIDPubKeyFNum
 )
 
-func (x *PeerID) StableMarshal(buf []byte) ([]byte, error) {
+func (x *PeerID) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
@@ -22,7 +22,7 @@ func (x *PeerID) StableMarshal(buf []byte) ([]byte, error) {
 
 	protoutil.BytesMarshal(peerIDPubKeyFNum, buf, x.publicKey)
 
-	return buf, nil
+	return buf
 }
 
 func (x *PeerID) StableSize() (size int) {
@@ -41,30 +41,21 @@ const (
 	trustValueFNum
 )
 
-func (x *Trust) StableMarshal(buf []byte) ([]byte, error) {
+func (x *Trust) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, x.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
-	n, err = protoutil.NestedStructureMarshal(trustPeerFNum, buf[offset:], x.peer)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
+	offset += protoutil.NestedStructureMarshal(trustPeerFNum, buf[offset:], x.peer)
 	protoutil.Float64Marshal(trustValueFNum, buf[offset:], x.val)
 
-	return buf, nil
+	return buf
 }
 
 func (x *Trust) StableSize() (size int) {
@@ -84,26 +75,21 @@ const (
 	p2pTrustValueFNum
 )
 
-func (x *PeerToPeerTrust) StableMarshal(buf []byte) ([]byte, error) {
+func (x *PeerToPeerTrust) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, x.StableSize())
 	}
 
-	offset, err := protoutil.NestedStructureMarshal(p2pTrustTrustingFNum, buf, x.trusting)
-	if err != nil {
-		return nil, err
-	}
+	var offset int
 
-	_, err = protoutil.NestedStructureMarshal(p2pTrustValueFNum, buf[offset:], x.trust)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.NestedStructureMarshal(p2pTrustTrustingFNum, buf, x.trusting)
+	protoutil.NestedStructureMarshal(p2pTrustValueFNum, buf[offset:], x.trust)
 
-	return buf, nil
+	return buf
 }
 
 func (x *PeerToPeerTrust) StableSize() (size int) {
@@ -123,26 +109,21 @@ const (
 	globalTrustBodyValueFNum
 )
 
-func (x *GlobalTrustBody) StableMarshal(buf []byte) ([]byte, error) {
+func (x *GlobalTrustBody) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, x.StableSize())
 	}
 
-	offset, err := protoutil.NestedStructureMarshal(globalTrustBodyManagerFNum, buf, x.manager)
-	if err != nil {
-		return nil, err
-	}
+	var offset int
 
-	_, err = protoutil.NestedStructureMarshal(globalTrustBodyValueFNum, buf[offset:], x.trust)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.NestedStructureMarshal(globalTrustBodyManagerFNum, buf, x.manager)
+	protoutil.NestedStructureMarshal(globalTrustBodyValueFNum, buf[offset:], x.trust)
 
-	return buf, nil
+	return buf
 }
 
 func (x *GlobalTrustBody) StableSize() (size int) {
@@ -163,33 +144,22 @@ const (
 	globalTrustSigFNum
 )
 
-func (x *GlobalTrust) StableMarshal(buf []byte) ([]byte, error) {
+func (x *GlobalTrust) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, x.StableSize())
 	}
 
-	offset, err := protoutil.NestedStructureMarshal(globalTrustVersionFNum, buf, x.version)
-	if err != nil {
-		return nil, err
-	}
+	var offset int
 
-	n, err := protoutil.NestedStructureMarshal(globalTrustBodyFNum, buf[offset:], x.body)
-	if err != nil {
-		return nil, err
-	}
+	offset += protoutil.NestedStructureMarshal(globalTrustVersionFNum, buf, x.version)
+	offset += protoutil.NestedStructureMarshal(globalTrustBodyFNum, buf[offset:], x.body)
+	protoutil.NestedStructureMarshal(globalTrustSigFNum, buf[offset:], x.sig)
 
-	offset += n
-
-	_, err = protoutil.NestedStructureMarshal(globalTrustSigFNum, buf[offset:], x.sig)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (x *GlobalTrust) StableSize() (size int) {
@@ -210,32 +180,24 @@ const (
 	announceLocalTrustBodyTrustsFNum
 )
 
-func (x *AnnounceLocalTrustRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+func (x *AnnounceLocalTrustRequestBody) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, x.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	var offset int
 
 	offset += protoutil.UInt64Marshal(announceLocalTrustBodyEpochFNum, buf[offset:], x.epoch)
 
 	for i := range x.trusts {
-		n, err = protoutil.NestedStructureMarshal(announceLocalTrustBodyTrustsFNum, buf[offset:], &x.trusts[i])
-		if err != nil {
-			return nil, err
-		}
-
-		offset += n
+		offset += protoutil.NestedStructureMarshal(announceLocalTrustBodyTrustsFNum, buf[offset:], &x.trusts[i])
 	}
 
-	return buf, nil
+	return buf
 }
 
 func (x *AnnounceLocalTrustRequestBody) StableSize() (size int) {
@@ -252,8 +214,8 @@ func (x *AnnounceLocalTrustRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(x, data, new(reputation.AnnounceLocalTrustRequest_Body))
 }
 
-func (x *AnnounceLocalTrustResponseBody) StableMarshal(buf []byte) ([]byte, error) {
-	return buf, nil
+func (x *AnnounceLocalTrustResponseBody) StableMarshal(buf []byte) []byte {
+	return buf
 }
 
 func (x *AnnounceLocalTrustResponseBody) StableSize() int {
@@ -271,29 +233,22 @@ const (
 	announceInterResBodyTrustFNum
 )
 
-func (x *AnnounceIntermediateResultRequestBody) StableMarshal(buf []byte) ([]byte, error) {
+func (x *AnnounceIntermediateResultRequestBody) StableMarshal(buf []byte) []byte {
 	if x == nil {
-		return []byte{}, nil
+		return []byte{}
 	}
 
 	if buf == nil {
 		buf = make([]byte, x.StableSize())
 	}
 
-	var (
-		offset int
-		err    error
-	)
+	var offset int
 
 	offset += protoutil.UInt64Marshal(announceInterResBodyEpochFNum, buf, x.epoch)
 	offset += protoutil.UInt32Marshal(announceInterResBodyIterFNum, buf[offset:], x.iter)
+	protoutil.NestedStructureMarshal(announceInterResBodyTrustFNum, buf[offset:], x.trust)
 
-	_, err = protoutil.NestedStructureMarshal(announceInterResBodyTrustFNum, buf[offset:], x.trust)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
+	return buf
 }
 
 func (x *AnnounceIntermediateResultRequestBody) StableSize() (size int) {
@@ -308,8 +263,8 @@ func (x *AnnounceIntermediateResultRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(x, data, new(reputation.AnnounceIntermediateResultRequest_Body))
 }
 
-func (x *AnnounceIntermediateResultResponseBody) StableMarshal(buf []byte) ([]byte, error) {
-	return buf, nil
+func (x *AnnounceIntermediateResultResponseBody) StableMarshal(buf []byte) []byte {
+	return buf
 }
 
 func (x *AnnounceIntermediateResultResponseBody) StableSize() int {

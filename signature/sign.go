@@ -28,7 +28,7 @@ type serviceResponse interface {
 }
 
 type stableMarshaler interface {
-	StableMarshal([]byte) ([]byte, error)
+	StableMarshal([]byte) []byte
 	StableSize() int
 }
 
@@ -117,7 +117,7 @@ func (r *responseVerificationHeader) setOrigin(m stableMarshaler) {
 
 func (s StableMarshalerWrapper) ReadSignedData(buf []byte) ([]byte, error) {
 	if s.SM != nil {
-		return s.SM.StableMarshal(buf)
+		return s.SM.StableMarshal(buf), nil
 	}
 
 	return nil, nil
