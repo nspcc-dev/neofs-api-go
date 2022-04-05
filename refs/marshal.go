@@ -1,6 +1,8 @@
 package refs
 
 import (
+	"encoding/binary"
+
 	refs "github.com/nspcc-dev/neofs-api-go/v2/refs/grpc"
 	"github.com/nspcc-dev/neofs-api-go/v2/rpc/message"
 	"github.com/nspcc-dev/neofs-api-go/v2/util/proto"
@@ -114,8 +116,13 @@ func (o *ObjectID) StableSize() int {
 // ObjectIDNestedListMarshal writes protobuf repeated ObjectID field
 // with fNum number to buf.
 func ObjectIDNestedListMarshal(fNum int64, buf []byte, ids []ObjectID) (off int) {
+	prefix, _ := proto.NestedStructurePrefix(fNum)
 	for i := range ids {
-		off += proto.NestedStructureMarshal(fNum, buf[off:], &ids[i])
+		off += binary.PutUvarint(buf, prefix)
+
+		n := ids[i].StableSize()
+		off += binary.PutUvarint(buf[off:], uint64(n))
+		off += proto.BytesMarshal(objectIDValField, buf, ids[i].val)
 	}
 
 	return
