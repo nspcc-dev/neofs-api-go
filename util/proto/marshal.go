@@ -286,7 +286,7 @@ func RepeatedInt32Size(field int, v []int32) (size, arraySize int) {
 	return RepeatedUInt64Size(field, convert)
 }
 
-// varUIntSize returns length of varint byte sequence for uint64 value 'x'.
+// VarUIntSize returns length of varint byte sequence for uint64 value 'x'.
 func VarUIntSize(x uint64) int {
 	return (bits.Len64(x|1) + 6) / 7
 }
