@@ -155,33 +155,6 @@ func (c *CreateResponse) FromGRPCMessage(m grpc.Message) error {
 	return c.ResponseHeaders.FromMessage(v)
 }
 
-func (l *TokenLifetime) ToGRPCMessage() grpc.Message {
-	var m *session.SessionToken_Body_TokenLifetime
-
-	if l != nil {
-		m = new(session.SessionToken_Body_TokenLifetime)
-
-		m.SetExp(l.exp)
-		m.SetIat(l.iat)
-		m.SetNbf(l.nbf)
-	}
-
-	return m
-}
-
-func (l *TokenLifetime) FromGRPCMessage(m grpc.Message) error {
-	v, ok := m.(*session.SessionToken_Body_TokenLifetime)
-	if !ok {
-		return message.NewUnexpectedMessageType(m, v)
-	}
-
-	l.exp = v.GetExp()
-	l.iat = v.GetIat()
-	l.nbf = v.GetNbf()
-
-	return nil
-}
-
 func (x *XHeader) ToGRPCMessage() grpc.Message {
 	var m *session.XHeader
 
@@ -242,7 +215,31 @@ func (t *Token) ToGRPCMessage() grpc.Message {
 	if t != nil {
 		m = new(session.SessionToken)
 
-		m.SetBody(t.body.ToGRPCMessage().(*session.SessionToken_Body))
+		body := new(session.SessionToken_Body)
+
+		switch typ := t.ctx.(type) {
+		default:
+			panic(fmt.Sprintf("unexpected session context %T", typ))
+		case nil:
+			body.Context = nil
+		case ObjectSessionContext:
+			body.SetObjectSessionContext(typ.ToGRPCMessage().(*session.ObjectSessionContext))
+		case ContainerSessionContext:
+			body.SetContainerSessionContext(typ.ToGRPCMessage().(*session.ContainerSessionContext))
+		}
+
+		body.SetOwnerId(t.ownerID.ToGRPCMessage().(*refsGRPC.OwnerID))
+		body.SetId(t.id)
+		body.SetSessionKey(t.sessionKey)
+
+		lt := new(session.SessionToken_Body_TokenLifetime)
+		lt.SetIat(t.iat)
+		lt.SetExp(t.exp)
+		lt.SetNbf(t.nbf)
+
+		body.SetLifetime(lt)
+
+		m.SetBody(body)
 		m.SetSignature(t.sig.ToGRPCMessage().(*refsGRPC.Signature))
 	}
 
@@ -258,31 +255,53 @@ func (t *Token) FromGRPCMessage(m grpc.Message) error {
 	var err error
 
 	body := v.GetBody()
-	if body == nil {
-		t.body = nil
-	} else {
-		if t.body == nil {
-			t.body = new(TokenBody)
+
+	switch val := body.GetContext().(type) {
+	default:
+		panic(fmt.Sprintf("unexpected session context %T", val))
+	case nil:
+		t.ctx = nil
+	case *session.SessionToken_Body_Object:
+		var ctx ObjectSessionContext
+
+		if val != nil {
+			err = ctx.FromGRPCMessage(val.Object)
+			if err != nil {
+				return fmt.Errorf("convert object session context: %w", err)
+			}
 		}
 
-		err = t.body.FromGRPCMessage(body)
-		if err != nil {
-			return err
+		t.ctx = ctx
+	case *session.SessionToken_Body_Container:
+		var ctx ContainerSessionContext
+
+		if val != nil {
+			err = ctx.FromGRPCMessage(val.Container)
+			if err != nil {
+				return fmt.Errorf("convert container session context: %w", err)
+			}
 		}
+
+		t.ctx = ctx
 	}
 
-	sig := v.GetSignature()
-	if sig == nil {
-		t.sig = nil
-	} else {
-		if t.sig == nil {
-			t.sig = new(refs.Signature)
-		}
+	err = t.ownerID.FromGRPCMessage(body.GetOwnerId())
+	if err != nil {
+		return fmt.Errorf("convert session owner: %w", err)
+	}
 
-		err = t.sig.FromGRPCMessage(sig)
-		if err != nil {
-			return err
-		}
+	lt := body.GetLifetime()
+
+	t.exp = lt.GetExp()
+	t.iat = lt.GetIat()
+	t.nbf = lt.GetNbf()
+
+	t.id = body.GetId()
+	t.sessionKey = body.GetSessionKey()
+
+	err = t.sig.FromGRPCMessage(v.GetSignature())
+	if err != nil {
+		return fmt.Errorf("convert session token signature: %w", err)
 	}
 
 	return nil
@@ -703,102 +722,6 @@ func (c *ObjectSessionContext) FromGRPCMessage(m grpc.Message) error {
 	}
 
 	c.verb = ObjectSessionVerbFromGRPCField(v.GetVerb())
-
-	return nil
-}
-
-func (t *TokenBody) ToGRPCMessage() grpc.Message {
-	var m *session.SessionToken_Body
-
-	if t != nil {
-		m = new(session.SessionToken_Body)
-
-		switch typ := t.ctx.(type) {
-		default:
-			panic(fmt.Sprintf("unknown session context %T", typ))
-		case nil:
-			m.Context = nil
-		case *ObjectSessionContext:
-			m.SetObjectSessionContext(typ.ToGRPCMessage().(*session.ObjectSessionContext))
-		case *ContainerSessionContext:
-			m.SetContainerSessionContext(typ.ToGRPCMessage().(*session.ContainerSessionContext))
-		}
-
-		m.SetOwnerId(t.ownerID.ToGRPCMessage().(*refsGRPC.OwnerID))
-		m.SetId(t.id)
-		m.SetSessionKey(t.sessionKey)
-		m.SetLifetime(t.lifetime.ToGRPCMessage().(*session.SessionToken_Body_TokenLifetime))
-	}
-
-	return m
-}
-
-func (t *TokenBody) FromGRPCMessage(m grpc.Message) error {
-	v, ok := m.(*session.SessionToken_Body)
-	if !ok {
-		return message.NewUnexpectedMessageType(m, v)
-	}
-
-	var err error
-
-	t.ctx = nil
-
-	switch val := v.GetContext().(type) {
-	default:
-		err = fmt.Errorf("unknown session context %T", val)
-	case nil:
-	case *session.SessionToken_Body_Object:
-		ctx, ok := t.ctx.(*ObjectSessionContext)
-		if !ok {
-			ctx = new(ObjectSessionContext)
-			t.ctx = ctx
-		}
-
-		err = ctx.FromGRPCMessage(val.Object)
-	case *session.SessionToken_Body_Container:
-		ctx, ok := t.ctx.(*ContainerSessionContext)
-		if !ok {
-			ctx = new(ContainerSessionContext)
-			t.ctx = ctx
-		}
-
-		err = ctx.FromGRPCMessage(val.Container)
-	}
-
-	if err != nil {
-		return err
-	}
-
-	ownerID := v.GetOwnerId()
-	if ownerID == nil {
-		t.ownerID = nil
-	} else {
-		if t.ownerID == nil {
-			t.ownerID = new(refs.OwnerID)
-		}
-
-		err = t.ownerID.FromGRPCMessage(ownerID)
-		if err != nil {
-			return err
-		}
-	}
-
-	lifetime := v.GetLifetime()
-	if lifetime == nil {
-		t.lifetime = nil
-	} else {
-		if t.lifetime == nil {
-			t.lifetime = new(TokenLifetime)
-		}
-
-		err = t.lifetime.FromGRPCMessage(lifetime)
-		if err != nil {
-			return err
-		}
-	}
-
-	t.id = v.GetId()
-	t.sessionKey = v.GetSessionKey()
 
 	return nil
 }

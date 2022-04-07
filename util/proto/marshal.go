@@ -8,6 +8,7 @@ package proto
 
 import (
 	"encoding/binary"
+	"fmt"
 	"math"
 	"math/bits"
 	"reflect"
@@ -306,23 +307,37 @@ func NestedStructurePrefix(field int64) (prefix uint64, ln int) {
 	return prefix, VarUIntSize(prefix)
 }
 
+func MarshalNestedFunc(buf []byte, field int64, fSize func() int, fMarshal func([]byte)) int {
+	prefix, _ := NestedStructurePrefix(field)
+	offset := binary.PutUvarint(buf, prefix)
+
+	n := fSize()
+	offset += binary.PutUvarint(buf[offset:], uint64(n))
+
+	fMarshal(buf[offset:])
+
+	return offset + n
+}
+
 func NestedStructureMarshal(field int64, buf []byte, v stableMarshaller) (int, error) {
 	if v == nil || reflect.ValueOf(v).IsNil() {
 		return 0, nil
 	}
 
-	prefix, _ := NestedStructurePrefix(field)
-	offset := binary.PutUvarint(buf, prefix)
+	return MarshalNestedFunc(buf, field, v.StableSize, func(buf []byte) {
+		_, err := v.StableMarshal(buf)
+		if err != nil {
+			panic(fmt.Sprintf("unexpected error from StableMarshal: %v", err))
+		}
+	}), nil
+}
 
-	n := v.StableSize()
-	offset += binary.PutUvarint(buf[offset:], uint64(n))
+func NestedSizeFunc(field int64, f func() int) (size int) {
+	_, ln := NestedStructurePrefix(field)
+	n := f()
+	size = ln + VarUIntSize(uint64(n)) + n
 
-	_, err := v.StableMarshal(buf[offset:])
-	if err != nil {
-		return 0, err
-	}
-
-	return offset + n, nil
+	return size
 }
 
 func NestedStructureSize(field int64, v stableMarshaller) (size int) {
@@ -330,11 +345,7 @@ func NestedStructureSize(field int64, v stableMarshaller) (size int) {
 		return 0
 	}
 
-	_, ln := NestedStructurePrefix(field)
-	n := v.StableSize()
-	size = ln + VarUIntSize(uint64(n)) + n
-
-	return size
+	return NestedSizeFunc(field, v.StableSize)
 }
 
 func Fixed64Marshal(field int, buf []byte, v uint64) (int, error) {

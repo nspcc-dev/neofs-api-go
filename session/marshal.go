@@ -198,63 +198,6 @@ func (x *XHeader) Unmarshal(data []byte) error {
 	return x.FromGRPCMessage(m)
 }
 
-func (l *TokenLifetime) StableMarshal(buf []byte) ([]byte, error) {
-	if l == nil {
-		return []byte{}, nil
-	}
-
-	if buf == nil {
-		buf = make([]byte, l.StableSize())
-	}
-
-	var (
-		offset, n int
-		err       error
-	)
-
-	n, err = proto.UInt64Marshal(lifetimeExpirationField, buf[offset:], l.exp)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.UInt64Marshal(lifetimeNotValidBeforeField, buf[offset:], l.nbf)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.UInt64Marshal(lifetimeIssuedAtField, buf[offset:], l.iat)
-	if err != nil {
-		return nil, err
-	}
-
-	return buf, nil
-}
-
-func (l *TokenLifetime) StableSize() (size int) {
-	if l == nil {
-		return 0
-	}
-
-	size += proto.UInt64Size(lifetimeExpirationField, l.exp)
-	size += proto.UInt64Size(lifetimeNotValidBeforeField, l.nbf)
-	size += proto.UInt64Size(lifetimeIssuedAtField, l.iat)
-
-	return size
-}
-
-func (l *TokenLifetime) Unmarshal(data []byte) error {
-	m := new(session.SessionToken_Body_TokenLifetime)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	return l.FromGRPCMessage(m)
-}
-
 func (c *ObjectSessionContext) StableMarshal(buf []byte) ([]byte, error) {
 	if c == nil {
 		return []byte{}, nil
@@ -363,123 +306,14 @@ func (x *ContainerSessionContext) Unmarshal(data []byte) error {
 	return message.Unmarshal(x, data, new(session.ContainerSessionContext))
 }
 
-func (t *TokenBody) StableMarshal(buf []byte) ([]byte, error) {
-	if t == nil {
-		return []byte{}, nil
-	}
-
+func (t Token) StableMarshal(buf []byte) ([]byte, error) {
 	if buf == nil {
 		buf = make([]byte, t.StableSize())
 	}
 
-	var (
-		offset, n int
-		err       error
-	)
+	offset := proto.MarshalNestedFunc(buf, sessionTokenBodyField, t.bodySize, t.marshalBodyTo)
 
-	n, err = proto.BytesMarshal(sessionTokenBodyIDField, buf[offset:], t.id)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(sessionTokenBodyOwnerField, buf[offset:], t.ownerID)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.NestedStructureMarshal(sessionTokenBodyLifetimeField, buf[offset:], t.lifetime)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	n, err = proto.BytesMarshal(sessionTokenBodyKeyField, buf[offset:], t.sessionKey)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	if t.ctx != nil {
-		switch v := t.ctx.(type) {
-		case *ObjectSessionContext:
-			_, err = proto.NestedStructureMarshal(sessionTokenBodyObjectCtxField, buf[offset:], v)
-			if err != nil {
-				return nil, err
-			}
-		case *ContainerSessionContext:
-			_, err = proto.NestedStructureMarshal(sessionTokenBodyCnrCtxField, buf[offset:], v)
-			if err != nil {
-				return nil, err
-			}
-		default:
-			panic("cannot marshal unknown session token context")
-		}
-	}
-
-	return buf, nil
-}
-
-func (t *TokenBody) StableSize() (size int) {
-	if t == nil {
-		return 0
-	}
-
-	size += proto.BytesSize(sessionTokenBodyIDField, t.id)
-	size += proto.NestedStructureSize(sessionTokenBodyOwnerField, t.ownerID)
-	size += proto.NestedStructureSize(sessionTokenBodyLifetimeField, t.lifetime)
-	size += proto.BytesSize(sessionTokenBodyKeyField, t.sessionKey)
-
-	if t.ctx != nil {
-		switch v := t.ctx.(type) {
-		case *ObjectSessionContext:
-			size += proto.NestedStructureSize(sessionTokenBodyObjectCtxField, v)
-		case *ContainerSessionContext:
-			size += proto.NestedStructureSize(sessionTokenBodyCnrCtxField, v)
-		default:
-			panic("cannot marshal unknown session token context")
-		}
-	}
-
-	return size
-}
-
-func (t *TokenBody) Unmarshal(data []byte) error {
-	m := new(session.SessionToken_Body)
-	if err := goproto.Unmarshal(data, m); err != nil {
-		return err
-	}
-
-	return t.FromGRPCMessage(m)
-}
-
-func (t *Token) StableMarshal(buf []byte) ([]byte, error) {
-	if t == nil {
-		return []byte{}, nil
-	}
-
-	if buf == nil {
-		buf = make([]byte, t.StableSize())
-	}
-
-	var (
-		offset, n int
-		err       error
-	)
-
-	n, err = proto.NestedStructureMarshal(sessionTokenBodyField, buf[offset:], t.body)
-	if err != nil {
-		return nil, err
-	}
-
-	offset += n
-
-	_, err = proto.NestedStructureMarshal(sessionTokenSignatureField, buf[offset:], t.sig)
+	_, err := proto.NestedStructureMarshal(sessionTokenSignatureField, buf[offset:], &t.sig)
 	if err != nil {
 		return nil, err
 	}
@@ -492,10 +326,103 @@ func (t *Token) StableSize() (size int) {
 		return 0
 	}
 
-	size += proto.NestedStructureSize(sessionTokenBodyField, t.body)
-	size += proto.NestedStructureSize(sessionTokenSignatureField, t.sig)
+	size += proto.NestedSizeFunc(sessionTokenBodyField, t.bodySize)
+	size += proto.NestedStructureSize(sessionTokenSignatureField, &t.sig)
 
 	return size
+}
+
+func (t Token) bodySize() (size int) {
+	size += proto.BytesSize(sessionTokenBodyIDField, t.id)
+	size += proto.NestedStructureSize(sessionTokenBodyOwnerField, &t.ownerID)
+	size += proto.NestedSizeFunc(sessionTokenBodyLifetimeField, t.lifetimeSize)
+	size += proto.BytesSize(sessionTokenBodyKeyField, t.sessionKey)
+
+	if t.ctx != nil {
+		switch v := t.ctx.(type) {
+		case ObjectSessionContext:
+			size += proto.NestedStructureSize(sessionTokenBodyObjectCtxField, &v)
+		case ContainerSessionContext:
+			size += proto.NestedStructureSize(sessionTokenBodyCnrCtxField, &v)
+		default:
+			panic("cannot marshal unknown session token context")
+		}
+	}
+
+	return
+}
+
+func (t Token) lifetimeSize() (size int) {
+	size += proto.UInt64Size(lifetimeExpirationField, t.exp)
+	size += proto.UInt64Size(lifetimeNotValidBeforeField, t.nbf)
+	size += proto.UInt64Size(lifetimeIssuedAtField, t.iat)
+
+	return
+}
+
+func (t Token) marshalBodyTo(buf []byte) {
+	offset, err := proto.BytesMarshal(sessionTokenBodyIDField, buf, t.id)
+	if err != nil {
+		panic(err)
+	}
+
+	n, err := proto.NestedStructureMarshal(sessionTokenBodyOwnerField, buf[offset:], &t.ownerID)
+	if err != nil {
+		panic(err)
+	}
+
+	offset += n
+
+	n = proto.MarshalNestedFunc(buf[offset:], sessionTokenBodyLifetimeField, t.lifetimeSize, func(buf []byte) {
+		offset, err := proto.UInt64Marshal(lifetimeExpirationField, buf, t.exp)
+		if err != nil {
+			panic(err)
+		}
+
+		n, err := proto.UInt64Marshal(lifetimeNotValidBeforeField, buf[offset:], t.nbf)
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = proto.UInt64Marshal(lifetimeIssuedAtField, buf[offset+n:], t.iat)
+		if err != nil {
+			panic(err)
+		}
+	})
+
+	offset += n
+
+	n, err = proto.BytesMarshal(sessionTokenBodyKeyField, buf[offset:], t.sessionKey)
+	if err != nil {
+		panic(err)
+	}
+
+	offset += n
+
+	if t.ctx != nil {
+		switch v := t.ctx.(type) {
+		case ObjectSessionContext:
+			_, err = proto.NestedStructureMarshal(sessionTokenBodyObjectCtxField, buf[offset:], &v)
+			if err != nil {
+				panic(err)
+			}
+		case ContainerSessionContext:
+			_, err = proto.NestedStructureMarshal(sessionTokenBodyCnrCtxField, buf[offset:], &v)
+			if err != nil {
+				panic(err)
+			}
+		default:
+			panic("cannot marshal unknown session token context")
+		}
+	}
+}
+
+func (t Token) marshalBody() []byte {
+	data := make([]byte, t.bodySize())
+
+	t.marshalBodyTo(data)
+
+	return data
 }
 
 func (t *Token) Unmarshal(data []byte) error {

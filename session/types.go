@@ -34,10 +34,6 @@ type XHeader struct {
 	key, val string
 }
 
-type TokenLifetime struct {
-	exp, nbf, iat uint64
-}
-
 type ObjectSessionVerb uint32
 
 type ObjectSessionContext struct {
@@ -46,39 +42,23 @@ type ObjectSessionContext struct {
 	addr *refs.Address
 }
 
-type TokenContext interface {
+type tokenContext interface {
 	sessionTokenContext()
 }
 
-// Deprecated: use TokenContext instead.
-//nolint:revive
-type SessionTokenContext = TokenContext
+type Token struct {
+	exp, nbf, iat uint64
 
-type TokenBody struct {
+	ownerID refs.OwnerID
+
+	sig refs.Signature
+
+	ctx tokenContext
+
 	id []byte
 
-	ownerID *refs.OwnerID
-
-	lifetime *TokenLifetime
-
 	sessionKey []byte
-
-	ctx TokenContext
 }
-
-// Deprecated: use TokenBody instead.
-//nolint:revive
-type SessionTokenBody = TokenBody
-
-type Token struct {
-	body *TokenBody
-
-	sig *refs.Signature
-}
-
-// Deprecated: use Token instead.
-//nolint:revive
-type SessionToken = Token
 
 type RequestVerificationHeader struct {
 	bodySig, metaSig, originSig *refs.Signature
@@ -425,42 +405,6 @@ func (r *RequestMetaHeader) SetNetworkMagic(v uint64) {
 	r.netMagic = v
 }
 
-func (l *TokenLifetime) GetExp() uint64 {
-	if l != nil {
-		return l.exp
-	}
-
-	return 0
-}
-
-func (l *TokenLifetime) SetExp(v uint64) {
-	l.exp = v
-}
-
-func (l *TokenLifetime) GetNbf() uint64 {
-	if l != nil {
-		return l.nbf
-	}
-
-	return 0
-}
-
-func (l *TokenLifetime) SetNbf(v uint64) {
-	l.nbf = v
-}
-
-func (l *TokenLifetime) GetIat() uint64 {
-	if l != nil {
-		return l.iat
-	}
-
-	return 0
-}
-
-func (l *TokenLifetime) SetIat(v uint64) {
-	l.iat = v
-}
-
 func (r *ResponseVerificationHeader) GetBodySignature() *refs.Signature {
 	if r != nil {
 		return r.bodySig
@@ -600,7 +544,7 @@ func SetStatus(msg interface {
 	meta.SetStatus(st)
 }
 
-func (c *ObjectSessionContext) sessionTokenContext() {}
+func (c ObjectSessionContext) sessionTokenContext() {}
 
 func (c *ObjectSessionContext) GetVerb() ObjectSessionVerb {
 	if c != nil {
@@ -626,88 +570,111 @@ func (c *ObjectSessionContext) SetAddress(v *refs.Address) {
 	c.addr = v
 }
 
-func (t *TokenBody) GetID() []byte {
-	if t != nil {
-		return t.id
-	}
-
-	return nil
+func (t Token) GetID() []byte {
+	return t.id
 }
 
-func (t *TokenBody) SetID(v []byte) {
+func (t *Token) SetID(v []byte) {
 	t.id = v
 }
 
-func (t *TokenBody) GetOwnerID() *refs.OwnerID {
-	if t != nil {
-		return t.ownerID
-	}
-
-	return nil
+func (t Token) GetOwnerID() refs.OwnerID {
+	return t.ownerID
 }
 
-func (t *TokenBody) SetOwnerID(v *refs.OwnerID) {
+func (t Token) ProcessOwnerID(f func(refs.OwnerID)) {
+	f(t.ownerID)
+}
+
+func (t *Token) SetOwnerID(v refs.OwnerID) {
 	t.ownerID = v
 }
 
-func (t *TokenBody) GetLifetime() *TokenLifetime {
-	if t != nil {
-		return t.lifetime
-	}
-
-	return nil
+func (t Token) GetExp() uint64 {
+	return t.exp
 }
 
-func (t *TokenBody) SetLifetime(v *TokenLifetime) {
-	t.lifetime = v
+func (t *Token) SetExp(v uint64) {
+	t.exp = v
 }
 
-func (t *TokenBody) GetSessionKey() []byte {
-	if t != nil {
-		return t.sessionKey
-	}
-
-	return nil
+func (t Token) GetNbf() uint64 {
+	return t.nbf
 }
 
-func (t *TokenBody) SetSessionKey(v []byte) {
+func (t *Token) SetNbf(v uint64) {
+	t.nbf = v
+}
+
+func (t Token) GetIat() uint64 {
+	return t.iat
+}
+
+func (t *Token) SetIat(v uint64) {
+	t.iat = v
+}
+
+func (t Token) GetSessionKey() []byte {
+	return t.sessionKey
+}
+
+func (t *Token) SetSessionKey(v []byte) {
 	t.sessionKey = v
 }
 
-func (t *TokenBody) GetContext() TokenContext {
-	if t != nil {
-		return t.ctx
-	}
-
-	return nil
+func (t Token) GetContextContainer() (ContainerSessionContext, bool) {
+	res, ok := t.ctx.(ContainerSessionContext)
+	return res, ok
 }
 
-func (t *TokenBody) SetContext(v TokenContext) {
+func (t *Token) SetContextContainer(v ContainerSessionContext) {
 	t.ctx = v
 }
 
-func (t *Token) GetBody() *TokenBody {
-	if t != nil {
-		return t.body
+func (t Token) GetContextObject() (ObjectSessionContext, bool) {
+	res, ok := t.ctx.(ObjectSessionContext)
+	return res, ok
+}
+
+func (t *Token) SetContextObject(v ObjectSessionContext) {
+	t.ctx = v
+}
+
+type Signer interface {
+	Sign(msg []byte) ([]byte, error)
+	Scheme() refs.SignatureScheme
+	MarshalPublicKey() []byte
+}
+
+type PublicKey interface {
+	Verify(msg, sig []byte) bool
+	Unmarshal([]byte) bool
+}
+
+func (t *Token) Sign(signer Signer) error {
+	sig, err := signer.Sign(t.marshalBody())
+	if err != nil {
+		return err
 	}
+
+	t.sig.SetSign(sig)
+	t.sig.SetKey(signer.MarshalPublicKey())
+	t.sig.SetScheme(signer.Scheme())
 
 	return nil
 }
 
-func (t *Token) SetBody(v *TokenBody) {
-	t.body = v
-}
-
-func (t *Token) GetSignature() *refs.Signature {
-	if t != nil {
-		return t.sig
+func (t Token) VerifySignature(switchScheme func(refs.SignatureScheme) PublicKey) bool {
+	key := switchScheme(t.sig.GetScheme())
+	if key == nil {
+		return false
 	}
 
-	return nil
-}
+	if !key.Unmarshal(t.sig.GetKey()) {
+		return false
+	}
 
-func (t *Token) SetSignature(v *refs.Signature) {
-	t.sig = v
+	return key.Verify(t.marshalBody(), t.sig.GetSign())
 }
 
 // ContainerSessionVerb represents NeoFS API v2
@@ -738,7 +705,7 @@ type ContainerSessionContext struct {
 	cid *refs.ContainerID
 }
 
-func (x *ContainerSessionContext) sessionTokenContext() {}
+func (x ContainerSessionContext) sessionTokenContext() {}
 
 // Verb returns type of request for which the token is issued.
 func (x *ContainerSessionContext) Verb() ContainerSessionVerb {

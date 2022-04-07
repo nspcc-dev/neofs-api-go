@@ -2,6 +2,7 @@ package sessiontest
 
 import (
 	acltest "github.com/nspcc-dev/neofs-api-go/v2/acl/test"
+	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refstest "github.com/nspcc-dev/neofs-api-go/v2/refs/test"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	statustest "github.com/nspcc-dev/neofs-api-go/v2/status/test"
@@ -145,40 +146,35 @@ func generateRequestMetaHeader(empty, withOrigin bool) *session.RequestMetaHeade
 	return m
 }
 
+type testSigner struct {
+}
+
+func (t testSigner) Sign(_ []byte) ([]byte, error) {
+	return []byte("signature"), nil
+}
+
+func (t testSigner) Scheme() refs.SignatureScheme {
+	return refs.ECDSA_SHA512
+}
+
+func (t testSigner) MarshalPublicKey() []byte {
+	return []byte("public key")
+}
+
 func GenerateSessionToken(empty bool) *session.Token {
 	m := new(session.Token)
 
 	if !empty {
-		m.SetBody(GenerateSessionTokenBody(false))
-	}
-
-	m.SetSignature(refstest.GenerateSignature(empty))
-
-	return m
-}
-
-func GenerateSessionTokenBody(empty bool) *session.TokenBody {
-	m := new(session.TokenBody)
-
-	if !empty {
 		m.SetID([]byte{1})
 		m.SetSessionKey([]byte{2})
-		m.SetOwnerID(refstest.GenerateOwnerID(false))
-		m.SetLifetime(GenerateTokenLifetime(false))
-		m.SetContext(GenerateObjectSessionContext(false))
-	}
-
-	return m
-}
-
-func GenerateTokenLifetime(empty bool) *session.TokenLifetime {
-	m := new(session.TokenLifetime)
-
-	if !empty {
+		m.SetOwnerID(*refstest.GenerateOwnerID(false))
 		m.SetExp(1)
 		m.SetIat(2)
 		m.SetExp(3)
+		m.SetContextObject(*GenerateObjectSessionContext(false))
 	}
+
+	m.Sign(testSigner{})
 
 	return m
 }
