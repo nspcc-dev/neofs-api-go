@@ -29,16 +29,15 @@ func SignDataWithHandler(key *ecdsa.PrivateKey, src DataSource, handler KeySigna
 		return crypto.ErrEmptyPrivateKey
 	}
 
-	data, err := dataForSignature(src)
-	if err != nil {
-		return err
-	}
-	defer bytesPool.Put(data)
-
 	cfg := defaultCfg()
 
 	for i := range opts {
 		opts[i](cfg)
+	}
+
+	data, err := readSignedData(cfg, src)
+	if err != nil {
+		return err
 	}
 
 	sigData, err := sign(cfg, key, data)
@@ -56,16 +55,15 @@ func SignDataWithHandler(key *ecdsa.PrivateKey, src DataSource, handler KeySigna
 }
 
 func VerifyDataWithSource(dataSrc DataSource, sigSrc KeySignatureSource, opts ...SignOption) error {
-	data, err := dataForSignature(dataSrc)
-	if err != nil {
-		return err
-	}
-	defer bytesPool.Put(data)
-
 	cfg := defaultCfg()
 
 	for i := range opts {
 		opts[i](cfg)
+	}
+
+	data, err := readSignedData(cfg, dataSrc)
+	if err != nil {
+		return err
 	}
 
 	return verify(cfg, data, sigSrc())
@@ -77,4 +75,14 @@ func SignData(key *ecdsa.PrivateKey, v DataWithSignature, opts ...SignOption) er
 
 func VerifyData(src DataWithSignature, opts ...SignOption) error {
 	return VerifyDataWithSource(src, src.GetSignature, opts...)
+}
+
+func readSignedData(cfg *cfg, src DataSource) ([]byte, error) {
+	size := src.SignedDataSize()
+	if cfg.buffer == nil || cap(cfg.buffer) < size {
+		cfg.buffer = make([]byte, size)
+	} else {
+		cfg.buffer = cfg.buffer[:size]
+	}
+	return src.ReadSignedData(cfg.buffer)
 }
