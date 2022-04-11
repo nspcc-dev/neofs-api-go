@@ -57,10 +57,13 @@ func (w *streamWrapper) withTimeout(closure func() error) error {
 		close(ch)
 	}()
 
+	tt := time.NewTimer(w.timeout)
+
 	select {
 	case err := <-ch:
+		tt.Stop()
 		return err
-	case <-time.After(w.timeout):
+	case <-tt.C:
 		w.cancel()
 		return context.DeadlineExceeded
 	}
