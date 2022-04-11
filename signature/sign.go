@@ -242,22 +242,32 @@ func VerifyServiceMessage(msg interface{}) error {
 		panic(fmt.Sprintf("unsupported session message %T", v))
 	}
 
-	return verifyMatryoshkaLevel(serviceMessageBody(msg), meta, verify)
+	body := serviceMessageBody(msg)
+	size := body.StableSize()
+	if sz := meta.StableSize(); sz > size {
+		size = sz
+	}
+	if sz := verify.StableSize(); sz > size {
+		size = sz
+	}
+
+	buf := make([]byte, 0, size)
+	return verifyMatryoshkaLevel(body, meta, verify, buf)
 }
 
-func verifyMatryoshkaLevel(body stableMarshaler, meta metaHeader, verify verificationHeader) error {
-	if err := verifyServiceMessagePart(meta, verify.GetMetaSignature); err != nil {
+func verifyMatryoshkaLevel(body stableMarshaler, meta metaHeader, verify verificationHeader, buf []byte) error {
+	if err := verifyServiceMessagePart(meta, verify.GetMetaSignature, buf); err != nil {
 		return fmt.Errorf("could not verify meta header: %w", err)
 	}
 
 	origin := verify.getOrigin()
 
-	if err := verifyServiceMessagePart(origin, verify.GetOriginSignature); err != nil {
+	if err := verifyServiceMessagePart(origin, verify.GetOriginSignature, buf); err != nil {
 		return fmt.Errorf("could not verify origin of verification header: %w", err)
 	}
 
 	if origin == nil {
-		if err := verifyServiceMessagePart(body, verify.GetBodySignature); err != nil {
+		if err := verifyServiceMessagePart(body, verify.GetBodySignature, buf); err != nil {
 			return fmt.Errorf("could not verify body: %w", err)
 		}
 
@@ -268,13 +278,14 @@ func verifyMatryoshkaLevel(body stableMarshaler, meta metaHeader, verify verific
 		return errors.New("body signature at the matryoshka upper level")
 	}
 
-	return verifyMatryoshkaLevel(body, meta.getOrigin(), origin)
+	return verifyMatryoshkaLevel(body, meta.getOrigin(), origin, buf)
 }
 
-func verifyServiceMessagePart(part stableMarshaler, sigRdr func() *refs.Signature) error {
+func verifyServiceMessagePart(part stableMarshaler, sigRdr func() *refs.Signature, buf []byte) error {
 	return signature.VerifyDataWithSource(
 		&StableMarshalerWrapper{part},
 		sigRdr,
+		signature.WithBuffer(buf),
 	)
 }
 

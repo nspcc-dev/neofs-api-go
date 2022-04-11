@@ -11,6 +11,7 @@ import (
 type cfg struct {
 	schemeFixed bool
 	scheme      refs.SignatureScheme
+	buffer      []byte
 }
 
 func defaultCfg() *cfg {
@@ -49,5 +50,12 @@ func SignWithRFC6979() SignOption {
 	return func(c *cfg) {
 		c.schemeFixed = true
 		c.scheme = refs.ECDSA_RFC6979_SHA256
+	}
+}
+
+// WithBuffer allows providing pre-allocated buffer for signature verification.
+func WithBuffer(buf []byte) SignOption {
+	return func(c *cfg) {
+		c.buffer = buf
 	}
 }
