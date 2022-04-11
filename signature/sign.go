@@ -194,14 +194,14 @@ func SignServiceMessage(key *ecdsa.PrivateKey, msg interface{}) error {
 }
 
 func signServiceMessagePart(key *ecdsa.PrivateKey, part stableMarshaler, sigWrite func(*refs.Signature)) error {
-	sig := new(refs.Signature)
+	var sig *refs.Signature
 
 	// sign part
 	if err := signature.SignDataWithHandler(
 		key,
 		&StableMarshalerWrapper{part},
 		func(s *refs.Signature) {
-			*sig = *s
+			sig = s
 		},
 	); err != nil {
 		return err
