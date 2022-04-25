@@ -703,7 +703,9 @@ type BearerToken_Body struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Table of Extended ACL rules to use instead of the ones attached to the
-	// container
+	// container. If it contains `container_id` field, bearer token is only
+	// valid for this specific container. Otherwise, any container of the same owner
+	// is allowed.
 	EaclTable *EACLTable `protobuf:"bytes,1,opt,name=eacl_table,json=eaclTable,proto3" json:"eacl_table,omitempty"`
 	// `OwnerID` to whom the token was issued. Must match the request
 	// originator's `OwnerID`. If empty, any token bearer will be accepted.
