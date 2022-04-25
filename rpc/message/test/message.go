@@ -16,7 +16,7 @@ type jsonMessage interface {
 }
 
 type binaryMessage interface {
-	StableMarshal([]byte) ([]byte, error)
+	StableMarshal([]byte) []byte
 	Unmarshal([]byte) error
 }
 
@@ -54,8 +54,7 @@ func TestRPCMessage(t *testing.T, msgGens ...func(empty bool) message.Message) {
 
 			if bm, ok := msg.(binaryMessage); ok {
 				t.Run(fmt.Sprintf("Binary_%T", msg), func(t *testing.T) {
-					data, err := bm.StableMarshal(nil)
-					require.NoError(t, err)
+					data := bm.StableMarshal(nil)
 
 					bm2 := msgGen(true).(binaryMessage)
 					require.NoError(t, bm2.Unmarshal(data))
