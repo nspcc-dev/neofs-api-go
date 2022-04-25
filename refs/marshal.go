@@ -118,11 +118,11 @@ func (o *ObjectID) StableSize() int {
 func ObjectIDNestedListMarshal(fNum int64, buf []byte, ids []ObjectID) (off int) {
 	prefix, _ := proto.NestedStructurePrefix(fNum)
 	for i := range ids {
-		off += binary.PutUvarint(buf, prefix)
+		off += binary.PutUvarint(buf[off:], prefix)
 
 		n := ids[i].StableSize()
 		off += binary.PutUvarint(buf[off:], uint64(n))
-		off += proto.BytesMarshal(objectIDValField, buf, ids[i].val)
+		off += proto.BytesMarshal(objectIDValField, buf[off:], ids[i].val)
 	}
 
 	return
