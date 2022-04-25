@@ -80,6 +80,7 @@ func (c *Container) ToGRPCMessage() grpc.Message {
 		m.SetAttributes(AttributesToGRPC(c.attr))
 		m.SetBasicAcl(c.basicACL)
 		m.SetNonce(c.nonce)
+		m.SetHomomorphicHashingDisabled(c.homomorphicHashingDisabled)
 	}
 
 	return m
@@ -142,6 +143,7 @@ func (c *Container) FromGRPCMessage(m grpc.Message) error {
 
 	c.basicACL = v.GetBasicAcl()
 	c.nonce = v.GetNonce()
+	c.homomorphicHashingDisabled = v.GetHomomorphicHashingDisabled()
 
 	return nil
 }

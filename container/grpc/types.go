@@ -44,3 +44,9 @@ func (m *Container) SetPlacementPolicy(v *netmap.PlacementPolicy) {
 func (m *Container) SetVersion(v *refs.Version) {
 	m.Version = v
 }
+
+// SetHomomorphicHashingDisabled sets homomorphic hashing
+// container setting.
+func (m *Container) SetHomomorphicHashingDisabled(v bool) {
+	m.HomomorphicHashingDisabled = v
+}

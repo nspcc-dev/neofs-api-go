@@ -10,12 +10,13 @@ const (
 	attributeKeyField   = 1
 	attributeValueField = 2
 
-	containerVersionField    = 1
-	containerOwnerField      = 2
-	containerNonceField      = 3
-	containerBasicACLField   = 4
-	containerAttributesField = 5
-	containerPlacementField  = 6
+	containerVersionField                    = 1
+	containerOwnerField                      = 2
+	containerNonceField                      = 3
+	containerBasicACLField                   = 4
+	containerAttributesField                 = 5
+	containerPlacementField                  = 6
+	containerHomomorphicHashingDisabledField = 7
 
 	putReqBodyContainerField = 1
 	putReqBodySignatureField = 2
@@ -103,7 +104,8 @@ func (c *Container) StableMarshal(buf []byte) []byte {
 		offset += protoutil.NestedStructureMarshal(containerAttributesField, buf[offset:], &c.attr[i])
 	}
 
-	protoutil.NestedStructureMarshal(containerPlacementField, buf[offset:], c.policy)
+	offset += protoutil.NestedStructureMarshal(containerPlacementField, buf[offset:], c.policy)
+	protoutil.BoolMarshal(containerHomomorphicHashingDisabledField, buf[offset:], c.homomorphicHashingDisabled)
 
 	return buf
 }
@@ -123,6 +125,7 @@ func (c *Container) StableSize() (size int) {
 	}
 
 	size += protoutil.NestedStructureSize(containerPlacementField, c.policy)
+	size += protoutil.BoolSize(containerHomomorphicHashingDisabledField, c.homomorphicHashingDisabled)
 
 	return size
 }

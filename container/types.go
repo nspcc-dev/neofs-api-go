@@ -23,6 +23,8 @@ type Container struct {
 	attr []Attribute
 
 	policy *netmap.PlacementPolicy
+
+	homomorphicHashingDisabled bool
 }
 
 type PutRequestBody struct {
@@ -274,6 +276,18 @@ func (c *Container) GetPlacementPolicy() *netmap.PlacementPolicy {
 
 func (c *Container) SetPlacementPolicy(v *netmap.PlacementPolicy) {
 	c.policy = v
+}
+
+func (c *Container) GetHomomorphicHashingDisabled() bool {
+	if c != nil {
+		return c.homomorphicHashingDisabled
+	}
+
+	return false
+}
+
+func (c *Container) SetHomomorphicHashingDisabled(v bool) {
+	c.homomorphicHashingDisabled = v
 }
 
 func (r *PutRequestBody) GetContainer() *Container {

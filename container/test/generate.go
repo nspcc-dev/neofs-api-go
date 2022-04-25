@@ -41,6 +41,7 @@ func GenerateContainer(empty bool) *container.Container {
 		m.SetOwnerID(refstest.GenerateOwnerID(false))
 		m.SetAttributes(GenerateAttributes(false))
 		m.SetPlacementPolicy(netmaptest.GeneratePlacementPolicy(false))
+		m.SetHomomorphicHashingDisabled(true)
 	}
 
 	m.SetVersion(refstest.GenerateVersion(empty))
