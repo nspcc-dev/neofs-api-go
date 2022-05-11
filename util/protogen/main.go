@@ -14,7 +14,8 @@ func main() {
 			//if !f.Generate {
 			//	continue
 			//}
-			if strings.HasSuffix(string(f.GoImportPath), "/control") {
+			imp := string(f.GoImportPath)
+			if strings.HasSuffix(imp, "/tree") { // || strings.HasSuffix(imp, "/control") {
 				generateFile(gen, f)
 			}
 		}
@@ -60,6 +61,12 @@ func emitMessage(g *protogen.GeneratedFile, msg *protogen.Message) {
 	g.P("func (x *", msg.GoIdent.GoName, ") StableSize() (size int) {")
 	if len(fs) != 0 {
 		for _, f := range fs {
+			if f.Desc.IsList() && marshalers[f.Desc.Kind()].RepeatedDouble {
+				g.P("var n int")
+				break
+			}
+		}
+		for _, f := range fs {
 			emitFieldSize(g, f)
 		}
 	}
@@ -75,18 +82,16 @@ func emitMessage(g *protogen.GeneratedFile, msg *protogen.Message) {
 	g.P("// Otherwise, returns the buffer in which the data is written.")
 	g.P("//")
 	g.P("// Structures with the same field values have the same binary format.")
-	g.P("func (x *", msg.GoIdent.GoName, ") StableMarshal(buf []byte) ([]byte, error) {")
+	g.P("func (x *", msg.GoIdent.GoName, ") StableMarshal(buf []byte) []byte {")
 	if len(fs) != 0 {
-		g.P("if x == nil { return []byte{}, nil }")
+		g.P("if x == nil { return []byte{} }")
 		g.P("if buf == nil { buf = make([]byte, x.StableSize()) }")
-		g.P("var err error")
-		g.P("var offset, n int")
-		g.P("_, _, _ = err, offset, n")
+		g.P("var offset int")
 		for _, f := range fs {
 			emitFieldMarshal(g, f)
 		}
 	}
-	g.P("return buf, nil")
+	g.P("return buf")
 	g.P("}\n")
 
 	if strings.HasSuffix(msg.GoIdent.GoName, "Request") || strings.HasSuffix(msg.GoIdent.GoName, "Response") {
@@ -107,7 +112,7 @@ func emitMessage(g *protogen.GeneratedFile, msg *protogen.Message) {
 		g.P("//")
 		g.P("// Structures with the same field values have the same signed data size.")
 		g.P("func (x *", msg.GoIdent.GoName, ") ReadSignedData(buf []byte) ([]byte, error) {")
-		g.P("return x.GetBody().StableMarshal(buf)")
+		g.P("return x.GetBody().StableMarshal(buf), nil")
 		g.P("}\n")
 
 		// Signature setters and getters.
@@ -139,7 +144,12 @@ func emitFieldSize(g *protogen.GeneratedFile, f *protogen.Field) {
 		g.P("size += proto.NestedStructureSize(", f.Desc.Number(), ", ", name, "[i])")
 		g.P("}")
 	case f.Desc.IsList():
-		g.P("size += proto.Repeated", m.Prefix, "Size(", f.Desc.Number(), ", ", name, ")")
+		if m.RepeatedDouble {
+			g.P("n, _ = proto.Repeated", m.Prefix, "Size(", f.Desc.Number(), ", ", name, ")")
+			g.P("size += n")
+		} else {
+			g.P("size += proto.Repeated", m.Prefix, "Size(", f.Desc.Number(), ", ", name, ")")
+		}
 	default:
 		g.P("size += proto.", m.Prefix, "Size(", f.Desc.Number(), ", ", name, ")")
 	}
@@ -168,20 +178,12 @@ func emitFieldMarshal(g *protogen.GeneratedFile, f *protogen.Field) {
 	switch {
 	case f.Desc.IsList() && f.Desc.Kind() == protoreflect.MessageKind:
 		g.P("for i := range ", name, "{")
-		g.P("n, err = proto.NestedStructureMarshal(", f.Desc.Number(), ", buf[offset:], ", name, "[i])")
-		g.P("if err != nil { return nil, err }")
-		g.P("offset += n")
+		g.P("offset += proto.NestedStructureMarshal(", f.Desc.Number(), ", buf[offset:], ", name, "[i])")
 		g.P("}")
 	case f.Desc.IsList():
 		g.P("offset += proto.Repeated", m.Prefix, "Marshal(", f.Desc.Number(), ", buf[offset:], ", name, ")")
 	default:
-		if m.CanFail {
-			g.P("n, err = proto.", prefix, "Marshal(", f.Desc.Number(), ", buf[offset:], ", name, ")")
-			g.P("if err != nil { return nil, err }")
-			g.P("offset += n")
-		} else {
-			g.P("offset += proto.", prefix, "Marshal(", f.Desc.Number(), ", buf[offset:], ", name, ")")
-		}
+		g.P("offset += proto.", prefix, "Marshal(", f.Desc.Number(), ", buf[offset:], ", name, ")")
 	}
 }
 
@@ -194,8 +196,8 @@ func castFieldName(f *protogen.Field) string {
 }
 
 type marshalerDesc struct {
-	Prefix  string
-	CanFail bool
+	Prefix         string
+	RepeatedDouble bool
 }
 
 // Unused kinds are commented.
@@ -204,19 +206,19 @@ var marshalers = map[protoreflect.Kind]marshalerDesc{
 	protoreflect.EnumKind: {Prefix: "Enum"},
 	//protoreflect.Int32Kind:    "",
 	//protoreflect.Sint32Kind:   "",
-	protoreflect.Uint32Kind: {Prefix: "UInt32"},
-	protoreflect.Int64Kind:  {Prefix: "Int64"},
+	protoreflect.Uint32Kind: {Prefix: "UInt32", RepeatedDouble: true},
+	protoreflect.Int64Kind:  {Prefix: "Int64", RepeatedDouble: true},
 	//protoreflect.Sint64Kind:   "",
-	protoreflect.Uint64Kind: {Prefix: "UInt64"},
+	protoreflect.Uint64Kind: {Prefix: "UInt64", RepeatedDouble: true},
 	//protoreflect.Sfixed32Kind: "",
-	protoreflect.Fixed32Kind: {Prefix: "Fixed32"},
+	protoreflect.Fixed32Kind: {Prefix: "Fixed32", RepeatedDouble: true},
 	//protoreflect.FloatKind:    "",
 	//protoreflect.Sfixed64Kind: "",
-	protoreflect.Fixed64Kind: {Prefix: "Fixed64"},
+	protoreflect.Fixed64Kind: {Prefix: "Fixed64", RepeatedDouble: true},
 	protoreflect.DoubleKind:  {Prefix: "Float64"},
 	protoreflect.StringKind:  {Prefix: "String"},
 	protoreflect.BytesKind:   {Prefix: "Bytes"},
-	protoreflect.MessageKind: {Prefix: "NestedStructure", CanFail: true},
+	protoreflect.MessageKind: {Prefix: "NestedStructure"},
 	//protoreflect.GroupKind:    "",
 }
 
