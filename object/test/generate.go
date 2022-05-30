@@ -1,7 +1,7 @@
 package objecttest
 
 import (
-	"github.com/nspcc-dev/neofs-api-go/v2/internal"
+	"github.com/nspcc-dev/neofs-api-go/v2/internal/random"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refstest "github.com/nspcc-dev/neofs-api-go/v2/refs/test"
@@ -186,7 +186,7 @@ func GenerateGetResponseBody(empty bool) *object.GetResponseBody {
 	m := new(object.GetResponseBody)
 
 	if !empty {
-		switch internal.RandUint32(3) {
+		switch random.Uint32(3) {
 		case 0:
 			m.SetObjectPart(GenerateGetObjectPartInit(false))
 		case 1:
@@ -240,7 +240,7 @@ func GeneratePutRequestBody(empty bool) *object.PutRequestBody {
 	m := new(object.PutRequestBody)
 
 	if !empty {
-		switch internal.RandUint32(2) {
+		switch random.Uint32(2) {
 		case 0:
 			m.SetObjectPart(GeneratePutObjectPartInit(false))
 		case 1:
@@ -362,7 +362,7 @@ func GenerateHeadResponseBody(empty bool) *object.HeadResponseBody {
 	m := new(object.HeadResponseBody)
 
 	if !empty {
-		switch internal.RandUint32(3) {
+		switch random.Uint32(3) {
 		case 0:
 			m.SetHeaderPart(GenerateHeaderWithSignature(false))
 		case 1:
@@ -524,7 +524,7 @@ func GenerateGetRangeResponseBody(empty bool) *object.GetRangeResponseBody {
 	m := new(object.GetRangeResponseBody)
 
 	if !empty {
-		switch internal.RandUint32(2) {
+		switch random.Uint32(2) {
 		case 0:
 			m.SetRangePart(GenerateGetRangePartChunk(false))
 		case 1:
