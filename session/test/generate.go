@@ -2,6 +2,7 @@ package sessiontest
 
 import (
 	acltest "github.com/nspcc-dev/neofs-api-go/v2/acl/test"
+	"github.com/nspcc-dev/neofs-api-go/v2/internal"
 	refstest "github.com/nspcc-dev/neofs-api-go/v2/refs/test"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
 	statustest "github.com/nspcc-dev/neofs-api-go/v2/status/test"
@@ -165,7 +166,13 @@ func GenerateSessionTokenBody(empty bool) *session.TokenBody {
 		m.SetSessionKey([]byte{2})
 		m.SetOwnerID(refstest.GenerateOwnerID(false))
 		m.SetLifetime(GenerateTokenLifetime(false))
-		m.SetContext(GenerateObjectSessionContext(false))
+
+		switch internal.RandUint32(2) {
+		case 0:
+			m.SetContext(GenerateObjectSessionContext(false))
+		case 1:
+			m.SetContext(GenerateContainerSessionContext(false))
+		}
 	}
 
 	return m
