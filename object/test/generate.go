@@ -1,6 +1,7 @@
 package objecttest
 
 import (
+	"github.com/nspcc-dev/neofs-api-go/v2/internal"
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	refstest "github.com/nspcc-dev/neofs-api-go/v2/refs/test"
@@ -185,7 +186,14 @@ func GenerateGetResponseBody(empty bool) *object.GetResponseBody {
 	m := new(object.GetResponseBody)
 
 	if !empty {
-		m.SetObjectPart(GenerateGetObjectPartInit(false))
+		switch internal.RandUint32(3) {
+		case 0:
+			m.SetObjectPart(GenerateGetObjectPartInit(false))
+		case 1:
+			m.SetObjectPart(GenerateGetObjectPartChunk(false))
+		case 2:
+			m.SetObjectPart(GenerateSplitInfo(false))
+		}
 	}
 
 	return m
@@ -232,7 +240,12 @@ func GeneratePutRequestBody(empty bool) *object.PutRequestBody {
 	m := new(object.PutRequestBody)
 
 	if !empty {
-		m.SetObjectPart(GeneratePutObjectPartInit(false))
+		switch internal.RandUint32(2) {
+		case 0:
+			m.SetObjectPart(GeneratePutObjectPartInit(false))
+		case 1:
+			m.SetObjectPart(GeneratePutObjectPartChunk(false))
+		}
 	}
 
 	return m
@@ -349,7 +362,14 @@ func GenerateHeadResponseBody(empty bool) *object.HeadResponseBody {
 	m := new(object.HeadResponseBody)
 
 	if !empty {
-		m.SetHeaderPart(GenerateHeaderWithSignature(false))
+		switch internal.RandUint32(3) {
+		case 0:
+			m.SetHeaderPart(GenerateHeaderWithSignature(false))
+		case 1:
+			m.SetHeaderPart(GenerateShortHeader(false))
+		case 2:
+			m.SetHeaderPart(GenerateSplitInfo(false))
+		}
 	}
 
 	return m
@@ -504,7 +524,12 @@ func GenerateGetRangeResponseBody(empty bool) *object.GetRangeResponseBody {
 	m := new(object.GetRangeResponseBody)
 
 	if !empty {
-		m.SetRangePart(GenerateGetRangePartChunk(false))
+		switch internal.RandUint32(2) {
+		case 0:
+			m.SetRangePart(GenerateGetRangePartChunk(false))
+		case 1:
+			m.SetRangePart(GenerateSplitInfo(false))
+		}
 	}
 
 	return m
