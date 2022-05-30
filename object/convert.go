@@ -1832,7 +1832,7 @@ func (r *GetRangeResponseBody) FromGRPCMessage(m grpc.Message) error {
 		if pt != nil {
 			partSplit := new(SplitInfo)
 			r.rngPart = partSplit
-			err = partSplit.FromGRPCMessage(pt)
+			err = partSplit.FromGRPCMessage(pt.SplitInfo)
 		}
 	default:
 		err = fmt.Errorf("unknown get range part %T", pt)
