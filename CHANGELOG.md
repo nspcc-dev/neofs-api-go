@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.12.2] - 2022-06-03
+
+### Added
+- `util/protogen` tool to compile Protocol Buffers with stable marshaling
+
+### Fixed
+- `refs.ObjectIDNestedListMarshal` incorrect encoding (#401)
+- incorrect conversion of `oneof` field in `GetRangeResponseBody.FromGRPCMessage` (#401)
+
+### Changed
+- Setters don't check call on `nil` (#388)
+- `StableMarshal` methods don't return `error`
+- `oneof` fields are now randomly initialized in test generators (#401)
+
 ## [2.12.1] - 2022-03-15
 
 ### Fixed
@@ -794,3 +808,4 @@ Initial public release
 [2.11.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.11.0...v2.11.1
 [2.12.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.11.1...v2.12.0
 [2.12.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.12.0...v2.12.1
+[2.12.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.12.1...v2.12.2
