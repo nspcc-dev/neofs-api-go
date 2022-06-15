@@ -104,7 +104,7 @@ func (Operation) EnumDescriptor() ([]byte, []int) {
 type Clause int32
 
 const (
-	// No modifier defined. Will select nodes from bucket randomly.
+	// No modifier defined. Nodes will be selected from the bucket randomly
 	Clause_CLAUSE_UNSPECIFIED Clause = 0
 	// SAME will select only nodes having the same value of bucket attribute
 	Clause_SAME Clause = 1
@@ -206,14 +206,14 @@ func (NodeInfo_State) EnumDescriptor() ([]byte, []int) {
 	return file_netmap_grpc_types_proto_rawDescGZIP(), []int{4, 0}
 }
 
-// Filter will return the subset of nodes from `NetworkMap` or another filter's
-// results, that will satisfy filter's conditions.
+// This filter will return the subset of nodes from `NetworkMap` or another filter's
+// results that will satisfy filter's conditions.
 type Filter struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Name of the filter or a reference to the named filter. '*' means
+	// Name of the filter or a reference to a named filter. '*' means
 	// application to the whole unfiltered NetworkMap. At top level it's used as a
 	// filter name. At lower levels it's considered to be a reference to another
 	// named filter
@@ -309,7 +309,7 @@ type Selector struct {
 	Count uint32 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
 	// Selector modifier showing how to form a bucket
 	Clause Clause `protobuf:"varint,3,opt,name=clause,proto3,enum=neo.fs.v2.netmap.Clause" json:"clause,omitempty"`
-	// Attribute bucket to select from
+	// Bucket attribute to select from
 	Attribute string `protobuf:"bytes,4,opt,name=attribute,proto3" json:"attribute,omitempty"`
 	// Filter reference to select from
 	Filter string `protobuf:"bytes,5,opt,name=filter,proto3" json:"filter,omitempty"`
@@ -383,7 +383,7 @@ func (x *Selector) GetFilter() string {
 }
 
 // Number of object replicas in a set of nodes from the defined selector. If no
-// selector set the root bucket containing all possible nodes will be used by
+// selector set, the root bucket containing all possible nodes will be used by
 // default.
 type Replica struct {
 	state         protoimpl.MessageState
@@ -805,7 +805,7 @@ func (x *NetworkInfo) GetNetworkConfig() *NetworkConfig {
 //   automatically from `UN-LOCODE` attribute.
 //
 // For detailed description of each well-known attribute please see the
-// corresponding section in NeoFS Technical specification.
+// corresponding section in NeoFS Technical Specification.
 type NodeInfo_Attribute struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

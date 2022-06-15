@@ -21,20 +21,20 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Tombstone keeps record of deleted objects for few epochs until they are
+// Tombstone keeps record of deleted objects for a few epochs until they are
 // purged from the NeoFS network.
 type Tombstone struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Last NeoFS epoch number of the tombstone lifetime. It's set by tombstone
-	// creator depending on current NeoFS network settings. Tombstone object
+	// Last NeoFS epoch number of the tombstone lifetime. It's set by the tombstone
+	// creator depending on the current NeoFS network settings. A tombstone object
 	// must have the same expiration epoch value in `__NEOFS__EXPIRATION_EPOCH`
-	// attribute. Otherwise tombstone will be rejected by storage node.
+	// attribute. Otherwise, the tombstone will be rejected by a storage node.
 	ExpirationEpoch uint64 `protobuf:"varint,1,opt,name=expiration_epoch,json=expirationEpoch,proto3" json:"expiration_epoch,omitempty"`
 	// 16 byte UUID used to identify the split object hierarchy parts. Must be
-	// unique inside container. All objects participating in the split must
+	// unique inside a container. All objects participating in the split must
 	// have the same `split_id` value.
 	SplitId []byte `protobuf:"bytes,2,opt,name=split_id,json=splitID,proto3" json:"split_id,omitempty"`
 	// List of objects to be deleted.

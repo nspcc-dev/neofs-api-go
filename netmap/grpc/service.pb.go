@@ -22,7 +22,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Get NodeInfo structure from the particular node directly
+// Get NodeInfo structure directly from a particular node
 type LocalNodeInfoRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -162,7 +162,7 @@ func (x *LocalNodeInfoResponse) GetVerifyHeader() *grpc.ResponseVerificationHead
 	return nil
 }
 
-// Get NetworkInfo structure with the network view from particular node.
+// Get NetworkInfo structure with the network view from a particular node.
 type NetworkInfoRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

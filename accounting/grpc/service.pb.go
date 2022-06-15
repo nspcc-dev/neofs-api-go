@@ -162,7 +162,7 @@ func (x *BalanceResponse) GetVerifyHeader() *grpc.ResponseVerificationHeader {
 	return nil
 }
 
-// To indicate the account for which the balance is requested, it's identifier
+// To indicate the account for which the balance is requested, its identifier
 // is used. It can be any existing account in NeoFS sidechain `Balance` smart
 // contract. If omitted, client implementation MUST set it to the request's
 // signer `OwnerID`.
@@ -216,7 +216,7 @@ func (x *BalanceRequest_Body) GetOwnerId() *grpc1.OwnerID {
 }
 
 // The amount of funds in GAS token for the `OwnerID`'s account requested.
-// Balance is `Decimal` format to avoid precision issues with rounding.
+// Balance is given in the `Decimal` format to avoid precision issues with rounding.
 type BalanceResponse_Body struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

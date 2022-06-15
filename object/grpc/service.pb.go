@@ -513,12 +513,12 @@ func (x *HeadRequest) GetVerifyHeader() *grpc.RequestVerificationHeader {
 	return nil
 }
 
-// Tuple of full object header and signature of `ObjectID`. \
+// Tuple of a full object header and signature of an `ObjectID`. \
 // Signed `ObjectID` is present to verify full header's authenticity through the
 // following steps:
 //
-// 1. Calculate `SHA-256` of marshalled `Header` structure
-// 2. Check if the resulting hash matched `ObjectID`
+// 1. Calculate `SHA-256` of the marshalled `Header` structure
+// 2. Check if the resulting hash matches `ObjectID`
 // 3. Check if `ObjectID` signature in `signature` field is correct
 type HeaderWithSignature struct {
 	state         protoimpl.MessageState
@@ -1898,13 +1898,13 @@ func (x *SearchRequest_Body) GetFilters() []*SearchRequest_Body_Filter {
 	return nil
 }
 
-// Filter structure checks if object header field or attribute content
+// Filter structure checks if the object header field or the attribute content
 // matches a value.
 //
-// If no filters set, search request will return all objects of the
+// If no filters are set, search request will return all objects of the
 // container, including Regular object, Tombstones and Storage Group
 // objects. Most human users expect to get only object they can directly
-// work with. In that case the `$Object:ROOT` filter should be used.
+// work with. In that case, `$Object:ROOT` filter should be used.
 //
 // By default `key` field refers to the corresponding object's `Attribute`.
 // Some Object's header fields can also be accessed by adding `$Object:`
@@ -1937,10 +1937,10 @@ func (x *SearchRequest_Body) GetFilters() []*SearchRequest_Body_Filter {
 // properties:
 //
 // * $Object:ROOT \
-//   Returns only `REGULAR` type objects that are not split or are the top
+//   Returns only `REGULAR` type objects that are not split or that are the top
 //   level root objects in a split hierarchy. This includes objects not
 //   present physically, like large objects split into smaller objects
-//   without separate top-level root object. Other type objects like
+//   without a separate top-level root object. Objects of other types like
 //   StorageGroups and Tombstones will not be shown. This filter may be
 //   useful for listing objects like `ls` command of some virtual file
 //   system. This filter is activated if the `key` exists, disregarding the

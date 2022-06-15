@@ -124,7 +124,7 @@ func (ChecksumType) EnumDescriptor() ([]byte, []int) {
 
 // Objects in NeoFS are addressed by their ContainerID and ObjectID.
 //
-// String presentation of `Address` is the concatenation of string encoded
+// String presentation of `Address` is a concatenation of string encoded
 // `ContainerID` and `ObjectID` delimited by '/' character.
 type Address struct {
 	state         protoimpl.MessageState
@@ -184,17 +184,17 @@ func (x *Address) GetObjectId() *ObjectID {
 }
 
 // NeoFS Object unique identifier. Objects are immutable and content-addressed.
-// It means `ObjectID` will change if `header` or `payload` changes.
+// It means `ObjectID` will change if the `header` or the `payload` changes.
 //
 // `ObjectID` is a 32 byte long
 // [SHA256](https://csrc.nist.gov/publications/detail/fips/180/4/final) hash of
-// object's `header` field, which, in it's turn, contains hash of object's
+// the object's `header` field, which, in it's turn, contains the hash of the object's
 // payload.
 //
-// String presentation is
+// String presentation is a
 // [base58](https://tools.ietf.org/html/draft-msporny-base58-02) encoded string.
 //
-// JSON value will be the data encoded as a string using standard base64
+// JSON value will be data encoded as a string using standard base64
 // encoding with paddings. Either
 // [standard](https://tools.ietf.org/html/rfc4648#section-4) or
 // [URL-safe](https://tools.ietf.org/html/rfc4648#section-5) base64 encoding
@@ -254,10 +254,10 @@ func (x *ObjectID) GetValue() []byte {
 // [SHA256](https://csrc.nist.gov/publications/detail/fips/180/4/final) hash of
 // stable-marshalled container message.
 //
-// String presentation is
+// String presentation is a
 // [base58](https://tools.ietf.org/html/draft-msporny-base58-02) encoded string.
 //
-// JSON value will be the data encoded as a string using standard base64
+// JSON value will be data encoded as a string using standard base64
 // encoding with paddings. Either
 // [standard](https://tools.ietf.org/html/rfc4648#section-4) or
 // [URL-safe](https://tools.ietf.org/html/rfc4648#section-5) base64 encoding
@@ -317,10 +317,10 @@ func (x *ContainerID) GetValue() []byte {
 // `OwnerID` is a 25 bytes sequence starting with Neo version prefix byte
 // followed by 20 bytes of ScrptHash and 4 bytes of checksum.
 //
-// String presentation is [Base58
+// String presentation is a [Base58
 // Check](https://en.bitcoin.it/wiki/Base58Check_encoding) Encoded string.
 //
-// JSON value will be the data encoded as a string using standard base64
+// JSON value will be data encoded as a string using standard base64
 // encoding with paddings. Either
 // [standard](https://tools.ietf.org/html/rfc4648#section-4) or
 // [URL-safe](https://tools.ietf.org/html/rfc4648#section-5) base64 encoding
@@ -377,7 +377,7 @@ func (x *OwnerID) GetValue() []byte {
 //
 // String representation of a value is base-10 integer.
 //
-// JSON representation is an object containing single `value` number field.
+// JSON representation is an object containing a single `value` number field.
 type SubnetID struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -429,7 +429,7 @@ func (x *SubnetID) GetValue() uint32 {
 // API version used by a node.
 //
 // String presentation is a Semantic Versioning 2.0.0 compatible version string
-// with 'v' prefix. I.e. `vX.Y`, where `X` - major number, `Y` - minor number.
+// with 'v' prefix. i.e. `vX.Y`, where `X` is the major number, `Y` is the minor number.
 type Version struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -613,7 +613,7 @@ func (x *SignatureRFC6979) GetSign() []byte {
 }
 
 // Checksum message.
-// Depending on checksum algorithm type the string presentation may vary:
+// Depending on checksum algorithm type, the string presentation may vary:
 //
 // * TZ \
 //   Hex encoded string without `0x` prefix

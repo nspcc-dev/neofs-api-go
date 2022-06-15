@@ -1069,7 +1069,7 @@ func (x *PutRequest_Body) GetSignature() *grpc1.SignatureRFC6979 {
 // Container put response body contains information about the newly registered
 // container as seen by `Container` smart contract. `ContainerID` can be
 // calculated beforehand from the container structure and compared to the one
-// returned here to make sure everything was done as expected.
+// returned here to make sure everything has been done as expected.
 type PutResponse_Body struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1118,8 +1118,8 @@ func (x *PutResponse_Body) GetContainerId() *grpc1.ContainerID {
 	return nil
 }
 
-// Container removal request body has a signed `ContainerID` as a proof of
-// container owner's intent. The signature will be verified by `Container`
+// Container removal request body has signed `ContainerID` as a proof of
+// the container owner's intent. The signature will be verified by `Container`
 // smart contract, so signing algorithm must be supported by NeoVM.
 type DeleteRequest_Body struct {
 	state         protoimpl.MessageState
@@ -1268,7 +1268,7 @@ func (x *GetRequest_Body) GetContainerId() *grpc1.ContainerID {
 }
 
 // Get container response body does not have container structure signature. It
-// was already verified on container creation.
+// has been already verified upon container creation.
 type GetResponse_Body struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1278,7 +1278,7 @@ type GetResponse_Body struct {
 	Container *Container `protobuf:"bytes,1,opt,name=container,proto3" json:"container,omitempty"`
 	// Signature of a stable-marshalled container according to RFC-6979.
 	Signature *grpc1.SignatureRFC6979 `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
-	// Session token if the container was created within a session
+	// Session token if the container has been created within the session
 	SessionToken *grpc.SessionToken `protobuf:"bytes,3,opt,name=session_token,json=sessionToken,proto3" json:"session_token,omitempty"`
 }
 
@@ -1440,7 +1440,7 @@ type SetExtendedACLRequest_Body struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Extended ACL table to set for container
+	// Extended ACL table to set for the container
 	Eacl *grpc2.EACLTable `protobuf:"bytes,1,opt,name=eacl,proto3" json:"eacl,omitempty"`
 	// Signature of stable-marshalled Extended ACL table according to RFC-6979.
 	Signature *grpc1.SignatureRFC6979 `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
@@ -1493,7 +1493,7 @@ func (x *SetExtendedACLRequest_Body) GetSignature() *grpc1.SignatureRFC6979 {
 }
 
 // `SetExtendedACLResponse` has an empty body because the operation is
-// asynchronous and update should be reflected in `Container` smart contract's
+// asynchronous and the update should be reflected in `Container` smart contract's
 // storage after next block is issued in sidechain.
 type SetExtendedACLResponse_Body struct {
 	state         protoimpl.MessageState
@@ -1582,9 +1582,9 @@ func (x *GetExtendedACLRequest_Body) GetContainerId() *grpc1.ContainerID {
 	return nil
 }
 
-// Get Extended ACL Response body can be empty if the requested container did
-// not have Extended ACL Table attached or Extended ACL was not allowed at
-// container creation.
+// Get Extended ACL Response body can be empty if the requested container does
+// not have Extended ACL Table attached or Extended ACL has not been allowed at
+// the time of container creation.
 type GetExtendedACLResponse_Body struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1657,8 +1657,8 @@ type AnnounceUsedSpaceRequest_Body struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// List of announcements. If nodes share several containers, then
-	// announcements transferred in a batch.
+	// List of announcements. If nodes share several containers,
+	// announcements are transferred in a batch.
 	Announcements []*AnnounceUsedSpaceRequest_Body_Announcement `protobuf:"bytes,1,rep,name=announcements,proto3" json:"announcements,omitempty"`
 }
 
@@ -1701,17 +1701,17 @@ func (x *AnnounceUsedSpaceRequest_Body) GetAnnouncements() []*AnnounceUsedSpaceR
 	return nil
 }
 
-// Announcement contains used space information about single container.
+// Announcement contains used space information for a single container.
 type AnnounceUsedSpaceRequest_Body_Announcement struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Epoch number for which container size estimation was produced.
+	// Epoch number for which the container size estimation was produced.
 	Epoch uint64 `protobuf:"varint,1,opt,name=epoch,proto3" json:"epoch,omitempty"`
 	// Identifier of the container.
 	ContainerId *grpc1.ContainerID `protobuf:"bytes,2,opt,name=container_id,json=containerId,proto3" json:"container_id,omitempty"`
-	// Used space is a sum of object payload sizes of specified
+	// Used space is a sum of object payload sizes of a specified
 	// container, stored in the node. It must not include inhumed objects.
 	UsedSpace uint64 `protobuf:"varint,3,opt,name=used_space,json=usedSpace,proto3" json:"used_space,omitempty"`
 }

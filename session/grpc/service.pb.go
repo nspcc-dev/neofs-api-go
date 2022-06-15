@@ -27,7 +27,7 @@ type CreateRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Body of create session token request message.
+	// Body of a create session token request message.
 	Body *CreateRequest_Body `protobuf:"bytes,1,opt,name=body,proto3" json:"body,omitempty"`
 	// Carries request meta information. Header data is used only to regulate
 	// message transport and does not affect request execution.
