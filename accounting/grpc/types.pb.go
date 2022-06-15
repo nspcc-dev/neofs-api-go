@@ -32,7 +32,7 @@ type Decimal struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Number in smallest Token fractions.
+	// Number in the smallest Token fractions.
 	Value int64 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
 	// Precision value indicating how many smallest fractions can be in one
 	// integer.

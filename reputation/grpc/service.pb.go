@@ -91,7 +91,7 @@ func (x *AnnounceLocalTrustRequest) GetVerifyHeader() *grpc.RequestVerificationH
 	return nil
 }
 
-// Node's local trust information announce response.
+// Node's local trust information announcement response.
 type AnnounceLocalTrustResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -231,7 +231,7 @@ func (x *AnnounceIntermediateResultRequest) GetVerifyHeader() *grpc.RequestVerif
 	return nil
 }
 
-// Intermediate global trust information announce response.
+// Intermediate global trust information announcement response.
 type AnnounceIntermediateResultResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -311,7 +311,7 @@ type AnnounceLocalTrustRequest_Body struct {
 	Epoch uint64 `protobuf:"varint,1,opt,name=epoch,proto3" json:"epoch,omitempty"`
 	// List of normalized local trust values to other NeoFS nodes. The value
 	// is calculated according to EigenTrust++ algorithm and must be a
-	// floating point number in the [0;1] range.
+	// floating point number in [0;1] range.
 	Trusts []*Trust `protobuf:"bytes,2,rep,name=trusts,proto3" json:"trusts,omitempty"`
 }
 
@@ -361,9 +361,9 @@ func (x *AnnounceLocalTrustRequest_Body) GetTrusts() []*Trust {
 	return nil
 }
 
-// Response to the node's local trust information announce has an empty body
+// Response to the node's local trust information announcement has an empty body
 // because the trust exchange operation is asynchronous. If Trust information
-// will not pass sanity checks it is silently ignored.
+// does not pass sanity checks, it is silently ignored.
 type AnnounceLocalTrustResponse_Body struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -469,9 +469,9 @@ func (x *AnnounceIntermediateResultRequest_Body) GetTrust() *PeerToPeerTrust {
 	return nil
 }
 
-// Response to the node's intermediate global trust information announce has
+// Response to the node's intermediate global trust information announcement has
 // an empty body because the trust exchange operation is asynchronous. If
-// Trust information will not pass sanity checks it is silently ignored.
+// Trust information does not pass sanity checks, it is silently ignored.
 type AnnounceIntermediateResultResponse_Body struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

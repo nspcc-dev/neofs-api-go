@@ -21,13 +21,13 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// NeoFS unique peer identifier is 33 byte long compressed public key of the
+// NeoFS unique peer identifier is a 33 byte long compressed public key of the
 // node, the same as the one stored in the network map.
 //
-// String presentation is
+// String presentation is a
 // [base58](https://tools.ietf.org/html/draft-msporny-base58-02) encoded string.
 //
-// JSON value will be the data encoded as a string using standard base64
+// JSON value will be data encoded as a string using standard base64
 // encoding with paddings. Either
 // [standard](https://tools.ietf.org/html/rfc4648#section-4) or
 // [URL-safe](https://tools.ietf.org/html/rfc4648#section-5) base64 encoding
@@ -202,7 +202,7 @@ type GlobalTrust struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Message format version. Effectively the version of API library used to create
+	// Message format version. Effectively, the version of API library used to create
 	// the message.
 	Version *grpc.Version `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	// Message body

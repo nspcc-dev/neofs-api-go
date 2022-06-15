@@ -23,7 +23,7 @@ const (
 )
 
 // Type of the object payload content. Only `REGULAR` type objects can be split,
-// hence `TOMBSTONE`, `STORAGE_GROUP` and `LOCK` payload is limited by maximal
+// hence `TOMBSTONE`, `STORAGE_GROUP` and `LOCK` payload is limited by the maximum
 // object size.
 //
 // String presentation of object type is the same as definition:
@@ -154,7 +154,7 @@ type ShortHeader struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Object format version. Effectively the version of API library used to
+	// Object format version. Effectively, the version of API library used to
 	// create particular object.
 	Version *grpc.Version `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	// Epoch when the object was created
@@ -259,7 +259,7 @@ type Header struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Object format version. Effectively the version of API library used to
+	// Object format version. Effectively, the version of API library used to
 	// create particular object
 	Version *grpc.Version `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	// Object's container
@@ -396,8 +396,8 @@ func (x *Header) GetSplit() *Header_Split {
 }
 
 // Object structure. Object is immutable and content-addressed. It means
-// `ObjectID` will change if header or payload changes. It's calculated as a
-// hash of header field, which contains hash of object's payload.
+// `ObjectID` will change if the header or the payload changes. It's calculated as a
+// hash of header field which contains hash of the object's payload.
 //
 // For non-regular object types payload format depends on object type specified
 // in the header.
@@ -476,10 +476,10 @@ func (x *Object) GetPayload() []byte {
 	return nil
 }
 
-// Meta information of split hierarchy for object assembly. With last part
-// one can traverse linked list of split hierarchy back to first part and
-// assemble original object. With linking object one can assembly object
-// straight away from the object parts.
+// Meta information of split hierarchy for object assembly. With the last part
+// one can traverse linked list of split hierarchy back to the first part and
+// assemble the original object. With a linking object one can assemble an object
+// right from the object parts.
 type SplitInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -487,11 +487,11 @@ type SplitInfo struct {
 
 	// 16 byte UUID used to identify the split object hierarchy parts.
 	SplitId []byte `protobuf:"bytes,1,opt,name=split_id,json=splitId,proto3" json:"split_id,omitempty"`
-	// Identifier of the last object in split hierarchy parts. It contains
-	// split header with original object header.
+	// The identifier of the last object in split hierarchy parts. It contains
+	// split header with the original object header.
 	LastPart *grpc.ObjectID `protobuf:"bytes,2,opt,name=last_part,json=lastPart,proto3" json:"last_part,omitempty"`
-	// Identifier of linking object for split hierarchy parts. It contains
-	// split header with original object header and sorted list of
+	// The identifier of a linking object for split hierarchy parts. It contains
+	// split header with the original object header and a sorted list of
 	// object parts.
 	Link *grpc.ObjectID `protobuf:"bytes,3,opt,name=link,proto3" json:"link,omitempty"`
 }
@@ -549,10 +549,10 @@ func (x *SplitInfo) GetLink() *grpc.ObjectID {
 	return nil
 }
 
-// `Attribute` is a user-defined Key-Value metadata pair attached to the
+// `Attribute` is a user-defined Key-Value metadata pair attached to an
 // object.
 //
-// Key name must be a object-unique valid UTF-8 string. Value can't be empty.
+// Key name must be an object-unique valid UTF-8 string. Value can't be empty.
 // Objects with duplicated attribute names or attributes with empty values
 // will be considered invalid.
 //
@@ -583,7 +583,7 @@ func (x *SplitInfo) GetLink() *grpc.ObjectID {
 //   MIME Content Type of object's payload
 //
 // For detailed description of each well-known attribute please see the
-// corresponding section in NeoFS Technical specification.
+// corresponding section in NeoFS Technical Specification.
 type Header_Attribute struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

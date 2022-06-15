@@ -340,10 +340,10 @@ func (x *SessionToken) GetSignature() *grpc.Signature {
 	return nil
 }
 
-// Extended headers for Request/Response. May contain any user-defined headers
+// Extended headers for Request/Response. They may contain any user-defined headers
 // to be interpreted on application level.
 //
-// Key name must be unique valid UTF-8 string. Value can't be empty. Requests or
+// Key name must be a unique valid UTF-8 string. Value can't be empty. Requests or
 // Responses with duplicated header names or headers with empty values will be
 // considered invalid.
 //
@@ -356,9 +356,9 @@ func (x *SessionToken) GetSignature() *grpc.Signature {
 //   current epoch only will be used.
 // * __NEOFS__NETMAP_LOOKUP_DEPTH \
 //   If object can't be found using current epoch's netmap, this header limits
-//   how many past epochs back the node can lookup. The `value` is string
-//   encoded `uint64` in decimal presentation. If set to '0' or not set, the
-//   current epoch only will be used.
+//   how many past epochs the node can look up through. The `value` is string
+//   encoded `uint64` in decimal presentation. If set to '0' or not set, only the
+//   current epoch will be used.
 type XHeader struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -624,13 +624,13 @@ func (x *ResponseMetaHeader) GetStatus() *grpc2.Status {
 	return nil
 }
 
-// Verification info for request signed by all intermediate nodes.
+// Verification info for the request signed by all intermediate nodes.
 type RequestVerificationHeader struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Request Body signature. Should be generated once by request initiator.
+	// Request Body signature. Should be generated once by the request initiator.
 	BodySignature *grpc.Signature `protobuf:"bytes,1,opt,name=body_signature,json=bodySignature,proto3" json:"body_signature,omitempty"`
 	// Request Meta signature is added and signed by each intermediate node
 	MetaSignature *grpc.Signature `protobuf:"bytes,2,opt,name=meta_signature,json=metaSignature,proto3" json:"meta_signature,omitempty"`
@@ -700,13 +700,13 @@ func (x *RequestVerificationHeader) GetOrigin() *RequestVerificationHeader {
 	return nil
 }
 
-// Verification info for response signed by all intermediate nodes
+// Verification info for the response signed by all intermediate nodes
 type ResponseVerificationHeader struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Response Body signature. Should be generated once by answering node.
+	// Response Body signature. Should be generated once by an answering node.
 	BodySignature *grpc.Signature `protobuf:"bytes,1,opt,name=body_signature,json=bodySignature,proto3" json:"body_signature,omitempty"`
 	// Response Meta signature is added and signed by each intermediate node
 	MetaSignature *grpc.Signature `protobuf:"bytes,2,opt,name=meta_signature,json=metaSignature,proto3" json:"meta_signature,omitempty"`

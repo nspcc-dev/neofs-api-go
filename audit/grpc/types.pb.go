@@ -28,7 +28,7 @@ type DataAuditResult struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Data Audit Result format version. Effectively the version of API library
+	// Data Audit Result format version. Effectively, the version of API library
 	// used to report DataAuditResult structure.
 	Version *grpc.Version `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	// Epoch number when the Data Audit was conducted
@@ -47,14 +47,14 @@ type DataAuditResult struct {
 	PassSg []*grpc.ObjectID `protobuf:"bytes,8,rep,name=pass_sg,json=passSG,proto3" json:"pass_sg,omitempty"`
 	// List of Storage Groups that failed audit PoR stage
 	FailSg []*grpc.ObjectID `protobuf:"bytes,9,rep,name=fail_sg,json=failSG,proto3" json:"fail_sg,omitempty"`
-	// Number of sampled objects under audit placed in an optimal way according to
+	// Number of sampled objects under the audit placed in an optimal way according to
 	// the containers placement policy when checking PoP
 	Hit uint32 `protobuf:"varint,10,opt,name=hit,proto3" json:"hit,omitempty"`
-	// Number of sampled objects under audit placed in suboptimal way according to
+	// Number of sampled objects under the audit placed in suboptimal way according to
 	// the containers placement policy, but still at a satisfactory level when
 	// checking PoP
 	Miss uint32 `protobuf:"varint,11,opt,name=miss,proto3" json:"miss,omitempty"`
-	// Number of sampled objects under audit stored in a way not confirming
+	// Number of sampled objects under the audit stored inconsistently with the
 	// placement policy or not found at all when checking PoP
 	Fail uint32 `protobuf:"varint,12,opt,name=fail,proto3" json:"fail,omitempty"`
 	// List of storage node public keys that passed at least one PDP

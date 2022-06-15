@@ -24,22 +24,22 @@ const (
 
 // Container is a structure that defines object placement behaviour. Objects can
 // be stored only within containers. They define placement rule, attributes and
-// access control information. ID of the container is a 32 byte long SHA256 hash
+// access control information. An ID of a container is a 32 byte long SHA256 hash
 // of stable-marshalled container message.
 type Container struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Container format version. Effectively the version of API library used to
-	// create container.
+	// Container format version. Effectively, the version of API library used to
+	// create the container.
 	Version *grpc.Version `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	// Identifier of the container owner
 	OwnerId *grpc.OwnerID `protobuf:"bytes,2,opt,name=owner_id,json=ownerID,proto3" json:"owner_id,omitempty"`
 	// Nonce is a 16 byte UUIDv4, used to avoid collisions of `ContainerID`s
 	Nonce []byte `protobuf:"bytes,3,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	// `BasicACL` contains access control rules for owner, system, others groups
-	// and permission bits for `BearerToken` and `Extended ACL`
+	// `BasicACL` contains access control rules for the owner, system and others groups,
+	// as well as permission bits for `BearerToken` and `Extended ACL`
 	BasicAcl uint32 `protobuf:"varint,4,opt,name=basic_acl,json=basicACL,proto3" json:"basic_acl,omitempty"`
 	// Attributes represent immutable container's meta data
 	Attributes []*Container_Attribute `protobuf:"bytes,5,rep,name=attributes,proto3" json:"attributes,omitempty"`
@@ -122,8 +122,8 @@ func (x *Container) GetPlacementPolicy() *grpc1.PlacementPolicy {
 }
 
 // `Attribute` is a user-defined Key-Value metadata pair attached to the
-// container. Container attributes are immutable. They are set at container
-// creation and can never be added or updated.
+// container. Container attributes are immutable. They are set at the moment of
+// container creation and can never be added or updated.
 //
 // Key name must be a container-unique valid UTF-8 string. Value can't be
 // empty. Containers with duplicated attribute names or attributes with empty
@@ -132,14 +132,20 @@ func (x *Container) GetPlacementPolicy() *grpc1.PlacementPolicy {
 // There are some "well-known" attributes affecting system behaviour:
 //
 // * __NEOFS__SUBNET \
-//   String ID of container's storage subnet. Container can be attached to
-//   only one subnet.
+//   String ID of a container's storage subnet. Any container can be attached to
+//   one subnet only.
 // * __NEOFS__NAME \
-//   String of human-friendly container name registered as the domain in
+//   String of a human-friendly container name registered as a domain in
 //   NNS contract.
 // * __NEOFS__ZONE \
-//   String of zone for `__NEOFS__NAME`. Used as TLD of domain name in NNS
-//   contract. If zone is not specified, use default zone: `container`.
+//   String of a zone for `__NEOFS__NAME`. Used as a TLD of a domain name in NNS
+//   contract. If no zone is specified, use default zone: `container`.
+// * __NEOFS__DISABLE_HOMOMORPHIC_HASHING \
+//   Disables homomorphic hashing for the container if the value equals "true" string.
+//   Any other values are interpreted as missing attribute. Container could be
+//   accepted in a NeoFS network only if the global network hashing configuration
+//   value corresponds with that attribute's value. After container inclusion, network
+//   setting is ignored.
 //
 // And some well-known attributes used by applications only:
 //

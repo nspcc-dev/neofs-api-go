@@ -29,10 +29,10 @@ const (
 	Role_ROLE_UNSPECIFIED Role = 0
 	// User target rule is applied if sender is the owner of the container
 	Role_USER Role = 1
-	// System target rule is applied if sender is the storage node within the
-	// container or inner ring node
+	// System target rule is applied if sender is a storage node within the
+	// container or an inner ring node
 	Role_SYSTEM Role = 2
-	// Others target rule is applied if sender is not user nor system target
+	// Others target rule is applied if sender is neither a user nor a system target
 	Role_OTHERS Role = 3
 )
 
@@ -394,16 +394,16 @@ func (x *EACLRecord) GetTargets() []*EACLRecord_Target {
 	return nil
 }
 
-// Extended ACL rules table. Defined a list of ACL rules additionally to Basic
-// ACL. Extended ACL rules can be attached to the container and can be updated
+// Extended ACL rules table. A list of ACL rules defined additionally to Basic
+// ACL. Extended ACL rules can be attached to a container and can be updated
 // or may be defined in `BearerToken` structure. Please see the corresponding
-// NeoFS Technical Specification's section for detailed description.
+// NeoFS Technical Specification section for detailed description.
 type EACLTable struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// eACL format version. Effectively the version of API library used to create
+	// eACL format version. Effectively, the version of API library used to create
 	// eACL Table.
 	Version *grpc.Version `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	// Identifier of the container that should use given access control rules
@@ -472,8 +472,8 @@ func (x *EACLTable) GetRecords() []*EACLRecord {
 // used in the similar use cases, like providing authorisation to externally
 // authenticated party.
 //
-// BearerToken can be issued only by container's owner and must be signed using
-// the key associated with container's `OwnerID`.
+// BearerToken can be issued only by the container's owner and must be signed using
+// the key associated with the container's `OwnerID`.
 type BearerToken struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -531,7 +531,7 @@ func (x *BearerToken) GetSignature() *grpc.Signature {
 	return nil
 }
 
-// Filter to check particular properties of the request or object.
+// Filter to check particular properties of the request or the object.
 //
 // By default `key` field refers to the corresponding object's `Attribute`.
 // Some Object's header fields can also be accessed by adding `$Object:`
@@ -695,17 +695,19 @@ func (x *EACLRecord_Target) GetKeys() [][]byte {
 	return nil
 }
 
-// Bearer Token body structure contains Extended ACL table issued by container
-// owner with additional information preventing token's abuse.
+// Bearer Token body structure contains Extended ACL table issued by the container
+// owner with additional information preventing token abuse.
 type BearerToken_Body struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	// Table of Extended ACL rules to use instead of the ones attached to the
-	// container
+	// container. If it contains `container_id` field, bearer token is only
+	// valid for this specific container. Otherwise, any container of the same owner
+	// is allowed.
 	EaclTable *EACLTable `protobuf:"bytes,1,opt,name=eacl_table,json=eaclTable,proto3" json:"eacl_table,omitempty"`
-	// `OwnerID` to whom the token was issued. Must match the request
+	// `OwnerID` defines to whom the token was issued. It must match the request
 	// originator's `OwnerID`. If empty, any token bearer will be accepted.
 	OwnerId *grpc.OwnerID `protobuf:"bytes,2,opt,name=owner_id,json=ownerID,proto3" json:"owner_id,omitempty"`
 	// Token expiration and valid time period parameters
