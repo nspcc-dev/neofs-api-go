@@ -59,6 +59,8 @@ const (
 	Internal Code = iota
 	// WrongMagicNumber is a local Code value for WRONG_MAGIC_NUMBER failure status.
 	WrongMagicNumber
+	// SignatureVerificationFail is a local Code value for SIGNATURE_VERIFICATION_FAIL status.
+	SignatureVerificationFail
 )
 
 const (
