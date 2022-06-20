@@ -15,7 +15,7 @@ func main() {
 			//	continue
 			//}
 			imp := string(f.GoImportPath)
-			if strings.HasSuffix(imp, "/tree") { // || strings.HasSuffix(imp, "/control") {
+			if strings.HasSuffix(imp, "/tree") || strings.HasSuffix(imp, "/control") {
 				generateFile(gen, f)
 			}
 		}
