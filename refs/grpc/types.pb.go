@@ -29,8 +29,7 @@ const (
 	// Deterministic ECDSA with SHA-256 hashing (RFC 6979)
 	SignatureScheme_ECDSA_RFC6979_SHA256 SignatureScheme = 1
 	// Deterministic ECDSA with SHA-256 hashing using WalletConnect API.
-	// Here the algorithm is the same, but the actual format for forming
-	// message and signature differs.
+	// Here the algorithm is the same, but the message format differs.
 	SignatureScheme_ECDSA_RFC6979_SHA256_WALLET_CONNECT SignatureScheme = 2
 )
 
