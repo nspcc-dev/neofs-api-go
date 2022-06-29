@@ -37,6 +37,9 @@ const (
 	// StatusAlreadyRemoved is a local status.Code value for
 	// OBJECT_ALREADY_REMOVED object failure.
 	StatusAlreadyRemoved
+	// StatusOutOfRange is a local status.Code value for
+	// OUT_OF_RANGE object failure.
+	StatusOutOfRange
 )
 
 const (
