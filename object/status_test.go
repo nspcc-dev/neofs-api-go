@@ -16,6 +16,7 @@ func TestStatusCodes(t *testing.T) {
 		object.StatusLocked, 2050,
 		object.StatusLockNonRegularObject, 2051,
 		object.StatusAlreadyRemoved, 2052,
+		object.StatusOutOfRange, 2053,
 	)
 }
 
