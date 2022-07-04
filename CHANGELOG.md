@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.13.0] - 2022-07-04 - Yeonpyeongdo (연평도, 延坪島)
+
+NeoFS API v2.13 support
+
+### Added
+- WalletConnect signature scheme (#386)
+- `object.StatusOutOfRange` enum value (#407)
+- Functionality to disable homomorphic hashing in container (#399)
+- `status.SignatureVerificationFail` enum value (#405)
+
 ## [2.12.2] - 2022-06-03
 
 ### Added
@@ -809,3 +819,4 @@ Initial public release
 [2.12.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.11.1...v2.12.0
 [2.12.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.12.0...v2.12.1
 [2.12.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.12.1...v2.12.2
+[2.13.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.12.2...v2.13.0
