@@ -25,4 +25,8 @@ const (
 	// StatusNotFound is a local status.Code value for
 	// CONTAINER_NOT_FOUND container failure.
 	StatusNotFound status.Code = iota
+
+	// StatusEACLNotFound is a local status.Code value for
+	// EACL_NOT_FOUND failure.
+	StatusEACLNotFound
 )
