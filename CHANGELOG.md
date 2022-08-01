@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.13.1] - 2022-08-01
+
+### Added
+- `EACL_NOT_FOUND` status code support (#409)
+
 ## [2.13.0] - 2022-07-04 - Yeonpyeongdo (연평도, 延坪島)
 
 NeoFS API v2.13 support
@@ -820,3 +825,4 @@ Initial public release
 [2.12.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.12.0...v2.12.1
 [2.12.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.12.1...v2.12.2
 [2.13.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.12.2...v2.13.0
+[2.13.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.13.0...v2.13.1
