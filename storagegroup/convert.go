@@ -50,6 +50,7 @@ func (s *StorageGroup) FromGRPCMessage(m grpc.Message) error {
 		return err
 	}
 
+	//nolint: staticcheck
 	s.exp = v.GetExpirationEpoch()
 	s.size = v.GetValidationDataSize()
 
