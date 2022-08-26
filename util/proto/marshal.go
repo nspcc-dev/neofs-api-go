@@ -24,7 +24,10 @@ func BytesMarshal(field int, buf, v []byte) int {
 	if len(v) == 0 {
 		return 0
 	}
+	return bytesMarshal(field, buf, v)
+}
 
+func bytesMarshal(field int, buf, v []byte) int {
 	prefix := field<<3 | 0x2
 
 	// buf length check can prevent panic at PutUvarint, but it will make
@@ -41,10 +44,13 @@ func BytesSize(field int, v []byte) int {
 	if ln == 0 {
 		return 0
 	}
+	return bytesSize(field, v)
+}
 
+func bytesSize(field int, v []byte) int {
 	prefix := field<<3 | 0x2
 
-	return VarUIntSize(uint64(prefix)) + VarUIntSize(uint64(ln)) + ln
+	return VarUIntSize(uint64(prefix)) + VarUIntSize(uint64(len(v))) + len(v)
 }
 
 func StringMarshal(field int, buf []byte, v string) int {
@@ -141,7 +147,7 @@ func RepeatedBytesMarshal(field int, buf []byte, v [][]byte) int {
 	var offset int
 
 	for i := range v {
-		offset += BytesMarshal(field, buf[offset:], v[i])
+		offset += bytesMarshal(field, buf[offset:], v[i])
 	}
 
 	return offset
@@ -149,7 +155,7 @@ func RepeatedBytesMarshal(field int, buf []byte, v [][]byte) int {
 
 func RepeatedBytesSize(field int, v [][]byte) (size int) {
 	for i := range v {
-		size += BytesSize(field, v[i])
+		size += bytesSize(field, v[i])
 	}
 
 	return size
@@ -159,7 +165,7 @@ func RepeatedStringMarshal(field int, buf []byte, v []string) int {
 	var offset int
 
 	for i := range v {
-		offset += StringMarshal(field, buf[offset:], v[i])
+		offset += bytesMarshal(field, buf[offset:], []byte(v[i]))
 	}
 
 	return offset
@@ -167,7 +173,7 @@ func RepeatedStringMarshal(field int, buf []byte, v []string) int {
 
 func RepeatedStringSize(field int, v []string) (size int) {
 	for i := range v {
-		size += StringSize(field, v[i])
+		size += bytesSize(field, []byte(v[i]))
 	}
 
 	return size
