@@ -313,6 +313,10 @@ func TestRepeatedBytesMarshal(t *testing.T) {
 		testRepeatedBytesMarshal(t, [][]byte{}, false)
 	})
 
+	t.Run("empty element", func(t *testing.T) {
+		testRepeatedBytesMarshal(t, [][]byte{{1}, {}}, false)
+	})
+
 	t.Run("nil", func(t *testing.T) {
 		testRepeatedBytesMarshal(t, nil, false)
 	})
@@ -323,6 +327,10 @@ func TestRepeatedStringMarshal(t *testing.T) {
 		data := []string{"One", "Two", "Three"}
 		testRepeatedStringMarshal(t, data, false)
 		testRepeatedStringMarshal(t, data, true)
+	})
+
+	t.Run("empty element", func(t *testing.T) {
+		testRepeatedStringMarshal(t, []string{""}, false)
 	})
 
 	t.Run("empty", func(t *testing.T) {
