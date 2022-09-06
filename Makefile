@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 SHELL = bash
 
-VERSION ?= $(shell git describe --tags --match "v*" --dirty --always)
+VERSION ?= $(shell git describe --tags --match "v*" --abbrev=8 --dirty --always)
 
 .PHONY: dep fmts fmt imports protoc test lint version help
 
