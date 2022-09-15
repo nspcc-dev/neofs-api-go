@@ -283,7 +283,7 @@ func (s *SubnetID) ToGRPCMessage() grpc.Message {
 // FromGRPCMessage restores Info from grpc.Message.
 //
 // Supported types:
-//  * refs.SubnetID.
+//   - refs.SubnetID.
 func (s *SubnetID) FromGRPCMessage(m grpc.Message) error {
 	v, ok := m.(*refs.SubnetID)
 	if !ok {

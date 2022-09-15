@@ -51,6 +51,7 @@ type TokenContext interface {
 }
 
 // Deprecated: use TokenContext instead.
+//
 //nolint:revive
 type SessionTokenContext = TokenContext
 
@@ -67,6 +68,7 @@ type TokenBody struct {
 }
 
 // Deprecated: use TokenBody instead.
+//
 //nolint:revive
 type SessionTokenBody = TokenBody
 
@@ -77,6 +79,7 @@ type Token struct {
 }
 
 // Deprecated: use Token instead.
+//
 //nolint:revive
 type SessionToken = Token
 
