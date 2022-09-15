@@ -61,6 +61,8 @@ const (
 	WrongMagicNumber
 	// SignatureVerificationFail is a local Code value for SIGNATURE_VERIFICATION_FAIL status.
 	SignatureVerificationFail
+	// NodeUnderMaintenance is a local Code value for NODE_UNDER_MAINTENANCE status.
+	NodeUnderMaintenance
 )
 
 const (

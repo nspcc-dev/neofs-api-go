@@ -94,6 +94,7 @@ const (
 	UnspecifiedState NodeState = iota
 	Online
 	Offline
+	Maintenance
 )
 
 const (
