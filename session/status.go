@@ -6,8 +6,9 @@ import (
 )
 
 // LocalizeFailStatus checks if passed global status.Code is related to session failure and:
-//   then localizes the code and returns true,
-//   else leaves the code unchanged and returns false.
+//
+//	then localizes the code and returns true,
+//	else leaves the code unchanged and returns false.
 //
 // Arg must not be nil.
 func LocalizeFailStatus(c *status.Code) bool {

@@ -59,13 +59,13 @@ func subnetAttributeKey(id *refs.SubnetID) string {
 // Existing subnet attributes are expected to be key-unique, otherwise undefined behavior.
 //
 // Does not add (removes existing) attribute if node:
-//   * disables non-zero subnet;
-//   * enables zero subnet.
+//   - disables non-zero subnet;
+//   - enables zero subnet.
 //
 // Attribute key is calculated from ID using format `__NEOFS__SUBNET_%s`.
 // Attribute Value is:
-//   * `True` if node enters the subnet;
-//   * `False`, otherwise.
+//   - `True` if node enters the subnet;
+//   - `False`, otherwise.
 func WriteSubnetInfo(node *NodeInfo, info NodeSubnetInfo) {
 	attrs := node.GetAttributes()
 

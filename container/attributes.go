@@ -24,8 +24,8 @@ const disabledHomomorphicHashingValue = "true"
 
 // HomomorphicHashingState returns container's homomorphic
 // hashing state:
-// 	* true if hashing is enabled;
-// 	* false if hashing is disabled.
+//   - true if hashing is enabled;
+//   - false if hashing is disabled.
 //
 // All container's attributes must be unique, otherwise behavior
 // is undefined.
