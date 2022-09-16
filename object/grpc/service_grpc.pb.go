@@ -44,16 +44,16 @@ type ObjectServiceClient interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   object has been successfully read;
 	// - Common failures (SECTION_FAILURE_COMMON);
-	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
-	//   object container not found;
 	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
 	//   read access to the object is denied;
 	// - **OBJECT_NOT_FOUND** (2049, SECTION_OBJECT): \
 	//   object not found in container;
-	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
-	//   provided session token has expired;
 	// - **OBJECT_ALREADY_REMOVED** (2052, SECTION_OBJECT): \
-	//   the requested object has been marked as deleted.
+	//   the requested object has been marked as deleted;
+	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
+	//   object container not found;
+	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
+	//   provided session token has expired.
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (ObjectService_GetClient, error)
 	// Put the object into container. Request uses gRPC stream. First message
 	// SHOULD be of PutHeader type. `ContainerID` and `OwnerID` of an object
@@ -73,6 +73,8 @@ type ObjectServiceClient interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   object has been successfully saved in the container;
 	// - Common failures (SECTION_FAILURE_COMMON);
+	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
+	//   write access to the container is denied;
 	// - **LOCKED** (2050, SECTION_OBJECT): \
 	//   placement of an object of type TOMBSTONE that includes at least one locked
 	//   object is prohibited;
@@ -81,8 +83,6 @@ type ObjectServiceClient interface {
 	//   type other than REGULAR is prohibited;
 	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
 	//   object storage container not found;
-	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
-	//   write access to the container is denied;
 	// - **TOKEN_NOT_FOUND** (4096, SECTION_SESSION): \
 	//   (for trusted object preparation) session private key does not exist or has
 	// been deleted;
@@ -103,12 +103,12 @@ type ObjectServiceClient interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   object has been successfully marked to be removed from the container;
 	// - Common failures (SECTION_FAILURE_COMMON);
+	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
+	//   delete access to the object is denied;
 	// - **LOCKED** (2050, SECTION_OBJECT): \
 	//   deleting a locked object is prohibited;
 	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
 	//   object container not found;
-	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
-	//   delete access to the object is denied;
 	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
 	//   provided session token has expired.
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
@@ -127,16 +127,16 @@ type ObjectServiceClient interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   object header has been successfully read;
 	// - Common failures (SECTION_FAILURE_COMMON);
-	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
-	//   object container not found;
 	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
 	//   access to operation HEAD of the object is denied;
 	// - **OBJECT_NOT_FOUND** (2049, SECTION_OBJECT): \
 	//   object not found in container;
-	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
-	//   provided session token has expired;
 	// - **OBJECT_ALREADY_REMOVED** (2052, SECTION_OBJECT): \
-	//   the requested object has been marked as deleted.
+	//   the requested object has been marked as deleted;
+	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
+	//   object container not found;
+	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
+	//   provided session token has expired.
 	Head(ctx context.Context, in *HeadRequest, opts ...grpc.CallOption) (*HeadResponse, error)
 	// Search objects in container. Search query allows to match by Object
 	// Header's filed values. Please see the corresponding NeoFS Technical
@@ -153,10 +153,10 @@ type ObjectServiceClient interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   objects have been successfully selected;
 	// - Common failures (SECTION_FAILURE_COMMON);
-	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
-	//   search container not found;
 	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
 	//   access to operation SEARCH of the object is denied;
+	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
+	//   search container not found;
 	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
 	//   provided session token has expired.
 	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (ObjectService_SearchClient, error)
@@ -179,18 +179,18 @@ type ObjectServiceClient interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   data range of the object payload has been successfully read;
 	// - Common failures (SECTION_FAILURE_COMMON);
-	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
-	//   object container not found;
 	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
 	//   access to operation RANGE of the object is denied;
 	// - **OBJECT_NOT_FOUND** (2049, SECTION_OBJECT): \
 	//   object not found in container;
-	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
-	//   provided session token has expired;
 	// - **OBJECT_ALREADY_REMOVED** (2052, SECTION_OBJECT): \
 	//   the requested object has been marked as deleted.
 	// - **OUT_OF_RANGE** (2053, SECTION_OBJECT): \
-	//   the requested range is out of bounds.
+	//   the requested range is out of bounds;
+	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
+	//   object container not found;
+	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
+	//   provided session token has expired.
 	GetRange(ctx context.Context, in *GetRangeRequest, opts ...grpc.CallOption) (ObjectService_GetRangeClient, error)
 	// Returns homomorphic or regular hash of object's payload range after
 	// applying XOR operation with the provided `salt`. Ranges are set of (offset,
@@ -211,14 +211,14 @@ type ObjectServiceClient interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   data range of the object payload has been successfully hashed;
 	// - Common failures (SECTION_FAILURE_COMMON);
-	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
-	//   object container not found;
 	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
 	//   access to operation RANGEHASH of the object is denied;
 	// - **OBJECT_NOT_FOUND** (2049, SECTION_OBJECT): \
 	//   object not found in container;
 	// - **OUT_OF_RANGE** (2053, SECTION_OBJECT): \
-	//   the requested range is out of bounds.
+	//   the requested range is out of bounds;
+	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
+	//   object container not found;
 	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
 	//   provided session token has expired.
 	GetRangeHash(ctx context.Context, in *GetRangeHashRequest, opts ...grpc.CallOption) (*GetRangeHashResponse, error)
@@ -415,16 +415,16 @@ type ObjectServiceServer interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   object has been successfully read;
 	// - Common failures (SECTION_FAILURE_COMMON);
-	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
-	//   object container not found;
 	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
 	//   read access to the object is denied;
 	// - **OBJECT_NOT_FOUND** (2049, SECTION_OBJECT): \
 	//   object not found in container;
-	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
-	//   provided session token has expired;
 	// - **OBJECT_ALREADY_REMOVED** (2052, SECTION_OBJECT): \
-	//   the requested object has been marked as deleted.
+	//   the requested object has been marked as deleted;
+	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
+	//   object container not found;
+	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
+	//   provided session token has expired.
 	Get(*GetRequest, ObjectService_GetServer) error
 	// Put the object into container. Request uses gRPC stream. First message
 	// SHOULD be of PutHeader type. `ContainerID` and `OwnerID` of an object
@@ -444,6 +444,8 @@ type ObjectServiceServer interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   object has been successfully saved in the container;
 	// - Common failures (SECTION_FAILURE_COMMON);
+	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
+	//   write access to the container is denied;
 	// - **LOCKED** (2050, SECTION_OBJECT): \
 	//   placement of an object of type TOMBSTONE that includes at least one locked
 	//   object is prohibited;
@@ -452,8 +454,6 @@ type ObjectServiceServer interface {
 	//   type other than REGULAR is prohibited;
 	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
 	//   object storage container not found;
-	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
-	//   write access to the container is denied;
 	// - **TOKEN_NOT_FOUND** (4096, SECTION_SESSION): \
 	//   (for trusted object preparation) session private key does not exist or has
 	// been deleted;
@@ -474,12 +474,12 @@ type ObjectServiceServer interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   object has been successfully marked to be removed from the container;
 	// - Common failures (SECTION_FAILURE_COMMON);
+	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
+	//   delete access to the object is denied;
 	// - **LOCKED** (2050, SECTION_OBJECT): \
 	//   deleting a locked object is prohibited;
 	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
 	//   object container not found;
-	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
-	//   delete access to the object is denied;
 	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
 	//   provided session token has expired.
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
@@ -498,16 +498,16 @@ type ObjectServiceServer interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   object header has been successfully read;
 	// - Common failures (SECTION_FAILURE_COMMON);
-	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
-	//   object container not found;
 	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
 	//   access to operation HEAD of the object is denied;
 	// - **OBJECT_NOT_FOUND** (2049, SECTION_OBJECT): \
 	//   object not found in container;
-	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
-	//   provided session token has expired;
 	// - **OBJECT_ALREADY_REMOVED** (2052, SECTION_OBJECT): \
-	//   the requested object has been marked as deleted.
+	//   the requested object has been marked as deleted;
+	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
+	//   object container not found;
+	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
+	//   provided session token has expired.
 	Head(context.Context, *HeadRequest) (*HeadResponse, error)
 	// Search objects in container. Search query allows to match by Object
 	// Header's filed values. Please see the corresponding NeoFS Technical
@@ -524,10 +524,10 @@ type ObjectServiceServer interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   objects have been successfully selected;
 	// - Common failures (SECTION_FAILURE_COMMON);
-	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
-	//   search container not found;
 	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
 	//   access to operation SEARCH of the object is denied;
+	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
+	//   search container not found;
 	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
 	//   provided session token has expired.
 	Search(*SearchRequest, ObjectService_SearchServer) error
@@ -550,18 +550,18 @@ type ObjectServiceServer interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   data range of the object payload has been successfully read;
 	// - Common failures (SECTION_FAILURE_COMMON);
-	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
-	//   object container not found;
 	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
 	//   access to operation RANGE of the object is denied;
 	// - **OBJECT_NOT_FOUND** (2049, SECTION_OBJECT): \
 	//   object not found in container;
-	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
-	//   provided session token has expired;
 	// - **OBJECT_ALREADY_REMOVED** (2052, SECTION_OBJECT): \
 	//   the requested object has been marked as deleted.
 	// - **OUT_OF_RANGE** (2053, SECTION_OBJECT): \
-	//   the requested range is out of bounds.
+	//   the requested range is out of bounds;
+	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
+	//   object container not found;
+	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
+	//   provided session token has expired.
 	GetRange(*GetRangeRequest, ObjectService_GetRangeServer) error
 	// Returns homomorphic or regular hash of object's payload range after
 	// applying XOR operation with the provided `salt`. Ranges are set of (offset,
@@ -582,14 +582,14 @@ type ObjectServiceServer interface {
 	// - **OK** (0, SECTION_SUCCESS): \
 	//   data range of the object payload has been successfully hashed;
 	// - Common failures (SECTION_FAILURE_COMMON);
-	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
-	//   object container not found;
 	// - **ACCESS_DENIED** (2048, SECTION_OBJECT): \
 	//   access to operation RANGEHASH of the object is denied;
 	// - **OBJECT_NOT_FOUND** (2049, SECTION_OBJECT): \
 	//   object not found in container;
 	// - **OUT_OF_RANGE** (2053, SECTION_OBJECT): \
-	//   the requested range is out of bounds.
+	//   the requested range is out of bounds;
+	// - **CONTAINER_NOT_FOUND** (3072, SECTION_CONTAINER): \
+	//   object container not found;
 	// - **TOKEN_EXPIRED** (4097, SECTION_SESSION): \
 	//   provided session token has expired.
 	GetRangeHash(context.Context, *GetRangeHashRequest) (*GetRangeHashResponse, error)

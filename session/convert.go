@@ -674,7 +674,7 @@ func (c *ObjectSessionContext) ToGRPCMessage() grpc.Message {
 		m = new(session.ObjectSessionContext)
 
 		m.SetVerb(ObjectSessionVerbToGRPCField(c.verb))
-		m.SetAddress(c.addr.ToGRPCMessage().(*refsGRPC.Address))
+		m.SetTarget(c.cnr.ToGRPCMessage().(*refsGRPC.ContainerID), refs.ObjectIDListToGRPCMessage(c.objs))
 	}
 
 	return m
@@ -688,18 +688,23 @@ func (c *ObjectSessionContext) FromGRPCMessage(m grpc.Message) error {
 
 	var err error
 
-	addr := v.GetAddress()
-	if addr == nil {
-		c.addr = nil
+	cnr := v.GetTarget().GetContainer()
+	if cnr == nil {
+		c.cnr = nil
 	} else {
-		if c.addr == nil {
-			c.addr = new(refs.Address)
+		if c.cnr == nil {
+			c.cnr = new(refs.ContainerID)
 		}
 
-		err = c.addr.FromGRPCMessage(addr)
+		err = c.cnr.FromGRPCMessage(cnr)
 		if err != nil {
 			return err
 		}
+	}
+
+	c.objs, err = refs.ObjectIDListFromGRPCMessage(v.GetTarget().GetObjects())
+	if err != nil {
+		return err
 	}
 
 	c.verb = ObjectSessionVerbFromGRPCField(v.GetVerb())

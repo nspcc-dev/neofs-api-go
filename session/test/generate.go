@@ -195,7 +195,7 @@ func GenerateObjectSessionContext(empty bool) *session.ObjectSessionContext {
 
 	if !empty {
 		m.SetVerb(session.ObjectVerbHead)
-		m.SetAddress(refstest.GenerateAddress(false))
+		m.SetTarget(refstest.GenerateContainerID(false), refstest.GenerateObjectIDs(false)...)
 	}
 
 	return m

@@ -865,6 +865,10 @@ func (x *NetworkInfo) GetNetworkConfig() *NetworkConfig {
 //     Node's continent name according to the [Seven-Continent model]
 //     (https://en.wikipedia.org/wiki/Continent#Number). Calculated
 //     automatically from `UN-LOCODE` attribute.
+//   - ExternalAddr
+//     Node's preferred way for communications with external clients.
+//     Clients SHOULD use these addresses if possible.
+//     Must contain a comma-separated list of multi-addresses.
 //
 // For detailed description of each well-known attribute please see the
 // corresponding section in NeoFS Technical Specification.

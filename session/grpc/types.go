@@ -65,9 +65,12 @@ func (m *SessionToken_Body) SetContainerSessionContext(v *ContainerSessionContex
 	}
 }
 
-// SetAddress sets address of the object related to the session.
-func (m *ObjectSessionContext) SetAddress(v *refs.Address) {
-	m.Address = v
+// SetTarget specifies objects involved in the object session.
+func (m *ObjectSessionContext) SetTarget(cnr *refs.ContainerID, objs []*refs.ObjectID) {
+	m.Target = &ObjectSessionContext_Target{
+		Container: cnr,
+		Objects:   objs,
+	}
 }
 
 // SetVerb sets type of request for which the token is issued.

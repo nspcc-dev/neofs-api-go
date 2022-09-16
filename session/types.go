@@ -4,6 +4,7 @@ import (
 	"github.com/nspcc-dev/neofs-api-go/v2/acl"
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-api-go/v2/status"
+	"github.com/nspcc-dev/neofs-api-go/v2/util/proto"
 )
 
 type CreateRequestBody struct {
@@ -40,10 +41,48 @@ type TokenLifetime struct {
 
 type ObjectSessionVerb uint32
 
+type objectSessionContextTarget struct {
+	cnr *refs.ContainerID
+
+	objs []refs.ObjectID
+}
+
+const (
+	_ = iota
+	fNumObjectTargetContainer
+	fNumObjectTargetObjects
+)
+
+func (x objectSessionContextTarget) StableMarshal(buf []byte) []byte {
+	if buf == nil {
+		buf = make([]byte, x.StableSize())
+	}
+
+	offset := proto.NestedStructureMarshal(fNumObjectTargetContainer, buf, x.cnr)
+
+	for i := range x.objs {
+		offset += proto.NestedStructureMarshal(fNumObjectTargetObjects, buf[offset:], &x.objs[i])
+	}
+
+	return buf
+}
+
+func (x objectSessionContextTarget) StableSize() (size int) {
+	size += proto.NestedStructureSize(fNumObjectTargetContainer, x.cnr)
+
+	for i := range x.objs {
+		size += proto.NestedStructureSize(fNumObjectTargetObjects, &x.objs[i])
+	}
+
+	return size
+}
+
 type ObjectSessionContext struct {
 	verb ObjectSessionVerb
 
-	addr *refs.Address
+	cnr *refs.ContainerID
+
+	objs []refs.ObjectID
 }
 
 type TokenContext interface {
@@ -617,16 +656,25 @@ func (c *ObjectSessionContext) SetVerb(v ObjectSessionVerb) {
 	c.verb = v
 }
 
-func (c *ObjectSessionContext) GetAddress() *refs.Address {
+func (c *ObjectSessionContext) GetContainer() *refs.ContainerID {
 	if c != nil {
-		return c.addr
+		return c.cnr
 	}
 
 	return nil
 }
 
-func (c *ObjectSessionContext) SetAddress(v *refs.Address) {
-	c.addr = v
+func (c *ObjectSessionContext) GetObjects() []refs.ObjectID {
+	if c != nil {
+		return c.objs
+	}
+
+	return nil
+}
+
+func (c *ObjectSessionContext) SetTarget(cnr *refs.ContainerID, objs ...refs.ObjectID) {
+	c.cnr = cnr
+	c.objs = objs
 }
 
 func (t *TokenBody) GetID() []byte {
