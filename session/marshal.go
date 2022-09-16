@@ -21,8 +21,8 @@ const (
 	lifetimeNotValidBeforeField = 2
 	lifetimeIssuedAtField       = 3
 
-	objectCtxVerbField    = 1
-	objectCtxAddressField = 2
+	objectCtxVerbField   = 1
+	objectCtxTargetField = 2
 
 	sessionTokenBodyIDField        = 1
 	sessionTokenBodyOwnerField     = 2
@@ -210,10 +210,11 @@ func (c *ObjectSessionContext) StableMarshal(buf []byte) []byte {
 		buf = make([]byte, c.StableSize())
 	}
 
-	var offset int
-
-	offset += proto.EnumMarshal(objectCtxVerbField, buf[offset:], int32(c.verb))
-	proto.NestedStructureMarshal(objectCtxAddressField, buf[offset:], c.addr)
+	offset := proto.EnumMarshal(objectCtxVerbField, buf, int32(c.verb))
+	proto.NestedStructureMarshal(objectCtxTargetField, buf[offset:], &objectSessionContextTarget{
+		cnr:  c.cnr,
+		objs: c.objs,
+	})
 
 	return buf
 }
@@ -224,7 +225,10 @@ func (c *ObjectSessionContext) StableSize() (size int) {
 	}
 
 	size += proto.EnumSize(objectCtxVerbField, int32(c.verb))
-	size += proto.NestedStructureSize(objectCtxAddressField, c.addr)
+	size += proto.NestedStructureSize(objectCtxTargetField, &objectSessionContextTarget{
+		cnr:  c.cnr,
+		objs: c.objs,
+	})
 
 	return size
 }
