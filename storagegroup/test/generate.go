@@ -10,6 +10,7 @@ func GenerateStorageGroup(empty bool) *storagegroup.StorageGroup {
 
 	if !empty {
 		m.SetValidationDataSize(44)
+		//nolint:staticcheck
 		m.SetExpirationEpoch(55)
 		m.SetMembers(refstest.GenerateObjectIDs(false))
 	}

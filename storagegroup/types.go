@@ -45,6 +45,8 @@ func (s *StorageGroup) SetValidationHash(v *refs.Checksum) {
 }
 
 // GetExpirationEpoch of unified storage group structure.
+//
+// Deprecated: Do not use.
 func (s *StorageGroup) GetExpirationEpoch() uint64 {
 	if s != nil {
 		return s.exp
@@ -54,6 +56,8 @@ func (s *StorageGroup) GetExpirationEpoch() uint64 {
 }
 
 // SetExpirationEpoch into unified storage group structure.
+//
+// Deprecated: Do not use.
 func (s *StorageGroup) SetExpirationEpoch(v uint64) {
 	s.exp = v
 }
