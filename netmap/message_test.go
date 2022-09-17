@@ -23,5 +23,10 @@ func TestMessageConvert(t *testing.T) {
 		func(empty bool) message.Message { return netmaptest.GenerateNetworkInfo(empty) },
 		func(empty bool) message.Message { return netmaptest.GenerateNetworkInfoRequest(empty) },
 		func(empty bool) message.Message { return netmaptest.GenerateNetworkInfoResponseBody(empty) },
+		func(empty bool) message.Message { return netmaptest.GenerateNetMap(empty) },
+		func(empty bool) message.Message { return netmaptest.GenerateSnapshotRequestBody(empty) },
+		func(empty bool) message.Message { return netmaptest.GenerateSnapshotRequest(empty) },
+		func(empty bool) message.Message { return netmaptest.GenerateSnapshotResponseBody(empty) },
+		func(empty bool) message.Message { return netmaptest.GenerateSnapshotResponse(empty) },
 	)
 }

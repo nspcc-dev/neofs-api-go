@@ -754,3 +754,181 @@ func (l *NetworkInfoResponse) FromGRPCMessage(m grpc.Message) error {
 
 	return l.ResponseHeaders.FromMessage(v)
 }
+
+func (x *NetMap) ToGRPCMessage() grpc.Message {
+	var m *netmap.Netmap
+
+	if x != nil {
+		m = new(netmap.Netmap)
+
+		m.SetEpoch(x.epoch)
+
+		if x.nodes != nil {
+			nodes := make([]*netmap.NodeInfo, len(x.nodes))
+
+			for i := range x.nodes {
+				nodes[i] = x.nodes[i].ToGRPCMessage().(*netmap.NodeInfo)
+			}
+
+			m.SetNodes(nodes)
+		}
+	}
+
+	return m
+}
+
+func (x *NetMap) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.Netmap)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	nodes := v.GetNodes()
+	if nodes == nil {
+		x.nodes = nil
+	} else {
+		x.nodes = make([]NodeInfo, len(nodes))
+
+		for i := range nodes {
+			err = x.nodes[i].FromGRPCMessage(nodes[i])
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	x.epoch = v.GetEpoch()
+
+	return nil
+}
+
+func (x *SnapshotRequestBody) ToGRPCMessage() grpc.Message {
+	var m *netmap.NetmapSnapshotRequest_Body
+
+	if x != nil {
+		m = new(netmap.NetmapSnapshotRequest_Body)
+	}
+
+	return m
+}
+
+func (x *SnapshotRequestBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NetmapSnapshotRequest_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	return nil
+}
+
+func (x *SnapshotRequest) ToGRPCMessage() grpc.Message {
+	var m *netmap.NetmapSnapshotRequest
+
+	if x != nil {
+		m = new(netmap.NetmapSnapshotRequest)
+
+		m.SetBody(x.body.ToGRPCMessage().(*netmap.NetmapSnapshotRequest_Body))
+		x.RequestHeaders.ToMessage(m)
+	}
+
+	return m
+}
+
+func (x *SnapshotRequest) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NetmapSnapshotRequest)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	body := v.GetBody()
+	if body == nil {
+		x.body = nil
+	} else {
+		if x.body == nil {
+			x.body = new(SnapshotRequestBody)
+		}
+
+		err = x.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return x.RequestHeaders.FromMessage(v)
+}
+
+func (x *SnapshotResponseBody) ToGRPCMessage() grpc.Message {
+	var m *netmap.NetmapSnapshotResponse_Body
+
+	if x != nil {
+		m = new(netmap.NetmapSnapshotResponse_Body)
+
+		m.SetNetmap(x.netMap.ToGRPCMessage().(*netmap.Netmap))
+	}
+
+	return m
+}
+
+func (x *SnapshotResponseBody) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NetmapSnapshotResponse_Body)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	netMap := v.GetNetmap()
+	if netMap == nil {
+		x.netMap = nil
+	} else {
+		if x.netMap == nil {
+			x.netMap = new(NetMap)
+		}
+
+		err = x.netMap.FromGRPCMessage(netMap)
+	}
+
+	return err
+}
+
+func (x *SnapshotResponse) ToGRPCMessage() grpc.Message {
+	var m *netmap.NetmapSnapshotResponse
+
+	if x != nil {
+		m = new(netmap.NetmapSnapshotResponse)
+
+		m.SetBody(x.body.ToGRPCMessage().(*netmap.NetmapSnapshotResponse_Body))
+		x.ResponseHeaders.ToMessage(m)
+	}
+
+	return m
+}
+
+func (x *SnapshotResponse) FromGRPCMessage(m grpc.Message) error {
+	v, ok := m.(*netmap.NetmapSnapshotResponse)
+	if !ok {
+		return message.NewUnexpectedMessageType(m, v)
+	}
+
+	var err error
+
+	body := v.GetBody()
+	if body == nil {
+		x.body = nil
+	} else {
+		if x.body == nil {
+			x.body = new(SnapshotResponseBody)
+		}
+
+		err = x.body.FromGRPCMessage(body)
+		if err != nil {
+			return err
+		}
+	}
+
+	return x.ResponseHeaders.FromMessage(v)
+}

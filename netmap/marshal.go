@@ -481,3 +481,74 @@ func (i *NetworkInfoResponseBody) StableSize() (size int) {
 func (i *NetworkInfoResponseBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(i, data, new(netmap.NetworkInfoResponse_Body))
 }
+
+const (
+	_ = iota
+	fNumNetMapEpoch
+	fNumNetMapNodes
+)
+
+func (x *NetMap) StableMarshal(buf []byte) []byte {
+	if x == nil {
+		return []byte{}
+	}
+
+	if buf == nil {
+		buf = make([]byte, x.StableSize())
+	}
+
+	offset := protoutil.UInt64Marshal(fNumNetMapEpoch, buf, x.epoch)
+
+	for i := range x.nodes {
+		offset += protoutil.NestedStructureMarshal(fNumNetMapNodes, buf[offset:], &x.nodes[i])
+	}
+
+	return buf
+}
+
+func (x *NetMap) StableSize() (size int) {
+	if x != nil {
+		size = protoutil.UInt64Size(fNumNetMapEpoch, x.epoch)
+
+		for i := range x.nodes {
+			size += protoutil.NestedStructureSize(fNumNetMapNodes, &x.nodes[i])
+		}
+	}
+
+	return
+}
+
+func (x *SnapshotRequestBody) StableMarshal([]byte) []byte {
+	return nil
+}
+
+func (x *SnapshotRequestBody) StableSize() int {
+	return 0
+}
+
+const (
+	_ = iota
+	fNumSnapshotResponseBodyNetMap
+)
+
+func (x *SnapshotResponseBody) StableMarshal(buf []byte) []byte {
+	if x == nil {
+		return []byte{}
+	}
+
+	if buf == nil {
+		buf = make([]byte, x.StableSize())
+	}
+
+	protoutil.NestedStructureMarshal(fNumSnapshotResponseBodyNetMap, buf, x.netMap)
+
+	return buf
+}
+
+func (x *SnapshotResponseBody) StableSize() (size int) {
+	if x != nil {
+		size = protoutil.NestedStructureSize(fNumSnapshotResponseBodyNetMap, x.netMap)
+	}
+
+	return
+}

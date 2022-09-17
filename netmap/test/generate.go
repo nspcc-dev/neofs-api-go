@@ -267,3 +267,57 @@ func GenerateNetworkInfoResponse(empty bool) *netmap.NetworkInfoResponse {
 
 	return m
 }
+
+func GenerateNetMap(empty bool) *netmap.NetMap {
+	m := new(netmap.NetMap)
+
+	if !empty {
+		m.SetEpoch(987)
+		m.SetNodes([]netmap.NodeInfo{
+			*GenerateNodeInfo(false),
+			*GenerateNodeInfo(false),
+		})
+	}
+
+	return m
+}
+
+func GenerateSnapshotRequestBody(_ bool) *netmap.SnapshotRequestBody {
+	return new(netmap.SnapshotRequestBody)
+}
+
+func GenerateSnapshotRequest(empty bool) *netmap.SnapshotRequest {
+	m := new(netmap.SnapshotRequest)
+
+	if !empty {
+		m.SetBody(GenerateSnapshotRequestBody(false))
+	}
+
+	m.SetMetaHeader(sessiontest.GenerateRequestMetaHeader(empty))
+	m.SetVerificationHeader(sessiontest.GenerateRequestVerificationHeader(empty))
+
+	return m
+}
+
+func GenerateSnapshotResponseBody(empty bool) *netmap.SnapshotResponseBody {
+	m := new(netmap.SnapshotResponseBody)
+
+	if !empty {
+		m.SetNetMap(GenerateNetMap(false))
+	}
+
+	return m
+}
+
+func GenerateSnapshotResponse(empty bool) *netmap.SnapshotResponse {
+	m := new(netmap.SnapshotResponse)
+
+	if !empty {
+		m.SetBody(GenerateSnapshotResponseBody(false))
+	}
+
+	m.SetMetaHeader(sessiontest.GenerateResponseMetaHeader(empty))
+	m.SetVerificationHeader(sessiontest.GenerateResponseVerificationHeader(empty))
+
+	return m
+}
