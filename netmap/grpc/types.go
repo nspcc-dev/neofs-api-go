@@ -202,3 +202,13 @@ func (x *NetworkConfig_Parameter) SetValue(v []byte) {
 func (x *NetworkConfig) SetParameters(v []*NetworkConfig_Parameter) {
 	x.Parameters = v
 }
+
+// SetEpoch sets revision number of the Netmap.
+func (x *Netmap) SetEpoch(v uint64) {
+	x.Epoch = v
+}
+
+// SetNodes sets nodes presented in the Netmap.
+func (x *Netmap) SetNodes(v []*NodeInfo) {
+	x.Nodes = v
+}

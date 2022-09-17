@@ -650,3 +650,98 @@ func (l *NetworkInfoResponse) GetBody() *NetworkInfoResponseBody {
 func (l *NetworkInfoResponse) SetBody(body *NetworkInfoResponseBody) {
 	l.body = body
 }
+
+// NetMap represents structure of NeoFS network map.
+type NetMap struct {
+	epoch uint64
+
+	nodes []NodeInfo
+}
+
+// Epoch returns revision number of the NetMap.
+func (x *NetMap) Epoch() uint64 {
+	if x != nil {
+		return x.epoch
+	}
+
+	return 0
+}
+
+// SetEpoch sets revision number of the NetMap.
+func (x *NetMap) SetEpoch(v uint64) {
+	x.epoch = v
+}
+
+// Nodes returns nodes presented in the NetMap.
+func (x *NetMap) Nodes() []NodeInfo {
+	if x != nil {
+		return x.nodes
+	}
+
+	return nil
+}
+
+// SetNodes sets nodes presented in the NetMap.
+func (x *NetMap) SetNodes(v []NodeInfo) {
+	x.nodes = v
+}
+
+// SnapshotRequestBody represents structure of Snapshot request body.
+type SnapshotRequestBody struct{}
+
+// SnapshotRequest represents structure of Snapshot request.
+type SnapshotRequest struct {
+	body *SnapshotRequestBody
+
+	session.RequestHeaders
+}
+
+func (x *SnapshotRequest) GetBody() *SnapshotRequestBody {
+	if x != nil {
+		return x.body
+	}
+
+	return nil
+}
+
+func (x *SnapshotRequest) SetBody(body *SnapshotRequestBody) {
+	x.body = body
+}
+
+// SnapshotResponseBody represents structure of Snapshot response body.
+type SnapshotResponseBody struct {
+	netMap *NetMap
+}
+
+// NetMap returns current NetMap.
+func (x *SnapshotResponseBody) NetMap() *NetMap {
+	if x != nil {
+		return x.netMap
+	}
+
+	return nil
+}
+
+// SetNetMap sets current NetMap.
+func (x *SnapshotResponseBody) SetNetMap(netMap *NetMap) {
+	x.netMap = netMap
+}
+
+// SnapshotResponse represents structure of Snapshot response.
+type SnapshotResponse struct {
+	body *SnapshotResponseBody
+
+	session.ResponseHeaders
+}
+
+func (x *SnapshotResponse) GetBody() *SnapshotResponseBody {
+	if x != nil {
+		return x.body
+	}
+
+	return nil
+}
+
+func (x *SnapshotResponse) SetBody(body *SnapshotResponseBody) {
+	x.body = body
+}
