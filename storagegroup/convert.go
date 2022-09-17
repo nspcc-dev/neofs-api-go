@@ -15,6 +15,7 @@ func (s *StorageGroup) ToGRPCMessage() grpc.Message {
 		m = new(sg.StorageGroup)
 
 		m.SetMembers(refs.ObjectIDListToGRPCMessage(s.members))
+		//nolint:staticcheck
 		m.SetExpirationEpoch(s.exp)
 		m.SetValidationDataSize(s.size)
 		m.SetValidationHash(s.hash.ToGRPCMessage().(*refsGRPC.Checksum))
@@ -50,7 +51,7 @@ func (s *StorageGroup) FromGRPCMessage(m grpc.Message) error {
 		return err
 	}
 
-	//nolint: staticcheck
+	//nolint:staticcheck
 	s.exp = v.GetExpirationEpoch()
 	s.size = v.GetValidationDataSize()
 

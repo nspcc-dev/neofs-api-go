@@ -15,6 +15,8 @@ func (m *StorageGroup) SetValidationHash(v *refs.Checksum) {
 }
 
 // SetExpirationEpoch sets number of the last epoch of the storage group lifetime.
+//
+// Deprecated: do not use, `expiration_epoch` field is deprecated in protocol.
 func (m *StorageGroup) SetExpirationEpoch(v uint64) {
 	m.ExpirationEpoch = v
 }
