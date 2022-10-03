@@ -68,11 +68,11 @@ func (g rwGRPC) WriteMessage(m message.Message) error {
 }
 
 func (c *Client) initGRPC(info common.CallMethodInfo, prm *callParameters) (MessageReadWriter, error) {
-	if err := c.createGRPCClient(); err != nil {
+	if err := c.createGRPCClient(prm.ctx); err != nil {
 		return nil, err
 	}
 
-	rw, err := c.gRPCClient.Init(info, prm.callOpts...)
+	rw, err := c.gRPCClient.Init(info, grpc.WithContext(prm.ctx))
 	if err != nil {
 		return nil, err
 	}

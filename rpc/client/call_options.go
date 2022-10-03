@@ -2,26 +2,28 @@ package client
 
 import (
 	"context"
-
-	"github.com/nspcc-dev/neofs-api-go/v2/rpc/grpc"
 )
 
 // CallOption is a messaging session option within Protobuf RPC.
 type CallOption func(*callParameters)
 
 type callParameters struct {
-	callOpts []grpc.CallOption
+	ctx context.Context
 }
 
 func defaultCallParameters() *callParameters {
 	return &callParameters{
-		callOpts: make([]grpc.CallOption, 0, 1),
+		ctx: context.Background(),
 	}
 }
 
-// WithContext return options to specify call context.
+// WithContext returns option to specify call context. If provided, all network
+// communications will be based on this context. Otherwise, context.Background()
+// is used.
+//
+// Context SHOULD NOT be nil.
 func WithContext(ctx context.Context) CallOption {
 	return func(prm *callParameters) {
-		prm.callOpts = append(prm.callOpts, grpc.WithContext(ctx))
+		prm.ctx = ctx
 	}
 }
