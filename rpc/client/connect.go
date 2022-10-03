@@ -13,9 +13,10 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func (c *Client) createGRPCClient() (err error) {
+func (c *Client) createGRPCClient(ctx context.Context) (err error) {
 	c.gRPCClientOnce.Do(func() {
-		if err = c.openGRPCConn(); err != nil {
+		if err = c.openGRPCConn(ctx); err != nil {
+			err = fmt.Errorf("open gRPC connection: %w", err)
 			return
 		}
 
@@ -30,7 +31,7 @@ func (c *Client) createGRPCClient() (err error) {
 
 var errInvalidEndpoint = errors.New("invalid endpoint options")
 
-func (c *Client) openGRPCConn() error {
+func (c *Client) openGRPCConn(ctx context.Context) error {
 	if c.conn != nil {
 		return nil
 	}
@@ -47,15 +48,18 @@ func (c *Client) openGRPCConn() error {
 		creds = insecure.NewCredentials()
 	}
 
-	dialCtx, cancel := context.WithTimeout(context.Background(), c.dialTimeout)
+	dialCtx, cancel := context.WithTimeout(ctx, c.dialTimeout)
 	var err error
+
 	c.conn, err = grpcstd.DialContext(dialCtx, c.addr,
 		grpcstd.WithTransportCredentials(creds),
 		grpcstd.WithBlock(),
 	)
+
 	cancel()
+
 	if err != nil {
-		return fmt.Errorf("open gRPC client connection: %w", err)
+		return fmt.Errorf("gRPC dial: %w", err)
 	}
 
 	return nil
