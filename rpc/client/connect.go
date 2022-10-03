@@ -49,10 +49,16 @@ func (c *Client) openGRPCConn() error {
 
 	dialCtx, cancel := context.WithTimeout(context.Background(), c.dialTimeout)
 	var err error
-	c.conn, err = grpcstd.DialContext(dialCtx, c.addr, grpcstd.WithTransportCredentials(creds))
+	c.conn, err = grpcstd.DialContext(dialCtx, c.addr,
+		grpcstd.WithTransportCredentials(creds),
+		grpcstd.WithBlock(),
+	)
 	cancel()
+	if err != nil {
+		return fmt.Errorf("open gRPC client connection: %w", err)
+	}
 
-	return err
+	return nil
 }
 
 // ParseURI parses s as address and returns a host and a flag
