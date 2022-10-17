@@ -1,5 +1,32 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+### Fixed
+### Changed
+### Updated
+
+## [2.14.0] - 2022-10-17 - Anmado (안마도, 鞍馬島)
+
+### Added
+- Maintenance status and node state (#415)
+- `NetmapSnapshot` RPC (#418)
+
+### Fixed
+- Marshal repeated `[]byte` fields correctly (#413)
+- Block until client connection is up (#419)
+
+### Changed
+- Support new object session context format (#416)
+- Mark all expiration methods as deprecated (#417)
+
+### Updated
+- Minimal go version to 1.17 (#412) 
+- `neofs-crypto` to `v0.4.0` (#412)
+- `google.golang.org/grpc` to `v1.48.0` (#415)
+- `google.golang.org/protobuf` to `v1.28.0` (#415)
+
 ## [2.13.1] - 2022-08-01
 
 ### Added
@@ -826,3 +853,4 @@ Initial public release
 [2.12.2]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.12.1...v2.12.2
 [2.13.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.12.2...v2.13.0
 [2.13.1]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.13.0...v2.13.1
+[2.14.0]: https://github.com/nspcc-dev/neofs-api-go/compare/v2.13.1...v2.14.0
