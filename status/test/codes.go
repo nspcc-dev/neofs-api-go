@@ -12,7 +12,7 @@ import (
 func TestCodes(t *testing.T,
 	localizer func(*status.Code) bool,
 	globalizer func(code *status.Code),
-	vals ...interface{},
+	vals ...any,
 ) {
 	for i := 0; i < len(vals); i += 2 {
 		c := vals[i].(status.Code)

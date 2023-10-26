@@ -26,12 +26,12 @@ type Message interface {
 // ErrUnexpectedMessageType is an error that
 // is used to indicate message mismatch.
 type ErrUnexpectedMessageType struct {
-	exp, act interface{}
+	exp, act any
 }
 
 // NewUnexpectedMessageType initializes an error about message mismatch
 // between act and exp.
-func NewUnexpectedMessageType(act, exp interface{}) ErrUnexpectedMessageType {
+func NewUnexpectedMessageType(act, exp any) ErrUnexpectedMessageType {
 	return ErrUnexpectedMessageType{
 		exp: exp,
 		act: act,

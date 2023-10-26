@@ -131,7 +131,7 @@ func (s StableMarshalerWrapper) SignedDataSize() int {
 	return 0
 }
 
-func SignServiceMessage(key *ecdsa.PrivateKey, msg interface{}) error {
+func SignServiceMessage(key *ecdsa.PrivateKey, msg any) error {
 	var (
 		body, meta, verifyOrigin stableMarshaler
 		verifyHdr                verificationHeader
@@ -213,7 +213,7 @@ func signServiceMessagePart(key *ecdsa.PrivateKey, part stableMarshaler, sigWrit
 	return nil
 }
 
-func VerifyServiceMessage(msg interface{}) error {
+func VerifyServiceMessage(msg any) error {
 	var (
 		meta   metaHeader
 		verify verificationHeader
@@ -289,7 +289,7 @@ func verifyServiceMessagePart(part stableMarshaler, sigRdr func() *refs.Signatur
 	)
 }
 
-func serviceMessageBody(req interface{}) stableMarshaler {
+func serviceMessageBody(req any) stableMarshaler {
 	switch v := req.(type) {
 	default:
 		panic(fmt.Sprintf("unsupported session message %T", req))

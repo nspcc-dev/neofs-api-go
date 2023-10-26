@@ -1,6 +1,6 @@
 module github.com/nspcc-dev/neofs-api-go/v2
 
-go 1.17
+go 1.19
 
 require (
 	github.com/nspcc-dev/neofs-crypto v0.4.0
