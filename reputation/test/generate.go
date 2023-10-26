@@ -97,7 +97,7 @@ func GenerateAnnounceLocalTrustRequest(empty bool) *reputation.AnnounceLocalTrus
 	return m
 }
 
-func GenerateAnnounceLocalTrustResponseBody(empty bool) *reputation.AnnounceLocalTrustResponseBody {
+func GenerateAnnounceLocalTrustResponseBody(_ bool) *reputation.AnnounceLocalTrustResponseBody {
 	m := new(reputation.AnnounceLocalTrustResponseBody)
 
 	return m
@@ -140,7 +140,7 @@ func GenerateAnnounceIntermediateResultRequest(empty bool) *reputation.AnnounceI
 	return m
 }
 
-func GenerateAnnounceIntermediateResultResponseBody(empty bool) *reputation.AnnounceIntermediateResultResponseBody {
+func GenerateAnnounceIntermediateResultResponseBody(_ bool) *reputation.AnnounceIntermediateResultResponseBody {
 	m := new(reputation.AnnounceIntermediateResultResponseBody)
 
 	return m

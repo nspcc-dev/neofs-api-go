@@ -170,7 +170,7 @@ func GenerateDeleteRequest(empty bool) *container.DeleteRequest {
 	return m
 }
 
-func GenerateDeleteResponseBody(empty bool) *container.DeleteResponseBody {
+func GenerateDeleteResponseBody(_ bool) *container.DeleteResponseBody {
 	m := new(container.DeleteResponseBody)
 
 	return m
@@ -260,7 +260,7 @@ func GenerateSetExtendedACLRequest(empty bool) *container.SetExtendedACLRequest 
 	return m
 }
 
-func GenerateSetExtendedACLResponseBody(empty bool) *container.SetExtendedACLResponseBody {
+func GenerateSetExtendedACLResponseBody(_ bool) *container.SetExtendedACLResponseBody {
 	m := new(container.SetExtendedACLResponseBody)
 
 	return m
@@ -376,7 +376,7 @@ func GenerateAnnounceUsedSpaceRequest(empty bool) *container.AnnounceUsedSpaceRe
 	return m
 }
 
-func GenerateAnnounceUsedSpaceResponseBody(empty bool) *container.AnnounceUsedSpaceResponseBody {
+func GenerateAnnounceUsedSpaceResponseBody(_ bool) *container.AnnounceUsedSpaceResponseBody {
 	m := new(container.AnnounceUsedSpaceResponseBody)
 
 	return m

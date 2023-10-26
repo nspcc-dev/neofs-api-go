@@ -280,7 +280,7 @@ func (ni *NodeInfo) Unmarshal(data []byte) error {
 	return message.Unmarshal(ni, data, new(netmap.NodeInfo))
 }
 
-func (l *LocalNodeInfoRequestBody) StableMarshal(buf []byte) []byte {
+func (l *LocalNodeInfoRequestBody) StableMarshal(_ []byte) []byte {
 	return nil
 }
 
@@ -437,7 +437,7 @@ func (i *NetworkInfo) Unmarshal(data []byte) error {
 	return message.Unmarshal(i, data, new(netmap.NetworkInfo))
 }
 
-func (l *NetworkInfoRequestBody) StableMarshal(buf []byte) []byte {
+func (l *NetworkInfoRequestBody) StableMarshal(_ []byte) []byte {
 	return nil
 }
 
