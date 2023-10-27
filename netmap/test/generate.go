@@ -145,7 +145,7 @@ func GenerateNodeInfo(empty bool) *netmap.NodeInfo {
 	return m
 }
 
-func GenerateLocalNodeInfoRequestBody(empty bool) *netmap.LocalNodeInfoRequestBody {
+func GenerateLocalNodeInfoRequestBody(_ bool) *netmap.LocalNodeInfoRequestBody {
 	m := new(netmap.LocalNodeInfoRequestBody)
 
 	return m
@@ -226,7 +226,7 @@ func GenerateNetworkInfo(empty bool) *netmap.NetworkInfo {
 	return m
 }
 
-func GenerateNetworkInfoRequestBody(empty bool) *netmap.NetworkInfoRequestBody {
+func GenerateNetworkInfoRequestBody(_ bool) *netmap.NetworkInfoRequestBody {
 	m := new(netmap.NetworkInfoRequestBody)
 
 	return m

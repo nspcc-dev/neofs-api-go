@@ -223,7 +223,7 @@ func (r *DeleteRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(container.DeleteRequest_Body))
 }
 
-func (r *DeleteResponseBody) StableMarshal(buf []byte) []byte {
+func (r *DeleteResponseBody) StableMarshal(_ []byte) []byte {
 	return nil
 }
 
@@ -391,7 +391,7 @@ func (r *SetExtendedACLRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(container.SetExtendedACLRequest_Body))
 }
 
-func (r *SetExtendedACLResponseBody) StableMarshal(buf []byte) []byte {
+func (r *SetExtendedACLResponseBody) StableMarshal(_ []byte) []byte {
 	return nil
 }
 
@@ -533,7 +533,7 @@ func (r *AnnounceUsedSpaceRequestBody) Unmarshal(data []byte) error {
 	return message.Unmarshal(r, data, new(container.AnnounceUsedSpaceRequest_Body))
 }
 
-func (r *AnnounceUsedSpaceResponseBody) StableMarshal(buf []byte) []byte {
+func (r *AnnounceUsedSpaceResponseBody) StableMarshal(_ []byte) []byte {
 	return nil
 }
 

@@ -17,10 +17,10 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        go: [ '1.17.x', '1.18.x', '1.19.x' ]
+        go: [ '1.19', '1.20', '1.21' ]
     steps:
       - name: Setup go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
 
@@ -60,5 +60,5 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.48.0
+          version: latest
           only-new-issues: true
