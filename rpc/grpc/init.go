@@ -2,11 +2,14 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"time"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/rpc/common"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/encoding"
+	"google.golang.org/grpc/encoding/proto"
 )
 
 // Message represents raw gRPC message.
@@ -69,6 +72,26 @@ func (w *streamWrapper) withTimeout(closure func() error) error {
 	}
 }
 
+type onlyBinarySendingCodec struct{}
+
+func (x onlyBinarySendingCodec) Name() string {
+	// may be any non-empty, conflicts are unlikely to arise
+	return "neofs_binary_sender"
+}
+
+func (x onlyBinarySendingCodec) Marshal(msg interface{}) ([]byte, error) {
+	bMsg, ok := msg.([]byte)
+	if ok {
+		return bMsg, nil
+	}
+
+	return nil, fmt.Errorf("message is not of type %T", bMsg)
+}
+
+func (x onlyBinarySendingCodec) Unmarshal(raw []byte, msg interface{}) error {
+	return encoding.GetCodec(proto.Name).Unmarshal(raw, msg)
+}
+
 // Init initiates a messaging session within the RPC configured by options.
 func (c *Client) Init(info common.CallMethodInfo, opts ...CallOption) (MessageReadWriter, error) {
 	prm := defaultCallParameters()
@@ -77,12 +100,17 @@ func (c *Client) Init(info common.CallMethodInfo, opts ...CallOption) (MessageRe
 		opt(prm)
 	}
 
+	var grpcCallOpts []grpc.CallOption
+	if prm.allowBinarySendingOnly {
+		grpcCallOpts = []grpc.CallOption{grpc.ForceCodec(onlyBinarySendingCodec{})}
+	}
+
 	ctx, cancel := context.WithCancel(prm.ctx)
 	stream, err := c.con.NewStream(ctx, &grpc.StreamDesc{
 		StreamName:    info.Name,
 		ServerStreams: info.ServerStream(),
 		ClientStreams: info.ClientStream(),
-	}, toMethodName(info))
+	}, toMethodName(info), grpcCallOpts...)
 	if err != nil {
 		cancel()
 		return nil, err
