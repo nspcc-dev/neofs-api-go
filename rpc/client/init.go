@@ -1,6 +1,7 @@
 package client
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/rpc/common"
@@ -67,12 +68,39 @@ func (g rwGRPC) WriteMessage(m message.Message) error {
 	return g.MessageReadWriter.WriteMessage(m.ToGRPCMessage())
 }
 
+// BinaryMessage represents binary [message.Message] that can be used with
+// [AllowBinarySendingOnly] option.
+type BinaryMessage []byte
+
+func (x BinaryMessage) ToGRPCMessage() grpc.Message {
+	return []byte(x)
+}
+
+func (x BinaryMessage) FromGRPCMessage(m grpc.Message) error {
+	bMsg, ok := m.([]byte)
+	if ok {
+		copy(x, bMsg)
+		return nil
+	}
+
+	return fmt.Errorf("message is %T, want %T", m, bMsg)
+}
+
 func (c *Client) initGRPC(info common.CallMethodInfo, prm *callParameters) (MessageReadWriter, error) {
 	if err := c.createGRPCClient(prm.ctx); err != nil {
 		return nil, err
 	}
 
-	rw, err := c.gRPCClient.Init(info, grpc.WithContext(prm.ctx))
+	var grpcCallOpts []grpc.CallOption
+	ctxCallOpt := grpc.WithContext(prm.ctx)
+
+	if prm.allowBinarySendingOnly {
+		grpcCallOpts = []grpc.CallOption{ctxCallOpt, grpc.AllowBinarySendingOnly()}
+	} else {
+		grpcCallOpts = []grpc.CallOption{ctxCallOpt}
+	}
+
+	rw, err := c.gRPCClient.Init(info, grpcCallOpts...)
 	if err != nil {
 		return nil, err
 	}
