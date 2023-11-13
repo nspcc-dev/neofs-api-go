@@ -1,6 +1,8 @@
 package rpc
 
 import (
+	"context"
+
 	"github.com/nspcc-dev/neofs-api-go/v2/object"
 	"github.com/nspcc-dev/neofs-api-go/v2/rpc/client"
 	"github.com/nspcc-dev/neofs-api-go/v2/rpc/common"
@@ -51,6 +53,40 @@ func PutObject(
 	return &PutRequestWriter{
 		wc:   wc,
 		resp: resp,
+	}, nil
+}
+
+// PutRequestBinaryWriter represents stream of binary-encoded request messages
+// of the NeoFS API V2 ObjectService.Put RPC.
+type PutRequestBinaryWriter struct {
+	wc client.MessageWriterCloser
+}
+
+// Write writes next binary-encoded request message to the stream. Note that
+// message sequence and format should comply to the protocol requirements.
+func (w *PutRequestBinaryWriter) Write(msg []byte) error {
+	return w.wc.WriteMessage(client.BinaryMessage(msg))
+}
+
+// Close closes the stream and decodes response message.
+func (w *PutRequestBinaryWriter) Close() error {
+	return w.wc.Close()
+}
+
+// PutObjectBinary opens and returns binary object stream using NeoFS API V2
+// ObjectService.Put RPC. Object is transmitted by sequentially calling
+// [PutRequestBinaryWriter.Write] method. When stream is completed,
+// [PutRequestBinaryWriter.Close] must be called. If transmission succeeds,
+// provided response is decoded from the received message.
+func PutObjectBinary(ctx context.Context, cli *client.Client, resp *object.PutResponse, opts ...client.CallOption) (*PutRequestBinaryWriter, error) {
+	wc, err := client.OpenClientStream(cli, common.CallMethodInfoClientStream(serviceObject, rpcObjectPut), resp,
+		append(opts, client.WithContext(ctx), client.AllowBinarySendingOnly())...)
+	if err != nil {
+		return nil, err
+	}
+
+	return &PutRequestBinaryWriter{
+		wc: wc,
 	}, nil
 }
 
