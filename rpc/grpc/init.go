@@ -100,9 +100,14 @@ func (c *Client) Init(info common.CallMethodInfo, opts ...CallOption) (MessageRe
 		opt(prm)
 	}
 
-	var grpcCallOpts []grpc.CallOption
+	grpcCallOpts := make([]grpc.CallOption, 0, 2)
+
 	if prm.allowBinarySendingOnly {
-		grpcCallOpts = []grpc.CallOption{grpc.ForceCodec(onlyBinarySendingCodec{})}
+		grpcCallOpts = append(grpcCallOpts, grpc.ForceCodec(onlyBinarySendingCodec{}))
+	}
+
+	if prm.syncWrite {
+		grpcCallOpts = append(grpcCallOpts, grpc.SyncSend())
 	}
 
 	ctx, cancel := context.WithCancel(prm.ctx)

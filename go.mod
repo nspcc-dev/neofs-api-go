@@ -28,3 +28,5 @@ require (
 // This version uses broken NeoFS API with incompatible signature
 // definitions. See fix in https://github.com/nspcc-dev/neofs-api/pull/203
 retract v2.12.0
+
+replace google.golang.org/grpc => github.com/cthulhu-rider/grpc-go v0.0.0-20231123095204-ced09a8c28ff

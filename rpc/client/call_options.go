@@ -11,6 +11,8 @@ type callParameters struct {
 	ctx context.Context
 
 	allowBinarySendingOnly bool
+
+	syncWrite bool
 }
 
 func defaultCallParameters() *callParameters {
@@ -39,5 +41,14 @@ func WithContext(ctx context.Context) CallOption {
 func AllowBinarySendingOnly() CallOption {
 	return func(prm *callParameters) {
 		prm.allowBinarySendingOnly = true
+	}
+}
+
+// SyncWrite makes each [MessageWriter.WriteMessage] call to wait for message to
+// be completely written out to the underlying client network connection. By
+// default, the method may return before writing to the wire.
+func SyncWrite() CallOption {
+	return func(prm *callParameters) {
+		prm.syncWrite = true
 	}
 }

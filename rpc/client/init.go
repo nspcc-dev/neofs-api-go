@@ -91,13 +91,15 @@ func (c *Client) initGRPC(info common.CallMethodInfo, prm *callParameters) (Mess
 		return nil, err
 	}
 
-	var grpcCallOpts []grpc.CallOption
-	ctxCallOpt := grpc.WithContext(prm.ctx)
+	grpcCallOpts := make([]grpc.CallOption, 1, 3)
+	grpcCallOpts[0] = grpc.WithContext(prm.ctx)
 
 	if prm.allowBinarySendingOnly {
-		grpcCallOpts = []grpc.CallOption{ctxCallOpt, grpc.AllowBinarySendingOnly()}
-	} else {
-		grpcCallOpts = []grpc.CallOption{ctxCallOpt}
+		grpcCallOpts = append(grpcCallOpts, grpc.AllowBinarySendingOnly())
+	}
+
+	if prm.syncWrite {
+		grpcCallOpts = append(grpcCallOpts, grpc.SyncWrite())
 	}
 
 	rw, err := c.gRPCClient.Init(info, grpcCallOpts...)
