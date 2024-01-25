@@ -227,7 +227,7 @@ func (p *PlacementPolicy) FromGRPCMessage(m grpc.Message) error {
 		return err
 	}
 
-	subnetID := v.GetSubnetId()
+	subnetID := v.GetSubnetId() //nolint:staticcheck // SA1019: v.GetSubnetId is deprecated: Marked as deprecated in netmap/grpc/types.proto
 	if subnetID == nil {
 		p.subnetID = nil
 	} else {
