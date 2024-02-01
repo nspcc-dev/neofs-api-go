@@ -183,6 +183,7 @@ func (h *SplitHeader) ToGRPCMessage() grpc.Message {
 		m.SetParentSignature(h.parSig.ToGRPCMessage().(*refsGRPC.Signature))
 		m.SetChildren(refs.ObjectIDListToGRPCMessage(h.children))
 		m.SetSplitId(h.splitID)
+		m.SetFirst(h.first.ToGRPCMessage().(*refsGRPC.ObjectID))
 	}
 
 	return m
@@ -219,6 +220,20 @@ func (h *SplitHeader) FromGRPCMessage(m grpc.Message) error {
 		}
 
 		err = h.prev.FromGRPCMessage(prev)
+		if err != nil {
+			return err
+		}
+	}
+
+	first := v.GetFirst()
+	if first == nil {
+		h.first = nil
+	} else {
+		if h.first == nil {
+			h.first = new(refs.ObjectID)
+		}
+
+		err = h.first.FromGRPCMessage(first)
 		if err != nil {
 			return err
 		}
@@ -529,6 +544,7 @@ func (s *SplitInfo) ToGRPCMessage() grpc.Message {
 
 		m.SetLastPart(s.lastPart.ToGRPCMessage().(*refsGRPC.ObjectID))
 		m.SetLink(s.link.ToGRPCMessage().(*refsGRPC.ObjectID))
+		m.SetFirstPart(s.firstPart.ToGRPCMessage().(*refsGRPC.ObjectID))
 		m.SetSplitId(s.splitID)
 	}
 
@@ -566,6 +582,20 @@ func (s *SplitInfo) FromGRPCMessage(m grpc.Message) error {
 		}
 
 		err = s.link.FromGRPCMessage(link)
+		if err != nil {
+			return err
+		}
+	}
+
+	first := v.GetFirstPart()
+	if first == nil {
+		s.firstPart = nil
+	} else {
+		if s.firstPart == nil {
+			s.firstPart = new(refs.ObjectID)
+		}
+
+		err = s.firstPart.FromGRPCMessage(first)
 		if err != nil {
 			return err
 		}
