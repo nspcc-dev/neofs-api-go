@@ -2018,6 +2018,9 @@ func (x *SearchRequest_Body) GetFilters() []*SearchRequest_Body_Filter {
 // objects. Most human users expect to get only object they can directly
 // work with. In that case, `$Object:ROOT` filter should be used.
 //
+// If `match_type` field is numerical, both `value` field and object
+// attribute MUST be base-10 integers.
+//
 // By default `key` field refers to the corresponding object's `Attribute`.
 // Some Object's header fields can also be accessed by adding `$Object:`
 // prefix to the name. Here is the list of fields available via this prefix:
