@@ -31,11 +31,11 @@ func WithContext(ctx context.Context) CallOption {
 }
 
 // AllowBinarySendingOnly allows only [MessageWriter.WriteMessage] method's
-// arguments that are convertible to binary gRPC messages ([]byte). For example,
-// [BinaryMessage] may be used for such write. By default, only arguments
-// convertible to [proto.Message] may be used. Use this option when binary
-// message transmission is needed. Note that only [proto.Message] convertible
-// response messages are supported even with this option.
+// arguments that are convertible to binary gRPC messages (grpc.DataReader). For
+// example, [BinaryMessage] may be used for such write. By default, only
+// arguments convertible to [proto.Message] may be used. Use this option when
+// binary message transmission is needed. Note that only [proto.Message]
+// convertible response messages are supported even with this option.
 func AllowBinarySendingOnly() CallOption {
 	return func(prm *callParameters) {
 		prm.allowBinarySendingOnly = true

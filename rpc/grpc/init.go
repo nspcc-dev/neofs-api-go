@@ -8,8 +8,6 @@ import (
 
 	"github.com/nspcc-dev/neofs-api-go/v2/rpc/common"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/encoding"
-	"google.golang.org/grpc/encoding/proto"
 )
 
 // Message represents raw gRPC message.
@@ -35,6 +33,7 @@ type streamWrapper struct {
 	grpc.ClientStream
 	timeout time.Duration
 	cancel  context.CancelFunc
+	binOnly bool
 }
 
 func (w streamWrapper) ReadMessage(m Message) error {
@@ -44,6 +43,16 @@ func (w streamWrapper) ReadMessage(m Message) error {
 }
 
 func (w streamWrapper) WriteMessage(m Message) error {
+	if w.binOnly {
+		dr, ok := m.(DataReader)
+		if !ok {
+			return fmt.Errorf("only %T is allowed with AllowBinarySendingOnly option", dr)
+		}
+		m = grpc.DataReader{
+			R:    dr.R,
+			Size: dr.Size,
+		}
+	}
 	return w.withTimeout(func() error {
 		return w.ClientStream.SendMsg(m)
 	})
@@ -72,24 +81,10 @@ func (w *streamWrapper) withTimeout(closure func() error) error {
 	}
 }
 
-type onlyBinarySendingCodec struct{}
-
-func (x onlyBinarySendingCodec) Name() string {
-	// may be any non-empty, conflicts are unlikely to arise
-	return "neofs_binary_sender"
-}
-
-func (x onlyBinarySendingCodec) Marshal(msg interface{}) ([]byte, error) {
-	bMsg, ok := msg.([]byte)
-	if ok {
-		return bMsg, nil
-	}
-
-	return nil, fmt.Errorf("message is not of type %T", bMsg)
-}
-
-func (x onlyBinarySendingCodec) Unmarshal(raw []byte, msg interface{}) error {
-	return encoding.GetCodec(proto.Name).Unmarshal(raw, msg)
+// DataReader combines [io.Reader] and size.
+type DataReader struct {
+	R    io.Reader
+	Size int
 }
 
 // Init initiates a messaging session within the RPC configured by options.
@@ -100,9 +95,8 @@ func (c *Client) Init(info common.CallMethodInfo, opts ...CallOption) (MessageRe
 		opt(prm)
 	}
 
-	var grpcCallOpts []grpc.CallOption
-	if prm.allowBinarySendingOnly {
-		grpcCallOpts = []grpc.CallOption{grpc.ForceCodec(onlyBinarySendingCodec{})}
+	if prm.allowBinarySendingOnly && (info.ClientStream() || info.ServerStream()) {
+		return nil, fmt.Errorf("AllowBinarySendingOnly option is allowed for unary RPC only")
 	}
 
 	ctx, cancel := context.WithCancel(prm.ctx)
@@ -110,7 +104,7 @@ func (c *Client) Init(info common.CallMethodInfo, opts ...CallOption) (MessageRe
 		StreamName:    info.Name,
 		ServerStreams: info.ServerStream(),
 		ClientStreams: info.ClientStream(),
-	}, toMethodName(info), grpcCallOpts...)
+	}, toMethodName(info))
 	if err != nil {
 		cancel()
 		return nil, err
@@ -118,7 +112,8 @@ func (c *Client) Init(info common.CallMethodInfo, opts ...CallOption) (MessageRe
 
 	return &streamWrapper{
 		ClientStream: stream,
-		cancel:       cancel,
 		timeout:      c.rwTimeout,
+		cancel:       cancel,
+		binOnly:      prm.allowBinarySendingOnly,
 	}, nil
 }

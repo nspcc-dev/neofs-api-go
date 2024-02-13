@@ -70,20 +70,14 @@ func (g rwGRPC) WriteMessage(m message.Message) error {
 
 // BinaryMessage represents binary [message.Message] that can be used with
 // [AllowBinarySendingOnly] option.
-type BinaryMessage []byte
+type BinaryMessage grpc.DataReader
 
 func (x BinaryMessage) ToGRPCMessage() grpc.Message {
-	return []byte(x)
+	return grpc.DataReader(x)
 }
 
 func (x BinaryMessage) FromGRPCMessage(m grpc.Message) error {
-	bMsg, ok := m.([]byte)
-	if ok {
-		copy(x, bMsg)
-		return nil
-	}
-
-	return fmt.Errorf("message is not of type %T", bMsg)
+	return fmt.Errorf("message %T should never be decoded", x)
 }
 
 func (c *Client) initGRPC(info common.CallMethodInfo, prm *callParameters) (MessageReadWriter, error) {

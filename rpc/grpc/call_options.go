@@ -26,11 +26,11 @@ func WithContext(ctx context.Context) CallOption {
 	}
 }
 
-// AllowBinarySendingOnly allows to pass []byte argument only to
+// AllowBinarySendingOnly allows to pass [DataReader] argument only to
 // [MessageReadWriter.WriteMessage] method. By default, only [proto.Message]
-// instances may be used. Use this option when binary message transmission is
-// needed. Note that only [proto.Message] response messages are supported even
-// with this option.
+// instances may be used. The option is allowed for unary RPC only. Use this
+// option when binary message transmission is needed. Note that only
+// [proto.Message] response messages are supported even with this option.
 func AllowBinarySendingOnly() CallOption {
 	return func(prm *callParameters) {
 		prm.allowBinarySendingOnly = true
