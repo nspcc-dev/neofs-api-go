@@ -135,10 +135,15 @@ func HeaderTypeFromGRPCField(t acl.HeaderType) HeaderType {
 // MatchTypeToGRPCField converts unified match type enum into grpc enum.
 func MatchTypeToGRPCField(t MatchType) acl.MatchType {
 	switch t {
-	case MatchTypeStringEqual:
-		return acl.MatchType_STRING_EQUAL
-	case MatchTypeStringNotEqual:
-		return acl.MatchType_STRING_NOT_EQUAL
+	case
+		MatchTypeStringEqual,
+		MatchTypeStringNotEqual,
+		MatchTypeNotPresent,
+		MatchTypeNumGT,
+		MatchTypeNumGE,
+		MatchTypeNumLT,
+		MatchTypeNumLE:
+		return acl.MatchType(t)
 	default:
 		return acl.MatchType_MATCH_TYPE_UNSPECIFIED
 	}
@@ -147,10 +152,15 @@ func MatchTypeToGRPCField(t MatchType) acl.MatchType {
 // MatchTypeFromGRPCField converts grpc enum into unified match type enum.
 func MatchTypeFromGRPCField(t acl.MatchType) MatchType {
 	switch t {
-	case acl.MatchType_STRING_EQUAL:
-		return MatchTypeStringEqual
-	case acl.MatchType_STRING_NOT_EQUAL:
-		return MatchTypeStringNotEqual
+	case
+		acl.MatchType_STRING_EQUAL,
+		acl.MatchType_STRING_NOT_EQUAL,
+		acl.MatchType_NOT_PRESENT,
+		acl.MatchType_NUM_GT,
+		acl.MatchType_NUM_GE,
+		acl.MatchType_NUM_LT,
+		acl.MatchType_NUM_LE:
+		return MatchType(t)
 	default:
 		return MatchTypeUnknown
 	}

@@ -79,6 +79,12 @@ const (
 	MatchTypeUnknown MatchType = iota
 	MatchTypeStringEqual
 	MatchTypeStringNotEqual
+	MatchTypeNotPresent
+	MatchTypeNumGT
+	MatchTypeNumGE
+	MatchTypeNumLT
+	MatchTypeNumLE
+	matchTypeLast // for testing
 )
 
 const (
