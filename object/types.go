@@ -28,7 +28,7 @@ type Attribute struct {
 }
 
 type SplitHeader struct {
-	par, prev *refs.ObjectID
+	par, prev, first *refs.ObjectID
 
 	parSig *refs.Signature
 
@@ -83,6 +83,8 @@ type SplitInfo struct {
 	lastPart *refs.ObjectID
 
 	link *refs.ObjectID
+
+	firstPart *refs.ObjectID
 }
 
 type GetRequestBody struct {
@@ -306,6 +308,7 @@ const (
 	TypeTombstone
 	TypeStorageGroup
 	TypeLock
+	TypeLink
 )
 
 const (
@@ -441,6 +444,18 @@ func (h *SplitHeader) SetParent(v *refs.ObjectID) {
 func (h *SplitHeader) GetPrevious() *refs.ObjectID {
 	if h != nil {
 		return h.prev
+	}
+
+	return nil
+}
+
+func (h *SplitHeader) SetFirst(v *refs.ObjectID) {
+	h.first = v
+}
+
+func (h *SplitHeader) GetFirst() *refs.ObjectID {
+	if h != nil {
+		return h.first
 	}
 
 	return nil
@@ -738,6 +753,18 @@ func (s *SplitInfo) GetLink() *refs.ObjectID {
 
 func (s *SplitInfo) SetLink(v *refs.ObjectID) {
 	s.link = v
+}
+
+func (s *SplitInfo) GetFirstPart() *refs.ObjectID {
+	if s != nil {
+		return s.firstPart
+	}
+
+	return nil
+}
+
+func (s *SplitInfo) SetFirstPart(v *refs.ObjectID) {
+	s.firstPart = v
 }
 
 func (s *SplitInfo) getObjectPart() {}

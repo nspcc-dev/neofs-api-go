@@ -25,6 +25,7 @@ const (
 	splitHdrParentHeaderField    = 4
 	splitHdrChildrenField        = 5
 	splitHdrSplitIDField         = 6
+	splitHdrFirstIDField         = 7
 
 	hdrVersionField         = 1
 	hdrContainerIDField     = 2
@@ -49,6 +50,7 @@ const (
 	splitInfoSplitIDField  = 1
 	splitInfoLastPartField = 2
 	splitInfoLinkField     = 3
+	splitInfoFirstField    = 4
 
 	getReqBodyAddressField = 1
 	getReqBodyRawFlagField = 2
@@ -202,7 +204,8 @@ func (h *SplitHeader) StableMarshal(buf []byte) []byte {
 	offset += proto.NestedStructureMarshal(splitHdrParentSignatureField, buf[offset:], h.parSig)
 	offset += proto.NestedStructureMarshal(splitHdrParentHeaderField, buf[offset:], h.parHdr)
 	offset += refs.ObjectIDNestedListMarshal(splitHdrChildrenField, buf[offset:], h.children)
-	proto.BytesMarshal(splitHdrSplitIDField, buf[offset:], h.splitID)
+	offset += proto.BytesMarshal(splitHdrSplitIDField, buf[offset:], h.splitID)
+	proto.NestedStructureMarshal(splitHdrFirstIDField, buf[offset:], h.first)
 
 	return buf
 }
@@ -218,6 +221,7 @@ func (h *SplitHeader) StableSize() (size int) {
 	size += proto.NestedStructureSize(splitHdrParentHeaderField, h.parHdr)
 	size += refs.ObjectIDNestedListSize(splitHdrChildrenField, h.children)
 	size += proto.BytesSize(splitHdrSplitIDField, h.splitID)
+	size += proto.NestedStructureSize(splitHdrFirstIDField, h.first)
 
 	return size
 }
@@ -363,7 +367,8 @@ func (s *SplitInfo) StableMarshal(buf []byte) []byte {
 
 	offset += proto.BytesMarshal(splitInfoSplitIDField, buf[offset:], s.splitID)
 	offset += proto.NestedStructureMarshal(splitInfoLastPartField, buf[offset:], s.lastPart)
-	proto.NestedStructureMarshal(splitInfoLinkField, buf[offset:], s.link)
+	offset += proto.NestedStructureMarshal(splitInfoLinkField, buf[offset:], s.link)
+	proto.NestedStructureMarshal(splitInfoFirstField, buf[offset:], s.firstPart)
 
 	return buf
 }
@@ -376,6 +381,7 @@ func (s *SplitInfo) StableSize() (size int) {
 	size += proto.BytesSize(splitInfoSplitIDField, s.splitID)
 	size += proto.NestedStructureSize(splitInfoLastPartField, s.lastPart)
 	size += proto.NestedStructureSize(splitInfoLinkField, s.link)
+	size += proto.NestedStructureSize(splitInfoFirstField, s.firstPart)
 
 	return size
 }

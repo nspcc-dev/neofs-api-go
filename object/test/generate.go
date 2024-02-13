@@ -610,3 +610,22 @@ func GenerateLock(empty bool) *object.Lock {
 
 	return m
 }
+
+func GenerateLink(empty bool) *object.Link {
+	m := new(object.Link)
+
+	if !empty {
+		m.SetChildren([]object.MeasuredObject{
+			{
+				ID:   *refstest.GenerateObjectID(false),
+				Size: 1,
+			},
+			{
+				ID:   *refstest.GenerateObjectID(false),
+				Size: 2,
+			},
+		})
+	}
+
+	return m
+}

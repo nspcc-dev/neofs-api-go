@@ -45,6 +45,10 @@ func (m *Header_Split) SetSplitId(v []byte) {
 	m.SplitId = v
 }
 
+func (m *Header_Split) SetFirst(v *refs.ObjectID) {
+	m.First = v
+}
+
 // SetContainerId sets identifier of the container.
 func (m *Header) SetContainerId(v *refs.ContainerID) {
 	m.ContainerId = v
@@ -168,6 +172,11 @@ func (m *SplitInfo) SetLastPart(v *refs.ObjectID) {
 // SetLink sets id of linking object in split hierarchy.
 func (m *SplitInfo) SetLink(v *refs.ObjectID) {
 	m.Link = v
+}
+
+// SetFirstPart sets id of initializing object in split hierarchy.
+func (m *SplitInfo) SetFirstPart(v *refs.ObjectID) {
+	m.FirstPart = v
 }
 
 // FromString parses ObjectType from a string representation,
