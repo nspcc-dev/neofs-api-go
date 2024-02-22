@@ -1,11 +1,13 @@
 package signature
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
 	"testing"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/accounting"
 	"github.com/nspcc-dev/neofs-api-go/v2/session"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 	"github.com/stretchr/testify/require"
 )
 
@@ -26,7 +28,7 @@ func TestBalanceResponse(t *testing.T) {
 	// verify unsigned request
 	require.Error(t, VerifyServiceMessage(req))
 
-	key, err := crypto.LoadPrivateKey("Kwk6k2eC3L3QuPvD8aiaNyoSXgQ2YL1bwS5CP1oKoA9waeAze97s")
+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	require.NoError(t, err)
 
 	// sign request
