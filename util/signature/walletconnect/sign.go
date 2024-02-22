@@ -4,10 +4,12 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/binary"
 	"encoding/hex"
+	"math/big"
 
-	crypto "github.com/nspcc-dev/neofs-crypto"
+	"github.com/nspcc-dev/rfc6979"
 )
 
 const (
@@ -59,10 +61,15 @@ func SignMessage(p *ecdsa.PrivateKey, msg []byte) (SignedMessage, error) {
 	_, _ = rand.Read(salt[:])
 
 	msg = createMessageWithSalt(msg, salt[:])
-	sign, err := crypto.SignRFC6979(p, msg)
-	if err != nil {
-		return SignedMessage{}, err
-	}
+
+	var (
+		h    = sha256.Sum256(msg)
+		r, s = rfc6979.SignECDSA(p, h[:], sha256.New)
+		sign = make([]byte, signatureLen, signatureLen+saltSize)
+	)
+
+	r.FillBytes(sign[:signatureLen/2])
+	s.FillBytes(sign[signatureLen/2:])
 
 	return SignedMessage{
 		Data:      sign,
@@ -88,7 +95,13 @@ func VerifyMessage(p *ecdsa.PublicKey, m SignedMessage) bool {
 			Y:     y,
 		}
 	}
-	return crypto.VerifyRFC6979(p, m.Message, m.Data) == nil
+	var (
+		h    = sha256.Sum256(m.Message)
+		r, s big.Int
+	)
+	r.SetBytes(m.Data[:signatureLen/2])
+	s.SetBytes(m.Data[signatureLen/2:])
+	return ecdsa.Verify(p, h[:], &r, &s)
 }
 
 func createMessageWithSalt(msg, salt []byte) []byte {
