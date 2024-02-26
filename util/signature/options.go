@@ -2,13 +2,21 @@ package signature
 
 import (
 	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
+	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/base64"
+	"errors"
 	"fmt"
+	"math/big"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
 	"github.com/nspcc-dev/neofs-api-go/v2/util/signature/walletconnect"
-	crypto "github.com/nspcc-dev/neofs-crypto"
+	"github.com/nspcc-dev/rfc6979"
 )
+
+const sigIntLen = 32
 
 type cfg struct {
 	schemeFixed bool
@@ -25,41 +33,93 @@ func verify(cfg *cfg, data []byte, sig *refs.Signature) error {
 		cfg.scheme = sig.GetScheme()
 	}
 
-	pub := crypto.UnmarshalPublicKey(sig.GetKey())
-	if pub == nil {
-		return crypto.ErrEmptyPublicKey
+	var pub ecdsa.PublicKey
+	pub.Curve = elliptic.P256()
+	pub.X, pub.Y = elliptic.UnmarshalCompressed(pub.Curve, sig.GetKey())
+	if pub.X == nil {
+		return errors.New("invalid public key")
 	}
+
+	var sigb = sig.GetSign()
+
+	if cfg.scheme == refs.ECDSA_RFC6979_SHA256_WALLET_CONNECT {
+		buf := make([]byte, base64.StdEncoding.EncodedLen(len(data)))
+		base64.StdEncoding.Encode(buf, data)
+		if !walletconnect.Verify(&pub, buf, sigb) {
+			return errors.New("invalid signature")
+		}
+		return nil
+	}
+	var (
+		r, s    big.Int
+		res     bool
+		prefLen int
+	)
+
+	if cfg.scheme == refs.ECDSA_SHA512 {
+		prefLen = 1
+	}
+	if len(sigb) != prefLen+2*sigIntLen {
+		return errors.New("invalid signature length")
+	}
+
+	r.SetBytes(sigb[prefLen : prefLen+sigIntLen])
+	s.SetBytes(sigb[prefLen+sigIntLen:])
 
 	switch cfg.scheme {
 	case refs.ECDSA_SHA512:
-		return crypto.Verify(pub, data, sig.GetSign())
-	case refs.ECDSA_RFC6979_SHA256:
-		return crypto.VerifyRFC6979(pub, data, sig.GetSign())
-	case refs.ECDSA_RFC6979_SHA256_WALLET_CONNECT:
-		buf := make([]byte, base64.StdEncoding.EncodedLen(len(data)))
-		base64.StdEncoding.Encode(buf, data)
-		if !walletconnect.Verify(pub, buf, sig.GetSign()) {
-			return crypto.ErrInvalidSignature
+		var h = sha512.Sum512(data)
+
+		if sigb[0] != 0x04 {
+			return errors.New("invalid signature prefix") // Legacy prefix for SHA512 signature.
 		}
-		return nil
+		res = ecdsa.Verify(&pub, h[:], &r, &s)
+	case refs.ECDSA_RFC6979_SHA256:
+		var h = sha256.Sum256(data)
+		res = ecdsa.Verify(&pub, h[:], &r, &s)
 	default:
 		return fmt.Errorf("unsupported signature scheme %s", cfg.scheme)
 	}
+	if !res {
+		return errors.New("invalid signature")
+	}
+	return nil
 }
 
 func sign(cfg *cfg, key *ecdsa.PrivateKey, data []byte) ([]byte, error) {
-	switch cfg.scheme {
-	case refs.ECDSA_SHA512:
-		return crypto.Sign(key, data)
-	case refs.ECDSA_RFC6979_SHA256:
-		return crypto.SignRFC6979(key, data)
-	case refs.ECDSA_RFC6979_SHA256_WALLET_CONNECT:
+	if cfg.scheme == refs.ECDSA_RFC6979_SHA256_WALLET_CONNECT {
 		buf := make([]byte, base64.StdEncoding.EncodedLen(len(data)))
 		base64.StdEncoding.Encode(buf, data)
 		return walletconnect.Sign(key, buf)
+	}
+
+	var (
+		r, s    *big.Int
+		err     error
+		prefLen int
+	)
+	switch cfg.scheme {
+	case refs.ECDSA_SHA512:
+		var h = sha512.Sum512(data)
+
+		r, s, err = ecdsa.Sign(rand.Reader, key, h[:])
+		prefLen = 1
+	case refs.ECDSA_RFC6979_SHA256:
+		var h = sha256.Sum256(data)
+		r, s = rfc6979.SignECDSA(key, h[:], sha256.New)
 	default:
 		panic(fmt.Sprintf("unsupported scheme %s", cfg.scheme))
 	}
+	if err != nil {
+		return nil, err
+	}
+	var sig = make([]byte, prefLen+2*sigIntLen)
+	if prefLen != 0 {
+		sig[0] = 0x04 // Legacy prefix.
+	}
+	r.FillBytes(sig[prefLen : prefLen+sigIntLen])
+	s.FillBytes(sig[prefLen+sigIntLen:])
+	return sig, nil
 }
 
 func SignWithRFC6979() SignOption {

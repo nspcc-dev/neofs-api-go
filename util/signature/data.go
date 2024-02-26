@@ -2,9 +2,10 @@ package signature
 
 import (
 	"crypto/ecdsa"
+	"crypto/elliptic"
+	"errors"
 
 	"github.com/nspcc-dev/neofs-api-go/v2/refs"
-	crypto "github.com/nspcc-dev/neofs-crypto"
 )
 
 type DataSource interface {
@@ -26,7 +27,7 @@ type KeySignatureSource func() *refs.Signature
 
 func SignDataWithHandler(key *ecdsa.PrivateKey, src DataSource, handler KeySignatureHandler, opts ...SignOption) error {
 	if key == nil {
-		return crypto.ErrEmptyPrivateKey
+		return errors.New("empty private key")
 	}
 
 	cfg := defaultCfg()
@@ -47,7 +48,7 @@ func SignDataWithHandler(key *ecdsa.PrivateKey, src DataSource, handler KeySigna
 
 	sig := new(refs.Signature)
 	sig.SetScheme(cfg.scheme)
-	sig.SetKey(crypto.MarshalPublicKey(&key.PublicKey))
+	sig.SetKey(elliptic.MarshalCompressed(key.PublicKey.Curve, key.PublicKey.X, key.PublicKey.Y))
 	sig.SetSign(sigData)
 	handler(sig)
 
