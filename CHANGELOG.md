@@ -6,6 +6,7 @@
 ### Fixed
 ### Changed
 ### Updated
+- Minimum required version of Go to 1.20
 
 ## [2.14.0] - 2022-10-17 - Anmado (안마도, 鞍馬島)
 

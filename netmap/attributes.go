@@ -141,8 +141,8 @@ func IterateSubnets(node *NodeInfo, f func(refs.SubnetID) error) error {
 		key := attrs[i].GetKey()
 
 		// cut subnet ID string
-		idTxt := strings.TrimPrefix(key, attrSubnetPrefix)
-		if len(idTxt) == len(key) {
+		idTxt, ok := strings.CutPrefix(key, attrSubnetPrefix)
+		if !ok {
 			// not a subnet attribute
 			continue
 		}

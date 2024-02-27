@@ -1,6 +1,6 @@
 module github.com/nspcc-dev/neofs-api-go/v2
 
-go 1.19
+go 1.20
 
 require (
 	github.com/nspcc-dev/rfc6979 v0.2.0
