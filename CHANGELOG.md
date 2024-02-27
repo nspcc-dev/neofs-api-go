@@ -7,6 +7,9 @@
 ### Changed
 ### Updated
 - Minimum required version of Go to 1.20
+- `github.com/nspcc-dev/rfc6979` [v0.2.0 => v0.2.1](https://github.com/nspcc-dev/rfc6979/compare/v0.2.0...v0.2.1)
+- `google.golang.org/grpc` [v1.59.0 => v1.62.0](https://github.com/grpc/grpc-go/compare/v1.59.0...v1.62.0)
+- `google.golang.org/protobuf` [v1.31.0 => v1.32.0](https://github.com/protocolbuffers/protobuf-go/compare/v1.31.0...v1.32.0)
 
 ## [2.14.0] - 2022-10-17 - Anmado (안마도, 鞍馬島)
 
