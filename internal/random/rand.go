@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
+	//nolint:staticcheck
 	rand.Seed(time.Now().UnixNano())
 }
 

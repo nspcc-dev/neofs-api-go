@@ -17,18 +17,18 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        go: [ '1.19', '1.20', '1.21' ]
+        go: [ '1.20', '1.21', '1.22' ]
     steps:
       - name: Setup go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go }}
 
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cache go mod
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ matrix.go }}-${{ hashFiles('**/go.sum') }}
@@ -47,18 +47,15 @@ jobs:
         run: bash <(curl -s https://codecov.io/bash)
 
   lint:
-    runs-on: ubuntu-20.04
+    name: Lint
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Setup go
-        uses: actions/setup-go@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
-          go-version: 1.19
-
-      - name: Check out code
-        uses: actions/checkout@v3
-
+          go-version-file: 'go.mod'
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v4
         with:
           version: latest
-          only-new-issues: true
