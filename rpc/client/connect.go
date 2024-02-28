@@ -53,7 +53,7 @@ func (c *Client) openGRPCConn(ctx context.Context, extraDialOpts ...grpcstd.Dial
 
 	c.conn, err = grpcstd.DialContext(dialCtx, c.addr, append([]grpcstd.DialOption{
 		grpcstd.WithTransportCredentials(creds),
-		grpcstd.WithBlock(),
+		grpcstd.WithReturnConnectionError(),
 	}, extraDialOpts...)...)
 
 	cancel()
