@@ -31,7 +31,7 @@ func (c *Client) createGRPCClient(ctx context.Context) (err error) {
 
 var errInvalidEndpoint = errors.New("invalid endpoint options")
 
-func (c *Client) openGRPCConn(ctx context.Context) error {
+func (c *Client) openGRPCConn(ctx context.Context, extraDialOpts ...grpcstd.DialOption) error {
 	if c.conn != nil {
 		return nil
 	}
@@ -51,10 +51,11 @@ func (c *Client) openGRPCConn(ctx context.Context) error {
 	dialCtx, cancel := context.WithTimeout(ctx, c.dialTimeout)
 	var err error
 
-	c.conn, err = grpcstd.DialContext(dialCtx, c.addr,
+	c.conn, err = grpcstd.DialContext(dialCtx, c.addr, append([]grpcstd.DialOption{
 		grpcstd.WithTransportCredentials(creds),
-		grpcstd.WithBlock(),
-	)
+		grpcstd.WithReturnConnectionError(),
+		grpcstd.FailOnNonTempDialError(true),
+	}, extraDialOpts...)...)
 
 	cancel()
 
