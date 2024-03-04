@@ -49,7 +49,7 @@ type TokenLifetime struct {
 type BearerTokenBody struct {
 	eacl *Table
 
-	ownerID *refs.OwnerID
+	ownerID, issuer *refs.OwnerID
 
 	lifetime *TokenLifetime
 }
@@ -332,6 +332,18 @@ func (bt *BearerTokenBody) GetOwnerID() *refs.OwnerID {
 
 func (bt *BearerTokenBody) SetOwnerID(v *refs.OwnerID) {
 	bt.ownerID = v
+}
+
+func (bt *BearerTokenBody) GetIssuer() *refs.OwnerID {
+	if bt != nil {
+		return bt.issuer
+	}
+
+	return nil
+}
+
+func (bt *BearerTokenBody) SetIssuer(v *refs.OwnerID) {
+	bt.issuer = v
 }
 
 func (bt *BearerTokenBody) GetLifetime() *TokenLifetime {

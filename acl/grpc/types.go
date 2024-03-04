@@ -79,6 +79,11 @@ func (m *BearerToken_Body) SetOwnerId(v *refs.OwnerID) {
 	m.OwnerId = v
 }
 
+// SetIssuer sets identifier of the bearer token issuer.
+func (m *BearerToken_Body) SetIssuer(v *refs.OwnerID) {
+	m.Issuer = v
+}
+
 // SetLifetime sets lifetime of the bearer token.
 func (m *BearerToken_Body) SetLifetime(v *BearerToken_Body_TokenLifetime) {
 	m.Lifetime = v

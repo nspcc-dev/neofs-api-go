@@ -22,6 +22,7 @@ func GenerateBearerTokenBody(empty bool) *acl.BearerTokenBody {
 
 	if !empty {
 		m.SetOwnerID(accountingtest.GenerateOwnerID(false))
+		m.SetIssuer(accountingtest.GenerateOwnerID(false))
 		m.SetEACL(GenerateTable(false))
 		m.SetLifetime(GenerateTokenLifetime(false))
 	}
