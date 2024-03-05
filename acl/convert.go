@@ -435,6 +435,7 @@ func (bt *BearerTokenBody) ToGRPCMessage() grpc.Message {
 		m = new(acl.BearerToken_Body)
 
 		m.SetOwnerId(bt.ownerID.ToGRPCMessage().(*refsGRPC.OwnerID))
+		m.SetIssuer(bt.issuer.ToGRPCMessage().(*refsGRPC.OwnerID))
 		m.SetLifetime(bt.lifetime.ToGRPCMessage().(*acl.BearerToken_Body_TokenLifetime))
 		m.SetEaclTable(bt.eacl.ToGRPCMessage().(*acl.EACLTable))
 	}
@@ -459,6 +460,20 @@ func (bt *BearerTokenBody) FromGRPCMessage(m grpc.Message) error {
 		}
 
 		err = bt.ownerID.FromGRPCMessage(ownerID)
+		if err != nil {
+			return err
+		}
+	}
+
+	issuer := v.GetIssuer()
+	if issuer == nil {
+		bt.issuer = nil
+	} else {
+		if bt.issuer == nil {
+			bt.issuer = new(refs.OwnerID)
+		}
+
+		err = bt.issuer.FromGRPCMessage(issuer)
 		if err != nil {
 			return err
 		}
