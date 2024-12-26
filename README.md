@@ -12,6 +12,10 @@
 [![GitHub release](https://img.shields.io/github/release/nspcc-dev/neofs-api-go.svg)](https://github.com/nspcc-dev/neofs-api-go)
 ![GitHub license](https://img.shields.io/github/license/nspcc-dev/neofs-api-go.svg?style=popout)
 
+# Archived
+
+This repository is archived and is no longer maintained, please refer to https://github.com/nspcc-dev/neofs-sdk-go for current NeoFS API definitions and how to use them.
+
 # Overview
 
 Go implementation of recent [NeoFS API](https://github.com/nspcc-dev/neofs-api)
